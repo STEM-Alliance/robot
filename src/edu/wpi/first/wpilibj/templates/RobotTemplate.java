@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 import com.sun.squawk.debugger.Log;
+import edu.wpi.first.wpilibj.DigitalOutput; 
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -23,14 +24,31 @@ import com.sun.squawk.debugger.Log;
  */
 public class RobotTemplate extends IterativeRobot 
 {
-        RobotDrive chassis = new RobotDrive(1, 2);
-    Joystick leftStick = new Joystick(1);
-    Joystick rightStick = new Joystick(2);
-    boolean previousState = false;
-    boolean grabber = false;
+    /* Motor Objects */
+    RobotDrive chassis = new RobotDrive(1, 2);
     Victor grabberMotor = new Victor(3);
+    
+    /* Left Stick Setup */
+    Joystick leftStick = new Joystick(1);
+    final int shooterButton = 1;
+    final int grabberButton = 2;
+    
+    /* Right Stick Setup */
+    Joystick rightStick = new Joystick(2);
+    
+    boolean previousGrabberState = false;
+    boolean grabber = false;
     double grabberSpeed = 1;
-    int grabberButton = 2;
+    
+    /* Shooter */
+    DigitalOutput shooterOn = new DigitalOutput(1);
+    DigitalOutput shooterOff = new DigitalOutput(2);
+    boolean previousShooterState = false;
+            
+    
+    
+    
+    
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -39,6 +57,8 @@ public class RobotTemplate extends IterativeRobot
     {
         Log.log("test");
         chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+        shooterOn.set(false);
+        shooterOff.set(true);
         // Add this in for 4WD
         //chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
 
@@ -67,26 +87,42 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic() 
     {
         chassis.tankDrive(leftStick, rightStick);
-        if(leftStick.getRawButton(2)) 
+        if(leftStick.getRawButton(grabberButton)) 
         {
             System.out.println("test");
-            if (previousState != true) 
+            if (previousGrabberState != true) 
             {
                grabber = !grabber; // toggle grabber motor
-               previousState = true;
+               previousGrabberState = true;
             }
         }
         else 
         {
-           previousState = false;
+           previousGrabberState = false;
         }
         if (grabber == true) 
         {
-            grabberMotor.set((double)600.0/(double)6000.0);
+            grabberMotor.set(1.0);
         } 
         else 
         {
             grabberMotor.set(0);
+        }
+        if (leftStick.getRawButton(shooterButton))
+        {
+            if (previousShooterState != true) 
+            {
+               previousShooterState = true;
+               shooterOff.set(false);
+               shooterOn.set(true);
+               Timer.delay(2.0);
+               shooterOn.set(false);
+               shooterOff.set(true);
+            }
+        }
+        else 
+        {
+           previousShooterState = false;
         }
     }
        
@@ -97,5 +133,4 @@ public class RobotTemplate extends IterativeRobot
     public void testPeriodic() {
     
     }
-    
 }
