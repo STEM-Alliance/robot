@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.camera.AxisCamera;
 import com.sun.squawk.debugger.Log;
 import edu.wpi.first.wpilibj.DigitalOutput; 
 /**
@@ -48,6 +49,10 @@ public class RobotTemplate extends IterativeRobot
     private DigitalOutput shooterOff;
     private boolean previousShooterState = false;
     
+    /* Camera */
+    private AxisCamera camera;
+    private final String cameraIP = "10.48.18.59";
+    
     ///////////////////////////////////////////////////////
     //  PUBLIC METHODS
     ///////////////////////////////////////////////////////
@@ -66,6 +71,8 @@ public class RobotTemplate extends IterativeRobot
         
         shooterOn = new DigitalOutput(1);
         shooterOff = new DigitalOutput(2);
+        
+        camera = AxisCamera.getInstance(cameraIP);
         
         // Inverting the Front left motor for driving
         chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
@@ -150,7 +157,8 @@ public class RobotTemplate extends IterativeRobot
      *              shooter.
      * ARGUMENTS:   None.
      */
-    private void RetractShooter() {
+    private void RetractShooter() 
+    {
         shooterOn.set(false);
         shooterOff.set(true);
         Timer.delay(1.0);
@@ -162,7 +170,8 @@ public class RobotTemplate extends IterativeRobot
      *              ball.
      * ARGUMENTS:   None.
      */
-    private void ShootBall() {
+    private void ShootBall() 
+    {
         shooterOff.set(false);
         shooterOn.set(true);
         Timer.delay(1.0);
