@@ -24,49 +24,75 @@ import edu.wpi.first.wpilibj.DigitalOutput;
  */
 public class RobotTemplate extends IterativeRobot 
 {
+    ///////////////////////////////////////////////////////
+    //  PRIVATE VARIABLES
+    ///////////////////////////////////////////////////////
     /* Motor Objects */
-    RobotDrive chassis = new RobotDrive(1, 2);
-    Victor grabberMotor = new Victor(3);
+    private RobotDrive chassis;
+    private Victor grabberMotor;
     
-    /* Left Stick Setup */
-    Joystick leftStick = new Joystick(1);
-    final int shooterButton = 1;
-    final int grabberButton = 2;
+    /* Left Joystick Setup */
+    private Joystick leftStick;
+    private final int shooterButton = 1;
+    private final int grabberButton = 2;
     
-    /* Right Stick Setup */
-    Joystick rightStick = new Joystick(2);
+    /* Right Joystick Setup */
+    private Joystick rightStick;
     
-    boolean previousGrabberState = false;
-    boolean grabber = false;
-    double grabberSpeed = 1;
+    private boolean previousGrabberState = false;
+    private boolean grabber = false;
+    private final double grabberSpeed = 1.0;
     
     /* Shooter */
-    DigitalOutput shooterOn = new DigitalOutput(1);
-    DigitalOutput shooterOff = new DigitalOutput(2);
-    boolean previousShooterState = false;
-            
+    private DigitalOutput shooterOn;
+    private DigitalOutput shooterOff;
+    private boolean previousShooterState = false;
     
-    
-    
-    
+    ///////////////////////////////////////////////////////
+    //  PUBLIC METHODS
+    ///////////////////////////////////////////////////////
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
     public void robotInit() 
     {
-        Log.log("test");
+        /* Initialize Objects */
+        chassis = new RobotDrive(1, 2);
+        grabberMotor = new Victor(3);
+        
+        leftStick = new Joystick(1);
+        rightStick = new Joystick(2);
+        
+        shooterOn = new DigitalOutput(1);
+        shooterOff = new DigitalOutput(2);
+        
+        // Inverting the Front left motor for driving
         chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
-        shooterOn.set(false);
-        shooterOff.set(true);
+        // Retracting the shooter into position
+        RetractShooter();
         // Add this in for 4WD
         //chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
 
     }
+    
+    /**
+     * This function is called at the start of operator mode.
+     */
     public void teleopInit()
     {
         chassis.setSafetyEnabled(true);
         chassis.tankDrive(leftStick, rightStick);
+    }
+    
+    /**
+     * This function is called periodically during operator control
+     */
+    public void teleopPeriodic() 
+    {
+        chassis.tankDrive(leftStick, rightStick);
+        GrabberMotorControls();
+        ShooterControls();
     }
 
     /**
@@ -75,62 +101,101 @@ public class RobotTemplate extends IterativeRobot
     public void autonomousPeriodic() 
     {
         chassis.setSafetyEnabled(false);
-        chassis.drive(-0.5, 0);
+        
+        //TODO: Add code to shoot the ball
+        
+        // Drive forward out of the zone and stop
+        chassis.drive(0.5, 0);
         Timer.delay(2.0);
         chassis.drive(0.0, 0.0);
-
     }
 
     /**
-     * This function is called periodically during operator control
+     * This function is called periodically during test mode
      */
-    public void teleopPeriodic() 
+    public void testPeriodic() 
     {
-        chassis.tankDrive(leftStick, rightStick);
-        if(leftStick.getRawButton(grabberButton)) 
-        {
-            System.out.println("test");
-            if (previousGrabberState != true) 
-            {
-               grabber = !grabber; // toggle grabber motor
-               previousGrabberState = true;
-            }
-        }
-        else 
-        {
-           previousGrabberState = false;
-        }
-        if (grabber == true) 
-        {
-            grabberMotor.set(1.0);
-        } 
-        else 
-        {
-            grabberMotor.set(0);
-        }
+    
+    }
+    
+    ///////////////////////////////////////////////////////
+    //  PRIVATE METHODS
+    ///////////////////////////////////////////////////////
+    
+    /**
+     * DESCRIPTION: Operate the shooter when the shooter button
+     *              is pressed.
+     * ARGUMENTS:   None.
+     */
+    private void ShooterControls() 
+    {
         if (leftStick.getRawButton(shooterButton))
         {
             if (previousShooterState != true) 
             {
-               previousShooterState = true;
-               shooterOff.set(false);
-               shooterOn.set(true);
-               Timer.delay(2.0);
-               shooterOn.set(false);
-               shooterOff.set(true);
+                previousShooterState = true;
+                ShootBall();
+                Timer.delay(2.0);
+                RetractShooter();
             }
         }
         else 
         {
-           previousShooterState = false;
+            previousShooterState = false;
         }
     }
-       
+
+    /**
+     * DESCRIPTION: Activate the controls for retracting the 
+     *              shooter.
+     * ARGUMENTS:   None.
+     */
+    private void RetractShooter() {
+        shooterOn.set(false);
+        shooterOff.set(true);
+        Timer.delay(1.0);
+        shooterOff.set(false);
+    }
     
     /**
-     * This function is called periodically during test mode
+     * DESCRIPTION: Activate the controls for shooting the 
+     *              ball.
+     * ARGUMENTS:   None.
      */
-    public void testPeriodic() {
-    
+    private void ShootBall() {
+        shooterOff.set(false);
+        shooterOn.set(true);
+        Timer.delay(1.0);
+        shooterOn.set(false);
+    }
+
+    /**
+     * DESCRIPTION: Activates the grabber motor for grabbing
+     *              a ball when the grabber button is pressed.
+     * ARGUMENTS:   None.
+     */
+    private void GrabberMotorControls() 
+    {
+        if(leftStick.getRawButton(grabberButton))
+        {
+            System.out.println("test");
+            if (previousGrabberState != true)
+            {
+                grabber = !grabber; // toggle grabber motor
+                previousGrabberState = true;
+            }
+        }
+        else
+        {
+            previousGrabberState = false;
+        }
+        if (grabber == true)
+        {
+            grabberMotor.set(grabberSpeed);
+        }
+        else
+        {
+            grabberMotor.set(0);
+        }
     }
 }
