@@ -14,8 +14,9 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
-import com.sun.squawk.debugger.Log;
 import edu.wpi.first.wpilibj.DigitalOutput; 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -45,13 +46,19 @@ public class RobotTemplate extends IterativeRobot
     private final double grabberSpeed = 1.0;
     
     /* Shooter */
-    private DigitalOutput shooterOn;
-    private DigitalOutput shooterOff;
+    private DigitalOutput tFiringArm;
+    private DigitalOutput tLoadingPin;
+    private DigitalInput sFiringArm;
+    private DigitalInput sLoadingPin;
+    private boolean firingArm = false;
+    private boolean loadingPin = false;
     private boolean previousShooterState = false;
+    private boolean firingReady = false;
+    private final double timingDelay = 0.5;
     
     /* Camera */
     private AxisCamera camera;
-    private final String cameraIP = "10.48.18.59";
+    private final String cameraIP = "10.48.18.11";
     
     ///////////////////////////////////////////////////////
     //  PUBLIC METHODS
@@ -69,8 +76,11 @@ public class RobotTemplate extends IterativeRobot
         leftStick = new Joystick(1);
         rightStick = new Joystick(2);
         
-        shooterOn = new DigitalOutput(1);
-        shooterOff = new DigitalOutput(2);
+        tFiringArm = new DigitalOutput(1);
+        sFiringArm = new DigitalInput(2);
+        tLoadingPin = new DigitalOutput(3);
+        sLoadingPin = new DigitalInput(4);
+        
         
         camera = AxisCamera.getInstance(cameraIP);
         
@@ -138,17 +148,14 @@ public class RobotTemplate extends IterativeRobot
     {
         if (leftStick.getRawButton(shooterButton))
         {
-            if (previousShooterState != true) 
+            if (firingReady)
             {
-                previousShooterState = true;
-                ShootBall();
-                Timer.delay(2.0);
-                RetractShooter();
+                fireShooter();
             }
-        }
-        else 
-        {
-            previousShooterState = false;
+            else
+            {
+                System.out.println("[!!] Not ready to fire. Aborting.");
+            }
         }
     }
 
@@ -157,12 +164,41 @@ public class RobotTemplate extends IterativeRobot
      *              shooter.
      * ARGUMENTS:   None.
      */
-    private void RetractShooter() 
+    private void reloadShooter() 
     {
-        shooterOn.set(false);
-        shooterOff.set(true);
-        Timer.delay(1.0);
-        shooterOff.set(false);
+        // Firing Stage 1
+        if(!sFiringArm.get() && sLoadingPin.get()) //If robot has just fired
+        {
+            tLoadingPin.set(true);
+            Timer.delay(timingDelay*5.0); //Need to fine tune this in case reloading takes longer
+            // Firing Stage 2
+            if(sFiringArm.get() && !sLoadingPin.get()) //If the arm is down but the loading mecahnism is still active
+            {
+                tFiringArm.set(false);
+                Timer.delay(timingDelay);
+                tLoadingPin.set(false);
+                // Firing Stage 3
+                if(sFiringArm.get() && sLoadingPin.get()) //If the robot is loaded and ready to go
+                {
+                    firingReady = true;
+                }
+                else
+                {
+                    firingReady = false;
+                    System.out.println("[!!] Something went wrong in firing stage 3. Not ready to fire.");
+                }
+            }
+            else
+            {
+                firingReady = false;
+                System.out.println("[!!] Something went wrong in firing stage 2. Not ready to fire.");
+            }
+        }
+        else
+        {
+            firingReady = false;
+            System.out.println("[!!] Something went wrong in firing stage 1. Not ready to fire.");
+        }
     }
     
     /**
@@ -170,12 +206,13 @@ public class RobotTemplate extends IterativeRobot
      *              ball.
      * ARGUMENTS:   None.
      */
-    private void ShootBall() 
+    private void fireShooter() 
     {
-        shooterOff.set(false);
-        shooterOn.set(true);
-        Timer.delay(1.0);
-        shooterOn.set(false);
+        System.out.println("[--] Firing!");
+        firingReady = false;
+        tFiringArm.set(true); //Release the firing arm
+        Timer.delay(timingDelay); //Wait just a little bit
+        reloadShooter();
     }
 
     /**
