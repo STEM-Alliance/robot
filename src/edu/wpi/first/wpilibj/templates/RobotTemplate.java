@@ -87,7 +87,7 @@ public class RobotTemplate extends IterativeRobot
         // Inverting the Front left motor for driving
         chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
         // Retracting the shooter into position
-        RetractShooter();
+        //RetractShooter(); Later implementation
         // Add this in for 4WD
         //chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
 
