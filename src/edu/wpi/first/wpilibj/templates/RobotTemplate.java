@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.DigitalOutput; 
 import edu.wpi.first.wpilibj.DigitalInput;
-
+import edu.wpi.first.wpilibj.Relay;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -37,24 +37,29 @@ public class RobotTemplate extends IterativeRobot
     private Joystick leftStick;
     private final int shooterButton = 1;
     private final int grabberButton = 2;
+    private final int compressorButton = 11;
     
     /* Right Joystick Setup */
     private Joystick rightStick;
     
     private boolean previousGrabberState = false;
     private boolean grabber = false;
+    private boolean compressor = false;
     private final double grabberSpeed = 1.0;
     
     /* Shooter */
+    
     private DigitalOutput tFiringArm;
     private DigitalOutput tLoadingPin;
     private DigitalInput sFiringArm;
     private DigitalInput sLoadingPin;
+    private Relay tCompressor;
     private boolean firingArm = false;
     private boolean loadingPin = false;
-    private boolean previousShooterState = false;
+    private boolean previousCompressorState = false;
     private boolean firingReady = false;
     private final double timingDelay = 0.5;
+    
     
     /* Camera */
     private AxisCamera camera;
@@ -80,7 +85,7 @@ public class RobotTemplate extends IterativeRobot
         sFiringArm = new DigitalInput(2);
         tLoadingPin = new DigitalOutput(3);
         sLoadingPin = new DigitalInput(4);
-        
+        tCompressor = new Relay(1, Relay.Direction.kForward);
         
         camera = AxisCamera.getInstance(cameraIP);
         
@@ -108,8 +113,10 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic() 
     {
         chassis.tankDrive(leftStick, rightStick);
-        GrabberMotorControls();
-        ShooterControls();
+        compressorToggle();
+       // GrabberMotorControls();
+        //ShooterControls();
+       
     }
 
     /**
@@ -242,6 +249,30 @@ public class RobotTemplate extends IterativeRobot
         else
         {
             grabberMotor.set(0);
+        }
+    }
+    private void compressorToggle(){
+       System.out.print("compressor toggle");
+        if(leftStick.getRawButton(compressorButton))
+        {
+            System.out.print("detected");
+            if (previousCompressorState != true)
+            {
+                compressor = !compressor; // toggle grabber motor
+                previousCompressorState = true;
+            }
+        }
+        else
+        {
+            previousCompressorState = false;
+        }
+         if (compressor == true)
+        {
+            tCompressor.set(Relay.Value.kOn);
+        }
+        else
+        {
+            tCompressor.set(Relay.Value.kOff);
         }
     }
 }
