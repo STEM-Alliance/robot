@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.DigitalOutput; 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Solenoid;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -32,6 +33,8 @@ public class RobotTemplate extends IterativeRobot
     /* Motor Objects */
     private RobotDrive chassis;
     private Victor grabberMotor;
+    // solenoid //
+    public Solenoid tFiringArm;
     
     /* Left Joystick Setup */
     private Joystick leftStick;
@@ -49,8 +52,7 @@ public class RobotTemplate extends IterativeRobot
     
     /* Shooter */
     
-    private DigitalOutput tFiringArm;
-    private DigitalOutput tLoadingPin;
+    private Solenoid tLoadingPin;
     private DigitalInput sFiringArm;
     private DigitalInput sLoadingPin;
     private Relay tCompressor;
@@ -75,26 +77,25 @@ public class RobotTemplate extends IterativeRobot
     public void robotInit() 
     {
         /* Initialize Objects */
-        chassis = new RobotDrive(1, 2);
-        grabberMotor = new Victor(3);
+        chassis = new RobotDrive(1, 2, 3, 4);
+        grabberMotor = new Victor(5);
         
         leftStick = new Joystick(1);
         rightStick = new Joystick(2);
         
-        tFiringArm = new DigitalOutput(1);
         sFiringArm = new DigitalInput(2);
-        tLoadingPin = new DigitalOutput(3);
+        tLoadingPin = new Solenoid(2, 2);
         sLoadingPin = new DigitalInput(4);
         tCompressor = new Relay(1, Relay.Direction.kForward);
-        
+        tFiringArm = new Solenoid(2, 1);
         camera = AxisCamera.getInstance(cameraIP);
         
         // Inverting the Front left motor for driving
-        chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+        //chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
         // Retracting the shooter into position
         //RetractShooter(); Later implementation
         // Add this in for 4WD
-        //chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+        chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
 
     }
     
