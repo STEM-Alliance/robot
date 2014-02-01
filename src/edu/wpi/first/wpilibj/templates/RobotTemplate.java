@@ -8,6 +8,7 @@
 package edu.wpi.first.wpilibj.templates;
 
 
+import com.sun.cldc.jna.Structure;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -18,6 +19,9 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
+
+
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -33,8 +37,12 @@ public class RobotTemplate extends IterativeRobot
     /* Motor Objects */
     private RobotDrive chassis;
     private Victor grabberMotor;
+    
     // solenoid //
-    public Solenoid tFiringArm;
+    public Solenoid tFiringArmOut;
+    public Solenoid tFiringArmIn;
+    public Solenoid tLoadingPinIn;
+    public Solenoid tLoadingPinOut;
     
     /* Left Joystick Setup */
     private Joystick leftStick;
@@ -52,7 +60,7 @@ public class RobotTemplate extends IterativeRobot
     
     /* Shooter */
     
-    private Solenoid tLoadingPin;
+    
     private DigitalInput sFiringArm;
     private DigitalInput sLoadingPin;
     private Relay tCompressor;
@@ -66,6 +74,8 @@ public class RobotTemplate extends IterativeRobot
     /* Camera */
     private AxisCamera camera;
     private final String cameraIP = "10.48.18.11";
+    
+    
     
     ///////////////////////////////////////////////////////
     //  PUBLIC METHODS
@@ -84,10 +94,14 @@ public class RobotTemplate extends IterativeRobot
         rightStick = new Joystick(2);
         
         sFiringArm = new DigitalInput(2);
-        tLoadingPin = new Solenoid(2, 2);
         sLoadingPin = new DigitalInput(4);
         tCompressor = new Relay(1, Relay.Direction.kForward);
-        tFiringArm = new Solenoid(2, 1);
+        tFiringArmIn  = new Solenoid(1);
+        tFiringArmOut = new Solenoid(2);
+        tLoadingPinIn = new Solenoid(3);
+        tLoadingPinOut  = new Solenoid(4);
+        
+        
         camera = AxisCamera.getInstance(cameraIP);
         
         // Inverting the Front left motor for driving
@@ -114,10 +128,10 @@ public class RobotTemplate extends IterativeRobot
     public void teleopPeriodic() 
     {
         chassis.tankDrive(leftStick, rightStick);
-        compressorToggle();
+        //compressorToggle();
+        reloadShooterStateMachine();
        // GrabberMotorControls();
         //ShooterControls();
-       
     }
 
     /**
@@ -166,47 +180,123 @@ public class RobotTemplate extends IterativeRobot
             }
         }
     }
-
+    
+    private final int ShooterStateStart =                   0;
+    private final int ShooterStateRetractFiringPin =        1;
+    private final int ShooterStateRetractFiringPinWait =    2;
+    private final int ShooterStateSetFiringArm =            3;
+    private final int ShooterStateSetFiringArmWait =        4;
+    private final int ShooterStateSetFiringPin =            5;
+    private final int ShooterStateSetFiringPinWait =        6;
+    private final int ShooterStateRetractFiringMech =       7;
+    private final int ShooterStateRetractFiringMechWait =   8;
+    private final int ShooterStateFireReady =               9;
+    
+    private int currentReloadShooterState = ShooterStateStart;
+    private int newReloadShooterState = ShooterStateStart;
+    private double shooterTime = 0;
+    
     /**
      * DESCRIPTION: Activate the controls for retracting the 
      *              shooter.
      * ARGUMENTS:   None.
      */
-    private void reloadShooter() 
+    private void reloadShooterStateMachine()
     {
-        // Firing Stage 1
-        if(!sFiringArm.get() && sLoadingPin.get()) //If robot has just fired
+        switch(currentReloadShooterState)
         {
-            tLoadingPin.set(true);
-            Timer.delay(timingDelay*5.0); //Need to fine tune this in case reloading takes longer
-            // Firing Stage 2
-            if(sFiringArm.get() && !sLoadingPin.get()) //If the arm is down but the loading mecahnism is still active
+            case ShooterStateStart:
             {
-                tFiringArm.set(false);
-                Timer.delay(timingDelay);
-                tLoadingPin.set(false);
-                // Firing Stage 3
-                if(sFiringArm.get() && sLoadingPin.get()) //If the robot is loaded and ready to go
-                {
-                    firingReady = true;
-                }
-                else
-                {
-                    firingReady = false;
-                    System.out.println("[!!] Something went wrong in firing stage 3. Not ready to fire.");
-                }
+                System.out.println("reloadShooterStateMachine: ShooterStateStart");
+                newReloadShooterState = ShooterStateRetractFiringPin;
+                break;
             }
-            else
+            case ShooterStateRetractFiringPin:
             {
-                firingReady = false;
-                System.out.println("[!!] Something went wrong in firing stage 2. Not ready to fire.");
+                System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPin");
+                tLoadingPinIn.set(false);
+                tLoadingPinOut.set(true);
+                shooterTime = Timer.getFPGATimestamp();
+                newReloadShooterState = ShooterStateRetractFiringPinWait;
+                break;
             }
+            case ShooterStateRetractFiringPinWait:
+            {
+                System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPinWait");
+                if (Timer.getFPGATimestamp() - shooterTime >= 5)
+                {
+                    newReloadShooterState = ShooterStateSetFiringArm;
+                }
+                break;
+            }
+            case ShooterStateSetFiringArm:
+            {
+                System.out.println("reloadShooterStateMachine: ShooterStateSetFiringArm");
+                tFiringArmIn.set(false);
+                tFiringArmOut.set(true);
+                shooterTime = Timer.getFPGATimestamp();
+                newReloadShooterState = ShooterStateSetFiringArmWait;
+                break;
+                
+            }
+            case ShooterStateSetFiringArmWait:
+            {
+                System.out.println("reloadShooterStateMachine: ShooterStateSetFiringArmWait");
+                if (Timer.getFPGATimestamp() - shooterTime >= 15)
+                {
+                    newReloadShooterState = ShooterStateSetFiringPin;
+                }   
+                break;
+            }
+            case ShooterStateSetFiringPin:
+            {
+                System.out.println("reloadShooterStateMachine: ShooterStateSetFiringPin");
+                tLoadingPinOut.set(false);
+                tLoadingPinIn.set(true);
+                newReloadShooterState = ShooterStateRetractFiringMech;
+                break;
+            }
+            case ShooterStateSetFiringPinWait:
+            {
+                break;
+            }
+            case ShooterStateRetractFiringMech:
+            {
+                System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringMech");
+                tFiringArmOut.set(false);
+                tFiringArmIn.set(true);
+                shooterTime = Timer.getFPGATimestamp();
+                newReloadShooterState = ShooterStateRetractFiringMechWait;
+                break;
+            }
+            case ShooterStateRetractFiringMechWait:
+            {
+                System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringMechWait");
+                if (Timer.getFPGATimestamp() - shooterTime >= 15)
+                {
+                    newReloadShooterState = ShooterStateFireReady;
+                }
+                break;
+            }
+            case ShooterStateFireReady:
+            {
+                System.out.println("reloadShooterStateMachine: ShooterStateFireReady");
+                if(leftStick.getRawButton(shooterButton))
+                {
+                    
+                }
+                newReloadShooterState = ShooterStateStart;
+                break;
+            }
+
+            default:
+            {
+                System.out.println("reloadShooterStateMachine: default - ERROR - Should not get here");
+                break;
+            }
+            
         }
-        else
-        {
-            firingReady = false;
-            System.out.println("[!!] Something went wrong in firing stage 1. Not ready to fire.");
-        }
+        currentReloadShooterState = newReloadShooterState;
     }
     
     /**
@@ -218,9 +308,9 @@ public class RobotTemplate extends IterativeRobot
     {
         System.out.println("[--] Firing!");
         firingReady = false;
-        tFiringArm.set(true); //Release the firing arm
+        //tFiringArm.set(true); //Release the firing arm
         Timer.delay(timingDelay); //Wait just a little bit
-        reloadShooter();
+        //reloadShooter();
     }
 
     /**
