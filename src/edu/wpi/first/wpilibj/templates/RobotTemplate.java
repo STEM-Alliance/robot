@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
-
+import edu.wpi.first.wpilibj.Compressor; 
 
 
 /**
@@ -48,15 +48,17 @@ public class RobotTemplate extends IterativeRobot
     private Joystick leftStick;
     private final int shooterButton = 1;
     private final int grabberButton = 2;
-    private final int compressorButton = 11;
+    //private final int compressorButton = 11;
     
     /* Right Joystick Setup */
     private Joystick rightStick;
     
     private boolean previousGrabberState = false;
     private boolean grabber = false;
-    private boolean compressor = false;
     private final double grabberSpeed = 1.0;
+   
+    private boolean compressor = false;
+    private DigitalInput presureSensor;
     
     /* Shooter */
     
@@ -69,14 +71,13 @@ public class RobotTemplate extends IterativeRobot
     private boolean previousCompressorState = false;
     private boolean firingReady = false;
     private final double timingDelay = 0.5;
-    
+    private Compressor Compressor;
     
     /* Camera */
     private AxisCamera camera;
     private final String cameraIP = "10.48.18.11";
     
-    
-    
+   
     ///////////////////////////////////////////////////////
     //  PUBLIC METHODS
     ///////////////////////////////////////////////////////
@@ -93,16 +94,20 @@ public class RobotTemplate extends IterativeRobot
         leftStick = new Joystick(1);
         rightStick = new Joystick(2);
         
-        sFiringArm = new DigitalInput(2);
-        sLoadingPin = new DigitalInput(4);
-        tCompressor = new Relay(1, Relay.Direction.kForward);
+        //    Firing arm
+        sFiringArm = new DigitalInput(3);
+        sLoadingPin = new DigitalInput(2);
         tFiringArmIn  = new Solenoid(1);
         tFiringArmOut = new Solenoid(2);
         tLoadingPinIn = new Solenoid(3);
         tLoadingPinOut  = new Solenoid(4);
+       
+        //tCompressor = new Relay(1, Relay.Direction.kForward);
+        //presureSensor = new DigitalInput(1);
+        //compressor = new Compressor(1,1);             
         
         
-        camera = AxisCamera.getInstance(cameraIP);
+        //camera = AxisCamera.getInstance(cameraIP);
         
         // Inverting the Front left motor for driving
         //chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
@@ -121,17 +126,20 @@ public class RobotTemplate extends IterativeRobot
         chassis.setSafetyEnabled(true);
         chassis.tankDrive(leftStick, rightStick);
     }
-    
+     
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() 
     {
         chassis.tankDrive(leftStick, rightStick);
-        //compressorToggle();
-        reloadShooterStateMachine();
-       // GrabberMotorControls();
-        //ShooterControls();
+        compressorControl();
+        //ShooterStateMachine();
+        GrabberMotorControls();
+       
+       
+        
+       
     }
 
     /**
@@ -166,20 +174,7 @@ public class RobotTemplate extends IterativeRobot
      *              is pressed.
      * ARGUMENTS:   None.
      */
-    private void ShooterControls() 
-    {
-        if (leftStick.getRawButton(shooterButton))
-        {
-            if (firingReady)
-            {
-                fireShooter();
-            }
-            else
-            {
-                System.out.println("[!!] Not ready to fire. Aborting.");
-            }
-        }
-    }
+    
     
     private final int ShooterStateStart =                   0;
     private final int ShooterStateRetractFiringPin =        1;
@@ -191,17 +186,23 @@ public class RobotTemplate extends IterativeRobot
     private final int ShooterStateRetractFiringMech =       7;
     private final int ShooterStateRetractFiringMechWait =   8;
     private final int ShooterStateFireReady =               9;
+    private final int ShooterStateFireWait =                10;
     
     private int currentReloadShooterState = ShooterStateStart;
     private int newReloadShooterState = ShooterStateStart;
+    
     private double shooterTime = 0;
     
+    private final int FIRING_ARM_WAIT = 10;
+    private final int LOADING_PIN_WAIT = 2;
+    private final int FIRING_WAIT = 2;
+    
     /**
-     * DESCRIPTION: Activate the controls for retracting the 
+     * DESCRIPTION: Activate the controls for the 
      *              shooter.
      * ARGUMENTS:   None.
      */
-    private void reloadShooterStateMachine()
+    private void ShooterStateMachine()
     {
         switch(currentReloadShooterState)
         {
@@ -223,7 +224,7 @@ public class RobotTemplate extends IterativeRobot
             case ShooterStateRetractFiringPinWait:
             {
                 System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPinWait");
-                if (Timer.getFPGATimestamp() - shooterTime >= 5)
+                if (Timer.getFPGATimestamp() - shooterTime >= LOADING_PIN_WAIT)
                 {
                     newReloadShooterState = ShooterStateSetFiringArm;
                 }
@@ -242,7 +243,7 @@ public class RobotTemplate extends IterativeRobot
             case ShooterStateSetFiringArmWait:
             {
                 System.out.println("reloadShooterStateMachine: ShooterStateSetFiringArmWait");
-                if (Timer.getFPGATimestamp() - shooterTime >= 15)
+                if (Timer.getFPGATimestamp() - shooterTime >= FIRING_ARM_WAIT)
                 {
                     newReloadShooterState = ShooterStateSetFiringPin;
                 }   
@@ -253,11 +254,16 @@ public class RobotTemplate extends IterativeRobot
                 System.out.println("reloadShooterStateMachine: ShooterStateSetFiringPin");
                 tLoadingPinOut.set(false);
                 tLoadingPinIn.set(true);
+                shooterTime = Timer.getFPGATimestamp();
                 newReloadShooterState = ShooterStateRetractFiringMech;
                 break;
             }
             case ShooterStateSetFiringPinWait:
             {
+                if (Timer.getFPGATimestamp() - shooterTime >= LOADING_PIN_WAIT)
+                {
+                    newReloadShooterState = ShooterStateSetFiringPin;
+                }
                 break;
             }
             case ShooterStateRetractFiringMech:
@@ -272,7 +278,7 @@ public class RobotTemplate extends IterativeRobot
             case ShooterStateRetractFiringMechWait:
             {
                 System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringMechWait");
-                if (Timer.getFPGATimestamp() - shooterTime >= 15)
+                if (Timer.getFPGATimestamp() - shooterTime >= FIRING_ARM_WAIT)
                 {
                     newReloadShooterState = ShooterStateFireReady;
                 }
@@ -283,12 +289,20 @@ public class RobotTemplate extends IterativeRobot
                 System.out.println("reloadShooterStateMachine: ShooterStateFireReady");
                 if(leftStick.getRawButton(shooterButton))
                 {
-                    
-                }
-                newReloadShooterState = ShooterStateStart;
+                    tLoadingPinIn.set(false);
+                    tLoadingPinOut.set(true);
+                    shooterTime = Timer.getFPGATimestamp();
+                    newReloadShooterState = ShooterStateFireWait;
+                }                
                 break;
             }
-
+            case ShooterStateFireWait:
+            {
+                if (Timer.getFPGATimestamp() - shooterTime >= FIRING_WAIT)
+                {
+                    newReloadShooterState = ShooterStateStart;
+                }
+            }
             default:
             {
                 System.out.println("reloadShooterStateMachine: default - ERROR - Should not get here");
@@ -342,28 +356,19 @@ public class RobotTemplate extends IterativeRobot
             grabberMotor.set(0);
         }
     }
-    private void compressorToggle(){
-       System.out.print("compressor toggle");
-        if(leftStick.getRawButton(compressorButton))
+    private void compressorControl(){
+        
+        if(!presureSensor.get()  )
         {
-            System.out.print("detected");
-            if (previousCompressorState != true)
-            {
-                compressor = !compressor; // toggle grabber motor
-                previousCompressorState = true;
-            }
-        }
-        else
-        {
-            previousCompressorState = false;
-        }
-         if (compressor == true)
-        {
-            tCompressor.set(Relay.Value.kOn);
+            System.out.println(" Charging");
+            tCompressor.set(Relay.Value.kForward);
+          
         }
         else
         {
             tCompressor.set(Relay.Value.kOff);
         }
+         
     }
 }
+           
