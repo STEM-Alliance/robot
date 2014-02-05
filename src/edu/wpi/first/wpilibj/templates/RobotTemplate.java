@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.DigitalOutput; 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Compressor; 
@@ -43,11 +44,16 @@ public class RobotTemplate extends IterativeRobot
     public Solenoid tFiringArmIn;
     public Solenoid tLoadingPinIn;
     public Solenoid tLoadingPinOut;
+    public Solenoid armOut;
+    public Solenoid armIn;
+    
+    public AnalogChannel cAnalogTest;
     
     /* Left Joystick Setup */
     private Joystick leftStick;
     private final int shooterButton = 1;
     private final int grabberButton = 2;
+    private final int armControlButton = 3;
     //private final int compressorButton = 11;
     
     /* Right Joystick Setup */
@@ -56,9 +62,10 @@ public class RobotTemplate extends IterativeRobot
     private boolean previousGrabberState = false;
     private boolean grabber = false;
     private final double grabberSpeed = 1.0;
-   
-    private boolean compressor = false;
-    private DigitalInput presureSensor;
+    private boolean previousArmState = false;
+    private boolean previousArmButtonState = false;
+    
+    
     
     /* Shooter */
     
@@ -71,7 +78,7 @@ public class RobotTemplate extends IterativeRobot
     private boolean previousCompressorState = false;
     private boolean firingReady = false;
     private final double timingDelay = 0.5;
-    private Compressor Compressor;
+    private Compressor compressor;
     
     /* Camera */
     private AxisCamera camera;
@@ -101,11 +108,11 @@ public class RobotTemplate extends IterativeRobot
         tFiringArmOut = new Solenoid(2);
         tLoadingPinIn = new Solenoid(3);
         tLoadingPinOut  = new Solenoid(4);
+        armOut = new Solenoid(5);
+        armIn = new Solenoid(6);
        
-        //tCompressor = new Relay(1, Relay.Direction.kForward);
-        //presureSensor = new DigitalInput(1);
-        //compressor = new Compressor(1,1);             
-        
+      
+        compressor = new Compressor(1,1);             
         
         //camera = AxisCamera.getInstance(cameraIP);
         
@@ -134,7 +141,7 @@ public class RobotTemplate extends IterativeRobot
     {
         chassis.tankDrive(leftStick, rightStick);
         compressorControl();
-        //ShooterStateMachine();
+        ShooterStateMachine();
         GrabberMotorControls();
        
        
@@ -149,7 +156,7 @@ public class RobotTemplate extends IterativeRobot
     {
         chassis.setSafetyEnabled(false);
         
-        //TODO: Add code to shoot the ball
+        
         
         // Drive forward out of the zone and stop
         chassis.drive(0.5, 0);
@@ -334,6 +341,29 @@ public class RobotTemplate extends IterativeRobot
      */
     private void GrabberMotorControls() 
     {
+       
+        if(leftStick.getRawButton(armControlButton))
+        {
+            if (previousArmButtonState== false)
+            {
+                if (previousArmState == false) // arm is in 
+                {
+                    armIn.set(false);
+                    armOut.set(true);
+                    previousArmState = true;
+                }
+                 else {
+                      armOut.set(false);
+                      armIn.set(true);
+                      previousArmState = false; 
+                 }
+                previousArmButtonState = true;
+            }
+            
+        }
+        else {
+            previousArmButtonState = false;
+        }
         if(leftStick.getRawButton(grabberButton))
         {
             System.out.println("test");
@@ -358,15 +388,16 @@ public class RobotTemplate extends IterativeRobot
     }
     private void compressorControl(){
         
-        if(!presureSensor.get()  )
+        if(!compressor.getPressureSwitchValue()  )
         {
-            System.out.println(" Charging");
-            tCompressor.set(Relay.Value.kForward);
+            
+            compressor.start();
           
         }
         else
         {
-            tCompressor.set(Relay.Value.kOff);
+            
+            compressor.stop();
         }
          
     }
