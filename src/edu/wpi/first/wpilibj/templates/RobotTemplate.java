@@ -47,17 +47,19 @@ public class RobotTemplate extends IterativeRobot
     public Solenoid armOut;
     public Solenoid armIn;
     
-    public AnalogChannel cAnalogTest;
+   // public AnalogChannel cAnalogTest;
     
     /* Left Joystick Setup */
     private Joystick leftStick;
     private final int shooterButton = 1;
-    private final int grabberButton = 2;
-    private final int armControlButton = 3;
+    private final int grabberForwardButton = 3;
+    private final int grabberReverseButton = 2;
     //private final int compressorButton = 11;
     
     /* Right Joystick Setup */
     private Joystick rightStick;
+    private final int armOutControlButton = 3;
+    private final int armInControlButton = 2;
     
     private boolean previousGrabberState = false;
     private boolean grabber = false;
@@ -68,11 +70,8 @@ public class RobotTemplate extends IterativeRobot
     
     
     /* Shooter */
-    
-    
     private DigitalInput sFiringArm;
     private DigitalInput sLoadingPin;
-    private Relay tCompressor;
     private boolean firingArm = false;
     private boolean loadingPin = false;
     private boolean previousCompressorState = false;
@@ -215,13 +214,13 @@ public class RobotTemplate extends IterativeRobot
         {
             case ShooterStateStart:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateStart");
+                //System.out.println("reloadShooterStateMachine: ShooterStateStart");
                 newReloadShooterState = ShooterStateRetractFiringPin;
                 break;
             }
             case ShooterStateRetractFiringPin:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPin");
+                //System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPin");
                 tLoadingPinIn.set(false);
                 tLoadingPinOut.set(true);
                 shooterTime = Timer.getFPGATimestamp();
@@ -230,7 +229,7 @@ public class RobotTemplate extends IterativeRobot
             }
             case ShooterStateRetractFiringPinWait:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPinWait");
+                //System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPinWait");
                 if (Timer.getFPGATimestamp() - shooterTime >= LOADING_PIN_WAIT)
                 {
                     newReloadShooterState = ShooterStateSetFiringArm;
@@ -239,7 +238,7 @@ public class RobotTemplate extends IterativeRobot
             }
             case ShooterStateSetFiringArm:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateSetFiringArm");
+                //System.out.println("reloadShooterStateMachine: ShooterStateSetFiringArm");
                 tFiringArmIn.set(false);
                 tFiringArmOut.set(true);
                 shooterTime = Timer.getFPGATimestamp();
@@ -249,7 +248,7 @@ public class RobotTemplate extends IterativeRobot
             }
             case ShooterStateSetFiringArmWait:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateSetFiringArmWait");
+               // System.out.println("reloadShooterStateMachine: ShooterStateSetFiringArmWait");
                 if (Timer.getFPGATimestamp() - shooterTime >= FIRING_ARM_WAIT)
                 {
                     newReloadShooterState = ShooterStateSetFiringPin;
@@ -258,7 +257,7 @@ public class RobotTemplate extends IterativeRobot
             }
             case ShooterStateSetFiringPin:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateSetFiringPin");
+               // System.out.println("reloadShooterStateMachine: ShooterStateSetFiringPin");
                 tLoadingPinOut.set(false);
                 tLoadingPinIn.set(true);
                 shooterTime = Timer.getFPGATimestamp();
@@ -275,7 +274,7 @@ public class RobotTemplate extends IterativeRobot
             }
             case ShooterStateRetractFiringMech:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringMech");
+                //System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringMech");
                 tFiringArmOut.set(false);
                 tFiringArmIn.set(true);
                 shooterTime = Timer.getFPGATimestamp();
@@ -284,7 +283,7 @@ public class RobotTemplate extends IterativeRobot
             }
             case ShooterStateRetractFiringMechWait:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringMechWait");
+                //System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringMechWait");
                 if (Timer.getFPGATimestamp() - shooterTime >= FIRING_ARM_WAIT)
                 {
                     newReloadShooterState = ShooterStateFireReady;
@@ -293,7 +292,7 @@ public class RobotTemplate extends IterativeRobot
             }
             case ShooterStateFireReady:
             {
-                System.out.println("reloadShooterStateMachine: ShooterStateFireReady");
+                //System.out.println("reloadShooterStateMachine: ShooterStateFireReady");
                 if(leftStick.getRawButton(shooterButton))
                 {
                     tLoadingPinIn.set(false);
@@ -342,61 +341,58 @@ public class RobotTemplate extends IterativeRobot
     private void GrabberMotorControls() 
     {
        
-        if(leftStick.getRawButton(armControlButton))
+        if(rightStick.getRawButton(armOutControlButton) && rightStick.getRawButton(armInControlButton)) 
         {
-            if (previousArmButtonState== false)
-            {
-                if (previousArmState == false) // arm is in 
-                {
-                    armIn.set(false);
-                    armOut.set(true);
-                    previousArmState = true;
-                }
-                 else {
-                      armOut.set(false);
-                      armIn.set(true);
-                      previousArmState = false; 
-                 }
-                previousArmButtonState = true;
-            }
-            
+           // if both buttons are pressed report error
+           System.out.println("error");
+           armOut.set(false);
+           armIn.set(true);
         }
-        else {
-            previousArmButtonState = false;
-        }
-        if(leftStick.getRawButton(grabberButton))
+        else if (rightStick.getRawButton(armOutControlButton)) 
         {
-            System.out.println("test");
-            if (previousGrabberState != true)
-            {
-                grabber = !grabber; // toggle grabber motor
-                previousGrabberState = true;
-            }
+           System.out.println("Arm Out/n");
+           armOut.set(true);
+           armIn.set(false);
+        }
+        else if(rightStick.getRawButton(armInControlButton))
+        {
+            System.out.println("Arm In/n");
+            armOut.set(false);
+            armIn.set(true);
+        }
+        else 
+        {
+            // Do nothing 
+        }
+        
+        if(leftStick.getRawButton(grabberForwardButton) && leftStick.getRawButton(grabberReverseButton))
+        {
+           System.out.println("Error/n");
+            grabberMotor.set(0.0);
+        }
+        else if (leftStick.getRawButton(grabberForwardButton))
+        {
+            System.out.println("Grabber Forward/n");
+            grabberMotor.set(grabberSpeed); 
+        }
+        else if (leftStick.getRawButton(grabberReverseButton))
+        {
+            System.out.println("Grabber Reverse /n");
+            grabberMotor.set(-grabberSpeed);
         }
         else
-        {
-            previousGrabberState = false;
-        }
-        if (grabber == true)
-        {
-            grabberMotor.set(grabberSpeed);
-        }
-        else
-        {
-            grabberMotor.set(0);
+        { 
+            grabberMotor.set(0.0);
         }
     }
     private void compressorControl(){
         
         if(!compressor.getPressureSwitchValue()  )
         {
-            
-            compressor.start();
-          
+             compressor.start();
         }
         else
         {
-            
             compressor.stop();
         }
          
