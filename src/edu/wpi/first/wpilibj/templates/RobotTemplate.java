@@ -47,7 +47,7 @@ public class RobotTemplate extends IterativeRobot
     public Solenoid armOut;
     public Solenoid armIn;
     
-   // public AnalogChannel cAnalogTest;
+  
     
     /* Left Joystick Setup */
     private Joystick leftStick;
@@ -62,7 +62,7 @@ public class RobotTemplate extends IterativeRobot
     private final int armInControlButton = 2;
     
     private boolean previousGrabberState = false;
-    private boolean grabber = false;
+    private final boolean grabber = false;
     private final double grabberSpeed = 1.0;
     private boolean previousArmState = false;
     private boolean previousArmButtonState = false;
@@ -70,11 +70,14 @@ public class RobotTemplate extends IterativeRobot
     
     
     /* Shooter */
-    private DigitalInput sFiringArm;
-    private DigitalInput sLoadingPin;
+    private DigitalInput armSensorR;
+    private DigitalInput armSensorL;
+    private DigitalInput armPistonL;
+    private DigitalInput armPistonR;
+    private DigitalInput latchSensor;
     private boolean firingArm = false;
     private boolean loadingPin = false;
-    private boolean previousCompressorState = false;
+    //private boolean previousCompressorState = false;
     private boolean firingReady = false;
     private final double timingDelay = 0.5;
     private Compressor compressor;
@@ -101,8 +104,11 @@ public class RobotTemplate extends IterativeRobot
         rightStick = new Joystick(2);
         
         //    Firing arm
-        sFiringArm = new DigitalInput(3);
-        sLoadingPin = new DigitalInput(2);
+        armSensorL = new DigitalInput(2);
+        armSensorR = new DigitalInput(3);
+        armPistonL = new DigitalInput(4);
+        armPistonR = new DigitalInput(5);
+        latchSensor = new DigitalInput(6);
         tFiringArmIn  = new Solenoid(1);
         tFiringArmOut = new Solenoid(2);
         tLoadingPinIn = new Solenoid(3);
@@ -113,7 +119,7 @@ public class RobotTemplate extends IterativeRobot
       
         compressor = new Compressor(1,1);             
         
-        //camera = AxisCamera.getInstance(cameraIP);
+        camera = AxisCamera.getInstance(cameraIP);
         
         // Inverting the Front left motor for driving
         //chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
@@ -140,29 +146,40 @@ public class RobotTemplate extends IterativeRobot
     {
         chassis.tankDrive(leftStick, rightStick);
         compressorControl();
-        ShooterStateMachine();
-        GrabberMotorControls();
-       
-       
-        
-       
+        ShooterStateMachine(false);
+        GrabberArmControls(false);
     }
 
     /**
      * This function is called periodically during autonomous
      */
+    private final int AutoStateStart =                   0;
+    private final int AutoStateArmRetracting =           1;
+    private final int AutoStateArmRetractingwait =       2;
+    private final int AutoStateMoveToPosition =          3;
+    private final int AutoStateMoveToPositionWait =      4;
+    private final int AutoStateFireShooter =             5;
+    private final int AutoStateFireShooterWait =         6;
+    private final int AutoStateMove =                    7;
+    private final int AutoStateMoveWait =                8;
+    private final int AutoStateDone =                    9;
+    
+    
+    
+    
     public void autonomousPeriodic() 
     {
         chassis.setSafetyEnabled(false);
-        
-        
-        
+        compressorControl();
         // Drive forward out of the zone and stop
         chassis.drive(0.5, 0);
         Timer.delay(2.0);
         chassis.drive(0.0, 0.0);
+        
+        ShooterStateMachine(true);
+        GrabberArmControls(true);
     }
-
+   
     /**
      * This function is called periodically during test mode
      */
@@ -174,8 +191,7 @@ public class RobotTemplate extends IterativeRobot
     ///////////////////////////////////////////////////////
     //  PRIVATE METHODS
     ///////////////////////////////////////////////////////
-    
-    /**
+     /**
      * DESCRIPTION: Operate the shooter when the shooter button
      *              is pressed.
      * ARGUMENTS:   None.
@@ -199,7 +215,7 @@ public class RobotTemplate extends IterativeRobot
     
     private double shooterTime = 0;
     
-    private final int FIRING_ARM_WAIT = 10;
+    //private final int FIRING_ARM_WAIT = 10;
     private final int LOADING_PIN_WAIT = 2;
     private final int FIRING_WAIT = 2;
     
@@ -208,14 +224,43 @@ public class RobotTemplate extends IterativeRobot
      *              shooter.
      * ARGUMENTS:   None.
      */
-    private void ShooterStateMachine()
+    private void ShooterStateMachine(boolean autoMode)
     {
         switch(currentReloadShooterState)
         {
             case ShooterStateStart:
             {
+                if (autoMode == true)
+                {
+                    if (latchSensor.get())
+                    {
+                        if (armSensorL.get() && armSensorR.get())
+                        {
+                            newReloadShooterState = ShooterStateSetFiringPin;
+                        }
+                        else 
+                        {
+                            newReloadShooterState = ShooterStateSetFiringArm;
+                        }
+                       
+                    }
+                    else
+                    {
+                         if (armSensorL.get() && armSensorR.get())
+                        {
+                            newReloadShooterState = ShooterStateRetractFiringMech;
+                        }
+                        else 
+                        {
+                            newReloadShooterState = ShooterStateRetractFiringPin;
+                        }
+                    }
+                }
+                else
+                {
                 //System.out.println("reloadShooterStateMachine: ShooterStateStart");
                 newReloadShooterState = ShooterStateRetractFiringPin;
+                }
                 break;
             }
             case ShooterStateRetractFiringPin:
@@ -230,7 +275,7 @@ public class RobotTemplate extends IterativeRobot
             case ShooterStateRetractFiringPinWait:
             {
                 //System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPinWait");
-                if (Timer.getFPGATimestamp() - shooterTime >= LOADING_PIN_WAIT)
+                if (latchSensor.get())
                 {
                     newReloadShooterState = ShooterStateSetFiringArm;
                 }
@@ -244,12 +289,11 @@ public class RobotTemplate extends IterativeRobot
                 shooterTime = Timer.getFPGATimestamp();
                 newReloadShooterState = ShooterStateSetFiringArmWait;
                 break;
-                
             }
             case ShooterStateSetFiringArmWait:
             {
                // System.out.println("reloadShooterStateMachine: ShooterStateSetFiringArmWait");
-                if (Timer.getFPGATimestamp() - shooterTime >= FIRING_ARM_WAIT)
+                if (armSensorR.get()&& armSensorL.get())
                 {
                     newReloadShooterState = ShooterStateSetFiringPin;
                 }   
@@ -261,14 +305,14 @@ public class RobotTemplate extends IterativeRobot
                 tLoadingPinOut.set(false);
                 tLoadingPinIn.set(true);
                 shooterTime = Timer.getFPGATimestamp();
-                newReloadShooterState = ShooterStateRetractFiringMech;
+                newReloadShooterState = ShooterStateSetFiringPinWait;
                 break;
             }
             case ShooterStateSetFiringPinWait:
             {
                 if (Timer.getFPGATimestamp() - shooterTime >= LOADING_PIN_WAIT)
                 {
-                    newReloadShooterState = ShooterStateSetFiringPin;
+                    newReloadShooterState = ShooterStateRetractFiringMech;
                 }
                 break;
             }
@@ -284,7 +328,7 @@ public class RobotTemplate extends IterativeRobot
             case ShooterStateRetractFiringMechWait:
             {
                 //System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringMechWait");
-                if (Timer.getFPGATimestamp() - shooterTime >= FIRING_ARM_WAIT)
+                if (armPistonL.get() && armPistonR.get())
                 {
                     newReloadShooterState = ShooterStateFireReady;
                 }
@@ -299,7 +343,13 @@ public class RobotTemplate extends IterativeRobot
                     tLoadingPinOut.set(true);
                     shooterTime = Timer.getFPGATimestamp();
                     newReloadShooterState = ShooterStateFireWait;
-                }                
+                } 
+                else if (autoMode)
+                {
+                    
+                }
+                    
+                    
                 break;
             }
             case ShooterStateFireWait:
@@ -338,9 +388,8 @@ public class RobotTemplate extends IterativeRobot
      *              a ball when the grabber button is pressed.
      * ARGUMENTS:   None.
      */
-    private void GrabberMotorControls() 
+    private void GrabberArmControls(boolean autoMode) 
     {
-       
         if(rightStick.getRawButton(armOutControlButton) && rightStick.getRawButton(armInControlButton)) 
         {
            // if both buttons are pressed report error
@@ -348,7 +397,7 @@ public class RobotTemplate extends IterativeRobot
            armOut.set(false);
            armIn.set(true);
         }
-        else if (rightStick.getRawButton(armOutControlButton)) 
+        else if (rightStick.getRawButton(armOutControlButton)|| (autoMode == true)) 
         {
            System.out.println("Arm Out/n");
            armOut.set(true);
@@ -389,7 +438,7 @@ public class RobotTemplate extends IterativeRobot
         
         if(!compressor.getPressureSwitchValue()  )
         {
-             compressor.start();
+            compressor.start();
         }
         else
         {
