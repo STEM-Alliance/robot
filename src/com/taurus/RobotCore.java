@@ -35,8 +35,8 @@ public class RobotCore extends IterativeRobot {
     private Solenoid tFiringArmIn;
     private Solenoid tLoadingPinIn;
     private Solenoid tLoadingPinOut;
-    private Solenoid armOut;        // These two are for the grabber
-    private Solenoid armIn;
+    private Solenoid tGrabberArmOut;        // These two are for the grabber
+    private Solenoid tGrabberArmIn;
     
     // Joysticks
     private Joystick leftStick;
@@ -63,6 +63,7 @@ public class RobotCore extends IterativeRobot {
     
     // Constants
     private final double timingDelay = 0.5;
+    boolean motorInverted = true;
     
     // Logger
     private Logger log;
@@ -77,9 +78,108 @@ public class RobotCore extends IterativeRobot {
     public void robotInit() {
         log = new Logger("[Core]", System.out);
         log.info("Initializing main systems...");
-        
+        initMotors();
+        initSensors();
+        initPneumatics();
+        initDrive();
+        log.info("Initialization complete.");
+    }
+    /**
+     * this method starts when operator mode is enabled.
+     */
+    public void teleopInit() {
+        log.info("Entering teleoperated mode. Activating controls.");
+        chassis.setSafetyEnabled(true);
+        chassis.tankDrive(leftStick, rightStick);
+    }
+    /**
+     * This function is ran in a loop during operator control.
+     */
+    public void teleopPeriodic() {
+        chassis.tankDrive(leftStick, rightStick);
+        compressorTick(); // TODO Implement compressor controls
+        shooterStateTick(); // TODO Implement shooter state
+        grabberStateTick(); // TODO Implement grabber state
+    }
+    /**
+     * This function is called periodically during autonomous mode.
+     */
+    public void autonomousPeriodic() {
+        // TODO Implement a proper autonomous mode
+        chassis.setSafetyEnabled(false);
+        chassis.drive(0.5, 0);
+        Timer.delay(2.0);
+        chassis.drive(0.0,0.0);
+    }
+    /**
+     * This function is called periodically during test mode.
+     */
+    public void testPeriodic() {
         
     }
     
+    //------------------
+    // Private Functions
+    //------------------
     
+    /**
+     * This function manages the state machine for the shooter arm.
+     */
+    private void shooterStateTick() {
+        // TODO Implement
+    }
+    /**
+     * This function manages the state machine for the grabber arm
+     */
+    private void grabberStateTick() {
+        // TODO Implement
+    }
+    
+    /**
+     * This function manages the compressor.
+     */
+    private void compressorTick() {
+        // TODO Implement
+    }
+    
+    /**
+     * Initialize the motor subsystem.
+     */
+    private void initMotors() {
+        log.info("Initializing motors...");
+        chassis = new RobotDrive(1,2,3,4); // Initialize all four drive motors
+        grabberMotor = new Victor(5); // Initialize the grabber motor
+        chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, motorInverted);
+    }
+    /**
+     * Initialize the sensor subsystem.
+     */
+    private void initSensors() {
+        log.info("Initializing sensors...");
+        sFiringArm = new DigitalInput(SensorPins.firingArm);
+        sLoadingPin = new DigitalInput(SensorPins.loadingPin);
+    }
+    /**
+     * Initialize the pneumatics subsystem.
+     */
+    private void initPneumatics() {
+        log.info("Initializing solenoids...");
+        tFiringArmIn = new Solenoid(SolenoidPins.firingArmIn);
+        tFiringArmOut = new Solenoid(SolenoidPins.firingArmOut);
+        tLoadingPinIn = new Solenoid(SolenoidPins.loadingPinIn);
+        tLoadingPinOut = new Solenoid(SolenoidPins.loadingPinOut);
+        tGrabberArmIn = new Solenoid(SolenoidPins.grabberArmIn);
+        tGrabberArmOut = new Solenoid(SolenoidPins.grabberArmOut);
+        log.info("Initializing compressor...");
+        compressor = new Compressor(CompressorPins.relay,
+                                    CompressorPins.pressure);
+    }
+    /**
+     * Initialize the drive subsystem.
+     */
+    private void initDrive() {
+        log.info("Initializing drive subsystem...");
+        leftStick = new Joystick(Joysticks.left);
+        rightStick = new Joystick(Joysticks.right);
+    }
 }
