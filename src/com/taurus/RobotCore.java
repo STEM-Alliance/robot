@@ -54,6 +54,9 @@ public class RobotCore extends IterativeRobot {
     private DigitalInput sFiringArm; // Sensors for the shooter state machine
     private DigitalInput sLoadingPin; 
     private Compressor compressor;
+    private int currentShooterState = 0;
+    private int newShooterState = 0;
+    private double shooterTime = 0;
     
     // Camera
     private AxisCamera camera;
@@ -62,6 +65,8 @@ public class RobotCore extends IterativeRobot {
     // Constants
     private final double timingDelay = 0.5;
     boolean motorInverted = true;
+    private final double speedStop = 0.0;
+    private final double speedGrabberOn = 1.0;
     
     // Logger
     private Logger log;
@@ -124,20 +129,153 @@ public class RobotCore extends IterativeRobot {
      * This function manages the state machine for the shooter arm.
      */
     private void shooterStateTick() {
-        // TODO Implement
+        final int stStart                   = 0;
+        final int stRetractFiringPin        = 1;
+        final int stRetractFiringPinWait    = 2;
+        final int stSetFiringArm            = 3;
+        final int stSetFiringArmWait        = 4;
+        final int stSetFiringPin            = 5;
+        final int stSetFiringPinWait        = 6;
+        final int stRetractFiringMech       = 7;
+        final int stRetractFiringMechWait   = 8;
+        final int stFireReady               = 9;
+        final int stFireWait                = 10;
+        
+        final double waitPin = 2;
+        final double waitFire = 2;
+        final double waitFireArm = 10;
+        
+        switch(currentShooterState) {
+            case stStart: {
+                log.info("Shooter in starting state.");
+                newShooterState = stRetractFiringPin;
+                break;
+            }
+            case stRetractFiringPin: {
+                log.info("Retracting firing pin...");
+                tLoadingPinIn.set(false);
+                tLoadingPinOut.set(true);
+                shooterTime = Timer.getFPGATimestamp();
+                newShooterState = stRetractFiringPinWait;
+                break;
+            }
+            case stRetractFiringPinWait: {
+                if(Timer.getFPGATimestamp() - shooterTime >= waitPin) {
+                    log.info("Firing pin retracted.");
+                    newShooterState = stSetFiringArm;
+                }
+                break;
+            }
+            case stSetFiringArm: {
+                log.info("Setting firing arm...");
+                tFiringArmIn.set(false);
+                tFiringArmOut.set(true);
+                shooterTime = Timer.getFPGATimestamp();
+                newShooterState = stSetFiringArmWait;
+                break;
+            }
+            case stSetFiringArmWait: {
+                if(Timer.getFPGATimestamp() - shooterTime >= waitFireArm ) {
+                    log.info("Firing arm set.");
+                    newShooterState = stSetFiringPin;
+                }
+                break;
+            }
+            case stSetFiringPin: {
+                log.info("Setting firing pin...");
+                tLoadingPinOut.set(false);
+                tLoadingPinIn.set(true);
+                shooterTime = Timer.getFPGATimestamp();
+                newShooterState = stSetFiringPinWait;
+                break;
+            }
+            case stSetFiringPinWait: {
+                if(Timer.getFPGATimestamp() - shooterTime >= waitPin) {
+                    log.info("Firing pin set.");
+                    newShooterState = stRetractFiringMech;
+                }
+                break;
+            }
+            case stRetractFiringMech: {
+                log.info("Retracting firing mechanism...");
+                tFiringArmOut.set(false);
+                tFiringArmIn.set(true);
+                shooterTime = Timer.getFPGATimestamp();
+                newShooterState = stRetractFiringMechWait;
+                break;
+            }
+            case stRetractFiringMechWait: {
+                if(Timer.getFPGATimestamp() - shooterTime >= waitFireArm ) {
+                    log.info("Firing mechanism set.");
+                    newShooterState = stFireReady;
+                }
+                break;
+            }
+            case stFireReady: {
+                if(leftStick.getRawButton(shooterButton)) {
+                    log.info("Firing shooter!");
+                    tLoadingPinIn.set(false);
+                    tLoadingPinOut.set(true);
+                    shooterTime = Timer.getFPGATimestamp();
+                    newShooterState = stFireWait;
+                }
+                break;
+            }
+            case stFireWait: {
+                if(Timer.getFPGATimestamp() - shooterTime >= waitFire ) {
+                    log.info("Reloading shooter.");
+                    newShooterState = stStart;
+                }
+                break;
+            }
+            default: {
+                log.error("Shooter should never be in this state. SOS.");
+                break;
+            }
+        }
     }
+    
     /**
      * This function manages the state machine for the grabber arm
      */
     private void grabberStateTick() {
-        // TODO Implement
+        // TODO could be implemented slightly better.
+        if(leftStick.getRawButton(grabberArmButton)) {
+            log.info("Toggling grabber arm...");
+            if(!previousArmState) {
+                // arm is currently in
+                tGrabberArmIn.set(false);
+                tGrabberArmOut.set(true);
+                previousArmState = true;
+            } else {
+                // arm is currently out
+                tGrabberArmOut.set(false);
+                tGrabberArmIn.set(true);
+                previousArmState = false;
+            }
+        }
+        if(leftStick.getRawButton(grabberButton)) {
+            log.info("Toggling grabber motor...");
+            if(previousGrabberState) {
+                previousGrabberState = false;
+                grabberMotor.set(speedStop);
+            } else {
+                previousGrabberState = true;
+                grabberMotor.set(speedGrabberOn);
+            }
+        }
     }
     
     /**
      * This function manages the compressor.
      */
     private void compressorTick() {
-        // TODO Implement
+        // If the tank is low on pressure, stop it. Otherwise make sure its on.
+        if(!compressor.getPressureSwitchValue()) {
+            compressor.start();
+        } else {
+            compressor.stop();
+        }
     }
     
     /**
