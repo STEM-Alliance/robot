@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Compressor; 
+import edu.wpi.first.wpilibj.DriverStation; 
 
 
 /**
@@ -85,7 +86,7 @@ public class RobotTemplate extends IterativeRobot
     /* Camera */
     private AxisCamera camera;
     private final String cameraIP = "10.48.18.11";
-    
+    private DriverStation driverStation;
    
     ///////////////////////////////////////////////////////
     //  PUBLIC METHODS
@@ -96,7 +97,8 @@ public class RobotTemplate extends IterativeRobot
      */
     public void robotInit() 
     {
-        /* Initialize Objects */
+        
+        // Initialize Objects
         chassis = new RobotDrive(1, 2, 3, 4);
         grabberMotor = new Victor(5);
         
@@ -121,13 +123,15 @@ public class RobotTemplate extends IterativeRobot
         
         camera = AxisCamera.getInstance(cameraIP);
         
+        
+        //driverStation = DriverStation.getInstance();
         // Inverting the Front left motor for driving
         //chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
         // Retracting the shooter into position
         //RetractShooter(); Later implementation
         // Add this in for 4WD
         chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
-
+        
     }
     
     /**
@@ -135,8 +139,10 @@ public class RobotTemplate extends IterativeRobot
      */
     public void teleopInit()
     {
+        chassis.setMaxOutput(1);
         chassis.setSafetyEnabled(true);
         chassis.tankDrive(leftStick, rightStick);
+        
     }
      
     /**
@@ -144,10 +150,14 @@ public class RobotTemplate extends IterativeRobot
      */
     public void teleopPeriodic() 
     {
+        
         chassis.tankDrive(leftStick, rightStick);
         compressorControl();
         ShooterStateMachine(false);
         GrabberArmControls(false);
+       
+        
+        
     }
 
     /**
@@ -155,7 +165,6 @@ public class RobotTemplate extends IterativeRobot
      */
     private final int AutoStateStart =                   0;
     private final int AutoStateArmRetracting =           1;
-    private final int AutoStateArmRetractingwait =       2;
     private final int AutoStateMoveToPosition =          3;
     private final int AutoStateMoveToPositionWait =      4;
     private final int AutoStateFireShooter =             5;
@@ -164,20 +173,96 @@ public class RobotTemplate extends IterativeRobot
     private final int AutoStateMoveWait =                8;
     private final int AutoStateDone =                    9;
     
-    
-    
-    
+    private int currentAutoState = AutoStateStart;
+    private int newAutoState = AutoStateStart;
+    private double autoTime = 0;
+    private final int AUTO_MOVE_TO_POSITION_TIME = 2;
+    private final int AUTO_SHOOTER_WAIT_TIME = 2;
+    private final int AUTO_MOVE_TIME = 2;
     public void autonomousPeriodic() 
     {
         chassis.setSafetyEnabled(false);
         compressorControl();
-        // Drive forward out of the zone and stop
-        chassis.drive(0.5, 0);
-        Timer.delay(2.0);
-        chassis.drive(0.0, 0.0);
+        switch (currentAutoState)
+        {
+            case AutoStateStart:
+            {    
+                newAutoState = AutoStateArmRetracting;
+            break;
+            }
+            case AutoStateArmRetracting:
+            {
+                GrabberArmControls(true);
+                newAutoState = AutoStateMoveToPosition;
+               break;
+            }
+            case AutoStateMoveToPosition:
+            {
+                chassis.drive(1, 0);
+                autoTime = Timer.getFPGATimestamp();
+                newAutoState = AutoStateMoveToPositionWait;
+                ShooterStateMachine(true);
+                break;
+            }
+            case AutoStateMoveToPositionWait:
+            {
+                 if (Timer.getFPGATimestamp() - autoTime >= AUTO_MOVE_TO_POSITION_TIME)
+                {
+                    chassis.drive(0, 0);
+                    newAutoState = AutoStateFireShooter;
+                }
+                 ShooterStateMachine(true);
+                if ((Timer.getFPGATimestamp() - autoTime >= AUTO_MOVE_TO_POSITION_TIME)&& 
+                        (currentReloadShooterState == ShooterStateFireReady)){
+                    newAutoState = AutoStateFireShooter;
+                }
+                 break;
+            }
+            case AutoStateFireShooter:
+            {
+                 ShooterStateMachine(true);
+                 newAutoState = AutoStateFireShooterWait;
+                 autoTime = Timer.getFPGATimestamp();
+                 break;
+            }
+            case AutoStateFireShooterWait:
+            {
+                 if (Timer.getFPGATimestamp() - autoTime >= AUTO_SHOOTER_WAIT_TIME)
+                {
+                    
+                    newAutoState = AutoStateMove;
+                }
+                 break;
+            }
+            case AutoStateMove:
+            {
+                chassis.drive(1, 0);
+                autoTime = Timer.getFPGATimestamp();
+                newAutoState = AutoStateMoveWait;
+                break;
+            }
+            case AutoStateMoveWait:
+            {
+                 if (Timer.getFPGATimestamp() - autoTime >= AUTO_MOVE_TIME)
+                {
+                    chassis.drive(0, 0);
+                    newAutoState = AutoStateDone;
+                }
+                 break;
+            }
+            case AutoStateDone:
+            {
+                
+                break;
+            }
+        }
+        currentAutoState = newAutoState;
+
+// Drive forward out of the zone and stop
+       
         
-        ShooterStateMachine(true);
-        GrabberArmControls(true);
+       
+        
     }
    
     /**
@@ -344,9 +429,13 @@ public class RobotTemplate extends IterativeRobot
                     shooterTime = Timer.getFPGATimestamp();
                     newReloadShooterState = ShooterStateFireWait;
                 } 
-                else if (autoMode)
+                else if ((autoMode == true)&& ( currentAutoState == AutoStateFireShooter))
                 {
-                    
+                   
+                    tLoadingPinIn.set(false);
+                    tLoadingPinOut.set(true);
+                    shooterTime = Timer.getFPGATimestamp();
+                    newReloadShooterState = ShooterStateFireWait;
                 }
                     
                     
