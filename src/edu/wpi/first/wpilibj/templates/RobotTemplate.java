@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj.templates;
 
-
 import com.sun.cldc.jna.Structure;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -22,7 +21,7 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Compressor; 
 import edu.wpi.first.wpilibj.DriverStation; 
-
+import edu.wpi.first.wpilibj.Servo; 
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,6 +38,7 @@ public class RobotTemplate extends IterativeRobot
     /* Motor Objects */
     private RobotDrive chassis;
     private Victor grabberMotor;
+    private boolean driveFacing;
     
     // solenoid //
     public Solenoid tFiringArmOut;
@@ -48,25 +48,27 @@ public class RobotTemplate extends IterativeRobot
     public Solenoid armOut;
     public Solenoid armIn;
     
-  
-    
     /* Left Joystick Setup */
     private Joystick leftStick;
     private final int shooterButton = 1;
-    private final int grabberForwardButton = 3;
-    private final int grabberReverseButton = 2;
+    private final int grabberForwardButton = 2;
+    private final int grabberReverseButton = 3;
     //private final int compressorButton = 11;
-    
+    private int servoRight = 5; 
+    private int servoLeft = 4;         
+            
     /* Right Joystick Setup */
     private Joystick rightStick;
     private final int armOutControlButton = 3;
     private final int armInControlButton = 2;
+    private final int driveControlForwardButton = 4;
+    private final int driveControlBackwardButton = 5;
     
-    private boolean previousGrabberState = false;
-    private final boolean grabber = false;
+    //private final boolean previousGrabberState = false;
+    //private final boolean grabber = false;
     private final double grabberSpeed = 1.0;
-    private boolean previousArmState = false;
-    private boolean previousArmButtonState = false;
+    //private final boolean previousArmState = false;
+    //private final boolean previousArmButtonState = false;
     
     
     
@@ -76,8 +78,9 @@ public class RobotTemplate extends IterativeRobot
     private DigitalInput armPistonL;
     private DigitalInput armPistonR;
     private DigitalInput latchSensor;
-    private boolean firingArm = false;
-    private boolean loadingPin = false;
+    
+    //private final boolean firingArm = false;
+    //private final boolean loadingPin = false;
     //private boolean previousCompressorState = false;
     private boolean firingReady = false;
     private final double timingDelay = 0.5;
@@ -87,7 +90,9 @@ public class RobotTemplate extends IterativeRobot
     private AxisCamera camera;
     private final String cameraIP = "10.48.18.11";
     private DriverStation driverStation;
-   
+    private Servo camServo;
+    private  double servoHoritzantal = .5;
+    private  double servoVertical = .5;
     ///////////////////////////////////////////////////////
     //  PUBLIC METHODS
     ///////////////////////////////////////////////////////
@@ -122,6 +127,7 @@ public class RobotTemplate extends IterativeRobot
         compressor = new Compressor(1,1);             
         
         camera = AxisCamera.getInstance(cameraIP);
+        camServo = new Servo(7); 
         
         
         //driverStation = DriverStation.getInstance();
@@ -139,7 +145,7 @@ public class RobotTemplate extends IterativeRobot
      */
     public void teleopInit()
     {
-        chassis.setMaxOutput(1);
+        chassis.setMaxOutput(.75);
         chassis.setSafetyEnabled(true);
         chassis.tankDrive(leftStick, rightStick);
         
@@ -155,8 +161,8 @@ public class RobotTemplate extends IterativeRobot
         compressorControl();
         ShooterStateMachine(false);
         GrabberArmControls(false);
-       
-        
+        driveControls();
+        ServoControl();
         
     }
 
@@ -273,6 +279,26 @@ public class RobotTemplate extends IterativeRobot
     
     }
     
+    public void driveControls()
+    {
+      if(rightStick.getRawButton(driveControlBackwardButton) && rightStick.getRawButton(driveControlForwardButton)) 
+        {
+            System.out.println("error");
+            chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+        }
+        else if (rightStick.getRawButton(driveControlBackwardButton)) 
+        {
+            chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, false);
+        }
+        else if(rightStick.getRawButton(driveControlForwardButton))
+        {
+           chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+        }
+        else 
+        {
+            // Do nothing 
+        }
+    }
     ///////////////////////////////////////////////////////
     //  PRIVATE METHODS
     ///////////////////////////////////////////////////////
@@ -523,6 +549,23 @@ public class RobotTemplate extends IterativeRobot
             grabberMotor.set(0.0);
         }
     }
+   private void ServoControl()
+    {
+       if (leftStick.getRawButton(servoLeft))
+       {
+           servoHoritzantal = servoHoritzantal + .1; 
+       }
+       else if (leftStick.getRawButton(servoRight))
+       {
+          servoHoritzantal = servoHoritzantal - .1; 
+       }
+       
+       camServo.set(servoHoritzantal);  
+       
+    }
+    
+    
+    
     private void compressorControl(){
         
         if(!compressor.getPressureSwitchValue()  )
