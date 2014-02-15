@@ -3,6 +3,7 @@ package edu.wpi.first.wpilibj.templates;
 
 // Import the necessary classes
 import com.taurus.CompressorPins;
+import com.taurus.ControlMapping;
 import com.taurus.Joysticks;
 import com.taurus.Logger;
 import com.taurus.SensorPins;
@@ -49,21 +50,9 @@ public class RobotTemplate extends IterativeRobot {
     // Joysticks
     // TODO Split into an enumeration
     private Joystick leftStick;
-    private final int shooterButton = 1;
-    private final int grabberMotorForwardButton = 2;
-    private final int grabberMotorReverseButton = 3;
-    private final int bLatchL = 9;
-    private final int bReleaseL = 8;
-    
     private Joystick rightStick;
-    private final int grabberArmOutButton = 2;
-    private final int grabberArmInButton = 3;
-    private final int shooterButtonSafety = 1;
-    private final int bLatchR = 9;
-    private final int bReleaseR = 8;
-    private final int bCameraUp = 5;
-    private final int bCameraDown = 4;
     
+    // State machine states
     private final int stShooterStart                   = 0;
     private final int stShooterRetractFiringPin        = 1;
     private final int stShooterRetractFiringPinWait    = 2;
@@ -240,7 +229,7 @@ public class RobotTemplate extends IterativeRobot {
                 if (sArmR.get() && sArmL.get()) {
                     newShooterState = stShooterSetFiringPin;
                 }
-                if (leftStick.getRawButton(bLatchL) && rightStick.getRawButton(bLatchR)) {
+                if (leftStick.getRawButton(ControlMapping.latchLeft) && rightStick.getRawButton(ControlMapping.latchRight)) {
                     newShooterState = stShooterSetFiringPin;
                 }
                 break;
@@ -297,8 +286,8 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stShooterFireReady: {
-                if(leftStick.getRawButton(shooterButton) && 
-                   rightStick.getRawButton(shooterButtonSafety)) {
+                if(leftStick.getRawButton(ControlMapping.fireLeft) && 
+                   rightStick.getRawButton(ControlMapping.fireRight)) {
                     log.info("Firing shooter!");
                     tLoadingPinIn.set(false);
                     tLoadingPinOut.set(true);
@@ -310,7 +299,7 @@ public class RobotTemplate extends IterativeRobot {
                     shooterTime = Timer.getFPGATimestamp();
                     newShooterState = stShooterFireWait;
                 }
-                if(leftStick.getRawButton(bReleaseL) && rightStick.getRawButton(bReleaseR)) {
+                if(leftStick.getRawButton(ControlMapping.releaseLeft) && rightStick.getRawButton(ControlMapping.releaseRight)) {
                     newShooterState = stShooterSafety;
                 }
                 break;
@@ -334,28 +323,28 @@ public class RobotTemplate extends IterativeRobot {
      * This function manages the state machine for the grabber arm
      */
     private void grabberStateTick(boolean autonomous) {
-        if(rightStick.getRawButton(grabberArmOutButton) && rightStick.getRawButton(grabberArmInButton)) {
+        if(rightStick.getRawButton(ControlMapping.grabberArmDown) && rightStick.getRawButton(ControlMapping.grabberArmUp)) {
            // If both buttons are pressed, report an error.
            log.error("Too many buttons pressed, grabber arm cannot exist in two positions simultaneously!");
            tGrabberArmOut.set(false);
            tGrabberArmIn.set(true);
-        } else if (rightStick.getRawButton(grabberArmOutButton) || autonomous) {
+        } else if (rightStick.getRawButton(ControlMapping.grabberArmDown) || autonomous) {
            log.info("Arm extended.");
            tGrabberArmOut.set(true);
            tGrabberArmIn.set(false);
-        } else if(rightStick.getRawButton(grabberArmInButton)) {
+        } else if(rightStick.getRawButton(ControlMapping.grabberArmUp)) {
             log.info("Arm retracted.");
             tGrabberArmOut.set(false);
             tGrabberArmIn.set(true);
         }
         
-        if(leftStick.getRawButton(grabberMotorForwardButton) && leftStick.getRawButton(grabberMotorReverseButton)) {
+        if(leftStick.getRawButton(ControlMapping.grabberMotorForward) && leftStick.getRawButton(ControlMapping.grabberMotorReverse)) {
            log.error("Too many buttons pressed, grabber motor cannot exist in two states!");
            grabberMotor.set(0.0);
-        } else if (leftStick.getRawButton(grabberMotorForwardButton)) {
+        } else if (leftStick.getRawButton(ControlMapping.grabberMotorForward)) {
             log.info("Grabber motor forward");
             grabberMotor.set(speedGrabberOn); 
-        } else if (leftStick.getRawButton(grabberMotorReverseButton)) {
+        } else if (leftStick.getRawButton(ControlMapping.grabberMotorReverse)) {
             log.info("Grabber motor reverse");
             grabberMotor.set(-speedGrabberOn);
         } else { 
@@ -375,9 +364,13 @@ public class RobotTemplate extends IterativeRobot {
         }
     }
     
+    /**
+     * This function manages the control facing switch
+     */
     private void driveControlTick() {
         // TODO reversed controls
     }
+    
     /**
      * This function controls the robot in autonomous mode.
      */
@@ -463,6 +456,7 @@ public class RobotTemplate extends IterativeRobot {
         chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, motorInverted);
         chassis.setMaxOutput(sensitivity);
     }
+    
     /**
      * Initialize the sensor subsystem.
      */
@@ -474,6 +468,7 @@ public class RobotTemplate extends IterativeRobot {
         sPistonR = new DigitalInput(SensorPins.armPistonRight);
         sLatch = new DigitalInput(SensorPins.latch);
     }
+    
     /**
      * Initialize the pneumatics subsystem.
      */
@@ -489,6 +484,7 @@ public class RobotTemplate extends IterativeRobot {
         compressor = new Compressor(CompressorPins.relay,
                                     CompressorPins.pressure);
     }
+    
     /**
      * Initialize the drive subsystem.
      */
@@ -515,15 +511,21 @@ public class RobotTemplate extends IterativeRobot {
         sSonic = new AnalogChannel(1);
     }
     
+    /**
+     * This control manages the servos for the camera.
+     */
     private void servoTick() {
-        if(leftStick.getRawButton(bCameraUp)) {
+        if(leftStick.getRawButton(ControlMapping.camUp)) {
             servoVertical = servoVertical +.1;
-        } else if (leftStick.getRawButton(bCameraDown)) {
+        } else if (leftStick.getRawButton(ControlMapping.camDown)) {
             servoVertical = servoVertical -.1;
         }
         servoCamera.set(servoVertical);
     }
     
+    /**
+     * This control manages the ultrasound measurement.
+     */
     private void ultrasoundTick() {
         sonicSignal = sSonic.getAverageVoltage();
         sonicSignal = ( sonicSignal * 100) / 9.8 ;
