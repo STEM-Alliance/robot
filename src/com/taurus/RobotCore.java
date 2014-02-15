@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.camera.AxisCamera;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Compressor; 
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.AnalogChannel;
 
 /**
  * This is a cleaner robot class. It's probably not the best idea to
@@ -37,12 +40,22 @@ public class RobotCore extends IterativeRobot {
     private Solenoid tGrabberArmIn;
     
     // Joysticks
+    // TODO Split into an enumeration
     private Joystick leftStick;
     private final int shooterButton = 1;
-    private final int grabberButton = 2;
-    private final int grabberArmButton = 3;
+    private final int grabberMotorForwardButton = 2;
+    private final int grabberMotorReverseButton = 3;
+    private final int bLatchL = 9;
+    private final int bReleaseL = 8;
     
     private Joystick rightStick;
+    private final int grabberArmOutButton = 3;
+    private final int grabberArmInButton = 4;
+    private final int shooterButtonSafety = 1;
+    private final int bLatchR = 9;
+    private final int bReleaseR = 8;
+    private final int bCameraUp = 5;
+    private final int bCameraDown = 4;
     
     // State variables
     private boolean previousGrabberState = false;
@@ -50,23 +63,65 @@ public class RobotCore extends IterativeRobot {
     private boolean previousArmState = false;
     private boolean previousArmButtonState = false; // questionable
     
+    private final int stShooterStart                   = 0;
+    private final int stShooterRetractFiringPin        = 1;
+    private final int stShooterRetractFiringPinWait    = 2;
+    private final int stShooterSetFiringArm            = 3;
+    private final int stShooterSetFiringArmWait        = 4;
+    private final int stShooterSetFiringPin            = 5;
+    private final int stShooterSetFiringPinWait        = 6;
+    private final int stShooterRetractFiringMech       = 7;
+    private final int stShooterRetractFiringMechWait   = 8;
+    private final int stShooterSafety                  = 9;
+    private final int stShooterSafetyLatch             = 10;
+    private final int stShooterSafetyRetract           = 11;
+    private final int stShooterFireReady               = 12;
+    private final int stShooterFireWait                = 13;
+    
+    private final int stAutoStart = 0;
+    private final int stAutoArmRetracting = 1;
+    private final int stAutoMoveToPosition = 2;
+    private final int stAutoMoveToPositionWait = 3;
+    private final int stAutoFire = 4;
+    private final int stAutoFireWait = 5;
+    private final int stAutoMove = 6;
+    private final int stAutoMoveWait = 7;
+    private final int stAutoDone = 8;
+    
     // Shooter
-    private DigitalInput sFiringArm; // Sensors for the shooter state machine
-    private DigitalInput sLoadingPin; 
+    private DigitalInput sArmL; // Sensors for the shooter state machine
+    private DigitalInput sArmR;
+    private DigitalInput sPistonL;
+    private DigitalInput sPistonR;
+    private DigitalInput sLatch;
     private Compressor compressor;
     private int currentShooterState = 0;
     private int newShooterState = 0;
     private double shooterTime = 0;
+    private double safetyTime = 0;
+    
+    // Autonomous
+    private int currentAutoState = 0;
+    private int newAutoState = 0;
+    private double autoTime = 0;
     
     // Camera
     private AxisCamera camera;
     private final String cameraIP = "10.48.18.11";
+    private DriverStation driverStation;
+    private Servo servoCamera;
+    private double servoVertical = .5;
+    
+    // Ultrasonic
+    private AnalogChannel sSonic;
+    private double sonicSignal;
     
     // Constants
     private final double timingDelay = 0.5;
     boolean motorInverted = true;
     private final double speedStop = 0.0;
     private final double speedGrabberOn = 1.0;
+    private final double speedMotorOn = 1.0;
     
     // Logger
     private Logger log;
@@ -101,8 +156,8 @@ public class RobotCore extends IterativeRobot {
     public void teleopPeriodic() {
         chassis.tankDrive(leftStick, rightStick);
         compressorTick(); // TODO Implement compressor controls
-        shooterStateTick(); // TODO Implement shooter state
-        grabberStateTick(); // TODO Implement grabber state
+        shooterStateTick(false); // TODO Implement shooter state
+        grabberStateTick(false); // TODO Implement grabber state
     }
     /**
      * This function is called periodically during autonomous mode.
@@ -128,103 +183,137 @@ public class RobotCore extends IterativeRobot {
     /**
      * This function manages the state machine for the shooter arm.
      */
-    private void shooterStateTick() {
-        final int stStart                   = 0;
-        final int stRetractFiringPin        = 1;
-        final int stRetractFiringPinWait    = 2;
-        final int stSetFiringArm            = 3;
-        final int stSetFiringArmWait        = 4;
-        final int stSetFiringPin            = 5;
-        final int stSetFiringPinWait        = 6;
-        final int stRetractFiringMech       = 7;
-        final int stRetractFiringMechWait   = 8;
-        final int stFireReady               = 9;
-        final int stFireWait                = 10;
-        
+    private void shooterStateTick(boolean autonomous) {      
         final double waitPin = 2;
         final double waitFire = 2;
-        final double waitFireArm = 10;
         
         switch(currentShooterState) {
-            case stStart: {
-                log.info("Shooter in starting state.");
-                newShooterState = stRetractFiringPin;
+            case stShooterStart: {
+                if(autonomous) {
+                    log.info("Shooter in autonomous starting state.");
+                    if(sLatch.get()) {
+                        if(sArmL.get() && sArmR.get()) {
+                            newShooterState = stShooterSetFiringPin;
+                        } else {
+                            newShooterState = stShooterSetFiringArm;
+                        }
+                    } else {
+                        if(sArmL.get() && sArmR.get()) {
+                            newShooterState = stShooterRetractFiringMech;
+                        } else {
+                            newShooterState = stShooterRetractFiringPin;
+                        }
+                    }
+                } else {
+                    log.info("Shooter in starting state.");
+                    newShooterState = stShooterRetractFiringPin;
+                }
                 break;
             }
-            case stRetractFiringPin: {
+            case stShooterRetractFiringPin: {
                 log.info("Retracting firing pin...");
                 tLoadingPinIn.set(false);
                 tLoadingPinOut.set(true);
                 shooterTime = Timer.getFPGATimestamp();
-                newShooterState = stRetractFiringPinWait;
+                newShooterState = stShooterRetractFiringPinWait;
                 break;
             }
-            case stRetractFiringPinWait: {
+            case stShooterRetractFiringPinWait: {
                 if(Timer.getFPGATimestamp() - shooterTime >= waitPin) {
                     log.info("Firing pin retracted.");
-                    newShooterState = stSetFiringArm;
+                    newShooterState = stShooterSetFiringArm;
                 }
                 break;
             }
-            case stSetFiringArm: {
+            case stShooterSetFiringArm: {
                 log.info("Setting firing arm...");
                 tFiringArmIn.set(false);
                 tFiringArmOut.set(true);
                 shooterTime = Timer.getFPGATimestamp();
-                newShooterState = stSetFiringArmWait;
+                newShooterState = stShooterSetFiringArmWait;
                 break;
             }
-            case stSetFiringArmWait: {
-                if(Timer.getFPGATimestamp() - shooterTime >= waitFireArm ) {
-                    log.info("Firing arm set.");
-                    newShooterState = stSetFiringPin;
+            case stShooterSetFiringArmWait: {
+                if (sArmR.get() && sArmL.get()) {
+                    newShooterState = stShooterSetFiringPin;
+                }
+                if (leftStick.getRawButton(bLatchL) && rightStick.getRawButton(bLatchR)) {
+                    newShooterState = stShooterSetFiringPin;
                 }
                 break;
             }
-            case stSetFiringPin: {
+            case stShooterSetFiringPin: {
                 log.info("Setting firing pin...");
                 tLoadingPinOut.set(false);
                 tLoadingPinIn.set(true);
                 shooterTime = Timer.getFPGATimestamp();
-                newShooterState = stSetFiringPinWait;
+                newShooterState = stShooterSetFiringPinWait;
                 break;
             }
-            case stSetFiringPinWait: {
+            case stShooterSetFiringPinWait: {
                 if(Timer.getFPGATimestamp() - shooterTime >= waitPin) {
                     log.info("Firing pin set.");
-                    newShooterState = stRetractFiringMech;
+                    newShooterState = stShooterRetractFiringMech;
                 }
                 break;
             }
-            case stRetractFiringMech: {
+            case stShooterRetractFiringMech: {
                 log.info("Retracting firing mechanism...");
                 tFiringArmOut.set(false);
                 tFiringArmIn.set(true);
                 shooterTime = Timer.getFPGATimestamp();
-                newShooterState = stRetractFiringMechWait;
+                newShooterState = stShooterRetractFiringMechWait;
                 break;
             }
-            case stRetractFiringMechWait: {
-                if(Timer.getFPGATimestamp() - shooterTime >= waitFireArm ) {
+            case stShooterRetractFiringMechWait: {
+                if(sPistonL.get() && sPistonR.get() ) {
                     log.info("Firing mechanism set.");
-                    newShooterState = stFireReady;
+                    newShooterState = stShooterFireReady;
                 }
                 break;
             }
-            case stFireReady: {
-                if(leftStick.getRawButton(shooterButton)) {
+            case stShooterSafety: {
+                tFiringArmIn.set(false);
+                tFiringArmOut.set(true);
+                safetyTime = Timer.getFPGATimestamp();
+                newShooterState = stShooterSafetyLatch;
+            }
+            case stShooterSafetyLatch: {
+                if(Timer.getFPGATimestamp() - safetyTime >= waitPin) {
+                    tLoadingPinIn.set(false);
+                    tLoadingPinOut.set(true);
+                    newShooterState = stShooterSafetyRetract;
+                }
+            }
+            case stShooterSafetyRetract: {
+                tFiringArmOut.set(false);
+                tFiringArmIn.set(true);
+                newShooterState = stShooterStart;
+                break;
+            }
+            case stShooterFireReady: {
+                if(leftStick.getRawButton(shooterButton) && 
+                   rightStick.getRawButton(shooterButtonSafety)) {
                     log.info("Firing shooter!");
                     tLoadingPinIn.set(false);
                     tLoadingPinOut.set(true);
                     shooterTime = Timer.getFPGATimestamp();
-                    newShooterState = stFireWait;
+                    newShooterState = stShooterFireWait;
+                } else if (autonomous && currentAutoState == stAutoFire) {
+                    tLoadingPinIn.set(false);
+                    tLoadingPinOut.set(true);
+                    shooterTime = Timer.getFPGATimestamp();
+                    newShooterState = stShooterFireWait;
+                }
+                if(leftStick.getRawButton(bReleaseL) && rightStick.getRawButton(bReleaseR)) {
+                    newShooterState = stShooterSafety;
                 }
                 break;
             }
-            case stFireWait: {
+            case stShooterFireWait: {
                 if(Timer.getFPGATimestamp() - shooterTime >= waitFire ) {
                     log.info("Reloading shooter.");
-                    newShooterState = stStart;
+                    newShooterState = stShooterStart;
                 }
                 break;
             }
@@ -233,36 +322,39 @@ public class RobotCore extends IterativeRobot {
                 break;
             }
         }
+        currentShooterState = newShooterState;
     }
     
     /**
      * This function manages the state machine for the grabber arm
      */
-    private void grabberStateTick() {
-        // TODO could be implemented slightly better.
-        if(leftStick.getRawButton(grabberArmButton)) {
-            log.info("Toggling grabber arm...");
-            if(!previousArmState) {
-                // arm is currently in
-                tGrabberArmIn.set(false);
-                tGrabberArmOut.set(true);
-                previousArmState = true;
-            } else {
-                // arm is currently out
-                tGrabberArmOut.set(false);
-                tGrabberArmIn.set(true);
-                previousArmState = false;
-            }
+    private void grabberStateTick(boolean autonomous) {
+        if(rightStick.getRawButton(grabberArmOutButton) && rightStick.getRawButton(grabberArmInButton)) {
+           // If both buttons are pressed, report an error.
+           log.error("Too many buttons pressed, grabber arm cannot exist in two positions simultaneously!");
+           tGrabberArmOut.set(false);
+           tGrabberArmIn.set(true);
+        } else if (rightStick.getRawButton(grabberArmOutButton) || autonomous) {
+           log.info("Arm extended.");
+           tGrabberArmOut.set(true);
+           tGrabberArmIn.set(false);
+        } else if(rightStick.getRawButton(grabberArmInButton)) {
+            log.info("Arm retracted.");
+            tGrabberArmOut.set(false);
+            tGrabberArmIn.set(true);
         }
-        if(leftStick.getRawButton(grabberButton)) {
-            log.info("Toggling grabber motor...");
-            if(previousGrabberState) {
-                previousGrabberState = false;
-                grabberMotor.set(speedStop);
-            } else {
-                previousGrabberState = true;
-                grabberMotor.set(speedGrabberOn);
-            }
+        
+        if(leftStick.getRawButton(grabberMotorForwardButton) && leftStick.getRawButton(grabberMotorReverseButton)) {
+           log.error("Too many buttons pressed, grabber motor cannot exist in two states!");
+           grabberMotor.set(0.0);
+        } else if (leftStick.getRawButton(grabberMotorForwardButton)) {
+            log.info("Grabber motor forward");
+            grabberMotor.set(speedGrabberOn); 
+        } else if (leftStick.getRawButton(grabberMotorReverseButton)) {
+            log.info("Grabber motor reverse");
+            grabberMotor.set(-speedGrabberOn);
+        } else { 
+            grabberMotor.set(0.0);
         }
     }
     
@@ -279,6 +371,80 @@ public class RobotCore extends IterativeRobot {
     }
     
     /**
+     * This function controls the robot in autonomous mode.
+     */
+    private void autonomousTick() {        
+        final int autoPositionWait = 2;
+        final int autoShooterWait = 2;
+        final int autoMoveWait = 2;
+        
+        chassis.setSafetyEnabled(false);
+        compressorTick();
+        switch (currentAutoState) {
+            case stAutoStart: {
+                newAutoState = stAutoArmRetracting;
+                break;
+            }
+            case stAutoArmRetracting: {
+                log.info("Retracting arm");
+                grabberStateTick(true);
+                newAutoState = stAutoMoveToPosition;
+                break;
+            }
+            case stAutoMoveToPosition: {
+                log.info("Moving into firing position.");
+                chassis.drive(speedMotorOn, 0);
+                autoTime = Timer.getFPGATimestamp();
+                newAutoState = stAutoMoveToPositionWait;
+                shooterStateTick(true);
+                break;
+            }
+            case stAutoMoveToPositionWait: {
+                if (Timer.getFPGATimestamp() - autoTime >= autoPositionWait ) {
+                    chassis.drive(speedStop, 0);
+                }
+                shooterStateTick(true);
+                if (Timer.getFPGATimestamp() - autoTime >= autoPositionWait 
+                 && currentShooterState == stShooterFireReady) {
+                    //TODO Fix this magic number
+                    newAutoState = stAutoFire;
+                }
+                break;
+            }
+            case stAutoFire: {
+                log.info("Firing!");
+                shooterStateTick(true);
+                newAutoState = stAutoFireWait;
+                autoTime = Timer.getFPGATimestamp();
+                break;
+            }
+            case stAutoFireWait: {
+                if(Timer.getFPGATimestamp() - autoTime >= autoShooterWait ) {
+                    newAutoState = stAutoMove;
+                }
+                break;
+            }
+            case stAutoMove: {
+                log.info("Moving after firing..");
+                chassis.drive(speedMotorOn, 0);
+                autoTime = Timer.getFPGATimestamp();
+                newAutoState = stAutoMoveWait;
+                break;
+            }
+            case stAutoMoveWait: {
+                if(Timer.getFPGATimestamp() - autoTime >= autoMoveWait) {
+                    chassis.drive(speedStop, 0);
+                    newAutoState = stAutoDone;
+                }
+            }
+            case stAutoDone: {
+                break;
+            }
+        }
+        currentAutoState = newAutoState;
+    }
+    
+    /**
      * Initialize the motor subsystem.
      */
     private void initMotors() {
@@ -292,8 +458,11 @@ public class RobotCore extends IterativeRobot {
      */
     private void initSensors() {
         log.info("Initializing sensors...");
-        sFiringArm = new DigitalInput(SensorPins.firingArm);
-        sLoadingPin = new DigitalInput(SensorPins.loadingPin);
+        sArmL = new DigitalInput(SensorPins.armSensorLeft);
+        sArmR = new DigitalInput(SensorPins.armSensorRight);
+        sPistonL = new DigitalInput(SensorPins.armPistonLeft);
+        sPistonR = new DigitalInput(SensorPins.armPistonRight);
+        sLatch = new DigitalInput(SensorPins.latch);
     }
     /**
      * Initialize the pneumatics subsystem.
@@ -317,5 +486,25 @@ public class RobotCore extends IterativeRobot {
         log.info("Initializing drive subsystem...");
         leftStick = new Joystick(Joysticks.left);
         rightStick = new Joystick(Joysticks.right);
+    }
+    
+    /**
+     * Initialize the camera servos
+     */
+    private void initCamera() {
+        
+    }
+    private void servoTick() {
+        if(leftStick.getRawButton(bCameraUp)) {
+            servoVertical = servoVertical +.1;
+        } else if (leftStick.getRawButton(bCameraDown)) {
+            servoVertical = servoVertical -.1;
+        }
+        servoCamera.set(servoVertical);
+    }
+    private void ultrasoundTick() {
+        sonicSignal = sSonic.getAverageVoltage();
+        sonicSignal = ( sonicSignal * 100) / 9.8 ;
+        log.dbg("Ultrasonic reading: " + String.valueOf(sonicSignal));
     }
 }
