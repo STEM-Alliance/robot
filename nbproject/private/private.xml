@@ -3,13 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/com/taurus/SolenoidPins.java</file>
-            <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/com/taurus/RobotCore.java</file>
-            <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/com/taurus/SensorPins.java</file>
-            <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/edu/wpi/first/wpilibj/templates/RobotTemplate.java</file>
-            <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/com/taurus/Logger.java</file>
+            <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/edu/wpi/first/wpilibj/templates/RobotCore.java</file>
             <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/com/taurus/Joysticks.java</file>
             <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/com/taurus/CompressorPins.java</file>
+            <file>file:/home/tanner/Development/Workspaces/First%20Robotics/Taurus/src/com/taurus/ServoPins.java</file>
         </group>
     </open-files>
 </project-private>
