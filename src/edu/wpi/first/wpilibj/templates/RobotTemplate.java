@@ -348,7 +348,7 @@ public class RobotTemplate extends IterativeRobot {
             log.info("Grabber motor reverse");
             grabberMotor.set(-speedGrabberOn);
         } else { 
-            grabberMotor.set(0.0);
+            grabberMotor.set(speedStop);
         }
     }
     
