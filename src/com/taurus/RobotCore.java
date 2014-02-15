@@ -30,6 +30,7 @@ public class RobotCore extends IterativeRobot {
     // Motor Objects
     private RobotDrive chassis;
     private Victor grabberMotor;
+    private final double sensitivity = 0.5;
     
     // Solenoid Objects
     private Solenoid tFiringArmOut; // These four are firing mechanisms
@@ -56,12 +57,6 @@ public class RobotCore extends IterativeRobot {
     private final int bReleaseR = 8;
     private final int bCameraUp = 5;
     private final int bCameraDown = 4;
-    
-    // State variables
-    private boolean previousGrabberState = false;
-    private boolean grabberState = false; // necessary?
-    private boolean previousArmState = false;
-    private boolean previousArmButtonState = false; // questionable
     
     private final int stShooterStart                   = 0;
     private final int stShooterRetractFiringPin        = 1;
@@ -155,19 +150,18 @@ public class RobotCore extends IterativeRobot {
      */
     public void teleopPeriodic() {
         chassis.tankDrive(leftStick, rightStick);
-        compressorTick(); // TODO Implement compressor controls
-        shooterStateTick(false); // TODO Implement shooter state
-        grabberStateTick(false); // TODO Implement grabber state
+        compressorTick(); 
+        shooterStateTick(false); 
+        grabberStateTick(false); 
+        servoTick();
+        ultrasoundTick();
+        
     }
     /**
      * This function is called periodically during autonomous mode.
      */
     public void autonomousPeriodic() {
-        // TODO Implement a proper autonomous mode
-        chassis.setSafetyEnabled(false);
-        chassis.drive(0.5, 0);
-        Timer.delay(2.0);
-        chassis.drive(0.0,0.0);
+        autonomousTick();
     }
     /**
      * This function is called periodically during test mode.
@@ -452,6 +446,7 @@ public class RobotCore extends IterativeRobot {
         chassis = new RobotDrive(1,2,3,4); // Initialize all four drive motors
         grabberMotor = new Victor(5); // Initialize the grabber motor
         chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, motorInverted);
+        chassis.setMaxOutput(sensitivity);
     }
     /**
      * Initialize the sensor subsystem.
@@ -492,8 +487,18 @@ public class RobotCore extends IterativeRobot {
      * Initialize the camera servos
      */
     private void initCamera() {
-        
+        log.info("Initializing camera servo...");
+        servoCamera = new Servo(ServoPins.cameraServo);
     }
+    
+    /**
+     * Initialize ultrasonic system
+     */
+    private void initUltrasonic() {
+        log.info("Initializing ultrasonic sensor...");
+        sSonic = new AnalogChannel(1);
+    }
+    
     private void servoTick() {
         if(leftStick.getRawButton(bCameraUp)) {
             servoVertical = servoVertical +.1;
@@ -502,6 +507,7 @@ public class RobotCore extends IterativeRobot {
         }
         servoCamera.set(servoVertical);
     }
+    
     private void ultrasoundTick() {
         sonicSignal = sSonic.getAverageVoltage();
         sonicSignal = ( sonicSignal * 100) / 9.8 ;

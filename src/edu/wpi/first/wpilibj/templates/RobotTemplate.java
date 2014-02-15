@@ -38,6 +38,7 @@ public class RobotTemplate extends IterativeRobot
     /* Motor Objects */
     private RobotDrive chassis;
     private Victor grabberMotor;
+    private double sensitivity = 0.5;
     
     // solenoid //
     public Solenoid tFiringArmOut;
@@ -130,6 +131,7 @@ public class RobotTemplate extends IterativeRobot
      */
     public void teleopInit()
     {
+        chassis.setMaxOutput(sensitivity);
         chassis.setSafetyEnabled(true);
         chassis.tankDrive(leftStick, rightStick);
     }
