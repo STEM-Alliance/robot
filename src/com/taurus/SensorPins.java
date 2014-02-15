@@ -5,6 +5,9 @@ package com.taurus;
  * @author Tanner Danzey < arkaniad AT gmail DOT com >
  */
 public class SensorPins {
-    public static final int firingArm = 3; // Firing arm sensor
-    public static final int loadingPin = 2; // Loading pin sensor
+    public static final int armSensorRight = 3;
+    public static final int armSensorLeft = 2;
+    public static final int armPistonRight = 5;
+    public static final int armPistonLeft = 4;
+    public static final int latch = 6;
 }
