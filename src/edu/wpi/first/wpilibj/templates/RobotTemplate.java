@@ -7,21 +7,19 @@
 
 package edu.wpi.first.wpilibj.templates;
 
-import com.sun.cldc.jna.Structure;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.camera.AxisCamera;
-import edu.wpi.first.wpilibj.DigitalOutput; 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.AnalogChannel;
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Compressor; 
 import edu.wpi.first.wpilibj.DriverStation; 
 import edu.wpi.first.wpilibj.Servo; 
+import edu.wpi.first.wpilibj.DriverStationLCD;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -53,24 +51,27 @@ public class RobotTemplate extends IterativeRobot
     private final int shooterButton = 1;
     private final int grabberForwardButton = 2;
     private final int grabberReverseButton = 3;
-    //private final int compressorButton = 11;
     private int servoRight = 5; 
     private int servoLeft = 4;         
-            
+    private int safetyReleaseButtonL = 8; 
+    private int safetyLatchButtonL = 9; 
+    
     /* Right Joystick Setup */
     private Joystick rightStick;
+    private final int shooterButtonSafety = 1;
     private final int armOutControlButton = 3;
     private final int armInControlButton = 2;
     private final int driveControlForwardButton = 4;
     private final int driveControlBackwardButton = 5;
-    
-    //private final boolean previousGrabberState = false;
-    //private final boolean grabber = false;
+    private int safetyReleaseButtonR = 8; 
+    private int safetyLatchButtonR = 9; 
+
+   
     private final double grabberSpeed = 1.0;
-    //private final boolean previousArmState = false;
-    //private final boolean previousArmButtonState = false;
-    
-    
+   
+    private AnalogChannel ultraSonic;
+    private double ultraSonicSignal;
+    private DriverStationLCD DriverLCD; 
     
     /* Shooter */
     private DigitalInput armSensorR;
@@ -91,8 +92,8 @@ public class RobotTemplate extends IterativeRobot
     private final String cameraIP = "10.48.18.11";
     private DriverStation driverStation;
     private Servo camServo;
-    private  double servoHoritzantal = .5;
     private  double servoVertical = .5;
+    
     ///////////////////////////////////////////////////////
     //  PUBLIC METHODS
     ///////////////////////////////////////////////////////
@@ -128,9 +129,9 @@ public class RobotTemplate extends IterativeRobot
         
         camera = AxisCamera.getInstance(cameraIP);
         camServo = new Servo(7); 
-        
-        
-        //driverStation = DriverStation.getInstance();
+        ultraSonic = new AnalogChannel(1);
+        DriverLCD.getClass(); 
+        driverStation = DriverStation.getInstance();
         // Inverting the Front left motor for driving
         //chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
         // Retracting the shooter into position
@@ -145,7 +146,7 @@ public class RobotTemplate extends IterativeRobot
      */
     public void teleopInit()
     {
-        chassis.setMaxOutput(.75);
+        chassis.setMaxOutput(.5);
         chassis.setSafetyEnabled(true);
         chassis.tankDrive(leftStick, rightStick);
         
@@ -163,7 +164,7 @@ public class RobotTemplate extends IterativeRobot
         GrabberArmControls(false);
         driveControls();
         ServoControl();
-        
+        UltraSonicControl();
     }
 
     /**
@@ -289,10 +290,16 @@ public class RobotTemplate extends IterativeRobot
         else if (rightStick.getRawButton(driveControlBackwardButton)) 
         {
             chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, false);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, false);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kFrontRight, true);
         }
         else if(rightStick.getRawButton(driveControlForwardButton))
         {
-           chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, true);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, false);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, true);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kFrontRight, false);
         }
         else 
         {
@@ -318,17 +325,21 @@ public class RobotTemplate extends IterativeRobot
     private final int ShooterStateSetFiringPinWait =        6;
     private final int ShooterStateRetractFiringMech =       7;
     private final int ShooterStateRetractFiringMechWait =   8;
-    private final int ShooterStateFireReady =               9;
-    private final int ShooterStateFireWait =                10;
+    private final int ShooterStateSafety =                  9;
+    private final int ShooterStateSafetyLatch =             10;
+    private final int ShooterStateSafetyretrack =           11;
+    private final int ShooterStateFireReady =               12;
+    private final int ShooterStateFireWait =                13;
     
     private int currentReloadShooterState = ShooterStateStart;
     private int newReloadShooterState = ShooterStateStart;
     
     private double shooterTime = 0;
+    private double safetyTime = 2;
     
     //private final int FIRING_ARM_WAIT = 10;
-    private final int LOADING_PIN_WAIT = 2;
-    private final int FIRING_WAIT = 2;
+    private final int LOADING_PIN_WAIT = 1;
+    private final int FIRING_WAIT = 1;
     
     /**
      * DESCRIPTION: Activate the controls for the 
@@ -386,7 +397,7 @@ public class RobotTemplate extends IterativeRobot
             case ShooterStateRetractFiringPinWait:
             {
                 //System.out.println("reloadShooterStateMachine: ShooterStateRetractFiringPinWait");
-                if (latchSensor.get())
+                if (Timer.getFPGATimestamp() - shooterTime >= LOADING_PIN_WAIT)
                 {
                     newReloadShooterState = ShooterStateSetFiringArm;
                 }
@@ -407,7 +418,11 @@ public class RobotTemplate extends IterativeRobot
                 if (armSensorR.get()&& armSensorL.get())
                 {
                     newReloadShooterState = ShooterStateSetFiringPin;
-                }   
+                }
+                if (leftStick.getRawButton(safetyLatchButtonL) && rightStick.getRawButton(safetyLatchButtonR))
+                {
+                     newReloadShooterState = ShooterStateSetFiringPin;
+                }
                 break;
             }
             case ShooterStateSetFiringPin:
@@ -415,7 +430,7 @@ public class RobotTemplate extends IterativeRobot
                // System.out.println("reloadShooterStateMachine: ShooterStateSetFiringPin");
                 tLoadingPinOut.set(false);
                 tLoadingPinIn.set(true);
-                shooterTime = Timer.getFPGATimestamp();
+                safetyTime = Timer.getFPGATimestamp();
                 newReloadShooterState = ShooterStateSetFiringPinWait;
                 break;
             }
@@ -443,12 +458,40 @@ public class RobotTemplate extends IterativeRobot
                 {
                     newReloadShooterState = ShooterStateFireReady;
                 }
+             
+                break;
+            }
+            case ShooterStateSafety:
+            {
+               
+                tFiringArmIn.set(false);
+                tFiringArmOut.set(true);
+                safetyTime = Timer.getFPGATimestamp();
+                newReloadShooterState = ShooterStateSafetyLatch;
+                
+                break;
+            }
+            case ShooterStateSafetyLatch:
+            {
+                if (Timer.getFPGATimestamp() - safetyTime >= LOADING_PIN_WAIT)
+                {
+                    tLoadingPinIn.set(false);
+                 tLoadingPinOut.set(true);
+                newReloadShooterState = ShooterStateSafetyretrack;
+                }  
+                break;
+            }
+            case ShooterStateSafetyretrack:
+            {
+                tFiringArmOut.set(false);
+                tFiringArmIn.set(true);
+                newReloadShooterState = ShooterStateStart;
                 break;
             }
             case ShooterStateFireReady:
             {
                 //System.out.println("reloadShooterStateMachine: ShooterStateFireReady");
-                if(leftStick.getRawButton(shooterButton))
+                if(leftStick.getRawButton(shooterButton) && rightStick.getRawButton(shooterButtonSafety))
                 {
                     tLoadingPinIn.set(false);
                     tLoadingPinOut.set(true);
@@ -463,7 +506,10 @@ public class RobotTemplate extends IterativeRobot
                     shooterTime = Timer.getFPGATimestamp();
                     newReloadShooterState = ShooterStateFireWait;
                 }
-                    
+                   if (leftStick.getRawButton(safetyReleaseButtonL) && rightStick.getRawButton(safetyReleaseButtonR))
+                {
+                    newReloadShooterState = ShooterStateSafety;
+                }    
                     
                 break;
             }
@@ -553,14 +599,14 @@ public class RobotTemplate extends IterativeRobot
     {
        if (leftStick.getRawButton(servoLeft))
        {
-           servoHoritzantal = servoHoritzantal + .1; 
+           servoVertical = servoVertical + .1; 
        }
        else if (leftStick.getRawButton(servoRight))
        {
-          servoHoritzantal = servoHoritzantal - .1; 
+          servoVertical = servoVertical - .1; 
        }
        
-       camServo.set(servoHoritzantal);  
+       camServo.set(servoVertical);  
        
     }
     
@@ -578,5 +624,14 @@ public class RobotTemplate extends IterativeRobot
         }
          
     }
+    private void UltraSonicControl()
+    {
+       ultraSonic.getAverageVoltage();
+       ultraSonicSignal = ultraSonic.getAverageVoltage();
+       ultraSonicSignal = ( ultraSonicSignal* 100)/9.8 ;
+       DriverLCD.println(DriverStationLCD.Line.kUser1, 1, String.valueOf(2.0));
+    
+    }
+
 }
-           
+        
