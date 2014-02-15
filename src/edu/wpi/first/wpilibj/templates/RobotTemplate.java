@@ -56,8 +56,8 @@ public class RobotTemplate extends IterativeRobot {
     private final int bReleaseL = 8;
     
     private Joystick rightStick;
-    private final int grabberArmOutButton = 3;
-    private final int grabberArmInButton = 4;
+    private final int grabberArmOutButton = 2;
+    private final int grabberArmInButton = 3;
     private final int shooterButtonSafety = 1;
     private final int bLatchR = 9;
     private final int bReleaseR = 8;
@@ -141,6 +141,8 @@ public class RobotTemplate extends IterativeRobot {
         initSensors();
         initPneumatics();
         initDrive();
+        initUltrasonic();
+        initCamera();
         log.info("Initialization complete.");
     }
     /**
@@ -159,6 +161,7 @@ public class RobotTemplate extends IterativeRobot {
         compressorTick(); 
         shooterStateTick(false); 
         grabberStateTick(false); 
+        driveControlTick();
         servoTick();
         ultrasoundTick();
         
@@ -277,6 +280,7 @@ public class RobotTemplate extends IterativeRobot {
                 tFiringArmOut.set(true);
                 safetyTime = Timer.getFPGATimestamp();
                 newShooterState = stShooterSafetyLatch;
+                break;
             }
             case stShooterSafetyLatch: {
                 if(Timer.getFPGATimestamp() - safetyTime >= waitPin) {
@@ -284,6 +288,7 @@ public class RobotTemplate extends IterativeRobot {
                     tLoadingPinOut.set(true);
                     newShooterState = stShooterSafetyRetract;
                 }
+                break;
             }
             case stShooterSafetyRetract: {
                 tFiringArmOut.set(false);
@@ -370,6 +375,9 @@ public class RobotTemplate extends IterativeRobot {
         }
     }
     
+    private void driveControlTick() {
+        // TODO reversed controls
+    }
     /**
      * This function controls the robot in autonomous mode.
      */
@@ -436,6 +444,7 @@ public class RobotTemplate extends IterativeRobot {
                     chassis.drive(speedStop, 0);
                     newAutoState = stAutoDone;
                 }
+                break;
             }
             case stAutoDone: {
                 break;
@@ -487,6 +496,7 @@ public class RobotTemplate extends IterativeRobot {
         log.info("Initializing drive subsystem...");
         leftStick = new Joystick(Joysticks.left);
         rightStick = new Joystick(Joysticks.right);
+        chassis.tankDrive(leftStick, rightStick);
     }
     
     /**
