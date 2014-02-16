@@ -53,30 +53,30 @@ public class RobotTemplate extends IterativeRobot {
     private Joystick rightStick;
     
     // State machine states
-    private final int stShooterStart                   = 0;
-    private final int stShooterRetractFiringPin        = 1;
-    private final int stShooterRetractFiringPinWait    = 2;
-    private final int stShooterSetFiringArm            = 3;
-    private final int stShooterSetFiringArmWait        = 4;
-    private final int stShooterSetFiringPin            = 5;
-    private final int stShooterSetFiringPinWait        = 6;
-    private final int stShooterRetractFiringMech       = 7;
-    private final int stShooterRetractFiringMechWait   = 8;
-    private final int stShooterSafety                  = 9;
-    private final int stShooterSafetyLatch             = 10;
-    private final int stShooterSafetyRetract           = 11;
-    private final int stShooterFireReady               = 12;
-    private final int stShooterFireWait                = 13;
+    private final int   stShooterStart                   = 0,
+                        stShooterRetractFiringPin        = 1,
+                        stShooterRetractFiringPinWait    = 2,
+                        stShooterSetFiringArm            = 3,
+                        stShooterSetFiringArmWait        = 4,
+                        stShooterSetFiringPin            = 5,
+                        stShooterSetFiringPinWait        = 6,
+                        stShooterRetractFiringMech       = 7,
+                        stShooterRetractFiringMechWait   = 8,
+                        stShooterSafety                  = 9,
+                        stShooterSafetyLatch             = 10,
+                        stShooterSafetyRetract           = 11,
+                        stShooterFireReady               = 12,
+                        stShooterFireWait                = 13;
     
-    private final int stAutoStart = 0;
-    private final int stAutoArmRetracting = 1;
-    private final int stAutoMoveToPosition = 2;
-    private final int stAutoMoveToPositionWait = 3;
-    private final int stAutoFire = 4;
-    private final int stAutoFireWait = 5;
-    private final int stAutoMove = 6;
-    private final int stAutoMoveWait = 7;
-    private final int stAutoDone = 8;
+    private final int   stAutoStart = 0,
+                        stAutoArmRetracting = 1,
+                        stAutoMoveToPosition = 2,
+                        stAutoMoveToPositionWait = 3,
+                        stAutoFire = 4,
+                        stAutoFireWait = 5,
+                        stAutoMove = 6,
+                        stAutoMoveWait = 7,
+                        stAutoDone = 8;
     
     // Shooter
     private DigitalInput sArmL; // Sensors for the shooter state machine
@@ -107,8 +107,16 @@ public class RobotTemplate extends IterativeRobot {
     private double sonicSignal;
     
     // Constants
-    private final double timingDelay = 0.5;
     boolean motorInverted = true;
+    
+    // Delay Constants
+    private final double    shooterWaitPin = 2.0,
+                            shooterWaitFire = 2.0,
+                            autoWaitPosition = 2.0,
+                            autoWaitFire = 2.0,
+                            autoWaitMove = 2.0;
+    
+    // Speed Constants
     private final double speedStop = 0.0;
     private final double speedGrabberOn = 1.0;
     private final double speedMotorOn = 1.0;
@@ -176,9 +184,6 @@ public class RobotTemplate extends IterativeRobot {
      * This function manages the state machine for the shooter arm.
      */
     private void shooterStateTick(boolean autonomous) {      
-        final double waitPin = 2;
-        final double waitFire = 2;
-        
         switch(currentShooterState) {
             case stShooterStart: {
                 if(autonomous) {
@@ -211,7 +216,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stShooterRetractFiringPinWait: {
-                if(Timer.getFPGATimestamp() - shooterTime >= waitPin) {
+                if(Timer.getFPGATimestamp() - shooterTime >= shooterWaitPin) {
                     log.info("Firing pin retracted.");
                     newShooterState = stShooterSetFiringArm;
                 }
@@ -243,7 +248,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stShooterSetFiringPinWait: {
-                if(Timer.getFPGATimestamp() - shooterTime >= waitPin) {
+                if(Timer.getFPGATimestamp() - shooterTime >= shooterWaitPin) {
                     log.info("Firing pin set.");
                     newShooterState = stShooterRetractFiringMech;
                 }
@@ -272,7 +277,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stShooterSafetyLatch: {
-                if(Timer.getFPGATimestamp() - safetyTime >= waitPin) {
+                if(Timer.getFPGATimestamp() - safetyTime >= shooterWaitPin) {
                     tLoadingPinIn.set(false);
                     tLoadingPinOut.set(true);
                     newShooterState = stShooterSafetyRetract;
@@ -305,7 +310,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stShooterFireWait: {
-                if(Timer.getFPGATimestamp() - shooterTime >= waitFire ) {
+                if(Timer.getFPGATimestamp() - shooterTime >= shooterWaitFire ) {
                     log.info("Reloading shooter.");
                     newShooterState = stShooterStart;
                 }
@@ -375,10 +380,6 @@ public class RobotTemplate extends IterativeRobot {
      * This function controls the robot in autonomous mode.
      */
     private void autonomousTick() {        
-        final int autoPositionWait = 2;
-        final int autoShooterWait = 2;
-        final int autoMoveWait = 2;
-        
         chassis.setSafetyEnabled(false);
         compressorTick();
         switch (currentAutoState) {
@@ -401,11 +402,11 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stAutoMoveToPositionWait: {
-                if (Timer.getFPGATimestamp() - autoTime >= autoPositionWait ) {
+                if (Timer.getFPGATimestamp() - autoTime >= autoWaitPosition ) {
                     chassis.drive(speedStop, 0);
                 }
                 shooterStateTick(true);
-                if (Timer.getFPGATimestamp() - autoTime >= autoPositionWait 
+                if (Timer.getFPGATimestamp() - autoTime >= autoWaitPosition 
                  && currentShooterState == stShooterFireReady) {
                     //TODO Fix this magic number
                     newAutoState = stAutoFire;
@@ -420,7 +421,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stAutoFireWait: {
-                if(Timer.getFPGATimestamp() - autoTime >= autoShooterWait ) {
+                if(Timer.getFPGATimestamp() - autoTime >= autoWaitFire ) {
                     newAutoState = stAutoMove;
                 }
                 break;
@@ -433,7 +434,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stAutoMoveWait: {
-                if(Timer.getFPGATimestamp() - autoTime >= autoMoveWait) {
+                if(Timer.getFPGATimestamp() - autoTime >= autoWaitMove) {
                     chassis.drive(speedStop, 0);
                     newAutoState = stAutoDone;
                 }
