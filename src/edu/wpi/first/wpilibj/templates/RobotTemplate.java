@@ -39,6 +39,7 @@ public class RobotTemplate extends IterativeRobot {
     private RobotDrive chassis;
     private Victor grabberMotor;
     private final double sensitivity = 0.5;
+    private boolean motorInverted = true;
 
     // Solenoid Objects
     private Solenoid tFiringArmOut; // These four are firing mechanisms
@@ -106,9 +107,6 @@ public class RobotTemplate extends IterativeRobot {
     // Ultrasonic
     private AnalogChannel sSonic;
     private double sonicSignal;
-
-    // Constants
-    boolean motorInverted = true;
 
     // Delay Constants
     private final double shooterWaitPin = 2.0,
@@ -376,7 +374,11 @@ public class RobotTemplate extends IterativeRobot {
      * This function manages the control facing switch
      */
     private void driveControlTick() {
-        // TODO reversed controls
+        if(rightStick.getRawButton(ControlMapping.driveFacing)) {
+            motorInverted =! motorInverted;
+            chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, motorInverted);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, motorInverted);
+        }
     }
 
     /**
@@ -458,6 +460,7 @@ public class RobotTemplate extends IterativeRobot {
         chassis = new RobotDrive(1, 2, 3, 4); // Initialize all four drive motors
         grabberMotor = new Victor(5); // Initialize the grabber motor
         chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, motorInverted);
+        chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, motorInverted);
         chassis.setMaxOutput(sensitivity);
     }
 

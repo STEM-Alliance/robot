@@ -29,5 +29,7 @@ public class ControlMapping {
 
     public static final int camUp = 5;
     public static final int camDown = 4;
+    
+    public static final int driveFacing = 7;
 
 }
