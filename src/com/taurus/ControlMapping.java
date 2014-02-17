@@ -15,8 +15,8 @@ public class ControlMapping {
     public static final int grabberArmDown = 2;
     public static final int grabberArmUp = 3;
 
-    public static final int grabberMotorForward = 2;
-    public static final int grabberMotorReverse = 3;
+    public static final int grabberMotorForward = 3;
+    public static final int grabberMotorReverse = 2;
 
     public static final int latchLeft = 8;
     public static final int latchRight = 8;
