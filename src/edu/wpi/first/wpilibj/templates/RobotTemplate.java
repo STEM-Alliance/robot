@@ -190,13 +190,13 @@ public class RobotTemplate extends IterativeRobot {
                 if (autonomous) {
                     log.info("Shooter in autonomous starting state.");
                     if (sLatch.get()) {
-                        if (sArmL.get() && sArmR.get()) {
+                        if (sArmL.get() || sArmR.get()) {
                             newShooterState = stShooterSetFiringPin;
                         } else {
                             newShooterState = stShooterSetFiringArm;
                         }
                     } else {
-                        if (sArmL.get() && sArmR.get()) {
+                        if (sArmL.get() || sArmR.get()) {
                             newShooterState = stShooterRetractFiringMech;
                         } else {
                             newShooterState = stShooterRetractFiringPin;
@@ -377,7 +377,7 @@ public class RobotTemplate extends IterativeRobot {
         if(rightStick.getRawButton(ControlMapping.driveFacing)) {
             motorInverted =! motorInverted;
             chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, motorInverted);
-            chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, motorInverted);
+            chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, !motorInverted);
         }
     }
 
