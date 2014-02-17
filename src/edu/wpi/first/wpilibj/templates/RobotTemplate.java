@@ -234,7 +234,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stShooterSetFiringArmWait: {
-                if (sArmR.get() && sArmL.get()) {
+                if (sArmR.get() || sArmL.get()) {
                     newShooterState = stShooterSetFiringPin;
                 }
                 if (leftStick.getRawButton(ControlMapping.latchLeft) && rightStick.getRawButton(ControlMapping.latchRight)) {
