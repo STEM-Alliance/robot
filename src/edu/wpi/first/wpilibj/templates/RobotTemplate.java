@@ -38,8 +38,8 @@ public class RobotTemplate extends IterativeRobot {
     // Motor Objects
     private RobotDrive chassis;
     private Victor grabberMotor;
-    private boolean driveFacing;
-    
+    private final double sensitivity = 0.5;
+
     // Solenoid Objects
     private Solenoid tFiringArmOut; // These four are firing mechanisms
     private Solenoid tFiringArmIn;
@@ -125,6 +125,9 @@ public class RobotTemplate extends IterativeRobot {
     // Logger
     private Logger log;
 
+    //-----------------
+    // Public Functions
+    //-----------------
     /**
      * This method is the first to run once the code starts up.
      */
@@ -147,13 +150,12 @@ public class RobotTemplate extends IterativeRobot {
         log.info("Entering teleoperated mode. Activating controls.");
         chassis.setSafetyEnabled(true);
         chassis.tankDrive(leftStick, rightStick);
-        
     }
 
     /**
      * This function is ran in a loop during operator control.
      */
-    public void teleopPeriodic() 
+    public void teleopPeriodic() {
         chassis.tankDrive(leftStick, rightStick);
         compressorTick();
         shooterStateTick(false);
@@ -161,6 +163,7 @@ public class RobotTemplate extends IterativeRobot {
         driveControlTick();
         servoTick();
         ultrasoundTick();
+
     }
 
     /**
@@ -169,7 +172,7 @@ public class RobotTemplate extends IterativeRobot {
     public void autonomousPeriodic() {
         autonomousTick();
     }
-   
+
     /**
      * This function is called periodically during test mode.
      */
@@ -180,7 +183,6 @@ public class RobotTemplate extends IterativeRobot {
     //------------------
     // Private Functions
     //------------------
-
     /**
      * This function manages the state machine for the shooter arm.
      */
@@ -275,6 +277,14 @@ public class RobotTemplate extends IterativeRobot {
                 tFiringArmOut.set(true);
                 safetyTime = Timer.getFPGATimestamp();
                 newShooterState = stShooterSafetyLatch;
+                break;
+            }
+            case stShooterSafetyLatch: {
+                if (Timer.getFPGATimestamp() - safetyTime >= shooterWaitPin) {
+                    tLoadingPinIn.set(false);
+                    tLoadingPinOut.set(true);
+                    newShooterState = stShooterSafetyRetract;
+                }
                 break;
             }
             case stShooterSafetyRetract: {
@@ -526,4 +536,3 @@ public class RobotTemplate extends IterativeRobot {
         log.dbg("Ultrasonic reading: " + String.valueOf(sonicSignal));
     }
 }
-
