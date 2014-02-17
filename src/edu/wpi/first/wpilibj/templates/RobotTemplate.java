@@ -375,9 +375,8 @@ public class RobotTemplate extends IterativeRobot {
      */
     private void driveControlTick() {
         if(rightStick.getRawButton(ControlMapping.driveFacing)) {
-            motorInverted =! motorInverted;
-            chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, motorInverted);
-            chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, !motorInverted);
+            motorInverted = !motorInverted;
+            setInvertedMotors(motorInverted);
         }
     }
 
@@ -457,10 +456,9 @@ public class RobotTemplate extends IterativeRobot {
      */
     private void initMotors() {
         log.info("Initializing motors...");
-        chassis = new RobotDrive(1, 2, 3, 4); // Initialize all four drive motors
+        chassis = new RobotDrive(1, 3); // Initialize all four drive motors
         grabberMotor = new Victor(5); // Initialize the grabber motor
-        chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, motorInverted);
-        chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, motorInverted);
+        setInvertedMotors(motorInverted);
         chassis.setMaxOutput(sensitivity);
     }
 
@@ -537,5 +535,15 @@ public class RobotTemplate extends IterativeRobot {
         sonicSignal = sSonic.getAverageVoltage();
         sonicSignal = (sonicSignal * 100) / 9.8;
         log.dbg("Ultrasonic reading: " + String.valueOf(sonicSignal));
+    }
+    
+    /**
+     * This function sets all the motor inversions en masse
+     */
+    private void setInvertedMotors(boolean inverted) {
+        chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, inverted);
+        chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, inverted);
+        chassis.setInvertedMotor(RobotDrive.MotorType.kFrontLeft, !inverted);
+        chassis.setInvertedMotor(RobotDrive.MotorType.kFrontRight, !inverted);
     }
 }
