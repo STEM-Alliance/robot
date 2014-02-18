@@ -264,7 +264,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stShooterRetractFiringMechWait: {
-                if (sPistonL.get() && sPistonR.get()) {
+                if (!sPistonL.get() && !sPistonR.get()) {
                     log.info("Firing mechanism set.");
                     newShooterState = stShooterFireReady;
                 }
@@ -456,7 +456,7 @@ public class RobotTemplate extends IterativeRobot {
      */
     private void initMotors() {
         log.info("Initializing motors...");
-        chassis = new RobotDrive(1, 3); // Initialize all four drive motors
+        chassis = new RobotDrive(1,2,3,4); // Initialize all four drive motors
         grabberMotor = new Victor(5); // Initialize the grabber motor
         setInvertedMotors(motorInverted);
         chassis.setMaxOutput(sensitivity);
@@ -498,6 +498,8 @@ public class RobotTemplate extends IterativeRobot {
         leftStick = new Joystick(Joysticks.left);
         rightStick = new Joystick(Joysticks.right);
         chassis.tankDrive(leftStick, rightStick);
+        chassis.setInvertedMotor(RobotDrive.MotorType.kRearLeft, false);
+        chassis.setInvertedMotor(RobotDrive.MotorType.kRearRight, false);
     }
 
     /**
@@ -521,9 +523,9 @@ public class RobotTemplate extends IterativeRobot {
      */
     private void servoTick() {
         if (leftStick.getRawButton(ControlMapping.camUp)) {
-            servoVertical = servoVertical + .1;
+            servoVertical = servoVertical + .005;
         } else if (leftStick.getRawButton(ControlMapping.camDown)) {
-            servoVertical = servoVertical - .1;
+            servoVertical = servoVertical - .005;
         }
         servoCamera.set(servoVertical);
     }
@@ -533,7 +535,7 @@ public class RobotTemplate extends IterativeRobot {
      */
     private void ultrasoundTick() {
         sonicSignal = sSonic.getAverageVoltage();
-        sonicSignal = (sonicSignal * 100) / 9.8;
+        sonicSignal = (sonicSignal * 100) / 11.47;
         log.dbg("Ultrasonic reading: " + String.valueOf(sonicSignal));
     }
     
