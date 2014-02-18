@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.AnalogChannel;
+import edu.wpi.first.wpilibj.DriverStationLCD;
 
 /**
  * This is a cleaner robot class. It's probably not the best idea to put our
@@ -28,7 +29,7 @@ import edu.wpi.first.wpilibj.AnalogChannel;
  * Use what you want, I only rewrote this because I wanted to program some java.
  * Not expecting this to be extra useful.
  *
- * @author Tanner Danzey < arkaniad AT gmail DOT com>
+ * @author Gordan Freeman is watcthing you  < arkaniad AT gmail DOT com>
  */
 public class RobotTemplate extends IterativeRobot {
     //---------
@@ -123,6 +124,7 @@ public class RobotTemplate extends IterativeRobot {
     // Logger
     private Logger log;
 
+    private static DriverStationLCD DSOutput;
     //-----------------
     // Public Functions
     //-----------------
@@ -533,10 +535,32 @@ public class RobotTemplate extends IterativeRobot {
     /**
      * This control manages the ultrasound measurement.
      */
+    private int counter = 0;
+    private double runningAverage[];
+    private double AveragedSignal;
+    
     private void ultrasoundTick() {
         sonicSignal = sSonic.getAverageVoltage();
-        sonicSignal = (sonicSignal * 100) / 11.47;
-        log.dbg("Ultrasonic reading: " + String.valueOf(sonicSignal));
+        sonicSignal = (sonicSignal * 1000) / 11.47;
+        log.dbg("Ultrasonic reading: " + String.valueOf(Math.floor(sonicSignal/12)) + "ft. " 
+                + String.valueOf(Math.floor(sonicSignal%12)) + "in.");
+        //runningAverage[counter] = sonicSignal;
+        
+        if(counter == 15)
+        {
+            //AveragedSignal = 0;
+            for(int i=0; i < 15; i++)
+            {
+                //AveragedSignal = AveragedSignal + runningAverage[i];
+            }
+            AveragedSignal = sonicSignal;//AveragedSignal/15;
+            counter = 0;
+            DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser1, 1, 
+                    "Dist: " + String.valueOf(Math.floor(AveragedSignal/12)) + "ft. " 
+                    + String.valueOf(Math.floor(AveragedSignal%12)) + "in.");
+            DriverStationLCD.getInstance().updateLCD();
+        }
+        counter = counter + 1;
     }
     
     /**
