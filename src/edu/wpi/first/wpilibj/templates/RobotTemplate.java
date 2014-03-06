@@ -162,7 +162,7 @@ public class RobotTemplate extends IterativeRobot {
         displayControl();
 
     }
-    
+
     public void autonomousInit() {
         currentAutoState = stAutoStart;
     }
@@ -368,7 +368,7 @@ public class RobotTemplate extends IterativeRobot {
      * This function controls the robot in autonomous mode.
      */
     private void autonomousTick() {
-       
+
         chassis.setSafetyEnabled(false);
         compressorControl();
         switch (currentAutoState) {
@@ -383,19 +383,18 @@ public class RobotTemplate extends IterativeRobot {
                 newAutoState = stAutoArmRetractingWait;
                 break;
             }
-            case stAutoArmRetractingWait:{
+            case stAutoArmRetractingWait: {
                 log.info("Retracting Arm Wait");
                 grabberControl(true);
-                if(Timer.getFPGATimestamp() - autoTime >= autoWaitGrabber)
-                {
+                if (Timer.getFPGATimestamp() - autoTime >= autoWaitGrabber) {
                     newAutoState = stAutoMoveToPosition;
-                    
+
                 }
                 break;
             }
             case stAutoMoveToPosition: {
                 log.info("Moving into firing position.");
-                chassis.drive(speedMotorOn/2, 0);
+                chassis.drive(speedMotorOn / 2, 0);
                 autoTime = Timer.getFPGATimestamp();
                 newAutoState = stAutoMoveToPositionWait;
                 shooterStateMachine(true);
@@ -427,7 +426,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stAutoMove: {
-                chassis.drive(speedMotorOn/2, 0);
+                chassis.drive(speedMotorOn / 2, 0);
                 autoTime = Timer.getFPGATimestamp();
                 newAutoState = stAutoMoveWait;
                 break;
