@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.DriverStationLCD;
  * Use what you want, I only rewrote this because I wanted to program some java.
  * Not expecting this to be extra useful.
  *
- * @author the Most Interesting Men in The World (Andrew Vetter and Aaron) 
+ * @author the Most Interesting Men in The World (Andrew Vetter and Aaron)
  */
 public class RobotTemplate extends IterativeRobot {
     //---------
@@ -39,8 +39,7 @@ public class RobotTemplate extends IterativeRobot {
     // Motor Objects
     private RobotDrive chassis;
     private Victor grabberMotor;
-    private final double sensitivity = .75;
-   
+    private final double sensitivity = .60;
 
     // Solenoid Objects
     private Solenoid firingArmOut; // These four are firing mechanisms
@@ -73,13 +72,14 @@ public class RobotTemplate extends IterativeRobot {
 
     private final int stAutoStart = 0,
             stAutoArmRetracting = 1,
-            stAutoMoveToPosition = 2,
-            stAutoMoveToPositionWait = 3,
-            stAutoFire = 4,
-            stAutoFireWait = 5,
-            stAutoMove = 6,
-            stAutoMoveWait = 7,
-            stAutoDone = 8;
+            stAutoArmRetractingWait = 2,
+            stAutoMoveToPosition = 3,
+            stAutoMoveToPositionWait = 4,
+            stAutoFire = 5,
+            stAutoFireWait = 6,
+            stAutoMove = 7,
+            stAutoMoveWait = 8,
+            stAutoDone = 9;
 
     // Shooter
     private DigitalInput armSensorL; // Sensors for the shooter state machine
@@ -110,7 +110,8 @@ public class RobotTemplate extends IterativeRobot {
             shooterWaitFire = 2.0,
             autoWaitPosition = 2.0,
             autoWaitFire = 2.0,
-            autoWaitMove = 2.0;
+            autoWaitMove = 2.0,
+            autoWaitGrabber = 2;
 
     // Speed Constants
     private final double speedStop = 0.0;
@@ -161,6 +162,10 @@ public class RobotTemplate extends IterativeRobot {
         displayControl();
 
     }
+    
+    public void autonomousInit() {
+        currentAutoState = stAutoStart;
+    }
 
     /**
      * This function is called periodically during autonomous mode.
@@ -185,18 +190,17 @@ public class RobotTemplate extends IterativeRobot {
     private void shooterStateMachine(boolean autonomous) {
         switch (currentShooterState) {
             case stShooterStart: {
-                if (!armSensorR.get() && !armSensorL.get())
-                {
-                     newShooterState = stShooterSetFiringArm;
+                if (!armSensorR.get() && !armSensorL.get()) {
+                    newShooterState = stShooterSetFiringArm;
                 }
                 if (autonomous) {
-                     {
-                        if (!armSensorL.get()|| !armSensorR.get()) {
-                            newShooterState = stShooterRetractFiringMech;
-                        } else {
-                            newShooterState = stShooterRetractFiringPin;
-                        }
+
+                    if (!armSensorL.get() || !armSensorR.get()) {
+                        newShooterState = stShooterRetractFiringMech;
+                    } else {
+                        newShooterState = stShooterRetractFiringPin;
                     }
+
                 } else {
                     log.info("Shooter in starting state.");
                     newShooterState = stShooterRetractFiringPin;
@@ -227,7 +231,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stShooterSetFiringArmWait: {
-                if ((armSensorL.get() == false) || (armSensorR.get() == false)){
+                if ((armSensorL.get() == false) || (armSensorR.get() == false)) {
                     newShooterState = stShooterSetFiringPin;
                 }
                 if (leftStick.getRawButton(ControlMapping.latchLeft) && rightStick.getRawButton(ControlMapping.latchRight)) {
@@ -246,9 +250,9 @@ public class RobotTemplate extends IterativeRobot {
             case stShooterSetFiringPinWait: {
                 if (Timer.getFPGATimestamp() - shooterTime >= shooterWaitPin) {
                     log.info("Firing pin set.");
-                    
+
                     newShooterState = stShooterRetractFiringMech;
-                    
+
                 }
                 break;
             }
@@ -360,11 +364,11 @@ public class RobotTemplate extends IterativeRobot {
         }
     }
 
-
     /**
      * This function controls the robot in autonomous mode.
      */
     private void autonomousTick() {
+       
         chassis.setSafetyEnabled(false);
         compressorControl();
         switch (currentAutoState) {
@@ -375,12 +379,23 @@ public class RobotTemplate extends IterativeRobot {
             case stAutoArmRetracting: {
                 log.info("Retracting arm");
                 grabberControl(true);
-                newAutoState = stAutoMoveToPosition;
+                autoTime = Timer.getFPGATimestamp();
+                newAutoState = stAutoArmRetractingWait;
+                break;
+            }
+            case stAutoArmRetractingWait:{
+                log.info("Retracting Arm Wait");
+                grabberControl(true);
+                if(Timer.getFPGATimestamp() - autoTime >= autoWaitGrabber)
+                {
+                    newAutoState = stAutoMoveToPosition;
+                    
+                }
                 break;
             }
             case stAutoMoveToPosition: {
                 log.info("Moving into firing position.");
-                chassis.drive(speedMotorOn, 0);
+                chassis.drive(speedMotorOn/2, 0);
                 autoTime = Timer.getFPGATimestamp();
                 newAutoState = stAutoMoveToPositionWait;
                 shooterStateMachine(true);
@@ -412,7 +427,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stAutoMove: {
-                chassis.drive(speedMotorOn, 0);
+                chassis.drive(speedMotorOn/2, 0);
                 autoTime = Timer.getFPGATimestamp();
                 newAutoState = stAutoMoveWait;
                 break;
@@ -435,7 +450,7 @@ public class RobotTemplate extends IterativeRobot {
      * Initialize the motor subsystem.
      */
     private void initMotors() {
-        chassis = new RobotDrive(1,2,3,4); // Initialize all four drive motors
+        chassis = new RobotDrive(1, 2, 3, 4); // Initialize all four drive motors
         grabberMotor = new Victor(5); // Initialize the grabber motor
         chassis.setMaxOutput(sensitivity);
     }
@@ -496,42 +511,37 @@ public class RobotTemplate extends IterativeRobot {
         } else if (leftStick.getRawButton(ControlMapping.camDown)) {
             servoVertical = servoVertical - .005;
         }
-        if (servoVertical >1 ){
-            servoVertical = 1; 
+        if (servoVertical > 1) {
+            servoVertical = 1;
         }
-        if (servoVertical <0){
-            servoVertical = 0; 
+        if (servoVertical < 0) {
+            servoVertical = 0;
         }
         servoCamera.set(servoVertical);
-       
+
     }
 
-    
-    private void displayControl()
-    {
-         DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser1, 1, 
-                    "Dist: " + String.valueOf(Math.floor(sonicSignal/12)) + "ft. " 
-                    + String.valueOf(Math.floor(sonicSignal%12)) + "in.");
-          
+    private void displayControl() {
+        DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser1, 1,
+                "Dist: " + String.valueOf(Math.floor(sonicSignal / 12)) + "ft. "
+                + String.valueOf(Math.floor(sonicSignal % 12)) + "in.");
+
         DriverStationLCD.getInstance().updateLCD();
-        if ((armSensorL.get() == false) || (armSensorR.get() == false))
-        {
-         DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser2, 1, 
+        if ((armSensorL.get() == false) || (armSensorR.get() == false)) {
+            DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser2, 1,
                     "LATCH SET      ");
-        }
-        else 
-        {
-        DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser2, 1, 
+        } else {
+            DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser2, 1,
                     "LATCH NOT SET");
         }
     }
+
     private void ultrasoundControl() {
         sonicSignal = ultraSonic.getAverageVoltage();
         sonicSignal = (sonicSignal * 1000) / 11.47;
-        log.dbg("Ultrasonic reading: " + String.valueOf(Math.floor(sonicSignal/12)) + "ft. " 
-                + String.valueOf(Math.floor(sonicSignal%12)) + "in.");
-       
+        log.dbg("Ultrasonic reading: " + String.valueOf(Math.floor(sonicSignal / 12)) + "ft. "
+                + String.valueOf(Math.floor(sonicSignal % 12)) + "in.");
+
     }
-    
 
 }
