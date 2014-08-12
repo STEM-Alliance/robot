@@ -14,6 +14,8 @@ public class ControlMapping {
 
     public static final int grabberArmDown = 2;
     public static final int grabberArmUp = 3;
+    public static final int I2CGet = 10;
+    public static final int I2CSet = 11;
 
     public static final int grabberMotorForward = 3;
     public static final int grabberMotorReverse = 2;

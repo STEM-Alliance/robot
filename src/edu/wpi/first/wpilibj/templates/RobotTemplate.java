@@ -9,6 +9,7 @@ import com.taurus.Logger;
 import com.taurus.SensorPins;
 import com.taurus.ServoPins;
 import com.taurus.SolenoidPins;
+import com.taurus.SwerveChassis;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -22,6 +23,9 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.DriverStationLCD;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.DigitalModule;
+
 
 /**
  * This is a cleaner robot class. It's probably not the best idea to put our
@@ -37,10 +41,14 @@ public class RobotTemplate extends IterativeRobot {
     //---------
 
     // Motor Objects
+    private SwerveChassis drive;
     private RobotDrive chassis;
     private Victor grabberMotor;
-    private final double sensitivity = .60;
-
+    private final double sensitivity = 1;
+    private I2C Slave;
+    private final int SlaveAddress = 2;
+    
+    
     // Solenoid Objects
     private Solenoid firingArmOut; // These four are firing mechanisms
     private Solenoid firingArmIn;
@@ -108,7 +116,7 @@ public class RobotTemplate extends IterativeRobot {
     // Delay Constants
     private final double shooterWaitPin = 2.0,
             shooterWaitFire = 2.0,
-            autoWaitPosition = 2.0,
+            autoWaitPosition = 2.8,
             autoWaitFire = 2.0,
             autoWaitMove = 2.0,
             autoWaitGrabber = 2;
@@ -138,6 +146,11 @@ public class RobotTemplate extends IterativeRobot {
         initUltrasonic();
         initCamera();
         log.info("Initialization complete.");
+        
+        drive  = new SwerveChassis();
+ 
+        
+                
     }
 
     /**
@@ -148,19 +161,91 @@ public class RobotTemplate extends IterativeRobot {
         chassis.setSafetyEnabled(true);
         chassis.tankDrive(leftStick, rightStick);
     }
-
-    /**
+// private final int  I2CButton = 0,
+//                    I2CSet = 1, 
+//                    I2CGet = 2,
+//                    I2CWait = 3; 
+// private int I2CState = 0; 
+// byte[] send = new byte[5];
+// byte[] send2 = new byte[5];
+// int motorspeed;
+// int motorpostion;
+ 
+        private int wait = 0;
+ /**
+     * 
      * This function is ran in a loop during operator control.
      */
     public void teleopPeriodic() {
         chassis.tankDrive(leftStick, rightStick);
-        compressorControl();
-        shooterStateMachine(false);
-        grabberControl(false);
-        servoControl();
-        ultrasoundControl();
+        //compressorControl();
+        //shooterStateMachine(false);
+        //grabberControl(false);
+        //servoControl();
+        //ultrasoundControl();
         displayControl();
 
+        drive.Update(leftStick.getX(), leftStick.getY(), rightStick.getX());
+        
+        
+//        
+//        switch(I2CState){
+//                
+//            case I2CButton: {
+//                if(leftStick.getRawButton(ControlMapping.I2CGet)) {
+//                    // next state
+//                    I2CState = I2CGet; 
+//                    log.info("Get");
+//                }
+//                else if(leftStick.getRawButton(ControlMapping.I2CSet)) {
+//                    // next state
+//                    I2CState = I2CSet;
+//                    log.info("set");
+//                }
+//                break;
+//            }
+//            case  I2CGet: {
+//                if(Slave.transaction(send2, 0,send, 5) == false)
+//                {
+//                  motorspeed = send[1] << 8 | send[2]; 
+//                  motorpostion = send[3] << 8 | send[4];
+//                    
+//                    try
+//                    {
+//                        String a = new String();
+//                        a = String.valueOf(send[0]) + " " + String.valueOf(motorspeed ) + " " + String.valueOf(motorpostion);
+//                        log.info(a);
+//                    }
+//                    catch(Exception e)
+//                    {
+//                        log.info("wtf");
+//                    }
+//                }
+//                else
+//                {
+//                    log.info("failed");
+//                }
+//                wait = 0;
+//                I2CState = I2CWait;
+//                break;       
+//            }      
+//            case I2CSet: {
+//                Slave.write(0, 1);
+//                wait = 0;
+//                I2CState = I2CWait;
+//            }
+//            case I2CWait: // wait
+//            {
+//                wait++;
+//                if(wait > 100)
+//                {
+//                    log.info("Wait Done");
+//                    I2CState = I2CButton;
+//                }
+//                break;
+//            }
+//        
+//        }
     }
 
     public void autonomousInit() {
@@ -172,6 +257,7 @@ public class RobotTemplate extends IterativeRobot {
      */
     public void autonomousPeriodic() {
         autonomousTick();
+        compressorControl();
     }
 
     /**
@@ -306,7 +392,8 @@ public class RobotTemplate extends IterativeRobot {
                     shooterTime = Timer.getFPGATimestamp();
                     newShooterState = stShooterFireWait;
                 }
-                if (leftStick.getRawButton(ControlMapping.releaseLeft) && rightStick.getRawButton(ControlMapping.releaseRight)) {
+                if (leftStick.getRawButton(ControlMapping.releaseLeft) ||
+                        rightStick.getRawButton(ControlMapping.releaseRight)) {
                     newShooterState = stShooterSafety;
                 }
                 break;
@@ -343,9 +430,9 @@ public class RobotTemplate extends IterativeRobot {
 
         if (leftStick.getRawButton(ControlMapping.grabberMotorForward) && leftStick.getRawButton(ControlMapping.grabberMotorReverse)) {
             grabberMotor.set(0.0);
-        } else if (leftStick.getRawButton(ControlMapping.grabberMotorForward)) {
+        } else if (leftStick.getRawButton(ControlMapping.grabberMotorForward) ) {
             grabberMotor.set(speedGrabberOn);
-        } else if (leftStick.getRawButton(ControlMapping.grabberMotorReverse)) {
+        } else if (leftStick.getRawButton(ControlMapping.grabberMotorReverse) || autonomous ) {
             grabberMotor.set(-speedGrabberOn);
         } else {
             grabberMotor.set(speedStop);
@@ -394,7 +481,7 @@ public class RobotTemplate extends IterativeRobot {
             }
             case stAutoMoveToPosition: {
                 log.info("Moving into firing position.");
-                chassis.drive(speedMotorOn / 2, 0);
+                chassis.drive(speedMotorOn / 4, 0);
                 autoTime = Timer.getFPGATimestamp();
                 newAutoState = stAutoMoveToPositionWait;
                 shooterStateMachine(true);
@@ -407,7 +494,6 @@ public class RobotTemplate extends IterativeRobot {
                 shooterStateMachine(true);
                 if (Timer.getFPGATimestamp() - autoTime >= autoWaitPosition
                         && currentShooterState == stShooterFireReady) {
-                    //TODO Fix this magic number
                     newAutoState = stAutoFire;
                 }
                 break;
@@ -426,7 +512,7 @@ public class RobotTemplate extends IterativeRobot {
                 break;
             }
             case stAutoMove: {
-                chassis.drive(speedMotorOn / 2, 0);
+                chassis.drive(0 , speedMotorOn);
                 autoTime = Timer.getFPGATimestamp();
                 newAutoState = stAutoMoveWait;
                 break;
