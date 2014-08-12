@@ -3,6 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/Taurus%20Robotics/Documents/NetBeansProjects/Taurus/src/com/taurus/SwerveGyro.java</file>
+            <file>file:/C:/Users/Taurus%20Robotics/Documents/NetBeansProjects/Taurus/src/com/taurus/SwerveArduino.java</file>
+            <file>file:/C:/Users/Taurus%20Robotics/Documents/NetBeansProjects/Taurus/src/com/taurus/SwerveChassis.java</file>
+            <file>file:/C:/Users/Taurus%20Robotics/Documents/NetBeansProjects/Taurus/src/com/taurus/SwervePoint.java</file>
+            <file>file:/C:/Users/Taurus%20Robotics/Documents/NetBeansProjects/Taurus/src/com/taurus/SwerveWheel.java</file>
             <file>file:/C:/Users/Taurus%20Robotics/Documents/NetBeansProjects/Taurus/src/edu/wpi/first/wpilibj/templates/RobotTemplate.java</file>
         </group>
     </open-files>
