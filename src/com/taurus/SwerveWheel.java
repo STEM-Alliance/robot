@@ -6,6 +6,10 @@
 
 package com.taurus;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+
 /**
  *
  * @author Taurus Robotics
@@ -18,7 +22,19 @@ public class SwerveWheel
     private Victor MotorDrive;
     private Victor MotorAngle;
     private SwerveArduino Arduino;
- 
+    
+    public double AngleP = 1;
+    public double AngleI = 0;
+    public double AngleD = 0;
+    public double DriveP = 1;
+    public double DriveI = 0;
+    public double DriveD = 0;
+    
+    private SwervePIDSource AngleSource;
+    private PIDController AnglePID;
+    
+    private SwervePIDSource DriveSource;
+    private PIDController DrivePID;
     // constructor
     // x and y are location relative to robot center
     // Address is slave address of arduino
@@ -29,6 +45,21 @@ public class SwerveWheel
         MotorDrive = new Victor(Drive);
         MotorAngle = new Victor(Angle);
         Arduino = new SwerveArduino(Address);
+        
+        //TODO need to implement this
+        AngleSource = new SwervePIDSource();
+        DriveSource = new SwervePIDSource();
+        
+        AnglePID = new PIDController(AngleP, AngleI, AngleD, AngleSource, MotorAngle);
+        AnglePID.setContinuous();
+        AnglePID.setInputRange(0, 360);
+        //Maybe set outputRange Depending on Victors 
+        AnglePID.enable();
+        
+        DrivePID = new PIDController(DriveP, DriveI, DriveD, DriveSource, MotorDrive);
+        DrivePID.setInputRange(-1, 1);
+        //MAybe set output range depending on stuff
+        DrivePID.enable();
     }
  
     // set the velocity and desired rotation of the wheel using the whole robot's desired values
@@ -62,9 +93,16 @@ public class SwerveWheel
     {
         Arduino.Update();
  
-        //TODO handle motor outputs relative to the new readings
-        // PID control here?
- 
+        // handle motor outputs relative to the new readings
+        // PID control here
+        AngleSource.pidSet(Arduino.Get().Angle());
+        AnglePID.setPID(AngleP, AngleI, AngleD);
+        AnglePID.setSetpoint(WheelVelocity.Angle());
+        
+        DriveSource.pidSet(Arduino.Get().H());
+        DrivePID.setPID(DriveP, DriveI, DriveD);
+        DrivePID.setSetpoint(WheelVelocity.H());
+        
         return Arduino.Get();
     }
 }
