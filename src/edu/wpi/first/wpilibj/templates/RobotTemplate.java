@@ -147,7 +147,7 @@ public class RobotTemplate extends IterativeRobot {
         initCamera();
         log.info("Initialization complete.");
         
-        drive  = new SwerveChassis();
+ //       drive  = new SwerveChassis();
  
         
                 
@@ -178,14 +178,14 @@ public class RobotTemplate extends IterativeRobot {
      */
     public void teleopPeriodic() {
         chassis.tankDrive(leftStick, rightStick);
-        //compressorControl();
-        //shooterStateMachine(false);
-        //grabberControl(false);
-        //servoControl();
-        //ultrasoundControl();
+        compressorControl();
+        shooterStateMachine(false);
+        grabberControl(false);
+        servoControl();
+        ultrasoundControl();
         displayControl();
 
-        drive.Update(leftStick.getX(), leftStick.getY(), rightStick.getX());
+//        drive.Update(leftStick.getX(), leftStick.getY(), rightStick.getX());
         
         
 //        
