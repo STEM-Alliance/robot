@@ -31,10 +31,11 @@ public class SwerveChassis
  
         Wheels = new SwerveWheel[4];
  
-        Wheels[0] = new SwerveWheel(-1,  1, 2, 1, 2); // Left Front
-        Wheels[1] = new SwerveWheel( 1,  1, 3, 3, 4); // Right Front
-        Wheels[2] = new SwerveWheel( 1, -1, 4, 5, 6); // Right Back
-        Wheels[3] = new SwerveWheel(-1, -1, 5, 7, 8); // Left Back
+        // x, y, EncoderA, EncderB, Drive, Angle, Pot
+        Wheels[0] = new SwerveWheel(-1,  1, 1, 2, 1, 2, 1); // Left Front
+        Wheels[1] = new SwerveWheel( 1,  1, 3, 4, 3, 4, 2); // Right Front
+        Wheels[2] = new SwerveWheel( 1, -1, 5, 6, 5, 6, 3); // Right Back
+        Wheels[3] = new SwerveWheel(-1, -1, 6, 7, 7, 8, 4); // Left Back
  
     }
  
