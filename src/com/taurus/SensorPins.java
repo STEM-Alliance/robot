@@ -1,9 +1,9 @@
 package com.taurus;
 
 /**
- * One faux enumeration to bind them, one faux enumeration to rule them all.
+ * 
  *
- * @author Tanner Danzey < arkaniad AT gmail DOT com >
+ * @author Da Vetter  < arkaniad AT gmail DOT com >
  */
 public class SensorPins {
 
