@@ -6,6 +6,8 @@
 
 package com.taurus;
 
+import edu.wpi.first.wpilibj.Gyro;
+
 /**
  *
  * @author Taurus Robotics
@@ -16,7 +18,7 @@ public class SwerveChassis
     private SwervePoint RobotVelocity;     // robot velocity
     private double RobotRotation;    // robot rotational movement, -1 to 1 rad/s
  
-    private SwerveGyro Gyro;
+    private Gyro RobotGyro;
  
     private SwerveWheel[] Wheels;
  
@@ -27,7 +29,7 @@ public class SwerveChassis
         RobotVelocity = new SwervePoint(0, 0);
         RobotRotation = 0;
  
-        Gyro = new SwerveGyro();
+        RobotGyro = new Gyro(5);
  
         Wheels = new SwerveWheel[4];
  
@@ -35,7 +37,7 @@ public class SwerveChassis
         Wheels[0] = new SwerveWheel(-1,  1, 1, 2, 1, 2, 1); // Left Front
         Wheels[1] = new SwerveWheel( 1,  1, 3, 4, 3, 4, 2); // Right Front
         Wheels[2] = new SwerveWheel( 1, -1, 5, 6, 5, 6, 3); // Right Back
-        Wheels[3] = new SwerveWheel(-1, -1, 6, 7, 7, 8, 4); // Left Back
+        Wheels[3] = new SwerveWheel(-1, -1, 7, 8, 7, 8, 4); // Left Back
  
     }
  
@@ -62,8 +64,9 @@ public class SwerveChassis
  
         for(int i = 0; i < 4; i++)
         {
-            Wheels[i].Set(RobotVelocity, RobotRotation);
- 
+            //Wheels[i].Set(RobotVelocity, RobotRotation);
+            Wheels[i].SetDesired(new SwervePoint(RobotVelocity.X() - RobotRotation * Wheels[i].WheelPosition.Y(),
+                                        RobotVelocity.Y() + RobotRotation * Wheels[i].WheelPosition.X()));
             Actuals[i] = Wheels[i].GetActual();
         }
  

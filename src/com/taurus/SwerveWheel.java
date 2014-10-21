@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.PIDController;
  */
 public class SwerveWheel
 {
-    private SwervePoint WheelPosition;     // wheel location from center of robot
+    public SwervePoint WheelPosition;     // wheel location from center of robot
     private SwervePoint WheelDesired;     // wheel speed, x and y vals, hypotenuse val, angle
     private SwervePoint WheelActual;     // wheel speed, x and y vals, hypotenuse val, angle
     private Victor MotorDrive;
@@ -78,6 +78,12 @@ public class SwerveWheel
         WheelDesired = new SwervePoint(RobotVelocity.X() - RobotRotation * WheelPosition.Y(),
                                         RobotVelocity.Y() + RobotRotation * WheelPosition.X());
  
+        UpdateTask();
+    }
+    
+    public void SetDesired(SwervePoint NewDesired){
+        WheelDesired = NewDesired;
+        
         UpdateTask();
     }
  
