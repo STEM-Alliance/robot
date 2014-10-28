@@ -17,7 +17,9 @@ public class SwerveChassis
 {
     private SwervePoint RobotVelocity;     // robot velocity
     private double RobotRotation;    // robot rotational movement, -1 to 1 rad/s
- 
+    
+    double MaxAvailableVelocity = 30;
+    
     private Gyro RobotGyro;
  
     private SwerveWheel[] Wheels;
@@ -58,17 +60,41 @@ public class SwerveChassis
     {
         SwervePoint[] Actuals = new SwervePoint[4];
         RobotVelocity = Velocity;
-        RobotRotation = Rotation;
+        RobotRotation = Rotation; //Limit rotation speed
        
         //TODO get gyro
- 
-        for(int i = 0; i < 4; i++)
+        
+        SwervePoint[] WheelUnscaled = new SwervePoint[4];
+        //Unscaled Wheel Speed Velocites
+        
+        SwervePoint[] WheelScaled = new SwervePoint[4];
+        //Scaled Wheel Speed Velocities
+        double MaxWantedVeloc = 0;
+
+        for(int i = 0; i < 4; i++){
+            //calculate and scale
+            WheelUnscaled[i] = new SwervePoint(RobotVelocity.X() - RobotRotation * Wheels[i].WheelPosition.Y(),
+                            RobotVelocity.Y() + RobotRotation * Wheels[i].WheelPosition.X());
+            if(WheelUnscaled[i].H() >= MaxWantedVeloc){
+                MaxWantedVeloc = WheelUnscaled[i].H();
+                
+            }
+        }
+        double VelocScale = MaxAvailableVelocity / MaxWantedVeloc;
+        for(int i = 0; i < 4; i++){
+            //set values for each wheel
+            WheelScaled[i] = new SwervePoint();
+            WheelScaled[i].SetAngleHyp(VelocScale * WheelUnscaled[i].H(), WheelUnscaled[i].Angle());
+            Wheels[i].SetDesired(WheelScaled[i]);
+        }
+       /* for(int i = 0; i < 4; i++)
         {
             //Wheels[i].Set(RobotVelocity, RobotRotation);
+            //set
             Wheels[i].SetDesired(new SwervePoint(RobotVelocity.X() - RobotRotation * Wheels[i].WheelPosition.Y(),
                                         RobotVelocity.Y() + RobotRotation * Wheels[i].WheelPosition.X()));
             Actuals[i] = Wheels[i].GetActual();
-        }
+        }*/
  
         return Actuals;
     }

@@ -10,6 +10,7 @@ import com.taurus.SensorPins;
 import com.taurus.ServoPins;
 import com.taurus.SolenoidPins;
 import com.taurus.SwerveChassis;
+import com.taurus.SwervePoint;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -184,8 +185,11 @@ public class RobotTemplate extends IterativeRobot {
         //servoControl();
         //ultrasoundControl();
         displayControl();
-
-        drive.Update(leftStick.getX(), leftStick.getY(), rightStick.getX());
+        
+        SwervePoint Mag = new SwervePoint();
+        Mag.SetAngleHyp(leftStick.getMagnitude(), leftStick.getDirectionDegrees());
+        
+        drive.Update(Mag, rightStick.getAxis(Joystick.AxisType.kX));
         
         
 //        
