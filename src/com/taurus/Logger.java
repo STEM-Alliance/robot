@@ -20,7 +20,6 @@ public class Logger {
     private final String warnTag = "[-!-]";
     private final String errTag = "[!!!]";
     private final String infoTag = "[---]";
-    private final String calloutTag = ">>>>>";
 
     /**
      * Instantiate the logger.

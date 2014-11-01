@@ -17,18 +17,18 @@ import edu.wpi.first.wpilibj.PIDController;
  */
 public class SwerveWheel
 {
-    private SwerveVector WheelPosition;     // wheel location from center of robot
-    private SwerveVector WheelDesired;     // wheel speed, x and y vals, hypotenuse val, angle
-    private SwerveVector WheelActual;     // wheel speed, x and y vals, hypotenuse val, angle
-    private Victor MotorDrive;
-    private Victor MotorAngle;
-    
     public double AngleP = 1;
     public double AngleI = 0;
     public double AngleD = 0;
     public double DriveP = 1;
     public double DriveI = 0;
     public double DriveD = 0;
+    
+    private SwerveVector WheelPosition;     // wheel location from center of robot
+    private SwerveVector WheelDesired;      // wheel speed, x and y vals, hypotenuse val, angle
+    private SwerveVector WheelActual;       // wheel speed, x and y vals, hypotenuse val, angle
+    private Victor MotorDrive;
+    private Victor MotorAngle;
     
     private double DriveWheelDiameter = 4.0; 
     private int DriveEncoderPulses = 64;
@@ -84,8 +84,7 @@ public class SwerveWheel
         
         UpdateTask();
 
-        WheelActual.setMagAngle(DrivePID.get(),AnglePID.get());
-        return WheelActual;
+        return getActual();
     }
  
     /** 
@@ -103,7 +102,8 @@ public class SwerveWheel
      */
     public SwerveVector getActual()
     {
-        WheelActual.setMagAngle(DrivePID.get(),AnglePID.get());
+    	//TODO is this right?
+        WheelActual.setMagAngle(DrivePID.get(), AnglePID.get());
         return WheelActual;
     }
     
