@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/networktables-crio.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Taurus/doc/javadoc.zip!/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/squawk.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Taurus/doc/javadoc.zip!/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/wpilibj.jar" sourcepath="lib/wpilibj.src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Taurus/doc/javadoc.zip!/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

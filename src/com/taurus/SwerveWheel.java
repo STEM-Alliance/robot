@@ -13,13 +13,13 @@ import edu.wpi.first.wpilibj.PIDController;
 /**
  *
  * @author Taurus Robotics
- handle motor outputs and feedback for an individual wheel
+ * Handle motor outputs and feedback for an individual wheel
  */
 public class SwerveWheel
 {
-    public SwervePoint WheelPosition;     // wheel location from center of robot
-    private SwervePoint WheelDesired;     // wheel speed, x and y vals, hypotenuse val, angle
-    private SwervePoint WheelActual;     // wheel speed, x and y vals, hypotenuse val, angle
+    private SwerveVector WheelPosition;     // wheel location from center of robot
+    private SwerveVector WheelDesired;     // wheel speed, x and y vals, hypotenuse val, angle
+    private SwerveVector WheelActual;     // wheel speed, x and y vals, hypotenuse val, angle
     private Victor MotorDrive;
     private Victor MotorAngle;
     
@@ -34,25 +34,29 @@ public class SwerveWheel
     private int DriveEncoderPulses = 64;
     private double DriveEncoderRate = Math.PI*DriveWheelDiameter/DriveEncoderPulses;
     
-    //private SwervePIDSource AngleSource;
     private AnalogPotentiometer AnglePot;
     private PIDController AnglePID;
     
-    //private SwervePIDSource DriveSource;
     private Encoder DriveEncoder;
     private PIDController DrivePID;
-    // constructor
-    // x and y are location relative to robot center
-    // Address is slave address of arduino
-    public SwerveWheel(double x, double y, int EncoderA, int EncoderB, int Drive, int Angle, int Pot)
+    
+    /**
+     * 
+     * @param Position Wheel position relative to robot center as array
+     * @param Encoder Speed Encoder input pins as array
+     * @param Pot Angle Potentiometer pin
+     * @param Drive Pin for drive motor controller
+     * @param Angle Pin for angle motor controller
+     */
+    public SwerveWheel(double[] Position, int[] Encoder, int Pot, int Drive, int Angle)
     {
-        WheelPosition = new SwervePoint(x, y);
-        WheelActual = new SwervePoint(0, 0);
-        WheelDesired = new SwervePoint(0, 0);
+        WheelPosition = new SwerveVector(Position);
+        WheelActual = new SwerveVector(0, 0);
+        WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new Victor(Drive);
         MotorAngle = new Victor(Angle);
         
-        DriveEncoder = new Encoder(EncoderA, EncoderB);
+        DriveEncoder = new Encoder(Encoder[0], Encoder[1]);
         AnglePot = new AnalogPotentiometer(Pot);
         
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
@@ -66,52 +70,67 @@ public class SwerveWheel
         
         DrivePID = new PIDController(DriveP, DriveI, DriveD, DriveEncoder, MotorDrive);
         DrivePID.setInputRange(-1, 1);
-        //MAybe set output range depending on stuff
+        //Maybe set output range depending on stuff
         DrivePID.enable();
     }
  
-    // set the velocity and desired rotation of the wheel using the whole robot's desired values
-    // auto calculates what is needed for this specific wheel instance
-    // return: actual reading from wheel
-    public void Set(SwervePoint RobotVelocity, double RobotRotation)
-    {
-        WheelDesired = new SwervePoint(RobotVelocity.X() - RobotRotation * WheelPosition.Y(),
-                                        RobotVelocity.Y() + RobotRotation * WheelPosition.X());
- 
-        UpdateTask();
-    }
-    
-    public void SetDesired(SwervePoint NewDesired){
+    /** 
+     * Set the desired wheel vector, auto updates the PID controllers
+     * @param NewDesired
+     * @return Actual vector reading of wheel
+     */
+    public SwerveVector setDesired(SwerveVector NewDesired){
         WheelDesired = NewDesired;
         
         UpdateTask();
+
+        WheelActual.setMagAngle(DrivePID.get(),AnglePID.get());
+        return WheelActual;
     }
  
-    // get the desired/requested velocity and rotation of this wheel instance
-    public SwervePoint GetDesired()
+    /** 
+     * Get the desired vector (velocity and rotation) of this wheel instance
+     * @return Desired vector
+     */
+    public SwerveVector getDesired()
     {
         return WheelDesired;
     }
  
-    public SwervePoint GetActual()
+    /** 
+     * Get the actual vector reading of the wheel
+     * @return Actual vector reading of wheel
+     */
+    public SwerveVector getActual()
     {
+        WheelActual.setMagAngle(DrivePID.get(),AnglePID.get());
         return WheelActual;
     }
-
     
-    // Manually invoke updating the actual values and the motor outputs
-    // called automatically from Set()
-    // return: actual reading from wheel
-    public void UpdateTask()
+    /** 
+     * Get the wheel's position relative to robot center
+     * @return Wheel position
+     */
+    public SwerveVector getPosition()
+    {
+        return WheelPosition;
+    }
+    
+    
+    /** 
+     * invoke updating the actual values and the motor outputs
+     * called automatically from setDesired()
+     */
+    private void UpdateTask()
     {
 
         // handle motor outputs relative to the new readings
         // PID control here
         AnglePID.setPID(AngleP, AngleI, AngleD);
-        AnglePID.setSetpoint(WheelDesired.Angle());
+        AnglePID.setSetpoint(WheelDesired.A());
         
         DrivePID.setPID(DriveP, DriveI, DriveD);
-        DrivePID.setSetpoint(WheelDesired.H());
+        DrivePID.setSetpoint(WheelDesired.M());
         
     }
 }
