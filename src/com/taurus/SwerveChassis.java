@@ -24,6 +24,8 @@ public class SwerveChassis
  
     private SwerveWheel[] Wheels;
  
+    private static final int WheelCount = 4;
+    
     /**
      * sets up individual wheels and their positions relative to robot center
      */
@@ -32,15 +34,19 @@ public class SwerveChassis
         RobotVelocity = new SwerveVector(0, 0);
         RobotRotation = 0;
  
-        RobotGyro = new Gyro(5);
-         
-        Wheels = new SwerveWheel[4];
+        RobotGyro = new Gyro(SwerveConstants.GyroPin);
+        
+        Wheels = new SwerveWheel[WheelCount];
  
-        // {x, y}, {EncoderA, EncoderB}, Drive, Angle, Pot
-        Wheels[0] = new SwerveWheel(new double[]{-1,  1}, new int[]{1, 2}, 1, 1, 2); // Left Front
-        Wheels[1] = new SwerveWheel(new double[]{ 1,  1}, new int[]{3, 4}, 2, 3, 4); // Right Front
-        Wheels[2] = new SwerveWheel(new double[]{ 1, -1}, new int[]{5, 6}, 3, 5, 6); // Right Back
-        Wheels[3] = new SwerveWheel(new double[]{-1, -1}, new int[]{7, 8}, 4, 7, 8); // Left Back
+        // {x, y}, {EncoderA, EncoderB}, Pot, Drive, Angle
+        for(int i = 0; i < WheelCount; i++)
+        {
+            Wheels[i] = new SwerveWheel(SwerveConstants.WheelPositions[i],
+                                        SwerveConstants.WheelEncoderPins[i],
+                                        SwerveConstants.WheelPotPins[i],
+                                        SwerveConstants.WheelDriveMotorPins[i],
+                                        SwerveConstants.WheelAngleMotorPins[i]);
+        }
  
     }
  
@@ -64,9 +70,10 @@ public class SwerveChassis
      */
     public SwerveVector[] Update(SwerveVector Velocity, double Rotation)
     {
-        SwerveVector[] WheelsUnscaled = new SwerveVector[4]; //Unscaled Wheel Velocities
-        SwerveVector[] WheelsScaled = new SwerveVector[4];   //Scaled Wheel Velocities
-        SwerveVector[] WheelsActual = new SwerveVector[4];   //Actual Wheel Velocities
+        SwerveVector[] WheelsUnscaled = new SwerveVector[WheelCount]; //Unscaled Wheel Velocities
+        SwerveVector[] WheelsScaled = new SwerveVector[WheelCount];   //Scaled Wheel Velocities
+        SwerveVector[] WheelsActual = new SwerveVector[WheelCount];   //Actual Wheel Velocities
+        
         double VelocScale = 1;
         double MaxWantedVeloc = 0;
 
@@ -75,8 +82,11 @@ public class SwerveChassis
        
         //TODO get gyro
         RobotGyro.getAngle();
+        
+        //TODO adjust RobotRotation based on RobotGyro.getAngle()
+        
 
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < WheelCount; i++)
         {
             //calculate and scale
             WheelsUnscaled[i] = new SwerveVector(RobotVelocity.X() - RobotRotation * Wheels[i].getPosition().Y(),
@@ -85,22 +95,20 @@ public class SwerveChassis
             if(WheelsUnscaled[i].M() >= MaxWantedVeloc)
             {
                 MaxWantedVeloc = WheelsUnscaled[i].M();
-                
             }
         }
 
         VelocScale = MaxAvailableVelocity / MaxWantedVeloc;
 
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < WheelCount; i++)
         {
-            //set values for each wheel
+            //scale values for each wheel
             WheelsScaled[i] = new SwerveVector(VelocScale * WheelsUnscaled[i].M(),
                                                WheelsUnscaled[i].A(),
                                                true);
 
-            Wheels[i].setDesired(WheelsScaled[i]);
-
-            WheelsActual[i] = GetActual(i);
+            //then set it
+            WheelsActual[i] = Wheels[i].setDesired(WheelsScaled[i]);
         }
         
         return WheelsActual;
@@ -108,11 +116,20 @@ public class SwerveChassis
 
     /**
      * Get the actual reading of a wheel
-     * @param Index Index of the wheel
+     * @param index Index of the wheel
      * @return Actual reading of the wheel
      */
-    public SwerveVector GetActual(int Index)
+    public SwerveVector getActual(int index)
     {
-        return Wheels[Index].getActual();
-    }  
+        return Wheels[index].getActual();
+    }
+    
+    /**
+     * Get the Gyro object
+     * @return Gyro object
+     */
+    public Gyro getGyro()
+    {
+    	return RobotGyro;
+    }
 }
