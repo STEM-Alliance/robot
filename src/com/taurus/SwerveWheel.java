@@ -122,15 +122,42 @@ public class SwerveWheel
      * called automatically from setDesired()
      */
     private void UpdateTask()
-    {
-
-        // handle motor outputs relative to the new readings
-        // PID control here
+    {        
+        // If the desired angle is 90 < desired angle < 270, 
+        // use the angle (desired angle + 180)mod(360) and reverse
+        // the motors
+        // Else use the desired angle and do not reverse the motors
+        //
+        // Desired angle, Used angle, reverse motors
+        // 0<x<90, x, n
+        // 90<x<270, (x + 180)mod(360), y
+        // 270<x<360, x, n
+        
+        // TODO - Make shortestAngle account for actual angle
+        
+        // The angle we tell the PID to move to, move wheel the least
+        double shortestAngle = WheelDesired.A();
+        double motorSpeed = WheelDesired.M();
+        
+        if (shortestAngle > 90 && shortestAngle < 270)
+        {
+            // (angle + 180)mod(360)
+            shortestAngle = (shortestAngle + 180) % 360;
+            motorSpeed = motorSpeed * -1;
+        }
+        else
+        {
+            // Do nothing
+        }
+        
+        // Tell the software that controls the wheels what
+        // angle we want the wheel to face
         AnglePID.setPID(AngleP, AngleI, AngleD);
-        AnglePID.setSetpoint(WheelDesired.A());
-        
+        AnglePID.setSetpoint(shortestAngle);
+
+        // Tell the software that controls the wheels what
+        // speed we want the wheel to go
         DrivePID.setPID(DriveP, DriveI, DriveD);
-        DrivePID.setSetpoint(WheelDesired.M());
-        
+        DrivePID.setSetpoint(motorSpeed);        
     }
 }

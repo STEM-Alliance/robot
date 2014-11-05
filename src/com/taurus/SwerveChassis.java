@@ -98,6 +98,7 @@ public class SwerveChassis
             }
         }
 
+        // TODO - Allow for values below maximum velocity
         VelocScale = MaxAvailableVelocity / MaxWantedVeloc;
 
         for(int i = 0; i < WheelCount; i++)
