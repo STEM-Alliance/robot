@@ -5,6 +5,7 @@ package edu.wpi.first.wpilibj.templates;
 import com.taurus.Joysticks;
 import com.taurus.Logger;
 import com.taurus.SwerveChassis;
+import com.taurus.SwerveConstants;
 import com.taurus.SwerveVector;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
+import edu.wpi.first.wpilibj.Joystick.ButtonType;
 
 
 /**
@@ -70,11 +72,22 @@ public class RobotTemplate extends IterativeRobot {
         
         displayControl();
         
+        // Use the Joystick inputs to update the drive system
         SwerveVector Mag = new SwerveVector(leftStick.getMagnitude(),
                                             leftStick.getDirectionDegrees(),
                                             true);
         
         drive.Update(Mag, rightStick.getAxis(Joystick.AxisType.kX));
+        
+        // Shift gears if necessary
+        if(leftStick.getRawButton(2))
+        {
+            drive.setGear(SwerveConstants.GearLow);
+        }
+        else
+        {
+            drive.setGear(SwerveConstants.GearHigh);
+        }
     }
 
     public void autonomousInit()
