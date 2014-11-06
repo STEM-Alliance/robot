@@ -45,10 +45,22 @@ public class SwerveConstants {
     /**
      * Pins (PWM) for wheel angle motor controller outputs
      */
-    public static final int[] WheelAngleMotorPins = {   1,
-                                                        3,
-                                                        5,
-                                                        7 };
+    public static final int[] WheelAngleMotorPins = {   2,
+                                                        4,
+                                                        6,
+                                                        8 };
 
+    /**
+     * Pins (PWM) for wheel shifting servo
+     */
+    public static final int[] WheelShiftServoPins = {   9,
+                                                        10,
+                                                        11,
+                                                        12 };
+    
     public static final int GyroPin = 5;
+    
+    public static final int GearLow = 0;
+    public static final int GearHigh = 1;
+    
 }

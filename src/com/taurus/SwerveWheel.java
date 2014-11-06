@@ -7,6 +7,7 @@
 package com.taurus;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.PIDController;
 
@@ -40,6 +41,8 @@ public class SwerveWheel
     private Encoder DriveEncoder;
     private PIDController DrivePID;
     
+    private Servo Shifter;
+    
     /**
      * 
      * @param Position Wheel position relative to robot center as array
@@ -47,14 +50,17 @@ public class SwerveWheel
      * @param Pot Angle Potentiometer pin
      * @param Drive Pin for drive motor controller
      * @param Angle Pin for angle motor controller
+     * @param Shift Pin for servo shifting
      */
-    public SwerveWheel(double[] Position, int[] Encoder, int Pot, int Drive, int Angle)
+    public SwerveWheel(double[] Position, int[] Encoder, int Pot, int Drive, int Angle, int Shift)
     {
         WheelPosition = new SwerveVector(Position);
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new Victor(Drive);
         MotorAngle = new Victor(Angle);
+        
+        Shifter = new Servo(Shift);
         
         DriveEncoder = new Encoder(Encoder[0], Encoder[1]);
         AnglePot = new AnalogPotentiometer(Pot);
@@ -116,6 +122,27 @@ public class SwerveWheel
         return WheelPosition;
     }
     
+    /**
+     * Set the shifting gear
+     * @param Gear gear to use
+     */
+    public void setGear(int Gear)
+    {
+        switch (Gear)
+        {
+            case SwerveConstants.GearLow:
+                Shifter.set(0.0);
+                break;
+                
+            case SwerveConstants.GearHigh:
+                Shifter.set(1.0);
+                break;
+                
+            default:
+                Shifter.set(0.0);
+                break;
+        }
+    }
     
     /** 
      * invoke updating the actual values and the motor outputs

@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.Gyro;
 public class SwerveChassis
 {
     private SwerveVector RobotVelocity;     // robot velocity
-    private double RobotRotation;    // robot rotational movement, -1 to 1 rad/s
+    private double RobotRotation;           // robot rotational movement, -1 to 1 rad/s
     
     private double MaxAvailableVelocity = 30;
     
@@ -25,6 +25,7 @@ public class SwerveChassis
     private SwerveWheel[] Wheels;
  
     private static final int WheelCount = 4;
+        
     
     /**
      * sets up individual wheels and their positions relative to robot center
@@ -38,14 +39,15 @@ public class SwerveChassis
         
         Wheels = new SwerveWheel[WheelCount];
  
-        // {x, y}, {EncoderA, EncoderB}, Pot, Drive, Angle
+        // {x, y}, {EncoderA, EncoderB}, Pot, Drive, Angle, Shifter
         for(int i = 0; i < WheelCount; i++)
         {
             Wheels[i] = new SwerveWheel(SwerveConstants.WheelPositions[i],
                                         SwerveConstants.WheelEncoderPins[i],
                                         SwerveConstants.WheelPotPins[i],
                                         SwerveConstants.WheelDriveMotorPins[i],
-                                        SwerveConstants.WheelAngleMotorPins[i]);
+                                        SwerveConstants.WheelAngleMotorPins[i],
+                                        SwerveConstants.WheelShiftServoPins[i]);
         }
  
     }
@@ -76,19 +78,26 @@ public class SwerveChassis
         
         double VelocScale = 1;
         double MaxWantedVeloc = 0;
-
+        double AdjustedAngle = 0;
+        
+        // adjust the desired angle based on the robot's current angle
+        AdjustedAngle = Velocity.A() - RobotGyro.getAngle();
+        
+        if (AdjustedAngle > 180.0)
+        {
+            AdjustedAngle -= 360;
+        }
+        
+        Velocity.setAngle(AdjustedAngle);
+        
+        // set the class variables for the velocity and rotation
         RobotVelocity = Velocity;
         RobotRotation = Rotation; //Limit rotation speed
-       
-        //TODO get gyro
-        RobotGyro.getAngle();
         
-        //TODO adjust RobotRotation based on RobotGyro.getAngle()
-        
-
+        // calculate vectors for each wheel
         for(int i = 0; i < WheelCount; i++)
         {
-            //calculate and scale
+            //calculate
             WheelsUnscaled[i] = new SwerveVector(RobotVelocity.X() - RobotRotation * Wheels[i].getPosition().Y(),
                                                  RobotVelocity.Y() + RobotRotation * Wheels[i].getPosition().X());
 
@@ -114,7 +123,19 @@ public class SwerveChassis
         
         return WheelsActual;
     }
-
+    
+    /**
+     * Set the shifting gear
+     * @param Gear gear to use
+     */
+    public void setGear(int Gear)
+    {
+        for(int i = 0; i < WheelCount; i++)
+        {
+            Wheels[i].setGear(Gear);
+        }
+    }
+    
     /**
      * Get the actual reading of a wheel
      * @param index Index of the wheel
