@@ -29,10 +29,10 @@ public class SwerveConstants {
     /**
      * Pins (Analog) for wheel angle potentiometer inputs
      */
-    public static final int[] WheelPotPins = {          1,
-                                                        2,
-                                                        3,
-                                                        4 };
+    public static final int[] WheelPotPins = {  1,
+                                                2,
+                                                3,
+                                                4 };
 
     /**
      * Pins (PWM) for wheel drive motor controller outputs
