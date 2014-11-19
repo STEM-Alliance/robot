@@ -10,8 +10,8 @@ Taurus Robotics Swerve Drive
     1. Add -> Standard VM -> Directory
     1. Choose the JDK you installed (e.g. C:\Program Files\Java\jdk1.7.0_71), click OK, click Finish
     1. Check the box next to the jdk you just added in the list of installed JREs, click OK
-1. Install the [2014 sunspot SDK](http://www.team2168.org/tutorials/2014_Java_sunspotfrcsdk.zip) into C:\Users\<username>\sunspotfrcsdk
-    1. Copy .sunspotfrc.properties into C:\Users\<username>
+1. Install the [2014 sunspot SDK](http://www.team2168.org/tutorials/2014_Java_sunspotfrcsdk.zip) into C:\Users\[username]\sunspotfrcsdk
+    1. Copy .sunspotfrc.properties into C:\Users\[username]
     1. Edit .sunspotfrc.properties to point to the correct path and the correct team number into 10.xx.yy.2
 1. Clone the repo into the eclipse workspace, add existing project to eclipse
 1. Configure eclipse to build the project
