@@ -7,6 +7,7 @@
 package com.taurus;
 
 import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -18,13 +19,12 @@ public class SwerveChassis
     private SwerveVector RobotVelocity;     // robot velocity
     private double RobotRotation;           // robot rotational movement, -1 to 1 rad/s
     
-    private double MaxAvailableVelocity = 30;
+    public double MaxVelocity = 30;
     
     private Gyro RobotGyro;
  
     private SwerveWheel[] Wheels;
  
-    private static final int WheelCount = 4;
         
     
     /**
@@ -37,12 +37,13 @@ public class SwerveChassis
  
         RobotGyro = new Gyro(SwerveConstants.GyroPin);
         
-        Wheels = new SwerveWheel[WheelCount];
+        Wheels = new SwerveWheel[SwerveConstants.WheelCount];
  
-        // {x, y}, {EncoderA, EncoderB}, Pot, Drive, Angle, Shifter
-        for(int i = 0; i < WheelCount; i++)
+        // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle, Shifter
+        for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             Wheels[i] = new SwerveWheel(SwerveConstants.WheelPositions[i],
+                                        SwerveConstants.WheelOrientationAngle[i],
                                         SwerveConstants.WheelEncoderPins[i],
                                         SwerveConstants.WheelPotPins[i],
                                         SwerveConstants.WheelDriveMotorPins[i],
@@ -72,9 +73,9 @@ public class SwerveChassis
      */
     public SwerveVector[] Update(SwerveVector Velocity, double Rotation)
     {
-        SwerveVector[] WheelsUnscaled = new SwerveVector[WheelCount]; //Unscaled Wheel Velocities
-        SwerveVector[] WheelsScaled = new SwerveVector[WheelCount];   //Scaled Wheel Velocities
-        SwerveVector[] WheelsActual = new SwerveVector[WheelCount];   //Actual Wheel Velocities
+        SwerveVector[] WheelsUnscaled = new SwerveVector[SwerveConstants.WheelCount]; //Unscaled Wheel Velocities
+        SwerveVector[] WheelsScaled = new SwerveVector[SwerveConstants.WheelCount];   //Scaled Wheel Velocities
+        SwerveVector[] WheelsActual = new SwerveVector[SwerveConstants.WheelCount];   //Actual Wheel Velocities
         
         double VelocScale = 1;
         double MaxWantedVeloc = 0;
@@ -95,7 +96,7 @@ public class SwerveChassis
         RobotRotation = Rotation; //Limit rotation speed
         
         // calculate vectors for each wheel
-        for(int i = 0; i < WheelCount; i++)
+        for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             //calculate
             WheelsUnscaled[i] = new SwerveVector(RobotVelocity.X() - RobotRotation * Wheels[i].getPosition().Y(),
@@ -108,9 +109,9 @@ public class SwerveChassis
         }
 
         // TODO - Allow for values below maximum velocity
-        VelocScale = MaxAvailableVelocity / MaxWantedVeloc;
+        VelocScale = MaxVelocity / MaxWantedVeloc;
 
-        for(int i = 0; i < WheelCount; i++)
+        for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             //scale values for each wheel
             WheelsScaled[i] = new SwerveVector(VelocScale * WheelsUnscaled[i].M(),
@@ -126,14 +127,35 @@ public class SwerveChassis
     
     /**
      * Set the shifting gear
-     * @param Gear gear to use
+     * @param GearHigh if true, shift to high gear, else low gear
      */
-    public void setGear(int Gear)
+    public void setGearHigh(boolean GearHigh)
     {
-        for(int i = 0; i < WheelCount; i++)
+        // Shift gears if necessary
+        if(GearHigh)
         {
-            Wheels[i].setGear(Gear);
+            SwerveWheel.setGear(SwerveConstants.GearHigh);
         }
+        else
+        {
+            SwerveWheel.setGear(SwerveConstants.GearLow);
+        }
+    }
+    
+    /**
+     * Get the shifting gear
+     * @return true if currently in high gear, else false
+     */
+    public boolean getGearHigh()
+    {
+        boolean retVal = false;
+        
+        if(SwerveWheel.Gear == SwerveConstants.GearHigh)
+        {
+            retVal = true;
+        }
+        
+        return retVal;
     }
     
     /**
@@ -153,5 +175,10 @@ public class SwerveChassis
     public Gyro getGyro()
     {
     	return RobotGyro;
+    }
+    
+    public SwerveWheel getWheel(int index)
+    {
+        return Wheels[index];
     }
 }
