@@ -8,6 +8,8 @@ package com.taurus;
  * Pin assignments for Swerve Drive system
  */
 public class SwerveConstants {
+
+    public static final int WheelCount = 4;
     
     /**
      * X & Y coordinate positions for wheel placement.
@@ -17,6 +19,15 @@ public class SwerveConstants {
                                                         { 1, 1},    // front right
                                                         { 1,-1},    // back right
                                                         {-1,-1} };  // back left
+    
+    /**
+     * Orientation Angle of each wheel in degrees clockwise.
+     * Relative to robot 0 angle
+     */
+    public static final double[] WheelOrientationAngle = {  0,      // front left
+                                                            90,     // front right
+                                                            180,    // back right
+                                                            270 };  // back left
     
     /**
      * Pins (Digital) for wheel speed encoder inputs

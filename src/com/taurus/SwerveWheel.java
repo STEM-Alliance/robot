@@ -18,14 +18,15 @@ import edu.wpi.first.wpilibj.PIDController;
  */
 public class SwerveWheel
 {
-    public double AngleP = 1;
-    public double AngleI = 0;
-    public double AngleD = 0;
-    public double DriveP = 1;
-    public double DriveI = 0;
-    public double DriveD = 0;
+    public static double AngleP = 1;
+    public static double AngleI = 0;
+    public static double AngleD = 0;
+    public static double DriveP = 1;
+    public static double DriveI = 0;
+    public static double DriveD = 0;
     
     private SwerveVector WheelPosition;     // wheel location from center of robot
+    private double WheelOrientation;
     private SwerveVector WheelDesired;      // wheel speed, x and y vals, hypotenuse val, angle
     private SwerveVector WheelActual;       // wheel speed, x and y vals, hypotenuse val, angle
     private Victor MotorDrive;
@@ -36,25 +37,28 @@ public class SwerveWheel
     private double DriveEncoderRate = Math.PI*DriveWheelDiameter/DriveEncoderPulses;
     
     private AnalogPotentiometer AnglePot;
-    private PIDController AnglePID;
+    public PIDController AnglePID;
     
     private Encoder DriveEncoder;
-    private PIDController DrivePID;
+    public PIDController DrivePID;
     
     private Servo Shifter;
+    public static int Gear;
     
     /**
      * 
      * @param Position Wheel position relative to robot center as array
+     * @param Orientation Angle of wheel relative to robot 0 angle in degrees
      * @param Encoder Speed Encoder input pins as array
      * @param Pot Angle Potentiometer pin
      * @param Drive Pin for drive motor controller
      * @param Angle Pin for angle motor controller
      * @param Shift Pin for servo shifting
      */
-    public SwerveWheel(double[] Position, int[] Encoder, int Pot, int Drive, int Angle, int Shift)
+    public SwerveWheel(double[] Position, double Orientation, int[] Encoder, int Pot, int Drive, int Angle, int Shift)
     {
         WheelPosition = new SwerveVector(Position);
+        WheelOrientation = Orientation;
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new Victor(Drive);
@@ -126,22 +130,9 @@ public class SwerveWheel
      * Set the shifting gear
      * @param Gear gear to use
      */
-    public void setGear(int Gear)
+    public static void setGear(int NewGear)
     {
-        switch (Gear)
-        {
-            case SwerveConstants.GearLow:
-                Shifter.set(0.0);
-                break;
-                
-            case SwerveConstants.GearHigh:
-                Shifter.set(1.0);
-                break;
-                
-            default:
-                Shifter.set(0.0);
-                break;
-        }
+        Gear = NewGear;
     }
     
     /** 
@@ -177,14 +168,28 @@ public class SwerveWheel
             // Do nothing
         }
         
-        // Tell the software that controls the wheels what
-        // angle we want the wheel to face
+        // switch to the desired gear
+        switch (Gear)
+        {
+            case SwerveConstants.GearLow:
+                Shifter.set(0.0);
+                break;
+                
+            case SwerveConstants.GearHigh:
+                Shifter.set(1.0);
+                break;
+                
+            default:
+                Shifter.set(0.0);
+                break;
+        }
+        
+        // set the angle we want the wheel to face
         AnglePID.setPID(AngleP, AngleI, AngleD);
-        AnglePID.setSetpoint(shortestAngle);
+        AnglePID.setSetpoint(((shortestAngle + 360) - WheelOrientation) % 360);
 
-        // Tell the software that controls the wheels what
-        // speed we want the wheel to go
+        // set the speed we want the wheel to go
         DrivePID.setPID(DriveP, DriveI, DriveD);
-        DrivePID.setSetpoint(motorSpeed);        
+        DrivePID.setSetpoint(motorSpeed);
     }
 }

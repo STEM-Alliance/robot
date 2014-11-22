@@ -114,7 +114,7 @@ public class SwerveVector
      */
     public double M()
     {
-        return Math.sqrt(x*x+y*y);
+        return Math.sqrt(MathUtils.pow(x, 2) + MathUtils.pow(y, 2));
     }
  
     /**
@@ -126,6 +126,7 @@ public class SwerveVector
         double retVal = 0;        
         if(y != 0)
         {
+            // maybe MathUtils.atan2(x, -y); 
             retVal = Math.toDegrees(MathUtils.atan2(y, x));
         }
  
