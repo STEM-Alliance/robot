@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.PIDController;
  */
 public class SwerveWheel
 {
+    // PID values
     public static double AngleP = 1;
     public static double AngleI = 0;
     public static double AngleD = 0;
@@ -25,6 +26,7 @@ public class SwerveWheel
     public static double DriveI = 0;
     public static double DriveD = 0;
     
+    // wheel stuff
     private SwerveVector WheelPosition;     // wheel location from center of robot
     private double WheelOrientation;
     private SwerveVector WheelDesired;      // wheel speed, x and y vals, hypotenuse val, angle
@@ -32,55 +34,72 @@ public class SwerveWheel
     private Victor MotorDrive;
     private Victor MotorAngle;
     
+    // encoder calculation
     private double DriveWheelDiameter = 4.0; 
     private int DriveEncoderPulses = 64;
     private double DriveEncoderRate = Math.PI*DriveWheelDiameter/DriveEncoderPulses;
     
+    // potentiometer calculation
+    private double AnglePotDegrees = 360; // pot has 360 degrees of range
+    private double AnglePotVoltage = 5;   // pot uses 5V supply 
+    private double AnglePotScale = AnglePotDegrees / AnglePotVoltage;
+    
+    // PID 
     private AnalogPotentiometer AnglePot;
     public PIDController AnglePID;
     
     private Encoder DriveEncoder;
     public PIDController DrivePID;
     
+    // shifter
     private Servo Shifter;
+    private double ShifterLevelHigh = 30;
+    private double ShifterLevelLow = 0;
     public static int Gear;
     
     /**
-     * 
+     * Set up the wheel with the specific IO and orientation on the robot
      * @param Position Wheel position relative to robot center as array
      * @param Orientation Angle of wheel relative to robot 0 angle in degrees
-     * @param Encoder Speed Encoder input pins as array
-     * @param Pot Angle Potentiometer pin
-     * @param Drive Pin for drive motor controller
-     * @param Angle Pin for angle motor controller
-     * @param Shift Pin for servo shifting
+     * @param EncoderPins Pins for Speed Encoder input as array
+     * @param PotPin Pin for Angle Potentiometer
+     * @param DrivePin Pin for drive motor controller
+     * @param AnglePin Pin for angle motor controller
+     * @param ShiftPin Pin for servo shifting
      */
-    public SwerveWheel(double[] Position, double Orientation, int[] Encoder, int Pot, int Drive, int Angle, int Shift)
+    public SwerveWheel( double[] Position,
+                        double Orientation,
+                        int[] EncoderPins,
+                        int PotPin,
+                        int DrivePin,
+                        int AnglePin,
+                        int ShiftPin)
     {
         WheelPosition = new SwerveVector(Position);
         WheelOrientation = Orientation;
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
-        MotorDrive = new Victor(Drive);
-        MotorAngle = new Victor(Angle);
+        MotorDrive = new Victor(DrivePin);
+        MotorAngle = new Victor(AnglePin);
         
-        Shifter = new Servo(Shift);
+        Shifter = new Servo(ShiftPin);
         
-        DriveEncoder = new Encoder(Encoder[0], Encoder[1]);
-        AnglePot = new AnalogPotentiometer(Pot);
+        DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
+        AnglePot = new AnalogPotentiometer(PotPin, AnglePotScale, WheelOrientation); //TODO Need offset? Maybe orientation?
         
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
-       
         
         AnglePID = new PIDController(AngleP, AngleI, AngleD, AnglePot, MotorAngle);
         AnglePID.setContinuous();
         AnglePID.setInputRange(0, 360);
-        //Maybe set outputRange Depending on Victors 
+        //Maybe set outputRange Depending on Victors
+        AnglePID.setOutputRange(-1, 1);
         AnglePID.enable();
         
         DrivePID = new PIDController(DriveP, DriveI, DriveD, DriveEncoder, MotorDrive);
         DrivePID.setInputRange(-1, 1);
         //Maybe set output range depending on stuff
+        AnglePID.setOutputRange(-1, 1);
         DrivePID.enable();
     }
  
@@ -154,8 +173,8 @@ public class SwerveWheel
         // TODO - Make shortestAngle account for actual angle
         
         // The angle we tell the PID to move to, move wheel the least
-        double shortestAngle = WheelDesired.A();
-        double motorSpeed = WheelDesired.M();
+        double shortestAngle = WheelDesired.getAngle();
+        double motorSpeed = WheelDesired.getMag();
         
         if (shortestAngle > 90 && shortestAngle < 270)
         {
@@ -172,21 +191,23 @@ public class SwerveWheel
         switch (Gear)
         {
             case SwerveConstants.GearLow:
-                Shifter.set(0.0);
+                Shifter.setAngle(ShifterLevelLow);
                 break;
                 
             case SwerveConstants.GearHigh:
-                Shifter.set(1.0);
+                Shifter.setAngle(ShifterLevelHigh);
                 break;
                 
             default:
-                Shifter.set(0.0);
+                Shifter.setAngle(ShifterLevelLow);
                 break;
         }
         
         // set the angle we want the wheel to face
         AnglePID.setPID(AngleP, AngleI, AngleD);
-        AnglePID.setSetpoint(((shortestAngle + 360) - WheelOrientation) % 360);
+        AnglePID.setSetpoint(shortestAngle);
+        //TODO may not need this, see line 78, AnglePot initialization
+        //AnglePID.setSetpoint(((shortestAngle + 360) - WheelOrientation) % 360);
 
         // set the speed we want the wheel to go
         DrivePID.setPID(DriveP, DriveI, DriveD);

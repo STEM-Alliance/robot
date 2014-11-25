@@ -7,7 +7,9 @@
 package com.taurus;
 
 import edu.wpi.first.wpilibj.Gyro;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -19,13 +21,34 @@ public class SwerveChassis
     private SwerveVector RobotVelocity;     // robot velocity
     private double RobotRotation;           // robot rotational movement, -1 to 1 rad/s
     
-    public double MaxVelocity = 30;
+    public double MaxAvailableVelocity = 1.0;
     
     private Gyro RobotGyro;
  
     private SwerveWheel[] Wheels;
- 
+
+    // PID controller stuff for robot angle/heading
+    private class ChassisPIDOutput implements PIDOutput
+    {
+        private double output;
         
+        public void pidWrite(double output)
+        {
+            this.output = output;
+        }
+        
+        public double get()
+        {
+            return output;
+        }
+        
+    }
+    private PIDController ChassisPID;
+    public double ChassisP = 1;
+    public double ChassisI = 0;
+    public double ChassisD = 0;
+    public ChassisPIDOutput ChassisOutput;
+    
     
     /**
      * sets up individual wheels and their positions relative to robot center
@@ -36,6 +59,12 @@ public class SwerveChassis
         RobotRotation = 0;
  
         RobotGyro = new Gyro(SwerveConstants.GyroPin);
+        
+        ChassisPID = new PIDController(ChassisP, ChassisI, ChassisD, RobotGyro, ChassisOutput);
+        ChassisPID.setContinuous();
+        ChassisPID.setInputRange(0, 360);
+        ChassisPID.setOutputRange(-1,  1);
+        ChassisPID.enable();
         
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
  
@@ -52,70 +81,114 @@ public class SwerveChassis
         }
  
     }
- 
+    
+    /**
+     * Updates the chassis for Angle Drive
+     * @param Velocity robot's velocity/movement using SwerveVector type
+     * @param Heading robot's heading/angle using SwerveVector type
+     * @return Array of SwerveVectors of the actual readings from the wheels
+     */
+    public SwerveVector[] UpdateAngleDrive(SwerveVector Velocity, double Heading)
+    {
+        double Rotation = 0;
+
+        Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
+        
+        // set the rotation using a PID based on current robot heading and new desired heading
+        ChassisPID.setPID(ChassisP, ChassisI, ChassisD);
+        ChassisPID.setSetpoint(Heading);
+        
+        // convert the PID output to the angular rate of rotation
+        //TODO does either one make sense?
+        Rotation = ChassisOutput.get();
+        //Rotation = ChassisPID.get();
+        
+        return setWheelVectors(Velocity, Rotation);
+    }
+    
     /** 
-     * Updates from individual x and y values of velocity
+     * Updates the chassis for Halo Drive from individual x and y values of velocity
      * @param VelocityX robot's velocity in the x direction, -1 to 1
      * @param VelocityY robot's velocity in the y direction, -1 to 1
      * @param Rotation robot's rotational movement, -1 to 1 rad/s
      * @return Array of SwerveVectors of the actual readings from the wheels
      */
-    public SwerveVector[] Update(double VelocityX, double VelocityY, double Rotation)
+    public SwerveVector[] UpdateHaloDrive(double VelocityX, double VelocityY, double Rotation)
     {
-        return Update(new SwerveVector(VelocityX, VelocityY), Rotation);
+        return UpdateHaloDrive(new SwerveVector(VelocityX, VelocityY), Rotation);
     }
  
     /**
-     * Updates from SwerveVector type of velocity
+     * Updates the chassis for Halo Drive from SwerveVector type of velocity
      * @param Velocity robot's velocity using SwerveVector type
      * @param Rotation robot's rotational movement, -1 to 1 rad/s
      * @return Array of SwerveVectors of the actual readings from the wheels
      */
-    public SwerveVector[] Update(SwerveVector Velocity, double Rotation)
+    public SwerveVector[] UpdateHaloDrive(SwerveVector Velocity, double Rotation)
+    {
+        Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
+        
+        return setWheelVectors(Velocity, Rotation);
+    }
+    
+    /**
+     * Scale the wheel vectors based on max available velocity, adjust for
+     * rotation rate, then set/update the desired vectors individual wheels
+     * @param NewVelocity robot's velocity using SwerveVector type
+     * @param NewRotation robot's rotational movement, -1 to 1 rad/s
+     * @return Array of SwerveVectors of the actual readings from the wheels
+     */
+    private SwerveVector[] setWheelVectors(SwerveVector NewVelocity, double NewRotation)
     {
         SwerveVector[] WheelsUnscaled = new SwerveVector[SwerveConstants.WheelCount]; //Unscaled Wheel Velocities
         SwerveVector[] WheelsScaled = new SwerveVector[SwerveConstants.WheelCount];   //Scaled Wheel Velocities
         SwerveVector[] WheelsActual = new SwerveVector[SwerveConstants.WheelCount];   //Actual Wheel Velocities
         
-        double VelocScale = 1;
         double MaxWantedVeloc = 0;
-        double AdjustedAngle = 0;
-        
-        // adjust the desired angle based on the robot's current angle
-        AdjustedAngle = Velocity.A() - RobotGyro.getAngle();
-        
-        if (AdjustedAngle > 180.0)
+
+        // set the class variables for the velocity and rotation
+        // set limitations on speed
+        if (NewVelocity.getMag() < -1.0)
         {
-            AdjustedAngle -= 360;
+            NewVelocity.setMag(-1.0);
+        }
+        else if (NewVelocity.getMag() > 1.0)
+        {
+            NewVelocity.setMag(1.0);
         }
         
-        Velocity.setAngle(AdjustedAngle);
+        // set limitations on rotation
+        if (NewRotation < -1.0)
+        {
+            NewRotation = -1.0;
+        }
+        else if (NewRotation > 1.0)
+        {
+            NewRotation = 1.0;
+        }
         
-        // set the class variables for the velocity and rotation
-        RobotVelocity = Velocity;
-        RobotRotation = Rotation; //Limit rotation speed
+        RobotVelocity = NewVelocity;
+        RobotRotation = NewRotation; //Limit rotation speed
         
         // calculate vectors for each wheel
         for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             //calculate
-            WheelsUnscaled[i] = new SwerveVector(RobotVelocity.X() - RobotRotation * Wheels[i].getPosition().Y(),
-                                                 RobotVelocity.Y() + RobotRotation * Wheels[i].getPosition().X());
+            WheelsUnscaled[i] = new SwerveVector(RobotVelocity.getX() - RobotRotation * Wheels[i].getPosition().getY(),
+                                                 RobotVelocity.getY() + RobotRotation * Wheels[i].getPosition().getX());
 
-            if(WheelsUnscaled[i].M() >= MaxWantedVeloc)
+            if(WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
             {
-                MaxWantedVeloc = WheelsUnscaled[i].M();
+                MaxWantedVeloc = WheelsUnscaled[i].getMag();
             }
         }
 
-        // TODO - Allow for values below maximum velocity
-        VelocScale = MaxVelocity / MaxWantedVeloc;
-
+        // Allow for values below maximum velocity
         for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             //scale values for each wheel
-            WheelsScaled[i] = new SwerveVector(VelocScale * WheelsUnscaled[i].M(),
-                                               WheelsUnscaled[i].A(),
+            WheelsScaled[i] = new SwerveVector(WheelsUnscaled[i].getMag() * (MaxAvailableVelocity / MaxWantedVeloc),
+                                               WheelsUnscaled[i].getAngle(),
                                                true);
 
             //then set it
@@ -123,6 +196,26 @@ public class SwerveChassis
         }
         
         return WheelsActual;
+    }
+    
+    /**
+     * Adjust the new angle based on the Gyroscope angle
+     * @param Angle new desired angle
+     * @return adjusted angle
+     */
+    private double adjustAngleFromGyro(double Angle)
+    {
+        double AdjustedAngle = 0;
+        
+        // adjust the desired angle based on the robot's current angle
+        AdjustedAngle = Angle - RobotGyro.getAngle();
+        
+        if (AdjustedAngle > 180.0)
+        {
+            AdjustedAngle -= 360;
+        }
+        
+        return AdjustedAngle;
     }
     
     /**
@@ -163,7 +256,7 @@ public class SwerveChassis
      * @param index Index of the wheel
      * @return Actual reading of the wheel
      */
-    public SwerveVector getActual(int index)
+    public SwerveVector getWheelActual(int index)
     {
         return Wheels[index].getActual();
     }
@@ -177,6 +270,11 @@ public class SwerveChassis
     	return RobotGyro;
     }
     
+    /**
+     * Get the SwerveWheel object for the specified index
+     * @param index of wheel to get
+     * @return SwerveWheel object
+     */
     public SwerveWheel getWheel(int index)
     {
         return Wheels[index];

@@ -31,11 +31,12 @@ public class RobotTemplate extends IterativeRobot {
     
     // Joysticks
     private SwerveController controller;
+    private SendableChooser driveChooser;
 
     // Logger
     private Logger log;
     //private static DriverStationLCD DSOutput;
-
+    
     private boolean TEST = true;
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
@@ -54,6 +55,10 @@ public class RobotTemplate extends IterativeRobot {
 
         controller = new SwerveController();
  
+        driveChooser = new SendableChooser();
+        driveChooser.addDefault("Halo Drive", Integer.valueOf(SwerveController.HALO_DRIVE));
+        driveChooser.addObject("Angle Drive", Integer.valueOf(SwerveController.ANGLE_DRIVE));
+        
         // set up the choosers for running tests while in teleop mode
         testChooser = new SendableChooser();
         testChooser.addDefault("Normal",    Integer.valueOf(TEST_MODE_NORMAL));
@@ -126,11 +131,21 @@ public class RobotTemplate extends IterativeRobot {
         SwerveWheel.AngleI = SmartDashboard.getNumber("Wheel Angle I", SwerveWheel.AngleI);
         SwerveWheel.AngleD = SmartDashboard.getNumber("Wheel Angle D", SwerveWheel.AngleD);
 
-        drive.MaxVelocity = SmartDashboard.getNumber("Max Velocity", drive.MaxVelocity);
+        // display each wheel's mag and angle in SmartDashboard
+        for(int i = 0; i < SwerveConstants.WheelCount; i++)
+        {
+            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag", drive.getWheelActual(i).getMag());
+            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle", drive.getWheelActual(i).getAngle());
+        }
+        
+        drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", drive.MaxAvailableVelocity);
+        
+        SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
         
         // show setting for using an xbox controller
         controller.useXbox = SmartDashboard.getBoolean("Xbox Controller", controller.useXbox);
-        
+        controller.driveScheme = ((Integer)driveChooser.getSelected()).intValue();
+                
         // display current gear
         if(drive.getGearHigh())
         {
@@ -140,6 +155,7 @@ public class RobotTemplate extends IterativeRobot {
         {
             SmartDashboard.putString("Gear", "Low");
         }
+        
         // update the test mode
         // disable for competitions?
         TEST = SmartDashboard.getBoolean("TEST MODE", TEST);
@@ -175,12 +191,12 @@ public class RobotTemplate extends IterativeRobot {
     private void TestWheel(int index)
     {
         // use the left joystick to control the wheel module
-        SwerveVector WheelActual = drive.getWheel(index).setDesired(controller.getHaloDrive_Vector());
+        SwerveVector WheelActual = drive.getWheel(index).setDesired(controller.getHaloDrive_Velocity());
 
         // display in SmartDashboard
-        SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.M());
+        SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
         SmartDashboard.putNumber("Test Wheel Mag Setpoint", drive.getWheel(index).DrivePID.getSetpoint());
-        SmartDashboard.putNumber("Test Wheel Angle Actual", WheelActual.A());
+        SmartDashboard.putNumber("Test Wheel Angle Actual", WheelActual.getAngle());
         SmartDashboard.putNumber("Test Wheel Angle Setpoint", drive.getWheel(index).AnglePID.getSetpoint());
         
         // if the button is not held down, we're in high gear
@@ -193,14 +209,16 @@ public class RobotTemplate extends IterativeRobot {
     private void DriveNormal()
     {
         // Use the Joystick inputs to update the drive system
-        
-        drive.Update(controller.getHaloDrive_Vector(), controller.getHaloDrive_Rotation());
-        
-        // display each wheel's mag and angle in SmartDashboard
-        for(int i = 0; i < SwerveConstants.WheelCount; i++)
+        switch(controller.driveScheme)
         {
-            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag", drive.getActual(i).M());
-            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle", drive.getActual(i).A());
+            case SwerveController.ANGLE_DRIVE:
+                drive.UpdateAngleDrive(controller.getAngleDrive_Velocity(), controller.getAngleDrive_Heading());
+                break;
+                
+            default:
+            case SwerveController.HALO_DRIVE:
+                drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(), controller.getHaloDrive_Rotation());
+                break;
         }
 
         // if the button is not held down, we're in high gear
