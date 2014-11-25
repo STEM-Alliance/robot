@@ -5,23 +5,39 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 /**
  * <pre>
- * Halo Drive: Left joystick controls moving
- * left/right/forward/back. Right joystick
- * controls rotation (CCW/CW).
+ * Halo Drive: like driving a vehicle in Halo
+ * Left joystick: movement l/r/f/b
+ * Right joystick: rotation rate (CCW/CW)
  *          ▲
- *          |               
+ *          |
  *      ◄---+---►           ◄---+---►
  *          |
  *          ▼
  *       Movement            Rotation
+ *       
+ * Angle Drive: like a top-down shooter such
+ * as Geometry Wars
+ * Left joystick: movement l/r/f/b
+ * Right joystick: robot heading l/r/f/b
+ *          ▲                   ▲
+ *          |                   |
+ *      ◄---+---►           ◄---+---►
+ *          |                   |
+ *          ▼                   ▼
+ *       Movement            Heading
  *    
  * Parts adapted from Team 3946 (https://github.com/frc3946)
  * </pre>
  * @author
  */
 public class SwerveController {
+
+    public static final int HALO_DRIVE = 0;
+    public static final int ANGLE_DRIVE = 1;
     
-    public boolean useXbox = false;
+    public boolean useXbox;
+    public int driveScheme;
+    
     private Joystick left;
     private Joystick right;
     
@@ -35,6 +51,9 @@ public class SwerveController {
         left = new Joystick(1);
         right = new Joystick(2);
         xbox = new XboxController(1);
+        
+        useXbox = false;
+        driveScheme = HALO_DRIVE;
     }
 
     /**
@@ -111,38 +130,6 @@ public class SwerveController {
     }
 
     /**
-     * Get the X value of the joystick for Halo Drive
-     * @return The X value of the joystick.
-     */
-    public double getHaloDrive_X()
-    {
-        if(useXbox)
-        {
-            return xbox.getAxis(XboxController.AxisType.kLeftX);
-        }
-        else
-        {
-            return left.getAxis(Joystick.AxisType.kX);
-        }
-    }
-
-    /**
-     * Get the Y value of the joystick for Halo Drive
-     * @return The Y value of the joystick.
-     */
-    public double getHaloDrive_Y()
-    {
-        if(useXbox)
-        {
-            return xbox.getAxis(XboxController.AxisType.kLeftY);
-        }
-        else
-        {
-            return left.getAxis(Joystick.AxisType.kY);
-        }
-    }
-
-    /**
      * Get the Rotation value of the joystick for Halo Drive
      * @return The Rotation value of the joystick.
      */
@@ -159,10 +146,44 @@ public class SwerveController {
     }
 
     /**
-     * Get the swerve vector (mag & angle) of the joystick for Halo Drive
+     * Get the swerve vector (mag & angle) of the velocity joystick for Halo Drive
      * @return The vector of the joystick.
      */
-    public SwerveVector getHaloDrive_Vector()
+    public SwerveVector getHaloDrive_Velocity()
+    {
+        if(useXbox)
+        {
+            return new SwerveVector(xbox.getX(Hand.kLeft),
+                                    xbox.getY(Hand.kLeft));
+        }
+        else
+        {
+            return new SwerveVector(left.getX(),
+                                    left.getY());
+        }
+    }
+
+    /**
+     * Get the heading/angle in degrees for Angle Drive
+     * @return The angle in degrees of the joystick.
+     */
+    public double getAngleDrive_Heading()
+    {
+        if(useXbox)
+        {
+            return xbox.getDirectionDegrees(Hand.kRight);
+        }
+        else
+        {
+            return right.getDirectionDegrees();
+        }
+    }
+
+    /**
+     * Get the swerve vector (mag & angle) of the velocity joystick for Angle Drive
+     * @return The vector of the joystick.
+     */
+    public SwerveVector getAngleDrive_Velocity()
     {
         if(useXbox)
         {
