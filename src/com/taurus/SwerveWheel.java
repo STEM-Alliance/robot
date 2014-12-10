@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -82,25 +83,26 @@ public class SwerveWheel
         MotorDrive = new Victor(DrivePin);
         MotorAngle = new Victor(AnglePin);
         
-        Shifter = new Servo(ShiftPin);
+        //Shifter = new Servo(ShiftPin);
         
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         AnglePot = new AnalogPotentiometer(PotPin, AnglePotScale, WheelOrientation); //TODO Need offset? Maybe orientation?
+        //AnglePot = new AnalogPotentiometer(PotPin);
         
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
         
-        AnglePID = new PIDController(AngleP, AngleI, AngleD, AnglePot, MotorAngle);
-        AnglePID.setContinuous();
-        AnglePID.setInputRange(0, 360);
-        //Maybe set outputRange Depending on Victors
-        AnglePID.setOutputRange(-1, 1);
-        AnglePID.enable();
-        
-        DrivePID = new PIDController(DriveP, DriveI, DriveD, DriveEncoder, MotorDrive);
-        DrivePID.setInputRange(-1, 1);
-        //Maybe set output range depending on stuff
-        AnglePID.setOutputRange(-1, 1);
-        DrivePID.enable();
+        //AnglePID = new PIDController(AngleP, AngleI, AngleD, AnglePot, MotorAngle);
+        //AnglePID.setContinuous();
+        //AnglePID.setInputRange(0, 360);
+//        //Maybe set outputRange Depending on Victors
+//        AnglePID.setOutputRange(-1, 1);
+        //AnglePID.enable();
+//        
+        //DrivePID = new PIDController(DriveP, DriveI, DriveD, DriveEncoder, MotorDrive);
+        //DrivePID.setInputRange(-1, 1);
+//        //Maybe set output range depending on stuff
+//        DrivePID.setOutputRange(-1, 1);
+        //DrivePID.enable();
     }
  
     /** 
@@ -132,7 +134,9 @@ public class SwerveWheel
     public SwerveVector getActual()
     {
     	//TODO is this right?
-        WheelActual.setMagAngle(DrivePID.get(), AnglePID.get());
+        //WheelActual.setMagAngle(DrivePID.get(), AnglePID.get());
+        double speed = MotorDrive.getSpeed();
+        WheelActual.setMagAngle(DriveEncoder.getRate(),AnglePot.get());
         return WheelActual;
     }
     
@@ -191,26 +195,37 @@ public class SwerveWheel
         switch (Gear)
         {
             case SwerveConstants.GearLow:
-                Shifter.setAngle(ShifterLevelLow);
+                //Shifter.setAngle(ShifterLevelLow);
                 break;
                 
             case SwerveConstants.GearHigh:
-                Shifter.setAngle(ShifterLevelHigh);
+                //Shifter.setAngle(ShifterLevelHigh);
                 break;
                 
             default:
-                Shifter.setAngle(ShifterLevelLow);
+                //Shifter.setAngle(ShifterLevelLow);
                 break;
         }
         
         // set the angle we want the wheel to face
-        AnglePID.setPID(AngleP, AngleI, AngleD);
-        AnglePID.setSetpoint(shortestAngle);
+//        AnglePID.setPID(AngleP, AngleI, AngleD);
+//        AnglePID.setSetpoint(shortestAngle);
         //TODO may not need this, see line 78, AnglePot initialization
         //AnglePID.setSetpoint(((shortestAngle + 360) - WheelOrientation) % 360);
-
+        //AnglePID.setSetpoint(WheelDesired.getAngle());
+        
         // set the speed we want the wheel to go
-        DrivePID.setPID(DriveP, DriveI, DriveD);
-        DrivePID.setSetpoint(motorSpeed);
+//        DrivePID.setPID(DriveP, DriveI, DriveD);
+//        DrivePID.setSetpoint(motorSpeed);
+        //DrivePID.setSetpoint(WheelDesired.getMag());
+ 
+        
+        SmartDashboard.putNumber("shortAngle", shortestAngle);
+        SmartDashboard.putNumber("motorSpeed", motorSpeed);
+        SmartDashboard.putNumber("MotorDrive", DriveEncoder.getRate());
+        SmartDashboard.putNumber("MotorAngle", AnglePot.get());
+        
+        MotorDrive.set(WheelDesired.getY());
+        MotorAngle.set(WheelDesired.getX());
     }
 }

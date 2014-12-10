@@ -31,7 +31,7 @@ public class RobotTemplate extends IterativeRobot {
     
     // Joysticks
     private SwerveController controller;
-    private SendableChooser driveChooser;
+    private SendableChooser driveChooser = new SendableChooser();;
 
     // Logger
     private Logger log;
@@ -40,8 +40,8 @@ public class RobotTemplate extends IterativeRobot {
     private boolean TEST = true;
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
-    private SendableChooser testChooser;
-    private SendableChooser testWheelChooser;
+    private SendableChooser testChooser = new SendableChooser();;
+    private SendableChooser testWheelChooser = new SendableChooser();;
     
     /**
      * runs once the code starts up
@@ -55,21 +55,27 @@ public class RobotTemplate extends IterativeRobot {
 
         controller = new SwerveController();
  
-        driveChooser = new SendableChooser();
+        //driveChooser = new SendableChooser();
         driveChooser.addDefault("Halo Drive", Integer.valueOf(SwerveController.HALO_DRIVE));
         driveChooser.addObject("Angle Drive", Integer.valueOf(SwerveController.ANGLE_DRIVE));
         
         // set up the choosers for running tests while in teleop mode
-        testChooser = new SendableChooser();
+        //testChooser = new SendableChooser();
         testChooser.addDefault("Normal",    Integer.valueOf(TEST_MODE_NORMAL));
         testChooser.addObject("Wheel Test", Integer.valueOf(TEST_MODE_WHEEL));
         
-        testWheelChooser = new SendableChooser();
+        //testWheelChooser = new SendableChooser();
         testWheelChooser.addDefault("Front Left", Integer.valueOf(0));
         testWheelChooser.addObject("Front Right", Integer.valueOf(1));
         testWheelChooser.addObject("Back Right",  Integer.valueOf(2));
         testWheelChooser.addObject("Back Left",   Integer.valueOf(3));
         
+        SmartDashboard.putNumber("Wheel Mag P", SwerveWheel.DriveP);
+        SmartDashboard.putNumber("Wheel Mag I", SwerveWheel.DriveI);
+        SmartDashboard.putNumber("Wheel Mag D", SwerveWheel.DriveD);
+        SmartDashboard.putNumber("Wheel Angle P", SwerveWheel.AngleP);
+        SmartDashboard.putNumber("Wheel Angle I", SwerveWheel.AngleI);
+        SmartDashboard.putNumber("Wheel Angle D", SwerveWheel.AngleD);
         
         log.info("Initialization complete.");
     }
@@ -140,11 +146,11 @@ public class RobotTemplate extends IterativeRobot {
         
         drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", drive.MaxAvailableVelocity);
         
-        SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
+        //SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
         
         // show setting for using an xbox controller
         controller.useXbox = SmartDashboard.getBoolean("Xbox Controller", controller.useXbox);
-        controller.driveScheme = ((Integer)driveChooser.getSelected()).intValue();
+        //controller.driveScheme = ((Integer)driveChooser.getSelected()).intValue();
                 
         // display current gear
         if(drive.getGearHigh())
@@ -172,17 +178,18 @@ public class RobotTemplate extends IterativeRobot {
      */
     private void TestRun()
     {
-        switch(((Integer)testChooser.getSelected()).intValue())
-        {
-            case TEST_MODE_WHEEL:
-                TestWheel(((Integer)testWheelChooser.getSelected()).intValue());
-                break;
-                
-            case TEST_MODE_NORMAL:
-            default:
-                DriveNormal();
-                break;
-        }
+        TestWheel(0);
+        //switch(((Integer)testChooser.getSelected()).intValue())
+//        {
+//            case TEST_MODE_WHEEL:
+//                TestWheel(((Integer)testWheelChooser.getSelected()).intValue());
+//                break;
+//                
+//            case TEST_MODE_NORMAL:
+//            default:
+//                DriveNormal();
+//                break;
+//        }
     }
     
     /**
@@ -195,9 +202,9 @@ public class RobotTemplate extends IterativeRobot {
 
         // display in SmartDashboard
         SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
-        SmartDashboard.putNumber("Test Wheel Mag Setpoint", drive.getWheel(index).DrivePID.getSetpoint());
+        //SmartDashboard.putNumber("Test Wheel Mag Setpoint", drive.getWheel(index).DrivePID.getSetpoint());
         SmartDashboard.putNumber("Test Wheel Angle Actual", WheelActual.getAngle());
-        SmartDashboard.putNumber("Test Wheel Angle Setpoint", drive.getWheel(index).AnglePID.getSetpoint());
+        //SmartDashboard.putNumber("Test Wheel Angle Setpoint", drive.getWheel(index).AnglePID.getSetpoint());
         
         // if the button is not held down, we're in high gear
         drive.setGearHigh(controller.getHighGearEnable());
