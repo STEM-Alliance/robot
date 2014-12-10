@@ -182,14 +182,21 @@ public class SwerveChassis
                 MaxWantedVeloc = WheelsUnscaled[i].getMag();
             }
         }
+        
+        double Ratio = MaxAvailableVelocity / MaxWantedVeloc;
+        
+        if (Ratio > 1)
+        {
+            Ratio = 1;
+        }
 
         // Allow for values below maximum velocity
         for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             //scale values for each wheel
-            WheelsScaled[i] = new SwerveVector(WheelsUnscaled[i].getMag() * (MaxAvailableVelocity / MaxWantedVeloc),
-                                               WheelsUnscaled[i].getAngle(),
-                                               true);
+            WheelsScaled[i] = SwerveVector.NewFromMagAngle(
+                    WheelsUnscaled[i].getMag() * Ratio,
+                    WheelsUnscaled[i].getAngle());
 
             //then set it
             WheelsActual[i] = Wheels[i].setDesired(WheelsScaled[i]);
