@@ -58,13 +58,13 @@ public class SwerveChassis
         RobotVelocity = new SwerveVector(0, 0);
         RobotRotation = 0;
  
-        RobotGyro = new Gyro(SwerveConstants.GyroPin);
-        
-        ChassisPID = new PIDController(ChassisP, ChassisI, ChassisD, RobotGyro, ChassisOutput);
-        ChassisPID.setContinuous();
-        ChassisPID.setInputRange(0, 360);
-        ChassisPID.setOutputRange(-1,  1);
-        ChassisPID.enable();
+//        RobotGyro = new Gyro(SwerveConstants.GyroPin);
+//        
+//        ChassisPID = new PIDController(ChassisP, ChassisI, ChassisD, RobotGyro, ChassisOutput);
+//        ChassisPID.setContinuous();
+//        ChassisPID.setInputRange(0, 360);
+//        ChassisPID.setOutputRange(-1,  1);
+//        ChassisPID.enable();
         
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
  
