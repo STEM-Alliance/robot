@@ -9,7 +9,6 @@ package com.taurus;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -71,7 +70,8 @@ public class SwerveChassis
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle, Shifter
         for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
-            Wheels[i] = new SwerveWheel(SwerveConstants.WheelPositions[i],
+            Wheels[i] = new SwerveWheel("wheel" + i,
+                                        SwerveConstants.WheelPositions[i],
                                         SwerveConstants.WheelOrientationAngle[i],
                                         SwerveConstants.WheelEncoderPins[i],
                                         SwerveConstants.WheelPotPins[i],

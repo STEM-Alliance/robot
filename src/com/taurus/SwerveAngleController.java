@@ -11,7 +11,7 @@ public class SwerveAngleController
     private double DriveMotorSpeed;
     private boolean ReverseDriveMotor;
 
-    public double getDriveMotorSpeed()
+    public double getAngleMotorSpeed()
     {
         return DriveMotorSpeed;
     }
