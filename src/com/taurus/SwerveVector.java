@@ -17,7 +17,7 @@ public class SwerveVector
 {
     private double x;
     private double y;
- 
+
     /**
      * empty constructor
      */
@@ -26,7 +26,7 @@ public class SwerveVector
         x = 0;
         y = 0;
     }
-    
+
     /**
      * Constructor from x and y values
      * @param position values as array
@@ -36,7 +36,6 @@ public class SwerveVector
         x = position[0];
         y = position[1];
     }
- 
 
     /**
      * Constructor from x and y values
@@ -48,19 +47,20 @@ public class SwerveVector
         this.x = x;
         this.y = y;
     }
-    
+
     /**
      * Constructor from magnitude and angle degrees
      * @param mag magnitude of vector
      * @param angle angle of vector
-     * @param dummy used to construct using mag & angle
      */
-    public SwerveVector(double mag, double angle, boolean dummy)
+    public static SwerveVector NewFromMagAngle(double mag, double angle)
     {
-        x = Math.sin(Math.toRadians(angle)) * mag;
-        y = Math.cos(Math.toRadians(angle)) * mag;
+        SwerveVector r = new SwerveVector();
+        r.setMagAngle(mag, angle);
+        return r;
     }
-    
+
+
     /**
      * Set the x value
      * @param x
@@ -69,7 +69,7 @@ public class SwerveVector
     {
         this.x = x;
     }
-    
+
     /**
      * Set the y value
      * @param y
@@ -78,7 +78,7 @@ public class SwerveVector
     {
         this.y = y;
     }
-    
+
     /**
      * Set x and y from magnitude and angle degrees
      * @param mag magnitude of vector
@@ -86,10 +86,10 @@ public class SwerveVector
      */
     public void setMagAngle(double mag, double angle)
     {
-        x = Math.sin(Math.toRadians(angle)) * mag;
-        y = Math.cos(Math.toRadians(angle)) * mag;
+        x = Math.cos(Math.toRadians(angle)) * mag;
+        y = Math.sin(Math.toRadians(angle)) * mag;
     }
-    
+
     /**
      * Set just the magnitude of the vector
      * @param mag
@@ -98,7 +98,7 @@ public class SwerveVector
     {
         setMagAngle(mag, this.getAngle());
     }
-    
+
     /**
      * Set just the angle of the vector
      * @param angle
@@ -107,7 +107,7 @@ public class SwerveVector
     {
         setMagAngle(this.getMag(), angle);
     }
- 
+
     /**
      * Get the x value
      * @return
@@ -116,7 +116,7 @@ public class SwerveVector
     {
         return x;
     }
- 
+
     /**
      * Get the y value
      * @return
@@ -125,29 +125,22 @@ public class SwerveVector
     {
         return y;
     }
- 
+
     /**
      * Get the magnitude of the vector
      * @return
      */
     public double getMag()
     {
-        return Math.sqrt(MathUtils.pow(x, 2) + MathUtils.pow(y, 2));
+        return Math.sqrt(x * x + y * y);
     }
- 
+
     /**
      * Get the angle of the vector
      * @return
      */
     public double getAngle()
     {
-        double retVal = 0;        
-        if(y != 0)
-        {
-            // maybe MathUtils.atan2(x, -y); 
-            retVal = Math.toDegrees(MathUtils.atan2(y, x));
-        }
- 
-        return retVal;
+        return Math.toDegrees(MathUtils.atan2(y, x));
     }
 }
