@@ -7,15 +7,8 @@ import com.taurus.Logger;
 import com.taurus.SwerveChassis;
 import com.taurus.SwerveConstants;
 import com.taurus.SwerveVector;
-import com.taurus.SwerveWheel;
-
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.IterativeRobot;
-//import edu.wpi.first.wpilibj.Joystick;
-//import edu.wpi.first.wpilibj.Timer;
-//import edu.wpi.first.wpilibj.DriverStation;
-//import edu.wpi.first.wpilibj.DriverStationLCD;
-//import edu.wpi.first.wpilibj.Joystick.ButtonType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -70,13 +63,6 @@ public class RobotTemplate extends IterativeRobot {
         testWheelChooser.addObject("Back Right",  Integer.valueOf(2));
         testWheelChooser.addObject("Back Left",   Integer.valueOf(3));
         
-        SmartDashboard.putNumber("Wheel Mag P", SwerveWheel.DriveP);
-        SmartDashboard.putNumber("Wheel Mag I", SwerveWheel.DriveI);
-        SmartDashboard.putNumber("Wheel Mag D", SwerveWheel.DriveD);
-        SmartDashboard.putNumber("Wheel Angle P", SwerveWheel.AngleP);
-        SmartDashboard.putNumber("Wheel Angle I", SwerveWheel.AngleI);
-        SmartDashboard.putNumber("Wheel Angle D", SwerveWheel.AngleD);
-        
         log.info("Initialization complete.");
     }
 
@@ -129,14 +115,6 @@ public class RobotTemplate extends IterativeRobot {
         SmartDashboard.putNumber("Right Mag",   controller.getMagnitude(Hand.kRight));
         SmartDashboard.putNumber("Right Angle", controller.getDirectionDegrees(Hand.kRight));
         
-        // display and get the PID values for the wheels
-        SwerveWheel.DriveP = SmartDashboard.getNumber("Wheel Mag P", SwerveWheel.DriveP);
-        SwerveWheel.DriveI = SmartDashboard.getNumber("Wheel Mag I", SwerveWheel.DriveI);
-        SwerveWheel.DriveD = SmartDashboard.getNumber("Wheel Mag D", SwerveWheel.DriveD);
-        SwerveWheel.AngleP = SmartDashboard.getNumber("Wheel Angle P", SwerveWheel.AngleP);
-        SwerveWheel.AngleI = SmartDashboard.getNumber("Wheel Angle I", SwerveWheel.AngleI);
-        SwerveWheel.AngleD = SmartDashboard.getNumber("Wheel Angle D", SwerveWheel.AngleD);
-
         // display each wheel's mag and angle in SmartDashboard
         for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
