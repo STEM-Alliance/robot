@@ -34,7 +34,9 @@ public class SwerveController {
 
     public static final int HALO_DRIVE = 0;
     public static final int ANGLE_DRIVE = 1;
-    
+
+    private static final double DEADBAND = 0.05;
+
     public boolean useXbox;
     public int driveScheme;
     
@@ -64,21 +66,29 @@ public class SwerveController {
      */
     public double getMagnitude(Hand hand)
     {
+        double value = 0;
+
         if(useXbox)
         {
-            return xbox.getMagnitude(hand);
+            value = xbox.getMagnitude(hand);
         }
         else
         {
             if(hand == Hand.kLeft)
             {
-                return left.getMagnitude();
+                value = left.getMagnitude();
             }
             else
             {
-                return right.getMagnitude();
+                value = right.getMagnitude();
             }
         }
+
+        if(value < DEADBAND)
+        {
+            value = 0;
+        }
+        return value;
     }
 
     /**
@@ -135,14 +145,22 @@ public class SwerveController {
      */
     public double getHaloDrive_Rotation()
     {
+        double value = 0;
+
         if(useXbox)
         {
-            return xbox.getAxis(XboxController.AxisType.kRightX);
+            value = xbox.getAxis(XboxController.AxisType.kRightX);
         }
         else
         {
-            return right.getAxis(Joystick.AxisType.kX);
+            value = right.getAxis(Joystick.AxisType.kX);
         }
+
+        if(value < DEADBAND)
+        {
+            value = 0;
+        }
+        return value;
     }
 
     /**
@@ -151,16 +169,24 @@ public class SwerveController {
      */
     public SwerveVector getHaloDrive_Velocity()
     {
+        SwerveVector value;
+
         if(useXbox)
         {
-            return new SwerveVector(xbox.getX(Hand.kLeft),
-                                    xbox.getY(Hand.kLeft));
+            value = new SwerveVector(xbox.getX(Hand.kLeft),
+                                     xbox.getY(Hand.kLeft));
         }
         else
         {
-            return new SwerveVector(left.getX(),
-                                    left.getY());
+            value = new SwerveVector(left.getX(),
+                                     left.getY());
         }
+
+        if(value.getMag() < DEADBAND)
+        {
+            value.setMag(0);
+        }
+        return value;
     }
 
     /**
@@ -185,16 +211,24 @@ public class SwerveController {
      */
     public SwerveVector getAngleDrive_Velocity()
     {
+        SwerveVector value;
+
         if(useXbox)
         {
-            return new SwerveVector(xbox.getX(Hand.kLeft),
-                                    xbox.getY(Hand.kLeft));
+            value = new SwerveVector(xbox.getX(Hand.kLeft),
+                                     xbox.getY(Hand.kLeft));
         }
         else
         {
-            return new SwerveVector(left.getX(),
-                                    left.getY());
+            value = new SwerveVector(left.getX(),
+                                     left.getY());
         }
+
+        if(value.getMag() < DEADBAND)
+        {
+            value.setMag(0);
+        }
+        return value;
     }
     
     /**
