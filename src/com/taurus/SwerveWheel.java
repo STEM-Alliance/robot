@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.PIDController;
 
 /**
  *
@@ -46,10 +45,10 @@ public class SwerveWheel
     
     // PID 
     private AnalogPotentiometer AnglePot;
-    public PIDController AnglePID;
+    public SwervePIDController AnglePID;
     
     private Encoder DriveEncoder;
-    public PIDController DrivePID;
+    public SwervePIDController DrivePID;
     
     // shifter
     private Servo Shifter;
@@ -89,14 +88,14 @@ public class SwerveWheel
         
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
         
-        AnglePID = new PIDController(AngleP, AngleI, AngleD, AnglePot, MotorAngle);
+        AnglePID = new SwervePIDController(AngleP, AngleI, AngleD, AnglePot, MotorAngle);
         AnglePID.setContinuous();
         AnglePID.setInputRange(0, 360);
         //Maybe set outputRange Depending on Victors
         AnglePID.setOutputRange(-1, 1);
         AnglePID.enable();
         
-        DrivePID = new PIDController(DriveP, DriveI, DriveD, DriveEncoder, MotorDrive);
+        DrivePID = new SwervePIDController(DriveP, DriveI, DriveD, DriveEncoder, MotorDrive);
         DrivePID.setInputRange(-1, 1);
         //Maybe set output range depending on stuff
         AnglePID.setOutputRange(-1, 1);
