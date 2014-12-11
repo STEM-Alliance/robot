@@ -47,16 +47,23 @@ public class SwerveAngleController
         if (Math.abs(error) > (MaxIn - MinIn) * 3 / 4)
         {
             // greater than 3/4 circle -> less than 1/4 circle
-            error -= Math.copySign(MaxIn - MinIn, error);
+            error -= copySign(MaxIn - MinIn, error);
         }
         else if (Math.abs(error) > (MaxIn - MinIn) / 4)
         {
             // greater than 1/4 circle -> less than 1/4 circle + motor reverse
             ReverseDriveMotor = true;
-            error -= Math.copySign((MaxIn - MinIn) / 2, error);
+            error -= copySign((MaxIn - MinIn) / 2, error);
         }
         
         return error;
+    }
+    
+    private static double copySign(double magnitude, double sign)
+    {
+        if ((sign < 0) != (magnitude < 0))
+            return -magnitude;
+        return magnitude;
     }
 
 }
