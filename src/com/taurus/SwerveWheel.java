@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -47,10 +46,10 @@ public class SwerveWheel
     
     // PID 
     private AnalogPotentiometer AnglePot;
-    public PIDController AnglePID;
+    public SwervePIDController AnglePID;
     
     private Encoder DriveEncoder;
-    public PIDController DrivePID;
+    public SwervePIDController DrivePID;
     
     // shifter
     private Servo Shifter;
