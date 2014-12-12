@@ -1,15 +1,12 @@
 package com.taurus.test;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import junit.framework.TestCase;
 
 import com.taurus.SwerveAngleController;
 
-public class SwerveAngleControllerTest
+public class SwerveAngleControllerTest extends TestCase
 {
 
-    @Test
     public void testCalcErrorAndReverseNeeded()
     {
         SwerveAngleController controller = new SwerveAngleController();
