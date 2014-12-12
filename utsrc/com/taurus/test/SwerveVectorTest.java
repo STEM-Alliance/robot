@@ -1,12 +1,11 @@
 package com.taurus.test;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import junit.framework.TestCase;
 
 import com.taurus.SwerveVector;
 
-public class SwerveVectorTest {
+public class SwerveVectorTest extends TestCase
+{
 
     private static double[][] testCases = new double[][] 
     {
@@ -18,39 +17,39 @@ public class SwerveVectorTest {
         new double[] { -3, -3, -135, 4.242 },
     };
 
-    private double[] getArrayForSwerveVector(SwerveVector v)
+    private static void assertEquals(double[] expected, SwerveVector actual)
     {
-        return new double[] { v.getX(), v.getY(), v.getAngle(), v.getMag() };
+        assertEquals(expected[0], actual.getX(), 0.01);
+        assertEquals(expected[1], actual.getY(), 0.01);
+        assertEquals(expected[2], actual.getAngle(), 0.01);
+        assertEquals(expected[3], actual.getMag(), 0.01);
     }
 
-    @Test
     public void testNewFromXY()
     {
-        for (double[] testCase : testCases)
+        for (int i = 0; i < testCases.length; i++)
         {
-            SwerveVector v = new SwerveVector(testCase[0], testCase[1]);
-            assertArrayEquals(testCase, getArrayForSwerveVector(v), 0.01);
+            SwerveVector v = new SwerveVector(testCases[i][0], testCases[i][1]);
+            assertEquals(testCases[i], v);
         }
     }
 
-    @Test
     public void testNewFromMagAngle()
     {
-        for (double[] testCase : testCases)
+        for (int i = 0; i < testCases.length; i++)
         {
-            SwerveVector v = SwerveVector.NewFromMagAngle(testCase[3], testCase[2]);
-            assertArrayEquals(testCase, getArrayForSwerveVector(v), 0.01);
+            SwerveVector v = SwerveVector.NewFromMagAngle(testCases[i][3], testCases[i][2]);
+            assertEquals(testCases[i], v);
         }
     }
 
-    @Test
     public void testSetMagAngle()
     {
-        for (double[] testCase : testCases)
+        for (int i = 0; i < testCases.length; i++)
         {
             SwerveVector v = new SwerveVector();
-            v.setMagAngle(testCase[3], testCase[2]);
-            assertArrayEquals(testCase, getArrayForSwerveVector(v), 0.01);
+            v.setMagAngle(testCases[i][3], testCases[i][2]);
+            assertEquals(testCases[i], v);
         }
     }
 
