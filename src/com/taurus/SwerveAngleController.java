@@ -1,18 +1,23 @@
 package com.taurus;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class SwerveAngleController
 {
-    private static double ErrorMax = 180;
-    private static double MaxOut = 1;
-    private static double P = 0.0001;
-    private static double I = 0.0; // FIXME: P / 100
+    private static final double MaxTimestampDiff = 1.0;  // heuristic to detect disabling
+    private static final double HalfCircle = 180, QuarterCircle = 90;
+    private static final double MaxOut = 1;
+    
+    private static final double P = MaxOut / QuarterCircle * 0.01;
+    private static final double T_I = .5;  // seconds needed to equal a P term contribution
+    private static final double I = 0;//1 / T_I;
 
     private String Name;
     private double DriveMotorSpeed;
     private boolean ReverseDriveMotor;
-    private double IntegratedError;
+    private double Integral;
+    private double LastTimestamp = 0;
 
     public SwerveAngleController()
     {
@@ -22,6 +27,7 @@ public final class SwerveAngleController
     public SwerveAngleController(String name)
     {
         this.Name = name;
+        this.LastTimestamp = 0;
         this.Reset();
     }
     
@@ -29,7 +35,7 @@ public final class SwerveAngleController
     {
         this.DriveMotorSpeed = 0;
         this.ReverseDriveMotor = false;
-        this.IntegratedError = 0;
+        this.Integral = 0;
     }
 
     public double getAngleMotorSpeed()
@@ -53,14 +59,36 @@ public final class SwerveAngleController
         SmartDashboard.putNumber(Name + ".Error", error);
         SmartDashboard.putBoolean(Name + ".Reverse", ReverseDriveMotor);
 
-        // Calculate integral term.
-        IntegratedError += error * I;
-        IntegratedError = Utilities.clampToRange(IntegratedError, -MaxOut, MaxOut);
+        // Proportional term.
+        double proportional = error * P;
         
-        SmartDashboard.putNumber(Name + ".IntegratedError", IntegratedError);
+        SmartDashboard.putNumber(Name + ".Proportional", proportional);
+        
+        // Get time since we were last called.
+        double timeDelta;
+        {
+            double timestamp = Timer.getFPGATimestamp();
+            timeDelta = timestamp - LastTimestamp;
+            LastTimestamp = timestamp;
+        }
+        
+        // Calculate integral term.
+        if (timeDelta > MaxTimestampDiff)
+        {
+            // We were probably disabled; reset the integral error.
+            Integral = 0;
+        }
+        else
+        {
+            // Sum the proportional term over time.
+            Integral += proportional * timeDelta * I;
+            Integral = Utilities.clampToRange(Integral, -MaxOut, MaxOut);
+        }
+        
+        SmartDashboard.putNumber(Name + ".IntegratedError", Integral);
 
         // Calculate output with coefficients.
-        double output = error * P + IntegratedError;
+        double output = proportional + Integral;
         
         SmartDashboard.putNumber(Name + ".Output", output);
 
@@ -72,20 +100,17 @@ public final class SwerveAngleController
 
     public double CalcErrorAndReverseNeeded(double setPoint, double sensorValue)
     {
-        // Calculate error.
+        // Calculate error (wrapped to +/- half circle).
         double error = setPoint - sensorValue;
-        error = Utilities.wrapToRange(error, -ErrorMax, ErrorMax);
+        error = Utilities.wrapToRange(error, -HalfCircle, HalfCircle);
         
-        // Adjust error for shortest path (possibly including reversing the
-        // drive motor direction).
-        double reversedMotorError = Utilities.wrapToRange(error + ErrorMax, -ErrorMax, ErrorMax);
-        ReverseDriveMotor = false;
+        // Calculate the error for the drive motor running backwards.
+        double reversedMotorError = Utilities.wrapToRange(error + HalfCircle, -HalfCircle, HalfCircle);
         
-        if (Math.abs(reversedMotorError) < Math.abs(error))
-        {
-            ReverseDriveMotor = true;
+        // Pick the smaller error.
+        ReverseDriveMotor = Math.abs(reversedMotorError) < Math.abs(error);
+        if (ReverseDriveMotor)
             error = reversedMotorError;
-        }
         
         return error;
     }
