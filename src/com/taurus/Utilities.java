@@ -2,7 +2,7 @@ package com.taurus;
 
 public final class Utilities
 {
-    public static double wrapToRange(double value, double min, double max)
+    public static final double wrapToRange(double value, double min, double max)
     {
         value -= min;
         value %= max - min;
@@ -12,19 +12,19 @@ public final class Utilities
         return value;
     }
 
-    public static double clampToRange(double value, double min, double max)
+    public static final double clampToRange(double value, double min, double max)
     {
         return value < min ? min
              : value > max ? max
                            : value;
     }
 
-    public static double scaleToRange(
+    public static final double scaleToRange(
             double value,
             double inMin, double inMax,
             double outMin, double outMax)
     {
-        return clampToRange(value, inMin, inMax)
+        return (clampToRange(value, inMin, inMax) - inMin)
                 * (outMax - outMin)
                 / (inMax - inMin)
                 + outMin;
