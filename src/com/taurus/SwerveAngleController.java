@@ -1,15 +1,17 @@
 package com.taurus;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class SwerveAngleController
 {
     private static double MinIn = -180, MaxIn = 180, MinOut = -1, MaxOut = 1;
-    private static double P = 
-            MaxOut /* Max speed (Note: 1.2 rot/second or 430 degrees/second) */
-            * 2.0 /* Speed fraction at max distance (before clamping) */
-            * 4 / (MaxIn - MinIn) /* Divide by max distance to travel (quarter circle) */;
+    private static double MaxError = 90;
+    private static double P = 0.0001;
+    private static double I = 0.0;//P / 100;
 
     private double DriveMotorSpeed;
     private boolean ReverseDriveMotor;
+    private double IntegralError = 0.0d;
 
     public double getAngleMotorSpeed()
     {
@@ -23,10 +25,23 @@ public class SwerveAngleController
 
     public void Update(double setPoint, double sensorValue)
     {
+        //P = SmartDashboard.getNumber("P", P);
+        //I = SmartDashboard.getNumber("I", P);
+        
         double error = CalcErrorAndReverseNeeded(setPoint, sensorValue);
 
+        SmartDashboard.putNumber(".ctl.Error", error);
+        
+        // Add up error.
+        IntegralError += error;
+        
+        // Clamp to MaxError.
+        IntegralError = Math.min(MaxOut / I, Math.max(MinOut / I, IntegralError));
+        
+        SmartDashboard.putNumber(".ctl.Integral", IntegralError);
+        
         // Calculate output with coefficients.
-        double output = error * P;
+        double output = error * P + IntegralError * I;
 
         // Clamp output.
         DriveMotorSpeed = Math.max(MinOut, Math.min(MaxOut, output));
