@@ -2,9 +2,10 @@ package com.taurus;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class SwerveAngleController
+public final class SwerveAngleController
 {
-    private static double MinIn = -180, MaxIn = 180, MinOut = -1, MaxOut = 1;
+    private static double ErrorMax = 180;
+    private static double MaxOut = 1;
     private static double P = 0.0001;
     private static double I = 0.0; // FIXME: P / 100
 
@@ -45,7 +46,8 @@ public class SwerveAngleController
     {
         SmartDashboard.putNumber(Name + ".SetPoint", setPoint);
         SmartDashboard.putNumber(Name + ".SensorValue", sensorValue);
-        
+
+        // Calculate error, with detection of the drive motor reversal shortcut.
         double error = CalcErrorAndReverseNeeded(setPoint, sensorValue);
         
         SmartDashboard.putNumber(Name + ".Error", error);
@@ -53,40 +55,36 @@ public class SwerveAngleController
 
         // Calculate integral term.
         IntegratedError += error * I;
-        IntegratedError = Utilities.clampToRange(IntegratedError, MinOut, MaxOut);
+        IntegratedError = Utilities.clampToRange(IntegratedError, -MaxOut, MaxOut);
+        
         SmartDashboard.putNumber(Name + ".IntegratedError", IntegratedError);
 
         // Calculate output with coefficients.
         double output = error * P + IntegratedError;
+        
         SmartDashboard.putNumber(Name + ".Output", output);
 
         // Clamp output.
-        DriveMotorSpeed = Utilities.clampToRange(output, MinOut, MaxOut);
+        DriveMotorSpeed = Utilities.clampToRange(output, -MaxOut, MaxOut);
+        
         SmartDashboard.putNumber(Name + ".ClampedOutput", DriveMotorSpeed);
     }
 
     public double CalcErrorAndReverseNeeded(double setPoint, double sensorValue)
     {
-        // Clamp input.
-        setPoint = Utilities.clampToRange(setPoint, MinIn, MaxIn);
-        sensorValue = Utilities.clampToRange(sensorValue, MinIn, MaxIn);
-
         // Calculate error.
         double error = setPoint - sensorValue;
-
+        error = Utilities.wrapToRange(error, -ErrorMax, ErrorMax);
+        
         // Adjust error for shortest path (possibly including reversing the
         // drive motor direction).
+        double reversedMotorError = Utilities.wrapToRange(error + ErrorMax, -ErrorMax, ErrorMax);
         ReverseDriveMotor = false;
-        if (Math.abs(error) > (MaxIn - MinIn) * 3 / 4)
+        
+        if (Math.abs(reversedMotorError) < Math.abs(error))
         {
-            // greater than 3/4 circle -> less than 1/4 circle
-            error -= Utilities.copySign(MaxIn - MinIn, error);
-        }
-        else if (Math.abs(error) > (MaxIn - MinIn) / 4)
-        {
-            // greater than 1/4 circle -> less than 1/4 circle + motor reverse
             ReverseDriveMotor = true;
-            error -= Utilities.copySign((MaxIn - MinIn) / 2, error);
+            error = reversedMotorError;
         }
         
         return error;
