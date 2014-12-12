@@ -1,5 +1,7 @@
 package com.taurus;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class SwerveAngleController
 {
     private static double MinIn = -180, MaxIn = 180, MinOut = -1, MaxOut = 1;
@@ -11,6 +13,11 @@ public class SwerveAngleController
     private boolean ReverseDriveMotor;
     private double IntegratedError;
 
+    public SwerveAngleController()
+    {
+        this("SwerveAngleController");
+    }
+    
     public SwerveAngleController(String name)
     {
         this.Name = name;
@@ -37,16 +44,22 @@ public class SwerveAngleController
     public void Update(double setPoint, double sensorValue)
     {
         double error = CalcErrorAndReverseNeeded(setPoint, sensorValue);
+        
+        SmartDashboard.putNumber(Name + ".Error", error);
+        SmartDashboard.putBoolean(Name + ".Reverse", ReverseDriveMotor);
 
+        // Calculate integral term.
         IntegratedError += error * I;
-
         IntegratedError = Utilities.clampToRange(IntegratedError, MinOut, MaxOut);
+        SmartDashboard.putNumber(Name + ".IntegratedError", IntegratedError);
 
         // Calculate output with coefficients.
         double output = error * P + IntegratedError;
+        SmartDashboard.putNumber(Name + ".Output", output);
 
         // Clamp output.
         DriveMotorSpeed = Utilities.clampToRange(output, MinOut, MaxOut);
+        SmartDashboard.putNumber(Name + ".ClampedOutput", DriveMotorSpeed);
     }
 
     public double CalcErrorAndReverseNeeded(double setPoint, double sensorValue)
@@ -72,7 +85,7 @@ public class SwerveAngleController
             ReverseDriveMotor = true;
             error -= Utilities.copySign((MaxIn - MinIn) / 2, error);
         }
-
+        
         return error;
     }
 
