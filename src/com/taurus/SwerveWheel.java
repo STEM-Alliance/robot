@@ -29,9 +29,9 @@ public class SwerveWheel
     private Victor MotorAngle;
 
     // encoder calculation
-    private double DriveWheelDiameter = 4.0;
-    private int DriveEncoderPulses = 64;
-    private double DriveEncoderRate = Math.PI * DriveWheelDiameter / DriveEncoderPulses;
+    private static final double DriveWheelDiameter = 4.0;
+    private static final int DriveEncoderPulses = 64;
+    private static final double DriveEncoderRate = Math.PI * DriveWheelDiameter / DriveEncoderPulses;
 
     // sensor
     private AnalogPotentiometer AnglePot;
