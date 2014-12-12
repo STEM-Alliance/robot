@@ -172,7 +172,7 @@ public class SwerveWheel
                 : WheelDesired.getMag());
         MotorAngle.set(AngleController.getAngleMotorSpeed());
         
-        MotorDrive.set(WheelDesired.getY());
-        MotorAngle.set(WheelDesired.getX());
+        //MotorDrive.set(WheelDesired.getY());
+        //MotorAngle.set(WheelDesired.getX());
     }
 }
