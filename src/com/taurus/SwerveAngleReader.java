@@ -7,10 +7,7 @@ public class SwerveAngleReader
 {
     private String name;
     private Potentiometer pot;
-    private double zero;
-    
-    private boolean rotated180 = false;
-    private double lastVal = 0;
+    // FIXME: private double zero;
     
     private static double MinIn = 0.2, MaxIn = 4.8, MinOut = -180, MaxOut = 180;
     
@@ -18,7 +15,7 @@ public class SwerveAngleReader
     {
         this.name = name;
         this.pot = pot;
-        this.zero = zero;
+        // FIXME: this.zero = zero;
     }
     
     public double get()
@@ -28,20 +25,10 @@ public class SwerveAngleReader
         SmartDashboard.putNumber(this.name + ".raw", val);
         
         // Clamp to input range.
-        val = Math.max(MinIn, Math.min(MaxIn, val));
-        
-        // Detect crossing the end.
-        if (Math.abs(val - this.lastVal) > (MaxIn - MinIn) / 2)
-        {
-            this.rotated180 = !this.rotated180;
-        }
-        
-        SmartDashboard.putBoolean(this.name + ".rotated180", this.rotated180);
-        
-        this.lastVal = val;
+        val = Utilities.clampToRange(val, MinIn, MaxIn);
         
         // Compute the final angle.
-        double ret = (val / (MaxIn - MinIn) + (rotated180 ? 1 : 0)) * (MaxOut - MinOut) / 2;
+        double ret = Utilities.scaleToRange(val, MinIn, MaxIn, MinOut, MaxOut);
         
         // Subtract off the 'zero' value, wrapping to stay within the output range.
         // FIXME: ret -= this.zero;

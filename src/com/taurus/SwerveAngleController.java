@@ -3,13 +3,26 @@ package com.taurus;
 public class SwerveAngleController
 {
     private static double MinIn = -180, MaxIn = 180, MinOut = -1, MaxOut = 1;
-    private static double P = 
-            MaxOut /* Max speed (Note: 1.2 rot/second or 430 degrees/second) */
-            * 2.0 /* Speed fraction at max distance (before clamping) */
-            * 4 / (MaxIn - MinIn) /* Divide by max distance to travel (quarter circle) */;
+    private static double P = 0.0001;
+    private static double I = 0.0; // FIXME: P / 100
 
+    private String Name;
     private double DriveMotorSpeed;
     private boolean ReverseDriveMotor;
+    private double IntegratedError;
+
+    public SwerveAngleController(String name)
+    {
+        this.Name = name;
+        this.Reset();
+    }
+    
+    public void Reset()
+    {
+        this.DriveMotorSpeed = 0;
+        this.ReverseDriveMotor = false;
+        this.IntegratedError = 0;
+    }
 
     public double getAngleMotorSpeed()
     {
@@ -25,21 +38,25 @@ public class SwerveAngleController
     {
         double error = CalcErrorAndReverseNeeded(setPoint, sensorValue);
 
+        IntegratedError += error * I;
+
+        IntegratedError = Utilities.clampToRange(IntegratedError, MinOut, MaxOut);
+
         // Calculate output with coefficients.
-        double output = error * P;
+        double output = error * P + IntegratedError;
 
         // Clamp output.
-        DriveMotorSpeed = Math.max(MinOut, Math.min(MaxOut, output));
+        DriveMotorSpeed = Utilities.clampToRange(output, MinOut, MaxOut);
     }
 
     public double CalcErrorAndReverseNeeded(double setPoint, double sensorValue)
     {
         // Clamp input.
-        setPoint = Math.max(MinIn, Math.min(MaxIn, setPoint));
-        sensorValue = Math.max(MinIn, Math.min(MaxIn, sensorValue));
+        setPoint = Utilities.clampToRange(setPoint, MinIn, MaxIn);
+        sensorValue = Utilities.clampToRange(sensorValue, MinIn, MaxIn);
 
         // Calculate error.
-        double error = (setPoint - MinIn) - (sensorValue - MinIn);
+        double error = setPoint - sensorValue;
 
         // Adjust error for shortest path (possibly including reversing the
         // drive motor direction).
@@ -47,23 +64,16 @@ public class SwerveAngleController
         if (Math.abs(error) > (MaxIn - MinIn) * 3 / 4)
         {
             // greater than 3/4 circle -> less than 1/4 circle
-            error -= copySign(MaxIn - MinIn, error);
+            error -= Utilities.copySign(MaxIn - MinIn, error);
         }
         else if (Math.abs(error) > (MaxIn - MinIn) / 4)
         {
             // greater than 1/4 circle -> less than 1/4 circle + motor reverse
             ReverseDriveMotor = true;
-            error -= copySign((MaxIn - MinIn) / 2, error);
+            error -= Utilities.copySign((MaxIn - MinIn) / 2, error);
         }
-        
+
         return error;
-    }
-    
-    private static double copySign(double magnitude, double sign)
-    {
-        if ((sign < 0) != (magnitude < 0))
-            return -magnitude;
-        return magnitude;
     }
 
 }
