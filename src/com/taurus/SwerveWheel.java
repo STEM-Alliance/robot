@@ -8,9 +8,7 @@ package com.taurus;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -36,7 +34,7 @@ public class SwerveWheel
     private double DriveEncoderRate = Math.PI * DriveWheelDiameter / DriveEncoderPulses;
 
     // sensor
-    private Potentiometer AnglePot;
+    private AnalogPotentiometer AnglePot;
     private Encoder DriveEncoder;
 
     // controller
