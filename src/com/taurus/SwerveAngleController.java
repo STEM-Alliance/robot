@@ -43,6 +43,9 @@ public class SwerveAngleController
 
     public void Update(double setPoint, double sensorValue)
     {
+        SmartDashboard.putNumber(Name + ".SetPoint", setPoint);
+        SmartDashboard.putNumber(Name + ".SensorValue", sensorValue);
+        
         double error = CalcErrorAndReverseNeeded(setPoint, sensorValue);
         
         SmartDashboard.putNumber(Name + ".Error", error);

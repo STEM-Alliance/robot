@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -35,7 +36,7 @@ public class SwerveWheel
     private double DriveEncoderRate = Math.PI * DriveWheelDiameter / DriveEncoderPulses;
 
     // sensor
-    private SwerveAngleReader AnglePot;
+    private Potentiometer AnglePot;
     private Encoder DriveEncoder;
 
     // controller
@@ -74,9 +75,7 @@ public class SwerveWheel
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
 
-        AnglePot = new SwerveAngleReader(name + ".pot", new AnalogPotentiometer(PotPin),
-                Orientation);
-
+        AnglePot = new AnalogPotentiometer(PotPin, 360 / 4.8, -180);
         AngleController = new SwerveAngleController(name + ".ctl");
     }
 
@@ -156,8 +155,7 @@ public class SwerveWheel
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
         SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
 
-        double angle = AnglePot.get();
-        AngleController.Update(WheelDesired.getAngle(), angle);
+        AngleController.Update(WheelDesired.getAngle(), AnglePot.get());
 
         MotorDrive.set(AngleController.isReverseDriveMotor() 
                 ? -WheelDesired.getMag()
