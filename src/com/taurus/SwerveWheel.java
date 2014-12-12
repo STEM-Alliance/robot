@@ -29,9 +29,15 @@ public class SwerveWheel
     private Victor MotorAngle;
 
     // encoder calculation
-    private static final double DriveWheelDiameter = 4.0;
+    private static final double DriveWheelDiameter = 4.0;  // inches
     private static final int DriveEncoderPulses = 64;
-    private static final double DriveEncoderRate = Math.PI * DriveWheelDiameter / DriveEncoderPulses;
+    private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
+    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses;
+    
+    // potentiometer calculation
+    private static final double PotentiometerMax = 4.9;
+    private static final double PotentiometerScale = 360 / PotentiometerMax; 
+    private static final double PotentiometerOffset = -180;
 
     // sensor
     private AnalogPotentiometer AnglePot;
@@ -73,7 +79,7 @@ public class SwerveWheel
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
 
-        AnglePot = new AnalogPotentiometer(PotPin, 360 / 4.8, -180);
+        AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, PotentiometerOffset);
         AngleController = new SwerveAngleController(name + ".ctl");
     }
 
