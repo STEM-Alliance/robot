@@ -35,7 +35,7 @@ public class SwerveWheel
     private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses;
     
     // potentiometer calculation
-    private static final double PotentiometerMax = 4.9;
+    private static final double PotentiometerMax = 4.9/1.1;
     private static final double PotentiometerScale = 360 / PotentiometerMax; 
     private static final double PotentiometerOffset = -180;
 
@@ -164,6 +164,15 @@ public class SwerveWheel
         MotorDrive.set(AngleController.isReverseDriveMotor() 
                 ? -WheelDesired.getMag()
                 : WheelDesired.getMag());
-        MotorAngle.set(AngleController.getAngleMotorSpeed());
+        
+        if(WheelDesired.getMag() > SwerveController.DEADBAND)
+        {
+            MotorAngle.set(-AngleController.getAngleMotorSpeed());
+        }
+        else
+        {
+            AngleController.resetIntegral();
+            MotorAngle.set(0);
+        }
     }
 }

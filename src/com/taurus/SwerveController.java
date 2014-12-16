@@ -35,7 +35,7 @@ public class SwerveController {
     public static final int HALO_DRIVE = 0;
     public static final int ANGLE_DRIVE = 1;
 
-    private static final double DEADBAND = 0.05;
+    public static final double DEADBAND = 0.16;
 
     public boolean useXbox;
     public int driveScheme;
@@ -44,6 +44,7 @@ public class SwerveController {
     private Joystick right;
     
     private XboxController xbox;
+    
     
     /**
      * 
@@ -186,6 +187,7 @@ public class SwerveController {
         {
             value.setMag(0);
         }
+        
         return value;
     }
 

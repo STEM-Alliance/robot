@@ -8,7 +8,7 @@ public final class SwerveAngleController
     private static final double HalfCircle = 180, QuarterCircle = 90;
     private static final double MaxOut = 1;
     
-    private static final double P = MaxOut / QuarterCircle * 0.01;
+    private static final double P = MaxOut / QuarterCircle * 0.4;
     //private static final double T_I = .5;  // seconds needed to equal a P term contribution
     private static final double I = 0;//1 / T_I;
 
@@ -31,6 +31,11 @@ public final class SwerveAngleController
         this.controller = new PIController(P, I, MaxOut);
     }
 
+    public void resetIntegral()
+    {
+        this.controller.integral = 0;
+    }
+    
     public double getAngleMotorSpeed()
     {
         return driveMotorSpeed;
