@@ -55,7 +55,7 @@ public class SwerveController {
         right = new Joystick(2);
         xbox = new XboxController(1);
         
-        useXbox = false;
+        useXbox = true;
         driveScheme = HALO_DRIVE;
     }
 

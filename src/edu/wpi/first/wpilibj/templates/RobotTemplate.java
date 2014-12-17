@@ -186,6 +186,7 @@ public class RobotTemplate extends IterativeRobot {
         
         // if the button is not held down, we're in high gear
         drive.setGearHigh(controller.getHighGearEnable());
+        drive.UpdateShifter();
     }
     
     /**
