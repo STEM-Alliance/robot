@@ -8,6 +8,7 @@ package com.taurus;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -46,11 +47,7 @@ public class SwerveWheel
     // controller
     private SwerveAngleController AngleController;
 
-    // shifter
-    // private Servo Shifter;
-    // private double ShifterLevelHigh = 30;
-    // private double ShifterLevelLow = 0;
-    public static int Gear;
+   
 
     /**
      * Set up the wheel with the specific IO and orientation on the robot
@@ -61,10 +58,9 @@ public class SwerveWheel
      * @param PotPin Pin for Angle Potentiometer
      * @param DrivePin Pin for drive motor controller
      * @param AnglePin Pin for angle motor controller
-     * @param ShiftPin Pin for servo shifting
      */
     public SwerveWheel(String name, double[] Position, double Orientation, int[] EncoderPins,
-            int PotPin, int DrivePin, int AnglePin, int ShiftPin)
+            int PotPin, int DrivePin, int AnglePin)
     {
         Name = name;
 
@@ -74,7 +70,7 @@ public class SwerveWheel
         MotorDrive = new Victor(DrivePin);
         MotorAngle = new Victor(AnglePin);
 
-        // Shifter = new Servo(ShiftPin);
+   
 
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
@@ -125,14 +121,7 @@ public class SwerveWheel
         return WheelPosition;
     }
 
-    /**
-     * Set the shifting gear
-     * @param Gear gear to use
-     */
-    public static void setGear(int NewGear)
-    {
-        Gear = NewGear;
-    }
+   
 
     /** 
      * invoke updating the actual values and the motor outputs
@@ -140,21 +129,7 @@ public class SwerveWheel
      */
     private void UpdateTask()
     {
-        // switch to the desired gear
-        switch (Gear)
-        {
-            case SwerveConstants.GearLow:
-                // Shifter.setAngle(ShifterLevelLow);
-                break;
-
-            case SwerveConstants.GearHigh:
-                // Shifter.setAngle(ShifterLevelHigh);
-                break;
-
-            default:
-                // Shifter.setAngle(ShifterLevelLow);
-                break;
-        }
+        
 
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
         SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());

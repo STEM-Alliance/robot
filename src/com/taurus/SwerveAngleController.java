@@ -8,7 +8,7 @@ public final class SwerveAngleController
     private static final double HalfCircle = 180, QuarterCircle = 90;
     private static final double MaxOut = 1;
     
-    private static final double P = MaxOut / QuarterCircle * 0.4;
+    private static final double P = MaxOut / QuarterCircle * 1.0;
     //private static final double T_I = .5;  // seconds needed to equal a P term contribution
     private static final double I = 0;//1 / T_I;
 

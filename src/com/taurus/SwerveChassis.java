@@ -9,6 +9,7 @@ package com.taurus;
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.Servo;
 
 /**
  *
@@ -26,6 +27,13 @@ public class SwerveChassis
  
     private SwerveWheel[] Wheels;
 
+    // shifter
+    private Servo Shifter;
+    private final double ShifterLevelHigh = 170;// 170 to 0 is max range allowed for the servo 
+    private final double ShifterLevelLow = 0;
+    public int Gear;
+    
+    
     // PID controller stuff for robot angle/heading
     private class ChassisPIDOutput implements PIDOutput
     {
@@ -56,7 +64,8 @@ public class SwerveChassis
     {
         RobotVelocity = new SwerveVector(0, 0);
         RobotRotation = 0;
- 
+        Shifter = new Servo(SwerveConstants.WheelShiftServoPin);
+        
 //        RobotGyro = new Gyro(SwerveConstants.GyroPin);
 //        
 //        ChassisPID = new PIDController(ChassisP, ChassisI, ChassisD, RobotGyro, ChassisOutput);
@@ -76,8 +85,7 @@ public class SwerveChassis
                                         SwerveConstants.WheelEncoderPins[i],
                                         SwerveConstants.WheelPotPins[i],
                                         SwerveConstants.WheelDriveMotorPins[i],
-                                        SwerveConstants.WheelAngleMotorPins[i],
-                                        SwerveConstants.WheelShiftServoPins[i]);
+                                        SwerveConstants.WheelAngleMotorPins[i]);
         }
  
     }
@@ -170,6 +178,8 @@ public class SwerveChassis
         RobotVelocity = NewVelocity;
         RobotRotation = NewRotation; //Limit rotation speed
         
+        UpdateShifter();
+        
         // calculate vectors for each wheel
         for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
@@ -206,6 +216,31 @@ public class SwerveChassis
     }
     
     /**
+     * Update the Shifting/Gear servo
+     */
+    public void UpdateShifter()
+    {
+        // switch to the desired gear
+        switch (Gear)
+        {
+            case SwerveConstants.GearLow:
+                Shifter.setAngle(ShifterLevelLow);
+                System.out.println("Gear Low");
+                break;
+
+            case SwerveConstants.GearHigh:
+                Shifter.setAngle(ShifterLevelHigh);
+                System.out.println("Gear High");
+                break;
+
+            default:
+                Shifter.setAngle(ShifterLevelHigh);
+                System.out.println("Gear Default");
+                break;
+        }
+    }
+    
+    /**
      * Adjust the new angle based on the Gyroscope angle
      * @param Angle new desired angle
      * @return adjusted angle
@@ -234,11 +269,11 @@ public class SwerveChassis
         // Shift gears if necessary
         if(GearHigh)
         {
-            SwerveWheel.setGear(SwerveConstants.GearHigh);
+            Gear = SwerveConstants.GearHigh;
         }
         else
         {
-            SwerveWheel.setGear(SwerveConstants.GearLow);
+            Gear = SwerveConstants.GearLow;
         }
     }
     
@@ -250,7 +285,7 @@ public class SwerveChassis
     {
         boolean retVal = false;
         
-        if(SwerveWheel.Gear == SwerveConstants.GearHigh)
+        if(Gear == SwerveConstants.GearHigh)
         {
             retVal = true;
         }
