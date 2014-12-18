@@ -8,7 +8,6 @@ package com.taurus;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,19 +25,10 @@ public class SwerveWheel
                                        // val, angle
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
+    
+    // motor
     private Victor MotorDrive;
     private Victor MotorAngle;
-
-    // encoder calculation
-    private static final double DriveWheelDiameter = 4.0;  // inches
-    private static final int DriveEncoderPulses = 64;
-    private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
-    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses;
-    
-    // potentiometer calculation
-    private static final double PotentiometerMax = 4.9/1.1;
-    private static final double PotentiometerScale = 360 / PotentiometerMax; 
-    private static final double PotentiometerOffset = -180;
 
     // sensor
     private AnalogPotentiometer AnglePot;
@@ -47,7 +37,19 @@ public class SwerveWheel
     // controller
     private SwerveAngleController AngleController;
 
-   
+    // encoder calculation
+    private static final double DriveWheelDiameter = 4.0;  // inches
+    private static final int DriveEncoderPulses = 64;
+    private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
+    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses;
+    
+    // potentiometer calculation
+    private static final double PotentiometerMax = 4.6;
+    private static final double PotentiometerScale = 360 / PotentiometerMax; 
+    private static final double PotentiometerOffset = -180;
+    
+    // deadband
+    private static final double MinSpeed = 0.1;
 
     /**
      * Set up the wheel with the specific IO and orientation on the robot
@@ -129,8 +131,6 @@ public class SwerveWheel
      */
     private void UpdateTask()
     {
-        
-
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
         SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
 
@@ -140,7 +140,7 @@ public class SwerveWheel
                 ? -WheelDesired.getMag()
                 : WheelDesired.getMag());
         
-        if(WheelDesired.getMag() > SwerveController.DEADBAND)
+        if (WheelDesired.getMag() > MinSpeed)
         {
             MotorAngle.set(-AngleController.getAngleMotorSpeed());
         }
