@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * 
- * @author 
+ * @author Team 4818 Taurus Robotics
  */
 public class RobotTemplate extends IterativeRobot {
 

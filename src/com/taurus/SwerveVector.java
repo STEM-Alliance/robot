@@ -8,10 +8,9 @@ package com.taurus;
 import com.sun.squawk.util.MathUtils;
 
 /**
- *
- * @author Taurus Robotics
- * auto calculate angle and magnitude/angular velocity/distance 
+ * Auto calculate angle and magnitude/angular velocity/distance 
  * from x and y values 
+ * @author Team 4818 Taurus Robotics
  */
 public class SwerveVector
 {

@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.parsing.IInputOutput;
 
 /**
  * Adapted from Team 3946 (https://github.com/frc3946)
+ * @author Team 4818 Taurus Robotics
+ *
  */
 public class XboxController extends GenericHID implements IInputOutput {
 

@@ -3,6 +3,11 @@ package com.taurus;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * Implementation of PIController for use with turning swerve wheel modules
+ * @author Team 4818 Taurus Robotics
+ *
+ */
 public final class SwerveAngleController
 {
     private static final double HalfCircle = 180, QuarterCircle = 90;
@@ -15,54 +20,87 @@ public final class SwerveAngleController
     private final String name;
     private final PIController controller;
     
-    private double driveMotorSpeed;
-    private boolean reverseDriveMotor;
+    private double motorSpeed;
+    private boolean reverseMotor;
 
+    /**
+     * Create a new angle controller with the default name
+     */
     public SwerveAngleController()
     {
         this("SwerveAngleController");
     }
     
+    /**
+     * Create a new angle controller
+     * @param name controller's name
+     */
     public SwerveAngleController(String name)
     {
         this.name = name;
-        this.driveMotorSpeed = 0;
-        this.reverseDriveMotor = false;
+        this.motorSpeed = 0;
+        this.reverseMotor = false;
         this.controller = new PIController(P, I, MaxOut);
     }
 
+    /**
+     * Reset the integral to 0. Useful when stopped to clear cumulative error
+     */
     public void resetIntegral()
     {
         this.controller.integral = 0;
     }
     
-    public double getAngleMotorSpeed()
+    /**
+     * Get the speed written to the motor
+     * @return motor speed, between -1 and 1
+     */
+    public double getMotorSpeed()
     {
-        return driveMotorSpeed;
+        return motorSpeed;
     }
 
-    public boolean isReverseDriveMotor()
+    /**
+     * Should the motor be driving in reverse? (180 vs 360 turning)
+     * @return true if motor should be reversed
+     */
+    public boolean isReverseMotor()
     {
-        return reverseDriveMotor;
+        return reverseMotor;
     }
 
-    public void Update(double setPoint, double sensorValue)
+    /**
+     * Update the motor drive speed using the PI controller
+     * @param setPoint desired position
+     * @param sensorValue current position from sensor
+     * @return new motor speed output, -1 to 1
+     */
+    public double update(double setPoint, double sensorValue)
     {
         SmartDashboard.putNumber(name + ".SetPoint", setPoint);
         SmartDashboard.putNumber(name + ".SensorValue", sensorValue);
 
         // Calculate error, with detection of the drive motor reversal shortcut.
-        double error = CalcErrorAndReverseNeeded(setPoint, sensorValue);
+        double error = calcErrorAndReverseNeeded(setPoint, sensorValue);
         
         SmartDashboard.putNumber(name + ".Error", error);
-        SmartDashboard.putBoolean(name + ".Reverse", reverseDriveMotor);
+        SmartDashboard.putBoolean(name + ".Reverse", reverseMotor);
 
-        driveMotorSpeed = this.controller.update(error, Timer.getFPGATimestamp());
+        motorSpeed = this.controller.update(error, Timer.getFPGATimestamp());
         
-        SmartDashboard.putNumber(name + ".Output", driveMotorSpeed);
+        SmartDashboard.putNumber(name + ".Output", motorSpeed);
+        
+        return motorSpeed;
     }
 
-    public double CalcErrorAndReverseNeeded(double setPoint, double sensorValue)
+    /**
+     * Calculate the error from the current reading and desired position,
+     * determine if motor reversal is needed
+     * @param setPoint desired position
+     * @param sensorValue current position from sensor
+     * @return current error value
+     */
+    public double calcErrorAndReverseNeeded(double setPoint, double sensorValue)
     {
         // Calculate error (wrapped to +/- half circle).
         double error = setPoint - sensorValue;
@@ -72,8 +110,8 @@ public final class SwerveAngleController
         double reversedMotorError = Utilities.wrapToRange(error + HalfCircle, -HalfCircle, HalfCircle);
         
         // Pick the smaller error.
-        reverseDriveMotor = Math.abs(reversedMotorError) < Math.abs(error);
-        if (reverseDriveMotor)
+        reverseMotor = Math.abs(reversedMotorError) < Math.abs(error);
+        if (reverseMotor)
             error = reversedMotorError;
         
         return error;

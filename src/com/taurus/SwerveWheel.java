@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * @author Taurus Robotics
  * Handle motor outputs and feedback for an individual wheel
+ * @author Team 4818 Taurus Robotics
  */
 public class SwerveWheel
 {
@@ -72,11 +72,11 @@ public class SwerveWheel
         MotorDrive = new Victor(DrivePin);
         MotorAngle = new Victor(AnglePin);
 
-   
-
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
 
+        //TODO the PotentiometerOffset will likely be different for every module
+        // so maybe use Orientation instead
         AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, PotentiometerOffset);
         AngleController = new SwerveAngleController(name + ".ctl");
     }
@@ -90,9 +90,7 @@ public class SwerveWheel
     {
         WheelDesired = NewDesired;
 
-        UpdateTask();
-
-        return getActual();
+        return updateTask();
     }
 
     /** 
@@ -123,31 +121,33 @@ public class SwerveWheel
         return WheelPosition;
     }
 
-   
-
     /** 
      * invoke updating the actual values and the motor outputs
      * called automatically from setDesired()
+     * @return Actual vector reading of wheel
      */
-    private void UpdateTask()
+    private SwerveVector updateTask()
     {
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
         SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
 
-        AngleController.Update(WheelDesired.getAngle(), AnglePot.get());
+        AngleController.update(WheelDesired.getAngle(), AnglePot.get());
 
-        MotorDrive.set(AngleController.isReverseDriveMotor() 
+        // reverse the motor output if it is the shorter path
+        MotorDrive.set(AngleController.isReverseMotor() 
                 ? -WheelDesired.getMag()
                 : WheelDesired.getMag());
         
         if (WheelDesired.getMag() > MinSpeed)
         {
-            MotorAngle.set(-AngleController.getAngleMotorSpeed());
+            MotorAngle.set(-AngleController.getMotorSpeed());
         }
         else
         {
             AngleController.resetIntegral();
             MotorAngle.set(0);
         }
+        
+        return getActual();
     }
 }
