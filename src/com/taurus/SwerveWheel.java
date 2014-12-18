@@ -41,7 +41,8 @@ public class SwerveWheel
     private static final double DriveWheelDiameter = 4.0;  // inches
     private static final int DriveEncoderPulses = 64;
     private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
-    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses;
+    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses / 3;
+    private static final int DriveEncoderSample = 4;
     
     // potentiometer calculation
     private static final double PotentiometerMax = 4.6;
@@ -74,7 +75,9 @@ public class SwerveWheel
 
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
-
+        DriveEncoder.setSamplesToAverage(DriveEncoderSample);
+        DriveEncoder.start();
+        
         //TODO the PotentiometerOffset will likely be different for every module
         // so maybe use Orientation instead
         AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, PotentiometerOffset);
@@ -130,9 +133,10 @@ public class SwerveWheel
     {
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
         SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
-
+       // SwerveVector actual = getActual();
         AngleController.update(WheelDesired.getAngle(), AnglePot.get());
-
+        SmartDashboard.putNumber(Name + ".actual.encoder", DriveEncoder.getRate());
+        SmartDashboard.putNumber(Name + ".encoder.raw", DriveEncoder.getRaw());
         // reverse the motor output if it is the shorter path
         MotorDrive.set(AngleController.isReverseMotor() 
                 ? -WheelDesired.getMag()
