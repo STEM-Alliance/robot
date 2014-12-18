@@ -12,9 +12,8 @@ import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.Servo;
 
 /**
- *
- * @author Taurus Robotics
- * swerve chassis implementation
+ * Swerve chassis implementation
+ * @author Team 4818 Taurus Robotics
  */
 public class SwerveChassis
 {
@@ -31,8 +30,13 @@ public class SwerveChassis
     private Servo Shifter;
     private final double ShifterLevelHigh = 170;// 170 to 0 is max range allowed for the servo 
     private final double ShifterLevelLow = 0;
-    public int Gear;
-    
+    private int Gear;
+
+    private PIDController ChassisPID;
+    public double ChassisP = 1;
+    public double ChassisI = 0;
+    public double ChassisD = 0;
+    private ChassisPIDOutput ChassisOutput;
     
     // PID controller stuff for robot angle/heading
     private class ChassisPIDOutput implements PIDOutput
@@ -50,11 +54,6 @@ public class SwerveChassis
         }
         
     }
-    private PIDController ChassisPID;
-    public double ChassisP = 1;
-    public double ChassisI = 0;
-    public double ChassisD = 0;
-    public ChassisPIDOutput ChassisOutput;
     
     
     /**

@@ -4,8 +4,8 @@
 package com.taurus;
 
 /**
- * @author 
  * Pin assignments for Swerve Drive system
+ * @author Team 4818 Taurus Robotics
  */
 public class SwerveConstants {
 
@@ -62,7 +62,7 @@ public class SwerveConstants {
                                                         8 };
 
     /**
-     * Pins (PWM) for wheel shifting servo
+     * Pin (PWM) for wheel shifting servos
      */
     public static final int WheelShiftServoPin = 9;
     

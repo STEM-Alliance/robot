@@ -8,27 +8,27 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
  * Halo Drive: like driving a vehicle in Halo
  * Left joystick: movement l/r/f/b
  * Right joystick: rotation rate (CCW/CW)
- *          ▲
+ *          ^
  *          |
- *      ◄---+---►           ◄---+---►
+ *      <---+--->           <---+--->
  *          |
- *          ▼
+ *          v
  *       Movement            Rotation
  *       
  * Angle Drive: like a top-down shooter such
  * as Geometry Wars
  * Left joystick: movement l/r/f/b
  * Right joystick: robot heading l/r/f/b
- *          ▲                   ▲
+ *          ^                   ^
  *          |                   |
- *      ◄---+---►           ◄---+---►
+ *      <---+--->           <---+--->
  *          |                   |
- *          ▼                   ▼
+ *          v                   v
  *       Movement            Heading
  *    
  * Parts adapted from Team 3946 (https://github.com/frc3946)
  * </pre>
- * @author
+ * @author Team 4818 Taurus Robotics
  */
 public class SwerveController {
 

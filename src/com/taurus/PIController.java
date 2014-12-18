@@ -1,5 +1,10 @@
 package com.taurus;
 
+/**
+ * A basic PI controller for use with the Swerve drive
+ * @author Team 4818 Taurus Robotics
+ *
+ */
 public final class PIController
 {
     // Heuristic to clear out the integral after being disabled.
@@ -12,6 +17,12 @@ public final class PIController
     public double integral;
     public double lastTimestamp;
 
+    /**
+     * Create a new instance of the PIController
+     * @param p proportional component
+     * @param i integral component, 0 to disable
+     * @param maxOutput maximum output of the controller (typically 1.0)
+     */
     public PIController(double p, double i, double maxOutput)
     {
         this.P = p;
@@ -22,6 +33,12 @@ public final class PIController
         this.lastTimestamp = Double.NEGATIVE_INFINITY;
     }
 
+    /**
+     * Update the PIController using the new error
+     * @param error new error to use for calculations
+     * @param timestamp current time
+     * @return new calculated output, clamped to max output range 
+     */
     public double update(double error, double timestamp)
     {
         // Proportional term.
