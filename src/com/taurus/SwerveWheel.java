@@ -46,7 +46,6 @@ public class SwerveWheel
     // potentiometer calculation
     private static final double PotentiometerMax = 4.6;
     private static final double PotentiometerScale = 360 / PotentiometerMax; 
-    private static final double PotentiometerOffset = -180;
     
     // deadband
     private static final double MinSpeed = 0.1;
@@ -75,9 +74,7 @@ public class SwerveWheel
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
 
-        //TODO the PotentiometerOffset will likely be different for every module
-        // so maybe use Orientation instead
-        AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, PotentiometerOffset);
+        AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, Orientation);
         AngleController = new SwerveAngleController(name + ".ctl");
     }
 
