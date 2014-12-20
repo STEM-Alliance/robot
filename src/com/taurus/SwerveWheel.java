@@ -8,6 +8,7 @@ package com.taurus;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -36,12 +37,20 @@ public class SwerveWheel
 
     // controller
     private SwerveAngleController AngleController;
+    private PositionVelocityFilter DriveEncoderFilter;
+    private PIController DriveEncoderController;
 
     // encoder calculation
     private static final double DriveWheelDiameter = 4.0;  // inches
     private static final int DriveEncoderPulses = 64;
     private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
     private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses;
+    
+    // encoder filter values
+    // The maximum distance the encoder value may be from the true value.
+    private static final double DriveEncoderMaxError = DriveEncoderRate / 2;
+    // Seconds to assume the wheel is still moving even if the encoder value doesn't change. 
+    private static final double DriveEncoderVelocityHoldTime = 0.001;
     
     // potentiometer calculation
     private static final double PotentiometerMax = 4.6;
@@ -73,6 +82,9 @@ public class SwerveWheel
 
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
+        
+        DriveEncoderFilter = new PositionVelocityFilter(DriveEncoderMaxError, DriveEncoderVelocityHoldTime);
+        DriveEncoderController = new PIController(0 /* TODO: p */, 0 /* TODO: i */, 1.0);
 
         AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, Orientation);
         AngleController = new SwerveAngleController(name + ".ctl");
@@ -125,25 +137,51 @@ public class SwerveWheel
      */
     private SwerveVector updateTask()
     {
-        SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
-        SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
-
+        double time = Timer.getFPGATimestamp();
+        
+        // Update the angle controller.
         AngleController.update(WheelDesired.getAngle(), AnglePot.get());
 
-        // reverse the motor output if it is the shorter path
-        MotorDrive.set(AngleController.isReverseMotor() 
-                ? -WheelDesired.getMag()
-                : WheelDesired.getMag());
-        
+        // Control the wheel angle.
         if (WheelDesired.getMag() > MinSpeed)
         {
             MotorAngle.set(-AngleController.getMotorSpeed());
         }
         else
         {
+            // Too slow, do nothing
             AngleController.resetIntegral();
             MotorAngle.set(0);
         }
+        
+        // Control the wheel speed.
+        double driveMotorSpeed = WheelDesired.getMag();
+        
+        // Reverse the motor output if the angle controller is taking advantage of rotational symmetry.
+        if (AngleController.isReverseMotor())
+            driveMotorSpeed = -driveMotorSpeed;
+        
+        // Filter the position and get a velocity estimate.
+        DriveEncoderFilter.updateEstimate(DriveEncoder.getDistance(), time);
+        
+        // Update the wheel speed controller.
+        // TODO: driveEncoderMaxVelocity = DriveWheelCircumference * ??? (depends on gear ratio)
+        double driveEncoderMaxVelocity = DriveWheelCircumference * 2.0;
+        double driveMotorControllerOutput = DriveEncoderController.update(driveMotorSpeed - DriveEncoderFilter.getVelocity() / driveEncoderMaxVelocity, time);
+        
+        // Control the motor.
+        double driveMotorOutput = driveMotorSpeed + driveMotorControllerOutput;
+        // TODO: MotorDrive.set(driveMotorOutput);
+        MotorDrive.set(driveMotorSpeed);
+
+        SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
+        SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
+        SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
+        SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
+        SmartDashboard.putNumber(Name + ".position.filtered", DriveEncoderFilter.getPosition());
+        SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
+        SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
+        SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
         
         return getActual();
     }
