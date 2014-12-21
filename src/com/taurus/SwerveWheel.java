@@ -44,7 +44,8 @@ public class SwerveWheel
     private static final double DriveWheelDiameter = 4.0;  // inches
     private static final int DriveEncoderPulses = 64;
     private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
-    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses;
+    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses / 3;
+    private static final int DriveEncoderSample = 4;
     
     // encoder filter values
     // The maximum distance the encoder value may be from the true value.
@@ -82,6 +83,8 @@ public class SwerveWheel
 
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
+        DriveEncoder.setSamplesToAverage(DriveEncoderSample);
+        DriveEncoder.start();
         
         DriveEncoderFilter = new PositionVelocityFilter(DriveEncoderMaxError, DriveEncoderVelocityHoldTime);
         DriveEncoderController = new PIController(0 /* TODO: p */, 0 /* TODO: i */, 1.0);
@@ -138,10 +141,10 @@ public class SwerveWheel
     private SwerveVector updateTask()
     {
         double time = Timer.getFPGATimestamp();
-        
+
         // Update the angle controller.
         AngleController.update(WheelDesired.getAngle(), AnglePot.get());
-
+        SmartDashboard.putNumber(Name + ".actual.encoder", DriveEncoder.getRate());
         // Control the wheel angle.
         if (WheelDesired.getMag() > MinSpeed)
         {

@@ -28,8 +28,8 @@ public class SwerveChassis
 
     // shifter
     private Servo Shifter;
-    private final double ShifterLevelHigh = 170;// 170 to 0 is max range allowed for the servo 
-    private final double ShifterLevelLow = 0;
+    private final double ShifterLevelHigh = 120;// 170 to 0 is max range allowed for the servo 
+    private final double ShifterLevelLow = 45;
     private int Gear;
 
     private PIDController ChassisPID;
@@ -224,17 +224,14 @@ public class SwerveChassis
         {
             case SwerveConstants.GearLow:
                 Shifter.setAngle(ShifterLevelLow);
-                System.out.println("Gear Low");
                 break;
 
             case SwerveConstants.GearHigh:
                 Shifter.setAngle(ShifterLevelHigh);
-                System.out.println("Gear High");
                 break;
 
             default:
                 Shifter.setAngle(ShifterLevelHigh);
-                System.out.println("Gear Default");
                 break;
         }
     }
