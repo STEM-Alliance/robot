@@ -39,6 +39,9 @@ public class SwerveWheel
     private SwerveAngleController AngleController;
     private PositionVelocityFilter DriveEncoderFilter;
     private PIController DriveEncoderController;
+    
+    private static final double P = 0.5;
+    private static final double I = 0;
 
     // encoder calculation
     private static final double DriveWheelDiameter = 4.0;  // inches
@@ -62,7 +65,7 @@ public class SwerveWheel
 
     /**
      * Set up the wheel with the specific IO and orientation on the robot
-     * @param Name Name of the wheel for display purposes
+     * @param name Name of the wheel for display purposes
      * @param Position Wheel position relative to robot center as array
      * @param Orientation Angle of wheel relative to robot 0 angle in degrees
      * @param EncoderPins Pins for Speed Encoder input as array
@@ -87,7 +90,7 @@ public class SwerveWheel
         DriveEncoder.start();
         
         DriveEncoderFilter = new PositionVelocityFilter(DriveEncoderMaxError, DriveEncoderVelocityHoldTime);
-        DriveEncoderController = new PIController(0 /* TODO: p */, 0 /* TODO: i */, 1.0);
+        DriveEncoderController = new PIController(P, I, 1.0);
 
         AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, Orientation);
         AngleController = new SwerveAngleController(name + ".ctl");
@@ -144,7 +147,7 @@ public class SwerveWheel
 
         // Update the angle controller.
         AngleController.update(WheelDesired.getAngle(), AnglePot.get());
-        SmartDashboard.putNumber(Name + ".actual.encoder", DriveEncoder.getRate());
+        
         // Control the wheel angle.
         if (WheelDesired.getMag() > MinSpeed)
         {
@@ -174,8 +177,9 @@ public class SwerveWheel
         
         // Control the motor.
         double driveMotorOutput = driveMotorSpeed + driveMotorControllerOutput;
-        // TODO: MotorDrive.set(driveMotorOutput);
-        MotorDrive.set(driveMotorSpeed);
+        
+        MotorDrive.set(driveMotorOutput);
+        //MotorDrive.set(driveMotorSpeed);
 
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
         SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());

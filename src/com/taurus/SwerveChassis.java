@@ -27,9 +27,9 @@ public class SwerveChassis
     private SwerveWheel[] Wheels;
 
     // shifter
-    private Servo Shifter;
-    private final double ShifterLevelHigh = 120;// 170 to 0 is max range allowed for the servo 
-    private final double ShifterLevelLow = 45;
+    private Servo Shifter[] = new Servo[2];
+    private final double[] ShifterLevelHigh = {120, 45};// 170 to 0 is max range allowed for the servo 
+    private final double[] ShifterLevelLow = {45, 120};
     private int Gear;
 
     private PIDController ChassisPID;
@@ -52,7 +52,6 @@ public class SwerveChassis
         {
             return output;
         }
-        
     }
     
     
@@ -63,9 +62,10 @@ public class SwerveChassis
     {
         RobotVelocity = new SwerveVector(0, 0);
         RobotRotation = 0;
-        Shifter = new Servo(SwerveConstants.WheelShiftServoPin);
+        Shifter[0] = new Servo(SwerveConstants.WheelShiftServoPins[0]);
+        Shifter[1] = new Servo(SwerveConstants.WheelShiftServoPins[1]);
         
-//        RobotGyro = new Gyro(SwerveConstants.GyroPin);
+        RobotGyro = new Gyro(SwerveConstants.GyroPin);
 //        
 //        ChassisPID = new PIDController(ChassisP, ChassisI, ChassisD, RobotGyro, ChassisOutput);
 //        ChassisPID.setContinuous();
@@ -223,15 +223,14 @@ public class SwerveChassis
         switch (Gear)
         {
             case SwerveConstants.GearLow:
-                Shifter.setAngle(ShifterLevelLow);
+                Shifter[0].setAngle(ShifterLevelLow[0]);
+                Shifter[1].setAngle(ShifterLevelLow[1]);
                 break;
 
             case SwerveConstants.GearHigh:
-                Shifter.setAngle(ShifterLevelHigh);
-                break;
-
             default:
-                Shifter.setAngle(ShifterLevelHigh);
+                Shifter[0].setAngle(ShifterLevelHigh[0]);
+                Shifter[1].setAngle(ShifterLevelHigh[1]);
                 break;
         }
     }

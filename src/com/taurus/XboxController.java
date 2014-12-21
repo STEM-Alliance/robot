@@ -246,7 +246,7 @@ public class XboxController extends GenericHID implements IInputOutput {
      * @return The direction of the vector in degrees
      */
     public double getDirectionDegrees(Hand hand) {
-        return getDirectionRadians(hand);
+        return Math.toDegrees(getDirectionRadians(hand));
     }
 
     /**

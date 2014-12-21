@@ -62,9 +62,9 @@ public class SwerveConstants {
                                                         8 };
 
     /**
-     * Pin (PWM) for wheel shifting servos
+     * Pins (PWM) for wheel shifting servos
      */
-    public static final int WheelShiftServoPin = 9;
+    public static final int[] WheelShiftServoPins = { 9, 10 };
     
     public static final int GyroPin = 1;
     
