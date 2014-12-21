@@ -48,20 +48,26 @@ public class RobotTemplate extends IterativeRobot {
 
         controller = new SwerveController();
  
-        //driveChooser = new SendableChooser();
+        driveChooser = new SendableChooser();
         driveChooser.addDefault("Halo Drive", Integer.valueOf(SwerveController.HALO_DRIVE));
         driveChooser.addObject("Angle Drive", Integer.valueOf(SwerveController.ANGLE_DRIVE));
+        SmartDashboard.putData("Drive Chooser", driveChooser);
         
         // set up the choosers for running tests while in teleop mode
-        //testChooser = new SendableChooser();
+        testChooser = new SendableChooser();
         testChooser.addDefault("Normal",    Integer.valueOf(TEST_MODE_NORMAL));
         testChooser.addObject("Wheel Test", Integer.valueOf(TEST_MODE_WHEEL));
+        SmartDashboard.putData("Test Chooser", testChooser);
         
-        //testWheelChooser = new SendableChooser();
+        testWheelChooser = new SendableChooser();
         testWheelChooser.addDefault("Front Left", Integer.valueOf(0));
         testWheelChooser.addObject("Front Right", Integer.valueOf(1));
         testWheelChooser.addObject("Back Right",  Integer.valueOf(2));
         testWheelChooser.addObject("Back Left",   Integer.valueOf(3));
+        SmartDashboard.putData("Test Wheel Chooser", testWheelChooser);
+        
+        SmartDashboard.putBoolean("Xbox Controller", controller.useXbox);
+        SmartDashboard.putBoolean("TEST MODE", TEST);
         
         log.info("Initialization complete.");
     }
@@ -71,7 +77,15 @@ public class RobotTemplate extends IterativeRobot {
      */
     public void disabledPeriodic()
     {
-        UpdateDashboard();
+        //UpdateDashboard();
+    }
+    
+    /**
+     * runs when robot is disabled
+     */
+    public void disabledInit()
+    {
+        //UpdateDashboard();
     }
     
     
@@ -146,8 +160,8 @@ public class RobotTemplate extends IterativeRobot {
         
         if(TEST)
         {
-            SmartDashboard.putData("Test Mode", testChooser);
-            SmartDashboard.putData("Test Wheel", testWheelChooser);
+            //SmartDashboard.putData("Test Mode", testChooser);
+            //SmartDashboard.putData("Test Wheel", testWheelChooser);
         }
     }
     
@@ -156,18 +170,17 @@ public class RobotTemplate extends IterativeRobot {
      */
     private void TestRun()
     {
-        TestWheel(0);
-        //switch(((Integer)testChooser.getSelected()).intValue())
-//        {
-//            case TEST_MODE_WHEEL:
-//                TestWheel(((Integer)testWheelChooser.getSelected()).intValue());
-//                break;
-//                
-//            case TEST_MODE_NORMAL:
-//            default:
-//                DriveNormal();
-//                break;
-//        }
+        switch(((Integer)testChooser.getSelected()).intValue())
+        {
+            case TEST_MODE_WHEEL:
+                TestWheel(((Integer)testWheelChooser.getSelected()).intValue());
+                break;
+                
+            case TEST_MODE_NORMAL:
+            default:
+                DriveNormal();
+                break;
+        }
     }
     
     /**
@@ -180,9 +193,7 @@ public class RobotTemplate extends IterativeRobot {
 
         // display in SmartDashboard
         SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
-        //SmartDashboard.putNumber("Test Wheel Mag Setpoint", drive.getWheel(index).DrivePID.getSetpoint());
         SmartDashboard.putNumber("Test Wheel Angle Actual", WheelActual.getAngle());
-        //SmartDashboard.putNumber("Test Wheel Angle Setpoint", drive.getWheel(index).AnglePID.getSetpoint());
         
         // if the button is not held down, we're in high gear
         drive.setGearHigh(controller.getHighGearEnable());
