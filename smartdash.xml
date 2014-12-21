@@ -1,0 +1,303 @@
+<xml version="1.0">
+<dashboard>
+	<widget field="Xbox Controller" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="693" y="176"/>
+	</widget>
+	<widget field="TEST MODE" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="712" y="150"/>
+	</widget>
+	<widget field="Test Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="668" y="4"/>
+	</widget>
+	<widget field="Test Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="561" y="7"/>
+	</widget>
+	<widget field="Test Wheel Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="764" y="8"/>
+	</widget>
+	<widget field="Drive Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="670" y="62"/>
+	</widget>
+	<widget field="wheel0.ctl.Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="43" y="349"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.ctl.Reverse" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="27" y="327"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.ctl.Output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="32" y="305"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.speed.motor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="742" y="410"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.speed.adjust" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="731" y="387"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.speed.filtered" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="715" y="363"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.position.filtered" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="722" y="340"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.position.scaled" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="720" y="317"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.position.raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="763" y="572"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.desired.ang" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="766" y="619"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.desired.mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="771" y="485"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.ctl.Output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="774" y="549"/>
+		<height>20</height>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.ctl.Reverse" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="752" y="518"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.ctl.Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="790" y="598"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.ctl.SensorValue" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="739" y="437"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel3.ctl.SetPoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="768" y="463"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.speed.motor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="482" y="618"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.speed.adjust" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="475" y="594"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.speed.filtered" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="423" y="351"/>
+		<height>20</height>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.position.filtered" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="461" y="570"/>
+		<height>20</height>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.position.scaled" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="425" y="308"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.position.raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="503" y="447"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.desired.ang" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="433" y="229"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.desired.mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="429" y="201"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.ctl.Output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="507" y="501"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.ctl.Reverse" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="504" y="387"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.ctl.Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="520" y="477"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.ctl.SensorValue" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="468" y="521"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel2.ctl.SetPoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="431" y="256"/>
+		<height>20</height>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.speed.motor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="220" y="519"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.speed.adjust" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="221" y="470"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.speed.filtered" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="217" y="495"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.position.filtered" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="208" y="445"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.position.scaled" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="211" y="418"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.position.raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="224" y="393"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.desired.ang" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="228" y="225"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.desired.mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="227" y="201"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.ctl.Output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="234" y="304"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.ctl.Reverse" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="226" y="328"/>
+		<height>20</height>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.ctl.Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="243" y="354"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.ctl.SensorValue" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="210" y="282"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel1.ctl.SetPoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="231" y="255"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="Gear" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="743" y="124"/>
+		<height>20</height>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.speed.motor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="10" y="519"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.speed.adjust" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="12" y="470"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.speed.filtered" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="495"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.position.filtered" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="5" y="446"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.position.scaled" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="12" y="419"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.position.raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="24" y="394"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.desired.mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="23" y="200"/>
+	</widget>
+	<widget field="wheel0.desired.ang" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="26" y="224"/>
+	</widget>
+	<widget field="wheel0.ctl.SetPoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="28" y="255"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="wheel0.ctl.SensorValue" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="8" y="281"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="Left Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="344" y="99"/>
+		<width>116</width>
+	</widget>
+	<widget field="Test Wheel Angle Actual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="328" y="162"/>
+	</widget>
+	<widget field="Test Wheel Mag Actual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="125" y="162"/>
+	</widget>
+	<widget field="Test Wheel" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="3" y="73"/>
+	</widget>
+	<widget field="Wheel 2 Mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="191" y="50"/>
+		<width>111</width>
+		<height>20</height>
+	</widget>
+	<widget field="Wheel 3 Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="324" y="73"/>
+		<width>136</width>
+	</widget>
+	<widget field="Wheel 3 Mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="190" y="74"/>
+		<width>111</width>
+	</widget>
+	<widget field="Wheel 1 Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="326" y="26"/>
+		<width>133</width>
+	</widget>
+	<widget field="Right Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="338" y="126"/>
+		<width>123</width>
+	</widget>
+	<widget field="Wheel 2 Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="325" y="50"/>
+		<width>134</width>
+	</widget>
+	<widget field="Wheel 0 Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="325" y="4"/>
+		<width>134</width>
+	</widget>
+	<widget field="Left Mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="208" y="99"/>
+		<width>94</width>
+	</widget>
+	<widget field="Right Mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="203" y="125"/>
+		<width>101</width>
+	</widget>
+	<widget field="Wheel 0 Mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="191" y="3"/>
+		<width>112</width>
+	</widget>
+	<widget field="Wheel 1 Mag" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="191" y="26"/>
+		<width>111</width>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
+		<location x="-5" y="-1"/>
+		<property name="Graphics" value="Rounded"/>
+	</static-widget>
+</dashboard>
+<live-window>
+</live-window>
+	<hidden field="wheel0.actual.encoder"/>
+</xml>
