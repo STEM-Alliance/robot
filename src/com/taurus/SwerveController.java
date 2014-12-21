@@ -35,7 +35,7 @@ public class SwerveController {
     public static final int HALO_DRIVE = 0;
     public static final int ANGLE_DRIVE = 1;
 
-    public static final double DEADBAND = 0.16;
+    public static final double DEADBAND = 0.18;
 
     public boolean useXbox;
     public int driveScheme;

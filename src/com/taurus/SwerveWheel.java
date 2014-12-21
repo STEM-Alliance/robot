@@ -39,12 +39,16 @@ public class SwerveWheel
     private SwerveAngleController AngleController;
     private PositionVelocityFilter DriveEncoderFilter;
     private PIController DriveEncoderController;
+    
+    private static final double P = 0.5;
+    private static final double I = 0;
 
     // encoder calculation
     private static final double DriveWheelDiameter = 4.0;  // inches
     private static final int DriveEncoderPulses = 64;
     private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
-    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses;
+    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses / 3;
+    private static final int DriveEncoderSample = 4;
     
     // encoder filter values
     // The maximum distance the encoder value may be from the true value.
@@ -61,7 +65,7 @@ public class SwerveWheel
 
     /**
      * Set up the wheel with the specific IO and orientation on the robot
-     * @param Name Name of the wheel for display purposes
+     * @param name Name of the wheel for display purposes
      * @param Position Wheel position relative to robot center as array
      * @param Orientation Angle of wheel relative to robot 0 angle in degrees
      * @param EncoderPins Pins for Speed Encoder input as array
@@ -82,9 +86,11 @@ public class SwerveWheel
 
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(DriveEncoderRate);
+        DriveEncoder.setSamplesToAverage(DriveEncoderSample);
+        DriveEncoder.start();
         
         DriveEncoderFilter = new PositionVelocityFilter(DriveEncoderMaxError, DriveEncoderVelocityHoldTime);
-        DriveEncoderController = new PIController(0 /* TODO: p */, 0 /* TODO: i */, 1.0);
+        DriveEncoderController = new PIController(P, I, 1.0);
 
         AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, Orientation);
         AngleController = new SwerveAngleController(name + ".ctl");
@@ -138,10 +144,10 @@ public class SwerveWheel
     private SwerveVector updateTask()
     {
         double time = Timer.getFPGATimestamp();
-        
+
         // Update the angle controller.
         AngleController.update(WheelDesired.getAngle(), AnglePot.get());
-
+        
         // Control the wheel angle.
         if (WheelDesired.getMag() > MinSpeed)
         {
@@ -171,8 +177,9 @@ public class SwerveWheel
         
         // Control the motor.
         double driveMotorOutput = driveMotorSpeed + driveMotorControllerOutput;
-        // TODO: MotorDrive.set(driveMotorOutput);
-        MotorDrive.set(driveMotorSpeed);
+        
+        MotorDrive.set(driveMotorOutput);
+        //MotorDrive.set(driveMotorSpeed);
 
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
         SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
