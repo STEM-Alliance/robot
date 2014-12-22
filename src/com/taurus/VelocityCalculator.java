@@ -11,9 +11,7 @@ public class VelocityCalculator
     private double velocity;
     
     /**
-     * Constructs a new filter instance with smoothing parameters
-     * @param maxSensorError How far aways can the sensor reading be from the true position
-     * @param extrapolateTime How far into the future should the filter extrapolate the position based on the velocity
+     * Constructs a new filter instance
      */
     public VelocityCalculator()
     {
@@ -29,15 +27,6 @@ public class VelocityCalculator
     public double getVelocity()
     {
         return velocity;
-    }
-    
-    /**
-     * Get the interpolated position
-     * @return the position
-     */
-    public double getPosition()
-    {
-        return lastPosition;
     }
     
     /**
@@ -57,6 +46,5 @@ public class VelocityCalculator
         // Save the new position.
         this.lastPosition = sensorReading;
     }
-    
     
 }
