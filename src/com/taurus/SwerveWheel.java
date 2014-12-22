@@ -37,11 +37,12 @@ public class SwerveWheel
 
     // controller
     private SwerveAngleController AngleController;
-    private PositionVelocityFilter DriveEncoderFilter;
+    private VelocityCalculator DriveEncoderFilter;
     private PIController DriveEncoderController;
     
-    private static final double P = 0.5;
-    private static final double I = 0;
+    private static final double DriveP = 0.2;
+    private static final double DriveTI = 0.5;  // seconds needed to equal a P term contribution
+    private static final double DriveI = 1 / DriveTI;
 
     // encoder calculation
     private static final double DriveWheelDiameter = 4.0;  // inches
@@ -49,13 +50,11 @@ public class SwerveWheel
     private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
     private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses / 3;
     private static final int DriveEncoderSample = 4;
-    
-    // encoder filter values
-    // The maximum distance the encoder value may be from the true value.
-    private static final double DriveEncoderMaxError = DriveEncoderRate / 2;
-    // Seconds to assume the wheel is still moving even if the encoder value doesn't change. 
-    private static final double DriveEncoderVelocityHoldTime = 0.001;
-    
+
+    // TODO: determine more precisely and hook up
+    private static final double DriveEncoderHighGearMaxVelocity = DriveWheelCircumference * 2.5;
+    private static final double DriveEncoderLowGearMaxVelocity = DriveWheelCircumference * 1.0;
+
     // potentiometer calculation
     private static final double PotentiometerMax = 4.6;
     private static final double PotentiometerScale = 360 / PotentiometerMax; 
@@ -89,8 +88,8 @@ public class SwerveWheel
         DriveEncoder.setSamplesToAverage(DriveEncoderSample);
         DriveEncoder.start();
         
-        DriveEncoderFilter = new PositionVelocityFilter(DriveEncoderMaxError, DriveEncoderVelocityHoldTime);
-        DriveEncoderController = new PIController(P, I, 1.0);
+        DriveEncoderFilter = new VelocityCalculator();
+        DriveEncoderController = new PIController(DriveP, DriveI, 1.0);
 
         AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, Orientation);
         AngleController = new SwerveAngleController(name + ".ctl");
@@ -167,13 +166,17 @@ public class SwerveWheel
         if (AngleController.isReverseMotor())
             driveMotorSpeed = -driveMotorSpeed;
         
-        // Filter the position and get a velocity estimate.
+        // Update the velocity estimate.
         DriveEncoderFilter.updateEstimate(DriveEncoder.getDistance(), time);
         
+        // Scale the velocity estimate.
+        double driveEncoderMaxVelocity = DriveEncoderHighGearMaxVelocity; // TODO: depends on gear ratio
+        double driveEncoderVelocityScaled = DriveEncoderFilter.getVelocity() / driveEncoderMaxVelocity;
+        driveEncoderVelocityScaled = Utilities.clampToRange(driveEncoderVelocityScaled, -1, 1);
+        
         // Update the wheel speed controller.
-        // TODO: driveEncoderMaxVelocity = DriveWheelCircumference * ??? (depends on gear ratio)
-        double driveEncoderMaxVelocity = DriveWheelCircumference * 2.0;
-        double driveMotorControllerOutput = DriveEncoderController.update(driveMotorSpeed - DriveEncoderFilter.getVelocity() / driveEncoderMaxVelocity, time);
+        double driveMotorControllerError = driveMotorSpeed - driveEncoderVelocityScaled;
+        double driveMotorControllerOutput = DriveEncoderController.update(driveMotorControllerError, time);
         
         // Control the motor.
         double driveMotorOutput = driveMotorSpeed + driveMotorControllerOutput;
@@ -187,6 +190,8 @@ public class SwerveWheel
         SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
         SmartDashboard.putNumber(Name + ".position.filtered", DriveEncoderFilter.getPosition());
         SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
+        SmartDashboard.putNumber(Name + ".speed.scaled", driveEncoderVelocityScaled);
+        SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
         SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
         SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
         
