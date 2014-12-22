@@ -55,7 +55,7 @@ public class SwerveChassis
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
  
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle, Shifter
-        for(int i = 0; i < SwerveConstants.WheelCount; i++)
+        for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             Wheels[i] = new SwerveWheel("wheel" + i,
                                         SwerveConstants.WheelPositions[i],
@@ -156,13 +156,13 @@ public class SwerveChassis
         UpdateShifter();
         
         // calculate vectors for each wheel
-        for(int i = 0; i < SwerveConstants.WheelCount; i++)
+        for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             //calculate
             WheelsUnscaled[i] = new SwerveVector(RobotVelocity.getX() - RobotRotation * Wheels[i].getPosition().getY(),
                                                  RobotVelocity.getY() + RobotRotation * Wheels[i].getPosition().getX());
 
-            if(WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
+            if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
             {
                 MaxWantedVeloc = WheelsUnscaled[i].getMag();
             }
@@ -176,7 +176,7 @@ public class SwerveChassis
         }
 
         // Allow for values below maximum velocity
-        for(int i = 0; i < SwerveConstants.WheelCount; i++)
+        for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             //scale values for each wheel
             WheelsScaled[i] = SwerveVector.NewFromMagAngle(
@@ -232,7 +232,7 @@ public class SwerveChassis
     public void setGearHigh(boolean GearHigh)
     {
         // Shift gears if necessary
-        if(GearHigh)
+        if (GearHigh)
         {
             Gear = SwerveConstants.GearHigh;
         }
@@ -250,7 +250,7 @@ public class SwerveChassis
     {
         boolean retVal = false;
         
-        if(Gear == SwerveConstants.GearHigh)
+        if (Gear == SwerveConstants.GearHigh)
         {
             retVal = true;
         }
