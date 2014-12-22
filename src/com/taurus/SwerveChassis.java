@@ -111,6 +111,8 @@ public class SwerveChassis
             Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
         }
         
+        UpdateShifter();
+        
         return setWheelVectors(Velocity, Rotation);
     }
     
@@ -152,8 +154,6 @@ public class SwerveChassis
         
         RobotVelocity = NewVelocity;
         RobotRotation = NewRotation; //Limit rotation speed
-        
-        UpdateShifter();
         
         // calculate vectors for each wheel
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
