@@ -189,7 +189,7 @@ public class RobotTemplate extends IterativeRobot {
     private void TestWheel(int index)
     {
         // use the left joystick to control the wheel module
-        SwerveVector WheelActual = drive.getWheel(index).setDesired(controller.getHaloDrive_Velocity());
+        SwerveVector WheelActual = drive.getWheel(index).setDesired(controller.getHaloDrive_Velocity(), controller.getHighGearEnable());
 
         // display in SmartDashboard
         SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
