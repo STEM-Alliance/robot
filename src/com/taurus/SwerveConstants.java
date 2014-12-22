@@ -71,4 +71,31 @@ public class SwerveConstants {
     public static final int GearLow = 0;
     public static final int GearHigh = 1;
     
+    //
+    // Wheel information
+    //
+    
+    /** Wheel diameter */
+    public static final double DriveWheelDiameter = 4.0;  // inches
+    
+    /** Wheel circumference */
+    public static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
+    
+    /** Pulses per 1 full encoder rotation */
+    public static final int DriveEncoderPulses = 64;
+    
+    /** Full encoder rotations per wheel rotation */
+    public static final double DriveEncoderRotPerWheelRot = 3.0;
+    
+    /** Pulses per 1 full encoder rotation */
+    public static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses / DriveEncoderRotPerWheelRot;
+
+    /** The ratio between low gear top speed and high gear top speed */
+    public static final double DriveGearRatio = 0.5;  // TODO: probably totally wrong
+    
+    /** The wheel top speed in high gear */
+    public static final double DriveHighGearMaxVelocity = DriveWheelCircumference * 9.5;
+
+    /** The wheel top speed in low gear */
+    public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity * DriveGearRatio;
 }
