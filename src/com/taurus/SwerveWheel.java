@@ -130,8 +130,22 @@ public class SwerveWheel
      */
     private SwerveVector updateTask()
     {
-        double time = Timer.getFPGATimestamp();
+        boolean reverse = updateAngleMotor();
+        updateDriveMotor(reverse);
 
+        SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
+        SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
+        
+        return getActual();
+    }
+    
+    /** 
+     * Update the angle motor based on the desired angle
+     * Called from updateTask() 
+     * @return Whether the drive motor should run in the opposite direction 
+     */
+    private boolean updateAngleMotor()
+    {
         // Update the angle controller.
         AngleController.update(WheelDesired.getAngle(), AnglePot.get());
         
@@ -147,11 +161,22 @@ public class SwerveWheel
             MotorAngle.set(0);
         }
         
+        return AngleController.isReverseMotor();
+    }
+    
+    /** 
+     * Update the drive motor based on the desired speed and whether to run in reverse
+     * Called from updateTask() 
+     */
+    private void updateDriveMotor(boolean reverse)
+    {
+        double time = Timer.getFPGATimestamp();
+
         // Control the wheel speed.
         double driveMotorSpeed = WheelDesired.getMag();
         
         // Reverse the motor output if the angle controller is taking advantage of rotational symmetry.
-        if (AngleController.isReverseMotor())
+        if (reverse)
             driveMotorSpeed = -driveMotorSpeed;
         
         // Update the velocity estimate.
@@ -172,8 +197,6 @@ public class SwerveWheel
         MotorDrive.set(driveMotorOutput);
         //MotorDrive.set(driveMotorSpeed);
 
-        SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
-        SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
         SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
         SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
         SmartDashboard.putNumber(Name + ".position.filtered", DriveEncoderFilter.getPosition());
@@ -182,7 +205,5 @@ public class SwerveWheel
         SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
         SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
         SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
-        
-        return getActual();
     }
 }
