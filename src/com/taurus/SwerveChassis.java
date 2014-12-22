@@ -20,6 +20,8 @@ public class SwerveChassis
     private SwerveVector RobotVelocity;     // robot velocity
     private double RobotRotation;           // robot rotational movement, -1 to 1 rad/s
     
+    public boolean FieldRelative = true;
+    
     public double MaxAvailableVelocity = 1.0;
     
     private Gyro RobotGyro;
@@ -133,7 +135,10 @@ public class SwerveChassis
      */
     public SwerveVector[] UpdateHaloDrive(SwerveVector Velocity, double Rotation)
     {
-        Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
+        if (FieldRelative)
+        {
+            Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
+        }
         
         return setWheelVectors(Velocity, Rotation);
     }
