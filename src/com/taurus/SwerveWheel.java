@@ -26,6 +26,7 @@ public class SwerveWheel
                                        // val, angle
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
+    private boolean HighGear;
     
     // motor
     private Victor MotorDrive;
@@ -39,7 +40,7 @@ public class SwerveWheel
     private SwerveAngleController AngleController;
     private VelocityCalculator DriveEncoderFilter;
     private PIController DriveEncoderController;
-    
+
     private static final double DriveP = 0.3;
     private static final double DriveTI = 0.5;  // seconds needed to equal a P term contribution
     private static final double DriveI = 1 / DriveTI;
@@ -71,6 +72,7 @@ public class SwerveWheel
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new Victor(DrivePin);
         MotorAngle = new Victor(AnglePin);
+        HighGear = true;
 
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
@@ -86,11 +88,13 @@ public class SwerveWheel
     /** 
      * Set the desired wheel vector, auto updates the PID controllers
      * @param NewDesired
+     * @param HighGear
      * @return Actual vector reading of wheel
      */
-    public SwerveVector setDesired(SwerveVector NewDesired)
+    public SwerveVector setDesired(SwerveVector NewDesired, boolean NewHighGear)
     {
         WheelDesired = NewDesired;
+        HighGear = NewHighGear;
 
         return updateTask();
     }
@@ -121,6 +125,15 @@ public class SwerveWheel
     public SwerveVector getPosition()
     {
         return WheelPosition;
+    }
+    
+    /**
+     * Get whether the wheel is in high gear or low gear
+     * @return Whether the wheel is in high gear
+     */
+    public boolean getIsHighGear()
+    {
+        return HighGear;
     }
 
     /** 
@@ -181,9 +194,19 @@ public class SwerveWheel
         
         // Update the velocity estimate.
         DriveEncoderFilter.updateEstimate(DriveEncoder.getDistance(), time);
+
+        // Determine the max velocity.
+        double driveEncoderMaxVelocity;
+        if (HighGear)
+        {
+            driveEncoderMaxVelocity = SwerveConstants.DriveHighGearMaxVelocity;
+        }
+        else
+        {
+            driveEncoderMaxVelocity = SwerveConstants.DriveLowGearMaxVelocity;
+        }
         
         // Scale the velocity estimate.
-        double driveEncoderMaxVelocity = SwerveConstants.DriveHighGearMaxVelocity; // TODO: depends on gear ratio
         double driveEncoderVelocityScaled = DriveEncoderFilter.getVelocity() / driveEncoderMaxVelocity;
         driveEncoderVelocityScaled = Utilities.clampToRange(driveEncoderVelocityScaled, -1, 1);
         

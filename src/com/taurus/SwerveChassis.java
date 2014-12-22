@@ -208,7 +208,7 @@ public class SwerveChassis
                     WheelsUnscaled[i].getAngle());
 
             //then set it
-            WheelsActual[i] = Wheels[i].setDesired(WheelsScaled[i]);
+            WheelsActual[i] = Wheels[i].setDesired(WheelsScaled[i], this.getGearHigh());
         }
         
         return WheelsActual;
