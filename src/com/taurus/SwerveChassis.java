@@ -17,9 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SwerveChassis
 {
-    private SwerveVector RobotVelocity;     // robot velocity
-    private double RobotRotation;           // robot rotational movement, -1 to 1 rad/s
-    
     public boolean FieldRelative = true;
     
     public double MaxAvailableVelocity = 1.0;
@@ -43,8 +40,6 @@ public class SwerveChassis
      */
     public SwerveChassis()
     {
-        RobotVelocity = new SwerveVector(0, 0);
-        RobotRotation = 0;
         Shifter[0] = new Servo(SwerveConstants.WheelShiftServoPins[0]);
         Shifter[1] = new Servo(SwerveConstants.WheelShiftServoPins[1]);
         
@@ -54,7 +49,7 @@ public class SwerveChassis
         
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
  
-        // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle, Shifter
+        // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             Wheels[i] = new SwerveWheel("wheel" + i,
@@ -86,18 +81,6 @@ public class SwerveChassis
         return UpdateHaloDrive(Velocity, Rotation);
     }
     
-    /** 
-     * Updates the chassis for Halo Drive from individual x and y values of velocity
-     * @param VelocityX robot's velocity in the x direction, -1 to 1
-     * @param VelocityY robot's velocity in the y direction, -1 to 1
-     * @param Rotation robot's rotational movement, -1 to 1 rad/s
-     * @return Array of SwerveVectors of the actual readings from the wheels
-     */
-    public SwerveVector[] UpdateHaloDrive(double VelocityX, double VelocityY, double Rotation)
-    {
-        return UpdateHaloDrive(new SwerveVector(VelocityX, VelocityY), Rotation);
-    }
- 
     /**
      * Updates the chassis for Halo Drive from SwerveVector type of velocity
      * @param Velocity robot's velocity using SwerveVector type
@@ -119,41 +102,25 @@ public class SwerveChassis
     /**
      * Scale the wheel vectors based on max available velocity, adjust for
      * rotation rate, then set/update the desired vectors individual wheels
-     * @param NewVelocity robot's velocity using SwerveVector type
-     * @param NewRotation robot's rotational movement, -1 to 1 rad/s
+     * @param RobotVelocity robot's velocity using SwerveVector type; max speed is 1.0
+     * @param RobotRotation robot's rotational movement; max rotation speed is -1 or 1
      * @return Array of SwerveVectors of the actual readings from the wheels
      */
-    private SwerveVector[] setWheelVectors(SwerveVector NewVelocity, double NewRotation)
+    private SwerveVector[] setWheelVectors(SwerveVector RobotVelocity, double RobotRotation)
     {
-        SwerveVector[] WheelsUnscaled = new SwerveVector[SwerveConstants.WheelCount]; //Unscaled Wheel Velocities
-        SwerveVector[] WheelsScaled = new SwerveVector[SwerveConstants.WheelCount];   //Scaled Wheel Velocities
-        SwerveVector[] WheelsActual = new SwerveVector[SwerveConstants.WheelCount];   //Actual Wheel Velocities
+        SwerveVector[] WheelsUnscaled = new SwerveVector[SwerveConstants.WheelCount]; // Unscaled Wheel Velocities
+        SwerveVector[] WheelsActual = new SwerveVector[SwerveConstants.WheelCount];   // Actual Wheel Velocities
         
         double MaxWantedVeloc = 0;
 
-        // set the class variables for the velocity and rotation
         // set limitations on speed
-        if (NewVelocity.getMag() < -1.0)
+        if (RobotVelocity.getMag() > 1.0)
         {
-            NewVelocity.setMag(-1.0);
-        }
-        else if (NewVelocity.getMag() > 1.0)
-        {
-            NewVelocity.setMag(1.0);
+            RobotVelocity.setMag(1.0);
         }
         
         // set limitations on rotation
-        if (NewRotation < -1.0)
-        {
-            NewRotation = -1.0;
-        }
-        else if (NewRotation > 1.0)
-        {
-            NewRotation = 1.0;
-        }
-        
-        RobotVelocity = NewVelocity;
-        RobotRotation = NewRotation; //Limit rotation speed
+        RobotRotation = Utilities.clampToRange(RobotRotation, -1, 1);
         
         // calculate vectors for each wheel
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
@@ -175,16 +142,15 @@ public class SwerveChassis
             Ratio = 1;
         }
 
-        // Allow for values below maximum velocity
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
-            //scale values for each wheel
-            WheelsScaled[i] = SwerveVector.NewFromMagAngle(
+            // Scale values for each wheel
+            SwerveVector WheelScaled = SwerveVector.NewFromMagAngle(
                     WheelsUnscaled[i].getMag() * Ratio,
                     WheelsUnscaled[i].getAngle());
 
-            //then set it
-            WheelsActual[i] = Wheels[i].setDesired(WheelsScaled[i], this.getGearHigh());
+            // Set the wheel speed
+            WheelsActual[i] = Wheels[i].setDesired(WheelScaled, this.getGearHigh());
         }
         
         return WheelsActual;
