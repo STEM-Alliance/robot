@@ -242,17 +242,11 @@ public class SwerveChassis
      */
     private double adjustAngleFromGyro(double Angle)
     {
-        double AdjustedAngle = 0;
-        
         // adjust the desired angle based on the robot's current angle
-        AdjustedAngle = Angle - RobotGyro.getAngle();
+        double AdjustedAngle = Angle - RobotGyro.getAngle();
         
-        if (AdjustedAngle > 180.0)
-        {
-            AdjustedAngle -= 360;
-        }
-        
-        return AdjustedAngle;
+        // Wrap to fit in the range -180 to 180
+        return Utilities.wrapToRange(AdjustedAngle, -180, 180);
     }
     
     /**
