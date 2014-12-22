@@ -7,9 +7,9 @@
 package com.taurus;
 
 import edu.wpi.first.wpilibj.Gyro;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Swerve chassis implementation
@@ -34,28 +34,9 @@ public class SwerveChassis
     private final double[] ShifterLevelLow = {45, 120};
     private int Gear;
 
-    private PIDController ChassisPID;
-    public double ChassisP = 1;
+    private PIController ChassisAngleController;
+    public double ChassisP = 1.0 / 90;  // Full speed rotation at error of 90 degrees. 
     public double ChassisI = 0;
-    public double ChassisD = 0;
-    private ChassisPIDOutput ChassisOutput;
-    
-    // PID controller stuff for robot angle/heading
-    private class ChassisPIDOutput implements PIDOutput
-    {
-        private double output;
-        
-        public void pidWrite(double output)
-        {
-            this.output = output;
-        }
-        
-        public double get()
-        {
-            return output;
-        }
-    }
-    
     
     /**
      * sets up individual wheels and their positions relative to robot center
@@ -68,12 +49,8 @@ public class SwerveChassis
         Shifter[1] = new Servo(SwerveConstants.WheelShiftServoPins[1]);
         
         RobotGyro = new Gyro(SwerveConstants.GyroPin);
-//        
-//        ChassisPID = new PIDController(ChassisP, ChassisI, ChassisD, RobotGyro, ChassisOutput);
-//        ChassisPID.setContinuous();
-//        ChassisPID.setInputRange(0, 360);
-//        ChassisPID.setOutputRange(-1,  1);
-//        ChassisPID.enable();
+        
+        ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
  
@@ -99,20 +76,14 @@ public class SwerveChassis
      */
     public SwerveVector[] UpdateAngleDrive(SwerveVector Velocity, double Heading)
     {
-        double Rotation = 0;
-
-        Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
+        // set the rotation using a PI controller based on current robot heading and new desired heading
+        double Error = Utilities.wrapToRange(Heading - RobotGyro.getAngle(), -180, 180);
+        double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
         
-        // set the rotation using a PID based on current robot heading and new desired heading
-        ChassisPID.setPID(ChassisP, ChassisI, ChassisD);
-        ChassisPID.setSetpoint(Heading);
+        SmartDashboard.putNumber("AngleDrive.error", Error);
+        SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
         
-        // convert the PID output to the angular rate of rotation
-        //TODO does either one make sense?
-        Rotation = ChassisOutput.get();
-        //Rotation = ChassisPID.get();
-        
-        return setWheelVectors(Velocity, Rotation);
+        return UpdateHaloDrive(Velocity, Rotation);
     }
     
     /** 
