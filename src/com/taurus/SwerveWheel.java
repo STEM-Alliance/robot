@@ -222,7 +222,6 @@ public class SwerveWheel
 
         SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
         SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
-        SmartDashboard.putNumber(Name + ".position.filtered", DriveEncoderFilter.getPosition());
         SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
         SmartDashboard.putNumber(Name + ".speed.scaled", driveEncoderVelocityScaled);
         SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
