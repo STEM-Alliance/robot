@@ -40,20 +40,9 @@ public class SwerveWheel
     private VelocityCalculator DriveEncoderFilter;
     private PIController DriveEncoderController;
     
-    private static final double DriveP = 0.2;
+    private static final double DriveP = 0.3;
     private static final double DriveTI = 0.5;  // seconds needed to equal a P term contribution
     private static final double DriveI = 1 / DriveTI;
-
-    // encoder calculation
-    private static final double DriveWheelDiameter = 4.0;  // inches
-    private static final int DriveEncoderPulses = 64;
-    private static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
-    private static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderPulses / 3;
-    private static final int DriveEncoderSample = 4;
-
-    // TODO: determine more precisely and hook up
-    private static final double DriveEncoderHighGearMaxVelocity = DriveWheelCircumference * 2.5;
-    private static final double DriveEncoderLowGearMaxVelocity = DriveWheelCircumference * 1.0;
 
     // potentiometer calculation
     private static final double PotentiometerMax = 4.6;
@@ -84,8 +73,7 @@ public class SwerveWheel
         MotorAngle = new Victor(AnglePin);
 
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
-        DriveEncoder.setDistancePerPulse(DriveEncoderRate);
-        DriveEncoder.setSamplesToAverage(DriveEncoderSample);
+        DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
         DriveEncoder.start();
         
         DriveEncoderFilter = new VelocityCalculator();
@@ -170,7 +158,7 @@ public class SwerveWheel
         DriveEncoderFilter.updateEstimate(DriveEncoder.getDistance(), time);
         
         // Scale the velocity estimate.
-        double driveEncoderMaxVelocity = DriveEncoderHighGearMaxVelocity; // TODO: depends on gear ratio
+        double driveEncoderMaxVelocity = SwerveConstants.DriveHighGearMaxVelocity; // TODO: depends on gear ratio
         double driveEncoderVelocityScaled = DriveEncoderFilter.getVelocity() / driveEncoderMaxVelocity;
         driveEncoderVelocityScaled = Utilities.clampToRange(driveEncoderVelocityScaled, -1, 1);
         
