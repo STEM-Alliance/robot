@@ -5,8 +5,6 @@
  */
 package com.taurus;
 
-import com.sun.squawk.util.MathUtils;
-
 /**
  * Auto calculate angle and magnitude/angular velocity/distance 
  * from x and y values 
@@ -140,6 +138,6 @@ public class SwerveVector
      */
     public double getAngle()
     {
-        return Math.toDegrees(MathUtils.atan2(y, x));
+        return Math.toDegrees(Math.atan2(y, x));
     }
 }

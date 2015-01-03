@@ -1,17 +1,14 @@
 package com.taurus;
 
-import com.sun.squawk.util.MathUtils;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.parsing.IInputOutput;
 
 /**
  * Adapted from Team 3946 (https://github.com/frc3946)
  * @author Team 4818 Taurus Robotics
  *
  */
-public class XboxController extends GenericHID implements IInputOutput {
+public class XboxController extends GenericHID {
 
     private DriverStation m_ds;
     private final int m_port;
@@ -228,7 +225,7 @@ public class XboxController extends GenericHID implements IInputOutput {
      * @return the magnitude of the direction vector
      */
     public double getMagnitude(Hand hand) {
-        return Math.sqrt(MathUtils.pow(getX(hand), 2) + MathUtils.pow(getY(hand), 2));
+        return Math.sqrt(Math.pow(getX(hand), 2) + Math.pow(getY(hand), 2));
     }
 
     /**
@@ -237,7 +234,7 @@ public class XboxController extends GenericHID implements IInputOutput {
      * @return The direction of the vector in radians
      */
     public double getDirectionRadians(Hand hand) {
-        return MathUtils.atan2(getX(hand), -getY(hand));
+        return Math.atan2(getX(hand), -getY(hand));
     }
     
     /**
@@ -390,5 +387,11 @@ public class XboxController extends GenericHID implements IInputOutput {
      */
     public boolean getYButton() {
         return getButton(ButtonType.kY);
+    }
+
+    @Override
+    public int getPOV(int pov) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }
