@@ -2,3 +2,5 @@ syntax: glob
 bin/*
 build/*
 *.orig
+.DS_Store
+*/.DS_Store
