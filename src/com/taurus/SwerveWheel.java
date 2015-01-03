@@ -76,7 +76,6 @@ public class SwerveWheel
 
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
-        DriveEncoder.start();
         
         DriveEncoderFilter = new VelocityCalculator();
         DriveEncoderController = new PIController(DriveP, DriveI, 1.0);
