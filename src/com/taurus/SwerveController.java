@@ -2,6 +2,8 @@ package com.taurus;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * <pre>
@@ -37,8 +39,7 @@ public class SwerveController {
 
     public static final double DEADBAND = 0.18;
 
-    public boolean useXbox;
-    public int driveScheme;
+    private SendableChooser driveChooser = new SendableChooser();
     
     private Joystick left;
     private Joystick right;
@@ -51,14 +52,52 @@ public class SwerveController {
      */
     public SwerveController()
     {
-        left = new Joystick(1);
-        right = new Joystick(2);
-        xbox = new XboxController(1);
+        left = new Joystick(0);
+        right = new Joystick(0);
+        xbox = new XboxController(0);
         
-        useXbox = true;
-        driveScheme = HALO_DRIVE;
+        driveChooser = new SendableChooser();
+        driveChooser.addDefault("Halo Drive", Integer.valueOf(SwerveController.HALO_DRIVE));
+        driveChooser.addObject("Angle Drive", Integer.valueOf(SwerveController.ANGLE_DRIVE));
+        SmartDashboard.putData("Drive Chooser", driveChooser);
+        
+        SmartDashboard.putBoolean("Xbox Controller", true);
+
     }
 
+    /**
+     * Get the current drive scheem from the dash
+     * @return
+     */
+    public int getDriveScheme()
+    {
+        return ((Integer)driveChooser.getSelected()).intValue();
+    }
+    
+    /* Not supported
+    public void setDriveScheme(int val)
+    {
+        driveChooser.
+    }*/
+    
+    /**
+     * Get the Use Xbox Flag
+     * @return
+     */
+    public boolean getUseXbox()
+    {
+        return SmartDashboard.getBoolean("Xbox Controller");
+    }
+    
+    /**
+     * Set the Use Xbox flag
+     * @param val
+     */
+    public void setUseXbox(boolean val)
+    {
+        SmartDashboard.putBoolean("Xbox Controller", val);
+    }
+    
     /**
      * Get the magnitude of the direction vector formed by the
      * joystick's current position relative to its origin
@@ -69,7 +108,7 @@ public class SwerveController {
     {
         double value = 0;
 
-        if(useXbox)
+        if(getUseXbox())
         {
             value = xbox.getMagnitude(hand);
         }
@@ -99,7 +138,7 @@ public class SwerveController {
      */
     public double getDirectionDegrees(Hand hand)
     {
-        if(useXbox)
+        if(getUseXbox())
         {
             return xbox.getDirectionDegrees(hand);
         }
@@ -123,7 +162,7 @@ public class SwerveController {
      */
     public double getDirectionRadians(Hand hand)
     {
-        if(useXbox)
+        if(getUseXbox())
         {
             return xbox.getDirectionRadians(hand);
         }
@@ -148,7 +187,7 @@ public class SwerveController {
     {
         double value = 0;
 
-        if(useXbox)
+        if(getUseXbox())
         {
             value = xbox.getAxis(XboxController.AxisType.kRightX);
         }
@@ -172,7 +211,7 @@ public class SwerveController {
     {
         SwerveVector value;
 
-        if(useXbox)
+        if(getUseXbox())
         {
             value = new SwerveVector(xbox.getX(Hand.kLeft),
                                      xbox.getY(Hand.kLeft));
@@ -197,7 +236,7 @@ public class SwerveController {
      */
     public double getAngleDrive_Heading()
     {
-        if(useXbox)
+        if(getUseXbox())
         {
             return xbox.getDirectionDegrees(Hand.kRight);
         }
@@ -215,7 +254,7 @@ public class SwerveController {
     {
         SwerveVector value;
 
-        if(useXbox)
+        if(getUseXbox())
         {
             value = new SwerveVector(xbox.getX(Hand.kLeft),
                                      xbox.getY(Hand.kLeft));
@@ -239,7 +278,7 @@ public class SwerveController {
      */
     public boolean getHighGearEnable()
     {
-        if(useXbox)
+        if(getUseXbox())
         {
             return !xbox.getBumper(Hand.kRight);
         }

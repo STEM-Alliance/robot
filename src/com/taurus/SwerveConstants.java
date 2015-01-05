@@ -9,6 +9,12 @@ package com.taurus;
  */
 public class SwerveConstants {
 
+    /*
+     * Digital: 0-9 are on-board, 10-25 are on the MXP
+     * Analog: 0-3 are on-board, 4-7 are on the MXP
+     * PWM: 0-9 are on-board, 10-19 are on the MXP
+     */
+    
     public static final int WheelCount = 4;
     
     /**
@@ -32,70 +38,88 @@ public class SwerveConstants {
     /**
      * Pins (Digital) for wheel speed encoder inputs
      */
-    public static final int[][] WheelEncoderPins = {    { 1, 2},    // front left
-                                                        { 3, 4},    // front right
-                                                        { 5, 6},    // back right
-                                                        { 7, 8} };  // back left
+    public static final int[][] WheelEncoderPins = {    { 0, 1},    // front left
+                                                        { 2, 3},    // front right
+                                                        { 4, 5},    // back right
+                                                        { 6, 7} };  // back left
     
     /**
      * Pins (Analog) for wheel angle potentiometer inputs
      */
-    public static final int[] WheelPotPins = {  2,
-                                                3,
-                                                4,
-                                                5 };
+    public static final int[] WheelPotPins = {  0,
+                                                1,
+                                                2,
+                                                3 };
 
     /**
      * Pins (PWM) for wheel drive motor controller outputs
      */
-    public static final int[] WheelDriveMotorPins = {   1,
-                                                        3,
-                                                        5,
-                                                        7 };
+    public static final int[] WheelDriveMotorPins = {   0,
+                                                        2,
+                                                        4,
+                                                        6 };
     
     /**
      * Pins (PWM) for wheel angle motor controller outputs
      */
-    public static final int[] WheelAngleMotorPins = {   2,
-                                                        4,
-                                                        6,
-                                                        8 };
+    public static final int[] WheelAngleMotorPins = {   1,
+                                                        3,
+                                                        5,
+                                                        7 };
 
     /**
      * Pins (PWM) for wheel shifting servos
      */
-    public static final int[] WheelShiftServoPins = { 9, 10 };
+    public static final int[] WheelShiftServoPins = { 8, 9 };
     
+    /**
+     * Pin (Analog) for the Gyroscope
+     */
     public static final int GyroPin = 1;
     
+    /**
+     * Gear Low/High constants
+     */
     public static final int GearLow = 0;
     public static final int GearHigh = 1;
     
-    //
-    // Wheel information
-    //
-    
-    /** Wheel diameter */
+    /**
+     * Wheel diameter
+     */
     public static final double DriveWheelDiameter = 4.0;  // inches
     
-    /** Wheel circumference */
+    /**
+     * Wheel circumference
+     */
     public static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
     
-    /** Encoder pulses per 1 full encoder rotation */
+    /**
+     * Encoder pulses per 1 full encoder rotation
+     */
     public static final int DriveEncoderPulses = 64;
     
-    /** Full encoder rotations per wheel rotation */
+    /**
+     * Full encoder rotations per wheel rotation
+     */
     public static final double DriveEncoderRotPerWheelRot = 3.0;
     
-    /** Inches per encoder pulse */
+    /**
+     * Inches per encoder pulse
+     */
     public static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderRotPerWheelRot / DriveEncoderPulses;
 
-    /** The ratio between low gear top speed and high gear top speed */
+    /**
+     * The ratio between low gear top speed and high gear top speed
+     */
     public static final double DriveGearRatio = 0.5;  // TODO: probably totally wrong
     
-    /** The wheel top speed in high gear */
+    /**
+     * The wheel top speed in high gear
+     */
     public static final double DriveHighGearMaxVelocity = DriveWheelCircumference * 9.5;
 
-    /** The wheel top speed in low gear */
+    /**
+     * The wheel top speed in low gear
+     */
     public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity * DriveGearRatio;
 }

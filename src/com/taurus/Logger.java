@@ -16,7 +16,7 @@ public class Logger {
     //------------------
     private final PrintStream output;
 
-    private String tag = "[4818.14]";
+    private String tag = "[4818]";
     private final String warnTag = "[-!-]";
     private final String errTag = "[!!!]";
     private final String infoTag = "[---]";

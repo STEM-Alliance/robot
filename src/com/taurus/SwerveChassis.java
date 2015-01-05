@@ -165,12 +165,14 @@ public class SwerveChassis
         switch (Gear)
         {
             case SwerveConstants.GearLow:
+                SmartDashboard.putString("Gear", "Low");
                 Shifter[0].setAngle(ShifterLevelLow[0]);
                 Shifter[1].setAngle(ShifterLevelLow[1]);
                 break;
 
             case SwerveConstants.GearHigh:
             default:
+                SmartDashboard.putString("Gear", "High");
                 Shifter[0].setAngle(ShifterLevelHigh[0]);
                 Shifter[1].setAngle(ShifterLevelHigh[1]);
                 break;
