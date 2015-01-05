@@ -26,7 +26,6 @@ public class Robot extends IterativeRobot {
     
     // Joysticks
     private SwerveController controller;
-    private SendableChooser driveChooser = new SendableChooser();;
 
     // Logger
     private Logger log;
@@ -47,28 +46,21 @@ public class Robot extends IterativeRobot {
         log.info("Initializing main systems...");
         
         drive = new SwerveChassis();
-
         controller = new SwerveController();
  
-        driveChooser = new SendableChooser();
-        driveChooser.addDefault("Halo Drive", Integer.valueOf(SwerveController.HALO_DRIVE));
-        driveChooser.addObject("Angle Drive", Integer.valueOf(SwerveController.ANGLE_DRIVE));
-        SmartDashboard.putData("Drive Chooser", driveChooser);
-        
         // set up the choosers for running tests while in teleop mode
         testChooser = new SendableChooser();
         testChooser.addDefault("Normal",    Integer.valueOf(TEST_MODE_NORMAL));
         testChooser.addObject("Wheel Test", Integer.valueOf(TEST_MODE_WHEEL));
-        SmartDashboard.putData("Test Chooser", testChooser);
+        SmartDashboard.putData("Test", testChooser);
         
         testWheelChooser = new SendableChooser();
         testWheelChooser.addDefault("Front Left", Integer.valueOf(0));
         testWheelChooser.addObject("Front Right", Integer.valueOf(1));
         testWheelChooser.addObject("Back Right",  Integer.valueOf(2));
         testWheelChooser.addObject("Back Left",   Integer.valueOf(3));
-        SmartDashboard.putData("Test Wheel Chooser", testWheelChooser);
+        SmartDashboard.putData("Test Wheel", testWheelChooser);
         
-        SmartDashboard.putBoolean("Xbox Controller", controller.useXbox);
         SmartDashboard.putBoolean("TEST MODE", TEST);
         
         log.info("Initialization complete.");
@@ -104,9 +96,6 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() 
     {
-        
-        displayControl();
-        
         UpdateDashboard();
 
         
@@ -140,31 +129,11 @@ public class Robot extends IterativeRobot {
         
         drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", drive.MaxAvailableVelocity);
         
-        //SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
-        
-        // show setting for using an xbox controller
-        controller.useXbox = SmartDashboard.getBoolean("Xbox Controller", controller.useXbox);
-        //controller.driveScheme = ((Integer)driveChooser.getSelected()).intValue();
+        SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
                 
-        // display current gear
-        if(drive.getGearHigh())
-        {
-            SmartDashboard.putString("Gear", "High");
-        }
-        else
-        {
-            SmartDashboard.putString("Gear", "Low");
-        }
-        
         // update the test mode
         // disable for competitions?
         TEST = SmartDashboard.getBoolean("TEST MODE", TEST);
-        
-        if(TEST)
-        {
-            //SmartDashboard.putData("Test Mode", testChooser);
-            //SmartDashboard.putData("Test Wheel", testWheelChooser);
-        }
     }
     
     /**
@@ -208,7 +177,7 @@ public class Robot extends IterativeRobot {
     private void DriveNormal()
     {
         // Use the Joystick inputs to update the drive system
-        switch(controller.driveScheme)
+        switch(controller.getDriveScheme())
         {
             case SwerveController.ANGLE_DRIVE:
                 drive.UpdateAngleDrive(controller.getAngleDrive_Velocity(), controller.getAngleDrive_Heading());
@@ -225,7 +194,7 @@ public class Robot extends IterativeRobot {
     }
 
     /**
-     * calls at init of autonomous mode
+     * called at init of autonomous mode
      */
     public void autonomousInit()
     {
@@ -239,19 +208,16 @@ public class Robot extends IterativeRobot {
     }
 
     /**
+     * called at init of test mode
+     */
+    public void testInit()
+    {
+    }
+    
+    /**
      * This function is called periodically during test mode.
      */
     public void testPeriodic()
     {
     }
-
-    private void displayControl()
-    {
-        //DriverStationLCD.getInstance().println(DriverStationLCD.Line.kUser1, 1,
-        //        "Dist: " + String.valueOf(Math.floor(sonicSignal / 12)) + "ft. "
-        //        + String.valueOf(Math.floor(sonicSignal % 12)) + "in.");
-
-        //DriverStationLCD.getInstance().updateLCD();
-    }
-    
 }
