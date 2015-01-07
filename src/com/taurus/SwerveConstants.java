@@ -75,7 +75,7 @@ public class SwerveConstants {
     /**
      * Pin (Analog) for the Gyroscope
      */
-    public static final int GyroPin = 1;
+    public static final int GyroPin = 0;
     
     /**
      * Gear Low/High constants

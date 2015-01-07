@@ -31,6 +31,7 @@ public class SwerveWheel
     // motor
     private Victor MotorDrive;
     private Victor MotorAngle;
+    private boolean Brake; 
 
     // sensor
     private AnalogPotentiometer AnglePot;
@@ -43,7 +44,7 @@ public class SwerveWheel
 
     private static final double DriveP = 0.3;
     private static final double DriveTI = 0.5;  // seconds needed to equal a P term contribution
-    private static final double DriveI = 1 / DriveTI;
+    private static final double DriveI = 2 / DriveTI;
 
     // potentiometer calculation
     private static final double PotentiometerMax = 4.6;
@@ -216,7 +217,15 @@ public class SwerveWheel
         // Control the motor.
         double driveMotorOutput = driveMotorSpeed + driveMotorControllerOutput;
         
-        MotorDrive.set(driveMotorOutput);
+        
+        if (Brake)
+        {
+            MotorDrive.set(0);
+        }
+        else
+        {
+            MotorDrive.set(driveMotorOutput);
+        }
         //MotorDrive.set(driveMotorSpeed);
 
         SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
@@ -227,4 +236,14 @@ public class SwerveWheel
         SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
         SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
     }
+    
+    /**
+     * Sets the brake 
+     * @param brake
+     */
+    public void setBrake(boolean brake)
+    {
+        Brake = brake;
+    }
+    
 }
