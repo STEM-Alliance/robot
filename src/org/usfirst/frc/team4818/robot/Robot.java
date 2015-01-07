@@ -2,7 +2,6 @@
 package org.usfirst.frc.team4818.robot;
 
 import com.taurus.SwerveController;
-import com.taurus.Logger;
 import com.taurus.SwerveChassis;
 import com.taurus.SwerveConstants;
 import com.taurus.SwerveVector;
@@ -27,9 +26,6 @@ public class Robot extends IterativeRobot {
     // Joysticks
     private SwerveController controller;
 
-    // Logger
-    private Logger log;
-    //private static DriverStationLCD DSOutput;
     
     private boolean TEST = true;
     private final int TEST_MODE_NORMAL = 0;
@@ -42,8 +38,6 @@ public class Robot extends IterativeRobot {
      * used for any initialization code.
      */
     public void robotInit() {
-        log = new Logger("[Core]", System.out);
-        log.info("Initializing main systems...");
         
         drive = new SwerveChassis();
         controller = new SwerveController();
@@ -63,7 +57,6 @@ public class Robot extends IterativeRobot {
         
         SmartDashboard.putBoolean("TEST MODE", TEST);
         
-        log.info("Initialization complete.");
     }
 
     /**
@@ -71,7 +64,7 @@ public class Robot extends IterativeRobot {
      */
     public void disabledPeriodic()
     {
-        //UpdateDashboard();
+        UpdateDashboard();
     }
     
     /**
@@ -79,7 +72,7 @@ public class Robot extends IterativeRobot {
      */
     public void disabledInit()
     {
-        //UpdateDashboard();
+        UpdateDashboard();
     }
     
     
@@ -88,7 +81,6 @@ public class Robot extends IterativeRobot {
      */
     public void teleopInit()
     {
-        log.info("Entering teleoperated mode. Activating controls.");
     }
 
     /**
@@ -97,7 +89,6 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() 
     {
         UpdateDashboard();
-
         
         if(!TEST)
         {
@@ -129,7 +120,7 @@ public class Robot extends IterativeRobot {
         
         drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", drive.MaxAvailableVelocity);
         
-        SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
+        //SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
                 
         // update the test mode
         // disable for competitions?
@@ -191,6 +182,7 @@ public class Robot extends IterativeRobot {
 
         // if the button is not held down, we're in high gear
         drive.setGearHigh(controller.getHighGearEnable());
+        drive.setBrake(controller.getBrake());
     }
 
     /**

@@ -43,7 +43,7 @@ public class SwerveChassis
         Shifter[0] = new Servo(SwerveConstants.WheelShiftServoPins[0]);
         Shifter[1] = new Servo(SwerveConstants.WheelShiftServoPins[1]);
         
-        RobotGyro = new Gyro(SwerveConstants.GyroPin);
+       // RobotGyro = new Gyro(SwerveConstants.GyroPin);
         
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
@@ -72,14 +72,15 @@ public class SwerveChassis
     public SwerveVector[] UpdateAngleDrive(SwerveVector Velocity, double Heading)
     {
         // set the rotation using a PI controller based on current robot heading and new desired heading
-        double Error = Utilities.wrapToRange(Heading - RobotGyro.getAngle(), -180, 180);
-        double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
+        //double Error = Utilities.wrapToRange(Heading - RobotGyro.getAngle(), -180, 180);
+       /* double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
         
         SmartDashboard.putNumber("AngleDrive.error", Error);
         SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
         
         return UpdateHaloDrive(Velocity, Rotation);
-    }
+  */return null;
+        }
     
     /**
      * Updates the chassis for Halo Drive from SwerveVector type of velocity
@@ -187,12 +188,18 @@ public class SwerveChassis
     private double adjustAngleFromGyro(double Angle)
     {
         // adjust the desired angle based on the robot's current angle
-        double AdjustedAngle = Angle - RobotGyro.getAngle();
+        double AdjustedAngle = Angle; //- RobotGyro.getAngle();
         
         // Wrap to fit in the range -180 to 180
         return Utilities.wrapToRange(AdjustedAngle, -180, 180);
     }
     
+    public void setBrake(boolean Brake)
+    {
+        for(int i = 0; i < SwerveConstants.WheelCount; i++){
+            Wheels[i].setBrake(Brake);
+        }
+    }
     /**
      * Set the shifting gear
      * @param GearHigh if true, shift to high gear, else low gear

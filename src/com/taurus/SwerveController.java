@@ -287,5 +287,20 @@ public class SwerveController {
             // shift to high gear if the button is not held down
             return !left.getRawButton(2);
         }
+    } 
+    /**
+     * Get the brake
+     * @return
+     */
+    public boolean getBrake()
+    {
+        if(getUseXbox())
+        {
+            return xbox.getBButton();
+        }
+        else
+        {
+            return left.getRawButton(3);
+        }
     }
 }
