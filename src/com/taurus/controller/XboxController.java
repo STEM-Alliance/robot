@@ -1,4 +1,4 @@
-package com.taurus;
+package com.taurus.controller;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;

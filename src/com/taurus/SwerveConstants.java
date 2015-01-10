@@ -73,17 +73,6 @@ public class SwerveConstants {
     public static final int[] WheelShiftServoPins = { 8, 9 };
     
     /**
-     * Pin (Analog) for the Gyroscope
-     */
-    public static final int GyroPin = 0;
-    
-    /**
-     * Gear Low/High constants
-     */
-    public static final int GearLow = 0;
-    public static final int GearHigh = 1;
-    
-    /**
      * Wheel diameter
      */
     public static final double DriveWheelDiameter = 4.0;  // inches

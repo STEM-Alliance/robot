@@ -1,10 +1,14 @@
 
 package org.usfirst.frc.team4818.robot;
 
-import com.taurus.SwerveController;
+import com.taurus.DriveScheme;
 import com.taurus.SwerveChassis;
 import com.taurus.SwerveConstants;
 import com.taurus.SwerveVector;
+import com.taurus.controller.ControllerChooser;
+import com.taurus.controller.ControllerJoysticks;
+import com.taurus.controller.ControllerSwerve;
+import com.taurus.controller.ControllerXbox;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -24,14 +28,16 @@ public class Robot extends IterativeRobot {
     private SwerveChassis drive;
     
     // Joysticks
-    private SwerveController controller;
-
+    private ControllerSwerve controller;
+    private ControllerChooser controllerChooser;
     
+    private DriveScheme driveScheme;
+
     private boolean TEST = true;
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
-    private SendableChooser testChooser = new SendableChooser();;
-    private SendableChooser testWheelChooser = new SendableChooser();;
+    private SendableChooser testChooser = new SendableChooser();
+    private SendableChooser testWheelChooser = new SendableChooser();
     
     /**
      * This function is run when the robot is first started up and should be
@@ -40,8 +46,18 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         
         drive = new SwerveChassis();
-        controller = new SwerveController();
- 
+        driveScheme = new DriveScheme();
+        
+        controllerChooser = new ControllerChooser();
+        if(controllerChooser.get() == ControllerChooser.XBOX)
+        {
+            controller = new ControllerXbox();
+        }
+        else
+        {
+            controller = new ControllerJoysticks();
+        }
+        
         // set up the choosers for running tests while in teleop mode
         testChooser = new SendableChooser();
         testChooser.addDefault("Normal",    Integer.valueOf(TEST_MODE_NORMAL));
@@ -81,6 +97,15 @@ public class Robot extends IterativeRobot {
      */
     public void teleopInit()
     {
+        controllerChooser = new ControllerChooser();
+        if(controllerChooser.get() == ControllerChooser.XBOX)
+        {
+            controller = new ControllerXbox();
+        }
+        else
+        {
+            controller = new ControllerJoysticks();
+        }
     }
 
     /**
@@ -120,6 +145,7 @@ public class Robot extends IterativeRobot {
         
         drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", drive.MaxAvailableVelocity);
         
+        //TODO
         //SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
                 
         // update the test mode
@@ -151,7 +177,10 @@ public class Robot extends IterativeRobot {
     private void TestWheel(int index)
     {
         // use the left joystick to control the wheel module
-        SwerveVector WheelActual = drive.getWheel(index).setDesired(controller.getHaloDrive_Velocity(), controller.getHighGearEnable());
+        SwerveVector WheelActual = drive.getWheel(index).setDesired(
+                controller.getHaloDrive_Velocity(),
+                controller.getHighGearEnable(),
+                controller.getBrake());
 
         // display in SmartDashboard
         SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
@@ -168,14 +197,14 @@ public class Robot extends IterativeRobot {
     private void DriveNormal()
     {
         // Use the Joystick inputs to update the drive system
-        switch(controller.getDriveScheme())
+        switch(driveScheme.get())
         {
-            case SwerveController.ANGLE_DRIVE:
+            case DriveScheme.ANGLE_DRIVE:
                 drive.UpdateAngleDrive(controller.getAngleDrive_Velocity(), controller.getAngleDrive_Heading());
                 break;
                 
             default:
-            case SwerveController.HALO_DRIVE:
+            case DriveScheme.HALO_DRIVE:
                 drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(), controller.getHaloDrive_Rotation());
                 break;
         }
@@ -184,7 +213,7 @@ public class Robot extends IterativeRobot {
         drive.setGearHigh(controller.getHighGearEnable());
         drive.setBrake(controller.getBrake());
     }
-
+    
     /**
      * called at init of autonomous mode
      */

@@ -20,16 +20,16 @@ public class SwerveChassis
     public boolean FieldRelative = true;
     
     public double MaxAvailableVelocity = 1.0;
-    
-    private Gyro RobotGyro;
- 
+     
     private SwerveWheel[] Wheels;
 
     // shifter
     private Servo Shifter[] = new Servo[2];
     private final double[] ShifterLevelHigh = {120, 45};// 170 to 0 is max range allowed for the servo 
     private final double[] ShifterLevelLow = {45, 120};
-    private int Gear;
+    private boolean GearHigh;
+    
+    private boolean Brake;
 
     private PIController ChassisAngleController;
     public double ChassisP = 1.0 / 90;  // Full speed rotation at error of 90 degrees. 
@@ -42,8 +42,6 @@ public class SwerveChassis
     {
         Shifter[0] = new Servo(SwerveConstants.WheelShiftServoPins[0]);
         Shifter[1] = new Servo(SwerveConstants.WheelShiftServoPins[1]);
-        
-       // RobotGyro = new Gyro(SwerveConstants.GyroPin);
         
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
@@ -71,16 +69,15 @@ public class SwerveChassis
      */
     public SwerveVector[] UpdateAngleDrive(SwerveVector Velocity, double Heading)
     {
-        // set the rotation using a PI controller based on current robot heading and new desired heading
-        //double Error = Utilities.wrapToRange(Heading - RobotGyro.getAngle(), -180, 180);
-       /* double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
+        //set the rotation using a PI controller based on current robot heading and new desired heading
+        double Error = Utilities.wrapToRange(Heading /*- RobotGyro.getAngle()*/, -180, 180);
+        double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
         
         SmartDashboard.putNumber("AngleDrive.error", Error);
         SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
         
         return UpdateHaloDrive(Velocity, Rotation);
-  */return null;
-        }
+    }
     
     /**
      * Updates the chassis for Halo Drive from SwerveVector type of velocity
@@ -151,33 +148,10 @@ public class SwerveChassis
                     WheelsUnscaled[i].getAngle());
 
             // Set the wheel speed
-            WheelsActual[i] = Wheels[i].setDesired(WheelScaled, this.getGearHigh());
+            WheelsActual[i] = Wheels[i].setDesired(WheelScaled, GearHigh, Brake);
         }
         
         return WheelsActual;
-    }
-    
-    /**
-     * Update the Shifting/Gear servo
-     */
-    public void UpdateShifter()
-    {
-        // switch to the desired gear
-        switch (Gear)
-        {
-            case SwerveConstants.GearLow:
-                SmartDashboard.putString("Gear", "Low");
-                Shifter[0].setAngle(ShifterLevelLow[0]);
-                Shifter[1].setAngle(ShifterLevelLow[1]);
-                break;
-
-            case SwerveConstants.GearHigh:
-            default:
-                SmartDashboard.putString("Gear", "High");
-                Shifter[0].setAngle(ShifterLevelHigh[0]);
-                Shifter[1].setAngle(ShifterLevelHigh[1]);
-                break;
-        }
     }
     
     /**
@@ -187,6 +161,7 @@ public class SwerveChassis
      */
     private double adjustAngleFromGyro(double Angle)
     {
+        //TODO
         // adjust the desired angle based on the robot's current angle
         double AdjustedAngle = Angle; //- RobotGyro.getAngle();
         
@@ -194,27 +169,52 @@ public class SwerveChassis
         return Utilities.wrapToRange(AdjustedAngle, -180, 180);
     }
     
-    public void setBrake(boolean Brake)
+    /**
+     * Update the Shifting/Gear servo
+     */
+    public void UpdateShifter()
     {
-        for(int i = 0; i < SwerveConstants.WheelCount; i++){
-            Wheels[i].setBrake(Brake);
+        // switch to the desired gear
+        if (GearHigh)
+        {
+            SmartDashboard.putString("Gear", "High");
+            Shifter[0].setAngle(ShifterLevelHigh[0]);
+            Shifter[1].setAngle(ShifterLevelHigh[1]);
+        }
+        else
+        {
+            SmartDashboard.putString("Gear", "Low");
+            Shifter[0].setAngle(ShifterLevelLow[0]);
+            Shifter[1].setAngle(ShifterLevelLow[1]);
         }
     }
+
+    /**
+     * Set the chassis's brake
+     * @param Brake if true, set the brake, else release brake
+     */
+    public void setBrake(boolean Brake)
+    {
+        this.Brake = Brake;
+        SmartDashboard.putBoolean("Brake", this.Brake);
+    }
+    
+    /**
+     * Get the chassis's brake
+     * @return true if brake is set, else false
+     */
+    public boolean getBrake()
+    {
+        return Brake;
+    }
+    
     /**
      * Set the shifting gear
      * @param GearHigh if true, shift to high gear, else low gear
      */
     public void setGearHigh(boolean GearHigh)
     {
-        // Shift gears if necessary
-        if (GearHigh)
-        {
-            Gear = SwerveConstants.GearHigh;
-        }
-        else
-        {
-            Gear = SwerveConstants.GearLow;
-        }
+        this.GearHigh = GearHigh;
     }
     
     /**
@@ -223,14 +223,7 @@ public class SwerveChassis
      */
     public boolean getGearHigh()
     {
-        boolean retVal = false;
-        
-        if (Gear == SwerveConstants.GearHigh)
-        {
-            retVal = true;
-        }
-        
-        return retVal;
+        return GearHigh;
     }
     
     /**
@@ -249,7 +242,8 @@ public class SwerveChassis
      */
     public Gyro getGyro()
     {
-    	return RobotGyro;
+    	//return RobotGyro;
+        return null;
     }
     
     /**
