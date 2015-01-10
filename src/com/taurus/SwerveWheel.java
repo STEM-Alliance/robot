@@ -27,11 +27,12 @@ public class SwerveWheel
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
     private boolean HighGear;
+    private boolean Brake;
     
     // motor
     private Victor MotorDrive;
     private Victor MotorAngle;
-    private boolean Brake; 
+    
 
     // sensor
     private AnalogPotentiometer AnglePot;
@@ -91,10 +92,11 @@ public class SwerveWheel
      * @param HighGear
      * @return Actual vector reading of wheel
      */
-    public SwerveVector setDesired(SwerveVector NewDesired, boolean NewHighGear)
+    public SwerveVector setDesired(SwerveVector NewDesired, boolean NewHighGear, boolean NewBrake)
     {
         WheelDesired = NewDesired;
         HighGear = NewHighGear;
+        Brake = NewBrake;
 
         return updateTask();
     }
@@ -135,7 +137,7 @@ public class SwerveWheel
     {
         return HighGear;
     }
-
+    
     /** 
      * invoke updating the actual values and the motor outputs
      * called automatically from setDesired()
@@ -236,14 +238,4 @@ public class SwerveWheel
         SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
         SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
     }
-    
-    /**
-     * Sets the brake 
-     * @param brake
-     */
-    public void setBrake(boolean brake)
-    {
-        Brake = brake;
-    }
-    
 }
