@@ -30,13 +30,17 @@ public class SwerveWheel
     private boolean Brake;
     private boolean SpinDirection;
     private double maxRotationSpeed = .75;
+    
     // motor
     private Talon MotorDrive;
-    private Talon MotorAngle;
+    public Talon MotorAngle;
     
-
+    private double AngleOrienation;
+    private double AngleInMin;
+    private double AngleInMax;
+    
     // sensor
-    private AnalogPotentiometer AnglePot;
+    public AnalogPotentiometer AnglePot;
     private Encoder DriveEncoder;
 
     // controller
@@ -47,14 +51,11 @@ public class SwerveWheel
     private static final double DriveP = 0.3;
     private static final double DriveTI = 0.5;  // seconds needed to equal a P term contribution
     private static final double DriveI = 2 / DriveTI;
-
-    // potentiometer calculation
-    private static final double PotentiometerMax = 4.6;
-    private static final double PotentiometerScale = 360 / PotentiometerMax; 
     
     // deadband
     private static final double MinSpeed = 0.1;
 
+    
     /**
      * Set up the wheel with the specific IO and orientation on the robot
      * @param name Name of the wheel for display purposes
@@ -64,9 +65,12 @@ public class SwerveWheel
      * @param PotPin Pin for Angle Potentiometer
      * @param DrivePin Pin for drive motor controller
      * @param AnglePin Pin for angle motor controller
+     * @param SpinDir If the spin direction needs to be inverted
+     * @param SpinMin
+     * @param SpinMax
      */
     public SwerveWheel(String name, double[] Position, double Orientation, int[] EncoderPins,
-            int PotPin, int DrivePin, int AnglePin, boolean WheelSpinDirection)
+            int PotPin, int DrivePin, int AnglePin, boolean SpinDir, double SpinMin, double SpinMax)
     {
         Name = name;
 
@@ -75,16 +79,23 @@ public class SwerveWheel
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new Talon(DrivePin);
         MotorAngle = new Talon(AnglePin);
+        
         HighGear = true;
-        SpinDirection = WheelSpinDirection;
+        
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
         
         DriveEncoderFilter = new VelocityCalculator();
         DriveEncoderController = new PIController(DriveP, DriveI, 1.0);
 
-        AnglePot = new AnalogPotentiometer(PotPin, PotentiometerScale, Orientation);
+        //AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) + Math.abs(SpinMax), -SpinMin);
+        AnglePot = new AnalogPotentiometer(PotPin);
         AngleController = new SwerveAngleController(name + ".ctl");
+        
+        SpinDirection = SpinDir;
+        AngleInMin = SpinMin;
+        AngleInMax = SpinMax;
+        AngleOrienation = Orientation;
     }
 
     /** 
@@ -117,7 +128,7 @@ public class SwerveWheel
      */
     public SwerveVector getActual()
     {
-        WheelActual.setMagAngle(DriveEncoder.getRate(), AnglePot.get());
+        WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
         return WheelActual;
     }
 
@@ -139,6 +150,28 @@ public class SwerveWheel
         return HighGear;
     }
     
+    /**
+     * Get the angle of the potentiometer
+     * @return
+     */
+    private double getAnglePotValue()
+    {
+        // scale it based on the calibration values
+        return Utilities.scaleToRange(AnglePot.get(), AngleInMin, AngleInMax, 0, 360);
+    }
+    
+    /**
+     * Adjust the angle for the orientation value
+     * @param angle
+     * @return
+     */
+    private double AdjustAngle(double angle)
+    {
+        //TODO is this right?
+        //angle = (angle + AngleOrienation + 360) % 360;
+        return angle;
+    }
+    
     /** 
      * invoke updating the actual values and the motor outputs
      * called automatically from setDesired()
@@ -146,7 +179,8 @@ public class SwerveWheel
      */
     private SwerveVector updateTask()
     {
-        boolean reverse = updateAngleMotor(WheelDesired.getAngle(), WheelDesired.getMag());
+        boolean reverse = updateAngleMotor(AdjustAngle(WheelDesired.getAngle()),
+                                           WheelDesired.getMag());
         updateDriveMotor(reverse);
 
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
@@ -163,7 +197,7 @@ public class SwerveWheel
     public boolean updateAngleMotor(double angle, double speed)
     {
         // Update the angle controller.
-        AngleController.update(angle, AnglePot.get());
+        AngleController.update(angle, getAnglePotValue());
         
         // Control the wheel angle.
         if (speed > MinSpeed)
