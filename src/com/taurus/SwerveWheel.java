@@ -9,7 +9,7 @@ package com.taurus;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -28,10 +28,11 @@ public class SwerveWheel
                                       // val, angle
     private boolean HighGear;
     private boolean Brake;
-    
+    private boolean SpinDirection;
+    private double maxRotationSpeed = .75;
     // motor
-    private Victor MotorDrive;
-    private Victor MotorAngle;
+    private Talon MotorDrive;
+    private Talon MotorAngle;
     
 
     // sensor
@@ -65,17 +66,17 @@ public class SwerveWheel
      * @param AnglePin Pin for angle motor controller
      */
     public SwerveWheel(String name, double[] Position, double Orientation, int[] EncoderPins,
-            int PotPin, int DrivePin, int AnglePin)
+            int PotPin, int DrivePin, int AnglePin, boolean WheelSpinDirection)
     {
         Name = name;
 
         WheelPosition = new SwerveVector(Position);
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
-        MotorDrive = new Victor(DrivePin);
-        MotorAngle = new Victor(AnglePin);
+        MotorDrive = new Talon(DrivePin);
+        MotorAngle = new Talon(AnglePin);
         HighGear = true;
-
+        SpinDirection = WheelSpinDirection;
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
         
@@ -145,7 +146,7 @@ public class SwerveWheel
      */
     private SwerveVector updateTask()
     {
-        boolean reverse = updateAngleMotor();
+        boolean reverse = updateAngleMotor(WheelDesired.getAngle(), WheelDesired.getMag());
         updateDriveMotor(reverse);
 
         SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
@@ -159,15 +160,22 @@ public class SwerveWheel
      * Called from updateTask() 
      * @return Whether the drive motor should run in the opposite direction 
      */
-    private boolean updateAngleMotor()
+    public boolean updateAngleMotor(double angle, double speed)
     {
         // Update the angle controller.
-        AngleController.update(WheelDesired.getAngle(), AnglePot.get());
+        AngleController.update(angle, AnglePot.get());
         
         // Control the wheel angle.
-        if (WheelDesired.getMag() > MinSpeed)
+        if (speed > MinSpeed)
         {
-            MotorAngle.set(-AngleController.getMotorSpeed());
+            if(SpinDirection)
+            {
+                MotorAngle.set(AngleController.getMotorSpeed()* maxRotationSpeed);
+            }
+            else 
+            {
+                MotorAngle.set(-AngleController.getMotorSpeed()*maxRotationSpeed);
+            }
         }
         else
         {

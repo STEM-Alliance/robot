@@ -38,6 +38,10 @@ public interface ControllerSwerve {
 
     public static final double DEADBAND = 0.0;
 
+
+    public double getX(Hand hand);
+    public double getY(Hand hand);
+    
     /**
      * Get the magnitude of the direction vector formed by the
      * joystick's current position relative to its origin

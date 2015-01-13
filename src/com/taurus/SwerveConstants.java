@@ -14,8 +14,14 @@ public class SwerveConstants {
      * Analog: 0-3 are on-board, 4-7 are on the MXP
      * PWM: 0-9 are on-board, 10-19 are on the MXP
      */
-    
+   
     public static final int WheelCount = 4;
+    
+    
+    public static final boolean[] WheelSpinDirection ={
+        true, false, true, false 
+    };
+ 
     
     /**
      * X & Y coordinate positions for wheel placement.

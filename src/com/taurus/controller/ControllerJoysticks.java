@@ -22,6 +22,14 @@ public class ControllerJoysticks implements ControllerSwerve {
 
     }
 
+    public double getX(Hand hand)
+    {
+        return GetJoy(hand).getX(hand);
+    }
+    public double getY(Hand hand)
+    {
+        return GetJoy(hand).getY(hand);
+    }
     /**
      * Get the joystick object for the specified hand
      * @param hand
