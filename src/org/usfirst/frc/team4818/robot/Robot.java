@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,8 +38,13 @@ public class Robot extends IterativeRobot {
     private boolean TEST = true;
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
+    private final int TEST_MODE_CALIBRATION = 2;
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
+    
+    
+    private Talon motor;
+    private AnalogPotentiometer pot;
     
     /**
      * This function is run when the robot is first started up and should be
@@ -45,7 +52,7 @@ public class Robot extends IterativeRobot {
      */
     public void robotInit() {
         
-        drive = new SwerveChassis();
+        //drive = new SwerveChassis();
         driveScheme = new DriveScheme();
         
         controllerChooser = new ControllerChooser();
@@ -62,6 +69,7 @@ public class Robot extends IterativeRobot {
         testChooser = new SendableChooser();
         testChooser.addDefault("Normal",    Integer.valueOf(TEST_MODE_NORMAL));
         testChooser.addObject("Wheel Test", Integer.valueOf(TEST_MODE_WHEEL));
+        testChooser.addObject("Wheel Calibarion", Integer.valueOf(TEST_MODE_CALIBRATION));
         SmartDashboard.putData("Test", testChooser);
         
         testWheelChooser = new SendableChooser();
@@ -72,6 +80,13 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Test Wheel", testWheelChooser);
         
         SmartDashboard.putBoolean("TEST MODE", TEST);
+
+        double PotentiometerMax = 4.6;
+        double PotentiometerScale = 360 / PotentiometerMax; 
+        
+        motor = new Talon(5);
+        pot = new AnalogPotentiometer(2, 390, -15);//, PotentiometerScale);
+        
         
     }
 
@@ -80,7 +95,7 @@ public class Robot extends IterativeRobot {
      */
     public void disabledPeriodic()
     {
-        UpdateDashboard();
+        //UpdateDashboard();
     }
     
     /**
@@ -88,7 +103,7 @@ public class Robot extends IterativeRobot {
      */
     public void disabledInit()
     {
-        UpdateDashboard();
+        //UpdateDashboard();
     }
     
     
@@ -113,7 +128,7 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() 
     {
-        UpdateDashboard();
+        //UpdateDashboard();
         
         if(!TEST)
         {
@@ -162,6 +177,13 @@ public class Robot extends IterativeRobot {
         {
             case TEST_MODE_WHEEL:
                 TestWheel(((Integer)testWheelChooser.getSelected()).intValue());
+                break;
+            case TEST_MODE_CALIBRATION:
+                //drive.getWheel(1).updateAngleMotor(controller.getDirectionDegrees(Hand.kRight), 1.0);
+                motor.set(controller.getX(Hand.kRight) * .5);
+                SmartDashboard.putNumber("motor set", motor.get());
+                SmartDashboard.putNumber("pot read", pot.get());
+                
                 break;
                 
             case TEST_MODE_NORMAL:

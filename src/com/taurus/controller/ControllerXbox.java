@@ -17,6 +17,15 @@ public class ControllerXbox implements ControllerSwerve {
     {
         xbox = new XboxController(0);
     }
+
+    public double getX(Hand hand)
+    {
+        return xbox.getX(hand);
+    }
+    public double getY(Hand hand)
+    {
+        return xbox.getX(hand);
+    }
     
     /**
      * Get the magnitude of the direction vector formed by the

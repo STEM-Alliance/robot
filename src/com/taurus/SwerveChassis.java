@@ -17,9 +17,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SwerveChassis
 {
-    public boolean FieldRelative = true;
+    public boolean FieldRelative = false;
     
-    public double MaxAvailableVelocity = 1.0;
+    public double MaxAvailableVelocity = .5;
      
     private SwerveWheel[] Wheels;
 
@@ -56,7 +56,8 @@ public class SwerveChassis
                                         SwerveConstants.WheelEncoderPins[i],
                                         SwerveConstants.WheelPotPins[i],
                                         SwerveConstants.WheelDriveMotorPins[i],
-                                        SwerveConstants.WheelAngleMotorPins[i]);
+                                        SwerveConstants.WheelAngleMotorPins[i],
+                                        SwerveConstants.WheelSpinDirection[i]);
         }
  
     }
