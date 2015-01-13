@@ -38,13 +38,14 @@ public class Robot extends IterativeRobot {
     private boolean TEST = true;
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
-    private final int TEST_MODE_CALIBRATION = 2;
+    private final int TEST_MODE_CALIBRATION_1 = 2;
+    private final int TEST_MODE_CALIBRATION_2 = 3;
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
     
     
-    private Talon motor;
-    private AnalogPotentiometer pot;
+    //private Talon motor;
+    //private AnalogPotentiometer pot;
     
     /**
      * This function is run when the robot is first started up and should be
@@ -69,7 +70,8 @@ public class Robot extends IterativeRobot {
         testChooser = new SendableChooser();
         testChooser.addDefault("Normal",    Integer.valueOf(TEST_MODE_NORMAL));
         testChooser.addObject("Wheel Test", Integer.valueOf(TEST_MODE_WHEEL));
-        testChooser.addObject("Wheel Calibarion", Integer.valueOf(TEST_MODE_CALIBRATION));
+        testChooser.addObject("Wheel Calibration 1", Integer.valueOf(TEST_MODE_CALIBRATION_1));
+        testChooser.addObject("Wheel Calibration 2", Integer.valueOf(TEST_MODE_CALIBRATION_2));
         SmartDashboard.putData("Test", testChooser);
         
         testWheelChooser = new SendableChooser();
@@ -81,12 +83,10 @@ public class Robot extends IterativeRobot {
         
         SmartDashboard.putBoolean("TEST MODE", TEST);
 
-        double PotentiometerMax = 4.6;
-        double PotentiometerScale = 360 / PotentiometerMax; 
-        
-        motor = new Talon(5);
-        pot = new AnalogPotentiometer(2, 390, -15);//, PotentiometerScale);
-        
+        //double PotentiometerMin = 15;
+        //double PotentiometerMax = 345;
+        //motor = new Talon(5);
+        //pot = new AnalogPotentiometer(2, 360 + PotentiometerMin - (PotentiometerMax - 360), -PotentiometerMin);//, PotentiometerScale);
         
     }
 
@@ -173,16 +173,27 @@ public class Robot extends IterativeRobot {
      */
     private void TestRun()
     {
+        int i = ((Integer)testWheelChooser.getSelected()).intValue();
+        
         switch(((Integer)testChooser.getSelected()).intValue())
         {
             case TEST_MODE_WHEEL:
-                TestWheel(((Integer)testWheelChooser.getSelected()).intValue());
+                TestWheel(i);
                 break;
-            case TEST_MODE_CALIBRATION:
-                //drive.getWheel(1).updateAngleMotor(controller.getDirectionDegrees(Hand.kRight), 1.0);
-                motor.set(controller.getX(Hand.kRight) * .5);
-                SmartDashboard.putNumber("motor set", motor.get());
-                SmartDashboard.putNumber("pot read", pot.get());
+                
+            case TEST_MODE_CALIBRATION_1:
+                //motor.set(controller.getX(Hand.kRight) * .5);
+                //SmartDashboard.putNumber("motor set", motor.get());
+                //SmartDashboard.putNumber("pot read", pot.get());
+                
+                drive.getWheel(i).MotorAngle.set(controller.getX(Hand.kRight) * .5);
+                SmartDashboard.putNumber("motor set", drive.getWheel(i).MotorAngle.get());
+                SmartDashboard.putNumber("pot read", drive.getWheel(i).AnglePot.get());
+                
+                break;
+                
+            case TEST_MODE_CALIBRATION_2:
+                drive.getWheel(1).updateAngleMotor(controller.getDirectionDegrees(Hand.kRight), 1.0);
                 
                 break;
                 

@@ -57,7 +57,9 @@ public class SwerveChassis
                                         SwerveConstants.WheelPotPins[i],
                                         SwerveConstants.WheelDriveMotorPins[i],
                                         SwerveConstants.WheelAngleMotorPins[i],
-                                        SwerveConstants.WheelSpinDirection[i]);
+                                        SwerveConstants.WheelSpinDirection[i],
+                                        SwerveConstants.WheelSpinMin[i],
+                                        SwerveConstants.WheelSpinMax[i]);
         }
  
     }
