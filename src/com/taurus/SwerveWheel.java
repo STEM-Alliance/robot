@@ -26,18 +26,19 @@ public class SwerveWheel
                                        // val, angle
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
+    
     private boolean HighGear;
     private boolean Brake;
-    private boolean SpinDirection;
+    
     private double maxRotationSpeed = .75;
+    
+    private double AngleOrienation = 0;
+    private double AngleInMin = 0.041;  // measured from raw sensor input
+    private double AngleInMax = 0.961;  // measured from raw sensor input
     
     // motor
     private Talon MotorDrive;
     public Talon MotorAngle;
-    
-    private double AngleOrienation;
-    private double AngleInMin;
-    private double AngleInMax;
     
     // sensor
     public AnalogPotentiometer AnglePot;
@@ -65,12 +66,9 @@ public class SwerveWheel
      * @param PotPin Pin for Angle Potentiometer
      * @param DrivePin Pin for drive motor controller
      * @param AnglePin Pin for angle motor controller
-     * @param SpinDir If the spin direction needs to be inverted
-     * @param SpinMin
-     * @param SpinMax
      */
     public SwerveWheel(String name, double[] Position, double Orientation, int[] EncoderPins,
-            int PotPin, int DrivePin, int AnglePin, boolean SpinDir, double SpinMin, double SpinMax)
+            int PotPin, int DrivePin, int AnglePin)
     {
         Name = name;
 
@@ -92,9 +90,6 @@ public class SwerveWheel
         AnglePot = new AnalogPotentiometer(PotPin);
         AngleController = new SwerveAngleController(name + ".ctl");
         
-        SpinDirection = SpinDir;
-        AngleInMin = SpinMin;
-        AngleInMax = SpinMax;
         AngleOrienation = Orientation;
     }
 
@@ -178,7 +173,7 @@ public class SwerveWheel
     private double AdjustAngle(double angle)
     {
         //TODO is this right?
-        //angle = (angle + AngleOrienation + 360) % 360;
+        angle = Utilities.wrapToRange(angle + AngleOrienation, 0, 360);
         return angle;
     }
     
@@ -212,14 +207,7 @@ public class SwerveWheel
         // Control the wheel angle.
         if (speed > MinSpeed)
         {
-            if(SpinDirection)
-            {
-                MotorAngle.set(AngleController.getMotorSpeed()* maxRotationSpeed);
-            }
-            else 
-            {
-                MotorAngle.set(-AngleController.getMotorSpeed()*maxRotationSpeed);
-            }
+            MotorAngle.set(-AngleController.getMotorSpeed()*maxRotationSpeed);
         }
         else
         {
