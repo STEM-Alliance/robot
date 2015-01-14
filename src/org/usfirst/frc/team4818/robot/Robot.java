@@ -14,8 +14,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,13 +40,6 @@ public class Robot extends IterativeRobot {
     private final int TEST_MODE_CALIBRATION_2 = 3;
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
-    
-    private double PotentiometerLow;
-    private double PotentiometerHigh;
-    
-    
-    //private Talon motor;
-    //private AnalogPotentiometer pot;
     
     /**
      * This function is run when the robot is first started up and should be
@@ -86,11 +77,6 @@ public class Robot extends IterativeRobot {
         
         SmartDashboard.putBoolean("TEST MODE", TEST);
 
-        //double PotentiometerMin = 15;
-        //double PotentiometerMax = 345;
-        //motor = new Talon(5);
-        //pot = new AnalogPotentiometer(2, 360 + PotentiometerMin - (PotentiometerMax - 360), -PotentiometerMin);//, PotentiometerScale);
-        
     }
 
     /**
@@ -115,10 +101,6 @@ public class Robot extends IterativeRobot {
      */
     public void teleopInit()
     {
-
-        PotentiometerHigh = 0;
-        PotentiometerLow = 1;
-        
         controllerChooser = new ControllerChooser();
         if(controllerChooser.get() == ControllerChooser.XBOX)
         {
@@ -135,7 +117,7 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() 
     {
-        //UpdateDashboard();
+        UpdateDashboard();
         
         if(!TEST)
         {
@@ -188,28 +170,11 @@ public class Robot extends IterativeRobot {
                 TestWheel(i);
                 break;
                 
-            case TEST_MODE_CALIBRATION_1:
-                //motor.set(controller.getX(Hand.kRight) * .5);
-                //SmartDashboard.putNumber("motor set", motor.get());
-                //SmartDashboard.putNumber("pot read", pot.get());
-                
+            case TEST_MODE_CALIBRATION_1:                
                 drive.getWheel(i).MotorAngle.set(controller.getX(Hand.kRight) * .5);
                 SmartDashboard.putNumber("motor set", drive.getWheel(i).MotorAngle.get());
                 SmartDashboard.putNumber("pot read", drive.getWheel(i).AnglePot.get());
-                
-
-                if(PotentiometerLow > drive.getWheel(i).AnglePot.get())
-                {
-                    PotentiometerLow = drive.getWheel(i).AnglePot.get();
-                }
-                if(PotentiometerHigh < drive.getWheel(i).AnglePot.get())
-                {
-                    PotentiometerHigh = drive.getWheel(i).AnglePot.get();
-                }
-                
-                SmartDashboard.putNumber("pot low", PotentiometerLow);
-                SmartDashboard.putNumber("pot high", PotentiometerHigh);
-                
+                               
                 break;
                 
             case TEST_MODE_CALIBRATION_2:
