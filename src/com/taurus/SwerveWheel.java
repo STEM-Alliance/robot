@@ -156,6 +156,16 @@ public class SwerveWheel
      */
     private double getAnglePotValue()
     {
+        // update the values if needed
+        if(AnglePot.get() > AngleInMax)
+        {
+            AngleInMax = AnglePot.get();
+        }
+        if(AnglePot.get() < AngleInMin)
+        {
+            AngleInMin = AnglePot.get();
+        }
+
         // scale it based on the calibration values
         return Utilities.scaleToRange(AnglePot.get(), AngleInMin, AngleInMax, 0, 360);
     }

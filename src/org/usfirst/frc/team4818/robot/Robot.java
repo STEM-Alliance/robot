@@ -43,6 +43,9 @@ public class Robot extends IterativeRobot {
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
     
+    private double PotentiometerLow;
+    private double PotentiometerHigh;
+    
     
     //private Talon motor;
     //private AnalogPotentiometer pot;
@@ -53,7 +56,7 @@ public class Robot extends IterativeRobot {
      */
     public void robotInit() {
         
-        //drive = new SwerveChassis();
+        drive = new SwerveChassis();
         driveScheme = new DriveScheme();
         
         controllerChooser = new ControllerChooser();
@@ -112,6 +115,10 @@ public class Robot extends IterativeRobot {
      */
     public void teleopInit()
     {
+
+        PotentiometerHigh = 0;
+        PotentiometerLow = 1;
+        
         controllerChooser = new ControllerChooser();
         if(controllerChooser.get() == ControllerChooser.XBOX)
         {
@@ -190,10 +197,23 @@ public class Robot extends IterativeRobot {
                 SmartDashboard.putNumber("motor set", drive.getWheel(i).MotorAngle.get());
                 SmartDashboard.putNumber("pot read", drive.getWheel(i).AnglePot.get());
                 
+
+                if(PotentiometerLow > drive.getWheel(i).AnglePot.get())
+                {
+                    PotentiometerLow = drive.getWheel(i).AnglePot.get();
+                }
+                if(PotentiometerHigh < drive.getWheel(i).AnglePot.get())
+                {
+                    PotentiometerHigh = drive.getWheel(i).AnglePot.get();
+                }
+                
+                SmartDashboard.putNumber("pot low", PotentiometerLow);
+                SmartDashboard.putNumber("pot high", PotentiometerHigh);
+                
                 break;
                 
             case TEST_MODE_CALIBRATION_2:
-                drive.getWheel(1).updateAngleMotor(controller.getDirectionDegrees(Hand.kRight), 1.0);
+                drive.getWheel(i).updateAngleMotor(controller.getDirectionDegrees(Hand.kRight), 1.0);
                 
                 break;
                 
