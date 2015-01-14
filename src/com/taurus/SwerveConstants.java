@@ -20,9 +20,9 @@ public class SwerveConstants {
     /**
      * if the wheel spinning direction needs to be inverted
      */
-    public static final boolean[] WheelSpinDirection ={ true,
+    public static final boolean[] WheelSpinDirection ={ false,
                                                         false,
-                                                        true,
+                                                        false,
                                                         false };
  
     
@@ -44,15 +44,15 @@ public class SwerveConstants {
                                                             180,    // back right
                                                             270 };  // back left
     
-    public static final double[] WheelSpinMin = {   0.0,
-                                                    0.0,
-                                                    0.0,
-                                                    0.0 };
+    public static final double[] WheelSpinMin = {   0.041,
+                                                    0.041,
+                                                    0.042,
+                                                    0.042 };
     
-    public static final double[] WheelSpinMax = {   1.0,
-                                                    1.0,
-                                                    1.0,
-                                                    1.0 }; 
+    public static final double[] WheelSpinMax = {   0.961,
+                                                    0.962,
+                                                    0.962,
+                                                    0.961 }; 
     
     /**
      * Pins (Digital) for wheel speed encoder inputs
