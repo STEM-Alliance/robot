@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj.CANTalon;
 /**
  * Handle motor outputs and feedback for an individual wheel
  * @author Team 4818 Taurus Robotics
@@ -37,7 +37,7 @@ public class SwerveWheel
     private double AngleInMax = 0.961;  // measured from raw sensor input
     
     // motor
-    private Talon MotorDrive;
+    private CANTalon MotorDrive;
     public Talon MotorAngle;
     
     // sensor
@@ -75,7 +75,7 @@ public class SwerveWheel
         WheelPosition = new SwerveVector(Position);
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
-        MotorDrive = new Talon(DrivePin);
+        MotorDrive = new CANTalon(DrivePin);
         MotorAngle = new Talon(AnglePin);
         
         HighGear = true;
@@ -184,7 +184,7 @@ public class SwerveWheel
      */
     private SwerveVector updateTask()
     {
-        boolean reverse = updateAngleMotor(AdjustAngle(WheelDesired.getAngle()),
+        boolean reverse = updateAngleMotor(WheelDesired.getAngle(),
                                            WheelDesired.getMag());
         updateDriveMotor(reverse);
 
@@ -202,7 +202,7 @@ public class SwerveWheel
     public boolean updateAngleMotor(double angle, double speed)
     {
         // Update the angle controller.
-        AngleController.update(angle, getAnglePotValue());
+        AngleController.update(angle, AdjustAngle(getAnglePotValue()));
         
         // Control the wheel angle.
         if (speed > MinSpeed)
@@ -257,7 +257,7 @@ public class SwerveWheel
         double driveMotorControllerOutput = DriveEncoderController.update(driveMotorControllerError, time);
         
         // Control the motor.
-        double driveMotorOutput = driveMotorSpeed + driveMotorControllerOutput;
+        double driveMotorOutput = driveMotorSpeed;// + driveMotorControllerOutput;
         
         
         if (Brake)
