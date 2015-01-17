@@ -22,9 +22,10 @@ public class ControllerXbox implements ControllerSwerve {
     {
         return xbox.getX(hand);
     }
+    
     public double getY(Hand hand)
     {
-        return xbox.getX(hand);
+        return xbox.getY(hand);
     }
     
     /**
@@ -76,7 +77,7 @@ public class ControllerXbox implements ControllerSwerve {
 
         value = xbox.getAxis(XboxController.AxisType.kRightX);
 
-        if(value < DEADBAND)
+        if(Math.abs(value) < DEADBAND)
         {
             value = 0;
         }
@@ -94,7 +95,7 @@ public class ControllerXbox implements ControllerSwerve {
         value = new SwerveVector(xbox.getX(Hand.kLeft),
                                  xbox.getY(Hand.kLeft));
 
-        if(value.getMag() < DEADBAND)
+        if (value.getMag() < DEADBAND)
         {
             value.setMag(0);
         }

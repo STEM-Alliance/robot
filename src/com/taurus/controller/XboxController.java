@@ -22,8 +22,8 @@ public class XboxController extends GenericHID {
          * The integer value representing this enumeration
          */
         public final int value;
-        private static final int kLeftX_val = 1;
-        private static final int kLeftY_val = 2;
+        private static final int kLeftX_val = 0;
+        private static final int kLeftY_val = 1;
         private static final int kTrigger_val = 3;
         private static final int kRightX_val = 4;
         private static final int kRightY_val = 5;
@@ -234,7 +234,7 @@ public class XboxController extends GenericHID {
      * @return The direction of the vector in radians
      */
     public double getDirectionRadians(Hand hand) {
-        return Math.atan2(getX(hand), -getY(hand));
+        return Math.atan2(getY(hand), getX(hand));
     }
     
     /**
