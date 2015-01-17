@@ -19,7 +19,7 @@ public class SwerveChassis
 {
     public boolean FieldRelative = false;
     
-    public double MaxAvailableVelocity = .5;
+    public double MaxAvailableVelocity = 1;
      
     private SwerveWheel[] Wheels;
 
@@ -124,7 +124,7 @@ public class SwerveChassis
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             //calculate
-            WheelsUnscaled[i] = new SwerveVector(RobotVelocity.getX() - RobotRotation * Wheels[i].getPosition().getY(),
+            WheelsUnscaled[i] = new SwerveVector(RobotVelocity.getX() + RobotRotation * Wheels[i].getPosition().getY(),
                                                  RobotVelocity.getY() + RobotRotation * Wheels[i].getPosition().getX());
 
             if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)

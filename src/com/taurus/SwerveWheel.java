@@ -51,7 +51,7 @@ public class SwerveWheel
 
     private static final double DriveP = 0.3;
     private static final double DriveTI = 0.5;  // seconds needed to equal a P term contribution
-    private static final double DriveI = 2 / DriveTI;
+    private static final double DriveI = 0;//2 / DriveTI;
     
     // deadband
     private static final double MinSpeed = 0.1;
@@ -233,7 +233,7 @@ public class SwerveWheel
         // Reverse the motor output if the angle controller is taking advantage of rotational symmetry.
         if (reverse)
             driveMotorSpeed = -driveMotorSpeed;
-        
+        /*
         // Update the velocity estimate.
         DriveEncoderFilter.updateEstimate(DriveEncoder.getDistance(), time);
 
@@ -255,16 +255,16 @@ public class SwerveWheel
         // Update the wheel speed controller.
         double driveMotorControllerError = driveMotorSpeed - driveEncoderVelocityScaled;
         double driveMotorControllerOutput = DriveEncoderController.update(driveMotorControllerError, time);
-        
+        */
         // Control the motor.
         double driveMotorOutput = driveMotorSpeed;// + driveMotorControllerOutput;
         
         
-        if (Brake)
+        /*if (Brake)
         {
             MotorDrive.set(0);
         }
-        else
+        else*/
         {
             MotorDrive.set(driveMotorOutput);
         }
@@ -273,9 +273,9 @@ public class SwerveWheel
         SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
         SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
         SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
-        SmartDashboard.putNumber(Name + ".speed.scaled", driveEncoderVelocityScaled);
-        SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
-        SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
+        //SmartDashboard.putNumber(Name + ".speed.scaled", driveEncoderVelocityScaled);
+        //SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
+        //SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
         SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
     }
 }
