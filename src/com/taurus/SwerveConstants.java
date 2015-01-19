@@ -32,9 +32,9 @@ public class SwerveConstants {
      * Relative to robot 0 angle
      */
     public static final double[] WheelOrientationAngle = {  -35,      // front left
-                                                            -90,     // front right
-                                                            -108,    // back right
-                                                            -2 };  // back left
+                                                            -10,     // front right
+                                                            -98,    // back right
+                                                             45 };  // back left
         
     /**
      * Pins (Digital) for wheel speed encoder inputs
