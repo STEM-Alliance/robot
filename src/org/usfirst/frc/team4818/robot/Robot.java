@@ -130,6 +130,15 @@ public class Robot extends IterativeRobot {
     }
     
     /**
+     * Pneumatics
+     */
+    public void pneumaticsControl()
+    {
+        
+    }
+    
+    
+    /**
      * Update the dashboard with the common entries
      */
     private void UpdateDashboard()
