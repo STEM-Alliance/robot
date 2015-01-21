@@ -6,9 +6,13 @@
 
 package com.taurus;
 
+import com.kauailabs.nav6.frc.IMUAdvanced;
+
 import edu.wpi.first.wpilibj.Gyro;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -17,16 +21,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SwerveChassis
 {
-    public boolean FieldRelative = false;
+    public boolean FieldRelative = true;
     
     public double MaxAvailableVelocity = 1;
      
     private SwerveWheel[] Wheels;
 
     // shifter
-    private Servo Shifter[] = new Servo[2];
-    private final double[] ShifterLevelHigh = {120, 45};// 170 to 0 is max range allowed for the servo 
-    private final double[] ShifterLevelLow = {45, 120};
+    private Servo Shifter[] = new Servo[4];
+    private final double[] ShifterLevelHigh = {120, 45, 120, 45};// 170 to 0 is max range allowed for the servo 
+    private final double[] ShifterLevelLow = {45, 120, 45, 120};
     private boolean GearHigh;
     
     private boolean Brake;
@@ -34,6 +38,8 @@ public class SwerveChassis
     private PIController ChassisAngleController;
     public double ChassisP = 1.0 / 90;  // Full speed rotation at error of 90 degrees. 
     public double ChassisI = 0;
+    public IMUAdvanced Gyro;
+    SerialPort serial_port; 
     
     /**
      * sets up individual wheels and their positions relative to robot center
@@ -42,11 +48,34 @@ public class SwerveChassis
     {
         Shifter[0] = new Servo(SwerveConstants.WheelShiftServoPins[0]);
         Shifter[1] = new Servo(SwerveConstants.WheelShiftServoPins[1]);
+        Shifter[2] = new Servo(SwerveConstants.WheelShiftServoPins[2]);
+        Shifter[3] = new Servo(SwerveConstants.WheelShiftServoPins[3]);
         
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
  
+        
+        try {
+            serial_port = new SerialPort(57600,SerialPort.Port.kMXP);
+                    
+                    // You can add a second parameter to modify the 
+                    // update rate (in hz) from 4 to 100.  The default is 100.
+                    // If you need to minimize CPU load, you can set it to a
+                    // lower value, as shown here, depending upon your needs.
+                    
+                    // You can also use the IMUAdvanced class for advanced
+                    // features.
+                    
+                    byte update_rate_hz = 50;
+                    
+                    Gyro = new IMUAdvanced(serial_port,update_rate_hz);
+            } catch( Exception ex ) {
+                    
+            }
+            if ( Gyro != null ) {
+                LiveWindow.addSensor("IMU", "Gyro", Gyro);
+            }
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
@@ -163,7 +192,7 @@ public class SwerveChassis
     {
         //TODO
         // adjust the desired angle based on the robot's current angle
-        double AdjustedAngle = Angle; //- RobotGyro.getAngle();
+        double AdjustedAngle = Angle - Gyro.getYaw();
         
         // Wrap to fit in the range -180 to 180
         return Utilities.wrapToRange(AdjustedAngle, -180, 180);
@@ -180,12 +209,17 @@ public class SwerveChassis
             SmartDashboard.putString("Gear", "High");
             Shifter[0].setAngle(ShifterLevelHigh[0]);
             Shifter[1].setAngle(ShifterLevelHigh[1]);
+            Shifter[2].setAngle(ShifterLevelHigh[2]);
+            Shifter[3].setAngle(ShifterLevelHigh[3]);
+        
         }
         else
         {
             SmartDashboard.putString("Gear", "Low");
             Shifter[0].setAngle(ShifterLevelLow[0]);
             Shifter[1].setAngle(ShifterLevelLow[1]);
+            Shifter[2].setAngle(ShifterLevelLow[2]);
+            Shifter[3].setAngle(ShifterLevelLow[3]);
         }
     }
 

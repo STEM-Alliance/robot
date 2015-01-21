@@ -146,4 +146,11 @@ public class ControllerXbox implements ControllerSwerve {
     {
         return xbox.getBButton();
     }
+    public boolean resetGyro(){
+        if(xbox.getBack() && xbox.getStart()){
+            return true;
+        } else{
+            return false;
+        }
+    }
 }

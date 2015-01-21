@@ -98,4 +98,6 @@ public interface ControllerSwerve {
      * @return
      */
     public boolean getBrake();
+    
+    public boolean resetGyro();
 }
