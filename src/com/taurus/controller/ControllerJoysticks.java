@@ -166,4 +166,11 @@ public class ControllerJoysticks implements ControllerSwerve {
     {
         return left.getRawButton(3);
     }
+    public boolean resetGyro(){
+        if(left.getRawButton(7)){
+            return true;
+        } else{
+            return false;
+        }
+    }
 }

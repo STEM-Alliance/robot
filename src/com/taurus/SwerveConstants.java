@@ -31,10 +31,10 @@ public class SwerveConstants {
      * Orientation Angle of each wheel in degrees clockwise.
      * Relative to robot 0 angle
      */
-    public static final double[] WheelOrientationAngle = {  -35,      // front left
-                                                            -10,     // front right
+    public static final double[] WheelOrientationAngle = {  -35,    // front left
+                                                            170,    // front right
                                                             -98,    // back right
-                                                             45 };  // back left
+                                                            45 };  // back left
         
     /**
      * Pins (Digital) for wheel speed encoder inputs
@@ -63,15 +63,18 @@ public class SwerveConstants {
     /**
      * Pins (PWM) for wheel angle motor controller outputs
      */
-    public static final int[] WheelAngleMotorPins = {   1,
-                                                        3,
-                                                        5,
-                                                        7 };
+    public static final int[] WheelAngleMotorPins = {   0,
+                                                        1,
+                                                        2,
+                                                        3 };
 
     /**
      * Pins (PWM) for wheel shifting servos
      */
-    public static final int[] WheelShiftServoPins = { 8, 9 };
+    public static final int[] WheelShiftServoPins = { 4,
+                                                      5,
+                                                      6,
+                                                      7};
     
     /**
      * Wheel diameter

@@ -110,6 +110,7 @@ public class Robot extends IterativeRobot {
         {
             controller = new ControllerJoysticks();
         }
+        drive.Gyro.zeroYaw();
     }
 
     /**
@@ -239,6 +240,9 @@ public class Robot extends IterativeRobot {
         // if the button is not held down, we're in high gear
         drive.setGearHigh(controller.getHighGearEnable());
         drive.setBrake(controller.getBrake());
+        if(controller.resetGyro()){
+            drive.Gyro.zeroYaw();
+        }
     }
     
     /**
