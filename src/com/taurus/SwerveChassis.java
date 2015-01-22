@@ -67,7 +67,7 @@ public class SwerveChassis
                     // You can also use the IMUAdvanced class for advanced
                     // features.
                     
-                    byte update_rate_hz = 50;
+                    byte update_rate_hz = 100;
                     
                     Gyro = new IMUAdvanced(serial_port,update_rate_hz);
             } catch( Exception ex ) {
@@ -99,7 +99,7 @@ public class SwerveChassis
     public SwerveVector[] UpdateAngleDrive(SwerveVector Velocity, double Heading)
     {
         //set the rotation using a PI controller based on current robot heading and new desired heading
-        double Error = Utilities.wrapToRange(Heading /*- RobotGyro.getAngle()*/, -180, 180);
+        double Error = Utilities.wrapToRange(Heading- Gyro.getYaw(), -180, 180);
         double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
         
         SmartDashboard.putNumber("AngleDrive.error", Error);
