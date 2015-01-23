@@ -6,7 +6,7 @@
 
 package com.taurus.swerve;
 
-import com.kauailabs.nav6.frc.IMUAdvanced;
+import com.kauailabs.nav6.frc.IMU;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.Gyro;
@@ -34,7 +34,7 @@ public class SwerveChassis
     private PIController ChassisAngleController;
     public double ChassisP = 1.0 / 90;  // Full speed rotation at error of 90 degrees. 
     public double ChassisI = 0;
-    public IMUAdvanced Gyro;
+    public IMU Gyro;
     SerialPort serial_port; 
     
     /**
@@ -58,15 +58,16 @@ public class SwerveChassis
                     // You can also use the IMUAdvanced class for advanced
                     // features.
                     
-                    byte update_rate_hz = 50;
-                    
-                    Gyro = new IMUAdvanced(serial_port,update_rate_hz);
-            } catch( Exception ex ) {
-                    
-            }
-            if ( Gyro != null ) {
-                LiveWindow.addSensor("IMU", "Gyro", Gyro);
-            }
+            byte update_rate_hz = 50;
+            
+            Gyro = new IMU(serial_port,update_rate_hz);
+        } catch( Exception ex ) {
+        }
+        
+        if ( Gyro != null ) {
+            LiveWindow.addSensor("IMU", "Gyro", Gyro);
+        }
+        
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
@@ -259,7 +260,7 @@ public class SwerveChassis
      * Get the Gyro object
      * @return Gyro object
      */
-    public IMUAdvanced getGyro()
+    public IMU getGyro()
     {
     	return Gyro;
     }
