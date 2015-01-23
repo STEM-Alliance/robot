@@ -1,14 +1,12 @@
 
 package org.usfirst.frc.team4818.robot;
 
-import com.taurus.DriveScheme;
+import com.taurus.SwerveApplication;
 import com.taurus.SwerveChassis;
 import com.taurus.SwerveConstants;
 import com.taurus.SwerveVector;
 import com.taurus.controller.ControllerChooser;
-import com.taurus.controller.ControllerJoysticks;
 import com.taurus.controller.ControllerSwerve;
-import com.taurus.controller.ControllerXbox;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -22,17 +20,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends IterativeRobot {
-    
-    // Motor Objects
-    private SwerveChassis drive;
-    
-    // Joysticks
-    private ControllerSwerve controller;
-    private ControllerChooser controllerChooser;
-    
-    private DriveScheme driveScheme;
+public class Robot extends IterativeRobot 
+{
+    private SwerveApplication application;
 
+    // Test
     private boolean TEST = true;
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
@@ -45,20 +37,9 @@ public class Robot extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-    public void robotInit() {
-        
-        drive = new SwerveChassis();
-        driveScheme = new DriveScheme();
-        
-        controllerChooser = new ControllerChooser();
-        if(controllerChooser.get() == ControllerChooser.XBOX)
-        {
-            controller = new ControllerXbox();
-        }
-        else
-        {
-            controller = new ControllerJoysticks();
-        }
+    public void robotInit() 
+    {        
+    	application = new com.taurus.SwerveApplication();  // Change for raw swerve or robot year specific
         
         // set up the choosers for running tests while in teleop mode
         testChooser = new SendableChooser();
@@ -76,7 +57,6 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Test Wheel", testWheelChooser);
         
         SmartDashboard.putBoolean("TEST MODE", TEST);
-
     }
 
     /**
@@ -84,7 +64,7 @@ public class Robot extends IterativeRobot {
      */
     public void disabledPeriodic()
     {
-        //UpdateDashboard();
+    	application.disabledPeriodic();
     }
     
     /**
@@ -92,7 +72,7 @@ public class Robot extends IterativeRobot {
      */
     public void disabledInit()
     {
-        //UpdateDashboard();
+    	application.disabledInit();
     }
     
     
@@ -101,16 +81,7 @@ public class Robot extends IterativeRobot {
      */
     public void teleopInit()
     {
-        controllerChooser = new ControllerChooser();
-        if(controllerChooser.get() == ControllerChooser.XBOX)
-        {
-            controller = new ControllerXbox();
-        }
-        else
-        {
-            controller = new ControllerJoysticks();
-        }
-        drive.Gyro.zeroYaw();
+    	application.teleopInit();
     }
 
     /**
@@ -122,22 +93,13 @@ public class Robot extends IterativeRobot {
         
         if(!TEST)
         {
-            DriveNormal();
+            application.teleopPeriodic();
         }
         else
         {
             TestRun();
         }
-    }
-    
-    /**
-     * Pneumatics
-     */
-    public void pneumaticsControl()
-    {
-        
-    }
-    
+    }    
     
     /**
      * Update the dashboard with the common entries
@@ -145,19 +107,19 @@ public class Robot extends IterativeRobot {
     private void UpdateDashboard()
     {
         // display the joysticks on smart dashboard
-        SmartDashboard.putNumber("Left Mag",    controller.getMagnitude(Hand.kLeft));
-        SmartDashboard.putNumber("Left Angle",  controller.getDirectionDegrees(Hand.kLeft));
-        SmartDashboard.putNumber("Right Mag",   controller.getMagnitude(Hand.kRight));
-        SmartDashboard.putNumber("Right Angle", controller.getDirectionDegrees(Hand.kRight));
+        SmartDashboard.putNumber("Left Mag",    application.controller.getMagnitude(Hand.kLeft));
+        SmartDashboard.putNumber("Left Angle",  application.controller.getDirectionDegrees(Hand.kLeft));
+        SmartDashboard.putNumber("Right Mag",   application.controller.getMagnitude(Hand.kRight));
+        SmartDashboard.putNumber("Right Angle", application.controller.getDirectionDegrees(Hand.kRight));
         
         // display each wheel's mag and angle in SmartDashboard
         for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
-            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag", drive.getWheelActual(i).getMag());
-            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle", drive.getWheelActual(i).getAngle());
+            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag", application.drive.getWheelActual(i).getMag());
+            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle", application.drive.getWheelActual(i).getAngle());
         }
         
-        drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", drive.MaxAvailableVelocity);
+        application.drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", application.drive.MaxAvailableVelocity);
         
         //TODO
         //SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
@@ -181,20 +143,20 @@ public class Robot extends IterativeRobot {
                 break;
                 
             case TEST_MODE_CALIBRATION_1:                
-                drive.getWheel(i).MotorAngle.set(controller.getX(Hand.kRight) * .5);
-                SmartDashboard.putNumber("motor set", drive.getWheel(i).MotorAngle.get());
-                SmartDashboard.putNumber("pot read", drive.getWheel(i).AnglePot.get());
+            	application.drive.getWheel(i).MotorAngle.set(application.controller.getX(Hand.kRight) * .5);
+                SmartDashboard.putNumber("motor set", application.drive.getWheel(i).MotorAngle.get());
+                SmartDashboard.putNumber("pot read", application.drive.getWheel(i).AnglePot.get());
                                
                 break;
                 
             case TEST_MODE_CALIBRATION_2:
-                drive.getWheel(i).updateAngleMotor(controller.getDirectionDegrees(Hand.kRight), 1.0);
+            	application.drive.getWheel(i).updateAngleMotor(application.controller.getDirectionDegrees(Hand.kRight), 1.0);
                 
                 break;
                 
             case TEST_MODE_NORMAL:
             default:
-                DriveNormal();
+                application.teleopPeriodic();
                 break;
         }
     }
@@ -205,44 +167,18 @@ public class Robot extends IterativeRobot {
     private void TestWheel(int index)
     {
         // use the left joystick to control the wheel module
-        SwerveVector WheelActual = drive.getWheel(index).setDesired(
-                controller.getHaloDrive_Velocity(),
-                controller.getHighGearEnable(),
-                controller.getBrake());
+        SwerveVector WheelActual = application.drive.getWheel(index).setDesired(
+        		application.controller.getHaloDrive_Velocity(),
+        		application.controller.getHighGearEnable(),
+        		application.controller.getBrake());
 
         // display in SmartDashboard
         SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
         SmartDashboard.putNumber("Test Wheel Angle Actual", WheelActual.getAngle());
         
         // if the button is not held down, we're in high gear
-        drive.setGearHigh(controller.getHighGearEnable());
-        drive.UpdateShifter();
-    }
-    
-    /**
-     * Run the normal operating Drive system
-     */
-    private void DriveNormal()
-    {
-        // Use the Joystick inputs to update the drive system
-        switch(driveScheme.get())
-        {
-            case DriveScheme.ANGLE_DRIVE:
-                drive.UpdateAngleDrive(controller.getAngleDrive_Velocity(), controller.getAngleDrive_Heading());
-                break;
-                
-            default:
-            case DriveScheme.HALO_DRIVE:
-                drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(), controller.getHaloDrive_Rotation());
-                break;
-        }
-
-        // if the button is not held down, we're in high gear
-        drive.setGearHigh(controller.getHighGearEnable());
-        drive.setBrake(controller.getBrake());
-        if(controller.resetGyro()){
-            drive.Gyro.zeroYaw();
-        }
+        application.drive.setGearHigh(application.controller.getHighGearEnable());
+        application.drive.UpdateShifter();
     }
     
     /**
@@ -250,6 +186,7 @@ public class Robot extends IterativeRobot {
      */
     public void autonomousInit()
     {
+    	application.autonomousInit();
     }
 
     /**
@@ -257,6 +194,7 @@ public class Robot extends IterativeRobot {
      */
     public void autonomousPeriodic()
     {
+    	application.autonomousPeriodic();
     }
 
     /**
@@ -264,6 +202,7 @@ public class Robot extends IterativeRobot {
      */
     public void testInit()
     {
+    	application.testInit();
     }
     
     /**
@@ -271,5 +210,6 @@ public class Robot extends IterativeRobot {
      */
     public void testPeriodic()
     {
+    	application.testPeriodic();
     }
 }
