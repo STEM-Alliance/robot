@@ -19,8 +19,20 @@ public class ControllerChooser {
         SmartDashboard.putData("Controller", controllerChooser);
     }
 
-    public int get()
+    public ControllerSwerve GetController()
     {
-       return ((Integer)controllerChooser.getSelected()).intValue();
+       ControllerSwerve result;
+       
+       switch (((Integer)controllerChooser.getSelected()).intValue()))
+       {
+    	   case XBOX:
+    		   result = new ControllerXbox();
+    	   case JOY:
+    		   result = new ControllerJoysticks();
+    	   default:
+    		   result = new ControllerXbox();
+       }
+    	
+       return result;
     }
 }
