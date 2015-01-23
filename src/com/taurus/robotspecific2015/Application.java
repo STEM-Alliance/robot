@@ -1,7 +1,7 @@
 package com.taurus.robotspecific2015;
 
 import com.taurus.IApplication;
-import com.taurus.SwerveApplication;
+import com.taurus.swerve.SwerveApplication;
 
 public class Application extends SwerveApplication
 {

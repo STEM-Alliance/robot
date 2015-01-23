@@ -1,9 +1,9 @@
 package com.taurus.controller;
 
-import com.taurus.SwerveVector;
+import com.taurus.swerve.SwerveVector;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Joystick;
 
 public class ControllerJoysticks implements ControllerSwerve {
 
@@ -155,9 +155,10 @@ public class ControllerJoysticks implements ControllerSwerve {
      */
     public boolean getHighGearEnable()
     {
-        // shift to high gear if the button is not held down
-        return !left.getRawButton(2);
-    } 
+        // shift to high gear if the button is held down
+        return left.getRawButton(2);
+    }
+    
     /**
      * Get the brake
      * @return
@@ -166,11 +167,9 @@ public class ControllerJoysticks implements ControllerSwerve {
     {
         return left.getRawButton(3);
     }
-    public boolean resetGyro(){
-        if(left.getRawButton(7)){
-            return true;
-        } else{
-            return false;
-        }
+    
+    public boolean getResetGyro()
+    {
+        return left.getRawButton(7);
     }
 }

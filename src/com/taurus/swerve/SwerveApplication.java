@@ -1,5 +1,6 @@
-package com.taurus;
+package com.taurus.swerve;
 
+import com.taurus.IApplication;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.controller.ControllerSwerve;
 
@@ -62,7 +63,8 @@ public class SwerveApplication implements IApplication
         // if the button is not held down, we're in high gear
         drive.setGearHigh(controller.getHighGearEnable());
         drive.setBrake(controller.getBrake());
-        if(controller.resetGyro()){
+        
+        if(controller.getResetGyro()){
         	drive.Gyro.zeroYaw();
         }
     }

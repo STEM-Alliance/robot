@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.taurus;
+package com.taurus.swerve;
 
 /**
  * Auto calculate angle and magnitude/angular velocity/distance 
