@@ -1,6 +1,6 @@
 package com.taurus.controller;
 
-import com.taurus.SwerveVector;
+import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
@@ -93,11 +93,16 @@ public interface ControllerSwerve {
      * @return true if high gear, else low gear
      */
     public boolean getHighGearEnable();
+    
     /**
      * Get the brake
      * @return
      */
     public boolean getBrake();
     
-    public boolean resetGyro();
+    /**
+     * Get if the gyro should be reset
+     * @return
+     */
+    public boolean getResetGyro();
 }

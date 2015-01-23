@@ -24,10 +24,10 @@ public class XboxController extends GenericHID {
         public final int value;
         private static final int kLeftX_val = 0;
         private static final int kLeftY_val = 1;
-        private static final int kTrigger_val = 3;
+        private static final int kLeftTrigger_val = 2;
+        private static final int kRightTrigger_val = 3;
         private static final int kRightX_val = 4;
         private static final int kRightY_val = 5;
-        private static final int kDLeftRight_val = 6;
 
         private AxisType(int value) {
             this.value = value;
@@ -44,9 +44,14 @@ public class XboxController extends GenericHID {
         public static final AxisType kLeftY = new AxisType(kLeftY_val);
 
         /**
-         * Axis: Triggers
+         * Axis: Left Trigger
          */
-        public static final AxisType kTrigger = new AxisType(kTrigger_val);
+        public static final AxisType kLeftTrigger = new AxisType(kLeftTrigger_val);
+        
+        /**
+         * Axis: Right Trigger
+         */
+        public static final AxisType kRightTrigger = new AxisType(kRightTrigger_val);
 
         /**
          * Axis: Right X
@@ -58,10 +63,6 @@ public class XboxController extends GenericHID {
          */
         public static final AxisType kRightY = new AxisType(kRightY_val);
 
-        /**
-         * Axis: D-Pad Left-Right
-         */
-        public static final AxisType kDLeftRight = new AxisType(kDLeftRight_val);
     }
 
     /**
@@ -83,8 +84,6 @@ public class XboxController extends GenericHID {
         private static final int kStart_val = 8;
         private static final int kLeftStick_val = 9;
         private static final int kRightStick_val = 10;
-        private static final int kRTrigger_val = 11;
-        private static final int kLTrigger_val = 12;
 
         private ButtonType(int value) {
             this.value = value;
@@ -134,16 +133,6 @@ public class XboxController extends GenericHID {
          * Button: Select
          */
         public static final ButtonType kStart = new ButtonType(kStart_val);
-
-        /**
-         * Button: Right Trigger
-         */
-        public static final ButtonType kRTrigger = new ButtonType(kRTrigger_val);
-
-        /**
-         * Button: Left Trigger
-         */
-        public static final ButtonType kLTrigger = new ButtonType(kLTrigger_val);
 
         /**
          * Button: Start
@@ -251,7 +240,7 @@ public class XboxController extends GenericHID {
      * @return Axis Value (-1 to 1)
      */
     public double getTwist() {
-        return getAxis(AxisType.kDLeftRight);
+        return 0;
     }
 
     /**
@@ -259,7 +248,7 @@ public class XboxController extends GenericHID {
      * @return Axis Value (-1 to 1)
      */
     public double getThrottle() {
-        return getAxis(AxisType.kTrigger);
+        return getAxis(AxisType.kRightTrigger);
     }
 
     /**
@@ -268,22 +257,6 @@ public class XboxController extends GenericHID {
      * @return State of the button
      */
     public boolean getRawButton(int button) {
-        if(button == ButtonType.kRTrigger.value) { //Abstracted Buttons from Analog Axis
-            if(getThrottle() <= -.6) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        if(button == ButtonType.kLTrigger.value) { //Abstracted Buttons from Analog Axis
-            if(getThrottle() >= .6) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
         return ((0x1 << (button - 1)) & m_ds.getStickButtons(m_port)) != 0;
     }
 
@@ -303,11 +276,26 @@ public class XboxController extends GenericHID {
      */
     public boolean getTrigger(Hand hand) {
         if(hand == Hand.kLeft) {
-            return getButton(ButtonType.kLTrigger);
+            return getAxis(AxisType.kLeftTrigger) > 0.6;
         } else if(hand == Hand.kRight) {
-            return getButton(ButtonType.kRTrigger);
+            return getAxis(AxisType.kRightTrigger) > 0.6;
         } else {
             return false;
+        }
+    }
+    
+    /**
+     * Get Trigger Value as Button
+     * @param hand Hand associated with button
+     * @return false
+     */
+    public double getTriggerVal(Hand hand) {
+        if(hand == Hand.kLeft) {
+            return getAxis(AxisType.kLeftTrigger);
+        } else if(hand == Hand.kRight) {
+            return getAxis(AxisType.kRightTrigger);
+        } else {
+            return 0;
         }
     }
 
@@ -391,7 +379,6 @@ public class XboxController extends GenericHID {
 
     @Override
     public int getPOV(int pov) {
-        // TODO Auto-generated method stub
-        return 0;
+        return m_ds.getStickPOV(m_port, pov);
     }
 }
