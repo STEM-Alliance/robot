@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 
-package com.taurus;
+package com.taurus.swerve;
+
+import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;

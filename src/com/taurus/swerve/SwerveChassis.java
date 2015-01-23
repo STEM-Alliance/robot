@@ -4,9 +4,10 @@
  * and open the template in the editor.
  */
 
-package com.taurus;
+package com.taurus.swerve;
 
 import com.kauailabs.nav6.frc.IMUAdvanced;
+import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.SerialPort;

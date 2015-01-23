@@ -1,14 +1,14 @@
 
 package org.usfirst.frc.team4818.robot;
 
-import com.taurus.DriveScheme;
-import com.taurus.SwerveChassis;
-import com.taurus.SwerveConstants;
-import com.taurus.SwerveVector;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.controller.ControllerJoysticks;
 import com.taurus.controller.ControllerSwerve;
 import com.taurus.controller.ControllerXbox;
+import com.taurus.swerve.DriveScheme;
+import com.taurus.swerve.SwerveChassis;
+import com.taurus.swerve.SwerveConstants;
+import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -240,7 +240,7 @@ public class Robot extends IterativeRobot {
         // if the button is not held down, we're in high gear
         drive.setGearHigh(controller.getHighGearEnable());
         drive.setBrake(controller.getBrake());
-        if(controller.resetGyro()){
+        if(controller.getResetGyro()){
             drive.Gyro.zeroYaw();
         }
     }
