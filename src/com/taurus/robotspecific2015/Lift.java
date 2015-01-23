@@ -1,4 +1,4 @@
-package RobotSpecific2015;
+package com.taurus.robotspecific2015;
 
 // Manages manipulators and supporting systems
 public class Lift 

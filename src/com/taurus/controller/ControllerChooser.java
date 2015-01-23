@@ -23,7 +23,7 @@ public class ControllerChooser {
     {
        ControllerSwerve result;
        
-       switch (((Integer)controllerChooser.getSelected()).intValue()))
+       switch (((Integer)controllerChooser.getSelected()).intValue())
        {
     	   case XBOX:
     		   result = new ControllerXbox();

@@ -1,12 +1,13 @@
 
 package org.usfirst.frc.team4818.robot;
 
-import com.taurus.SwerveApplication;
-import com.taurus.SwerveChassis;
-import com.taurus.SwerveConstants;
-import com.taurus.SwerveVector;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.controller.ControllerSwerve;
+import com.taurus.swerve.DriveScheme;
+import com.taurus.swerve.SwerveApplication;
+import com.taurus.swerve.SwerveChassis;
+import com.taurus.swerve.SwerveConstants;
+import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -39,7 +40,7 @@ public class Robot extends IterativeRobot
      */
     public void robotInit() 
     {        
-    	application = new com.taurus.SwerveApplication();  // Change for raw swerve or robot year specific
+    	application = new com.taurus.swerve.SwerveApplication();  // Change for raw swerve or robot year specific
         
         // set up the choosers for running tests while in teleop mode
         testChooser = new SendableChooser();
@@ -120,9 +121,10 @@ public class Robot extends IterativeRobot
         }
         
         application.drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", application.drive.MaxAvailableVelocity);
-        
-        //TODO
-        //SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getAngle());
+
+        SmartDashboard.putNumber("Gyro Angle", application.drive.getGyro().getYaw());
+        SmartDashboard.putBoolean("Gyro Calibrating", application.drive.getGyro().isCalibrating());
+        SmartDashboard.putBoolean("Gyro Connected", application.drive.getGyro().isConnected());
                 
         // update the test mode
         // disable for competitions?

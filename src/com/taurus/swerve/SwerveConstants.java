@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.taurus;
+package com.taurus.swerve;
 
 /**
  * Pin assignments for Swerve Drive system
@@ -75,6 +75,14 @@ public class SwerveConstants {
                                                       5,
                                                       6,
                                                       7};
+    
+    /**
+     * Array of values for shifting gears, high then low values
+     */
+    public static final int[] WheelShiftServoVals[] = { {120, 45},
+                                                        {45, 120},
+                                                        {120, 45},
+                                                        {45, 120}};
     
     /**
      * Wheel diameter
