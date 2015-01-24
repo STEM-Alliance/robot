@@ -3,7 +3,7 @@ package org.usfirst.frc.team4818.robot;
 
 import com.taurus.controller.ControllerChooser;
 import com.taurus.controller.ControllerJoysticks;
-import com.taurus.controller.ControllerSwerve;
+import com.taurus.controller.Controller;
 import com.taurus.controller.ControllerXbox;
 import com.taurus.swerve.DriveScheme;
 import com.taurus.swerve.SwerveChassis;
@@ -26,12 +26,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends SampleRobot {
+    
+    private final double TIME_RATE_DASH = .1;
+    private final double TIME_RATE_SWERVE = .01;
 
     // Motor Objects
     private SwerveChassis drive;
 
     // Joysticks
-    private ControllerSwerve controller;
+    private Controller controller;
     private ControllerChooser controllerChooser;
     
     private PowerDistributionPanel PDP;
@@ -43,13 +46,13 @@ public class Robot extends SampleRobot {
     private final int TEST_MODE_WHEEL = 1;
     private final int TEST_MODE_CALIBRATION_1 = 2;
     private final int TEST_MODE_CALIBRATION_2 = 3;
+    
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
-    private final double TimeRateDash = .01;
-    private final double TimeRate = .01;
     
     
     //private CameraServer cam;
+    
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -66,14 +69,7 @@ public class Robot extends SampleRobot {
         PDP = new PowerDistributionPanel();
 
         controllerChooser = new ControllerChooser();
-        if(controllerChooser.get() == ControllerChooser.XBOX)
-        {
-            controller = new ControllerXbox();
-        }
-        else
-        {
-            controller = new ControllerJoysticks();
-        }
+        controller = controllerChooser.GetController();
 
         // set up the choosers for running tests while in teleop mode
         testChooser = new SendableChooser();
@@ -101,31 +97,24 @@ public class Robot extends SampleRobot {
      */
     public void operatorControl() 
     {
-        double timelastdash = 0;
-        double timelastran = 0;
+        double TimeLastDash = 0;
+        double TimeLastSwerve = 0;
 
-        controllerChooser = new ControllerChooser();
-        if(controllerChooser.get() == ControllerChooser.XBOX)
-        {
-            controller = new ControllerXbox();
-        }
-        else
-        {
-            controller = new ControllerJoysticks();
-        }
+        controller = controllerChooser.GetController();
         drive.Gyro.zeroYaw();
 
 
-        while (isOperatorControl() && isEnabled()) {
-            
-            if((Timer.getFPGATimestamp() - timelastdash) > TimeRateDash)  {
-                
-                timelastdash = Timer.getFPGATimestamp();
+        while (isOperatorControl() && isEnabled())
+        {
+            if((Timer.getFPGATimestamp() - TimeLastDash) > TIME_RATE_DASH)
+            {
+                TimeLastDash = Timer.getFPGATimestamp();
                 UpdateDashboard();
             }
             
-            if((Timer.getFPGATimestamp() - timelastran) > TimeRate)  {
-                timelastran = Timer.getFPGATimestamp();
+            if((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
+            {
+                TimeLastSwerve = Timer.getFPGATimestamp();
                 if(!TEST)
                 {
                     DriveNormal();
@@ -135,8 +124,6 @@ public class Robot extends SampleRobot {
                     TestRun();
                 }
             }
-        
-
         }
     }
 
@@ -169,14 +156,9 @@ public class Robot extends SampleRobot {
         SmartDashboard.putNumber("Right Mag",   controller.getMagnitude(Hand.kRight));
         SmartDashboard.putNumber("Right Angle", controller.getDirectionDegrees(Hand.kRight));
 
-        switch(driveScheme.get())
+        if(driveScheme.get() == DriveScheme.ANGLE_DRIVE)
         {
-        case DriveScheme.ANGLE_DRIVE:
             SmartDashboard.putNumber("Angle heading", controller.getAngleDrive_Heading());
-            break;
-
-        default:
-            break;
         }
         
         // display each wheel's mag and angle in SmartDashboard
@@ -188,7 +170,6 @@ public class Robot extends SampleRobot {
 
         drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity", drive.MaxAvailableVelocity);
 
-        //TODO
         SmartDashboard.putNumber("Gyro Angle", drive.Gyro.getYaw());
 
         // update the test mode
@@ -207,26 +188,26 @@ public class Robot extends SampleRobot {
 
         switch(((Integer)testChooser.getSelected()).intValue())
         {
-        case TEST_MODE_WHEEL:
-            TestWheel(i);
-            break;
-
-        case TEST_MODE_CALIBRATION_1:                
-            drive.getWheel(i).MotorAngle.set(controller.getX(Hand.kRight) * .5);
-            SmartDashboard.putNumber("motor set", drive.getWheel(i).MotorAngle.get());
-            SmartDashboard.putNumber("pot read", drive.getWheel(i).AnglePot.get());
-
-            break;
-
-        case TEST_MODE_CALIBRATION_2:
-            drive.getWheel(i).updateAngleMotor(controller.getDirectionDegrees(Hand.kRight), 1.0);
-
-            break;
-
-        case TEST_MODE_NORMAL:
-        default:
-            DriveNormal();
-            break;
+            case TEST_MODE_WHEEL:
+                TestWheel(i);
+                break;
+    
+            case TEST_MODE_CALIBRATION_1:                
+                drive.getWheel(i).MotorAngle.set(controller.getX(Hand.kRight) * .5);
+                SmartDashboard.putNumber("motor set", drive.getWheel(i).MotorAngle.get());
+                SmartDashboard.putNumber("pot read", drive.getWheel(i).AnglePot.get());
+    
+                break;
+    
+            case TEST_MODE_CALIBRATION_2:
+                drive.getWheel(i).updateAngleMotor(controller.getDirectionDegrees(Hand.kRight), 1.0);
+    
+                break;
+    
+            case TEST_MODE_NORMAL:
+            default:
+                DriveNormal();
+                break;
         }
     }
 
@@ -258,14 +239,14 @@ public class Robot extends SampleRobot {
         // Use the Joystick inputs to update the drive system
         switch(driveScheme.get())
         {
-        case DriveScheme.ANGLE_DRIVE:
-            drive.UpdateAngleDrive(controller.getAngleDrive_Velocity(), controller.getAngleDrive_Heading());
-            break;
-
-        default:
-        case DriveScheme.HALO_DRIVE:
-            drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(), controller.getHaloDrive_Rotation());
-            break;
+            case DriveScheme.ANGLE_DRIVE:
+                drive.UpdateAngleDrive(controller.getAngleDrive_Velocity(), controller.getAngleDrive_Heading());
+                break;
+    
+            default:
+            case DriveScheme.HALO_DRIVE:
+                drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(), controller.getHaloDrive_Rotation());
+                break;
         }
         
         drive.setGearHigh(controller.getHighGearEnable());
