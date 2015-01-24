@@ -41,7 +41,7 @@ public class Robot extends SampleRobot {
     private final int TEST_MODE_CALIBRATION_2 = 3;
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
-    private final double TimeRateDash = .05;
+    private final double TimeRateDash = .01;
     private final double TimeRate = .01;
     
     /**
@@ -107,6 +107,7 @@ public class Robot extends SampleRobot {
         while (isOperatorControl() && isEnabled()) {
             
             if((Timer.getFPGATimestamp() - timelastdash) > TimeRateDash)  {
+                
                 timelastdash = Timer.getFPGATimestamp();
                 UpdateDashboard();
             }

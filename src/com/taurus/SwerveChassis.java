@@ -99,7 +99,7 @@ public class SwerveChassis
     public SwerveVector[] UpdateAngleDrive(SwerveVector Velocity, double Heading)
     {
         //set the rotation using a PI controller based on current robot heading and new desired heading
-        double Error = Utilities.wrapToRange(Heading- Gyro.getYaw(), -180, 180);
+        double Error = Utilities.wrapToRange(Heading - Gyro.getYaw(), -180, 180);
         double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
         
         SmartDashboard.putNumber("AngleDrive.error", Error);
