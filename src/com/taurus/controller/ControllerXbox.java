@@ -4,9 +4,9 @@ import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
-public class ControllerXbox implements ControllerSwerve {
+public class ControllerXbox implements Controller {
     
-    private XboxController xbox;
+    private Xbox xbox;
 
     public static final double DEADBAND = 0.2;
     
@@ -19,7 +19,7 @@ public class ControllerXbox implements ControllerSwerve {
      */
     public ControllerXbox()
     {
-        xbox = new XboxController(0);
+        xbox = new Xbox(0);
         
         LastAngleDrive = 0;
         fieldRelative = true;
@@ -83,7 +83,7 @@ public class ControllerXbox implements ControllerSwerve {
     {
         double value = 0;
 
-        value = xbox.getAxis(XboxController.AxisType.kRightX);
+        value = xbox.getAxis(Xbox.AxisType.kRightX);
 
         if(Math.abs(value) < DEADBAND)
         {

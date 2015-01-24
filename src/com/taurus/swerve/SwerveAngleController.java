@@ -17,7 +17,7 @@ public final class SwerveAngleController
     
     private static final double P = MaxOut / QuarterCircle * 3.0;
     private static final double T_I = .1;  // seconds needed to equal a P term contribution
-    private static final double I = 0;//1 / T_I;
+    private static final double I = 0 / T_I;
 
     private final String name;
     private final PIController controller;

@@ -5,7 +5,7 @@ import com.taurus.swerve.SwerveVector;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 
-public class ControllerJoysticks implements ControllerSwerve {
+public class ControllerJoysticks implements Controller {
 
     private Joystick left;
     private Joystick right;

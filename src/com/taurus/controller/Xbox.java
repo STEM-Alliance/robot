@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
  * @author Team 4818 Taurus Robotics
  *
  */
-public class XboxController extends GenericHID {
+public class Xbox extends GenericHID {
 
     private DriverStation m_ds;
     private final int m_port;
@@ -147,7 +147,7 @@ public class XboxController extends GenericHID {
      * Constructor
      * @param port USB Port on DriverStation
      */
-    public XboxController(int port) {
+    public Xbox(int port) {
         super();
         m_port = port;
         m_ds = DriverStation.getInstance();
