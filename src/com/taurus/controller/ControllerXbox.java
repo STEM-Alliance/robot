@@ -10,7 +10,9 @@ public class ControllerXbox implements ControllerSwerve {
 
     public static final double DEADBAND = 0.2;
     
-    private double LastAngleDrive = 0;
+    private boolean fieldRelative;
+    private boolean fieldRelativeLast;
+    private double LastAngleDrive;
     
     /**
      * Create a new Xbox Controller object
@@ -20,6 +22,8 @@ public class ControllerXbox implements ControllerSwerve {
         xbox = new XboxController(0);
         
         LastAngleDrive = 0;
+        fieldRelative = true;
+        fieldRelativeLast = false;
     }
 
     public double getX(Hand hand)
@@ -167,5 +171,15 @@ public class ControllerXbox implements ControllerSwerve {
         {
             return false;
         }
+    }
+    
+    public boolean getFieldRelative()
+    {
+        if(!fieldRelativeLast && xbox.getTop(Hand.kLeft))
+        {
+            fieldRelative = !fieldRelative;
+        }
+        fieldRelativeLast = xbox.getTop(Hand.kLeft);
+        return fieldRelative;
     }
 }

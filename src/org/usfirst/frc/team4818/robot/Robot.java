@@ -148,6 +148,16 @@ public class Robot extends SampleRobot {
         SmartDashboard.putNumber("Right Mag",   controller.getMagnitude(Hand.kRight));
         SmartDashboard.putNumber("Right Angle", controller.getDirectionDegrees(Hand.kRight));
 
+        switch(driveScheme.get())
+        {
+        case DriveScheme.ANGLE_DRIVE:
+            SmartDashboard.putNumber("Angle heading", controller.getAngleDrive_Heading());
+            break;
+
+        default:
+            break;
+        }
+        
         // display each wheel's mag and angle in SmartDashboard
         for(int i = 0; i < SwerveConstants.WheelCount; i++)
         {
@@ -234,10 +244,10 @@ public class Robot extends SampleRobot {
             drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(), controller.getHaloDrive_Rotation());
             break;
         }
-
-        // if the button is not held down, we're in high gear
+        
         drive.setGearHigh(controller.getHighGearEnable());
         drive.setBrake(controller.getBrake());
+        drive.setFieldRelative(controller.getFieldRelative());
         if(controller.getResetGyro()){
             drive.Gyro.zeroYaw();
         }

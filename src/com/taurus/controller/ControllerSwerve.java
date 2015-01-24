@@ -105,4 +105,9 @@ public interface ControllerSwerve {
      * @return
      */
     public boolean getResetGyro();
+    
+    
+    public boolean getFieldRelative();
+    
+    
 }

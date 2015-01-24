@@ -1,5 +1,7 @@
 package com.taurus.controller;
 
+import com.taurus.Utilities;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 
@@ -232,7 +234,9 @@ public class XboxController extends GenericHID {
      * @return The direction of the vector in degrees
      */
     public double getDirectionDegrees(Hand hand) {
-        return Math.toDegrees(getDirectionRadians(hand));
+        double Angle =  Math.toDegrees(getDirectionRadians(hand));
+        return Utilities.wrapToRange(Angle + 90,-180,  180);
+        
     }
 
     /**
