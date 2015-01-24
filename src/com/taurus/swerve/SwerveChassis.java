@@ -9,7 +9,6 @@ package com.taurus.swerve;
 import com.kauailabs.nav6.frc.IMU;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -21,19 +20,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SwerveChassis
 {
-    public boolean FieldRelative = true;
-    
     public double MaxAvailableVelocity = 1;
      
     private SwerveWheel[] Wheels;
 
+    private boolean FieldRelative;
     private boolean GearHigh;
-    
     private boolean Brake;
 
     private PIController ChassisAngleController;
-    public double ChassisP = 1.0 / 90;  // Full speed rotation at error of 90 degrees. 
-    public double ChassisI = 0;
+    public double ChassisP = 1.2 / 180;  // Full speed rotation at error of 90 degrees. 
+    public double ChassisI = .3;
     public IMU Gyro;
     SerialPort serial_port; 
     
@@ -49,17 +46,7 @@ public class SwerveChassis
         
         try {
             serial_port = new SerialPort(57600,SerialPort.Port.kMXP);
-                    
-                    // You can add a second parameter to modify the 
-                    // update rate (in hz) from 4 to 100.  The default is 100.
-                    // If you need to minimize CPU load, you can set it to a
-                    // lower value, as shown here, depending upon your needs.
-                    
-                    // You can also use the IMUAdvanced class for advanced
-                    // features.
-                    
-            byte update_rate_hz = 50;
-            
+            byte update_rate_hz = 100;
             Gyro = new IMU(serial_port,update_rate_hz);
         } catch( Exception ex ) {
         }
@@ -93,7 +80,7 @@ public class SwerveChassis
     public SwerveVector[] UpdateAngleDrive(SwerveVector Velocity, double Heading)
     {
         //set the rotation using a PI controller based on current robot heading and new desired heading
-        double Error = Utilities.wrapToRange(Heading /*- RobotGyro.getAngle()*/, -180, 180);
+        double Error = Utilities.wrapToRange(Heading - Gyro.getYaw(), -180, 180);
         double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
         
         SmartDashboard.putNumber("AngleDrive.error", Error);
@@ -226,6 +213,25 @@ public class SwerveChassis
         {
             SmartDashboard.putString("Gear", "Low");
         }
+    }
+
+    /**
+     * Set if driving is field relative or robot relative
+     * @param FieldRelative
+     */
+    public void setFieldRelative(boolean FieldRelative)
+    {
+        this.FieldRelative = FieldRelative;
+        SmartDashboard.putBoolean("Field Relative", FieldRelative);
+    }
+
+    /**
+     * Get if driving is field relative or robot relative
+     * @return
+     */
+    public boolean getFieldRelative()
+    {
+        return FieldRelative;
     }
     
     /**
