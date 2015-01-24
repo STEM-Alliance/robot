@@ -18,7 +18,7 @@ public class PneumaticSubsystem
 	{
 		Channel = channel;
 		
-        ByteBuffer port = SolenoidJNI.getPortWithModule(Constants.PCUModuleID, (byte) Channel);
+        ByteBuffer port = SolenoidJNI.getPortWithModule(Constants.MODULE_ID_PCU, (byte) Channel);
         IntBuffer status = IntBuffer.allocate(1);
         
         // Initializes all solenoids
@@ -38,7 +38,7 @@ public class PneumaticSubsystem
 	// Extend all of the solenoids to the 'on' position	
 	public void Extend()
 	{
-        ByteBuffer port = SolenoidJNI.getPortWithModule(Constants.PCUModuleID, (byte) Channel);
+        ByteBuffer port = SolenoidJNI.getPortWithModule(Constants.MODULE_ID_PCU, (byte) Channel);
         IntBuffer status = IntBuffer.allocate(1);
         
         // Extend solenoids
@@ -51,7 +51,7 @@ public class PneumaticSubsystem
 	// Contract all of the solenoids to the 'off' position
 	public void Contract()
 	{
-        ByteBuffer port = SolenoidJNI.getPortWithModule(Constants.PCUModuleID, (byte) Channel);
+        ByteBuffer port = SolenoidJNI.getPortWithModule(Constants.MODULE_ID_PCU, (byte) Channel);
         IntBuffer status = IntBuffer.allocate(1);
         
         // Contract solenoids
