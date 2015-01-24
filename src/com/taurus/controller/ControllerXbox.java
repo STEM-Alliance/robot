@@ -10,12 +10,16 @@ public class ControllerXbox implements ControllerSwerve {
 
     public static final double DEADBAND = 0.2;
     
+    private double LastAngleDrive = 0;
+    
     /**
      * Create a new Xbox Controller object
      */
     public ControllerXbox()
     {
         xbox = new XboxController(0);
+        
+        LastAngleDrive = 0;
     }
 
     public double getX(Hand hand)
@@ -109,7 +113,12 @@ public class ControllerXbox implements ControllerSwerve {
      */
     public double getAngleDrive_Heading()
     {
-        return xbox.getDirectionDegrees(Hand.kRight);
+        if(xbox.getMagnitude(Hand.kRight) > 0.65)
+        {
+            LastAngleDrive = xbox.getDirectionDegrees(Hand.kRight);
+        }
+        
+        return LastAngleDrive;
     }
 
     /**
