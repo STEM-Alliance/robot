@@ -10,10 +10,12 @@ import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.CANTalon;
+
 /**
  * Handle motor outputs and feedback for an individual wheel
  * @author Team 4818 Taurus Robotics
@@ -28,8 +30,12 @@ public class SwerveWheel
                                        // val, angle
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
-    
+
+    private Servo Shifter;
+    private int ShifterValueHigh;
+    private int ShifterValueLow;
     private boolean HighGear;
+    
     private boolean Brake;
     
     private double maxRotationSpeed = .75;
@@ -66,21 +72,24 @@ public class SwerveWheel
      * @param Orientation Angle of wheel relative to robot 0 angle in degrees
      * @param EncoderPins Pins for Speed Encoder input as array
      * @param PotPin Pin for Angle Potentiometer
-     * @param DrivePin Pin for drive motor controller
+     * @param DriveAddress Address for drive motor controller
      * @param AnglePin Pin for angle motor controller
      */
     public SwerveWheel(String name, double[] Position, double Orientation, int[] EncoderPins,
-            int PotPin, int DrivePin, int AnglePin)
+            int PotPin, int DriveAddress, int AnglePin, int ShiftPin, int[] ShiftVals)
     {
         Name = name;
 
         WheelPosition = new SwerveVector(Position);
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
-        MotorDrive = new CANTalon(DrivePin);
+        MotorDrive = new CANTalon(DriveAddress);
         MotorAngle = new Talon(AnglePin);
         
         HighGear = true;
+        Shifter = new Servo(ShiftPin);
+        ShifterValueHigh = ShiftVals[0];
+        ShifterValueLow = ShiftVals[1];
         
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
@@ -147,6 +156,19 @@ public class SwerveWheel
         return HighGear;
     }
     
+    private void updateShifter()
+    {
+        if (HighGear)
+        {
+            Shifter.setAngle(ShifterValueHigh);
+        
+        }
+        else
+        {
+            Shifter.setAngle(ShifterValueLow);
+        }
+    }
+    
     /**
      * Get the angle of the potentiometer
      * @return
@@ -174,7 +196,6 @@ public class SwerveWheel
      */
     private double AdjustAngle(double angle)
     {
-        //TODO is this right?
         angle = Utilities.wrapToRange(angle + AngleOrienation, 0, 360);
         return angle;
     }
@@ -188,10 +209,13 @@ public class SwerveWheel
     {
         boolean reverse = updateAngleMotor(WheelDesired.getAngle(),
                                            WheelDesired.getMag());
+        
+        updateShifter();
+        
         updateDriveMotor(reverse);
 
-        SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
-        SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
+        //SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
+        //SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
         
         return getActual();
     }
@@ -234,7 +258,10 @@ public class SwerveWheel
         
         // Reverse the motor output if the angle controller is taking advantage of rotational symmetry.
         if (reverse)
+        {
             driveMotorSpeed = -driveMotorSpeed;
+        }
+        
         /*
         // Update the velocity estimate.
         DriveEncoderFilter.updateEstimate(DriveEncoder.getDistance(), time);
@@ -258,26 +285,25 @@ public class SwerveWheel
         double driveMotorControllerError = driveMotorSpeed - driveEncoderVelocityScaled;
         double driveMotorControllerOutput = DriveEncoderController.update(driveMotorControllerError, time);
         */
+        
         // Control the motor.
         double driveMotorOutput = driveMotorSpeed;// + driveMotorControllerOutput;
         
-        
-        /*if (Brake)
+        if (Brake)
         {
             MotorDrive.set(0);
         }
-        else*/
+        else
         {
             MotorDrive.set(driveMotorOutput);
         }
-        //MotorDrive.set(driveMotorSpeed);
 
-        SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
-        SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
-        SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
+        //SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
+        //SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
+        //SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
         //SmartDashboard.putNumber(Name + ".speed.scaled", driveEncoderVelocityScaled);
         //SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
         //SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
-        SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
+        //SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
     }
 }

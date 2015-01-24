@@ -156,7 +156,7 @@ public class ControllerJoysticks implements ControllerSwerve {
     public boolean getHighGearEnable()
     {
         // shift to high gear if the button is not held down
-        return !left.getRawButton(2);
+        return left.getRawButton(2);
     }
     
     /**

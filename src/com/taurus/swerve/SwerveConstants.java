@@ -77,6 +77,14 @@ public class SwerveConstants {
                                                       7};
     
     /**
+     * Array of values for shifting gears, high then low values
+     */
+    public static final int[] WheelShiftServoVals[] = { {45, 120},
+                                                        {120, 45},
+                                                        {45, 120},
+                                                        {120, 45}};
+    
+    /**
      * Wheel diameter
      */
     public static final double DriveWheelDiameter = 4.0;  // inches

@@ -145,7 +145,7 @@ public class ControllerXbox implements ControllerSwerve {
      */
     public boolean getHighGearEnable()
     {
-        return !xbox.getBumper(Hand.kRight);
+        return xbox.getBumper(Hand.kRight);
     } 
     
     /**

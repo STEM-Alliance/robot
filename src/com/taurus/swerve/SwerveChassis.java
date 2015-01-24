@@ -6,12 +6,11 @@
 
 package com.taurus.swerve;
 
-import com.kauailabs.nav6.frc.IMUAdvanced;
+import com.kauailabs.nav6.frc.IMU;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.Gyro;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,10 +27,6 @@ public class SwerveChassis
      
     private SwerveWheel[] Wheels;
 
-    // shifter
-    private Servo Shifter[] = new Servo[4];
-    private final double[] ShifterLevelHigh = {120, 45, 120, 45};// 170 to 0 is max range allowed for the servo 
-    private final double[] ShifterLevelLow = {45, 120, 45, 120};
     private boolean GearHigh;
     
     private boolean Brake;
@@ -39,7 +34,7 @@ public class SwerveChassis
     private PIController ChassisAngleController;
     public double ChassisP = 1.0 / 90;  // Full speed rotation at error of 90 degrees. 
     public double ChassisI = 0;
-    public IMUAdvanced Gyro;
+    public IMU Gyro;
     SerialPort serial_port; 
     
     /**
@@ -47,11 +42,6 @@ public class SwerveChassis
      */
     public SwerveChassis()
     {
-        Shifter[0] = new Servo(SwerveConstants.WheelShiftServoPins[0]);
-        Shifter[1] = new Servo(SwerveConstants.WheelShiftServoPins[1]);
-        Shifter[2] = new Servo(SwerveConstants.WheelShiftServoPins[2]);
-        Shifter[3] = new Servo(SwerveConstants.WheelShiftServoPins[3]);
-        
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
@@ -68,15 +58,16 @@ public class SwerveChassis
                     // You can also use the IMUAdvanced class for advanced
                     // features.
                     
-                    byte update_rate_hz = 100;
-                    
-                    Gyro = new IMUAdvanced(serial_port,update_rate_hz);
-            } catch( Exception ex ) {
-                    
-            }
-            if ( Gyro != null ) {
-                LiveWindow.addSensor("IMU", "Gyro", Gyro);
-            }
+            byte update_rate_hz = 50;
+            
+            Gyro = new IMU(serial_port,update_rate_hz);
+        } catch( Exception ex ) {
+        }
+        
+        if ( Gyro != null ) {
+            LiveWindow.addSensor("IMU", "Gyro", Gyro);
+        }
+        
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
@@ -86,7 +77,9 @@ public class SwerveChassis
                                         SwerveConstants.WheelEncoderPins[i],
                                         SwerveConstants.WheelPotPins[i],
                                         SwerveConstants.WheelDriveMotorPins[i],
-                                        SwerveConstants.WheelAngleMotorPins[i]);
+                                        SwerveConstants.WheelAngleMotorPins[i],
+                                        SwerveConstants.WheelShiftServoPins[i],
+                                        SwerveConstants.WheelShiftServoVals[i] );
         }
  
     }
@@ -100,7 +93,7 @@ public class SwerveChassis
     public SwerveVector[] UpdateAngleDrive(SwerveVector Velocity, double Heading)
     {
         //set the rotation using a PI controller based on current robot heading and new desired heading
-        double Error = Utilities.wrapToRange(Heading - Gyro.getYaw(), -180, 180);
+        double Error = Utilities.wrapToRange(Heading /*- RobotGyro.getAngle()*/, -180, 180);
         double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
         
         SmartDashboard.putNumber("AngleDrive.error", Error);
@@ -191,7 +184,6 @@ public class SwerveChassis
      */
     private double adjustAngleFromGyro(double Angle)
     {
-        //TODO
         // adjust the desired angle based on the robot's current angle
         double AdjustedAngle = Angle - Gyro.getYaw();
         
@@ -199,30 +191,6 @@ public class SwerveChassis
         return Utilities.wrapToRange(AdjustedAngle, -180, 180);
     }
     
-    /**
-     * Update the Shifting/Gear servo
-     */
-    public void UpdateShifter()
-    {
-        // switch to the desired gear
-        if (GearHigh)
-        {
-            SmartDashboard.putString("Gear", "High");
-            Shifter[0].setAngle(ShifterLevelHigh[0]);
-            Shifter[1].setAngle(ShifterLevelHigh[1]);
-            Shifter[2].setAngle(ShifterLevelHigh[2]);
-            Shifter[3].setAngle(ShifterLevelHigh[3]);
-        
-        }
-        else
-        {
-            SmartDashboard.putString("Gear", "Low");
-            Shifter[0].setAngle(ShifterLevelLow[0]);
-            Shifter[1].setAngle(ShifterLevelLow[1]);
-            Shifter[2].setAngle(ShifterLevelLow[2]);
-            Shifter[3].setAngle(ShifterLevelLow[3]);
-        }
-    }
 
     /**
      * Set the chassis's brake
@@ -241,6 +209,23 @@ public class SwerveChassis
     public boolean getBrake()
     {
         return Brake;
+    }
+
+    /**
+     * Update the Shifting/Gear servo
+     */
+    public void UpdateShifter()
+    {
+        // switch to the desired gear
+        if (GearHigh)
+        {
+            SmartDashboard.putString("Gear", "High");
+        
+        }
+        else
+        {
+            SmartDashboard.putString("Gear", "Low");
+        }
     }
     
     /**
@@ -275,10 +260,9 @@ public class SwerveChassis
      * Get the Gyro object
      * @return Gyro object
      */
-    public Gyro getGyro()
+    public IMU getGyro()
     {
-    	//return RobotGyro;
-        return null;
+    	return Gyro;
     }
     
     /**
