@@ -10,7 +10,9 @@ import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveConstants;
 import com.taurus.swerve.SwerveVector;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -31,6 +33,8 @@ public class Robot extends SampleRobot {
     // Joysticks
     private ControllerSwerve controller;
     private ControllerChooser controllerChooser;
+    
+    private PowerDistributionPanel PDP;
 
     private DriveScheme driveScheme;
 
@@ -44,6 +48,8 @@ public class Robot extends SampleRobot {
     private final double TimeRateDash = .01;
     private final double TimeRate = .01;
     
+    
+    //private CameraServer cam;
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -52,6 +58,12 @@ public class Robot extends SampleRobot {
 
         drive = new SwerveChassis();
         driveScheme = new DriveScheme();
+        
+        //cam = CameraServer.getInstance();
+        //cam.setQuality(50);
+        //cam.startAutomaticCapture("cam0");
+        
+        PDP = new PowerDistributionPanel();
 
         controllerChooser = new ControllerChooser();
         if(controllerChooser.get() == ControllerChooser.XBOX)
@@ -142,6 +154,15 @@ public class Robot extends SampleRobot {
      */
     private void UpdateDashboard()
     {
+        for (int i = 0; i < 16; i++)
+        {
+            SmartDashboard.putNumber("PDP " + i, PDP.getCurrent(i));
+        }
+        
+        SmartDashboard.putNumber("PDP Total Current", PDP.getTotalCurrent());        
+        SmartDashboard.putNumber("PDP Total Power", PDP.getTotalPower());        
+        SmartDashboard.putNumber("PDP Total Energy", PDP.getTotalEnergy());
+        
         // display the joysticks on smart dashboard
         SmartDashboard.putNumber("Left Mag",    controller.getMagnitude(Hand.kLeft));
         SmartDashboard.putNumber("Left Angle",  controller.getDirectionDegrees(Hand.kLeft));
@@ -173,6 +194,8 @@ public class Robot extends SampleRobot {
         // update the test mode
         // disable for competitions?
         TEST = SmartDashboard.getBoolean("TEST MODE", TEST);
+        
+        
     }
 
     /**
