@@ -79,18 +79,18 @@ public final class SwerveAngleController
      */
     public double update(double setPoint, double sensorValue)
     {
-        SmartDashboard.putNumber(name + ".SetPoint", setPoint);
-        SmartDashboard.putNumber(name + ".SensorValue", sensorValue);
+        //SmartDashboard.putNumber(name + ".SetPoint", setPoint);
+        //SmartDashboard.putNumber(name + ".SensorValue", sensorValue);
 
         // Calculate error, with detection of the drive motor reversal shortcut.
         double error = calcErrorAndReverseNeeded(setPoint, sensorValue);
         
-        SmartDashboard.putNumber(name + ".Error", error);
-        SmartDashboard.putBoolean(name + ".Reverse", reverseMotor);
+        //SmartDashboard.putNumber(name + ".Error", error);
+        //SmartDashboard.putBoolean(name + ".Reverse", reverseMotor);
 
         motorSpeed = this.controller.update(error, Timer.getFPGATimestamp());
         
-        SmartDashboard.putNumber(name + ".Output", motorSpeed);
+        //SmartDashboard.putNumber(name + ".Output", motorSpeed);
         
         return motorSpeed;
     }
