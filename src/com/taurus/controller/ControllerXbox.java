@@ -1,6 +1,6 @@
 package com.taurus.controller;
 
-import com.taurus.SwerveVector;
+import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
@@ -147,6 +147,7 @@ public class ControllerXbox implements ControllerSwerve {
     {
         return !xbox.getBumper(Hand.kRight);
     } 
+    
     /**
      * Get the brake
      * @return
@@ -155,10 +156,15 @@ public class ControllerXbox implements ControllerSwerve {
     {
         return xbox.getBButton();
     }
-    public boolean resetGyro(){
-        if(xbox.getBack() && xbox.getStart()){
+    
+    public boolean getResetGyro()
+    {
+        if(xbox.getBack() && xbox.getStart())
+        {
             return true;
-        } else{
+        }
+        else
+        {
             return false;
         }
     }
