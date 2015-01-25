@@ -14,15 +14,15 @@ public class Application extends SwerveApplication
 	}
 	
     // Runs when operator mode is enabled.
-    public void teleopInit()
+    public void teleopAppInit()
     {
-    	super.teleopInit(); // Call parent class init
+    	// TODO: Make sure application calls this as a template method
     }
     
     // Runs during operator control
-    public void teleopPeriodic()
+    public void teleopAppPeriodic()
     {
-    	super.teleopPeriodic(); // Call parent class periodic (drive routine)
+    	// TODO: Make sure application calls this as a template method
     }
     
     // Called at start of autonomous mode
@@ -34,7 +34,7 @@ public class Application extends SwerveApplication
     // Called periodically during autonomous mode
     public void autonomousPeriodic()
     {
-    	// TODO: Move the robot
+    	// TODO: Put the autonomous routine here
     }
     
     // Called at start of test mode
@@ -47,22 +47,21 @@ public class Application extends SwerveApplication
     public void testPeriodic()
     {
     	int testMode = 0;
+		boolean button1 = false;  // TODO: Get these button values from the controller
+		boolean button2 = false;
+		boolean button3 = false;
+		boolean button4 = false;
+		boolean button5 = false;
     	
     	// TODO: Add test modes for cylinders and motors and features.
     	switch(testMode)
     	{
     	case Constants.TEST_MODE_PNEUMATICS:    		
     		PneumaticSubsystem testCylinders;
-    		boolean button1 = false;  // TODO: Get these button values from the controller
-    		boolean button2 = false;
-    		boolean button3 = false;
-    		boolean button4 = false;
-    		boolean button5 = false;
     		
     		if (button1)
     		{
     			testCylinders = lift.CylindersRails;
-
     		}
     		else if (button2)
     		{
@@ -85,7 +84,7 @@ public class Application extends SwerveApplication
     			testCylinders = lift.CylindersRails;
     		}
     		
-    		// Toggle those cylinders
+    		// Toggle selected cylinders to opposite position
 			if (testCylinders.IsExtended())
 			{
 				testCylinders.Contract();
@@ -95,11 +94,18 @@ public class Application extends SwerveApplication
 				testCylinders.Extend();
 			}
     		break;
-    	case Constants.TEST_MODE_MOTORS:
-    		// TODO: Get controller input to determine which motors to test
+    	case Constants.TEST_MODE_CAR:
+    		if (button1)
+    		{
+    			// TODO: Move the car up one position
+    		}
+    		else if (button2)
+    		{
+    			// TODO: Move the car down one position
+    		}
     		break;
     	default:
-    		// If not test mode is given, do regular mode
+    		// If test mode is not given, do regular mode
     		teleopPeriodic();
     		break;
     	}
