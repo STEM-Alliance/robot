@@ -19,7 +19,7 @@ public abstract class Constants
    // Car
    public static enum POSITION_CAR
    {
-	   TOP,
+	   STACK,
 	   DESTACK,
 	   CHUTE,
 	   BOTTOM
@@ -27,5 +27,5 @@ public abstract class Constants
    
    // Test mode
    public static final int TEST_MODE_PNEUMATICS = 0;
-   public static final int TEST_MODE_MOTORS = 1;
+   public static final int TEST_MODE_CAR = 1;
 }

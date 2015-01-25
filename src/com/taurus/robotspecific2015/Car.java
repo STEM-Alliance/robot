@@ -9,22 +9,16 @@ public class Car
 {
    private POSITION_CAR currentState;
 	
-   private Talon MotorsCar;
+   private Talon MotorsCar = new Talon(Constants.MOTOR_TALON_PIN_CAR);
 	
    // Constructor
    public Car()
    {
-	   MotorsCar = new Talon(Constants.MOTOR_TALON_PIN_CAR);
-   }
-   
-   // Get the current position of the car
-   public POSITION_CAR GetPosition()
-   {
-	   return currentState;
+	   // TODO: Move the car to the bottom as a 'home' position, sense that we are there, then move the car to the chute desired starting position 
    }
 
-   // Move car to top position
-   public void GoToTop()
+   // Move car to where the new tote will be held in place by the stack holder
+   public void GoToStack()
    {
 	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
 	   
@@ -32,7 +26,7 @@ public class Car
 	   {
 		   // Stop motor and advance state machine state
 		   MotorsCar.set(0);
-		   currentState = Constants.POSITION_CAR.TOP;
+		   currentState = Constants.POSITION_CAR.STACK;
 	   }
 	   else
 	   {
@@ -53,7 +47,15 @@ public class Car
 	   }
 	   else
 	   {
-		   // TODO: Set motor, specifically selecting the correct direction based on current position
+		   // Set motor, specifically selecting the correct direction based on current position
+		   if (currentState == Constants.POSITION_CAR.STACK)
+		   {
+			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
+		   }
+		   else
+		   {
+			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
+		   }
 	   }
    }
    
@@ -70,7 +72,15 @@ public class Car
 	   }
 	   else
 	   {
-		   // TODO: Set motor, specifically selecting the correct direction based on current position
+		   // Set motor, specifically selecting the correct direction based on current position
+		   if (currentState == Constants.POSITION_CAR.BOTTOM)
+		   {
+			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
+		   }
+		   else
+		   {
+			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
+		   }
 	   }
    }
 
