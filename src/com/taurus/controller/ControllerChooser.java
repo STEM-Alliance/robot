@@ -19,9 +19,9 @@ public class ControllerChooser {
         SmartDashboard.putData("Controller", controllerChooser);
     }
 
-    public ControllerSwerve GetController()
+    public Controller GetController()
     {
-       ControllerSwerve result;
+       Controller result;
        
        switch (((Integer)controllerChooser.getSelected()).intValue())
        {

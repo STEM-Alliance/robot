@@ -4,18 +4,26 @@ import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
-public class ControllerXbox implements ControllerSwerve {
+public class ControllerXbox implements Controller {
     
-    private XboxController xbox;
+    private Xbox xbox;
 
     public static final double DEADBAND = 0.2;
+    
+    private boolean fieldRelative;
+    private boolean fieldRelativeLast;
+    private double LastAngleDrive;
     
     /**
      * Create a new Xbox Controller object
      */
     public ControllerXbox()
     {
-        xbox = new XboxController(0);
+        xbox = new Xbox(0);
+        
+        LastAngleDrive = 0;
+        fieldRelative = true;
+        fieldRelativeLast = false;
     }
 
     public double getX(Hand hand)
@@ -75,7 +83,7 @@ public class ControllerXbox implements ControllerSwerve {
     {
         double value = 0;
 
-        value = xbox.getAxis(XboxController.AxisType.kRightX);
+        value = xbox.getAxis(Xbox.AxisType.kRightX);
 
         if(Math.abs(value) < DEADBAND)
         {
@@ -109,7 +117,12 @@ public class ControllerXbox implements ControllerSwerve {
      */
     public double getAngleDrive_Heading()
     {
-        return xbox.getDirectionDegrees(Hand.kRight);
+        if(xbox.getMagnitude(Hand.kRight) > 0.65)
+        {
+            LastAngleDrive = xbox.getDirectionDegrees(Hand.kRight);
+        }
+        
+        return LastAngleDrive;
     }
 
     /**
@@ -158,5 +171,15 @@ public class ControllerXbox implements ControllerSwerve {
         {
             return false;
         }
+    }
+    
+    public boolean getFieldRelative()
+    {
+        if(!fieldRelativeLast && xbox.getTop(Hand.kLeft))
+        {
+            fieldRelative = !fieldRelative;
+        }
+        fieldRelativeLast = xbox.getTop(Hand.kLeft);
+        return fieldRelative;
     }
 }

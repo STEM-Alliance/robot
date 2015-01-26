@@ -214,8 +214,8 @@ public class SwerveWheel
         
         updateDriveMotor(reverse);
 
-        SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
-        SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
+        //SmartDashboard.putNumber(Name + ".desired.mag", WheelDesired.getMag());
+        //SmartDashboard.putNumber(Name + ".desired.ang", WheelDesired.getAngle());
         
         return getActual();
     }
@@ -298,12 +298,12 @@ public class SwerveWheel
             MotorDrive.set(driveMotorOutput);
         }
 
-        SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
-        SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
-        SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
+        //SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
+        //SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
+        //SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
         //SmartDashboard.putNumber(Name + ".speed.scaled", driveEncoderVelocityScaled);
         //SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
         //SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
-        SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
+        //SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
     }
 }

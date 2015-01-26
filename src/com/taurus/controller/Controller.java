@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
  * </pre>
  * @author Team 4818 Taurus Robotics
  */
-public interface ControllerSwerve {
+public interface Controller {
 
     public static final int HALO_DRIVE = 0;
     public static final int ANGLE_DRIVE = 1;
@@ -105,4 +105,9 @@ public interface ControllerSwerve {
      * @return
      */
     public boolean getResetGyro();
+    
+    
+    public boolean getFieldRelative();
+    
+    
 }
