@@ -5,10 +5,13 @@ import com.taurus.swerve.SwerveVector;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 
-public class ControllerJoysticks implements ControllerSwerve {
+public class ControllerJoysticks implements Controller {
 
     private Joystick left;
     private Joystick right;
+    
+    private boolean fieldRelative;
+    private boolean fieldRelativeLast;
 
     public static final double DEADBAND = 0.05;
 
@@ -19,6 +22,9 @@ public class ControllerJoysticks implements ControllerSwerve {
     {
         left = new Joystick(0);
         right = new Joystick(1);
+        
+        fieldRelative = true;
+        fieldRelativeLast = false;
 
     }
 
@@ -155,7 +161,7 @@ public class ControllerJoysticks implements ControllerSwerve {
      */
     public boolean getHighGearEnable()
     {
-        // shift to high gear if the button is held down
+        // shift to high gear if the button is not held down
         return left.getRawButton(2);
     }
     
@@ -171,5 +177,15 @@ public class ControllerJoysticks implements ControllerSwerve {
     public boolean getResetGyro()
     {
         return left.getRawButton(7);
+    }
+
+    public boolean getFieldRelative()
+    {
+        if(!fieldRelativeLast && left.getTop())
+        {
+            fieldRelative = !fieldRelative;
+        }
+        fieldRelativeLast = left.getTop();
+        return fieldRelative;
     }
 }
