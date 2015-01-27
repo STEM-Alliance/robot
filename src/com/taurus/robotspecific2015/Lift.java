@@ -1,8 +1,10 @@
 package com.taurus.robotspecific2015;
 
+import com.taurus.robotspecific2015.Constants.*;
+
 // Manages manipulators and supporting systems
-public class Lift 
-{      
+public class Lift
+{
    Car Car = new Car();
    PneumaticSubsystem CylindersRails;
    PneumaticSubsystem CylindersContainerCar;
@@ -10,7 +12,8 @@ public class Lift
    PneumaticSubsystem CylindersStackHolder;
    PneumaticSubsystem CylindersJawsOfLife;
    
-   int TotesInStack = 0;
+   STATE_ADD_TOTE_TO_STACK StateAddToteToStack = STATE_ADD_TOTE_TO_STACK.LIFT_TOTE;
+   int TotesInStack = 0;   
    
    // Initialize lift and all objects owned by the lift
    public Lift()
@@ -26,7 +29,23 @@ public class Lift
    public void AddToteToStack()
    {
 	   // TODO: Turn this into a state machine
-	   Car.GoToStack();
+//      switch (StateAddToteToStack)
+//      {
+//         case LIFT_TOTE:
+//            if (Car.GoToStack())
+//            {
+//               StateAddToteToStack = STATE_ADD_TOTE_TO_STACK.JAWS;
+//            }
+//            break;
+//         case JAWS:
+//            // TODO: How do we sense that the pneumatics are done?
+//            break;
+//         default:
+//            // TODO: Put error condition here
+//            break;
+//      }      
+      
+      Car.GoToStack();
 	   if (TotesInStack == 5)
 	   {
 		   CylindersJawsOfLife.Contract();
@@ -46,7 +65,7 @@ public class Lift
 	   Car.GoToStack();
 	   CylindersContainerFixed.Extend();
 	   CylindersContainerCar.Contract();
-       Car.GoToChute();
+      Car.GoToChute();
    }
    
    // Place the stack on the ground, then push it onto the scoring platform

@@ -16,6 +16,13 @@ public abstract class Constants
    public static final int MOTOR_DIRECTION_UP = 1;
    public static final int MOTOR_DIRECTION_DOWN = -1;
    
+   // Lift
+   public static enum STATE_ADD_TOTE_TO_STACK
+   {
+	   LIFT_TOTE,
+	   JAWS,
+   }
+   
    // Car
    public static enum POSITION_CAR
    {
@@ -24,8 +31,9 @@ public abstract class Constants
 	   CHUTE,
 	   BOTTOM
    }
-   
+
    // Test mode
-   public static final int TEST_MODE_PNEUMATICS = 0;
+   public static final int TEST_MODE_PNEUMATIC = 0;
    public static final int TEST_MODE_CAR = 1;
+   public static final int TEST_MODE_SENSOR = 2;
 }

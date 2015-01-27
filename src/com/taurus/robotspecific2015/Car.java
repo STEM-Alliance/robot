@@ -18,11 +18,11 @@ public class Car
    }
 
    // Move car to where the new tote will be held in place by the stack holder
-   public void GoToStack()
+   public boolean GoToStack()
    {
 	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
 	   
-	   if(sensorAtPosition)
+	   if(sensorAtPosition || currentState == Constants.POSITION_CAR.STACK)
 	   {
 		   // Stop motor and advance state machine state
 		   MotorsCar.set(0);
@@ -31,15 +31,18 @@ public class Car
 	   else
 	   {
 		   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
-	   }	   
+	   }
+	   
+	   // At destination?
+	   return currentState == Constants.POSITION_CAR.STACK;
    }
    
    // Move car to position that pushes last tote high enough to make room to disengage stack holder
-   public void GoToDeStack()
+   public boolean GoToDeStack()
    {
 	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
 	   
-	   if(sensorAtPosition)
+	   if(sensorAtPosition || currentState == Constants.POSITION_CAR.DESTACK)
 	   {
 		   // Stop motor and advance state machine state
 		   MotorsCar.set(0);
@@ -57,14 +60,17 @@ public class Car
 			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
 		   }
 	   }
+	   
+	   // At destination?
+	   return currentState == Constants.POSITION_CAR.DESTACK;
    }
    
    // Move car to position that can receive totes from chute
-   public void GoToChute()
+   public boolean GoToChute()
    {
 	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
 	   
-	   if(sensorAtPosition)
+	   if(sensorAtPosition || currentState == Constants.POSITION_CAR.CHUTE)
 	   {
 		   // Stop motor and advance state machine state
 		   MotorsCar.set(0);
@@ -82,14 +88,17 @@ public class Car
 			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
 		   }
 	   }
+	   
+	   // At destination?
+	   return currentState == Constants.POSITION_CAR.CHUTE;
    }
 
    // Move car to bottom position
-   public void GoToBottom()
+   public boolean GoToBottom()
    {
 	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
 	   
-	   if(sensorAtPosition)
+	   if(sensorAtPosition || currentState == Constants.POSITION_CAR.BOTTOM)
 	   {
 		   // Stop motor and advance state machine state
 		   MotorsCar.set(0);
@@ -97,7 +106,10 @@ public class Car
 	   }
 	   else
 	   {
-		   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
-	   }
+         MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
+      }
+	   
+	   // At destination?
+	   return currentState == Constants.POSITION_CAR.BOTTOM;
    }
 }
