@@ -173,7 +173,7 @@ public class SwerveWheel
      * Get the angle of the potentiometer
      * @return
      */
-    private double getAnglePotValue()
+    public double getAnglePotValue()
     {
         // update the values if needed
         if(AnglePot.get() > AngleInMax)
@@ -196,7 +196,7 @@ public class SwerveWheel
      */
     private double AdjustAngle(double angle)
     {
-        angle = Utilities.wrapToRange(angle + AngleOrienation, 0, 360);
+        angle = Utilities.wrapToRange(angle +270 - AngleOrienation, 0, 360);
         return angle;
     }
     

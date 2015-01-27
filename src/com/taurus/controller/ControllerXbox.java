@@ -182,4 +182,10 @@ public class ControllerXbox implements Controller {
         fieldRelativeLast = xbox.getTop(Hand.kLeft);
         return fieldRelative;
     }
+    
+    
+    public double getDPad()
+    {
+        return xbox.getPOV();
+    }
 }

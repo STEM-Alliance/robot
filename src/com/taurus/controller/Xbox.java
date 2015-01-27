@@ -383,6 +383,14 @@ public class Xbox extends GenericHID {
 
     @Override
     public int getPOV(int pov) {
-        return m_ds.getStickPOV(m_port, pov);
+        int  Angle =  m_ds.getStickPOV(m_port, pov);
+        if(Angle != -1)
+        {
+            return (int) Utilities.wrapToRange(Angle , 0,  360);
+        }
+        else
+        {
+            return -1;
+        }
     }
 }

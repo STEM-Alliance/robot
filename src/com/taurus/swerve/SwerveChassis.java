@@ -27,10 +27,11 @@ public class SwerveChassis
     private boolean FieldRelative;
     private boolean GearHigh;
     private boolean Brake;
+    private double LastHeading;
 
     private PIController ChassisAngleController;
     public double ChassisP = 1.2 / 180;  // Full speed rotation at error of 90 degrees. 
-    public double ChassisI = .3;
+    public double ChassisI = 0;
     public IMU Gyro;
     SerialPort serial_port; 
     
@@ -83,6 +84,41 @@ public class SwerveChassis
         double Error = Utilities.wrapToRange(Heading - Gyro.getYaw(), -180, 180);
         double Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
         
+        SmartDashboard.putNumber("AngleDrive.error", Error);
+        SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
+        
+        return UpdateHaloDrive(Velocity, Rotation);
+    }
+    
+    public SwerveVector[] UpdateHaloDrive(SwerveVector Velocity, double Rotation, double Heading)
+    {
+        double Error = 0;
+        if(Math.abs(Rotation) < .1)
+        {
+            // if we're not spinning
+            if(Heading != -1)
+            {
+                // pressing on the dpad
+                //set the rotation using a PI controller based on current robot heading and new desired heading
+                Error = Utilities.wrapToRange(Heading - Gyro.getYaw(), -180, 180);
+                Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
+                LastHeading = Heading;
+            }
+            else
+            {
+                // not pressing on dpad
+                //set the rotation using a PI controller based on current robot heading and new desired heading
+                Error = Utilities.wrapToRange(LastHeading - Gyro.getYaw(), -180, 180);
+                Rotation = ChassisAngleController.update(Error, Timer.getFPGATimestamp());
+            }
+        }
+        else
+        {
+            // spinning
+            LastHeading = Gyro.getYaw();
+        }
+        
+        SmartDashboard.putNumber("Last Heading", LastHeading);
         SmartDashboard.putNumber("AngleDrive.error", Error);
         SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
         
@@ -178,6 +214,11 @@ public class SwerveChassis
         return Utilities.wrapToRange(AdjustedAngle, -180, 180);
     }
     
+    public void ZeroGyro()
+    {
+        Gyro.zeroYaw();
+        LastHeading = 0;
+    }
 
     /**
      * Set the chassis's brake

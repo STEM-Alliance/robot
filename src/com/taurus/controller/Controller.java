@@ -109,5 +109,8 @@ public interface Controller {
     
     public boolean getFieldRelative();
     
+    public double getDPad();
+    
+    
     
 }
