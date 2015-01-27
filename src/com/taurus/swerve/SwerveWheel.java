@@ -62,7 +62,7 @@ public class SwerveWheel
     private static final double DriveI = 0;//2 / DriveTI;
     
     // deadband
-    private static final double MinSpeed = 0.1;
+    private static final double MinSpeed = 0.05;
 
     
     /**
@@ -292,9 +292,11 @@ public class SwerveWheel
         if (Brake)
         {
             MotorDrive.set(0);
+            MotorDrive.enableBrakeMode(true);
         }
         else
         {
+            MotorDrive.enableBrakeMode(false);
             MotorDrive.set(driveMotorOutput);
         }
 
