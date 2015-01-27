@@ -162,10 +162,10 @@ public class SwerveChassis
         {
             RobotVelocity.setMag(1.0);
         }
-        
+        double RotationAdjust = Math.min(1- RobotVelocity.getMag() + .2, 1);
         // set limitations on rotation
-        RobotRotation = Utilities.clampToRange(RobotRotation, -1, 1);
-        
+        RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
+       
         // calculate vectors for each wheel
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
