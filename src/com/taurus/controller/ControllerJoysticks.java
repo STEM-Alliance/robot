@@ -188,4 +188,11 @@ public class ControllerJoysticks implements Controller {
         fieldRelativeLast = left.getTop();
         return fieldRelative;
     }
+
+    @Override
+    public double getDPad()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }
