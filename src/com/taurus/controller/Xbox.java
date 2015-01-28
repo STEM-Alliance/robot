@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 
 /**
  * Adapted from Team 3946 (https://github.com/frc3946)
+ * 
  * @author Team 4818 Taurus Robotics
  *
  */
@@ -31,7 +32,8 @@ public class Xbox extends GenericHID {
         private static final int kRightX_val = 4;
         private static final int kRightY_val = 5;
 
-        private AxisType(int value) {
+        private AxisType(int value)
+        {
             this.value = value;
         }
 
@@ -48,12 +50,14 @@ public class Xbox extends GenericHID {
         /**
          * Axis: Left Trigger
          */
-        public static final AxisType kLeftTrigger = new AxisType(kLeftTrigger_val);
-        
+        public static final AxisType kLeftTrigger = new AxisType(
+                kLeftTrigger_val);
+
         /**
          * Axis: Right Trigger
          */
-        public static final AxisType kRightTrigger = new AxisType(kRightTrigger_val);
+        public static final AxisType kRightTrigger = new AxisType(
+                kRightTrigger_val);
 
         /**
          * Axis: Right X
@@ -87,19 +91,22 @@ public class Xbox extends GenericHID {
         private static final int kLeftStick_val = 9;
         private static final int kRightStick_val = 10;
 
-        private ButtonType(int value) {
+        private ButtonType(int value)
+        {
             this.value = value;
         }
 
         /**
          * Button: X-Joystick
          */
-        public static final ButtonType kLeftStick = new ButtonType(kLeftStick_val);
+        public static final ButtonType kLeftStick = new ButtonType(
+                kLeftStick_val);
 
         /**
          * Button: Y-Joystick
          */
-        public static final ButtonType kRightStick = new ButtonType(kRightStick_val);
+        public static final ButtonType kRightStick = new ButtonType(
+                kRightStick_val);
 
         /**
          * Button: X
@@ -142,12 +149,14 @@ public class Xbox extends GenericHID {
         public static final ButtonType kBack = new ButtonType(kBack_val);
     }
 
-
     /**
      * Constructor
-     * @param port USB Port on DriverStation
+     * 
+     * @param port
+     *            USB Port on DriverStation
      */
-    public Xbox(int port) {
+    public Xbox(int port)
+    {
         super();
         m_port = port;
         m_ds = DriverStation.getInstance();
@@ -155,238 +164,330 @@ public class Xbox extends GenericHID {
 
     /**
      * Get Value from an Axis
-     * @param axis Axis Number
+     * 
+     * @param axis
+     *            Axis Number
      * @return Value from Axis (-1 to 1)
      */
-    public double getRawAxis(int axis) {
+    public double getRawAxis(int axis)
+    {
         return m_ds.getStickAxis(m_port, axis);
     }
 
     /**
      * Get Value from an Axis
-     * @param axis AxisType
-     * @return 
+     * 
+     * @param axis
+     *            AxisType
+     * @return
      */
-    public double getAxis(AxisType axis) {
+    public double getAxis(AxisType axis)
+    {
         return getRawAxis(axis.value);
     }
 
     /**
      * Retrieve value for X axis
-     * @param hand Hand associated with the Joystick
+     * 
+     * @param hand
+     *            Hand associated with the Joystick
      * @return Value of Axis (-1 to 1)
      */
-    public double getX(Hand hand) {
-        if(hand.value == Hand.kRight.value) {
+    public double getX(Hand hand)
+    {
+        if (hand.value == Hand.kRight.value)
+        {
             return getAxis(AxisType.kRightX);
-        } else if(hand.value == Hand.kLeft.value) {
+        }
+        else if (hand.value == Hand.kLeft.value)
+        {
             return getAxis(AxisType.kLeftX);
-        } else {
+        }
+        else
+        {
             return 0;
         }
     }
 
     /**
      * Retrieve value for Y axis
-     * @param hand Hand associated with the Joystick
+     * 
+     * @param hand
+     *            Hand associated with the Joystick
      * @return Value of Axis (-1 to 1)
      */
-    public double getY(Hand hand) {
-        if(hand.value == Hand.kRight.value) {
+    public double getY(Hand hand)
+    {
+        if (hand.value == Hand.kRight.value)
+        {
             return getAxis(AxisType.kRightY);
-        } else if(hand.value == Hand.kLeft.value) {
+        }
+        else if (hand.value == Hand.kLeft.value)
+        {
             return getAxis(AxisType.kLeftY);
-        } else {
+        }
+        else
+        {
             return 0;
         }
     }
 
     /**
      * Unused
-     * @param hand Unused
+     * 
+     * @param hand
+     *            Unused
      * @return 0
      */
-    public double getZ(Hand hand) {
+    public double getZ(Hand hand)
+    {
         return 0;
     }
-    
+
     /**
-     * Get the magnitude of the direction vector formed by the joystick's current position relative to its origin
-     * @param hand Hand associated with the Joystick
+     * Get the magnitude of the direction vector formed by the joystick's
+     * current position relative to its origin
+     * 
+     * @param hand
+     *            Hand associated with the Joystick
      * @return the magnitude of the direction vector
      */
-    public double getMagnitude(Hand hand) {
+    public double getMagnitude(Hand hand)
+    {
         return Math.sqrt(Math.pow(getX(hand), 2) + Math.pow(getY(hand), 2));
     }
 
     /**
-     * Get the direction of the vector formed by the joystick and its origin in radians
-     * @param hand Hand associated with the Joystick
+     * Get the direction of the vector formed by the joystick and its origin in
+     * radians
+     * 
+     * @param hand
+     *            Hand associated with the Joystick
      * @return The direction of the vector in radians
      */
-    public double getDirectionRadians(Hand hand) {
+    public double getDirectionRadians(Hand hand)
+    {
         return Math.atan2(getY(hand), getX(hand));
     }
-    
+
     /**
-     * Get the direction of the vector formed by the joystick and its origin in degrees
-     * @param hand Hand associated with the Joystick
+     * Get the direction of the vector formed by the joystick and its origin in
+     * degrees
+     * 
+     * @param hand
+     *            Hand associated with the Joystick
      * @return The direction of the vector in degrees
      */
-    public double getDirectionDegrees(Hand hand) {
-        double Angle =  Math.toDegrees(getDirectionRadians(hand));
-        return Utilities.wrapToRange(Angle + 90,-180,  180);
-        
+    public double getDirectionDegrees(Hand hand)
+    {
+        double Angle = Math.toDegrees(getDirectionRadians(hand));
+        return Utilities.wrapToRange(Angle + 90, -180, 180);
+
     }
 
     /**
      * Gets Value from D-Pad Left and Right Axis
+     * 
      * @return Axis Value (-1 to 1)
      */
-    public double getTwist() {
+    public double getTwist()
+    {
         return 0;
     }
 
     /**
      * Gets Value from Back Triggers
+     * 
      * @return Axis Value (-1 to 1)
      */
-    public double getThrottle() {
+    public double getThrottle()
+    {
         return getAxis(AxisType.kRightTrigger);
     }
 
     /**
      * Gets value from a button
-     * @param button number of the button 
+     * 
+     * @param button
+     *            number of the button
      * @return State of the button
      */
-    public boolean getRawButton(int button) {
+    public boolean getRawButton(int button)
+    {
         return ((0x1 << (button - 1)) & m_ds.getStickButtons(m_port)) != 0;
     }
 
     /**
      * Get Value from a button
-     * @param button Button Type
-     * @return 
+     * 
+     * @param button
+     *            Button Type
+     * @return
      */
-    public boolean getButton(ButtonType button) {
+    public boolean getButton(ButtonType button)
+    {
         return getRawButton(button.value);
     }
 
     /**
      * Get Trigger Value as Button
-     * @param hand Hand associated with button
+     * 
+     * @param hand
+     *            Hand associated with button
      * @return false
      */
-    public boolean getTrigger(Hand hand) {
-        if(hand == Hand.kLeft) {
+    public boolean getTrigger(Hand hand)
+    {
+        if (hand == Hand.kLeft)
+        {
             return getAxis(AxisType.kLeftTrigger) > 0.6;
-        } else if(hand == Hand.kRight) {
+        }
+        else if (hand == Hand.kRight)
+        {
             return getAxis(AxisType.kRightTrigger) > 0.6;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
-    
+
     /**
      * Get Trigger Value as Button
-     * @param hand Hand associated with button
+     * 
+     * @param hand
+     *            Hand associated with button
      * @return false
      */
-    public double getTriggerVal(Hand hand) {
-        if(hand == Hand.kLeft) {
+    public double getTriggerVal(Hand hand)
+    {
+        if (hand == Hand.kLeft)
+        {
             return getAxis(AxisType.kLeftTrigger);
-        } else if(hand == Hand.kRight) {
+        }
+        else if (hand == Hand.kRight)
+        {
             return getAxis(AxisType.kRightTrigger);
-        } else {
+        }
+        else
+        {
             return 0;
         }
     }
 
     /**
      * Get Button from Joystick
-     * @param hand hand associated with the button
+     * 
+     * @param hand
+     *            hand associated with the button
      * @return Button Status (true or false)
      */
-    public boolean getTop(Hand hand) {
-        if(hand == Hand.kRight) {
+    public boolean getTop(Hand hand)
+    {
+        if (hand == Hand.kRight)
+        {
             return getButton(ButtonType.kRightStick);
-        } else if(hand == Hand.kLeft) {
+        }
+        else if (hand == Hand.kLeft)
+        {
             return getButton(ButtonType.kLeftStick);
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
     /**
      * Get Value from Back buttons
-     * @param hand hand associated with the button
-     * @return state of left or right 
+     * 
+     * @param hand
+     *            hand associated with the button
+     * @return state of left or right
      */
-    public boolean getBumper(Hand hand) {
-        if(hand == Hand.kRight) {
+    public boolean getBumper(Hand hand)
+    {
+        if (hand == Hand.kRight)
+        {
             return getButton(ButtonType.kR);
-        } else if(hand == Hand.kLeft) {
+        }
+        else if (hand == Hand.kLeft)
+        {
             return getButton(ButtonType.kL);
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
     /**
      * Get State of Select Button
+     * 
      * @return State of button
      */
-    public boolean getStart() {
+    public boolean getStart()
+    {
         return getButton(ButtonType.kStart);
     }
 
     /**
      * Get State of Back Button
+     * 
      * @return State of button
      */
-    public boolean getBack() {
+    public boolean getBack()
+    {
         return getButton(ButtonType.kBack);
     }
 
     /**
      * Get State of A Button
+     * 
      * @return State of button
      */
-    public boolean getAButton() {
+    public boolean getAButton()
+    {
         return getButton(ButtonType.kA);
     }
 
     /**
      * Get State of B Button
+     * 
      * @return State of button
      */
-    public boolean getBButton() {
+    public boolean getBButton()
+    {
         return getButton(ButtonType.kB);
     }
 
     /**
      * Get State of X Button
+     * 
      * @return State of button
      */
-    public boolean getXButton() {
+    public boolean getXButton()
+    {
         return getButton(ButtonType.kX);
     }
 
     /**
      * Get State of Y Button
+     * 
      * @return State of button
      */
-    public boolean getYButton() {
+    public boolean getYButton()
+    {
         return getButton(ButtonType.kY);
     }
 
     @Override
-    public int getPOV(int pov) {
-        int  Angle =  m_ds.getStickPOV(m_port, pov);
-        if(Angle != -1)
+    public int getPOV(int pov)
+    {
+        int Angle = m_ds.getStickPOV(m_port, pov);
+        if (Angle != -1)
         {
-            return (int) Utilities.wrapToRange(Angle , 0,  360);
+            return (int) Utilities.wrapToRange(Angle, 0, 360);
         }
         else
         {
