@@ -33,7 +33,7 @@ public class Car
 		   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
 	   }
 	   
-	   // At destination?
+	   // Is the car at the stack position or not?
 	   return currentState == Constants.POSITION_CAR.STACK;
    }
    
@@ -61,7 +61,7 @@ public class Car
 		   }
 	   }
 	   
-	   // At destination?
+	    // Is the car at the destack position or not?
 	   return currentState == Constants.POSITION_CAR.DESTACK;
    }
    
@@ -89,7 +89,7 @@ public class Car
 		   }
 	   }
 	   
-	   // At destination?
+	   // Is the car at the chute position or not?
 	   return currentState == Constants.POSITION_CAR.CHUTE;
    }
 
@@ -109,7 +109,7 @@ public class Car
          MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
       }
 	   
-	   // At destination?
+	// Is the car at the bottom position or not?
 	   return currentState == Constants.POSITION_CAR.BOTTOM;
    }
 }
