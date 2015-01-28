@@ -9,6 +9,7 @@ public abstract class Constants
    public static final int CHANNEL_CONTAINER_FIXED = 2;
    public static final int CHANNEL_STACK_HOLDER = 3;
    public static final int CHANNEL_JAWS_OF_LIFE = 4;
+   public static final double TIME_CLOSE_JAWS = 5; //TODO - what is the amount of time required to close the jaw
    
    // Motors
    public static final int MOTOR_TALON_PIN_CAR = 999; //TODO - Which PWM is this talon connected to?;
@@ -20,7 +21,9 @@ public abstract class Constants
    public static enum STATE_ADD_TOTE_TO_STACK
    {
 	   LIFT_TOTE,
-	   JAWS,
+	   JAWS_CONTRACT,
+	   JAWS_FINISH,
+	   LOWER_CAR
    }
    
    // Car
@@ -37,3 +40,4 @@ public abstract class Constants
    public static final int TEST_MODE_CAR = 1;
    public static final int TEST_MODE_SENSOR = 2;
 }
+ 
