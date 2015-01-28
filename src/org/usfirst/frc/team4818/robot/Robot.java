@@ -24,8 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends SampleRobot
-{
+public class Robot extends SampleRobot {
 
     private final double TIME_RATE_DASH = .1;
     private final double TIME_RATE_SWERVE = .01;
@@ -121,7 +120,8 @@ public class Robot extends SampleRobot
                 if (!TEST)
                 {
                     DriveNormal();
-                } else
+                }
+                else
                 {
                     TestRun();
                 }
@@ -150,6 +150,7 @@ public class Robot extends SampleRobot
         SmartDashboard.putNumber("PDP Total Current", PDP.getTotalCurrent());
         SmartDashboard.putNumber("PDP Total Power", PDP.getTotalPower());
         SmartDashboard.putNumber("PDP Total Energy", PDP.getTotalEnergy());
+        SmartDashboard.putNumber("Voltage", PDP.getVoltage());
 
         // display the joysticks on smart dashboard
         SmartDashboard.putNumber("Left Mag",
@@ -179,7 +180,7 @@ public class Robot extends SampleRobot
         drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity",
                 drive.MaxAvailableVelocity);
 
-        SmartDashboard.putNumber("Gyro Angle", drive.Gyro.getYaw());
+        SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getYaw());
 
         // update the test mode
         // disable for competitions?
@@ -196,39 +197,40 @@ public class Robot extends SampleRobot
 
         switch (((Integer) testChooser.getSelected()).intValue())
         {
-        case TEST_MODE_WHEEL:
-            TestWheel(i);
-            break;
+            case TEST_MODE_WHEEL:
+                TestWheel(i);
+                break;
 
-        case TEST_MODE_CALIBRATION_1:
-            drive.getWheel(i).MotorAngle.set(controller.getX(Hand.kRight) * .3);
-            SmartDashboard.putNumber("motor set",
-                    drive.getWheel(i).MotorAngle.get());
-            SmartDashboard.putNumber("pot read", drive.getWheel(i)
-                    .getAnglePotValue());
+            case TEST_MODE_CALIBRATION_1:
+                drive.getWheel(i).MotorAngle
+                        .set(controller.getX(Hand.kRight) * .3);
+                SmartDashboard.putNumber("motor set",
+                        drive.getWheel(i).MotorAngle.get());
+                SmartDashboard.putNumber("pot read", drive.getWheel(i)
+                        .getAnglePotValue());
 
-            break;
+                break;
 
-        case TEST_MODE_CALIBRATION_2:
-            drive.getWheel(i).updateAngleMotor(
-                    controller.getDirectionDegrees(Hand.kRight), 1.0);
+            case TEST_MODE_CALIBRATION_2:
+                drive.getWheel(i).updateAngleMotor(
+                        controller.getDirectionDegrees(Hand.kRight), 1.0);
 
-            break;
+                break;
 
-        case TEST_MODE_CALIBRATION_3:
-            SwerveVector TestVector = new SwerveVector();
-            TestVector.setMagAngle(.5, controller.getDPad());
-            if (controller.getDPad() != -1)
-            {
-                drive.UpdateHaloDrive(TestVector,
-                        controller.getHaloDrive_Rotation());
-            }
+            case TEST_MODE_CALIBRATION_3:
+                SwerveVector TestVector = new SwerveVector();
+                TestVector.setMagAngle(.5, controller.getDPad());
+                if (controller.getDPad() != -1)
+                {
+                    drive.UpdateHaloDrive(TestVector,
+                            controller.getHaloDrive_Rotation());
+                }
 
-            break;
-        case TEST_MODE_NORMAL:
-        default:
-            DriveNormal();
-            break;
+                break;
+            case TEST_MODE_NORMAL:
+            default:
+                DriveNormal();
+                break;
         }
     }
 
@@ -260,21 +262,22 @@ public class Robot extends SampleRobot
         // Use the Joystick inputs to update the drive system
         switch (driveScheme.get())
         {
-        case DriveScheme.ANGLE_DRIVE:
-            drive.UpdateAngleDrive(controller.getAngleDrive_Velocity(),
-                    controller.getAngleDrive_Heading());
-            break;
+            case DriveScheme.ANGLE_DRIVE:
+                drive.UpdateDrive(controller.getAngleDrive_Velocity(), 0,
+                        controller.getAngleDrive_Heading());
+                break;
 
-        case DriveScheme.COMBO_DRIVE:
-            drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(),
-                    controller.getHaloDrive_Rotation(), controller.getDPad());
-            break;
+            case DriveScheme.HALO_DRIVE:
+                drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(),
+                        controller.getHaloDrive_Rotation());
+                break;
 
-        default:
-        case DriveScheme.HALO_DRIVE:
-            drive.UpdateHaloDrive(controller.getHaloDrive_Velocity(),
-                    controller.getHaloDrive_Rotation());
-            break;
+            default:
+            case DriveScheme.COMBO_DRIVE:
+                drive.UpdateDrive(controller.getHaloDrive_Velocity(),
+                        controller.getHaloDrive_Rotation(),
+                        controller.getDPad());
+                break;
         }
 
         drive.setGearHigh(controller.getHighGearEnable());
