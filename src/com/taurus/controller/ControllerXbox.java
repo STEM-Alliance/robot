@@ -207,11 +207,11 @@ public class ControllerXbox implements Controller {
 
     public boolean getFieldRelative()
     {
-        if (!fieldRelativeLast && xbox.getTop(Hand.kLeft))
+        if (!fieldRelativeLast && xbox.getBumper(Hand.kLeft))
         {
             fieldRelative = !fieldRelative;
         }
-        fieldRelativeLast = xbox.getTop(Hand.kLeft);
+        fieldRelativeLast = xbox.getBumper(Hand.kLeft);
         return fieldRelative;
     }
 
