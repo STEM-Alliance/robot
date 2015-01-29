@@ -1,5 +1,9 @@
 package org.usfirst.frc.team4818.robot;
 
+import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.DrawMode;
+import com.ni.vision.NIVision.Image;
+import com.ni.vision.NIVision.ShapeMode;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.controller.ControllerJoysticks;
 import com.taurus.controller.Controller;
@@ -26,8 +30,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends SampleRobot {
 
-    private final double TIME_RATE_DASH = .1;
+    private final double TIME_RATE_DASH = .2;
     private final double TIME_RATE_SWERVE = .01;
+    private final double TIME_RATE_VISION = .2;
 
     // Motor Objects
     private SwerveChassis drive;
@@ -50,7 +55,9 @@ public class Robot extends SampleRobot {
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
 
-    // private CameraServer cam;
+    int session;
+    Image frame;
+
 
     /**
      * This function is run when the robot is first started up and should be
@@ -62,9 +69,13 @@ public class Robot extends SampleRobot {
         drive = new SwerveChassis();
         driveScheme = new DriveScheme();
 
-        // cam = CameraServer.getInstance();
-        // cam.setQuality(50);
-        // cam.startAutomaticCapture("cam0");
+
+        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+
+        // the camera name (ex "cam0") can be found through the roborio web interface
+        session = NIVision.IMAQdxOpenCamera("cam0",
+                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        NIVision.IMAQdxConfigureGrab(session);
 
         PDP = new PowerDistributionPanel();
 
@@ -102,16 +113,29 @@ public class Robot extends SampleRobot {
     {
         double TimeLastDash = 0;
         double TimeLastSwerve = 0;
+        double TimeLastVision = 0;
 
         controller = controllerChooser.GetController();
         drive.ZeroGyro();
+        NIVision.IMAQdxStartAcquisition(session);
 
         while (isOperatorControl() && isEnabled())
         {
+            if ((Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
+            {
+                TimeLastVision = Timer.getFPGATimestamp();
+
+                NIVision.IMAQdxGrab(session, frame, 1);
+                CameraServer.getInstance().setImage(frame);
+                CameraServer.getInstance().setQuality(50);
+                SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
+            }
+            
             if ((Timer.getFPGATimestamp() - TimeLastDash) > TIME_RATE_DASH)
             {
                 TimeLastDash = Timer.getFPGATimestamp();
-                UpdateDashboard();
+                //UpdateDashboard();
+                SmartDashboard.putNumber("Dash Task Length", Timer.getFPGATimestamp() - TimeLastDash);
             }
 
             if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
@@ -125,8 +149,10 @@ public class Robot extends SampleRobot {
                 {
                     TestRun();
                 }
+                SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
             }
         }
+        NIVision.IMAQdxStopAcquisition(session);
     }
 
     /**
