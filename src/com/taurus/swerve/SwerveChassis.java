@@ -112,9 +112,9 @@ public class SwerveChassis {
             LastHeading = Gyro.getYaw();
         }
 
-        SmartDashboard.putNumber("Last Heading", LastHeading);
-        SmartDashboard.putNumber("AngleDrive.error", Error);
-        SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
+        //SmartDashboard.putNumber("Last Heading", LastHeading);
+        //SmartDashboard.putNumber("AngleDrive.error", Error);
+        //SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
 
         return UpdateHaloDrive(Velocity, Rotation);
     }
