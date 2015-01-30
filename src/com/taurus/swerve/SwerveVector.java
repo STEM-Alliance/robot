@@ -158,4 +158,28 @@ public class SwerveVector {
     {
         return Math.toDegrees(Math.atan2(y, x));
     }
+    
+    /**
+     * Returns the sum of this and the other vector
+     * @param other
+     * @return
+     */
+    public SwerveVector add(SwerveVector other)
+    {
+        return new SwerveVector(
+            this.getX() + other.getX(), 
+            this.getY() + other.getY());
+    }
+    
+    /**
+     * Returns the difference of this and the other vector
+     * @param other
+     * @return
+     */
+    public SwerveVector subtract(SwerveVector other)
+    {
+        return new SwerveVector(
+            this.getX() - other.getX(), 
+            this.getY() - other.getY());
+    }
 }

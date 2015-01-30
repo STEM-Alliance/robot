@@ -36,6 +36,11 @@ public class SwerveChassis {
     private IMU Gyro;
     SerialPort serial_port;
     private double MinRotationAdjust = .3;
+    private static final double MaxAcceleration = 2;  // Smaller is slower acceleration
+
+    private SwerveVector LastVelocity;
+
+    private double lastVelocityTimestamp;
 
     /**
      * sets up individual wheels and their positions relative to robot center
@@ -43,6 +48,8 @@ public class SwerveChassis {
     public SwerveChassis()
     {
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
+        
+        LastVelocity = new SwerveVector(0,0);
 
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
 
@@ -167,6 +174,9 @@ public class SwerveChassis {
         {
             RobotVelocity.setMag(1.0);
         }
+        
+        RobotVelocity = restrictVelocity(RobotVelocity);
+        
         double RotationAdjust = Math.min(1 - RobotVelocity.getMag()
                 + MinRotationAdjust, 1);
         // set limitations on rotation
@@ -208,6 +218,28 @@ public class SwerveChassis {
         }
 
         return WheelsActual;
+    }
+
+    /**
+     * Returns the velocity restricted by the maximum acceleration
+     * @param robotVelocity
+     * @return
+     */
+    private SwerveVector restrictVelocity(SwerveVector robotVelocity)
+    {
+        double TimeDelta = Timer.getFPGATimestamp() - lastVelocityTimestamp;
+        lastVelocityTimestamp = Timer.getFPGATimestamp();
+        
+        SwerveVector delta = robotVelocity.subtract(LastVelocity);
+        
+        if (delta.getMag() > MaxAcceleration * TimeDelta)
+        {
+            delta.setMag(MaxAcceleration * TimeDelta);
+            robotVelocity = LastVelocity.add(delta);
+        }
+                
+        LastVelocity = robotVelocity;        
+        return robotVelocity;
     }
 
     /**
