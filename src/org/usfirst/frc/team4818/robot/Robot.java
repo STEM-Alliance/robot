@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -55,9 +57,42 @@ public class Robot extends SampleRobot {
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
 
-    int session;
-    Image frame;
+    public class VisionTask implements Runnable {
+        int session;
+        Image frame;
+        
+        @Override
+        public void run()
+        {
+            frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
+            // the camera name (ex "cam0") can be found through the roborio web interface
+            session = NIVision.IMAQdxOpenCamera("cam0",
+                    NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+            NIVision.IMAQdxConfigureGrab(session);
+            
+            NIVision.IMAQdxStartAcquisition(session);
+            
+            double TimeLastVision = 0;
+            
+            CameraServer.getInstance().setQuality(50);
+            
+            while (true)
+            {
+                if ((Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
+                {
+                    TimeLastVision = Timer.getFPGATimestamp();
+
+                    NIVision.IMAQdxGrab(session, frame, 1);
+                    CameraServer.getInstance().setImage(frame);
+                    SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
+                }
+                Timer.delay(TIME_RATE_VISION);
+            }
+
+            //NIVision.IMAQdxStopAcquisition(session);
+        }
+    }
 
     /**
      * This function is run when the robot is first started up and should be
@@ -65,18 +100,13 @@ public class Robot extends SampleRobot {
      */
     public void robotInit()
     {
-
         drive = new SwerveChassis();
         driveScheme = new DriveScheme();
 
-
-        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-
-        // the camera name (ex "cam0") can be found through the roborio web interface
-        session = NIVision.IMAQdxOpenCamera("cam0",
-                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-        NIVision.IMAQdxConfigureGrab(session);
-
+        Thread visionThread = new Thread(new VisionTask());
+        visionThread.setPriority(Thread.MIN_PRIORITY);
+        visionThread.start();
+        
         PDP = new PowerDistributionPanel();
 
         controllerChooser = new ControllerChooser();
@@ -103,7 +133,6 @@ public class Robot extends SampleRobot {
         SmartDashboard.putData("Test Wheel", testWheelChooser);
 
         SmartDashboard.putBoolean("TEST MODE", TEST);
-
     }
 
     /**
@@ -113,24 +142,12 @@ public class Robot extends SampleRobot {
     {
         double TimeLastDash = 0;
         double TimeLastSwerve = 0;
-        double TimeLastVision = 0;
 
         controller = controllerChooser.GetController();
         drive.ZeroGyro();
-        NIVision.IMAQdxStartAcquisition(session);
 
         while (isOperatorControl() && isEnabled())
         {
-            if ((Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
-            {
-                TimeLastVision = Timer.getFPGATimestamp();
-
-                NIVision.IMAQdxGrab(session, frame, 1);
-                CameraServer.getInstance().setImage(frame);
-                CameraServer.getInstance().setQuality(50);
-                SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
-            }
-            
             if ((Timer.getFPGATimestamp() - TimeLastDash) > TIME_RATE_DASH)
             {
                 TimeLastDash = Timer.getFPGATimestamp();
@@ -152,7 +169,6 @@ public class Robot extends SampleRobot {
                 SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
             }
         }
-        NIVision.IMAQdxStopAcquisition(session);
     }
 
     /**
