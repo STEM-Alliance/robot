@@ -9,7 +9,7 @@ public class Car
 {
    private POSITION_CAR currentState;
 	
-   private Talon MotorsCar = new Talon(Constants.MOTOR_TALON_PIN_CAR);
+   public Talon MotorsCar = new Talon(Constants.MOTOR_TALON_PIN_CAR);
 	
    // Constructor
    public Car()

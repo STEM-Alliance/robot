@@ -20,6 +20,7 @@ public abstract class Constants
    // Lift
    public static enum STATE_ADD_TOTE_TO_STACK
    {
+      INTAKE_TOTE,
 	   LIFT_TOTE,
 	   JAWS_CONTRACT,
 	   JAWS_FINISH,

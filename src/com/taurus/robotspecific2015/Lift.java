@@ -7,14 +7,14 @@ import edu.wpi.first.wpilibj.Timer;
 // Manages manipulators and supporting systems
 public class Lift
 {
-   Car Car = new Car();
+   Car LiftCar = new Car(); //TODO Name it something different than car
    PneumaticSubsystem CylindersRails;
    PneumaticSubsystem CylindersContainerCar;
    PneumaticSubsystem CylindersContainerFixed;
    PneumaticSubsystem CylindersStackHolder;
    PneumaticSubsystem CylindersJawsOfLife;
 
-   STATE_ADD_TOTE_TO_STACK StateAddToteToStack = STATE_ADD_TOTE_TO_STACK.LIFT_TOTE;
+   STATE_ADD_TOTE_TO_STACK StateAddToteToStack = STATE_ADD_TOTE_TO_STACK.INTAKE_TOTE;
    int TotesInStack = 0;
    double TimeStart;
    double TimeCurrent;
@@ -36,8 +36,17 @@ public class Lift
       {
          switch (StateAddToteToStack)
          {
+            case INTAKE_TOTE:
+               boolean ToteReceived = false;  // TODO: Read this value from the sensor
+               
+               // When sensor triggered, go to next state to lift the tote
+               if (ToteReceived)
+               {
+                  StateAddToteToStack = STATE_ADD_TOTE_TO_STACK.LIFT_TOTE;
+               }
+               break;
             case LIFT_TOTE:
-               if (Car.GoToStack())
+               if (LiftCar.GoToStack())
                {
                   StateAddToteToStack = STATE_ADD_TOTE_TO_STACK.JAWS_CONTRACT;
                }
@@ -67,7 +76,7 @@ public class Lift
                break;
             case LOWER_CAR:
 
-               if (Car.GoToChute())
+               if (LiftCar.GoToChute())
                {
                   TotesInStack = TotesInStack + 1;
                }
@@ -86,10 +95,10 @@ public class Lift
       CylindersRails.Contract();
       // TODO: Sense container OR Remove contracting the rails and add that to it's own method
       CylindersContainerCar.Extend();
-      Car.GoToStack();
+      LiftCar.GoToStack();
       CylindersContainerFixed.Extend();
       CylindersContainerCar.Contract();
-      Car.GoToChute();
+      LiftCar.GoToChute();
    }
 
    // Place the stack on the ground, then push it onto the scoring platform
@@ -97,9 +106,9 @@ public class Lift
    {
       // TODO: Turn this into a state machine
       CylindersJawsOfLife.Extend();
-      Car.GoToDeStack();
+      LiftCar.GoToDeStack();
       CylindersStackHolder.Contract();
-      Car.GoToBottom();
+      LiftCar.GoToBottom();
       // TODO: Push the stack out
       // TODO: Contract the stack pusher
       CylindersStackHolder.Extend();
