@@ -6,6 +6,8 @@
 
 package com.taurus.swerve;
 
+import org.usfirst.frc.team4818.robot.Robot;
+
 import com.kauailabs.nav6.frc.IMU;
 import com.taurus.Utilities;
 
@@ -47,6 +49,8 @@ public class SwerveChassis {
      */
     public SwerveChassis()
     {
+        MaxAvailableVelocity = Robot.prefs.getDouble("MAX_ROBOT_VELOCITY", 1.0);
+        
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
         LastVelocity = new SwerveVector(0,0);
@@ -73,7 +77,7 @@ public class SwerveChassis {
         {
             Wheels[i] = new SwerveWheel("wheel" + i,
                     SwerveConstants.WheelPositions[i],
-                    SwerveConstants.WheelOrientationAngle[i],
+                    Robot.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
                     SwerveConstants.WheelEncoderPins[i],
                     SwerveConstants.WheelPotPins[i],
                     SwerveConstants.WheelDriveMotorPins[i],

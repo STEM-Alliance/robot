@@ -1,4 +1,4 @@
-640 x 480 YUY 2 30.00 fps	0
+ 640 x 480 YUY 2 30.00 fps	0
  640 x 480 YUY 2 20.00 fps	1
  640 x 480 YUY 2 15.00 fps	2
  640 x 480 YUY 2 10.00 fps	3
