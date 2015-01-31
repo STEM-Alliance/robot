@@ -18,6 +18,7 @@ import com.taurus.swerve.SwerveVector;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -58,6 +59,9 @@ public class Robot extends SampleRobot {
 
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
+    private SendableChooser imageChooser = new SendableChooser();
+    
+    public static Preferences prefs;
 
     public class VisionTask implements Runnable {
 
@@ -72,8 +76,7 @@ public class Robot extends SampleRobot {
         int session;
         Image frame;
         Image frameTH;
-        
-        
+                
         @Override
         public void run()
         {
@@ -90,8 +93,10 @@ public class Robot extends SampleRobot {
 //                Modes += mode.Name + " " + mode.Value + ", ";
 //            }
 //            SmartDashboard.putString("Modes", Modes);
+            
+            int videoMode = Robot.prefs.getInt("VIDEO_MODE", 93);
 
-            NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, 93);
+            NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, videoMode);
             NIVision.IMAQdxConfigureGrab(session);
             
             NIVision.IMAQdxStartAcquisition(session);
@@ -107,6 +112,11 @@ public class Robot extends SampleRobot {
                     TimeLastVision = Timer.getFPGATimestamp();
 
                     NIVision.IMAQdxGrab(session, frame, 1);
+                    
+                    if (((Integer)imageChooser.getSelected()).intValue() == 0)
+                    {
+                        CameraServer.getInstance().setImage(frame);
+                    }
 
                     NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(100, 60), new Point(60, 180), 0.0f);
                     NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(101, 60), new Point(61, 180), 0.0f);
@@ -118,7 +128,12 @@ public class Robot extends SampleRobot {
 //                    for(int i = 0; i <= 640; i += 40){
 //                        NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(i, 0), new Point(i, 480) , 0.0f);
 //                    }
-                    CameraServer.getInstance().setImage(frame);
+                    
+                    if (((Integer)imageChooser.getSelected()).intValue() == 1)
+                    {
+                        CameraServer.getInstance().setImage(frame);
+                    }
+                    
                     SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
                 }
                 Timer.delay(Math.max(0, TIME_RATE_VISION-(Timer.getFPGATimestamp()-TimeLastVision)));
@@ -134,6 +149,8 @@ public class Robot extends SampleRobot {
      */
     public void robotInit()
     {
+        prefs = Preferences.getInstance();
+        
         drive = new SwerveChassis();
         driveScheme = new DriveScheme();
 
@@ -165,6 +182,11 @@ public class Robot extends SampleRobot {
         testWheelChooser.addObject("Back Right", Integer.valueOf(2));
         testWheelChooser.addObject("Back Left", Integer.valueOf(3));
         SmartDashboard.putData("Test Wheel", testWheelChooser);
+        
+        imageChooser = new SendableChooser();
+        imageChooser.addDefault("Input image", Integer.valueOf(0));        
+        imageChooser.addObject("Processed image", Integer.valueOf(1));
+        SmartDashboard.putData("Image to show", imageChooser);
 
         SmartDashboard.putBoolean("TEST MODE", TEST);
     }
@@ -204,7 +226,82 @@ public class Robot extends SampleRobot {
             }
         }
     }
+    
+    
+    public static enum AUTO_STATE_MACHINE
+    {
+        INITSTATE,
+        DRIVE_FOR,
+        DRIVE_STOP,
+        DRIVE_RIGHT,
+        AUTO_END,
+        
+        
+    }
+   
+    
+    public void autonomous() {
+       
+        double StateTime = 0;
+        
+        AUTO_STATE_MACHINE state = AUTO_STATE_MACHINE.INITSTATE;
+        
+        while(isAutonomous() && isEnabled()){
+            
+            switch(state)
+             {
+                case INITSTATE: 
+                    drive.ZeroGyro();
+                    
+                    state  = AUTO_STATE_MACHINE.DRIVE_FOR;
+                    StateTime = Timer.getFPGATimestamp();
+                    break;
+                case DRIVE_FOR:
+                    drive.UpdateDrive(new SwerveVector(0, -1), 0, -1);
+                    if(Timer.getFPGATimestamp() - StateTime > 2 )
+                    {
+                        StateTime = Timer.getFPGATimestamp();
+                        state = AUTO_STATE_MACHINE.DRIVE_STOP;
+                    }
+                    break;
+                case DRIVE_STOP:
+                    drive.UpdateDrive(new SwerveVector(0, 0.001), 0, -1);
+                    if(Timer.getFPGATimestamp() - StateTime > .5 )
+                    {
+                        StateTime = Timer.getFPGATimestamp();
+                        state = AUTO_STATE_MACHINE.DRIVE_RIGHT;
+                    }
+                    break;
+                case DRIVE_RIGHT:
+                    drive.UpdateDrive(new SwerveVector(1, 0), 0, -1);
+                    if (Timer.getFPGATimestamp() - StateTime > 2)
+                    {
+                        StateTime = Timer.getFPGATimestamp();
+                        state = AUTO_STATE_MACHINE.AUTO_END;
+                    }
+                    break;
+                case AUTO_END:
+                    drive.UpdateDrive(new SwerveVector(0, 0), 0, -1);
+                    
+                    break;
+                
+                    
+                default:
+                    // TODO: Put error condition here
+                    break;
+                
+            }
+            
+        }
+        
+        
 
+    }
+
+    
+    
+    
+    
     /**
      * Pneumatics
      */
