@@ -1,13 +1,15 @@
 package org.usfirst.frc.team4818.robot;
 
+
 import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.CompressionType;
 import com.ni.vision.NIVision.DrawMode;
+import com.ni.vision.NIVision.FlattenType;
 import com.ni.vision.NIVision.Image;
-import com.ni.vision.NIVision.ShapeMode;
-import com.taurus.controller.ControllerChooser;
-import com.taurus.controller.ControllerJoysticks;
+import com.ni.vision.NIVision.Point;
+import com.ni.vision.NIVision.RawData;
 import com.taurus.controller.Controller;
-import com.taurus.controller.ControllerXbox;
+import com.taurus.controller.ControllerChooser;
 import com.taurus.swerve.DriveScheme;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveConstants;
@@ -34,7 +36,7 @@ public class Robot extends SampleRobot {
 
     private final double TIME_RATE_DASH = .2;
     private final double TIME_RATE_SWERVE = .01;
-    private final double TIME_RATE_VISION = .2;
+    private final double TIME_RATE_VISION = .033;
 
     // Motor Objects
     private SwerveChassis drive;
@@ -58,24 +60,45 @@ public class Robot extends SampleRobot {
     private SendableChooser testWheelChooser = new SendableChooser();
 
     public class VisionTask implements Runnable {
+
+        private static final String ATTR_VIDEO_MODE = "AcquisitionAttributes::VideoMode";
+        private static final String ATTR_WB_MODE = "CameraAttributes::WhiteBalance::Mode";
+        private static final String ATTR_WB_VALUE = "CameraAttributes::WhiteBalance::Value";
+        private static final String ATTR_EX_MODE = "CameraAttributes::Exposure::Mode";
+        private static final String ATTR_EX_VALUE = "CameraAttributes::Exposure::Value";
+        private static final String ATTR_BR_MODE = "CameraAttributes::Brightness::Mode";
+        private static final String ATTR_BR_VALUE = "CameraAttributes::Brightness::Value";
+        
         int session;
         Image frame;
+        Image frameTH;
+        
         
         @Override
         public void run()
         {
             frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-
+            
             // the camera name (ex "cam0") can be found through the roborio web interface
             session = NIVision.IMAQdxOpenCamera("cam0",
                     NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+
+//            NIVision.dxEnumerateVideoModesResult enumerated = NIVision.IMAQdxEnumerateVideoModes(session);
+//            String Modes = "";
+//            for (NIVision.IMAQdxEnumItem mode : enumerated.videoModeArray)
+//            {
+//                Modes += mode.Name + " " + mode.Value + ", ";
+//            }
+//            SmartDashboard.putString("Modes", Modes);
+
+            NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, 93);
             NIVision.IMAQdxConfigureGrab(session);
             
             NIVision.IMAQdxStartAcquisition(session);
             
             double TimeLastVision = 0;
             
-            CameraServer.getInstance().setQuality(50);
+            CameraServer.getInstance().setQuality(15);
             
             while (true)
             {
@@ -84,10 +107,21 @@ public class Robot extends SampleRobot {
                     TimeLastVision = Timer.getFPGATimestamp();
 
                     NIVision.IMAQdxGrab(session, frame, 1);
+
+                    NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(100, 60), new Point(60, 180), 0.0f);
+                    NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(101, 60), new Point(61, 180), 0.0f);
+                    NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(320-100, 60), new Point(320-60, 180), 0.0f);
+                    NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(320-101, 60), new Point(320-61, 180), 0.0f);
+//                    for(int i = 0; i <= 480; i += 40){
+//                        NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(0, i), new Point(640, i) , 0.0f);
+//                    }
+//                    for(int i = 0; i <= 640; i += 40){
+//                        NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(i, 0), new Point(i, 480) , 0.0f);
+//                    }
                     CameraServer.getInstance().setImage(frame);
                     SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
                 }
-                Timer.delay(TIME_RATE_VISION);
+                Timer.delay(Math.max(0, TIME_RATE_VISION-(Timer.getFPGATimestamp()-TimeLastVision)));
             }
 
             //NIVision.IMAQdxStopAcquisition(session);
