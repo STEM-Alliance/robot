@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj.Talon;
 // State machine for lift
 public class Car 
 {
-   private POSITION_CAR currentState;
+   private POSITION_CAR CurrentState;
 	
-   public Talon MotorsCar = new Talon(Constants.MOTOR_TALON_PIN_CAR);
+   Talon Motors = new Talon(Constants.MOTOR_TALON_PIN_CAR);  // TODO: This is actually two motors. Create the second one
 	
    // Constructor
    public Car()
@@ -20,96 +20,96 @@ public class Car
    // Move car to where the new tote will be held in place by the stack holder
    public boolean GoToStack()
    {
-	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
+	   Sensor positionSensor = null; //TODO create the specific sensor type
 	   
-	   if(sensorAtPosition || currentState == Constants.POSITION_CAR.STACK)
+	   if(positionSensor.IsOn() || CurrentState == Constants.POSITION_CAR.STACK)
 	   {
 		   // Stop motor and advance state machine state
-		   MotorsCar.set(0);
-		   currentState = Constants.POSITION_CAR.STACK;
+		   Motors.set(0);
+		   CurrentState = Constants.POSITION_CAR.STACK;
 	   }
 	   else
 	   {
-		   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
+		   Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_FORWARD);
 	   }
 	   
 	   // Is the car at the stack position or not?
-	   return currentState == Constants.POSITION_CAR.STACK;
+	   return CurrentState == Constants.POSITION_CAR.STACK;
    }
    
    // Move car to position that pushes last tote high enough to make room to disengage stack holder
    public boolean GoToDeStack()
    {
-	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
+      Sensor positionSensor = null; //TODO create the specific sensor type
 	   
-	   if(sensorAtPosition || currentState == Constants.POSITION_CAR.DESTACK)
+	   if(positionSensor.IsOn() || CurrentState == Constants.POSITION_CAR.DESTACK)
 	   {
 		   // Stop motor and advance state machine state
-		   MotorsCar.set(0);
-		   currentState = Constants.POSITION_CAR.DESTACK;
+		   Motors.set(0);
+		   CurrentState = Constants.POSITION_CAR.DESTACK;
 	   }
 	   else
 	   {
 		   // Set motor, specifically selecting the correct direction based on current position
-		   if (currentState == Constants.POSITION_CAR.STACK)
+		   if (CurrentState == Constants.POSITION_CAR.STACK)
 		   {
-			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
+			   Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_BACKWARD);
 		   }
 		   else
 		   {
-			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
+			   Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_FORWARD);
 		   }
 	   }
 	   
 	    // Is the car at the destack position or not?
-	   return currentState == Constants.POSITION_CAR.DESTACK;
+	   return CurrentState == Constants.POSITION_CAR.DESTACK;
    }
    
    // Move car to position that can receive totes from chute
    public boolean GoToChute()
    {
-	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
+      Sensor positionSensor = null; //TODO create the specific sensor type
 	   
-	   if(sensorAtPosition || currentState == Constants.POSITION_CAR.CHUTE)
+	   if(positionSensor.IsOn() || CurrentState == Constants.POSITION_CAR.CHUTE)
 	   {
 		   // Stop motor and advance state machine state
-		   MotorsCar.set(0);
-		   currentState = Constants.POSITION_CAR.CHUTE;
+		   Motors.set(0);
+		   CurrentState = Constants.POSITION_CAR.CHUTE;
 	   }
 	   else
 	   {
 		   // Set motor, specifically selecting the correct direction based on current position
-		   if (currentState == Constants.POSITION_CAR.BOTTOM)
+		   if (CurrentState == Constants.POSITION_CAR.BOTTOM)
 		   {
-			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
+			   Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_FORWARD);
 		   }
 		   else
 		   {
-			   MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
+			   Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_BACKWARD);
 		   }
 	   }
 	   
 	   // Is the car at the chute position or not?
-	   return currentState == Constants.POSITION_CAR.CHUTE;
+	   return CurrentState == Constants.POSITION_CAR.CHUTE;
    }
 
    // Move car to bottom position
    public boolean GoToBottom()
    {
-	   boolean sensorAtPosition = false;  // TODO: Get this value from the sensor that we ultimately use
+      Sensor positionSensor = null; //TODO create the specific sensor type
 	   
-	   if(sensorAtPosition || currentState == Constants.POSITION_CAR.BOTTOM)
+	   if(positionSensor.IsOn() || CurrentState == Constants.POSITION_CAR.BOTTOM)
 	   {
 		   // Stop motor and advance state machine state
-		   MotorsCar.set(0);
-		   currentState = Constants.POSITION_CAR.BOTTOM;
+		   Motors.set(0);
+		   CurrentState = Constants.POSITION_CAR.BOTTOM;
 	   }
 	   else
 	   {
-         MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
+         Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_BACKWARD);
       }
 	   
 	// Is the car at the bottom position or not?
-	   return currentState == Constants.POSITION_CAR.BOTTOM;
+	   return CurrentState == Constants.POSITION_CAR.BOTTOM;
    }
 }
