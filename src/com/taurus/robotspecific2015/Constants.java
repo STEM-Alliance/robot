@@ -4,27 +4,69 @@ public abstract class Constants
 {
    // Pneumatics
    public static final byte MODULE_ID_PCU = 9;
+   
    public static final int CHANNEL_RAIL = 0;
    public static final int CHANNEL_CONTAINER_CAR = 1;
    public static final int CHANNEL_CONTAINER_FIXED = 2;
    public static final int CHANNEL_STACK_HOLDER = 3;
    public static final int CHANNEL_JAWS_OF_LIFE = 4;
-   public static final double TIME_CLOSE_JAWS = 5; //TODO - what is the amount of time required to close the jaw
+   public static final int CHANNEL_STOP = 5;
+   public static final int CHANNEL_PUSHER = 6;   
+   
+   public static final double TIME_EXTEND_RAILS = 5; //TODO - what is the amount of time required to close the rails
+   public static final double TIME_EXTEND_CONTAINER_CAR = 5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_EXTEND_CONTAINER_FIXED = 5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_EXTEND_STACK_HOLDER = 5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_EXTEND_JAWS = 5; //TODO - what is the amount of time required to close the jaws
+   public static final double TIME_EXTEND_STOP = 5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_EXTEND_PUSHER = 5; //TODO - what is the amount of time required to close the jaws
+   
+   public static final double TIME_CONTRACT_RAILS = 5; //TODO - what is the amount of time required to close the rails
+   public static final double TIME_CONTRACT_CONTAINER_CAR = 5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_CONTRACT_CONTAINER_FIXED = 5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_CONTRACT_STACK_HOLDER = 5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_CONTRACT_JAWS = 5; //TODO - what is the amount of time required to close the jaws
+   public static final double TIME_CONTRACT_STOP = 5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_CONTRACT_PUSHER = 5; //TODO - what is the amount of time required to close the jaws
    
    // Motors
-   public static final int MOTOR_TALON_PIN_CAR = 999; //TODO - Which PWM is this talon connected to?;
+   public static final int MOTOR_TALON_PIN_CAR = 999; //TODO - Which PWM is this talon connected to?
+   public static final int MOTOR_TALON_PIN_EJECTOR = 999; //TODO - Which PWM is this talon connected to?
+   
    public static final double MOTOR_SPEED_CAR = 1; // TODO - What does this number have to be to move the car at the speed that we want?
-   public static final int MOTOR_DIRECTION_UP = 1;
-   public static final int MOTOR_DIRECTION_DOWN = -1;
+   public static final double MOTOR_SPEED_EJECTOR = 1;  // TODO - What does this number have to be to move the ejector at the speed that we want?
+   
+   public static final int MOTOR_DIRECTION_FORWARD = 1;
+   public static final int MOTOR_DIRECTION_BACKWARD = -1;
    
    // Lift
    public static enum STATE_ADD_TOTE_TO_STACK
    {
       INTAKE_TOTE,
 	   LIFT_TOTE,
-	   JAWS_CONTRACT,
+	   HANDLE_CONTAINER,
 	   JAWS_FINISH,
 	   LOWER_CAR
+   }
+   
+   public static enum STATE_ADD_CONTAINER_TO_STACK
+   {
+      RAILS_UP,
+      CONTAINER_CAR_EXTEND,
+      LIFT_CAR,
+      CONTAINER_FIXED_EXTEND,
+      CONTAINER_CAR_CONTRACT,
+      LOWER_CAR,
+      RAILS_EXTEND
+   }
+   
+   public static enum STATE_EJECT_STACK
+   {
+      JAWS_EXTEND,
+      LIFT_CAR,
+      STACK_HOLDER_CONTRACT,
+      LOWER_CAR,
+      STACK_HOLDER_EXTEND,
    }
    
    // Car
@@ -34,6 +76,22 @@ public abstract class Constants
 	   DESTACK,
 	   CHUTE,
 	   BOTTOM
+   }
+   
+   // Ejector
+   public static enum STATE_EJECT
+   {
+      PUSHER_EXTEND,
+      MOVE_OUT,
+      MOVE_IN,
+      PUSHER_CONTRACT
+   }
+   
+   public static enum POSITION_EJECTOR
+   {
+      OUT,
+      MID,  // TODO: If we do not use this, remove this enum and create boolean in ejector class
+      IN
    }
 
    // Test mode

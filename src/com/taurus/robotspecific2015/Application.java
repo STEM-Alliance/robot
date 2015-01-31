@@ -119,11 +119,11 @@ public class Application extends com.taurus.Application
          case Constants.TEST_MODE_CAR:
             if (button1)
             {
-               TestModeCar.MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_UP);
+               TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_FORWARD);
             }
             else if (button2)
             {
-               TestModeCar.MotorsCar.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_DOWN);
+               TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_BACKWARD);
             }
             break;
          default:
