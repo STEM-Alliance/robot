@@ -15,7 +15,7 @@ public class PneumaticSubsystem
    private boolean Contracting = false;
    private double TimeExtend;
    private double TimeContract;
-   double TimeStart;
+   private double TimeStart;
 
    SolenoidJNI solenoid;
 
@@ -122,45 +122,5 @@ public class PneumaticSubsystem
    public boolean IsExtended()
    {
       return Extended;
-   }
-   
-   private boolean IsDone()
-   {
-      double waitTime;
-      boolean done = false;
-      
-      if (Extending)
-      {
-         waitTime = TimeExtend;
-      }
-      else if (Contracting)
-      {
-         waitTime = TimeContract;
-      }
-      else
-      {
-         waitTime = 0;  // If we call this method more than once, this will force a done response
-      }      
-      
-      if (Timer.getFPGATimestamp() - TimeStart > waitTime)
-      {
-         done = true;
-         
-         // Record the position
-         if (Extending)
-         {
-            Extended = true;
-         }
-         else if(Contracting)
-         {
-            Extended = false;
-         }
-         
-         // Record that cylinder is done moving
-         Extending = false;
-         Contracting = false;
-      }
-      
-      return done;
    }
 }

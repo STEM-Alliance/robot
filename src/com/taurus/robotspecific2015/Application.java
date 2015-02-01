@@ -4,11 +4,12 @@ public class Application extends com.taurus.Application
 {
    Lift lift;
    Car TestModeCar;
+   Ejector TestModeEjector;
+   Sensor TestModeToteIntakeSensor;
 
    public Application()
    {
       lift = new Lift();
-      TestModeCar = lift.LiftCar;
    }
 
    public void TeleopInitRobotSpecific()
@@ -28,7 +29,7 @@ public class Application extends com.taurus.Application
       
       if (button1)
       {
-         lift.AddToteToStack();
+         lift.AddChuteToteToStack();
       }
       else if (button2)
       {
@@ -63,7 +64,9 @@ public class Application extends com.taurus.Application
 
    public void TestModeInitRobotSpecific()
    {
-
+      TestModeCar = lift.LiftCar;
+      TestModeEjector = lift.StackEjector;
+      TestModeToteIntakeSensor = lift.ToteIntakeSensor;
    }
 
    public void TestModePeriodicRobotSpecific()
@@ -125,11 +128,23 @@ public class Application extends com.taurus.Application
             {
                TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_BACKWARD);
             }
+            else if (button3)
+            {
+               TestModeEjector.Motors.set(Constants.MOTOR_SPEED_EJECTOR * Constants.MOTOR_DIRECTION_FORWARD);
+            }
+            else if (button4)
+            {
+               TestModeEjector.Motors.set(Constants.MOTOR_SPEED_EJECTOR * Constants.MOTOR_DIRECTION_BACKWARD);
+            }
             break;
          default:
             break;
       }
       // TODO: Get the value of one sensor and report that somehow (Smartdashboard, print, etc)
+      if (TestModeToteIntakeSensor.IsOn())
+      {
+         // TODO: Update smartdashboard or however we show sensors
+      }
    }
 
    public void TestModeDeInitRobotSpecific()

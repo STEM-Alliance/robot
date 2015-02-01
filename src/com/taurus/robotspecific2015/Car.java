@@ -10,19 +10,26 @@ public class Car
    private POSITION_CAR CurrentState;
 	
    Talon Motors = new Talon(Constants.MOTOR_TALON_PIN_CAR);  // TODO: This is actually two motors. Create the second one
+   Sensor SensorStack = new SensorDigital();
+   Sensor SensorDestack = new SensorDigital();
+   Sensor SensorChute = new SensorDigital();
+   Sensor SensorBottom = new SensorDigital();
 	
    // Constructor
    public Car()
    {
 	   // TODO: Move the car to the bottom as a 'home' position, sense that we are there, then move the car to the chute desired starting position 
    }
+   
+   public POSITION_CAR GetPosition()
+   {
+      return CurrentState;
+   }
 
    // Move car to where the new tote will be held in place by the stack holder
    public boolean GoToStack()
    {
-	   Sensor positionSensor = null; //TODO create the specific sensor type
-	   
-	   if(positionSensor.IsOn() || CurrentState == Constants.POSITION_CAR.STACK)
+	   if(SensorStack.IsOn() || CurrentState == Constants.POSITION_CAR.STACK)
 	   {
 		   // Stop motor and advance state machine state
 		   Motors.set(0);
@@ -38,11 +45,9 @@ public class Car
    }
    
    // Move car to position that pushes last tote high enough to make room to disengage stack holder
-   public boolean GoToDeStack()
+   public boolean GoToDestack()
    {
-      Sensor positionSensor = null; //TODO create the specific sensor type
-	   
-	   if(positionSensor.IsOn() || CurrentState == Constants.POSITION_CAR.DESTACK)
+	   if(SensorDestack.IsOn() || CurrentState == Constants.POSITION_CAR.DESTACK)
 	   {
 		   // Stop motor and advance state machine state
 		   Motors.set(0);
@@ -68,9 +73,7 @@ public class Car
    // Move car to position that can receive totes from chute
    public boolean GoToChute()
    {
-      Sensor positionSensor = null; //TODO create the specific sensor type
-	   
-	   if(positionSensor.IsOn() || CurrentState == Constants.POSITION_CAR.CHUTE)
+      if(SensorChute.IsOn() || CurrentState == Constants.POSITION_CAR.CHUTE)
 	   {
 		   // Stop motor and advance state machine state
 		   Motors.set(0);
@@ -96,9 +99,7 @@ public class Car
    // Move car to bottom position
    public boolean GoToBottom()
    {
-      Sensor positionSensor = null; //TODO create the specific sensor type
-	   
-	   if(positionSensor.IsOn() || CurrentState == Constants.POSITION_CAR.BOTTOM)
+      if(SensorBottom.IsOn() || CurrentState == Constants.POSITION_CAR.BOTTOM)
 	   {
 		   // Stop motor and advance state machine state
 		   Motors.set(0);

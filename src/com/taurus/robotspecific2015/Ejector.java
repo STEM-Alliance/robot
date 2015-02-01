@@ -12,8 +12,8 @@ public class Ejector
    Talon Motors = new Talon(Constants.MOTOR_TALON_PIN_EJECTOR); // TODO: This is actually two motors. Create the second one
    PneumaticSubsystem CylindersStop;
    PneumaticSubsystem CylindersPusher;
-   Sensor OutSensor = null; // TODO create the specific sensor type
-   Sensor InSensor = null; // TODO create the specific sensor type
+   Sensor OutSensor = new SensorDigital();
+   Sensor InSensor = new SensorDigital();
 
    public Ejector()
    {

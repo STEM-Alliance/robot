@@ -40,24 +40,34 @@ public abstract class Constants
    public static final int MOTOR_DIRECTION_BACKWARD = -1;
    
    // Lift
-   public static enum STATE_ADD_TOTE_TO_STACK
+   public static enum STATE_ADD_CHUTE_TOTE_TO_STACK
    {
+      INIT,
       INTAKE_TOTE,
 	   LIFT_TOTE,
 	   HANDLE_CONTAINER,
 	   JAWS_FINISH,
-	   LOWER_CAR
+	   RESET
+   }
+   
+   public static enum STATE_ADD_FLOOR_TOTE_TO_STACK
+   {
+      INIT,
+      INTAKE_TOTE,
+      LIFT_TOTE,
+      HANDLE_CONTAINER,
+      RESET
    }
    
    public static enum STATE_ADD_CONTAINER_TO_STACK
    {
-      RAILS_UP,
+      INIT,
       CONTAINER_CAR_EXTEND,
       LIFT_CAR,
       CONTAINER_FIXED_EXTEND,
       CONTAINER_CAR_CONTRACT,
       LOWER_CAR,
-      RAILS_EXTEND
+      RESET
    }
    
    public static enum STATE_EJECT_STACK
