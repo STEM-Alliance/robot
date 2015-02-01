@@ -3,7 +3,6 @@ package com.taurus.swerve;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Implementation of PIController for use with turning swerve wheel modules
@@ -20,6 +19,7 @@ public final class SwerveAngleController {
                                           // contribution
     private static final double I = 0 / T_I;
 
+    @SuppressWarnings("unused")
     private final String name;
     private final PIController controller;
 

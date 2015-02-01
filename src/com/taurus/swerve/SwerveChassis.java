@@ -6,10 +6,9 @@
 
 package com.taurus.swerve;
 
-import org.usfirst.frc.team4818.robot.Robot;
-
 import com.kauailabs.nav6.frc.IMU;
 import com.taurus.Utilities;
+import com.taurus.controller.Controller;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
@@ -22,41 +21,45 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author Team 4818 Taurus Robotics
  */
 public class SwerveChassis {
-    public double MaxAvailableVelocity = 1;
 
     private SwerveWheel[] Wheels;
 
     private boolean FieldRelative;
     private boolean GearHigh;
     private boolean Brake;
-    public double LastHeading;
+    private double LastHeading;
 
     private PIController ChassisAngleController;
-    public double ChassisP = 1.3 / 180; // Full speed rotation at error of 90
-                                        // degrees.
-    public double ChassisI = 0;
+    private double ChassisP = 1.3 / 180; // Full speed rotation at error of 90
+                                         // degrees.
+    private double ChassisI = 0;
+    
     private IMU Gyro;
     SerialPort serial_port;
+    
     private double MinRotationAdjust = .3;
     private double MaxAcceleration = 2;  // Smaller is slower acceleration
+    private double MaxAvailableVelocity = 1;
 
     private SwerveVector LastVelocity;
 
     private double lastVelocityTimestamp;
+
+    private DriveScheme driveScheme;
 
     /**
      * sets up individual wheels and their positions relative to robot center
      */
     public SwerveChassis()
     {
-        MaxAvailableVelocity = Robot.prefs.getDouble("MAX_ROBOT_VELOCITY", MaxAvailableVelocity);
-        MaxAcceleration = Robot.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration); 
         
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
         LastVelocity = new SwerveVector(0,0);
 
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
+        
+        driveScheme = new DriveScheme();
 
         try
         {
@@ -78,7 +81,7 @@ public class SwerveChassis {
         {
             Wheels[i] = new SwerveWheel("wheel" + i,
                     SwerveConstants.WheelPositions[i],
-                    Robot.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
+                    Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
                     SwerveConstants.WheelEncoderPins[i],
                     SwerveConstants.WheelPotPins[i],
                     SwerveConstants.WheelDriveMotorPins[i],
@@ -87,6 +90,47 @@ public class SwerveChassis {
                     SwerveConstants.WheelShiftServoVals[i]);
         }
 
+    }
+    
+    public void run(Controller controller)
+    {
+        MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY", MaxAvailableVelocity);
+        MaxAcceleration = Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration); 
+
+        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+        {
+            Wheels[i].setOrientation(Application.prefs.getDouble("Wheel_Orientation_" + i,
+                    SwerveConstants.WheelOrientationAngle[i]));
+        }
+        
+        // Use the Joystick inputs to update the drive system
+        switch (driveScheme.get())
+        {
+            case DriveScheme.ANGLE_DRIVE:
+                UpdateDrive(controller.getAngleDrive_Velocity(), 0,
+                        controller.getAngleDrive_Heading());
+                break;
+
+            case DriveScheme.HALO_DRIVE:
+                UpdateHaloDrive(controller.getHaloDrive_Velocity(),
+                        controller.getHaloDrive_Rotation());
+                break;
+
+            default:
+            case DriveScheme.COMBO_DRIVE:
+                UpdateDrive(controller.getHaloDrive_Velocity(),
+                        controller.getHaloDrive_Rotation(),
+                        controller.getDPad());
+                break;
+        }
+
+        setGearHigh(controller.getHighGearEnable());
+        setBrake(controller.getBrake());
+        setFieldRelative(controller.getFieldRelative());
+        if (controller.getResetGyro())
+        {
+            ZeroGyro();
+        }
     }
 
     public SwerveVector[] UpdateDrive(SwerveVector Velocity, double Rotation,
@@ -277,7 +321,6 @@ public class SwerveChassis {
     public void setBrake(boolean Brake)
     {
         this.Brake = Brake;
-        SmartDashboard.putBoolean("Brake", this.Brake);
     }
 
     /**
@@ -288,6 +331,11 @@ public class SwerveChassis {
     public boolean getBrake()
     {
         return Brake;
+    }
+    
+    public double getLastHeading()
+    {
+        return LastHeading;
     }
 
     /**
@@ -315,7 +363,6 @@ public class SwerveChassis {
     public void setFieldRelative(boolean FieldRelative)
     {
         this.FieldRelative = FieldRelative;
-        SmartDashboard.putBoolean("Field Relative", FieldRelative);
     }
 
     /**

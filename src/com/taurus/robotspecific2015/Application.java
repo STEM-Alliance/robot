@@ -1,11 +1,30 @@
 package com.taurus.robotspecific2015;
 
+import com.taurus.swerve.SwerveVector;
+
+import edu.wpi.first.wpilibj.Timer;
+
 public class Application extends com.taurus.Application {
     Lift lift;
+    Car TestModeCar;
+
+    public static enum AUTO_STATE_MACHINE {
+        DRIVE_FOR, DRIVE_STOP, DRIVE_RIGHT, AUTO_END,
+    }
+
+    private double AutoStateTime;
+    private AUTO_STATE_MACHINE AutoState;
+
+    private Vision vision;
 
     public Application()
     {
         lift = new Lift();
+        TestModeCar = lift.LiftCar;
+        
+        vision = new Vision();
+        vision.Start();
+
     }
 
     public void TeleopInitRobotSpecific()
@@ -15,7 +34,29 @@ public class Application extends com.taurus.Application {
 
     public void TeleopPeriodicRobotSpecific()
     {
+        boolean button1 = false; // TODO: Get these button values from the
+                                 // controller
+        boolean button2 = false;
+        boolean button3 = false;
+        //boolean button4 = false; // TODO: Do we want a button to cancel the
+                                 // current routine
 
+        // TODO: Make sure that we stay in the same mode after the button
+        // is pressed until we are done doing that routine
+
+        if (button1)
+        {
+            lift.AddToteToStack();
+        }
+        else if (button2)
+        {
+            // add container
+            lift.AddContainerToStack();
+        }
+        else if (button3)
+        {
+            lift.EjectStack();
+        }
     }
 
     public void TeleopDeInitRobotSpecific()
@@ -25,12 +66,52 @@ public class Application extends com.taurus.Application {
 
     public void AutonomousInitRobotSpecific()
     {
+        drive.ZeroGyro();
 
+        AutoState = AUTO_STATE_MACHINE.DRIVE_FOR;
+        AutoStateTime = Timer.getFPGATimestamp();
     }
 
     public void AutonomousPeriodicRobotSpecific()
     {
+        switch (AutoState)
+        {
+            case DRIVE_FOR:
+                drive.UpdateDrive(new SwerveVector(0, -1), 0, -1);
+                if (Timer.getFPGATimestamp() - AutoStateTime > 2)
+                {
+                    AutoState = AUTO_STATE_MACHINE.DRIVE_STOP;
+                    AutoStateTime = Timer.getFPGATimestamp();
+                }
+                break;
+                
+            case DRIVE_STOP:
+                drive.UpdateDrive(new SwerveVector(0, 0.001), 0, -1);
+                if (Timer.getFPGATimestamp() - AutoStateTime > .5)
+                {
+                    AutoState = AUTO_STATE_MACHINE.DRIVE_RIGHT;
+                    AutoStateTime = Timer.getFPGATimestamp();
+                }
+                break;
+                
+            case DRIVE_RIGHT:
+                drive.UpdateDrive(new SwerveVector(1, 0), 0, 270);
+                if (Timer.getFPGATimestamp() - AutoStateTime > 2)
+                {
+                    AutoState = AUTO_STATE_MACHINE.AUTO_END;
+                    AutoStateTime = Timer.getFPGATimestamp();
+                }
+                break;
+                
+            case AUTO_END:
+                drive.UpdateDrive(new SwerveVector(0, 0), 0, -1);
 
+                break;
+
+            default:
+                AutoState = AUTO_STATE_MACHINE.AUTO_END;
+                break;
+        }
     }
 
     public void AutonomousDeInitRobotSpecific()
@@ -56,7 +137,7 @@ public class Application extends com.taurus.Application {
         // TODO: Add test modes for cylinders and motors and features.
         switch (testMode)
         {
-            case Constants.TEST_MODE_PNEUMATICS:
+            case Constants.TEST_MODE_PNEUMATIC:
                 PneumaticSubsystem testCylinders;
 
                 if (button1)
@@ -97,16 +178,20 @@ public class Application extends com.taurus.Application {
             case Constants.TEST_MODE_CAR:
                 if (button1)
                 {
-                    // TODO: Move the car up one position
+                    TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR
+                            * Constants.MOTOR_DIRECTION_FORWARD);
                 }
                 else if (button2)
                 {
-                    // TODO: Move the car down one position
+                    TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR
+                            * Constants.MOTOR_DIRECTION_BACKWARD);
                 }
                 break;
             default:
                 break;
         }
+        // TODO: Get the value of one sensor and report that somehow
+        // (Smartdashboard, print, etc)
     }
 
     public void TestModeDeInitRobotSpecific()

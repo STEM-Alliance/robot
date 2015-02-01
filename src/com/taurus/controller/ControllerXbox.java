@@ -173,6 +173,11 @@ public class ControllerXbox implements Controller {
         return value;
     }
 
+    public boolean getRawButtion(int button)
+    {
+        return xbox.getRawButton(button);
+    }
+    
     /**
      * Get whether the high gear should be enabled
      * 
