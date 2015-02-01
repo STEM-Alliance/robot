@@ -27,22 +27,23 @@ public class Vision implements Runnable {
 
     Thread visionThread;
 
-    private int ToteLineStartX = 100 / 320;
-    private int ToteLineStartY = 60 / 240;
-    private int ToteLineEndX = 60 / 320;
-    private int ToteLineEndY = 180 / 240;
+    private double ToteLineStartX = 100 / 320;
+    private double ToteLineStartY = 60 / 240;
+    private double ToteLineEndX = 60 / 320;
+    private double ToteLineEndY = 180 / 240;
 
     private boolean toteDetectionOn = true;
 
     public Vision()
     {
         imageChooser = new SendableChooser();
-        imageChooser.addDefault("Input image", Integer.valueOf(0));
-        imageChooser.addObject("Processed image", Integer.valueOf(1));
-        imageChooser.addObject("Guide image", Integer.valueOf(2));
+        imageChooser.addDefault("Input", Integer.valueOf(0));
+        imageChooser.addObject("Guide", Integer.valueOf(1));
+        imageChooser.addObject("Thresholded", Integer.valueOf(2));
+        imageChooser.addObject("Particles", Integer.valueOf(3));
         SmartDashboard.putData("Image to show", imageChooser);
 
-        visionThread = new Thread(new Vision());
+        visionThread = new Thread(this);
     }
 
     public void Start()
@@ -83,94 +84,120 @@ public class Vision implements Runnable {
 
         CameraServer.getInstance().setQuality(15);
 
-        int chooser = 0;
-
         NIVision.IMAQdxGrab(session, frame, 1);
         GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
 
         // set up the lines for tote detection
-        Point[][] ToteLines = new Point[2][4];
-        ToteLines[0][0] = new Point(ToteLineStartX * size.width, ToteLineStartY
-                * size.height);
-        ToteLines[0][1] = new Point(size.width - ToteLineStartX * size.width,
-                ToteLineStartY * size.height);
-        ToteLines[0][2] = new Point(ToteLineStartX * size.width + 1,
-                ToteLineStartY * size.height);
-        ToteLines[0][3] = new Point(size.width - ToteLineStartX * size.width
-                + 1, ToteLineStartY * size.height);
-
-        ToteLines[1][0] = new Point(ToteLineEndX * size.width, ToteLineEndY
-                * size.height);
-        ToteLines[1][1] = new Point(size.width - ToteLineStartX * size.width,
-                ToteLineStartY * size.height);
-        ToteLines[1][2] = new Point(ToteLineEndX * size.width + 1, ToteLineEndY
-                * size.height);
-        ToteLines[1][3] = new Point(size.width - ToteLineStartX * size.width
-                + 1, ToteLineStartY * size.height);
+        Point[][] ToteLines = new Point[][] {
+                {
+                    new Point(
+                            (int)(ToteLineStartX * size.width), 
+                            (int)(ToteLineStartY * size.height)),
+                    new Point(
+                            (int)(size.width - ToteLineStartX * size.width), 
+                            (int)(ToteLineStartY * size.height)),
+                    new Point(
+                            (int)(ToteLineStartX * size.width + 1), 
+                            (int)(ToteLineStartY * size.height)),
+                    new Point(
+                            (int)(size.width - ToteLineStartX * size.width + 1), 
+                            (int)(ToteLineStartY * size.height)),
+                },
+                {
+                    new Point(
+                            (int)(ToteLineEndX * size.width), 
+                            (int)(ToteLineEndY * size.height)),
+                    new Point(
+                            (int)(size.width - ToteLineEndX * size.width), 
+                            (int)(ToteLineEndY * size.height)),
+                    new Point(
+                            (int)(ToteLineEndX * size.width + 1), 
+                            (int)(ToteLineEndY * size.height)),
+                    new Point(
+                            (int)(size.width - ToteLineEndX * size.width + 1), 
+                            (int)(ToteLineEndY * size.height)),
+                },
+        };
 
         while (true)
         {
             if ((Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
             {
                 TimeLastVision = Timer.getFPGATimestamp();
-
-                NIVision.IMAQdxGrab(session, frame, 1);
                 
-                if (((Integer)imageChooser.getSelected()).intValue() == 0)
+                try
                 {
-                    CameraServer.getInstance().setImage(frame);
-                }                
-                else if (((Integer)imageChooser.getSelected()).intValue() == 1)
-                {
-                    for (int i = 0; i < 4; i++)
+                    NIVision.IMAQdxGrab(session, frame, 1);
+                    
+                    SmartDashboard.putString("FrameSize", size.width+","+size.height);
+                    
+                    if (((Integer)imageChooser.getSelected()).intValue() == 0)
                     {
-                        NIVision.imaqDrawLineOnImage(frameWithLine, frame,
-                                DrawMode.DRAW_VALUE, ToteLines[0][i],
-                                ToteLines[1][i], 0.0f);
-                    }
+                        CameraServer.getInstance().setImage(frame);
+                    }                
+                    else if (((Integer)imageChooser.getSelected()).intValue() == 1)
+                    {
+                        NIVision.imaqDuplicate(frameWithLine, frame);
                         
-                    CameraServer.getInstance().setImage(frameWithLine);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            NIVision.imaqDrawLineOnImage(frameWithLine, frameWithLine,
+                                    DrawMode.DRAW_VALUE, ToteLines[0][i],
+                                    ToteLines[1][i], 127);
+                        }
+                            
+                        CameraServer.getInstance().setImage(frameWithLine);
+                    }
+    
+                    if (toteDetectionOn)
+                    {
+                        NIVision.imaqColorThreshold(frameTH, frame, 255, ColorMode.HSL, 
+                                new Range(Application.prefs.getInt("Hmin", 30), Application.prefs.getInt("Hmax", 60)), 
+                                new Range(Application.prefs.getInt("Smin", 60), Application.prefs.getInt("Smax", 255)), 
+                                new Range(Application.prefs.getInt("Lmin", 100), Application.prefs.getInt("Lmax", 255)));
+                        
+                        if (((Integer)imageChooser.getSelected()).intValue() == 2)
+                        {
+                            CameraServer.getInstance().setImage(frameTH);
+                        }
+                        
+                        ParticleFilterCriteria2[] criteria =
+                            new ParticleFilterCriteria2[] {
+                                new ParticleFilterCriteria2(
+                                        MeasurementType.MT_AREA_BY_IMAGE_AREA, 
+                                        /*lower*/ Application.prefs.getInt("AreaMin", 10), 
+                                        /*upper*/ Application.prefs.getInt("AreaMax", 76800), 
+                                        /*calibrated*/ 0, /*exclude*/ 0),
+                            };
+                        ParticleFilterOptions2 options = 
+                                new ParticleFilterOptions2(/*rejectMatches*/ 0, /*rejectBorder*/ 0, /*fillHoles*/ 0, /*connectivity8*/ 1);
+                        ROI roi = NIVision.imaqCreateROI();
+                        
+                        NIVision.imaqParticleFilter4(frameTH, frameTH, criteria, options, roi);
+                        
+                        int particleCount = NIVision.imaqCountParticles(frameTH, /*connectivity8*/ 1);
+                        SmartDashboard.putNumber("Particles", particleCount);
+                        
+                        if (((Integer)imageChooser.getSelected()).intValue() == 3)
+                        {
+                            for (int i = 0; i < particleCount; i++)
+                            {
+                                int left = (int) NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_LEFT);
+                                int top = (int) NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_TOP);
+                                int right = (int) NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_RIGHT);
+                                int bottom = (int) NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_BOTTOM);
+                                SmartDashboard.putString("Particle", left+","+top+","+right+","+bottom);
+                                NIVision.imaqDrawShapeOnImage(frameTH, frameTH, new Rect(left, top, right, bottom), DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, 255);
+                            }
+                        
+                            CameraServer.getInstance().setImage(frameTH);
+                        }
+                    }
                 }
-
-                if (toteDetectionOn)
+                catch (Exception e)
                 {
-                    NIVision.imaqColorThreshold(frameTH, frame, 255, ColorMode.HSL, 
-                            new Range(Application.prefs.getInt("Hmin", 30), Application.prefs.getInt("Hmax", 60)), 
-                            new Range(Application.prefs.getInt("Smin", 60), Application.prefs.getInt("Smax", 255)), 
-                            new Range(Application.prefs.getInt("Lmin", 100), Application.prefs.getInt("Lmax", 255)));
-                    
-                    if (((Integer)imageChooser.getSelected()).intValue() == 2)
-                    {
-                        CameraServer.getInstance().setImage(frameTH);
-                    }
-                    
-                    ParticleFilterCriteria2[] criteria =
-                        new ParticleFilterCriteria2[] {
-                            new ParticleFilterCriteria2(
-                                    MeasurementType.MT_AREA_BY_IMAGE_AREA, 
-                                    /*lower*/ Application.prefs.getInt("AreaMin", 10), 
-                                    /*upper*/ Application.prefs.getInt("AreaMax", 76800), 
-                                    /*calibrated*/ 0, /*exclude*/ 0),
-                        };
-                    ParticleFilterOptions2 options = 
-                            new ParticleFilterOptions2(/*rejectMatches*/ 0, /*rejectBorder*/ 0, /*fillHoles*/ 0, /*connectivity8*/ 1);
-                    ROI roi = NIVision.imaqCreateROI();
-                    
-                    NIVision.imaqParticleFilter4(frameTH, frameTH, criteria, options, roi);
-                    
-                    int particleCount = NIVision.imaqCountParticles(frameTH, /*connectivity8*/ 1);
-                    SmartDashboard.putNumber("Particles", particleCount);
-                    
-                    for (int i = 0; i < particleCount; i++)
-                    {
-                        NIVision.imaqDrawShapeOnImage(frameTH, frameTH, new Rect(0,0,10,10), DrawMode.DRAW_VALUE, ShapeMode.SHAPE_OVAL, 255);
-                    }
-                    
-                    if (((Integer)imageChooser.getSelected()).intValue() == 3)
-                    {
-                        CameraServer.getInstance().setImage(frameTH);
-                    }
-                }
+                    System.err.println(e.getMessage());
+                } 
                 
                 SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
             }
