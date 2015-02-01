@@ -6,12 +6,12 @@
 package com.taurus.swerve;
 
 /**
- * Auto calculate angle and magnitude/angular velocity/distance 
- * from x and y values 
+ * Auto calculate angle and magnitude/angular velocity/distance from x and y
+ * values
+ * 
  * @author Team 4818 Taurus Robotics
  */
-public class SwerveVector
-{
+public class SwerveVector {
     private double x;
     private double y;
 
@@ -26,7 +26,9 @@ public class SwerveVector
 
     /**
      * Constructor from x and y values
-     * @param position values as array
+     * 
+     * @param position
+     *            values as array
      */
     public SwerveVector(double[] position)
     {
@@ -36,8 +38,11 @@ public class SwerveVector
 
     /**
      * Constructor from x and y values
-     * @param x position value
-     * @param y position value
+     * 
+     * @param x
+     *            position value
+     * @param y
+     *            position value
      */
     public SwerveVector(double x, double y)
     {
@@ -47,8 +52,11 @@ public class SwerveVector
 
     /**
      * Constructor from magnitude and angle degrees
-     * @param mag magnitude of vector
-     * @param angle angle of vector
+     * 
+     * @param mag
+     *            magnitude of vector
+     * @param angle
+     *            angle of vector
      */
     public static SwerveVector NewFromMagAngle(double mag, double angle)
     {
@@ -57,9 +65,9 @@ public class SwerveVector
         return r;
     }
 
-
     /**
      * Set the x value
+     * 
      * @param x
      */
     public void setX(double x)
@@ -69,6 +77,7 @@ public class SwerveVector
 
     /**
      * Set the y value
+     * 
      * @param y
      */
     public void setY(double y)
@@ -78,8 +87,11 @@ public class SwerveVector
 
     /**
      * Set x and y from magnitude and angle degrees
-     * @param mag magnitude of vector
-     * @param angle angle of vector
+     * 
+     * @param mag
+     *            magnitude of vector
+     * @param angle
+     *            angle of vector
      */
     public void setMagAngle(double mag, double angle)
     {
@@ -89,6 +101,7 @@ public class SwerveVector
 
     /**
      * Set just the magnitude of the vector
+     * 
      * @param mag
      */
     public void setMag(double mag)
@@ -98,6 +111,7 @@ public class SwerveVector
 
     /**
      * Set just the angle of the vector
+     * 
      * @param angle
      */
     public void setAngle(double angle)
@@ -107,6 +121,7 @@ public class SwerveVector
 
     /**
      * Get the x value
+     * 
      * @return
      */
     public double getX()
@@ -116,6 +131,7 @@ public class SwerveVector
 
     /**
      * Get the y value
+     * 
      * @return
      */
     public double getY()
@@ -125,6 +141,7 @@ public class SwerveVector
 
     /**
      * Get the magnitude of the vector
+     * 
      * @return
      */
     public double getMag()
@@ -134,10 +151,35 @@ public class SwerveVector
 
     /**
      * Get the angle of the vector
+     * 
      * @return
      */
     public double getAngle()
     {
         return Math.toDegrees(Math.atan2(y, x));
+    }
+    
+    /**
+     * Returns the sum of this and the other vector
+     * @param other
+     * @return
+     */
+    public SwerveVector add(SwerveVector other)
+    {
+        return new SwerveVector(
+            this.getX() + other.getX(), 
+            this.getY() + other.getY());
+    }
+    
+    /**
+     * Returns the difference of this and the other vector
+     * @param other
+     * @return
+     */
+    public SwerveVector subtract(SwerveVector other)
+    {
+        return new SwerveVector(
+            this.getX() - other.getX(), 
+            this.getY() - other.getY());
     }
 }

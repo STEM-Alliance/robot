@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ControllerChooser {
 
     private SendableChooser controllerChooser;
-    
+
     public static final int XBOX = 0;
     public static final int JOY = 1;
-    
+
     public ControllerChooser()
     {
 
@@ -21,18 +21,18 @@ public class ControllerChooser {
 
     public Controller GetController()
     {
-       Controller result;
-       
-       switch (((Integer)controllerChooser.getSelected()).intValue())
-       {
-    	   case XBOX:
-    		   result = new ControllerXbox();
-    	   case JOY:
-    		   result = new ControllerJoysticks();
-    	   default:
-    		   result = new ControllerXbox();
-       }
-    	
-       return result;
+        Controller result;
+
+        switch (((Integer) controllerChooser.getSelected()).intValue())
+        {
+            case XBOX:
+                result = new ControllerXbox();
+            case JOY:
+                result = new ControllerJoysticks();
+            default:
+                result = new ControllerXbox();
+        }
+
+        return result;
     }
 }

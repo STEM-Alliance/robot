@@ -5,115 +5,111 @@ package com.taurus.swerve;
 
 /**
  * Pin assignments for Swerve Drive system
+ * 
  * @author Team 4818 Taurus Robotics
  */
 public class SwerveConstants {
 
     /*
-     * Digital: 0-9 are on-board, 10-25 are on the MXP
-     * Analog: 0-3 are on-board, 4-7 are on the MXP
-     * PWM: 0-9 are on-board, 10-19 are on the MXP
+     * Digital: 0-9 are on-board, 10-25 are on the MXP Analog: 0-3 are on-board,
+     * 4-7 are on the MXP PWM: 0-9 are on-board, 10-19 are on the MXP
      */
-   
+
     public static final int WheelCount = 4;
-     
-    
+
+    public static final double ChassisWidth = 28.5;
+    public static final double ChassisDepth = 19;
+    public static final double ChassisScale = ChassisWidth;
+
     /**
-     * X & Y coordinate positions for wheel placement.
-     * Relative to robot center
+     * X & Y coordinate positions for wheel placement. Relative to robot center
      */
-    public static final double[][] WheelPositions = {   {-1, 1},    // front left
-                                                        { 1, 1},    // front right
-                                                        { 1,-1},    // back right
-                                                        {-1,-1} };  // back left
-    
+    public static final double[][] WheelPositions = {
+            { -ChassisWidth / ChassisScale, ChassisDepth / ChassisScale }, // front
+                                                                           // left
+            { ChassisWidth / ChassisScale, ChassisDepth / ChassisScale }, // front
+                                                                          // right
+            { ChassisWidth / ChassisScale, -ChassisDepth / ChassisScale }, // back
+                                                                           // right
+            { -ChassisWidth / ChassisScale, -ChassisDepth / ChassisScale } }; // back
+                                                                              // left
+
     /**
-     * Orientation Angle of each wheel in degrees clockwise.
-     * Relative to robot 0 angle
+     * Orientation Angle of each wheel in degrees clockwise. Relative to robot 0
+     * angle
      */
-    public static final double[] WheelOrientationAngle = {  -35,    // front left
-                                                            170,    // front right
-                                                            -98,    // back right
-                                                            45 };  // back left
-        
+    public static final double[] WheelOrientationAngle = { 4, // front left
+            96, // front right
+            0, // back right
+            283 }; // back left
+
     /**
      * Pins (Digital) for wheel speed encoder inputs
      */
-    public static final int[][] WheelEncoderPins = {    { 0, 1},    // front left
-                                                        { 2, 3},    // front right
-                                                        { 4, 5},    // back right
-                                                        { 6, 7} };  // back left
-    
+    public static final int[][] WheelEncoderPins = { { 0, 1 }, // front left
+            { 2, 3 }, // front right
+            { 4, 5 }, // back right
+            { 6, 7 } }; // back left
+
     /**
      * Pins (Analog) for wheel angle potentiometer inputs
      */
-    public static final int[] WheelPotPins = {  0,
-                                                1,
-                                                2,
-                                                3 };
+    public static final int[] WheelPotPins = { 0, 1, 2, 3 };
 
     /**
      * Pins (PWM) for wheel drive motor controller outputs
      */
-    public static final int[] WheelDriveMotorPins = {   11,
-                                                        12,
-                                                        13,
-                                                        14 };
-    
+    public static final int[] WheelDriveMotorPins = { 11, 12, 13, 14 };
+
     /**
      * Pins (PWM) for wheel angle motor controller outputs
      */
-    public static final int[] WheelAngleMotorPins = {   0,
-                                                        1,
-                                                        2,
-                                                        3 };
+    public static final int[] WheelAngleMotorPins = { 0, 1, 2, 3 };
 
     /**
      * Pins (PWM) for wheel shifting servos
      */
-    public static final int[] WheelShiftServoPins = { 4,
-                                                      5,
-                                                      6,
-                                                      7};
-    
+    public static final int[] WheelShiftServoPins = { 4, 5, 6, 7 };
+
     /**
      * Array of values for shifting gears, high then low values
      */
-    public static final int[] WheelShiftServoVals[] = { {45, 120},
-                                                        {120, 45},
-                                                        {45, 120},
-                                                        {120, 45}};
-    
+    public static final int[] WheelShiftServoVals[] = { { 45, 120 },
+            { 120, 45 }, { 45, 120 }, { 120, 45 } };
+
     /**
      * Wheel diameter
      */
-    public static final double DriveWheelDiameter = 4.0;  // inches
-    
+    public static final double DriveWheelDiameter = 4.0; // inches
+
     /**
      * Wheel circumference
      */
-    public static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
-    
+    public static final double DriveWheelCircumference = Math.PI
+            * DriveWheelDiameter;
+
     /**
      * Encoder pulses per 1 full encoder rotation
      */
     public static final int DriveEncoderPulses = 64;
-    
+
     /**
      * Full encoder rotations per wheel rotation
      */
     public static final double DriveEncoderRotPerWheelRot = 3.0;
-    
+
     /**
      * Inches per encoder pulse
      */
-    public static final double DriveEncoderRate = DriveWheelCircumference / DriveEncoderRotPerWheelRot / DriveEncoderPulses;
+    public static final double DriveEncoderRate = DriveWheelCircumference
+            / DriveEncoderRotPerWheelRot / DriveEncoderPulses;
 
     /**
      * The ratio between low gear top speed and high gear top speed
      */
-    public static final double DriveGearRatio = 0.5;  // TODO: probably totally wrong
-    
+    public static final double DriveGearRatio = 0.5; // TODO: probably totally
+                                                     // wrong
+
     /**
      * The wheel top speed in high gear
      */
@@ -122,5 +118,6 @@ public class SwerveConstants {
     /**
      * The wheel top speed in low gear
      */
-    public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity * DriveGearRatio;
+    public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity
+            * DriveGearRatio;
 }
