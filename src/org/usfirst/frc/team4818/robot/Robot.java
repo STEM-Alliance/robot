@@ -2,17 +2,15 @@ package org.usfirst.frc.team4818.robot;
 
 
 import com.ni.vision.NIVision;
-import com.ni.vision.NIVision.CompressionType;
+import com.ni.vision.NIVision.ColorMode;
 import com.ni.vision.NIVision.DrawMode;
-import com.ni.vision.NIVision.FlattenType;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.Point;
-import com.ni.vision.NIVision.RawData;
+import com.ni.vision.NIVision.Range;
 import com.taurus.controller.Controller;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.swerve.DriveScheme;
 import com.taurus.swerve.SwerveChassis;
-import com.taurus.swerve.SwerveConstants;
 import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.CameraServer;
@@ -128,6 +126,12 @@ public class Robot extends SampleRobot {
 //                    for(int i = 0; i <= 640; i += 40){
 //                        NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(i, 0), new Point(i, 480) , 0.0f);
 //                    }
+                    NIVision.imaqColorThreshold(frame, frame, 255, ColorMode.HSL, 
+                            new Range(Robot.prefs.getInt("Hmin", 30), Robot.prefs.getInt("Hmax", 60)), 
+                            new Range(Robot.prefs.getInt("Smin", 60), Robot.prefs.getInt("Smax", 255)), 
+                            new Range(Robot.prefs.getInt("Lmin", 100), Robot.prefs.getInt("Lmax", 255)));
+                    
+                    // TODO: NIVision.imaqParticleFilter4(frame, frame, new Particle, options, roi)
                     
                     if (((Integer)imageChooser.getSelected()).intValue() == 1)
                     {
@@ -166,12 +170,12 @@ public class Robot extends SampleRobot {
         // set up the choosers for running tests while in teleop mode
         testChooser = new SendableChooser();
         testChooser.addDefault("Normal", Integer.valueOf(TEST_MODE_NORMAL));
-        testChooser.addObject("Wheel Test", Integer.valueOf(TEST_MODE_WHEEL));
-        testChooser.addObject("Wheel Calibration 1",
+        testChooser.addObject("Wheel Test Full", Integer.valueOf(TEST_MODE_WHEEL));
+        testChooser.addObject("Wheel Spin Raw",
                 Integer.valueOf(TEST_MODE_CALIBRATION_1));
-        testChooser.addObject("Wheel Calibration 2",
+        testChooser.addObject("Wheel Set Angle",
                 Integer.valueOf(TEST_MODE_CALIBRATION_2));
-        testChooser.addObject("Wheel Calibration 3",
+        testChooser.addObject("Wheel To Heading",
                 Integer.valueOf(TEST_MODE_CALIBRATION_3));
 
         SmartDashboard.putData("Test", testChooser);
@@ -207,7 +211,7 @@ public class Robot extends SampleRobot {
             if ((Timer.getFPGATimestamp() - TimeLastDash) > TIME_RATE_DASH)
             {
                 TimeLastDash = Timer.getFPGATimestamp();
-                //UpdateDashboard();
+                UpdateDashboard();
                 SmartDashboard.putNumber("Dash Task Length", Timer.getFPGATimestamp() - TimeLastDash);
             }
 
@@ -273,7 +277,7 @@ public class Robot extends SampleRobot {
                     }
                     break;
                 case DRIVE_RIGHT:
-                    drive.UpdateDrive(new SwerveVector(1, 0), 0, -1);
+                    drive.UpdateDrive(new SwerveVector(1, 0), 0, 270);
                     if (Timer.getFPGATimestamp() - StateTime > 2)
                     {
                         StateTime = Timer.getFPGATimestamp();
@@ -284,8 +288,7 @@ public class Robot extends SampleRobot {
                     drive.UpdateDrive(new SwerveVector(0, 0), 0, -1);
                     
                     break;
-                
-                    
+               
                 default:
                     // TODO: Put error condition here
                     break;
@@ -315,45 +318,46 @@ public class Robot extends SampleRobot {
      */
     private void UpdateDashboard()
     {
-        for (int i = 0; i < 16; i++)
-        {
-            SmartDashboard.putNumber("PDP " + i, PDP.getCurrent(i));
-        }
-
-        SmartDashboard.putNumber("PDP Total Current", PDP.getTotalCurrent());
-        SmartDashboard.putNumber("PDP Total Power", PDP.getTotalPower());
-        SmartDashboard.putNumber("PDP Total Energy", PDP.getTotalEnergy());
+//        for (int i = 0; i < 16; i++)
+//        {
+//            SmartDashboard.putNumber("PDP " + i, PDP.getCurrent(i));
+//        }
+//
+//        SmartDashboard.putNumber("PDP Total Current", PDP.getTotalCurrent());
+//        SmartDashboard.putNumber("PDP Total Power", PDP.getTotalPower());
+//        SmartDashboard.putNumber("PDP Total Energy", PDP.getTotalEnergy());
         SmartDashboard.putNumber("Voltage", PDP.getVoltage());
 
         // display the joysticks on smart dashboard
-        SmartDashboard.putNumber("Left Mag",
-                controller.getMagnitude(Hand.kLeft));
-        SmartDashboard.putNumber("Left Angle",
-                controller.getDirectionDegrees(Hand.kLeft));
-        SmartDashboard.putNumber("Right Mag",
-                controller.getMagnitude(Hand.kRight));
-        SmartDashboard.putNumber("Right Angle",
-                controller.getDirectionDegrees(Hand.kRight));
+//        SmartDashboard.putNumber("Left Mag",
+//                controller.getMagnitude(Hand.kLeft));
+//        SmartDashboard.putNumber("Left Angle",
+//                controller.getDirectionDegrees(Hand.kLeft));
+//        SmartDashboard.putNumber("Right Mag",
+//                controller.getMagnitude(Hand.kRight));
+//        SmartDashboard.putNumber("Right Angle",
+//                controller.getDirectionDegrees(Hand.kRight));
 
-        if (driveScheme.get() == DriveScheme.ANGLE_DRIVE)
-        {
-            SmartDashboard.putNumber("Angle heading",
-                    controller.getAngleDrive_Heading());
-        }
-
-        // display each wheel's mag and angle in SmartDashboard
-        for (int i = 0; i < SwerveConstants.WheelCount; i++)
-        {
-            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag",
-                    drive.getWheelActual(i).getMag());
-            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle",
-                    drive.getWheelActual(i).getAngle());
-        }
-
-        drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity",
-                drive.MaxAvailableVelocity);
+//        if (driveScheme.get() == DriveScheme.ANGLE_DRIVE)
+//        {
+//            SmartDashboard.putNumber("Angle heading",
+//                    controller.getAngleDrive_Heading());
+//        }
+//
+//        // display each wheel's mag and angle in SmartDashboard
+//        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+//        {
+//            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag",
+//                    drive.getWheelActual(i).getMag());
+//            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle",
+//                    drive.getWheelActual(i).getAngle());
+//        }
+//
+//        drive.MaxAvailableVelocity = SmartDashboard.getNumber("Max Velocity",
+//                drive.MaxAvailableVelocity);
 
         SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getYaw());
+        SmartDashboard.putNumber("Last Heading", drive.LastHeading);
 
         // update the test mode
         // disable for competitions?
@@ -371,7 +375,19 @@ public class Robot extends SampleRobot {
         switch (((Integer) testChooser.getSelected()).intValue())
         {
             case TEST_MODE_WHEEL:
-                TestWheel(i);
+             // use the left joystick to control the wheel module
+                SwerveVector WheelActual = drive.getWheel(i).setDesired(
+                        controller.getHaloDrive_Velocity(),
+                        controller.getHighGearEnable(), controller.getBrake());
+
+                // display in SmartDashboard
+                SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
+                SmartDashboard.putNumber("Test Wheel Angle Actual",
+                        WheelActual.getAngle());
+
+                // if the button is not held down, we're in high gear
+                drive.setGearHigh(controller.getHighGearEnable());
+                drive.UpdateShifter();
                 break;
 
             case TEST_MODE_CALIBRATION_1:
@@ -407,25 +423,6 @@ public class Robot extends SampleRobot {
         }
     }
 
-    /**
-     * Test an individual wheel module
-     */
-    private void TestWheel(int index)
-    {
-        // use the left joystick to control the wheel module
-        SwerveVector WheelActual = drive.getWheel(index).setDesired(
-                controller.getHaloDrive_Velocity(),
-                controller.getHighGearEnable(), controller.getBrake());
-
-        // display in SmartDashboard
-        SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
-        SmartDashboard.putNumber("Test Wheel Angle Actual",
-                WheelActual.getAngle());
-
-        // if the button is not held down, we're in high gear
-        drive.setGearHigh(controller.getHighGearEnable());
-        drive.UpdateShifter();
-    }
 
     /**
      * Run the normal operating Drive system

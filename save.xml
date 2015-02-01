@@ -1,0 +1,142 @@
+<xml version="1.0">
+<dashboard>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
+		<location x="451" y="303"/>
+		<height>146</height>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="323" y="58"/>
+		<width>425</width>
+	</static-widget>
+	<widget field="Test Wheel Angle Actual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="47" y="313"/>
+	</widget>
+	<widget field="Test Wheel Mag Actual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="42" y="290"/>
+	</widget>
+	<widget field="Vision Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="756" y="1"/>
+		<width>238</width>
+		<height>179</height>
+		<property name="Buffer Size (samples)" value="500"/>
+	</widget>
+	<widget field="Swerve Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="999" y="184"/>
+		<width>258</width>
+		<height>162</height>
+		<property name="Buffer Size (samples)" value="500"/>
+	</widget>
+	<widget field="Dash Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="760" y="185"/>
+		<width>236</width>
+		<height>161</height>
+		<property name="Buffer Size (samples)" value="500"/>
+	</widget>
+	<widget field="Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="997" y="3"/>
+		<width>260</width>
+		<height>179</height>
+		<property name="Buffer Size (samples)" value="500"/>
+	</widget>
+	<widget field="Last Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="604" y="30"/>
+	</widget>
+	<widget field="AngleDrive.rotation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="188" y="380"/>
+	</widget>
+	<widget field="AngleDrive.error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="202" y="402"/>
+	</widget>
+	<widget field="PDP Total Energy" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="9" y="354"/>
+	</widget>
+	<widget field="PDP Total Power" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="12" y="379"/>
+	</widget>
+	<widget field="PDP Total Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="8" y="333"/>
+	</widget>
+	<widget field="PDP 15" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="132" y="263"/>
+	</widget>
+	<widget field="PDP 14" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="135" y="243"/>
+	</widget>
+	<widget field="PDP 13" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="136" y="226"/>
+	</widget>
+	<widget field="PDP 12" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="136" y="206"/>
+	</widget>
+	<widget field="PDP 11" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="135" y="185"/>
+	</widget>
+	<widget field="PDP 10" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="135" y="165"/>
+	</widget>
+	<widget field="PDP 9" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="141" y="145"/>
+	</widget>
+	<widget field="PDP 8" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="141" y="124"/>
+	</widget>
+	<widget field="PDP 7" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="266"/>
+	</widget>
+	<widget field="PDP 6" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="246"/>
+	</widget>
+	<widget field="PDP 5" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="225"/>
+	</widget>
+	<widget field="PDP 4" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="205"/>
+	</widget>
+	<widget field="PDP 3" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="184"/>
+	</widget>
+	<widget field="PDP 2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="163"/>
+	</widget>
+	<widget field="PDP 1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="143"/>
+	</widget>
+	<widget field="PDP 0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="122"/>
+	</widget>
+	<widget field="Field Relative" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="334" y="5"/>
+		<height>20</height>
+	</widget>
+	<widget field="Brake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="487" y="29"/>
+		<height>23</height>
+	</widget>
+	<widget field="Gear" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="489" y="6"/>
+	</widget>
+	<widget field="Gyro Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="613" y="5"/>
+	</widget>
+	<widget field="Drive Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="-7" y="-10"/>
+	</widget>
+	<widget field="Controller" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="-7" y="57"/>
+	</widget>
+	<widget field="Test Wheel" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="210" y="-11"/>
+	</widget>
+	<widget field="Test" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="81" y="-11"/>
+	</widget>
+	<widget field="TEST MODE" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="343" y="29"/>
+	</widget>
+	<widget field="Image to show" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="321" y="301"/>
+	</widget>
+</dashboard>
+<live-window>
+</live-window>
+</xml>

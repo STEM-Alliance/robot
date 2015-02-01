@@ -29,7 +29,7 @@ public class SwerveChassis {
     private boolean FieldRelative;
     private boolean GearHigh;
     private boolean Brake;
-    private double LastHeading;
+    public double LastHeading;
 
     private PIController ChassisAngleController;
     public double ChassisP = 1.3 / 180; // Full speed rotation at error of 90
@@ -38,7 +38,7 @@ public class SwerveChassis {
     private IMU Gyro;
     SerialPort serial_port;
     private double MinRotationAdjust = .3;
-    private static final double MaxAcceleration = 2;  // Smaller is slower acceleration
+    private double MaxAcceleration = 2;  // Smaller is slower acceleration
 
     private SwerveVector LastVelocity;
 
@@ -49,7 +49,8 @@ public class SwerveChassis {
      */
     public SwerveChassis()
     {
-        MaxAvailableVelocity = Robot.prefs.getDouble("MAX_ROBOT_VELOCITY", 1.0);
+        MaxAvailableVelocity = Robot.prefs.getDouble("MAX_ROBOT_VELOCITY", MaxAvailableVelocity);
+        MaxAcceleration = Robot.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration); 
         
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
@@ -123,7 +124,6 @@ public class SwerveChassis {
             LastHeading = Gyro.getYaw();
         }
 
-        //SmartDashboard.putNumber("Last Heading", LastHeading);
         //SmartDashboard.putNumber("AngleDrive.error", Error);
         //SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
 
