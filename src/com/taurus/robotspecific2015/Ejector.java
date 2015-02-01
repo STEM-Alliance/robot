@@ -2,14 +2,12 @@ package com.taurus.robotspecific2015;
 
 import com.taurus.robotspecific2015.Constants.*;
 
-import edu.wpi.first.wpilibj.Talon;
-
 public class Ejector
 {
    STATE_EJECT StateEject = STATE_EJECT.PUSHER_EXTEND;
    POSITION_EJECTOR PositionEjector = POSITION_EJECTOR.IN;
 
-   Talon Motors = new Talon(Constants.MOTOR_TALON_PIN_EJECTOR); // TODO: This is actually two motors. Create the second one
+   MotorSystem Motors = new MotorSystem(Constants.PINS_EJECTOR);
    PneumaticSubsystem CylindersStop;
    PneumaticSubsystem CylindersPusher;
    Sensor OutSensor = new SensorDigital();
@@ -19,6 +17,7 @@ public class Ejector
    {
       CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP, Constants.TIME_EXTEND_STOP, Constants.TIME_CONTRACT_STOP, false);
       CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER, Constants.TIME_EXTEND_PUSHER, Constants.TIME_CONTRACT_PUSHER, false);
+      Motors.SetScale(Constants.SCALING_EJECTOR);
 
       // Move the Ejector to its initial "in" position
       MoveIn();
@@ -98,12 +97,12 @@ public class Ejector
       if (OutSensor.IsOn() || PositionEjector == Constants.POSITION_EJECTOR.OUT)
       {
          // Stop motor and advance state machine state
-         Motors.set(0);
+         Motors.Set(0);
          PositionEjector = Constants.POSITION_EJECTOR.OUT;
       }
       else
       {
-         Motors.set(Constants.MOTOR_SPEED_EJECTOR * Constants.MOTOR_DIRECTION_FORWARD);
+         Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
       }
 
       // Is the Ejector in the out position or not?
@@ -116,12 +115,12 @@ public class Ejector
       if (InSensor.IsOn() || PositionEjector == Constants.POSITION_EJECTOR.IN)
       {
          // Stop motor and advance state machine state
-         Motors.set(0);
+         Motors.Set(0);
          PositionEjector = Constants.POSITION_EJECTOR.IN;
       }
       else
       {
-         Motors.set(Constants.MOTOR_SPEED_EJECTOR * Constants.MOTOR_DIRECTION_BACKWARD);
+         Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
       }
 
       // Is the Ejector in the in position or not?

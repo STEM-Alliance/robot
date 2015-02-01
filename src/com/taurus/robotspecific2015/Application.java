@@ -9,6 +9,8 @@ public class Application extends com.taurus.Application
 
    public Application()
    {
+      super.Application();  // Initialize anything in the super class constructor
+      
       lift = new Lift();
    }
 
@@ -122,19 +124,19 @@ public class Application extends com.taurus.Application
          case Constants.TEST_MODE_CAR:
             if (button1)
             {
-               TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_FORWARD);
+               TestModeCar.Motors.Set(Constants.MOTOR_SPEED_CAR1 * Constants.MOTOR_DIRECTION_FORWARD);
             }
             else if (button2)
             {
-               TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR * Constants.MOTOR_DIRECTION_BACKWARD);
+               TestModeCar.Motors.Set(Constants.MOTOR_SPEED_CAR1 * Constants.MOTOR_DIRECTION_BACKWARD);
             }
             else if (button3)
             {
-               TestModeEjector.Motors.set(Constants.MOTOR_SPEED_EJECTOR * Constants.MOTOR_DIRECTION_FORWARD);
+               TestModeEjector.Motors.set(Constants.SCALING_EJECTOR * Constants.MOTOR_DIRECTION_FORWARD);
             }
             else if (button4)
             {
-               TestModeEjector.Motors.set(Constants.MOTOR_SPEED_EJECTOR * Constants.MOTOR_DIRECTION_BACKWARD);
+               TestModeEjector.Motors.set(Constants.SCALING_EJECTOR * Constants.MOTOR_DIRECTION_BACKWARD);
             }
             break;
          default:
