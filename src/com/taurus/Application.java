@@ -3,6 +3,7 @@ package com.taurus;
 
 import com.taurus.controller.Controller;
 import com.taurus.controller.ControllerChooser;
+import com.taurus.robotspecific2015.LEDs;
 import com.taurus.swerve.SwerveChassis;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -52,6 +53,8 @@ public abstract class Application {
 
     public static Preferences prefs;
     
+    private LEDs leds;
+    
     public Application()
     {
         prefs = Preferences.getInstance();
@@ -61,6 +64,8 @@ public abstract class Application {
         PDP = new PowerDistributionPanel();
 
         controllerChooser = new ControllerChooser();
+        
+        leds = new LEDs();
     }
     
     public void TeleopInit()
@@ -72,6 +77,8 @@ public abstract class Application {
         drive.ZeroGyro();
 
         TeleopInitRobotSpecific();
+        
+        leds.Set(80, 255, 255);
     }
 
     public void TeleopPeriodic()

@@ -6,11 +6,13 @@ import java.util.ArrayList;
 
 public class MotorSystem
 {
-   private ArrayList<Talon> Talons = new ArrayList<Talon>();
+   private ArrayList<Talon> Talons;
    private ArrayList<Double> Scaling;
    
    public MotorSystem(int[] pins)
    {
+       Talons = new ArrayList<Talon>();
+       Scaling = new ArrayList<Double>();
       for(int index = 0; index < pins.length; index++)
       {
          Talons.add(new Talon(pins[index]));
