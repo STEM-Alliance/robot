@@ -2,11 +2,11 @@
 <dashboard>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
 		<location x="0" y="250"/>
-		<width>385</width>
-		<height>263</height>
+		<width>375</width>
+		<height>270</height>
 	</static-widget>
 	<widget field="Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="137" y="214"/>
+		<location x="11" y="213"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
 		<location x="389" y="316"/>
@@ -29,11 +29,14 @@
 		<location x="8" y="50"/>
 	</widget>
 	<widget field="Image to show" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="2" y="160"/>
+		<location x="248" y="139"/>
 	</widget>
 	<widget field="Test" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="111" y="61"/>
 	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
+		<location x="389" y="316"/>
+	</static-widget>
 </dashboard>
 <live-window>
 </live-window>

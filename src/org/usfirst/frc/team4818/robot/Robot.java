@@ -20,7 +20,7 @@ public class Robot extends SampleRobot {
     
     public void robotInit()
     {
-        app = new com.taurus.swerve.Application();
+        app = new com.taurus.robotspecific2015.VisionApplication();
     }
 
     public void operatorControl()
