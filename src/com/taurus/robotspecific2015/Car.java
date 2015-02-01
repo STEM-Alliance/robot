@@ -7,14 +7,20 @@ public class Car
 {
    private POSITION_CAR CurrentState;   
    
-   MotorSystem Motors = new MotorSystem(Constants.PINS_MOTOR);
-   Sensor SensorStack = new SensorDigital();
-   Sensor SensorDestack = new SensorDigital();
-   Sensor SensorChute = new SensorDigital();
-   Sensor SensorBottom = new SensorDigital();
+   MotorSystem Motors;
+   Sensor SensorStack;
+   Sensor SensorDestack;
+   Sensor SensorChute;
+   Sensor SensorBottom;
    
    public Car()
    {
+      Motors = new MotorSystem(Constants.PINS_MOTOR);
+      SensorStack = new SensorDigital();
+      SensorDestack = new SensorDigital();
+      SensorChute = new SensorDigital();
+      SensorBottom = new SensorDigital();
+      
       Motors.SetScale(Constants.SCALING_MOTOR);
    }
    
