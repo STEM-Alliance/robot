@@ -30,34 +30,44 @@ public abstract class Constants
    public static final double TIME_CONTRACT_PUSHER = 5; //TODO - what is the amount of time required to close the jaws
    
    // Motors
-   public static final int MOTOR_TALON_PIN_CAR = 999; //TODO - Which PWM is this talon connected to?
-   public static final int MOTOR_TALON_PIN_EJECTOR = 999; //TODO - Which PWM is this talon connected to?
+   public static final int[] PINS_MOTOR = {10, 11}; //TODO - Which PWM is this talon connected to?
+   public static final int[] PINS_EJECTOR = {12}; //TODO - Which PWM is this talon connected to?
    
-   public static final double MOTOR_SPEED_CAR = 1; // TODO - What does this number have to be to move the car at the speed that we want?
-   public static final double MOTOR_SPEED_EJECTOR = 1;  // TODO - What does this number have to be to move the ejector at the speed that we want?
+   public static final double[] SCALING_MOTOR = {1, 1}; // TODO - What does this number have to be to move the car at the speed that we want?
+   public static final double[] SCALING_EJECTOR = {1};  // TODO - What does this number have to be to move the ejector at the speed that we want?
    
    public static final int MOTOR_DIRECTION_FORWARD = 1;
    public static final int MOTOR_DIRECTION_BACKWARD = -1;
    
    // Lift
-   public static enum STATE_ADD_TOTE_TO_STACK
+   public static enum STATE_ADD_CHUTE_TOTE_TO_STACK
    {
+      INIT,
       INTAKE_TOTE,
 	   LIFT_TOTE,
 	   HANDLE_CONTAINER,
 	   JAWS_FINISH,
-	   LOWER_CAR
+	   RESET
+   }
+   
+   public static enum STATE_ADD_FLOOR_TOTE_TO_STACK
+   {
+      INIT,
+      INTAKE_TOTE,
+      LIFT_TOTE,
+      HANDLE_CONTAINER,
+      RESET
    }
    
    public static enum STATE_ADD_CONTAINER_TO_STACK
    {
-      RAILS_UP,
+      INIT,
       CONTAINER_CAR_EXTEND,
       LIFT_CAR,
       CONTAINER_FIXED_EXTEND,
       CONTAINER_CAR_CONTRACT,
       LOWER_CAR,
-      RAILS_EXTEND
+      RESET
    }
    
    public static enum STATE_EJECT_STACK
@@ -96,7 +106,13 @@ public abstract class Constants
 
    // Test mode
    public static final int TEST_MODE_PNEUMATIC = 0;
-   public static final int TEST_MODE_CAR = 1;
+   public static final int TEST_MODE_MOTORS = 1;
    public static final int TEST_MODE_SENSOR = 2;
+   
+   // Autonomous mode
+   public static enum AUTO_STATE_MACHINE
+   {
+       DRIVE_FOR, DRIVE_STOP, DRIVE_RIGHT, AUTO_END,
+   }
 }
  

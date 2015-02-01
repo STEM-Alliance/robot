@@ -1,30 +1,30 @@
 package com.taurus.robotspecific2015;
 
 import com.taurus.swerve.SwerveVector;
+import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class Application extends com.taurus.Application {
-    Lift lift;
-    Car TestModeCar;
 
-    public static enum AUTO_STATE_MACHINE {
-        DRIVE_FOR, DRIVE_STOP, DRIVE_RIGHT, AUTO_END,
-    }
-
+public class Application extends com.taurus.Application
+{
     private double AutoStateTime;
     private AUTO_STATE_MACHINE AutoState;
-
+    
+    Lift lift;
+    Car TestModeCar;
+    Ejector TestModeEjector;
+    Sensor TestModeToteIntakeSensor;
     private Vision vision;
 
     public Application()
     {
-        lift = new Lift();
-        TestModeCar = lift.LiftCar;
-        
-        vision = new Vision();
-        vision.Start();
+        super(); // Initialize anything in the super class constructor
 
+        lift = new Lift();
+        vision = new Vision();
+        
+        vision.Start();
     }
 
     public void TeleopInitRobotSpecific()
@@ -34,26 +34,28 @@ public class Application extends com.taurus.Application {
 
     public void TeleopPeriodicRobotSpecific()
     {
-        boolean button1 = false; // TODO: Get these button values from the
-                                 // controller
+        boolean button1 = false; // TODO: Get these button values from the controller
         boolean button2 = false;
         boolean button3 = false;
-        //boolean button4 = false; // TODO: Do we want a button to cancel the
-                                 // current routine
+        boolean button4 = false; 
+        // TODO: Do we want a button to cancel the current routine
 
         // TODO: Make sure that we stay in the same mode after the button
         // is pressed until we are done doing that routine
 
         if (button1)
         {
-            lift.AddToteToStack();
+            lift.AddChuteToteToStack();
         }
         else if (button2)
         {
-            // add container
-            lift.AddContainerToStack();
+            lift.AddFloorToteToStack();
         }
         else if (button3)
+        {
+            lift.AddContainerToStack();
+        }
+        else if (button4)
         {
             lift.EjectStack();
         }
@@ -68,7 +70,7 @@ public class Application extends com.taurus.Application {
     {
         drive.ZeroGyro();
 
-        AutoState = AUTO_STATE_MACHINE.DRIVE_FOR;
+        AutoState = Constants.AUTO_STATE_MACHINE.DRIVE_FOR;
         AutoStateTime = Timer.getFPGATimestamp();
     }
 
@@ -84,7 +86,7 @@ public class Application extends com.taurus.Application {
                     AutoStateTime = Timer.getFPGATimestamp();
                 }
                 break;
-                
+
             case DRIVE_STOP:
                 drive.UpdateDrive(new SwerveVector(0, 0.001), 0, -1);
                 if (Timer.getFPGATimestamp() - AutoStateTime > .5)
@@ -93,7 +95,7 @@ public class Application extends com.taurus.Application {
                     AutoStateTime = Timer.getFPGATimestamp();
                 }
                 break;
-                
+
             case DRIVE_RIGHT:
                 drive.UpdateDrive(new SwerveVector(1, 0), 0, 270);
                 if (Timer.getFPGATimestamp() - AutoStateTime > 2)
@@ -102,7 +104,7 @@ public class Application extends com.taurus.Application {
                     AutoStateTime = Timer.getFPGATimestamp();
                 }
                 break;
-                
+
             case AUTO_END:
                 drive.UpdateDrive(new SwerveVector(0, 0), 0, -1);
 
@@ -121,7 +123,9 @@ public class Application extends com.taurus.Application {
 
     public void TestModeInitRobotSpecific()
     {
-
+        TestModeCar = lift.LiftCar;
+        TestModeEjector = lift.StackEjector;
+        TestModeToteIntakeSensor = lift.ToteIntakeSensor;
     }
 
     public void TestModePeriodicRobotSpecific()
@@ -175,23 +179,32 @@ public class Application extends com.taurus.Application {
                     testCylinders.Extend();
                 }
                 break;
-            case Constants.TEST_MODE_CAR:
+            case Constants.TEST_MODE_MOTORS:
                 if (button1)
                 {
-                    TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR
-                            * Constants.MOTOR_DIRECTION_FORWARD);
+                    TestModeCar.Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
                 }
                 else if (button2)
                 {
-                    TestModeCar.Motors.set(Constants.MOTOR_SPEED_CAR
-                            * Constants.MOTOR_DIRECTION_BACKWARD);
+                    TestModeCar.Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
+                }
+                else if (button3)
+                {
+                    TestModeEjector.Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
+                }
+                else if (button4)
+                {
+                    TestModeEjector.Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
                 }
                 break;
             default:
                 break;
         }
         // TODO: Get the value of one sensor and report that somehow
-        // (Smartdashboard, print, etc)
+        if (TestModeToteIntakeSensor.IsOn())
+        {
+            // TODO: Update smartdashboard or however we show sensors
+        }
     }
 
     public void TestModeDeInitRobotSpecific()
