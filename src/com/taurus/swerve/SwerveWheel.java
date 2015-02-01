@@ -9,12 +9,10 @@ package com.taurus.swerve;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.CANTalon;
 
 /**
  * Handle motor outputs and feedback for an individual wheel
@@ -54,13 +52,13 @@ public class SwerveWheel {
 
     // controller
     private SwerveAngleController AngleController;
-    private VelocityCalculator DriveEncoderFilter;
-    private PIController DriveEncoderController;
+//    private VelocityCalculator DriveEncoderFilter;
+//    private PIController DriveEncoderController;
 
-    private static final double DriveP = 0.3;
-    private static final double DriveTI = 0.5; // seconds needed to equal a P
-                                               // term contribution
-    private static final double DriveI = 0;// 2 / DriveTI;
+//    private static final double DriveP = 0.3;
+//    private static final double DriveTI = 0.5; // seconds needed to equal a P
+//                                               // term contribution
+//    private static final double DriveI = 0;// 2 / DriveTI;
 
     // deadband
     private static final double MinSpeed = 0.08;
@@ -103,8 +101,8 @@ public class SwerveWheel {
         DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
 
-        DriveEncoderFilter = new VelocityCalculator();
-        DriveEncoderController = new PIController(DriveP, DriveI, 1.0);
+//        DriveEncoderFilter = new VelocityCalculator();
+//        DriveEncoderController = new PIController(DriveP, DriveI, 1.0);
 
         // AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) +
         // Math.abs(SpinMax), -SpinMin);
@@ -162,6 +160,11 @@ public class SwerveWheel {
         return WheelPosition;
     }
 
+    public void setOrientation(double orientation)
+    {
+        this.AngleOrienation = orientation;
+    }
+    
     /**
      * Get whether the wheel is in high gear or low gear
      * 
@@ -274,7 +277,7 @@ public class SwerveWheel {
      */
     private void updateDriveMotor(boolean reverse)
     {
-        double time = Timer.getFPGATimestamp();
+//        double time = Timer.getFPGATimestamp();
 
         // Control the wheel speed.
         double driveMotorSpeed = WheelDesired.getMag();
