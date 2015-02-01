@@ -30,11 +30,11 @@ public abstract class Constants
    public static final double TIME_CONTRACT_PUSHER = 5; //TODO - what is the amount of time required to close the jaws
    
    // Motors
-   public static final int MOTOR_TALON_PIN_CAR = 999; //TODO - Which PWM is this talon connected to?
-   public static final int MOTOR_TALON_PIN_EJECTOR = 999; //TODO - Which PWM is this talon connected to?
+   public static final int[] PINS_MOTOR = {999, 999}; //TODO - Which PWM is this talon connected to?
+   public static final int[] PINS_EJECTOR = {999}; //TODO - Which PWM is this talon connected to?
    
-   public static final double MOTOR_SPEED_CAR = 1; // TODO - What does this number have to be to move the car at the speed that we want?
-   public static final double MOTOR_SPEED_EJECTOR = 1;  // TODO - What does this number have to be to move the ejector at the speed that we want?
+   public static final double[] SCALING_MOTOR = {1, 1}; // TODO - What does this number have to be to move the car at the speed that we want?
+   public static final double[] SCALING_EJECTOR = {1};  // TODO - What does this number have to be to move the ejector at the speed that we want?
    
    public static final int MOTOR_DIRECTION_FORWARD = 1;
    public static final int MOTOR_DIRECTION_BACKWARD = -1;
