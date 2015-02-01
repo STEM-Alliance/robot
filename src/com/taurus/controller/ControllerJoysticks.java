@@ -176,6 +176,11 @@ public class ControllerJoysticks implements Controller {
         return value;
     }
 
+    public boolean getRawButtion(int button)
+    {
+        return left.getRawButton(button);
+    }
+    
     /**
      * Get whether the high gear should be enabled
      * 
