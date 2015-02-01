@@ -66,7 +66,8 @@ public abstract class Constants
       LIFT_CAR,
       STACK_HOLDER_CONTRACT,
       LOWER_CAR,
-      STACK_HOLDER_EXTEND,
+      EJECT_STACK,
+      RESET,
    }
    
    // Car
@@ -83,8 +84,7 @@ public abstract class Constants
    {
       PUSHER_EXTEND,
       MOVE_OUT,
-      MOVE_IN,
-      PUSHER_CONTRACT
+      RESET
    }
    
    public static enum POSITION_EJECTOR

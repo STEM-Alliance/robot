@@ -16,7 +16,8 @@ public class Lift
    STATE_ADD_CONTAINER_TO_STACK StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.RAILS_UP;
    STATE_EJECT_STACK StateEjectStack = STATE_EJECT_STACK.JAWS_EXTEND;
 
-   Car LiftCar = new Car(); // TODO Name it something different than car
+   Car LiftCar = new Car();
+   Ejector StackEjector = new Ejector();
    PneumaticSubsystem CylindersRails;
    PneumaticSubsystem CylindersContainerCar;
    PneumaticSubsystem CylindersContainerFixed;
@@ -104,6 +105,7 @@ public class Lift
                   StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                }
                break;
+            // TODO: Need sensor to tell us when the container is in position to secure with pneumatics
             case CONTAINER_CAR_EXTEND:
                if (CylindersContainerCar.Extend())
                {
@@ -150,61 +152,64 @@ public class Lift
    }
 
    // Place the stack on the ground, then push it onto the scoring platform
-   public void EjectStack()
+   public boolean EjectStack()
    {
-      if (true)
+      switch (StateEjectStack)
       {
-         switch (StateEjectStack)
+         case JAWS_EXTEND:
+            if (CylindersJawsOfLife.Extend())
+            {
+               StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
+            }
+            break;
+         case LIFT_CAR:
+            if (LiftCar.GoToDeStack()) // TODO: Add new height for adding container to stack?
+            {
+               StateEjectStack = STATE_EJECT_STACK.STACK_HOLDER_CONTRACT;
+            }
+            break;
+         case STACK_HOLDER_CONTRACT:
+            if (CylindersStackHolder.Contract())
+            {
+               StateEjectStack = STATE_EJECT_STACK.LOWER_CAR;
+            }
+            break;
+         case LOWER_CAR:
+            if (LiftCar.GoToChute())
+            {
+               StateEjectStack = STATE_EJECT_STACK.EJECT_STACK;
+            }
+            break;
+         case EJECT_STACK:
+            if (StackEjector.EjectStack())
+            {
+               StateEjectStack = STATE_EJECT_STACK.RESET;
+            }
+            break;
+         // IMPORTANT: Resetting the Ejector needs to happen, but with a seperate method call
+         //            This allows robot to asynchronous drive and reset the Ejector
+         default:
+            // TODO: Put error condition here
+            break;
+      }
+      return StateEjectStack == STATE_EJECT_STACK.RESET;
+   }
+
+   public boolean ResetEjectStack()
+   {
+      boolean finishedReset = false;
+
+      if (StateEjectStack == STATE_EJECT_STACK.RESET)
+      {
+         // IMPORTANT: Use single '&' to execute all cleanup routines asynchronously
+         if (StackEjector.ResetEjectStack() & CylindersStackHolder.Extend())
          {
-            case JAWS_EXTEND:
-               if (CylindersJawsOfLife.Extend())
-               {
-                  StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
-               }
-               break;
-            case LIFT_CAR:
-               if (LiftCar.GoToDeStack()) // TODO: Add new height for adding container to stack?
-               {
-                  StateEjectStack = STATE_EJECT_STACK.STACK_HOLDER_CONTRACT;
-               }
-               break;
-            case STACK_HOLDER_CONTRACT:
-               if (CylindersStackHolder.Contract())
-               {
-                  StateEjectStack = STATE_EJECT_STACK.LOWER_CAR;
-               }
-               break;
-            case LOWER_CAR:
-               if (LiftCar.GoToChute())
-               {
-                  StateEjectStack = STATE_EJECT_STACK.STACK_HOLDER_EXTEND;
-               }
-               break;
-            // TODO: Push the stack out
-            // TODO: Contract the stack pusher
-            case STACK_HOLDER_EXTEND:
-               if (CylindersStackHolder.Extend())
-               {
-                  ContainerInStack = false;
-                  TotesInStack = 0;
-                  StateEjectStack = STATE_EJECT_STACK.JAWS_EXTEND;
-               }
-               break;
-            default:
-               // TODO: Put error condition here
-               break;
+            finishedReset = true;
+            ContainerInStack = false;
+            TotesInStack = 0;
+            StateEjectStack = STATE_EJECT_STACK.JAWS_EXTEND;
          }
       }
-
-      // // TODO: Turn this into a state machine
-      // CylindersJawsOfLife.Extend();
-      // LiftCar.GoToDeStack();
-      // CylindersStackHolder.Contract();
-      // LiftCar.GoToChute();
-      // // TODO: Push the stack out
-      // // TODO: Contract the stack pusher
-      // CylindersStackHolder.Extend();
-      //
-      // TotesInStack = 0;
+      return finishedReset;
    }
 }
