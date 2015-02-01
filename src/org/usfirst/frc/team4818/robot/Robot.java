@@ -5,8 +5,14 @@ import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.ColorMode;
 import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.Image;
+import com.ni.vision.NIVision.MeasurementType;
+import com.ni.vision.NIVision.ParticleFilterCriteria2;
+import com.ni.vision.NIVision.ParticleFilterOptions2;
 import com.ni.vision.NIVision.Point;
+import com.ni.vision.NIVision.ROI;
 import com.ni.vision.NIVision.Range;
+import com.ni.vision.NIVision.Rect;
+import com.ni.vision.NIVision.ShapeMode;
 import com.taurus.controller.Controller;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.swerve.DriveScheme;
@@ -79,6 +85,7 @@ public class Robot extends SampleRobot {
         public void run()
         {
             frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+            frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 0);
             
             // the camera name (ex "cam0") can be found through the roborio web interface
             session = NIVision.IMAQdxOpenCamera("cam0",
@@ -116,26 +123,37 @@ public class Robot extends SampleRobot {
                         CameraServer.getInstance().setImage(frame);
                     }
 
-                    NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(100, 60), new Point(60, 180), 0.0f);
-                    NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(101, 60), new Point(61, 180), 0.0f);
-                    NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(320-100, 60), new Point(320-60, 180), 0.0f);
-                    NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(320-101, 60), new Point(320-61, 180), 0.0f);
-//                    for(int i = 0; i <= 480; i += 40){
-//                        NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(0, i), new Point(640, i) , 0.0f);
-//                    }
-//                    for(int i = 0; i <= 640; i += 40){
-//                        NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(i, 0), new Point(i, 480) , 0.0f);
-//                    }
-                    NIVision.imaqColorThreshold(frame, frame, 255, ColorMode.HSL, 
+                    NIVision.imaqColorThreshold(frameTH, frame, 255, ColorMode.HSL, 
                             new Range(Robot.prefs.getInt("Hmin", 30), Robot.prefs.getInt("Hmax", 60)), 
                             new Range(Robot.prefs.getInt("Smin", 60), Robot.prefs.getInt("Smax", 255)), 
                             new Range(Robot.prefs.getInt("Lmin", 100), Robot.prefs.getInt("Lmax", 255)));
                     
-                    // TODO: NIVision.imaqParticleFilter4(frame, frame, new Particle, options, roi)
-                    
                     if (((Integer)imageChooser.getSelected()).intValue() == 1)
                     {
-                        CameraServer.getInstance().setImage(frame);
+                        CameraServer.getInstance().setImage(frameTH);
+                    }
+                    
+                    ParticleFilterCriteria2[] criteria =
+                        new ParticleFilterCriteria2[] {
+                            new ParticleFilterCriteria2(
+                                    MeasurementType.MT_AREA_BY_IMAGE_AREA, 
+                                    /*lower*/ Robot.prefs.getInt("AreaMin", 10), 
+                                    /*upper*/ Robot.prefs.getInt("AreaMax", 76800), 
+                                    /*calibrated*/ 0, /*exclude*/ 0),
+                        };
+                    ParticleFilterOptions2 options = 
+                            new ParticleFilterOptions2(/*rejectMatches*/ 0, /*rejectBorder*/ 0, /*fillHoles*/ 0, /*connectivity8*/ 1);
+                    ROI roi = NIVision.imaqCreateROI();
+                    
+                    NIVision.imaqParticleFilter4(frameTH, frameTH, criteria, options, roi);
+                    SmartDashboard.putNumber("Particles", NIVision.imaqCountParticles(frameTH, /*connectivity8*/ 1));
+                    
+                    NIVision.imaqDrawShapeOnImage(frameTH, frameTH, new Rect(0,0,10,10), DrawMode.DRAW_VALUE, ShapeMode.SHAPE_OVAL, 255);
+                    //NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE, new Point(320-100, 60), new Point(320-60, 180), 0.0f);
+                    
+                    if (((Integer)imageChooser.getSelected()).intValue() == 2)
+                    {
+                        CameraServer.getInstance().setImage(frameTH);
                     }
                     
                     SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
@@ -189,7 +207,8 @@ public class Robot extends SampleRobot {
         
         imageChooser = new SendableChooser();
         imageChooser.addDefault("Input image", Integer.valueOf(0));        
-        imageChooser.addObject("Processed image", Integer.valueOf(1));
+        imageChooser.addObject("Thresholded image", Integer.valueOf(1));
+        imageChooser.addObject("Particle image", Integer.valueOf(2));
         SmartDashboard.putData("Image to show", imageChooser);
 
         SmartDashboard.putBoolean("TEST MODE", TEST);
