@@ -105,6 +105,8 @@ public interface Controller {
      */
     public SwerveVector getAngleDrive_Velocity();
 
+    public boolean getRawButtion(int button);
+    
     /**
      * Get whether the high gear should be enabled
      * 
