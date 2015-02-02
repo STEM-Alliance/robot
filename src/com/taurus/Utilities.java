@@ -43,6 +43,40 @@ public final class Utilities {
     }
 
     /**
+     * Ensure the value is between 0 and max, and if it is outside the range,
+     * wrap it around.
+     * 
+     * @param value
+     *            Input value
+     * @param max
+     *            Maximum expected output value
+     * @return The value wrapped to between 0 and max
+     */
+    public static final float wrapToRange(float value, float max)
+    {
+        // The Java mod operator returns values from -max to max,
+        // so we need to add max and mod again
+        return ((value % max) + max) % max;
+    }
+    /**
+     * Ensure the value is between min and max, and if it is outside the range,
+     * wrap it around.
+     * 
+     * @param value
+     *            Input value
+     * @param min
+     *            Minimum expected output value
+     * @param max
+     *            Maximum expected output value
+     * @return The value wrapped to between min and max
+     */
+    public static final float wrapToRange(float value, float min, float max)
+    {
+        // Subract off the min, wrap to the range, and add the min again
+        return wrapToRange(value - min, max - min) + min;
+    }
+
+    /**
      * Trim a value to keep it in the min/max range.
      * 
      * @param value

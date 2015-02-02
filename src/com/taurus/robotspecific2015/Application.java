@@ -26,7 +26,7 @@ public class Application extends com.taurus.Application
         
         vision.Start();
     }
-
+    
     public void TeleopInitRobotSpecific()
     {
 
@@ -69,6 +69,7 @@ public class Application extends com.taurus.Application
     public void AutonomousInitRobotSpecific()
     {
         drive.ZeroGyro();
+        drive.SetGyroZero(-90); // starting facing left, so fix offset
 
         AutoState = Constants.AUTO_STATE_MACHINE.DRIVE_FOR;
         AutoStateTime = Timer.getFPGATimestamp();

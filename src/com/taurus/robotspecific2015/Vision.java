@@ -64,6 +64,7 @@ public class Vision implements Runnable {
         session = NIVision.IMAQdxOpenCamera("cam0",
                 NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 
+        // print to dashboard a list of all available video modes
         // NIVision.dxEnumerateVideoModesResult enumerated =
         // NIVision.IMAQdxEnumerateVideoModes(session);
         // String Modes = "";
@@ -119,11 +120,16 @@ public class Vision implements Runnable {
                 },
         };
 
+        int imageToSend = ((Integer)imageChooser.getSelected()).intValue();
+        
         while (true)
         {
             if ((Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
             {
                 TimeLastVision = Timer.getFPGATimestamp();
+                
+                // grab from the chooser which image to use
+                imageToSend = ((Integer)imageChooser.getSelected()).intValue();
                 
                 try
                 {
@@ -131,12 +137,14 @@ public class Vision implements Runnable {
                     
                     SmartDashboard.putString("FrameSize", size.width+","+size.height);
                     
-                    if (((Integer)imageChooser.getSelected()).intValue() == 0)
+                    if (imageToSend == 0)
                     {
+                        // just send the raw image
                         CameraServer.getInstance().setImage(frame);
                     }                
-                    else if (((Integer)imageChooser.getSelected()).intValue() == 1)
+                    else if (imageToSend == 1)
                     {
+                        // send the image with the tote lines on it
                         NIVision.imaqDuplicate(frameWithLine, frame);
                         
                         for (int i = 0; i < 4; i++)
@@ -151,6 +159,7 @@ public class Vision implements Runnable {
     
                     if (toteDetectionOn)
                     {
+                        // tote detection is on, so adjust the image to filter out all the nonsense
                         NIVision.imaqLowPass(frame, frame, 3, 3, .4f, null);
                         
                         NIVision.imaqColorThreshold(frameTH, frame, 255, ColorMode.HSL, 
@@ -158,11 +167,13 @@ public class Vision implements Runnable {
                                 new Range(Application.prefs.getInt("Smin", 60), Application.prefs.getInt("Smax", 255)), 
                                 new Range(Application.prefs.getInt("Lmin", 100), Application.prefs.getInt("Lmax", 255)));
                         
-                        if (((Integer)imageChooser.getSelected()).intValue() == 2)
+                        if (imageToSend == 2)
                         {
+                            // send the raw black/white image that should have just yellow totes
                             CameraServer.getInstance().setImage(frameTH);
                         }
                         
+                        // filter out any missed particles that aren't the tote
                         ParticleFilterCriteria2[] criteria =
                             new ParticleFilterCriteria2[] {
                                 new ParticleFilterCriteria2(
@@ -180,8 +191,9 @@ public class Vision implements Runnable {
                         int particleCount = NIVision.imaqCountParticles(frameTH, /*connectivity8*/ 1);
                         SmartDashboard.putNumber("Particles", particleCount);
                         
-                        if (((Integer)imageChooser.getSelected()).intValue() == 3)
+                        if (imageToSend == 3)
                         {
+                            // find the bounding rectangle, then send
                             for (int i = 0; i < particleCount; i++)
                             {
                                 double left = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_LEFT);

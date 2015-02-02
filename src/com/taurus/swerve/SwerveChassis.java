@@ -6,7 +6,6 @@
 
 package com.taurus.swerve;
 
-import com.kauailabs.nav6.frc.IMU;
 import com.taurus.Utilities;
 import com.taurus.controller.Controller;
 
@@ -34,7 +33,7 @@ public class SwerveChassis {
                                          // degrees.
     private double ChassisI = 0;
     
-    private IMU Gyro;
+    private SwerveIMU Gyro;
     SerialPort serial_port;
     
     private double MinRotationAdjust = .3;
@@ -52,7 +51,6 @@ public class SwerveChassis {
      */
     public SwerveChassis()
     {
-        
         ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
         
         LastVelocity = new SwerveVector(0,0);
@@ -65,7 +63,7 @@ public class SwerveChassis {
         {
             serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
             byte update_rate_hz = 100;
-            Gyro = new IMU(serial_port, update_rate_hz);
+            Gyro = new SwerveIMU(serial_port, update_rate_hz);
         }
         catch (Exception ex)
         {
@@ -92,11 +90,12 @@ public class SwerveChassis {
 
     }
     
+    /**
+     * Run the normal drive setup, using inputs from the controller
+     * @param controller
+     */
     public void run(Controller controller)
     {
-        MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY", MaxAvailableVelocity);
-        MaxAcceleration = Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration); 
-
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             Wheels[i].setOrientation(Application.prefs.getDouble("Wheel_Orientation_" + i,
@@ -124,6 +123,7 @@ public class SwerveChassis {
                 break;
         }
 
+        // set various options for the chassis
         setGearHigh(controller.getHighGearEnable());
         setBrake(controller.getBrake());
         setFieldRelative(controller.getFieldRelative());
@@ -133,6 +133,14 @@ public class SwerveChassis {
         }
     }
 
+    /**
+     * Main drive update function, allows for xy movement, yaw rotation, and 
+     * turn to angle/heading
+     * @param Velocity vector of xy movement of robot
+     * @param Rotation robot's rotational movement, -1 to 1 rad/s
+     * @param Heading 0-360 of angle to turn to, -1 if not in use
+     * @return actual wheel readings
+     */
     public SwerveVector[] UpdateDrive(SwerveVector Velocity, double Rotation,
             double Heading)
     {
@@ -208,13 +216,8 @@ public class SwerveChassis {
     private SwerveVector[] setWheelVectors(SwerveVector RobotVelocity,
             double RobotRotation)
     {
-        SwerveVector[] WheelsUnscaled = new SwerveVector[SwerveConstants.WheelCount]; // Unscaled
-                                                                                      // Wheel
-                                                                                      // Velocities
-        SwerveVector[] WheelsActual = new SwerveVector[SwerveConstants.WheelCount]; // Actual
-                                                                                    // Wheel
-                                                                                    // Velocities
-
+        SwerveVector[] WheelsUnscaled = new SwerveVector[SwerveConstants.WheelCount];
+        SwerveVector[] WheelsActual = new SwerveVector[SwerveConstants.WheelCount];
         double MaxWantedVeloc = 0;
 
         // set limitations on speed
@@ -224,10 +227,11 @@ public class SwerveChassis {
         }
         
         RobotVelocity = restrictVelocity(RobotVelocity);
-        
+
+        // set limitations on rotation,
+        // so if driving full speed it doesn't take priority
         double RotationAdjust = Math.min(1 - RobotVelocity.getMag()
                 + MinRotationAdjust, 1);
-        // set limitations on rotation
         RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust,
                 RotationAdjust);
 
@@ -246,6 +250,10 @@ public class SwerveChassis {
             }
         }
 
+        // grab max velocity from the dash
+        MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY", MaxAvailableVelocity);
+
+        // determine ratio to scale all wheel velocities by
         double Ratio = MaxAvailableVelocity / MaxWantedVeloc;
 
         if (Ratio > 1)
@@ -278,10 +286,17 @@ public class SwerveChassis {
         double TimeDelta = Timer.getFPGATimestamp() - lastVelocityTimestamp;
         lastVelocityTimestamp = Timer.getFPGATimestamp();
         
+        // get the difference between last velocity and this velocity
         SwerveVector delta = robotVelocity.subtract(LastVelocity);
         
+        // grab the max acceleration value from the dash
+        MaxAcceleration = Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration); 
+
+        
+        // determine if we are accelerating/decelerating too slow
         if (delta.getMag() > MaxAcceleration * TimeDelta)
         {
+            // if we are, slow that down by the MaxAcceleration value
             delta.setMag(MaxAcceleration * TimeDelta);
             robotVelocity = LastVelocity.add(delta);
         }
@@ -306,10 +321,23 @@ public class SwerveChassis {
         return Utilities.wrapToRange(AdjustedAngle, -180, 180);
     }
 
+    /**
+     * Zero the yaw of the gyroscope
+     */
     public void ZeroGyro()
     {
         Gyro.zeroYaw();
         LastHeading = 0;
+    }
+    
+    /**
+     * Set the Gyro to use a new zero value
+     * 
+     * @param yaw angle to offset by
+     */
+    public void SetGyroZero(float yaw)
+    {
+        Gyro.setZero(yaw);
     }
 
     /**
@@ -333,6 +361,11 @@ public class SwerveChassis {
         return Brake;
     }
     
+    /**
+     * get the last heading used for the robot. If free spinning,
+     * this will constantly update
+     * @return angle in degrees
+     */
     public double getLastHeading()
     {
         return LastHeading;
@@ -413,7 +446,7 @@ public class SwerveChassis {
      * 
      * @return Gyro object
      */
-    public IMU getGyro()
+    public SwerveIMU getGyro()
     {
         return Gyro;
     }
