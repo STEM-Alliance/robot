@@ -13,6 +13,7 @@ public class DriveScheme {
 
     public DriveScheme()
     {
+        // setup the drive chooser object
         driveChooser = new SendableChooser();
         driveChooser.addDefault("Combo Drive", Integer.valueOf(COMBO_DRIVE));
         driveChooser.addObject("Halo Drive", Integer.valueOf(HALO_DRIVE));
@@ -20,6 +21,10 @@ public class DriveScheme {
         SmartDashboard.putData("Drive Chooser", driveChooser);
     }
 
+    /**
+     * Get which drive setup to use from the dashboard
+     * @return 0 = combo drive; 1 = halo drive; 2 = angle drive
+     */
     public int get()
     {
         return ((Integer) driveChooser.getSelected()).intValue();

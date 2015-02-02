@@ -3,24 +3,39 @@ package org.usfirst.frc.team4818.robot;
 
 import com.taurus.Application;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SampleRobot;
 
-
-
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
 public class Robot extends SampleRobot {    
 
     private Application app;
     
     public void robotInit()
     {
-        app = new com.taurus.robotspecific2015.VisionApplication();
+        int appToRun = Preferences.getInstance().getInt("Application", 1);
+        
+        switch(appToRun)
+        {
+            case 0:
+                // Run Swerve
+                app = new com.taurus.swerve.Application();
+                break;
+            
+            case 1:
+                // Run 2015 specific
+                app = new com.taurus.robotspecific2015.Application();
+                break;
+            
+            case 2:
+                // Run Vision test
+                app = new com.taurus.robotspecific2015.VisionApplication();
+                break;
+                
+            default:
+                // Run 2015 specific
+                app = new com.taurus.robotspecific2015.Application();
+                break;
+        }
     }
 
     public void operatorControl()
