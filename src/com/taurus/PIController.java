@@ -1,6 +1,5 @@
-package com.taurus.swerve;
+package com.taurus;
 
-import com.taurus.Utilities;
 
 /**
  * A basic PI controller for use with the Swerve drive
@@ -39,6 +38,19 @@ public final class PIController {
         this.lastTimestamp = Double.NEGATIVE_INFINITY;
     }
 
+    /**
+     * Update the PIController using the setpoint and the sensor reading
+     * 
+     * @param setpoint desired setpoint
+     * @param sensor reading from the sensor
+     * @param timestamp current time
+     * @return new calculated output, clamped to max output range
+     */
+    public double update(double setpoint, double sensor, double timestamp)
+    {
+        return this.update(setpoint - sensor, timestamp);
+    }
+    
     /**
      * Update the PIController using the new error
      * 
