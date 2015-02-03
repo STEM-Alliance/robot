@@ -13,23 +13,26 @@ public class Lift
    STATE_ADD_CONTAINER_TO_STACK StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
    STATE_EJECT_STACK StateEjectStack = STATE_EJECT_STACK.JAWS_EXTEND;
 
-   Car LiftCar = new Car();
-   Ejector StackEjector = new Ejector();
+   Car LiftCar;
+   Ejector StackEjector;
    PneumaticSubsystem CylindersRails;
    PneumaticSubsystem CylindersContainerCar;
    PneumaticSubsystem CylindersContainerFixed;
    PneumaticSubsystem CylindersStackHolder;
    PneumaticSubsystem CylindersJawsOfLife;
-   Sensor ToteIntakeSensor = new SensorDigital(); // TODO create the specific sensor type
+   Sensor ToteIntakeSensor;
 
    // Initialize lift and all objects owned by the lift
    public Lift()
    {
+      LiftCar = new Car();
+      StackEjector = new Ejector();
       CylindersRails = new PneumaticSubsystem(Constants.CHANNEL_RAIL, Constants.TIME_EXTEND_RAILS, Constants.TIME_CONTRACT_RAILS, true);
       CylindersContainerCar = new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_CAR, Constants.TIME_EXTEND_CONTAINER_CAR, Constants.TIME_CONTRACT_CONTAINER_CAR, false);
       CylindersContainerFixed = new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_FIXED, Constants.TIME_EXTEND_CONTAINER_FIXED, Constants.TIME_CONTRACT_CONTAINER_FIXED, false);
       CylindersStackHolder = new PneumaticSubsystem(Constants.CHANNEL_STACK_HOLDER, Constants.TIME_EXTEND_STACK_HOLDER, Constants.TIME_CONTRACT_STACK_HOLDER, false);
       CylindersJawsOfLife = new PneumaticSubsystem(Constants.CHANNEL_JAWS_OF_LIFE, Constants.TIME_EXTEND_JAWS, Constants.TIME_CONTRACT_JAWS, false);
+      ToteIntakeSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
    }
 
    // Routine to add a new tote to existing stack from chute

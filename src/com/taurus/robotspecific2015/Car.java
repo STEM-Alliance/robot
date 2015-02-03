@@ -16,10 +16,10 @@ public class Car
    public Car()
    {
       Motors = new MotorSystem(Constants.PINS_MOTOR);
-      SensorStack = new SensorDigital();
-      SensorDestack = new SensorDigital();
-      SensorChute = new SensorDigital();
-      SensorBottom = new SensorDigital();
+      SensorStack = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_STACK);
+      SensorDestack = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_DESTACK);
+      SensorChute = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_CHUTE);
+      SensorBottom = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_BOTTOM);
       
       Motors.SetScale(Constants.SCALING_MOTOR);
    }

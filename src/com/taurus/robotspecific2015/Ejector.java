@@ -7,16 +7,20 @@ public class Ejector
    STATE_EJECT StateEject = STATE_EJECT.PUSHER_EXTEND;
    POSITION_EJECTOR PositionEjector = POSITION_EJECTOR.IN;
 
-   MotorSystem Motors = new MotorSystem(Constants.PINS_EJECTOR);
+   MotorSystem Motors;
    PneumaticSubsystem CylindersStop;
    PneumaticSubsystem CylindersPusher;
-   Sensor OutSensor = new SensorDigital();
-   Sensor InSensor = new SensorDigital();
+   Sensor OutSensor;
+   Sensor InSensor;
 
    public Ejector()
    {
+      Motors = new MotorSystem(Constants.PINS_EJECTOR);
       CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP, Constants.TIME_EXTEND_STOP, Constants.TIME_CONTRACT_STOP, false);
       CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER, Constants.TIME_EXTEND_PUSHER, Constants.TIME_CONTRACT_PUSHER, false);
+      OutSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_OUT);
+      InSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_IN);
+      
       Motors.SetScale(Constants.SCALING_EJECTOR);
 
       // Move the Ejector to its initial "in" position

@@ -39,6 +39,15 @@ public abstract class Constants
    public static final int MOTOR_DIRECTION_FORWARD = 1;
    public static final int MOTOR_DIRECTION_BACKWARD = -1;
    
+   //Sensors
+   public static final int CHANNEL_DIGITAL_TOTE_INTAKE = 8;
+   public static final int CHANNEL_DIGITAL_CAR_STACK = 9;
+   public static final int CHANNEL_DIGITAL_CAR_DESTACK = 10;
+   public static final int CHANNEL_DIGITAL_CAR_CHUTE = 11;
+   public static final int CHANNEL_DIGITAL_CAR_BOTTOM = 12;
+   public static final int CHANNEL_DIGITAL_EJECTOR_OUT = 13;
+   public static final int CHANNEL_DIGITAL_EJECTOR_IN = 14;
+   
    // Lift
    public static enum STATE_ADD_CHUTE_TOTE_TO_STACK
    {
