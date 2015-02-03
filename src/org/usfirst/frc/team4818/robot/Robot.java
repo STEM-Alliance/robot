@@ -5,6 +5,7 @@ import com.taurus.Application;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends SampleRobot {    
 
@@ -19,21 +20,25 @@ public class Robot extends SampleRobot {
             case 0:
                 // Run Swerve
                 app = new com.taurus.swerve.Application();
+                SmartDashboard.putString("Application", "Swerve");
                 break;
             
             case 1:
                 // Run 2015 specific
                 app = new com.taurus.robotspecific2015.Application();
+                SmartDashboard.putString("Application", "2015");
                 break;
             
             case 2:
                 // Run Vision test
                 app = new com.taurus.robotspecific2015.VisionApplication();
+                SmartDashboard.putString("Application", "Vision");
                 break;
                 
             default:
                 // Run 2015 specific
                 app = new com.taurus.robotspecific2015.Application();
+                SmartDashboard.putString("Application", "Swerve");
                 break;
         }
     }
