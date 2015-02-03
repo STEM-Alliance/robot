@@ -147,4 +147,39 @@ public final class Utilities {
     {
         return clampToRange(value, 0, inMax) * outMax / inMax;
     }
+    
+    /**
+     * Find the closest position given the input
+     * @param Input
+     * @param Positions
+     * @return
+     */
+    public static double findClosest(double Input, double[] Positions)
+    {
+        double min = Double.MAX_VALUE;
+        double closest = Input;
+
+        for (int i = 0; i < Positions.length; i++)
+        {
+            final double diff = Math.abs(Positions[i] - Input);
+
+            if (diff < min) {
+                min = diff;
+                closest = Positions[i];
+            }
+        }
+
+        return closest;
+    }
+    
+    /**
+     * Check if a number is between two others
+     * @param val
+     * @param min
+     * @param max
+     * @return
+     */
+    public static boolean isBetween(double val, double min, double max) {
+        return max > min ? val > min && val < max : val > max && val < min;
+    }
 }
