@@ -33,6 +33,34 @@ public class Vision implements Runnable {
     private double ToteLineEndY = 180 / 240;
 
     private boolean toteDetectionOn = true;
+    
+    private double resultX = 0, resultY = 0;
+    private double resultOrientation = 0;
+    
+    public double getResultX()
+    {
+        synchronized (visionThread)
+        {
+            return resultX;
+        }
+    }    
+    
+    public double getResultY()
+    {
+        synchronized (visionThread)
+        {
+            return resultY;
+        }
+    }
+    
+    
+    public double getResultOrientation()
+    {
+        synchronized (visionThread)
+        {
+            return resultOrientation;
+        }
+    }
 
     public Vision()
     {
@@ -160,7 +188,6 @@ public class Vision implements Runnable {
                     if (toteDetectionOn)
                     {
                         // tote detection is on, so adjust the image to filter out all the nonsense
-                        NIVision.imaqLowPass(frame, frame, 3, 3, .4f, null);
                         
                         NIVision.imaqColorThreshold(frameTH, frame, 255, ColorMode.HSL, 
                                 new Range(Application.prefs.getInt("Hmin", 30), Application.prefs.getInt("Hmax", 60)), 
@@ -191,38 +218,40 @@ public class Vision implements Runnable {
                         int particleCount = NIVision.imaqCountParticles(frameTH, /*connectivity8*/ 1);
                         SmartDashboard.putNumber("Particles", particleCount);
                         
+                        // find the bounding rectangle, then send
+                        double biggestArea = -1;
+                        double biggestX = 0, biggestY = 0;
+                        double biggestOrientation = 0;
+                        
+                        for (int i = 0; i < particleCount; i++)
+                        {
+                            double centerx = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_CENTER_OF_MASS_X);                                
+                            double centery = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_CENTER_OF_MASS_Y);
+                            double area = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_AREA);
+                            double orientation = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_ORIENTATION);
+                            
+                            if (area > biggestArea)
+                            {
+                                biggestArea = area;
+                                biggestX = centerx;
+                                biggestY = centery;
+                                biggestOrientation = orientation;
+                            }
+                        }
+                        
+                        SmartDashboard.putNumber("Area", biggestArea);
+                        SmartDashboard.putString("Center", biggestX+","+biggestY);
+                        SmartDashboard.putNumber("Orientation", biggestOrientation);
+                        
+                        synchronized (visionThread)
+                        {
+                            resultX = biggestX / size.width;
+                            resultY = biggestY / size.height;
+                            resultOrientation = biggestOrientation;
+                        }
+                        
                         if (imageToSend == 3)
                         {
-                            // find the bounding rectangle, then send
-                            for (int i = 0; i < particleCount; i++)
-                            {
-                                double left = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_LEFT);
-                                double top = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_TOP);
-                                double right = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_RIGHT);
-                                double bottom = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_BOUNDING_RECT_BOTTOM);
-                                double centerx = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_CENTER_OF_MASS_X);                                
-                                double centery = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_CENTER_OF_MASS_Y);
-                                double ellipsemajor = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_EQUIVALENT_ELLIPSE_MAJOR_AXIS);
-                                double ellipseminor =  NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_EQUIVALENT_ELLIPSE_MINOR_AXIS);
-                                double ellipseminorf = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_EQUIVALENT_ELLIPSE_MINOR_AXIS_FERET);
-                                double rectmajor = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_EQUIVALENT_RECT_LONG_SIDE);
-                                double rectminor = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_EQUIVALENT_RECT_SHORT_SIDE);
-                                double rectminorf = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_EQUIVALENT_RECT_SHORT_SIDE_FERET);
-                                double area = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_AREA);
-                                double convexarea = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_CONVEX_HULL_AREA);
-                                double convexperimeter = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_CONVEX_HULL_PERIMETER);
-                                double orientation = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_ORIENTATION);
-                                double perimiter = NIVision.imaqMeasureParticle(frameTH, i, 0, MeasurementType.MT_PERIMETER);
-                                
-                                SmartDashboard.putString("Bounding", left+","+top+","+right+","+bottom);
-                                SmartDashboard.putString("Ellipse", ellipsemajor+","+ellipseminor+","+ellipseminorf);
-                                SmartDashboard.putString("Rectangle", rectmajor+","+rectminor+","+rectminorf);
-                                SmartDashboard.putString("Convex", convexarea+","+convexperimeter);
-                                SmartDashboard.putString("Outside", area+","+perimiter);
-                                SmartDashboard.putString("Center", centerx+","+centery);
-                                SmartDashboard.putNumber("Orientation", orientation);
-                            }
-                        
                             CameraServer.getInstance().setImage(frameTH);
                         }
                     }
