@@ -138,6 +138,7 @@ public class Application extends com.taurus.Application
         boolean button3 = false;
         boolean button4 = false;
         boolean button5 = false;
+        boolean button6 = false;
 
         // TODO: Add test modes for cylinders and motors and features.
         switch (testMode)
@@ -183,17 +184,25 @@ public class Application extends com.taurus.Application
             case Constants.TEST_MODE_MOTORS:
                 if (button1)
                 {
-                    TestModeCar.Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
+                    TestModeCar.MotorEncoder.SetPosition(0);
                 }
                 else if (button2)
                 {
-                    TestModeCar.Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
+                    TestModeCar.MotorEncoder.SetPosition(1);
                 }
                 else if (button3)
                 {
-                    TestModeEjector.Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
+                    TestModeCar.MotorEncoder.SetPosition(2);
                 }
                 else if (button4)
+                {
+                    TestModeCar.MotorEncoder.SetPosition(3);
+                }
+                else if (button5)
+                {
+                    TestModeEjector.Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
+                }
+                else if (button6)
                 {
                     TestModeEjector.Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
                 }
