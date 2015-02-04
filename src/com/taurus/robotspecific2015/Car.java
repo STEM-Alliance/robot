@@ -3,121 +3,81 @@ package com.taurus.robotspecific2015;
 import com.taurus.robotspecific2015.Constants.POSITION_CAR;
 
 // State machine for lift
-public class Car {
-    private POSITION_CAR CurrentState;
-
-    MotorSystem Motors;
-    Sensor SensorStack;
-    Sensor SensorDestack;
-    Sensor SensorChute;
-    Sensor SensorBottom;
-
+public class Car 
+{    
+    int[] EncoderPins = null;  //TODO create constant
+    double InchesPerPulse = 0; //TODO create constants
+    double[] Positions = {0, 1, 2, 3};  //TODO Create constants
+    
+    LinearMotorEncoder MotorEncoder;
+    SensorDigital ZeroSensor;
+    
     public Car()
     {
-        Motors = new MotorSystem(Constants.PINS_MOTOR);
-        SensorStack = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_STACK);
-        SensorDestack = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_DESTACK);
-        SensorChute = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_CHUTE);
-        SensorBottom = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_BOTTOM);
-
-        Motors.SetScale(Constants.SCALING_MOTOR);
+        MotorEncoder = new LinearMotorEncoder(Constants.PINS_MOTOR, Constants.SCALING_MOTOR, EncoderPins, InchesPerPulse, Positions);
+        ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
+        
+        // Move the motor until you hit a sensor, then zero the encoder position
+        if (ZeroSensor.IsOn())
+        {
+            MotorEncoder.Zero();
+        }
+        else
+        {
+            MotorEncoder.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+        }
     }
-
+    
     public POSITION_CAR GetPosition()
     {
-        return CurrentState;
+        POSITION_CAR result = POSITION_CAR.MOVING;
+        int position = MotorEncoder.GetPosition();
+                
+        if (position == 3) 
+        {
+            result = POSITION_CAR.STACK;
+        }
+        else if (position == 2)
+        {
+            result = POSITION_CAR.DESTACK;
+        }
+        else if (position == 1)
+        {
+            result = POSITION_CAR.CHUTE;
+        }
+        else if (position == 0)
+        {
+            result = POSITION_CAR.BOTTOM;
+        }
+        return result;
     }
 
     // Move car to where the new tote will be held in place by the stack holder
     public boolean GoToStack()
     {
-        if (SensorStack.IsOn() || CurrentState == Constants.POSITION_CAR.STACK)
-        {
-            // Stop motor and advance state machine state
-            Motors.Set(0);
-            CurrentState = Constants.POSITION_CAR.STACK;
-        }
-        else
-        {
-            Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
-        }
-
-        // Is the car at the stack position or not?
-        return CurrentState == Constants.POSITION_CAR.STACK;
+        MotorEncoder.SetPosition(3);
+        return MotorEncoder.GetPosition() == 3;
     }
 
     // Move car to position that pushes last tote high enough to make room to
-    // disengage stack holder
+    // disengage stack holder    
     public boolean GoToDestack()
     {
-        if (SensorDestack.IsOn()
-                || CurrentState == Constants.POSITION_CAR.DESTACK)
-        {
-            // Stop motor and advance state machine state
-            Motors.Set(0);
-            CurrentState = Constants.POSITION_CAR.DESTACK;
-        }
-        else
-        {
-            // Set motor, specifically selecting the correct direction based on
-            // current position
-            if (CurrentState == Constants.POSITION_CAR.STACK)
-            {
-                Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
-            }
-            else
-            {
-                Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
-            }
-        }
-
-        // Is the car at the destack position or not?
-        return CurrentState == Constants.POSITION_CAR.DESTACK;
+        MotorEncoder.SetPosition(2);
+        return MotorEncoder.GetPosition() == 2;
     }
 
     // Move car to position that can receive totes from chute
     public boolean GoToChute()
     {
-        if (SensorChute.IsOn() || CurrentState == Constants.POSITION_CAR.CHUTE)
-        {
-            // Stop motor and advance state machine state
-            Motors.Set(0);
-            CurrentState = Constants.POSITION_CAR.CHUTE;
-        }
-        else
-        {
-            // Set motor, specifically selecting the correct direction based on
-            // current position
-            if (CurrentState == Constants.POSITION_CAR.BOTTOM)
-            {
-                Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
-            }
-            else
-            {
-                Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
-            }
-        }
-
-        // Is the car at the chute position or not?
-        return CurrentState == Constants.POSITION_CAR.CHUTE;
+        MotorEncoder.SetPosition(1);
+        return MotorEncoder.GetPosition() == 1;
     }
 
     // Move car to bottom position
     public boolean GoToBottom()
     {
-        if (SensorBottom.IsOn()
-                || CurrentState == Constants.POSITION_CAR.BOTTOM)
-        {
-            // Stop motor and advance state machine state
-            Motors.Set(0);
-            CurrentState = Constants.POSITION_CAR.BOTTOM;
-        }
-        else
-        {
-            Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
-        }
-
-        // Is the car at the bottom position or not?
-        return CurrentState == Constants.POSITION_CAR.BOTTOM;
+        MotorEncoder.SetPosition(0);
+        return MotorEncoder.GetPosition() == 0;
     }
 }

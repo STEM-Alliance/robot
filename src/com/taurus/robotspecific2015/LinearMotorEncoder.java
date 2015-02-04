@@ -66,7 +66,7 @@ public class LinearMotorEncoder {
     }
 
     /**
-     * Get the current position index if it is close enough to a position,
+     * Get the current position index if it is close enough to a position index,
      * otherwise returns -1
      * 
      * @return Position index if close to a position, else -1
@@ -126,6 +126,16 @@ public class LinearMotorEncoder {
         }
 
         return position;
+    }
+    
+    /**
+     * Set the desired speed directly on the motors
+     * 
+     * @param speed - raw value between -1 and 1
+     */
+    public void SetSpeedRaw(double speed)
+    {
+        Motors.Set(speed);
     }
 
     /**

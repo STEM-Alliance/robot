@@ -19,7 +19,7 @@ public class Lift {
     PneumaticSubsystem CylindersContainerFixed;
     PneumaticSubsystem CylindersStackHolder;
     PneumaticSubsystem CylindersJawsOfLife;
-    Sensor ToteIntakeSensor;
+    SensorDigital ToteIntakeSensor;
 
     // Initialize lift and all objects owned by the lift
     public Lift()
