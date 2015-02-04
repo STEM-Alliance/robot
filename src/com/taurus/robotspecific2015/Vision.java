@@ -36,6 +36,7 @@ public class Vision implements Runnable {
     
     private double resultX = 0, resultY = 0;
     private double resultOrientation = 0;
+    private boolean particleSeen = false;
     
     public double getResultX()
     {
@@ -59,6 +60,14 @@ public class Vision implements Runnable {
         synchronized (visionThread)
         {
             return resultOrientation;
+        }
+    }
+    
+    public boolean getToteSeen()
+    {
+        synchronized (visionThread)
+        {
+            return particleSeen;
         }
     }
 
@@ -245,6 +254,7 @@ public class Vision implements Runnable {
                         
                         synchronized (visionThread)
                         {
+                            particleSeen = particleCount > 0;
                             resultX = biggestX / size.width;
                             resultY = biggestY / size.height;
                             resultOrientation = biggestOrientation;

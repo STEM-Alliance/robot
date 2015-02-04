@@ -1,5 +1,27 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Autonomous mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="169" y="414"/>
+	</widget>
+	<widget field="Velocity Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="452"/>
+	</widget>
+	<widget field="Velocity X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="431"/>
+	</widget>
+	<widget field="Orientation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="410"/>
+	</widget>
+	<widget field="Area" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="168" y="371"/>
+	</widget>
+	<widget field="Center" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="158" y="390"/>
+		<width>281</width>
+	</widget>
+	<widget field="Application" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="182" y="1"/>
+	</widget>
 	<widget field="FrameSize" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="389"/>
 	</widget>
@@ -19,7 +41,7 @@
 		<location x="760" y="0"/>
 		<width>250</width>
 		<height>180</height>
-		<property name="Buffer Size (samples)" value="500"/>
+		<property name="Buffer Size (samples)" value="100"/>
 	</widget>
 	<widget field="Swerve Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
 		<location x="760" y="180"/>
@@ -69,10 +91,9 @@
 		<location x="81" y="-11"/>
 	</widget>
 	<widget field="Image to show" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="144" y="10"/>
+		<location x="172" y="36"/>
 	</widget>
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="TEST MODE"/>
 </xml>
