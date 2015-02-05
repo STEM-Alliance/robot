@@ -9,6 +9,7 @@ public class ControllerChooser {
 
     public static final int XBOX = 0;
     public static final int JOY = 1;
+    public static final int XBOXPANEL = 2;
 
     public ControllerChooser()
     {
@@ -16,6 +17,7 @@ public class ControllerChooser {
         controllerChooser = new SendableChooser();
         controllerChooser.addDefault("Xbox", XBOX);
         controllerChooser.addObject("Joysticks", JOY);
+        controllerChooser.addObject("Xbox & Panel", XBOXPANEL);
         SmartDashboard.putData("Controller", controllerChooser);
     }
 
@@ -27,10 +29,16 @@ public class ControllerChooser {
         {
             case XBOX:
                 result = new ControllerXbox();
+                break;
             case JOY:
                 result = new ControllerJoysticks();
+                break;
+            case XBOXPANEL:
+                result = new ControllerXboxPanel();
+                break;
             default:
                 result = new ControllerXbox();
+                break;
         }
 
         return result;
