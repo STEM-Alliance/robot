@@ -13,19 +13,19 @@ public abstract class Constants
    public static final int[] CHANNEL_STOP = {0, 1};
    public static final int[] CHANNEL_PUSHER = {2, 3};   
    
-   public static final double TIME_EXTEND_RAILS = 5; //TODO - what is the amount of time required to close the rails
-   public static final double TIME_EXTEND_CONTAINER_CAR = 5; //TODO - what is the amount of time required to open the container car
-   public static final double TIME_EXTEND_CONTAINER_FIXED = 5; //TODO - what is the amount of time required to open the container car
-   public static final double TIME_EXTEND_STACK_HOLDER = 5; //TODO - what is the amount of time required to open the container car
-   public static final double TIME_EXTEND_STOP = 5; //TODO - what is the amount of time required to open the container car
-   public static final double TIME_EXTEND_PUSHER = 5; //TODO - what is the amount of time required to close the jaws
+   public static final double TIME_EXTEND_RAILS = .5; //TODO - what is the amount of time required to close the rails
+   public static final double TIME_EXTEND_CONTAINER_CAR = .5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_EXTEND_CONTAINER_FIXED = .5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_EXTEND_STACK_HOLDER = .5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_EXTEND_STOP = .5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_EXTEND_PUSHER = .5; //TODO - what is the amount of time required to close the jaws
    
-   public static final double TIME_CONTRACT_RAILS = 5; //TODO - what is the amount of time required to close the rails
-   public static final double TIME_CONTRACT_CONTAINER_CAR = 5; //TODO - what is the amount of time required to open the container car
-   public static final double TIME_CONTRACT_CONTAINER_FIXED = 5; //TODO - what is the amount of time required to open the container car
-   public static final double TIME_CONTRACT_STACK_HOLDER = 5; //TODO - what is the amount of time required to open the container car
-   public static final double TIME_CONTRACT_STOP = 5; //TODO - what is the amount of time required to open the container car
-   public static final double TIME_CONTRACT_PUSHER = 5; //TODO - what is the amount of time required to close the jaws
+   public static final double TIME_CONTRACT_RAILS = .5; //TODO - what is the amount of time required to close the rails
+   public static final double TIME_CONTRACT_CONTAINER_CAR = .5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_CONTRACT_CONTAINER_FIXED = .5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_CONTRACT_STACK_HOLDER = .5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_CONTRACT_STOP = .5; //TODO - what is the amount of time required to open the container car
+   public static final double TIME_CONTRACT_PUSHER = .5; //TODO - what is the amount of time required to close the jaws
    
    // Motors
    public static final int[] PINS_LIFT_MOTOR = {8}; 
@@ -118,7 +118,7 @@ public abstract class Constants
    // Autonomous mode
    public static enum AUTO_STATE_MACHINE
    {
-       DRIVE_FOR, DRIVE_STOP, DRIVE_RIGHT, AUTO_END,
+      AUTO_START, DRIVE_FOR, DRIVE_STOP, DRIVE_RIGHT, AUTO_END,
    }
 }
  
