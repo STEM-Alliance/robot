@@ -5,31 +5,37 @@ import com.taurus.robotspecific2015.Constants.POSITION_CAR;
 // State machine for lift
 public class Car {
 
-    LinearMotorEncoder MotorEncoder;
-    SensorDigital ZeroSensor;
+    private LinearActuator Actuator;
+    private SensorDigital ZeroSensor;
 
     public Car()
     {
-        MotorEncoder = new LinearMotorEncoder(Constants.PINS_LIFT_MOTOR,
-                Constants.SCALING_LIFT_MOTOR, Constants.LIFT_ENCODER_PINS, Constants.INCHES_PER_PULSE,
+        Actuator = new LinearActuator(Constants.LIFT_MOTOR_PINS,
+                Constants.LIFT_MOTOR_SCALING, Constants.LIFT_ENCODER_PINS,
+                Constants.LIFT_ENCODER_INCHES_PER_PULSE,
                 Constants.LIFT_POSTITIONS);
+        
         ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
 
         // Move the motor until you hit a sensor, then zero the encoder position
         if (ZeroSensor.IsOn())
         {
-            MotorEncoder.Zero();
+            Actuator.Zero();
         }
         else
         {
-            MotorEncoder.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+            Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
         }
     }
 
+    /**
+     * Get the position of the car
+     * @return
+     */
     public POSITION_CAR GetPosition()
     {
         POSITION_CAR result = POSITION_CAR.MOVING;
-        int position = MotorEncoder.GetPosition();
+        int position = Actuator.GetPosition();
 
         if (position == 3)
         {
@@ -49,33 +55,65 @@ public class Car {
         }
         return result;
     }
+    
+    /**
+     * Go to position
+     * @param i position index
+     * @return
+     */
+    public boolean SetPosition(int i)
+    {
+        Actuator.SetPosition(i);
+        return Actuator.GetPosition() == i;
+    }
 
-    // Move car to where the new tote will be held in place by the stack holder
+    /**
+     * Move car to where the new tote will be held in place by the stack holder
+     * @return
+     */
     public boolean GoToStack()
     {
-        MotorEncoder.SetPosition(3);
-        return MotorEncoder.GetPosition() == 3;
+        Actuator.SetPosition(3);
+        return Actuator.GetPosition() == 3;
     }
 
-    // Move car to position that pushes last tote high enough to make room to
-    // disengage stack holder
+    /**
+     * Move car to position that pushes last tote high enough to make room to
+     * disengage stack holder
+     * @return
+     */
     public boolean GoToDestack()
     {
-        MotorEncoder.SetPosition(2);
-        return MotorEncoder.GetPosition() == 2;
+        Actuator.SetPosition(2);
+        return Actuator.GetPosition() == 2;
     }
 
-    // Move car to position that can receive totes from chute
+    /**
+     * Move car to position that can receive totes from chute
+     * @return
+     */
     public boolean GoToChute()
     {
-        MotorEncoder.SetPosition(1);
-        return MotorEncoder.GetPosition() == 1;
+        Actuator.SetPosition(1);
+        return Actuator.GetPosition() == 1;
     }
 
-    // Move car to bottom position
+    /**
+     * Move car to bottom position
+     * @return
+     */
     public boolean GoToBottom()
     {
-        MotorEncoder.SetPosition(0);
-        return MotorEncoder.GetPosition() == 0;
+        Actuator.SetPosition(0);
+        return Actuator.GetPosition() == 0;
+    }
+    
+    /**
+     * Get the current height of the car in inches
+     * @return
+     */
+    public double GetHeight()
+    {
+        return Actuator.GetDistance();
     }
 }

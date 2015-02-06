@@ -20,8 +20,14 @@ public class PneumaticSubsystem {
 
     private DoubleSolenoid solenoid;
 
-    // Constructor - Initialize PCU (pneumatic control unit) for this pneumatic
-    // subsystem
+    /**
+     * Initialize PCU (pneumatic control unit) for this pneumatic subsytem
+     * @param channels array of 2 channels for double solenoid
+     * @param module module id of PCU
+     * @param timeExtend time it takes to extend
+     * @param timeContract time it takes to contract
+     * @param startExtended whether to start extended or contracted
+     */
     public PneumaticSubsystem(int[] channels,
             int module, double timeExtend, double timeContract,
             boolean startExtended)
@@ -45,7 +51,10 @@ public class PneumaticSubsystem {
         }
     }
 
-    // Extend all of the solenoids to the 'on' position
+    /**
+     * Extend all of the solenoids to the 'on' position
+     * @return true if finished
+     */
     public boolean Extend()
     {
         boolean done = false;
@@ -58,7 +67,6 @@ public class PneumaticSubsystem {
         else if (Extending == false && Contracting == false)
         {
             // If we are not moving, start extending
-
             solenoid.set(DoubleSolenoid.Value.kForward);
 
             // Update current state
@@ -79,7 +87,10 @@ public class PneumaticSubsystem {
         return done;
     }
 
-    // Contract all of the solenoids to the 'off' position
+    /**
+     * Contract all of the solenoids to the 'off' position
+     * @return true if finished
+     */
     public boolean Contract()
     {
         boolean done = false;
@@ -112,7 +123,10 @@ public class PneumaticSubsystem {
         return done;
     }
 
-    // Return current position of solenoids
+    /**
+     * Return current position of solenoids
+     * @return true if it is extended, false if contracted
+     */
     public boolean IsExtended()
     {
         return Extended;
