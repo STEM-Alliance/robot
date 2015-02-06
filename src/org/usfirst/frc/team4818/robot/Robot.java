@@ -38,7 +38,7 @@ public class Robot extends SampleRobot {
             default:
                 // Run 2015 specific
                 app = new com.taurus.robotspecific2015.Application();
-                SmartDashboard.putString("Application", "Swerve");
+                SmartDashboard.putString("Application", "2015");
                 break;
         }
     }

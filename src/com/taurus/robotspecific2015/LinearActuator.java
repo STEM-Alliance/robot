@@ -6,7 +6,11 @@ import com.taurus.Utilities;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 
-public class LinearMotorEncoder {
+/**
+ * A Linear actuator subsystem using motor(s) and an encoder
+ *
+ */
+public class LinearActuator {
 
     private Encoder Enc;
     private PIController EncPIController;
@@ -16,18 +20,21 @@ public class LinearMotorEncoder {
     private double EncI = 0;
 
     private double[] Positions;
-    private double POSITION_THRESHOLD = .5;
+    private double PositionThreshold;
+    private static final double PositionThresholdDefault = 0.5;
 
     /**
-     * Create a new linear encoder sensor
+     * Create a new linear actuator using motor(s) and an encoder
      * @param MotorPins pin(s) to control the motor(s)
      * @param MotorScaling scale the speed of the motor(s) output
      * @param EncoderPins 2 pins, A and B, that the encoder is connected to
      * @param InchesPerPulse distance of travel per pulse on the encoder, in inches
-     * @param Positions array of positions in inches to use for setpoints, reading
+     * @param Positions array of positions in inches to use for setpoints, readings
+     * @param PositionThreshold threshold in inches to use when determining the position
      */
-    public LinearMotorEncoder(int[] MotorPins, double[] MotorScaling,
-            int[] EncoderPins, double InchesPerPulse, double[] Positions)
+    public LinearActuator(int[] MotorPins, double[] MotorScaling,
+            int[] EncoderPins, double InchesPerPulse, double[] Positions,
+            double PositionThreshold)
     {
         Motors = new MotorSystem(MotorPins);
         Motors.SetScale(MotorScaling);
@@ -38,6 +45,23 @@ public class LinearMotorEncoder {
         EncPIController = new PIController(EncP, EncI, 1.0);
 
         this.Positions = Positions;
+        this.PositionThreshold = PositionThreshold;
+    }
+
+    /**
+     * Create a new linear actuator using motor(s) and an encoder with the default
+     * position threshold of .5
+     * @param MotorPins pin(s) to control the motor(s)
+     * @param MotorScaling scale the speed of the motor(s) output
+     * @param EncoderPins 2 pins, A and B, that the encoder is connected to
+     * @param InchesPerPulse distance of travel per pulse on the encoder, in inches
+     * @param Positions array of positions in inches to use for setpoints, readings
+     */
+    public LinearActuator(int[] MotorPins, double[] MotorScaling,
+            int[] EncoderPins, double InchesPerPulse, double[] Positions)
+    {
+        this(MotorPins, MotorScaling, EncoderPins, InchesPerPulse,
+                Positions, PositionThresholdDefault);
     }
 
     /**
@@ -84,7 +108,7 @@ public class LinearMotorEncoder {
                     - Positions[i]);
 
             // then see if that distance is close enough using the threshold
-            if (DistanceFromPosition < POSITION_THRESHOLD)
+            if (DistanceFromPosition < PositionThreshold)
             {
                 position = i;
                 break;

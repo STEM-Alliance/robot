@@ -28,11 +28,17 @@ public class ControllerJoysticks implements Controller {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public double getX(Hand hand)
     {
         return GetJoy(hand).getX(hand);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public double getY(Hand hand)
     {
         return GetJoy(hand).getY(hand);
@@ -57,12 +63,7 @@ public class ControllerJoysticks implements Controller {
     }
 
     /**
-     * Get the magnitude of the direction vector formed by the joystick's
-     * current position relative to its origin
-     * 
-     * @param hand
-     *            Hand associated with the Joystick
-     * @return the magnitude of the direction vector
+     * {@inheritDoc}
      */
     public double getMagnitude(Hand hand)
     {
@@ -76,14 +77,9 @@ public class ControllerJoysticks implements Controller {
         }
         return value;
     }
-
+    
     /**
-     * Get the direction of the vector formed by the joystick and its origin in
-     * degrees
-     * 
-     * @param hand
-     *            Hand associated with the Joystick
-     * @return The direction of the vector in degrees
+     * {@inheritDoc}
      */
     public double getDirectionDegrees(Hand hand)
     {
@@ -91,12 +87,7 @@ public class ControllerJoysticks implements Controller {
     }
 
     /**
-     * Get the direction of the vector formed by the joystick and its origin in
-     * radians
-     * 
-     * @param hand
-     *            Hand associated with the Joystick
-     * @return The direction of the vector in radians
+     * {@inheritDoc}
      */
     public double getDirectionRadians(Hand hand)
     {
@@ -104,9 +95,7 @@ public class ControllerJoysticks implements Controller {
     }
 
     /**
-     * Get the Rotation value of the joystick for Halo Drive
-     * 
-     * @return The Rotation value of the joystick.
+     * {@inheritDoc}
      */
     public double getHaloDrive_Rotation()
     {
@@ -122,10 +111,7 @@ public class ControllerJoysticks implements Controller {
     }
 
     /**
-     * Get the swerve vector (mag & angle) of the velocity joystick for Halo
-     * Drive
-     * 
-     * @return The vector of the joystick.
+     * {@inheritDoc}
      */
     public SwerveVector getHaloDrive_Velocity()
     {
@@ -140,11 +126,9 @@ public class ControllerJoysticks implements Controller {
 
         return value;
     }
-
+    
     /**
-     * Get the heading/angle in degrees for Angle Drive
-     * 
-     * @return The angle in degrees of the joystick.
+     * {@inheritDoc}
      */
     public double getAngleDrive_Heading()
     {
@@ -156,12 +140,9 @@ public class ControllerJoysticks implements Controller {
 
         return Angle;
     }
-
+    
     /**
-     * Get the swerve vector (mag & angle) of the velocity joystick for Angle
-     * Drive
-     * 
-     * @return The vector of the joystick.
+     * {@inheritDoc}
      */
     public SwerveVector getAngleDrive_Velocity()
     {
@@ -176,15 +157,16 @@ public class ControllerJoysticks implements Controller {
         return value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean getRawButtion(int button)
     {
         return left.getRawButton(button);
     }
-    
+
     /**
-     * Get whether the high gear should be enabled
-     * 
-     * @return true if high gear, else low gear
+     * {@inheritDoc}
      */
     public boolean getHighGearEnable()
     {
@@ -193,20 +175,24 @@ public class ControllerJoysticks implements Controller {
     }
 
     /**
-     * Get the brake
-     * 
-     * @return
+     * {@inheritDoc}
      */
     public boolean getBrake()
     {
         return left.getRawButton(3);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean getResetGyro()
     {
         return left.getRawButton(7);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean getFieldRelative()
     {
         if (!fieldRelativeLast && left.getTop())
@@ -217,17 +203,49 @@ public class ControllerJoysticks implements Controller {
         return fieldRelative;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public double getDPad()
     {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public double getAngleDrive_Rotation()
     {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public boolean getAddChuteTote()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getAddFloorTote()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getAddContainer()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getEjectStack()
+    {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

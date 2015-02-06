@@ -7,20 +7,22 @@ public class Lift {
     // TODO add container state variable
     private boolean ContainerInStack = false;
     private int TotesInStack = 0;
-    STATE_ADD_CHUTE_TOTE_TO_STACK StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
-    STATE_ADD_FLOOR_TOTE_TO_STACK StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
-    STATE_ADD_CONTAINER_TO_STACK StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
-    STATE_EJECT_STACK StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
+    private STATE_ADD_CHUTE_TOTE_TO_STACK StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+    private STATE_ADD_FLOOR_TOTE_TO_STACK StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+    private STATE_ADD_CONTAINER_TO_STACK StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
+    private STATE_EJECT_STACK StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
 
-    Car LiftCar;
-    Ejector StackEjector;
-    PneumaticSubsystem CylindersRails;
-    PneumaticSubsystem CylindersContainerCar;
-    PneumaticSubsystem CylindersContainerFixed;
-    PneumaticSubsystem CylindersStackHolder;
-    SensorDigital ToteIntakeSensor;
+    private Car LiftCar;
+    private Ejector StackEjector;
+    private PneumaticSubsystem CylindersRails;
+    private PneumaticSubsystem CylindersContainerCar;
+    private PneumaticSubsystem CylindersContainerFixed;
+    private PneumaticSubsystem CylindersStackHolder;
+    private SensorDigital ToteIntakeSensor;
 
-    // Initialize lift and all objects owned by the lift
+    /**
+     * Initialize lift and all objects owned by the lift
+     */
     public Lift()
     {
         LiftCar = new Car();
@@ -47,7 +49,10 @@ public class Lift {
                 Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
     }
 
-    // Routine to add a new tote to existing stack from chute
+    /**
+     * Routine to add a new tote to existing stack from chute
+     * @return true if finished
+     */
     public boolean AddChuteToteToStack()
     {
         if (TotesInStack < 5) // Sanity check this should even be called
@@ -83,7 +88,7 @@ public class Lift {
                 case HANDLE_CONTAINER:
                     if (TotesInStack == 0)
                     {
-                        if (CylindersContainerFixed.Contract())
+                        if (GetCylindersContainerFixed().Contract())
                         {
                             StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
                         }
@@ -108,7 +113,10 @@ public class Lift {
         return TotesInStack == 5 && ToteIntakeSensor.IsOn();
     }
 
-    // Routine to add a new tote to existing stack from floor
+    /**
+     *  Routine to add a new tote to existing stack from floor
+     * @return true if finished
+     */
     public boolean AddFloorToteToStack()
     {
         switch (StateAddFloorToteToStack)
@@ -148,7 +156,7 @@ public class Lift {
             case HANDLE_CONTAINER:
                 if (TotesInStack == 0)
                 {
-                    if (CylindersContainerFixed.Contract())
+                    if (GetCylindersContainerFixed().Contract())
                     {
                         StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.RESET;
                     }
@@ -176,7 +184,10 @@ public class Lift {
         return TotesInStack == 5 && LiftCar.GetPosition() == POSITION_CAR.CHUTE;
     }
 
-    // Routine to lift a container to start a new stack
+    /**
+     *  Routine to lift a container to start a new stack
+     * @return true if finished
+     */
     public boolean AddContainerToStack()
     {
         if (TotesInStack == 0 && ContainerInStack == false) // Sanity check this
@@ -186,7 +197,7 @@ public class Lift {
             switch (StateAddContainerToStack)
             {
                 case INIT:
-                    if (CylindersRails.Contract())
+                    if (GetCylindersRails().Contract())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                     }
@@ -194,7 +205,7 @@ public class Lift {
                 // TODO: Need sensor to tell us when the container is in
                 // position to secure with pneumatics
                 case CONTAINER_CAR_EXTEND:
-                    if (CylindersContainerCar.Extend())
+                    if (GetCylindersContainerCar().Extend())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.LIFT_CAR;
                     }
@@ -207,13 +218,13 @@ public class Lift {
                     }
                     break;
                 case CONTAINER_FIXED_EXTEND:
-                    if (CylindersContainerFixed.Extend())
+                    if (GetCylindersContainerFixed().Extend())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_CONTRACT;
                     }
                     break;
                 case CONTAINER_CAR_CONTRACT:
-                    if (CylindersContainerCar.Contract())
+                    if (GetCylindersContainerCar().Contract())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.LOWER_CAR;
                     }
@@ -225,7 +236,7 @@ public class Lift {
                     }
                     break;
                 case RESET:
-                    if (CylindersRails.Extend())
+                    if (GetCylindersRails().Extend())
                     {
                         ContainerInStack = true;
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
@@ -239,7 +250,10 @@ public class Lift {
         return ContainerInStack;
     }
 
-    // Place the stack on the ground, then push it onto the scoring platform
+    /**
+     *  Place the stack on the ground, then push it onto the scoring platform
+     * @return true if finished
+     */
     public boolean EjectStack()
     {
         switch (StateEjectStack)
@@ -252,7 +266,7 @@ public class Lift {
                 }
                 break;
             case STACK_HOLDER_CONTRACT:
-                if (CylindersStackHolder.Contract())
+                if (GetCylindersStackHolder().Contract())
                 {
                     StateEjectStack = STATE_EJECT_STACK.LOWER_CAR;
                 }
@@ -279,6 +293,10 @@ public class Lift {
         return StateEjectStack == STATE_EJECT_STACK.RESET;
     }
 
+    /**
+     * reset the stack eject
+     * @return true if finished
+     */
     public boolean ResetEjectStack()
     {
         boolean finishedReset = false;
@@ -287,7 +305,7 @@ public class Lift {
         {
             // IMPORTANT: Use single '&' to execute all cleanup routines
             // asynchronously
-            if (StackEjector.ResetEjectStack() & CylindersStackHolder.Extend())
+            if (StackEjector.ResetEjectStack() & GetCylindersStackHolder().Extend())
             {
                 finishedReset = true;
                 ContainerInStack = false;
@@ -296,5 +314,68 @@ public class Lift {
             }
         }
         return finishedReset;
+    }
+
+    /**
+     * get the car object
+     * @return
+     */
+    public Car GetCar()
+    {
+        return LiftCar;
+    }
+    
+    /**
+     * get the ejector object
+     * @return
+     */
+    public Ejector GetEjector()
+    {
+        return StackEjector;
+    }
+
+    /**
+     * get the tote intake sensor object
+     * @return
+     */
+    public Sensor GetToteIntakeSensor()
+    {
+        return ToteIntakeSensor;
+    }
+
+    /**
+     * get the cylinder rails object
+     * @return the CylindersRails
+     */
+    public PneumaticSubsystem GetCylindersRails()
+    {
+        return CylindersRails;
+    }
+
+    /**
+     * get the cylinder container car object
+     * @return the CylindersContainerCar
+     */
+    public PneumaticSubsystem GetCylindersContainerCar()
+    {
+        return CylindersContainerCar;
+    }
+    
+    /**
+     * get the cylinder container fixed object
+     * @return the CylindersContainerFixed
+     */
+    public PneumaticSubsystem GetCylindersContainerFixed()
+    {
+        return CylindersContainerFixed;
+    }
+
+    /**
+     * get the cylinder stack object
+     * @return the CylindersStackHolder
+     */
+    public PneumaticSubsystem GetCylindersStackHolder()
+    {
+        return CylindersStackHolder;
     }
 }

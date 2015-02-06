@@ -65,8 +65,6 @@ public abstract class Application {
     
     public void TeleopInit()
     {
-        // TODO: Put common routine here
-
         controller = controllerChooser.GetController();
         
         drive.ZeroGyro();
@@ -76,7 +74,6 @@ public abstract class Application {
 
     public void TeleopPeriodic()
     {
-        // TODO: Put common routine here
         if ((Timer.getFPGATimestamp() - TimeLastDash) > TIME_RATE_DASH)
         {
             TimeLastDash = Timer.getFPGATimestamp();

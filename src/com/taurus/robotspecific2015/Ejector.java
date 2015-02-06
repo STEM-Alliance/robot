@@ -2,132 +2,173 @@ package com.taurus.robotspecific2015;
 
 import com.taurus.robotspecific2015.Constants.*;
 
-public class Ejector
-{
-   STATE_EJECT StateEject = STATE_EJECT.PUSHER_EXTEND;
-   POSITION_EJECTOR PositionEjector = POSITION_EJECTOR.IN;
+public class Ejector {
+    private STATE_EJECT StateEject = STATE_EJECT.PUSHER_EXTEND;
+    private POSITION_EJECTOR PositionEjector = POSITION_EJECTOR.IN;
 
-   MotorSystem Motors;
-   PneumaticSubsystem CylindersStop;
-   PneumaticSubsystem CylindersPusher;
-   Sensor OutSensor;
-   Sensor InSensor;
+    private MotorSystem Motors;
+    private PneumaticSubsystem CylindersStop;
+    private PneumaticSubsystem CylindersPusher;
+    private Sensor OutSensor;
+    private Sensor InSensor;
 
-   public Ejector()
-   {
-      Motors = new MotorSystem(Constants.PINS_EJECTOR);
-      CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP, Constants.MODULE_ID_PCU_2, Constants.TIME_EXTEND_STOP, Constants.TIME_CONTRACT_STOP, false);
-      CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER,Constants.MODULE_ID_PCU_2 ,Constants.TIME_EXTEND_PUSHER, Constants.TIME_CONTRACT_PUSHER, false);
-      OutSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_OUT);
-      InSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_IN);
-      
-      Motors.SetScale(Constants.SCALING_EJECTOR);
+    public Ejector()
+    {
+        Motors = new MotorSystem(Constants.PINS_EJECTOR);
+        CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP,
+                Constants.MODULE_ID_PCU_2, Constants.TIME_EXTEND_STOP,
+                Constants.TIME_CONTRACT_STOP, false);
+        CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER,
+                Constants.MODULE_ID_PCU_2, Constants.TIME_EXTEND_PUSHER,
+                Constants.TIME_CONTRACT_PUSHER, false);
+        OutSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_OUT);
+        InSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_IN);
 
-      // Move the Ejector to its initial "in" position
-      MoveIn();
-   }
+        Motors.SetScale(Constants.SCALING_EJECTOR);
 
-   public boolean EjectStack()
-   {
-      switch (StateEject)
-      {
-         case PUSHER_EXTEND:
-            if (CylindersPusher.Extend())
+        // Move the Ejector to its initial "in" position
+        MoveIn();
+    }
+
+    /**
+     * Eject the stack
+     * 
+     * @return true when finished
+     */
+    public boolean EjectStack()
+    {
+        switch (StateEject)
+        {
+            case PUSHER_EXTEND:
+                if (CylindersPusher.Extend())
+                {
+                    StateEject = STATE_EJECT.MOVE_OUT;
+                }
+                break;
+            case MOVE_OUT:
+                if (MoveOut())
+                {
+                    StateEject = STATE_EJECT.RESET;
+                }
+                break;
+            // IMPORTANT: Resetting the Ejector needs to happen, but with a
+            // seperate method call
+            // This allows robot to asynchronous drive and reset the Ejector
+            default:
+                // TODO: Put error condition here
+                break;
+        }
+
+        // Did we just finish ejecting the stack?
+        return StateEject == STATE_EJECT.RESET;
+    }
+
+    /**
+     * Asynchronously finish EjectStack(), which can be called while driving
+     * 
+     * @return true when finished
+     */
+    public boolean ResetEjectStack()
+    {
+        boolean finishedReset = false;
+
+        if (StateEject == STATE_EJECT.RESET)
+        {
+            // IMPORTANT: Use single '&' to execute all cleanup routines
+            // asynchronously
+            if (MoveIn() & CylindersPusher.Contract())
             {
-               StateEject = STATE_EJECT.MOVE_OUT;
+                finishedReset = true;
+                StateEject = STATE_EJECT.PUSHER_EXTEND;
             }
-            break;
-         case MOVE_OUT:
-            if (MoveOut())
-            {
-               StateEject = STATE_EJECT.RESET;
-            }
-            break;
-         // IMPORTANT: Resetting the Ejector needs to happen, but with a seperate method call
-         //            This allows robot to asynchronous drive and reset the Ejector
-         default:
-            // TODO: Put error condition here
-            break;
-      }
+        }
+        return finishedReset;
+    }
 
-      // Did we just finish ejecting the stack?
-      return StateEject == STATE_EJECT.RESET;
-   }
+    /**
+     * Disengage the stop for stopping totes from the chute
+     * 
+     * @return true when finished
+     */
+    public boolean StopOut()
+    {
+        boolean done = false;
 
-   // Asynchronously finish EjectStack(), which can be called while driving
-   public boolean ResetEjectStack()
-   {
-      boolean finishedReset = false;
-      
-      if (StateEject == STATE_EJECT.RESET)
-      {
-         // IMPORTANT: Use single '&' to execute all cleanup routines asynchronously
-         if (MoveIn() & CylindersPusher.Contract())
-         {
-            finishedReset = true;
-            StateEject = STATE_EJECT.PUSHER_EXTEND;
-         }
-      }      
-      return finishedReset;
-   }
+        if (CylindersStop.Extend() && MoveOut())
+        {
+            done = true;
+        }
+        return done;
+    }
 
-   // Disengage the stop for stopping totes from the chute
-   public boolean StopOut()
-   {
-      boolean done = false;
+    /**
+     * Engage the stop for stopping totes from the chute
+     * 
+     * @return true when finished
+     */
+    public boolean StopIn()
+    {
+        boolean done = false;
 
-      if (CylindersStop.Extend() && MoveOut())
-      {
-         done = true;
-      }
-      return done;
-   }
+        if (CylindersStop.Contract() && MoveIn())
+        {
+            done = true;
+        }
+        return done;
+    }
 
-   // Engage the stop for stopping totes from the chute
-   public boolean StopIn()
-   {
-      boolean done = false;
+    /**
+     * Move the Ejector outward with the motors
+     * 
+     * @return true when finished
+     */
+    private boolean MoveOut()
+    {
+        if (OutSensor.IsOn()
+                || PositionEjector == Constants.POSITION_EJECTOR.OUT)
+        {
+            // Stop motor and advance state machine state
+            Motors.Set(0);
+            PositionEjector = Constants.POSITION_EJECTOR.OUT;
+        }
+        else
+        {
+            Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
+        }
 
-      if (CylindersStop.Contract() && MoveIn())
-      {
-         done = true;
-      }
-      return done;
-   }
+        // Is the Ejector in the out position or not?
+        return PositionEjector == Constants.POSITION_EJECTOR.OUT;
+    }
 
-   // Move the Ejector outward with the motors
-   private boolean MoveOut()
-   {
-      if (OutSensor.IsOn() || PositionEjector == Constants.POSITION_EJECTOR.OUT)
-      {
-         // Stop motor and advance state machine state
-         Motors.Set(0);
-         PositionEjector = Constants.POSITION_EJECTOR.OUT;
-      }
-      else
-      {
-         Motors.Set(Constants.MOTOR_DIRECTION_FORWARD);
-      }
+    /**
+     * Move the Ejector inward with the motors
+     * 
+     * @return true when finished
+     */
+    private boolean MoveIn()
+    {
+        if (InSensor.IsOn() || PositionEjector == Constants.POSITION_EJECTOR.IN)
+        {
+            // Stop motor and advance state machine state
+            Motors.Set(0);
+            PositionEjector = Constants.POSITION_EJECTOR.IN;
+        }
+        else
+        {
+            Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
+        }
 
-      // Is the Ejector in the out position or not?
-      return PositionEjector == Constants.POSITION_EJECTOR.OUT;
-   }
+        // Is the Ejector in the in position or not?
+        return PositionEjector == Constants.POSITION_EJECTOR.IN;
+    }
 
-   // Move the Ejector inward with the motors
-   private boolean MoveIn()
-   {
-      if (InSensor.IsOn() || PositionEjector == Constants.POSITION_EJECTOR.IN)
-      {
-         // Stop motor and advance state machine state
-         Motors.Set(0);
-         PositionEjector = Constants.POSITION_EJECTOR.IN;
-      }
-      else
-      {
-         Motors.Set(Constants.MOTOR_DIRECTION_BACKWARD);
-      }
-
-      // Is the Ejector in the in position or not?
-      return PositionEjector == Constants.POSITION_EJECTOR.IN;
-   }
+    /**
+     * Set the motors' speed
+     * 
+     * @param speed
+     */
+    public void SetMotors(double speed)
+    {
+        Motors.Set(speed);
+    }
 }
