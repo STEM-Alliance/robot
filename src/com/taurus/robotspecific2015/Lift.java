@@ -10,7 +10,7 @@ public class Lift {
     STATE_ADD_CHUTE_TOTE_TO_STACK StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
     STATE_ADD_FLOOR_TOTE_TO_STACK StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
     STATE_ADD_CONTAINER_TO_STACK StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
-    STATE_EJECT_STACK StateEjectStack = STATE_EJECT_STACK.JAWS_EXTEND;
+    STATE_EJECT_STACK StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
 
     Car LiftCar;
     Ejector StackEjector;
@@ -18,7 +18,6 @@ public class Lift {
     PneumaticSubsystem CylindersContainerCar;
     PneumaticSubsystem CylindersContainerFixed;
     PneumaticSubsystem CylindersStackHolder;
-    PneumaticSubsystem CylindersJawsOfLife;
     SensorDigital ToteIntakeSensor;
 
     // Initialize lift and all objects owned by the lift
@@ -27,23 +26,23 @@ public class Lift {
         LiftCar = new Car();
         StackEjector = new Ejector();
         CylindersRails = new PneumaticSubsystem(Constants.CHANNEL_RAIL,
-                Constants.TIME_EXTEND_RAILS, Constants.TIME_CONTRACT_RAILS,
+                 Constants.MODULE_ID_PCU, Constants.TIME_EXTEND_RAILS, Constants.TIME_CONTRACT_RAILS,
                 true);
         CylindersContainerCar = new PneumaticSubsystem(
                 Constants.CHANNEL_CONTAINER_CAR,
+                Constants.MODULE_ID_PCU,
                 Constants.TIME_EXTEND_CONTAINER_CAR,
                 Constants.TIME_CONTRACT_CONTAINER_CAR, false);
         CylindersContainerFixed = new PneumaticSubsystem(
                 Constants.CHANNEL_CONTAINER_FIXED,
+                Constants.MODULE_ID_PCU,
                 Constants.TIME_EXTEND_CONTAINER_FIXED,
                 Constants.TIME_CONTRACT_CONTAINER_FIXED, false);
         CylindersStackHolder = new PneumaticSubsystem(
                 Constants.CHANNEL_STACK_HOLDER,
+                Constants.MODULE_ID_PCU,
                 Constants.TIME_EXTEND_STACK_HOLDER,
                 Constants.TIME_CONTRACT_STACK_HOLDER, false);
-        CylindersJawsOfLife = new PneumaticSubsystem(
-                Constants.CHANNEL_JAWS_OF_LIFE, Constants.TIME_EXTEND_JAWS,
-                Constants.TIME_CONTRACT_JAWS, false);
         ToteIntakeSensor = new SensorDigital(
                 Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
     }
@@ -85,13 +84,6 @@ public class Lift {
                     if (TotesInStack == 0)
                     {
                         if (CylindersContainerFixed.Contract())
-                        {
-                            StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
-                        }
-                    }
-                    else if (TotesInStack == 4)
-                    {
-                        if (CylindersJawsOfLife.Contract())
                         {
                             StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
                         }
@@ -157,13 +149,6 @@ public class Lift {
                 if (TotesInStack == 0)
                 {
                     if (CylindersContainerFixed.Contract())
-                    {
-                        StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.RESET;
-                    }
-                }
-                else if (TotesInStack == 4)
-                {
-                    if (CylindersJawsOfLife.Contract())
                     {
                         StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.RESET;
                     }
@@ -259,12 +244,6 @@ public class Lift {
     {
         switch (StateEjectStack)
         {
-            case JAWS_EXTEND:
-                if (CylindersJawsOfLife.Extend())
-                {
-                    StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
-                }
-                break;
             case LIFT_CAR:
                 if (LiftCar.GoToDestack()) // TODO: Add new height for adding
                                            // container to stack?
@@ -313,7 +292,7 @@ public class Lift {
                 finishedReset = true;
                 ContainerInStack = false;
                 TotesInStack = 0;
-                StateEjectStack = STATE_EJECT_STACK.JAWS_EXTEND;
+                StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
             }
         }
         return finishedReset;

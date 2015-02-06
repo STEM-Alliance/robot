@@ -48,7 +48,7 @@ public class SwerveWheel {
 
     // sensor
     public AnalogPotentiometer AnglePot;
-    private Encoder DriveEncoder;
+    //private Encoder DriveEncoder;
 
     // controller
     private SwerveAngleController AngleController;
@@ -98,8 +98,8 @@ public class SwerveWheel {
         ShifterValueHigh = ShiftVals[0];
         ShifterValueLow = ShiftVals[1];
 
-        DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
-        DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
+        //DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
+        //DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
 
 //        DriveEncoderFilter = new VelocityCalculator();
 //        DriveEncoderController = new PIController(DriveP, DriveI, 1.0);
@@ -146,7 +146,8 @@ public class SwerveWheel {
      */
     public SwerveVector getActual()
     {
-        WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
+     //   WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
+        WheelActual.setMagAngle(WheelDesired.getMag(), getAnglePotValue());
         return WheelActual;
     }
 

@@ -3,20 +3,18 @@ package com.taurus.robotspecific2015;
 import com.taurus.robotspecific2015.Constants.POSITION_CAR;
 
 // State machine for lift
-public class Car 
-{    
-    int[] EncoderPins = null;  //TODO create constant
-    double InchesPerPulse = 0; //TODO create constants
-    double[] Positions = {0, 1, 2, 3};  //TODO Create constants
-    
+public class Car {
+
     LinearMotorEncoder MotorEncoder;
     SensorDigital ZeroSensor;
-    
+
     public Car()
     {
-        MotorEncoder = new LinearMotorEncoder(Constants.PINS_MOTOR, Constants.SCALING_MOTOR, EncoderPins, InchesPerPulse, Positions);
+        MotorEncoder = new LinearMotorEncoder(Constants.PINS_LIFT_MOTOR,
+                Constants.SCALING_LIFT_MOTOR, Constants.LIFT_ENCODER_PINS, Constants.INCHES_PER_PULSE,
+                Constants.LIFT_POSTITIONS);
         ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
-        
+
         // Move the motor until you hit a sensor, then zero the encoder position
         if (ZeroSensor.IsOn())
         {
@@ -27,13 +25,13 @@ public class Car
             MotorEncoder.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
         }
     }
-    
+
     public POSITION_CAR GetPosition()
     {
         POSITION_CAR result = POSITION_CAR.MOVING;
         int position = MotorEncoder.GetPosition();
-                
-        if (position == 3) 
+
+        if (position == 3)
         {
             result = POSITION_CAR.STACK;
         }
@@ -60,7 +58,7 @@ public class Car
     }
 
     // Move car to position that pushes last tote high enough to make room to
-    // disengage stack holder    
+    // disengage stack holder
     public boolean GoToDestack()
     {
         MotorEncoder.SetPosition(2);

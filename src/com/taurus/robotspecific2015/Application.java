@@ -162,10 +162,6 @@ public class Application extends com.taurus.Application
                 {
                     testCylinders = lift.CylindersStackHolder;
                 }
-                else if (button5)
-                {
-                    testCylinders = lift.CylindersJawsOfLife;
-                }
                 else
                 {
                     testCylinders = lift.CylindersRails;

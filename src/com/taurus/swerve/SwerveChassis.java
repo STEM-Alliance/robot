@@ -83,7 +83,7 @@ public class SwerveChassis {
                     Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
                     SwerveConstants.WheelEncoderPins[i],
                     SwerveConstants.WheelPotPins[i],
-                    SwerveConstants.WheelDriveMotorPins[i],
+                    SwerveConstants.WheelDriveMotorAddress[i],
                     SwerveConstants.WheelAngleMotorPins[i],
                     SwerveConstants.WheelShiftServoPins[i],
                     SwerveConstants.WheelShiftServoVals[i]);

@@ -16,8 +16,8 @@ public class Ejector
    public Ejector()
    {
       Motors = new MotorSystem(Constants.PINS_EJECTOR);
-      CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP, Constants.TIME_EXTEND_STOP, Constants.TIME_CONTRACT_STOP, false);
-      CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER, Constants.TIME_EXTEND_PUSHER, Constants.TIME_CONTRACT_PUSHER, false);
+      CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP, Constants.MODULE_ID_PCU_2, Constants.TIME_EXTEND_STOP, Constants.TIME_CONTRACT_STOP, false);
+      CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER,Constants.MODULE_ID_PCU_2 ,Constants.TIME_EXTEND_PUSHER, Constants.TIME_CONTRACT_PUSHER, false);
       OutSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_OUT);
       InSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_IN);
       
