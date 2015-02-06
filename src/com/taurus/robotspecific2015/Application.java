@@ -1,13 +1,20 @@
 package com.taurus.robotspecific2015;
 
+import com.taurus.Utilities;
 import com.taurus.swerve.SwerveVector;
 import com.taurus.robotspecific2015.Constants.*;
+import com.taurus.robotspecific2015.VisionApplication.Autostate;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Application extends com.taurus.Application
 {
+    Vision vision = new Vision();
+    SendableChooser autoChooser;
+    
     private double AutoStateTime;
     private AUTO_STATE_MACHINE AutoState;
     
@@ -15,8 +22,7 @@ public class Application extends com.taurus.Application
     Car TestModeCar;
     Ejector TestModeEjector;
     Sensor TestModeToteIntakeSensor;
-    private Vision vision;
-
+    
     public Application()
     {
         super(); // Initialize anything in the super class constructor
@@ -25,6 +31,11 @@ public class Application extends com.taurus.Application
         vision = new Vision();
         
         vision.Start();
+        autoChooser = new SendableChooser();
+        autoChooser.addDefault("Drive forward", Integer.valueOf(0));
+        autoChooser.addObject("Go to tote", Integer.valueOf(1));
+        autoChooser.addObject("Drive L", Integer.valueOf(2));
+        SmartDashboard.putData("Autonomous mode", autoChooser);
     }
     
     public void TeleopInitRobotSpecific()
@@ -77,6 +88,26 @@ public class Application extends com.taurus.Application
 
     public void AutonomousPeriodicRobotSpecific()
     {
+        int automode = ((Integer) autoChooser.getSelected()).intValue();
+        
+        switch (automode)
+        {
+            case 0:
+                DriveForwardAuto();
+                break;
+
+            case 1:
+                GotoToteAuto();
+                break;
+            
+            case 2:
+                Drive_L();
+                break;
+        }
+    }
+
+    public void Drive_L()
+    {
         switch (AutoState)
         {
             case DRIVE_FOR:
@@ -121,6 +152,72 @@ public class Application extends com.taurus.Application
     {
 
     }
+    
+    enum Autostate {
+        start, go, stop
+
+    }
+
+    @SuppressWarnings("incomplete-switch")
+    private void DriveForwardAuto()
+    {
+
+        double DriveTime = 5;
+
+        switch (AutoState)
+        {
+            case AUTO_START:
+                AutoStateTime = Timer.getFPGATimestamp();
+                AutoState = AUTO_STATE_MACHINE.DRIVE_FOR;
+                break;
+
+            case DRIVE_FOR:
+                SwerveVector Velocity = new SwerveVector(0, 1);
+
+                drive.setGearHigh(false);
+                drive.UpdateDrive(Velocity, 0, 0);
+                if (Timer.getFPGATimestamp() > AutoStateTime + DriveTime)
+                {
+                    AutoState = AUTO_STATE_MACHINE.AUTO_END;
+                }
+                break;
+
+            case AUTO_END:
+                drive.UpdateDrive(new SwerveVector(), 0, -1);
+                break;
+        }
+
+    }
+
+    private void GotoToteAuto()
+    {
+        double maxSlide = prefs.getDouble("MaxSlide", 1), slideP = prefs
+                .getDouble("SlideP", 1), targetX = prefs.getDouble(
+                "SlideTargetX", .5), forwardSpeed = prefs.getDouble(
+                "AutoSpeed", .5);
+
+        SwerveVector Velocity;
+
+        if (vision.getToteSeen())
+        {
+            Velocity = new SwerveVector(-forwardSpeed, Utilities.clampToRange(
+                    (vision.getResultX() - targetX) * slideP, -maxSlide,
+                    maxSlide));
+        }
+        else
+        {
+            Velocity = new SwerveVector(-forwardSpeed, 0);
+        }
+
+        double Rotation = 0;
+        double Heading = 270;
+
+        SmartDashboard.putNumber("Velocity X", Velocity.getX());
+        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
+
+        drive.setGearHigh(false);
+        drive.UpdateDrive(Velocity, Rotation, Heading);
+    }
 
     public void TestModeInitRobotSpecific()
     {
@@ -132,13 +229,12 @@ public class Application extends com.taurus.Application
     public void TestModePeriodicRobotSpecific()
     {
         int testMode = 0;
-        boolean button1 = false; // TODO: Get these button values from the
-                                 // controller
-        boolean button2 = false;
-        boolean button3 = false;
-        boolean button4 = false;
-        boolean button5 = false;
-        boolean button6 = false;
+        boolean button1 = controller.getRawButtion(1); // TODO: Get these button values from the
+        boolean button2 = controller.getRawButtion(2);
+        boolean button3 = controller.getRawButtion(3);
+        boolean button4 = controller.getRawButtion(4);
+        boolean button5 = controller.getRawButtion(5);
+        boolean button6 = controller.getRawButtion(6);
 
         // TODO: Add test modes for cylinders and motors and features.
         switch (testMode)
@@ -157,7 +253,7 @@ public class Application extends com.taurus.Application
                 else if (button3)
                 {
                     testCylinders = lift.CylindersContainerFixed;
-                }
+                }   
                 else if (button4)
                 {
                     testCylinders = lift.CylindersStackHolder;

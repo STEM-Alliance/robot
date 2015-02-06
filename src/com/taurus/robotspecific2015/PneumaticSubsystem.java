@@ -1,11 +1,10 @@
 package com.taurus.robotspecific2015;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
+
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.hal.SolenoidJNI;
+
 
 // Wraps FIRST code to control a group of pneumatic cylinders
 public class PneumaticSubsystem {
