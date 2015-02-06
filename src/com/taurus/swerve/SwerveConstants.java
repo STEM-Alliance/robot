@@ -57,9 +57,9 @@ public class SwerveConstants {
     public static final int[] WheelPotPins = { 0, 1, 2, 3 };
 
     /**
-     * Pins (PWM) for wheel drive motor controller outputs
+     * CAN Address for wheel drive motor controller outputs
      */
-    public static final int[] WheelDriveMotorPins = { 11, 12, 13, 14 };
+    public static final int[] WheelDriveMotorAddress = { 11, 12, 13, 14 };
 
     /**
      * Pins (PWM) for wheel angle motor controller outputs

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class MotorSystem
 {
    private ArrayList<Talon> Talons = new ArrayList<Talon>();
-   private ArrayList<Double> Scaling;
+   private ArrayList<Double> Scaling = new ArrayList<Double>();
    
    public MotorSystem(int[] pins)
    {
