@@ -1,6 +1,6 @@
 package com.taurus.swerve;
 
-import com.taurus.PIController;
+import com.taurus.PIDController;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -19,10 +19,11 @@ public final class SwerveAngleController {
     private static final double T_I = .1; // seconds needed to equal a P term
                                           // contribution
     private static final double I = 0 / T_I;
+    private static final double D = 0;
 
     @SuppressWarnings("unused")
     private final String name;
-    private final PIController controller;
+    private final PIDController controller;
 
     private double motorSpeed;
     private boolean reverseMotor;
@@ -46,7 +47,7 @@ public final class SwerveAngleController {
         this.name = name;
         this.motorSpeed = 0;
         this.reverseMotor = false;
-        this.controller = new PIController(P, I, MaxOut);
+        this.controller = new PIDController(P, I, D, MaxOut);
     }
 
     /**

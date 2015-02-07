@@ -6,25 +6,26 @@ import edu.wpi.first.wpilibj.tables.ITableListener;
 
 
 /**
- * A basic PI controller for use with the Swerve drive
+ * A basic PID controller for use with the Swerve drive
  * 
  * @author Team 4818 Taurus Robotics
  *
  */
-public final class PIController implements LiveWindowSendable{
+public final class PIDController implements LiveWindowSendable {
     // Heuristic to clear out the integral after being disabled.
     private static final double MaxTimestampDiff = 1.0;
 
     // Configuration.
     private double P;
-
     private double I;
+    private double D;
 
     private final double maxOutput;
 
     // State.
     public double integral;
     public double lastTimestamp;
+    public double lastError;
 
     /**
      * Create a new instance of the PIController
@@ -36,10 +37,11 @@ public final class PIController implements LiveWindowSendable{
      * @param maxOutput
      *            maximum output of the controller (typically 1.0)
      */
-    public PIController(double p, double i, double maxOutput)
+    public PIDController(double p, double i, double d, double maxOutput)
     {
         this.P = p;
         this.I = i;
+        this.D = d;
         this.maxOutput = maxOutput;
 
         this.integral = 0;
@@ -77,6 +79,9 @@ public final class PIController implements LiveWindowSendable{
         // Get time since we were last called.
         double timeDiff = timestamp - this.lastTimestamp;
         this.lastTimestamp = timestamp;
+        
+        double derivative = Utilities.clampToRange((error - lastError) / timeDiff * D, 
+                -this.maxOutput, this.maxOutput);
 
         if (timeDiff < MaxTimestampDiff)
         {
@@ -89,10 +94,13 @@ public final class PIController implements LiveWindowSendable{
         {
             // We were probably disabled; reset the integral.
             this.integral = 0;
+            derivative = 0;
         }
+        
+        this.lastError = error;
 
         // Calculate output with coefficients.
-        return Utilities.clampToRange(proportional + this.integral,
+        return Utilities.clampToRange(proportional + this.integral + derivative,
                 -this.maxOutput, this.maxOutput);
     }
 
@@ -106,6 +114,11 @@ public final class PIController implements LiveWindowSendable{
         return I;
     }
     
+    public double getD()
+    {
+        return D;
+    }
+    
     public void setP(double P)
     {
         this.P = P;
@@ -114,6 +127,11 @@ public final class PIController implements LiveWindowSendable{
     public void setI(double I)
     {
         this.I = I;
+    }
+    
+    public void setD(double D)
+    {
+        this.D = D;
     }
 
     @Override

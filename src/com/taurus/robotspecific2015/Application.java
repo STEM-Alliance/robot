@@ -32,9 +32,17 @@ public class Application extends com.taurus.Application
         vision.Start();
         
         autoChooser = new SendableChooser();
-        autoChooser.addDefault("Drive forward", Integer.valueOf(0));
-        autoChooser.addObject("Go to tote", Integer.valueOf(1));
-        autoChooser.addObject("Drive L", Integer.valueOf(2));
+        autoChooser.addDefault("Do nothing", Integer.valueOf(0));
+        autoChooser.addObject("Push tote", Integer.valueOf(1));
+        autoChooser.addObject("Grab tote", Integer.valueOf(2));
+        autoChooser.addObject("grab container", Integer.valueOf(3));
+        autoChooser.addObject("grab 2 totes side approach", Integer.valueOf(4));
+        autoChooser.addObject("grab 2 totes loop approach", Integer.valueOf(5));
+        autoChooser.addObject("grab container, 2 totes middle", Integer.valueOf(6));
+        autoChooser.addObject("grab container 2 totes side", Integer.valueOf(7));
+        autoChooser.addObject("container + tote", Integer.valueOf(8));
+        autoChooser.addObject("3 totes", Integer.valueOf(9));
+        
         SmartDashboard.putData("Autonomous mode", autoChooser);
     }
     
@@ -129,15 +137,14 @@ public class Application extends com.taurus.Application
         switch (automode)
         {
             case 0:
-                DriveForwardAuto();
+                
                 break;
-
             case 1:
-                GotoToteAuto();
+                DriveForwardAuto();
                 break;
             
             case 2:
-                Drive_L();
+                GotoToteAuto();
                 break;
         }
     }
@@ -194,7 +201,7 @@ public class Application extends com.taurus.Application
     private void DriveForwardAuto()
     {
         double DriveTime = 5;
-
+//TODO find exact numbers 
         switch (AutoStateForward)
         {
             case AUTO_START:
@@ -226,32 +233,41 @@ public class Application extends com.taurus.Application
      */
     private void GotoToteAuto()
     {
-        double maxSlide = prefs.getDouble("MaxSlide", 1), slideP = prefs
-                .getDouble("SlideP", 1), targetX = prefs.getDouble(
-                "SlideTargetX", .5), forwardSpeed = prefs.getDouble(
-                "AutoSpeed", .5);
-
-        SwerveVector Velocity;
-
-        if (vision.getToteSeen())
+        if (lift.GetTotesInStack() == 0)
         {
-            Velocity = new SwerveVector(-forwardSpeed, Utilities.clampToRange(
-                    (vision.getResultX() - targetX) * slideP, -maxSlide,
-                    maxSlide));
+            lift.AddFloorToteToStack();
+        
+            double maxSlide = prefs.getDouble("MaxSlide", 1), slideP = prefs
+                    .getDouble("SlideP", 1), targetX = prefs.getDouble(
+                    "SlideTargetX", .5), forwardSpeed = prefs.getDouble(
+                    "AutoSpeed", .5);
+    
+            SwerveVector Velocity;
+    
+            if (vision.getToteSeen())
+            {
+                Velocity = new SwerveVector(-forwardSpeed, Utilities.clampToRange(
+                        (vision.getResultX() - targetX) * slideP, -maxSlide,
+                        maxSlide));
+            }
+            else
+            {
+                Velocity = new SwerveVector(-forwardSpeed, 0);
+            }
+    
+            double Rotation = 0;
+            double Heading = 270;
+    
+            SmartDashboard.putNumber("Velocity X", Velocity.getX());
+            SmartDashboard.putNumber("Velocity Y", Velocity.getY());
+    
+            drive.setGearHigh(false);
+            drive.UpdateDrive(Velocity, Rotation, Heading);
         }
         else
         {
-            Velocity = new SwerveVector(-forwardSpeed, 0);
+            DriveForwardAuto();
         }
-
-        double Rotation = 0;
-        double Heading = 270;
-
-        SmartDashboard.putNumber("Velocity X", Velocity.getX());
-        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
-
-        drive.setGearHigh(false);
-        drive.UpdateDrive(Velocity, Rotation, Heading);
     }
 
     public void AutonomousDeInitRobotSpecific()

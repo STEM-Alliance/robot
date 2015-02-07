@@ -1,6 +1,6 @@
 package com.taurus.robotspecific2015;
 
-import com.taurus.PIController;
+import com.taurus.PIDController;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -13,11 +13,12 @@ import edu.wpi.first.wpilibj.Timer;
 public class LinearActuator {
 
     private Encoder Enc;
-    private PIController EncPIController;
+    private PIDController EncPIController;
     private MotorSystem Motors;
 
     private double EncP = 1;
     private double EncI = 0;
+    private double EncD = 0.1;
 
     private double[] Positions;
     private double PositionThreshold;
@@ -42,7 +43,7 @@ public class LinearActuator {
         Enc = new Encoder(EncoderPins[0], EncoderPins[1]);
         Enc.setDistancePerPulse(InchesPerPulse);
 
-        EncPIController = new PIController(EncP, EncI, 1.0);
+        EncPIController = new PIDController(EncP, EncI, EncD, 1.0);
 
         this.Positions = Positions;
         this.PositionThreshold = PositionThreshold;

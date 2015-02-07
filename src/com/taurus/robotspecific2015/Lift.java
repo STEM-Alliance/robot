@@ -378,4 +378,13 @@ public class Lift {
     {
         return CylindersStackHolder;
     }
+    
+    /**
+     * Gets the number of totes in the stack
+     * @return the number of totes
+     */
+    public int GetTotesInStack()
+    {
+        return TotesInStack;
+    }
 }

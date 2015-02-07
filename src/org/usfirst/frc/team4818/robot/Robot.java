@@ -28,12 +28,6 @@ public class Robot extends SampleRobot {
                 app = new com.taurus.robotspecific2015.Application();
                 SmartDashboard.putString("Application", "2015");
                 break;
-            
-            case 2:
-                // Run Vision test
-                app = new com.taurus.robotspecific2015.VisionApplication();
-                SmartDashboard.putString("Application", "Vision");
-                break;
                 
             default:
                 // Run 2015 specific
