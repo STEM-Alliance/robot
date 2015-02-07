@@ -104,4 +104,12 @@ public abstract class Constants {
 
     }
     
+    public static enum AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE {
+        AUTO_START, AUTO_FIND, AUTO_MOVE_OUT, AUTO_MOVE_OVER, AUTO_MOVE_IN, AUTO_MOVE_LEFT, AUTO_MOVE_TO_SCORING_AREA
+    }
+    
+    public static enum AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER {
+        AUTO_START, AUTO_FIND, AUTO_GRABBED
+    }
+    
 }
