@@ -6,7 +6,7 @@
 
 package com.taurus.swerve;
 
-import com.taurus.PIController;
+import com.taurus.PIDController;
 import com.taurus.Utilities;
 import com.taurus.controller.Controller;
 
@@ -29,10 +29,11 @@ public class SwerveChassis {
     private boolean Brake;
     private double LastHeading;
 
-    private PIController ChassisAngleController;
+    private PIDController ChassisAngleController;
     private double ChassisP = 1.3 / 180; // Full speed rotation at error of 90
                                          // degrees.
     private double ChassisI = 0;
+    private double ChassisD = 0;
     
     private SwerveIMU Gyro;
     SerialPort serial_port;
@@ -52,7 +53,7 @@ public class SwerveChassis {
      */
     public SwerveChassis()
     {
-        ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
+        ChassisAngleController = new PIDController(ChassisP, ChassisI, ChassisD, 1.0);
         
         LastVelocity = new SwerveVector(0,0);
 
