@@ -20,12 +20,6 @@ public class Autonomous
     
     private int automode;
     
-//    private double AutoStateTime;
-//    
-//    private AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE AutoStateForward;
-//    private AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE AutoStateFindAndGrabTote;
-//    private AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER AutoStateFindAndGrabContainer;
-    
     Command autoCommand;
     
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision, int automode)
@@ -36,11 +30,6 @@ public class Autonomous
         this.automode = automode;
         
         drive.ZeroGyro();
-
-//        AutoStateTime = Timer.getFPGATimestamp();
-        
-//        AutoStateForward = Constants.AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE.START;
-//        AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.START;
         
         switch (automode)
         {
@@ -53,16 +42,19 @@ public class Autonomous
                 break;
             
             case 2:
+                drive.SetGyroZero(270);
                 autoCommand = new GrabToteAndDriveToAutoScoringZone();
                 break;
                 
             case 3:
+                drive.SetGyroZero(90);
                 autoCommand = new GrabContainerAndDriveToAutoScoringZone();
                 break;
                 
-//            case 4:
-//                AutoGrab2TotesMovingLeftAndGoToScoringZone();
-//                break;
+            case 4:
+                drive.SetGyroZero(270);
+                autoCommand = new Grab2TotesMovingLeftAndDriveToScoringZone();
+                break;
         }
         
         autoCommand.start();
@@ -72,37 +64,7 @@ public class Autonomous
     {
         Scheduler.getInstance().run();
     }
-    
-//    private void AutoFindTote()
-//    {
-//        double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
-//        double slideP = Application.prefs.getDouble("SlideP", 1);
-//        double targetX = Application.prefs.getDouble("SlideTargetX", .5);
-//        double forwardSpeed = Application.prefs.getDouble("AutoSpeed", .5);
-//
-//        SwerveVector Velocity;
-//
-//        if (vision.getToteSeen())
-//        {
-//            Velocity = new SwerveVector(-forwardSpeed, Utilities.clampToRange(
-//                    (vision.getResultX() - targetX) * slideP, -maxSlide,
-//                    maxSlide));
-//        }
-//        else
-//        {
-//            Velocity = new SwerveVector(-forwardSpeed, 0);
-//        }
-//
-//        double Rotation = 0;
-//        double Heading = 270;
-//
-//        SmartDashboard.putNumber("Velocity X", Velocity.getX());
-//        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
-//
-//        drive.setGearHigh(false);
-//        drive.UpdateDrive(Velocity, Rotation, Heading);
-//    }
-    
+        
     private class DriveToAutoScoringZone extends CommandGroup
     {
         public DriveToAutoScoringZone()
@@ -150,8 +112,88 @@ public class Autonomous
         public NavigateAroundContainerToPickUpTote()
         {
             addSequential(new DriveForTime(new SwerveVector(0, 1), 0, 270, 1));
-            // TODO do shit
+            addSequential(new DriveTowardToteWithVision());
         }
+    }
+    
+    private class DriveTowardToteWithVision extends Command
+    {
+        double lastDistance = Double.POSITIVE_INFINITY;        
+
+        @Override
+        protected void initialize()
+        {
+            requires(drive);            
+        }
+
+        @Override
+        protected void execute()
+        {
+            double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
+            double slideP = Application.prefs.getDouble("SlideP", 1);
+            double targetX = Application.prefs.getDouble("SlideTargetX", .5);
+            double forwardSpeed = Application.prefs.getDouble("AutoSpeed", .5);
+            
+            SwerveVector Velocity;
+            double Heading;
+            
+            if (vision.getToteSeen())
+            {
+                lastDistance = vision.getResultY();
+                
+                // TODO: numbers
+                if (lastDistance > .5)
+                {
+                    Heading = 225;
+                }
+                else
+                {
+                    Heading = 270;
+                }
+                
+                Velocity = new SwerveVector(
+                        -forwardSpeed, 
+                        Utilities.clampToRange((vision.getResultX() - targetX) * slideP, 
+                            -maxSlide, maxSlide));
+            }
+            else
+            {
+                // TODO numbers
+                if (lastDistance > .5)
+                {
+                    // Drive back-left pointing 45 degrees
+                    Heading = 225;
+                }
+                else
+                {
+                    Heading = 270;
+                }
+                
+                Velocity = SwerveVector.NewFromMagAngle(forwardSpeed, Heading);
+            }
+            
+            drive.setGearHigh(false);
+            drive.UpdateDrive(Velocity, 0, Heading);
+        }
+
+        @Override
+        protected boolean isFinished()
+        {
+            return lift.GetToteIntakeSensor().IsOn();
+        }
+
+        @Override
+        protected void end()
+        {
+            drive.UpdateDrive(new SwerveVector(), 0, -1);
+        }
+
+        @Override
+        protected void interrupted()
+        {
+            end();
+        }
+        
     }
     
     private class DropToteStack extends Command
