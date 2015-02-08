@@ -18,7 +18,7 @@ public class Autonomous
     
     private double AutoStateTime;
     
-    private AUTO_STATE_MACHINE_FORWARD AutoStateForward;
+    private AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE AutoStateForward;
     private AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE AutoStateFindAndGrabTote;
     private AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER AutoStateFindAndGrabContainer;
     
@@ -34,8 +34,8 @@ public class Autonomous
 
         AutoStateTime = Timer.getFPGATimestamp();
         
-        AutoStateForward = Constants.AUTO_STATE_MACHINE_FORWARD.AUTO_START;
-        AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_START;
+        AutoStateForward = Constants.AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE.START;
+        AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.START;
     }
     
     public void Run()
@@ -73,12 +73,12 @@ public class Autonomous
 
         switch (AutoStateForward)
         {
-            case AUTO_START:
+            case START:
                 AutoStateTime = Timer.getFPGATimestamp();
-                AutoStateForward = AUTO_STATE_MACHINE_FORWARD.AUTO_GO;
+                AutoStateForward = AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE.GO;
                 break;
 
-            case AUTO_GO:
+            case GO:
                 SwerveVector Velocity = new SwerveVector(0, 1);
 
                 // TODO pick values
@@ -86,11 +86,11 @@ public class Autonomous
                 drive.UpdateDrive(Velocity, 0, Heading);
                 if (Timer.getFPGATimestamp() > AutoStateTime + DriveTime)
                 {
-                    AutoStateForward = AUTO_STATE_MACHINE_FORWARD.AUTO_END;
+                    AutoStateForward = AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE.END;
                 }
                 break;
 
-            case AUTO_END:
+            case END:
             default:
                 drive.UpdateDrive(new SwerveVector(), 0, -1);
                 break;
@@ -105,22 +105,22 @@ public class Autonomous
     {
         switch (AutoStateFindAndGrabTote)
         {
-            case AUTO_START:
-                AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_FIND;
+            case START:
+                AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.DRIVE_TOWARDS_TOTE;
                 drive.SetGyroZero(-90);  // starting facing left
                 break;
                 
-            case AUTO_FIND:
+            case DRIVE_TOWARDS_TOTE:
                 AutoFindTote();
                 lift.AddFloorToteToStack();
                 
                 if (lift.GetToteIntakeSensor().IsOn())
                 {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_MOVE_TO_SCORING_AREA;
+                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_TO_SCORING_AREA;
                 }
                 break;
                 
-            case AUTO_MOVE_TO_SCORING_AREA:
+            case MOVE_TO_SCORING_AREA:
                 AutoGoToScoringZone(270);
                 lift.AddFloorToteToStack();
                 break;
@@ -132,12 +132,12 @@ public class Autonomous
     {
         switch (AutoStateFindAndGrabContainer)
         {
-            case AUTO_START:
-                AutoStateFindAndGrabContainer = AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER.AUTO_FIND;
+            case START:
+                AutoStateFindAndGrabContainer = AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER.DRIVE_TOWARDS_CONTAINER;
                 drive.SetGyroZero(90);  // starting facing right
                 break;
                 
-            case AUTO_FIND:
+            case DRIVE_TOWARDS_CONTAINER:
                 // TODO: choose velocity
                 drive.UpdateDrive(new SwerveVector(.5, 0), 0, 90);
                 
@@ -145,11 +145,11 @@ public class Autonomous
                 
                 if (lift.GetToteIntakeSensor().IsOn())
                 {
-                    AutoStateFindAndGrabContainer = AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER.AUTO_GRABBED;
+                    AutoStateFindAndGrabContainer = AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER.GRABBED;
                 }
                 break;
                 
-            case AUTO_GRABBED:
+            case GRABBED:
                 AutoGoToScoringZone(90);
                 
                 lift.AddContainerToStack();
@@ -159,26 +159,61 @@ public class Autonomous
     
     private void AutoGrab2TotesMovingLeftAndGoToScoringZone()
     {
+        double DriveOutTime = 1, DriveOverTime = 1, DriveInTime = 1;
+        
         switch (AutoStateFindAndGrabTote)
         {
-            case AUTO_START:
-                AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_FIND;
+            case START:
+                AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.DRIVE_TOWARDS_TOTE;
                 drive.SetGyroZero(-90);   // starting facing left
                 break;
                 
-            case AUTO_FIND:
+            case DRIVE_TOWARDS_TOTE:
                 AutoFindTote();
                 lift.AddFloorToteToStack();
                 
                 if (lift.GetToteIntakeSensor().IsOn())
                 {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_MOVE_TO_SCORING_AREA;
+                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_OUT;
+                    AutoStateTime = Timer.getFPGATimestamp();
                 }
                 break;
                 
-            case AUTO_MOVE_TO_SCORING_AREA:
-                SwerveVector Velocity = new SwerveVector(); // TODO
-                drive.UpdateDrive(Velocity, 0, 270);
+            case MOVE_OUT:
+                drive.UpdateDrive(new SwerveVector(0, 1), 0, 270);
+                lift.AddFloorToteToStack();
+                    
+                if (Timer.getFPGATimestamp() - AutoStateTime > DriveOutTime)
+                {
+                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_OVER;
+                    AutoStateTime = Timer.getFPGATimestamp();
+                }
+                break;
+                
+            case MOVE_OVER:
+                drive.UpdateDrive(new SwerveVector(-1, 0), 0, 270);
+                lift.AddFloorToteToStack();
+                
+                if (Timer.getFPGATimestamp() - AutoStateTime > DriveOverTime)
+                {
+                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_IN;
+                    AutoStateTime = Timer.getFPGATimestamp();
+                }
+                break;
+                
+            case MOVE_IN:
+                drive.UpdateDrive(new SwerveVector(0, -1), 0, 270);
+                lift.AddFloorToteToStack();
+                
+                if (Timer.getFPGATimestamp() - AutoStateTime > DriveInTime)
+                {
+                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_TO_SCORING_AREA;
+                    AutoStateTime = Timer.getFPGATimestamp();
+                }
+                break;
+                
+            case MOVE_TO_SCORING_AREA:
+                AutoGoToScoringZone(270);
                 lift.AddFloorToteToStack();
                 break;
         }
