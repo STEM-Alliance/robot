@@ -2,23 +2,26 @@ package com.taurus.robotspecific2015;
 
 
 
+import com.taurus.robotspecific2015.Constants.CYLINDER_STATE;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 
 
 // Wraps FIRST code to control a group of pneumatic cylinders
 public class PneumaticSubsystem {
-    private int ChannelExtend;
-    private int ChannelContract;
-    private boolean Extended;
-    private boolean Extending = false;
-    private boolean Contracting = false;
-    private double TimeExtend;
-    private double TimeContract;
-    private double TimeStart;
-    private int Module;
+    private final int ChannelExtend;
+    private final int ChannelContract;
+    private final int Module;
+    
+    private final double TimeExtend;
+    private final double TimeContract;
 
-    private DoubleSolenoid solenoid;
+    private CYLINDER_STATE State = CYLINDER_STATE.NONE;
+    
+    private double TimeStart;
+
+    private final DoubleSolenoid solenoid;
 
     /**
      * Initialize PCU (pneumatic control unit) for this pneumatic subsytem
@@ -59,27 +62,26 @@ public class PneumaticSubsystem {
     {
         boolean done = false;
 
-        if (Extended)
+        if (State == CYLINDER_STATE.EXTENDED)
         {
             // Already extended
             done = true;
         }
-        else if (Extending == false && Contracting == false)
+        else if (State == CYLINDER_STATE.CONTRACTING || State == CYLINDER_STATE.CONTRACTED)
         {
             // If we are not moving, start extending
             solenoid.set(DoubleSolenoid.Value.kForward);
 
             // Update current state
             TimeStart = Timer.getFPGATimestamp();
-            Extending = true;
+            State = CYLINDER_STATE.EXTENDING;
         }
         else
         {
             // We are extending. Check if we are done extending.
             if (Timer.getFPGATimestamp() - TimeStart > TimeExtend)
             {
-                Extending = false; // Record that cylinder is done moving
-                Extended = true; // Record the position
+                State = CYLINDER_STATE.EXTENDED; // Record the position
                 done = true;
             }
         }
@@ -95,27 +97,26 @@ public class PneumaticSubsystem {
     {
         boolean done = false;
 
-        if (!Extended)
+        if (State == CYLINDER_STATE.CONTRACTED)
         {
             // Already contracted
             done = true;
         }
-        else if (Extending == false && Contracting == false)
+        else if (State == CYLINDER_STATE.EXTENDING || State == CYLINDER_STATE.EXTENDED)
         {
             // If we are not moving, start contracting
             solenoid.set(DoubleSolenoid.Value.kReverse);
 
             // Update current state
             TimeStart = Timer.getFPGATimestamp();
-            Contracting = true;
+            State = CYLINDER_STATE.CONTRACTING;
         }
         else
         {
             // We are contracting. Check if we are done contracting.
             if (Timer.getFPGATimestamp() - TimeStart > TimeContract)
             {
-                Contracting = false; // Record that cylinder is done moving
-                Extended = false; // Record the position
+                State = CYLINDER_STATE.CONTRACTED; // Record the position
                 done = true;
             }
         }
@@ -129,6 +130,6 @@ public class PneumaticSubsystem {
      */
     public boolean IsExtended()
     {
-        return Extended;
+        return State == CYLINDER_STATE.EXTENDED;
     }
 }

@@ -1,26 +1,32 @@
 package com.taurus.robotspecific2015;
 
 import com.taurus.Utilities;
-import com.taurus.robotspecific2015.Constants.AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER;
 import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous 
 {
+    
     private SwerveChassis drive;
     private Lift lift;
     private Vision vision;
+    
     private int automode;
     
-    private double AutoStateTime;
+//    private double AutoStateTime;
+//    
+//    private AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE AutoStateForward;
+//    private AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE AutoStateFindAndGrabTote;
+//    private AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER AutoStateFindAndGrabContainer;
     
-    private AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE AutoStateForward;
-    private AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE AutoStateFindAndGrabTote;
-    private AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER AutoStateFindAndGrabContainer;
+    Command autoCommand;
     
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision, int automode)
     {
@@ -30,16 +36,12 @@ public class Autonomous
         this.automode = automode;
         
         drive.ZeroGyro();
-        drive.SetGyroZero(-90); // starting facing left, so fix offset
 
-        AutoStateTime = Timer.getFPGATimestamp();
+//        AutoStateTime = Timer.getFPGATimestamp();
         
-        AutoStateForward = Constants.AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE.START;
-        AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.START;
-    }
-    
-    public void Run()
-    {
+//        AutoStateForward = Constants.AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE.START;
+//        AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.START;
+        
         switch (automode)
         {
             default:
@@ -47,207 +49,320 @@ public class Autonomous
                 break;
                 
             case 1:
-                AutoGoToScoringZone(-1);
+                autoCommand = new DriveToAutoScoringZone();
                 break;
             
             case 2:
-                AutoGrab1ToteAndGoToScoringZone();
+                autoCommand = new GrabToteAndDriveToAutoScoringZone();
                 break;
                 
             case 3:
-                AutoGrabContainerAndGoToScoringZone();
+                autoCommand = new GrabContainerAndDriveToAutoScoringZone();
                 break;
                 
-            case 4:
-                AutoGrab2TotesMovingLeftAndGoToScoringZone();
-                break;
+//            case 4:
+//                AutoGrab2TotesMovingLeftAndGoToScoringZone();
+//                break;
         }
-    }
-    
-    /**
-     * Just drive forward for a few seconds
-     */
-    private void AutoGoToScoringZone(double Heading)
-    {
-        double DriveTime = 2; //TODO find exact numbers to get into scoring zone
-
-        switch (AutoStateForward)
-        {
-            case START:
-                AutoStateTime = Timer.getFPGATimestamp();
-                AutoStateForward = AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE.GO;
-                break;
-
-            case GO:
-                SwerveVector Velocity = new SwerveVector(0, 1);
-
-                // TODO pick values
-                drive.setGearHigh(true);
-                drive.UpdateDrive(Velocity, 0, Heading);
-                if (Timer.getFPGATimestamp() > AutoStateTime + DriveTime)
-                {
-                    AutoStateForward = AUTO_STATE_MACHINE_MOVE_TO_SCORING_ZONE.END;
-                }
-                break;
-
-            case END:
-            default:
-                drive.UpdateDrive(new SwerveVector(), 0, -1);
-                break;
-        }
-
-    }
-
-    /**
-     * Use the vision to find the tote and drive towards it
-     */
-    private void AutoGrab1ToteAndGoToScoringZone()
-    {
-        switch (AutoStateFindAndGrabTote)
-        {
-            case START:
-                AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.DRIVE_TOWARDS_TOTE;
-                drive.SetGyroZero(-90);  // starting facing left
-                break;
-                
-            case DRIVE_TOWARDS_TOTE:
-                AutoFindTote();
-                lift.AddFloorToteToStack();
-                
-                if (lift.GetToteIntakeSensor().IsOn())
-                {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_TO_SCORING_AREA;
-                }
-                break;
-                
-            case MOVE_TO_SCORING_AREA:
-                AutoGoToScoringZone(270);
-                lift.AddFloorToteToStack();
-                break;
-        }
-
-    }
-    
-    private void AutoGrabContainerAndGoToScoringZone()
-    {
-        switch (AutoStateFindAndGrabContainer)
-        {
-            case START:
-                AutoStateFindAndGrabContainer = AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER.DRIVE_TOWARDS_CONTAINER;
-                drive.SetGyroZero(90);  // starting facing right
-                break;
-                
-            case DRIVE_TOWARDS_CONTAINER:
-                // TODO: choose velocity
-                drive.UpdateDrive(new SwerveVector(.5, 0), 0, 90);
-                
-                lift.AddContainerToStack();
-                
-                if (lift.GetToteIntakeSensor().IsOn())
-                {
-                    AutoStateFindAndGrabContainer = AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER.GRABBED;
-                }
-                break;
-                
-            case GRABBED:
-                AutoGoToScoringZone(90);
-                
-                lift.AddContainerToStack();
-                break;
-        }
-    }
-    
-    private void AutoGrab2TotesMovingLeftAndGoToScoringZone()
-    {
-        double DriveOutTime = 1, DriveOverTime = 1, DriveInTime = 1;
         
-        switch (AutoStateFindAndGrabTote)
+        autoCommand.start();
+    }
+    
+    public void Run()
+    {
+        Scheduler.getInstance().run();
+    }
+    
+//    private void AutoFindTote()
+//    {
+//        double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
+//        double slideP = Application.prefs.getDouble("SlideP", 1);
+//        double targetX = Application.prefs.getDouble("SlideTargetX", .5);
+//        double forwardSpeed = Application.prefs.getDouble("AutoSpeed", .5);
+//
+//        SwerveVector Velocity;
+//
+//        if (vision.getToteSeen())
+//        {
+//            Velocity = new SwerveVector(-forwardSpeed, Utilities.clampToRange(
+//                    (vision.getResultX() - targetX) * slideP, -maxSlide,
+//                    maxSlide));
+//        }
+//        else
+//        {
+//            Velocity = new SwerveVector(-forwardSpeed, 0);
+//        }
+//
+//        double Rotation = 0;
+//        double Heading = 270;
+//
+//        SmartDashboard.putNumber("Velocity X", Velocity.getX());
+//        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
+//
+//        drive.setGearHigh(false);
+//        drive.UpdateDrive(Velocity, Rotation, Heading);
+//    }
+    
+    private class DriveToAutoScoringZone extends CommandGroup
+    {
+        public DriveToAutoScoringZone()
         {
-            case START:
-                AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.DRIVE_TOWARDS_TOTE;
-                drive.SetGyroZero(-90);   // starting facing left
-                break;
-                
-            case DRIVE_TOWARDS_TOTE:
-                AutoFindTote();
-                lift.AddFloorToteToStack();
-                
-                if (lift.GetToteIntakeSensor().IsOn())
-                {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_OUT;
-                    AutoStateTime = Timer.getFPGATimestamp();
-                }
-                break;
-                
-            case MOVE_OUT:
-                drive.UpdateDrive(new SwerveVector(0, 1), 0, 270);
-                lift.AddFloorToteToStack();
-                    
-                if (Timer.getFPGATimestamp() - AutoStateTime > DriveOutTime)
-                {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_OVER;
-                    AutoStateTime = Timer.getFPGATimestamp();
-                }
-                break;
-                
-            case MOVE_OVER:
-                drive.UpdateDrive(new SwerveVector(-1, 0), 0, 270);
-                lift.AddFloorToteToStack();
-                
-                if (Timer.getFPGATimestamp() - AutoStateTime > DriveOverTime)
-                {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_IN;
-                    AutoStateTime = Timer.getFPGATimestamp();
-                }
-                break;
-                
-            case MOVE_IN:
-                drive.UpdateDrive(new SwerveVector(0, -1), 0, 270);
-                lift.AddFloorToteToStack();
-                
-                if (Timer.getFPGATimestamp() - AutoStateTime > DriveInTime)
-                {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.MOVE_TO_SCORING_AREA;
-                    AutoStateTime = Timer.getFPGATimestamp();
-                }
-                break;
-                
-            case MOVE_TO_SCORING_AREA:
-                AutoGoToScoringZone(270);
-                lift.AddFloorToteToStack();
-                break;
+            // TODO: numbers
+            addSequential(new DriveForTime(new SwerveVector(0, 1), 0, -1, 2));
         }
     }
     
-    private void AutoFindTote()
+    
+    private class GrabToteAndDriveToAutoScoringZone extends CommandGroup
     {
-        double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
-        double slideP = Application.prefs.getDouble("SlideP", 1);
-        double targetX = Application.prefs.getDouble("SlideTargetX", .5);
-        double forwardSpeed = Application.prefs.getDouble("AutoSpeed", .5);
-
-        SwerveVector Velocity;
-
-        if (vision.getToteSeen())
+        public GrabToteAndDriveToAutoScoringZone()
         {
-            Velocity = new SwerveVector(-forwardSpeed, Utilities.clampToRange(
-                    (vision.getResultX() - targetX) * slideP, -maxSlide,
-                    maxSlide));
+            // TODO: numbers
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));
+            addSequential(new PickupFloorTotes(0));
+            addSequential(new DriveToAutoScoringZone());
         }
-        else
-        {
-            Velocity = new SwerveVector(-forwardSpeed, 0);
-        }
-
-        double Rotation = 0;
-        double Heading = 270;
-
-        SmartDashboard.putNumber("Velocity X", Velocity.getX());
-        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
-
-        drive.setGearHigh(false);
-        drive.UpdateDrive(Velocity, Rotation, Heading);
     }
+    
+    private class GrabContainerAndDriveToAutoScoringZone extends CommandGroup
+    {
+        public GrabContainerAndDriveToAutoScoringZone()
+        {
+            addSequential(new PickupContainer());
+            addSequential(new DriveToAutoScoringZone());
+        }
+    }
+    
+    private class Grab2TotesMovingLeftAndDriveToScoringZone extends CommandGroup
+    {
+        public Grab2TotesMovingLeftAndDriveToScoringZone()
+        {
+            // TODO: numbers
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));
+            addParallel(new PickupFloorTotes(1));
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new DriveToAutoScoringZone());
+        }
+    }
+    
+    private class NavigateAroundContainerToPickUpTote extends CommandGroup
+    {
+        public NavigateAroundContainerToPickUpTote()
+        {
+            addSequential(new DriveForTime(new SwerveVector(0, 1), 0, 270, 1));
+            // TODO do shit
+        }
+    }
+    
+    private class DropToteStack extends Command
+    {
+        private boolean Finished = false;        
 
+        @Override
+        protected void initialize()
+        {
+            requires(lift);
+            this.Finished = false;
+        }
+
+        @Override
+        protected void execute()
+        {
+            this.Finished = lift.DropStack();
+        }
+
+        @Override
+        protected boolean isFinished()
+        {
+            return this.Finished;
+        }
+
+        @Override
+        protected void end()
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        protected void interrupted()
+        {
+            end();
+        }
+        
+    }
+    
+    private class PickupContainer extends Command
+    {
+        private boolean Finished = false;
+
+        @Override
+        protected void initialize()
+        {
+            requires(lift);
+            this.Finished = false;
+        }
+
+        @Override
+        protected void execute()
+        {
+            this.Finished = lift.AddContainerToStack();
+        }
+
+        @Override
+        protected boolean isFinished()
+        {
+            return this.Finished;
+        }
+
+        @Override
+        protected void end()
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        protected void interrupted()
+        {
+            end();
+        }
+        
+    }
+    
+    private class PickupFloorTotes extends Command
+    {
+        private int MaxTotesInStack;
+        private boolean Finished;
+        
+        public PickupFloorTotes(int MaxTotesInStack)
+        {
+            this.MaxTotesInStack = MaxTotesInStack;
+            this.Finished = false;
+        }
+        
+        @Override
+        protected void initialize()
+        {
+            requires(lift);
+            Finished = false;
+        }
+
+        @Override
+        protected void execute()
+        {
+            this.Finished = lift.AddFloorToteToStack(MaxTotesInStack);
+        }
+
+        @Override
+        protected boolean isFinished()
+        {
+            return this.Finished;
+        }
+
+        @Override
+        protected void end()
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        protected void interrupted()
+        {
+            end();
+        }
+        
+    }
+    
+    private class DriveForTime extends Command
+    {
+        private SwerveVector Velocity;
+        private double Rotation;
+        private double Heading;
+        private double EndTime;
+        
+        public DriveForTime(SwerveVector velocity, double rotation, double heading, double TimeDelta)
+        {
+            this.Velocity = velocity;
+            this.Rotation = rotation;
+            this.Heading = heading;
+            this.EndTime = Timer.getFPGATimestamp() + TimeDelta;
+        }
+
+        @Override
+        protected void initialize()
+        {
+            requires(drive);
+        }
+
+        @Override
+        protected void execute()
+        {
+            drive.UpdateDrive(Velocity, Rotation, Heading);
+        }
+
+        @Override
+        protected boolean isFinished()
+        {
+            return Timer.getFPGATimestamp() > this.EndTime;
+        }
+
+        @Override
+        protected void end()
+        {
+            drive.UpdateDrive(new SwerveVector(), 0, -1);
+        }
+
+        @Override
+        protected void interrupted()
+        {
+            end();
+        }
+    }
+    
+    private class DriveUntilToteSensed extends Command
+    {
+        private SwerveVector Velocity;
+        private double Rotation;
+        private double Heading;
+        
+        public DriveUntilToteSensed(SwerveVector velocity, double rotation, double heading)
+        {
+            this.Velocity = velocity;
+            this.Rotation = rotation;
+            this.Heading = heading;
+        }
+
+        @Override
+        protected void initialize()
+        {
+            requires(drive);
+        }
+
+        @Override
+        protected void execute()
+        {
+            drive.UpdateDrive(Velocity, Rotation, Heading);
+        }
+
+        @Override
+        protected boolean isFinished()
+        {
+            return lift.GetToteIntakeSensor().IsOn();
+        }
+
+        @Override
+        protected void end()
+        {
+            drive.UpdateDrive(new SwerveVector(), 0, -1);
+        }
+
+        @Override
+        protected void interrupted()
+        {
+            end();
+        }
+    }
     
 }

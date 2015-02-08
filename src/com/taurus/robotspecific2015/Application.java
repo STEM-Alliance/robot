@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Application extends com.taurus.Application
 {
     private Vision vision = new Vision();
-    private SendableChooser autoChooser;
+    private Lift lift;
         
     private STATE_LIFT_ACTION CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
     
-    private Lift lift;
+    private SendableChooser autoChooser;
     private Autonomous autonomous;
     
     public Application()
@@ -77,14 +77,14 @@ public class Application extends com.taurus.Application
         switch(CurrentLiftAction)
         {
             case ADD_CHUTE_TOTE:
-                if(lift.AddChuteToteToStack())
+                if(lift.AddChuteToteToStack(5))
                 {
                     CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                 }
                 break;
                 
             case ADD_FLOOR_TOTE:
-                if(lift.AddFloorToteToStack())
+                if(lift.AddFloorToteToStack(5))
                 {
                     CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                 }
