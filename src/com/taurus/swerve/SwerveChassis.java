@@ -12,6 +12,7 @@ import com.taurus.controller.Controller;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * 
  * @author Team 4818 Taurus Robotics
  */
-public class SwerveChassis {
+public class SwerveChassis extends Subsystem {
 
     private SwerveWheel[] Wheels;
 
@@ -463,5 +464,11 @@ public class SwerveChassis {
     public SwerveWheel getWheel(int index)
     {
         return Wheels[index];
+    }
+
+    @Override
+    protected void initDefaultCommand()
+    {
+        // TODO Auto-generated method stub
     }
 }

@@ -52,6 +52,10 @@ public abstract class Constants {
     public static final double LIFT_ENCODER_INCHES_PER_PULSE = LIFT_ENCODER_FULL_TURN_DISTANCE / LIFT_ENCODER_PULSES;
     public static final double[] LIFT_POSTITIONS = { 0, 1, 2, 3 };
 
+    public static enum CYLINDER_STATE {
+        NONE, EXTENDED, EXTENDING, CONTRACTED, CONTRACTING
+    }
+    
     public static enum STATE_LIFT_ACTION {
         NO_ACTION, ADD_CHUTE_TOTE, ADD_FLOOR_TOTE, ADD_CONTAINER, EJECT_STACK
     }
