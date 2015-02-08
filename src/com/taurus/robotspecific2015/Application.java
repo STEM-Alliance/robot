@@ -1,10 +1,7 @@
 package com.taurus.robotspecific2015;
 
-import com.taurus.Utilities;
-import com.taurus.swerve.SwerveVector;
 import com.taurus.robotspecific2015.Constants.*;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -13,16 +10,11 @@ public class Application extends com.taurus.Application
 {
     private Vision vision = new Vision();
     private SendableChooser autoChooser;
-    
-    private double AutoStateTime;
-    private AUTO_STATE_MACHINE_L AutoStateL;
-    private AUTO_STATE_MACHINE_FORWARD AutoStateForward;
-    private AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE AutoStateFindAndGrabTote;
-    private AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER AutoStateFindAndGrabContainer;
-    
+        
     private STATE_LIFT_ACTION CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
     
     private Lift lift;
+    private Autonomous autonomous;
     
     public Application()
     {
@@ -126,241 +118,17 @@ public class Application extends com.taurus.Application
     public void AutonomousInitRobotSpecific()
     {
         drive.ZeroGyro();
-        drive.SetGyroZero(-90); // starting facing left, so fix offset
-
-        AutoStateL = Constants.AUTO_STATE_MACHINE_L.DRIVE_FOR;
-        AutoStateForward = Constants.AUTO_STATE_MACHINE_FORWARD.AUTO_START;
-        AutoStateTime = Timer.getFPGATimestamp();
+        int automode = ((Integer) autoChooser.getSelected()).intValue();
+        autonomous = new Autonomous(drive, lift, vision, automode);        
     }
 
     public void AutonomousPeriodicRobotSpecific()
     {
-        int automode = ((Integer) autoChooser.getSelected()).intValue();
-        
-        switch (automode)
-        {
-            case 0:
-                
-                break;
-                
-            case 1:
-                AutoGoToScoringZone();
-                break;
-            
-            case 2:
-                AutoGrab1ToteAndGoToScoringZone();
-                break;
-                
-            case 3:
-                AutoGrabContainerAndGoToScoringZone();
-                break;
-                
-            case 4:
-                AutoGrab2TotesMovingLeftAndGoToScoringZone();
-                break;
-        }
-    }
-
-    /**
-     * Drive forward for a few seconds, then drive right for a few seconds
-     */
-    private void Drive_L()
-    {
-        switch (AutoStateL)
-        {
-            case DRIVE_FOR:
-                drive.UpdateDrive(new SwerveVector(0, -1), 0, -1);
-                if (Timer.getFPGATimestamp() - AutoStateTime > 2)
-                {
-                    AutoStateL = AUTO_STATE_MACHINE_L.DRIVE_STOP;
-                    AutoStateTime = Timer.getFPGATimestamp();
-                }
-                break;
-
-            case DRIVE_STOP:
-                drive.UpdateDrive(new SwerveVector(0, 0.001), 0, -1);
-                if (Timer.getFPGATimestamp() - AutoStateTime > .5)
-                {
-                    AutoStateL = AUTO_STATE_MACHINE_L.DRIVE_RIGHT;
-                    AutoStateTime = Timer.getFPGATimestamp();
-                }
-                break;
-
-            case DRIVE_RIGHT:
-                drive.UpdateDrive(new SwerveVector(1, 0), 0, 270);
-                if (Timer.getFPGATimestamp() - AutoStateTime > 2)
-                {
-                    AutoStateL = AUTO_STATE_MACHINE_L.AUTO_END;
-                    AutoStateTime = Timer.getFPGATimestamp();
-                }
-                break;
-
-            case AUTO_END:
-                drive.UpdateDrive(new SwerveVector(0, 0), 0, -1);
-
-                break;
-
-            default:
-                AutoStateL = AUTO_STATE_MACHINE_L.AUTO_END;
-                break;
-        }
-    }
-
-    
-    /**
-     * Just drive forward for a few seconds
-     */
-    private void AutoGoToScoringZone()
-    {
-        AutoGoToScoringZone(-1);
-    }
-    private void AutoGoToScoringZone(double Heading)
-    {
-        double DriveTime = 2; //TODO find exact numbers to get into scoring zone
-
-        switch (AutoStateForward)
-        {
-            case AUTO_START:
-                AutoStateTime = Timer.getFPGATimestamp();
-                AutoStateForward = AUTO_STATE_MACHINE_FORWARD.AUTO_GO;
-                break;
-
-            case AUTO_GO:
-                SwerveVector Velocity = new SwerveVector(0, 1);
-
-                // TODO pick values
-                drive.setGearHigh(true);
-                drive.UpdateDrive(Velocity, 0, Heading);
-                if (Timer.getFPGATimestamp() > AutoStateTime + DriveTime)
-                {
-                    AutoStateForward = AUTO_STATE_MACHINE_FORWARD.AUTO_END;
-                }
-                break;
-
-            case AUTO_END:
-            default:
-                drive.UpdateDrive(new SwerveVector(), 0, -1);
-                break;
-        }
-
-    }
-
-    /**
-     * Use the vision to find the tote and drive towards it
-     */
-    private void AutoGrab1ToteAndGoToScoringZone()
-    {
-        switch (AutoStateFindAndGrabTote)
-        {
-            case AUTO_START:
-                AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_FIND;
-                break;
-                
-            case AUTO_FIND:
-                AutoFindTote();
-                lift.AddFloorToteToStack();
-                
-                if (lift.GetToteIntakeSensor().IsOn())
-                {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_MOVE_TO_SCORING_AREA;
-                }
-                break;
-                
-            case AUTO_MOVE_TO_SCORING_AREA:
-                AutoGoToScoringZone();
-                lift.AddFloorToteToStack();
-                break;
-        }
-
-    }
-    
-    private void AutoGrabContainerAndGoToScoringZone()
-    {
-        switch (AutoStateFindAndGrabContainer)
-        {
-            case AUTO_START:
-                AutoStateFindAndGrabContainer = AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER.AUTO_FIND;
-                break;
-                
-            case AUTO_FIND:
-                // TODO: choose velocity
-                drive.UpdateDrive(new SwerveVector(.5, 0), 0, 90);
-                
-                lift.AddContainerToStack();
-                
-                if (lift.GetToteIntakeSensor().IsOn())
-                {
-                    AutoStateFindAndGrabContainer = AUTO_STATE_MACHINE_FIND_AND_GRAB_CONTAINER.AUTO_GRABBED;
-                }
-                break;
-                
-            case AUTO_GRABBED:
-                AutoGoToScoringZone();
-                
-                lift.AddContainerToStack();
-                break;
-        }
-    }
-    
-    private void AutoGrab2TotesMovingLeftAndGoToScoringZone()
-    {
-        switch (AutoStateFindAndGrabTote)
-        {
-            case AUTO_START:
-                AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_FIND;
-                break;
-                
-            case AUTO_FIND:
-                AutoFindTote();
-                lift.AddFloorToteToStack();
-                
-                if (lift.GetToteIntakeSensor().IsOn())
-                {
-                    AutoStateFindAndGrabTote = AUTO_STATE_MACHINE_FIND_AND_GRAB_TOTE.AUTO_MOVE_TO_SCORING_AREA;
-                }
-                break;
-                
-            case AUTO_MOVE_TO_SCORING_AREA:
-                SwerveVector Velocity = new SwerveVector(); // TODO
-                drive.UpdateDrive(Velocity, 0, 270);
-                lift.AddFloorToteToStack();
-                break;
-        }
-    }
-    
-    private void AutoFindTote()
-    {
-        double maxSlide = prefs.getDouble("MaxSlide", 1), slideP = prefs
-                .getDouble("SlideP", 1), targetX = prefs.getDouble(
-                "SlideTargetX", .5), forwardSpeed = prefs.getDouble(
-                "AutoSpeed", .5);
-
-        SwerveVector Velocity;
-
-        if (vision.getToteSeen())
-        {
-            Velocity = new SwerveVector(-forwardSpeed, Utilities.clampToRange(
-                    (vision.getResultX() - targetX) * slideP, -maxSlide,
-                    maxSlide));
-        }
-        else
-        {
-            Velocity = new SwerveVector(-forwardSpeed, 0);
-        }
-
-        double Rotation = 0;
-        double Heading = 270;
-
-        SmartDashboard.putNumber("Velocity X", Velocity.getX());
-        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
-
-        drive.setGearHigh(false);
-        drive.UpdateDrive(Velocity, Rotation, Heading);
+        autonomous.Run();
     }
 
     public void AutonomousDeInitRobotSpecific()
-    {
-
+    {   
     }
     
     public void TestModeInitRobotSpecific()
