@@ -66,7 +66,7 @@ public abstract class Constants {
     }
 
     public static enum STATE_ADD_FLOOR_TOTE_TO_STACK {
-        INIT, INTAKE_TOTE, LIFT_TOTE, HANDLE_CONTAINER, RESET
+        INIT, INTAKE_TOTE, GRAB_TOTE, LIFT_TOTE, HANDLE_CONTAINER, RESET
     }
 
     public static enum STATE_ADD_CONTAINER_TO_STACK {
