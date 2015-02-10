@@ -13,20 +13,20 @@ public abstract class Constants {
     public static final int[] CHANNEL_PUSHER = { 2, 3 };
 
     // TODO - what is the amount of time required to extend?
-    public static final double TIME_EXTEND_RAILS = .5;
-    public static final double TIME_EXTEND_CONTAINER_CAR = .5;
-    public static final double TIME_EXTEND_CONTAINER_FIXED = .5;
-    public static final double TIME_EXTEND_STACK_HOLDER = .5;
-    public static final double TIME_EXTEND_STOP = .5;
-    public static final double TIME_EXTEND_PUSHER = .5;
+    public static final double TIME_EXTEND_RAILS = 1;
+    public static final double TIME_EXTEND_CONTAINER_CAR = 1;
+    public static final double TIME_EXTEND_CONTAINER_FIXED = 1;
+    public static final double TIME_EXTEND_STACK_HOLDER = 1;
+    public static final double TIME_EXTEND_STOP = 1;
+    public static final double TIME_EXTEND_PUSHER = 1;
 
     // TODO - what is the amount of time required to contract?
-    public static final double TIME_CONTRACT_RAILS = .5;
-    public static final double TIME_CONTRACT_CONTAINER_CAR = .5;
-    public static final double TIME_CONTRACT_CONTAINER_FIXED = .5;
-    public static final double TIME_CONTRACT_STACK_HOLDER = .5;
-    public static final double TIME_CONTRACT_STOP = .5;
-    public static final double TIME_CONTRACT_PUSHER = .5;
+    public static final double TIME_CONTRACT_RAILS = 1;
+    public static final double TIME_CONTRACT_CONTAINER_CAR = 1;
+    public static final double TIME_CONTRACT_CONTAINER_FIXED = 1;
+    public static final double TIME_CONTRACT_STACK_HOLDER = 1;
+    public static final double TIME_CONTRACT_STOP = 1;
+    public static final double TIME_CONTRACT_PUSHER = 1;
 
     // Motors
     public static final int[] PINS_EJECTOR = { 9 };
@@ -50,7 +50,7 @@ public abstract class Constants {
     // TODO - find distance of lift traveled for one full rotation
     public static final double LIFT_ENCODER_FULL_TURN_DISTANCE = 1;
     public static final double LIFT_ENCODER_INCHES_PER_PULSE = LIFT_ENCODER_FULL_TURN_DISTANCE / LIFT_ENCODER_PULSES;
-    public static final double[] LIFT_POSTITIONS = { 0, 1, 2, 3 };
+    public static final double[] LIFT_POSTITIONS = { 0, 6, 12, 18 };
 
     public static enum CYLINDER_STATE {
         NONE, EXTENDED, EXTENDING, CONTRACTED, CONTRACTING

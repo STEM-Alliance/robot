@@ -28,7 +28,7 @@ public class Application extends com.taurus.Application {
         testChooser.addObject("Wheel To Heading",
                 Integer.valueOf(TEST_MODE_CALIBRATION_3));
 
-        SmartDashboard.putData("Test", testChooser);
+        SmartDashboard.putData("Test Mode", testChooser);
 
         testWheelChooser = new SendableChooser();
         testWheelChooser.addDefault("Front Left", Integer.valueOf(0));
@@ -44,36 +44,6 @@ public class Application extends com.taurus.Application {
     }
 
     public void TeleopPeriodicRobotSpecific()
-    {
-
-    }
-
-    public void TeleopDeInitRobotSpecific()
-    {
-
-    }
-
-    public void AutonomousInitRobotSpecific()
-    {
-
-    }
-
-    public void AutonomousPeriodicRobotSpecific()
-    {
-
-    }
-
-    public void AutonomousDeInitRobotSpecific()
-    {
-
-    }
-
-    public void TestModeInitRobotSpecific()
-    {
-
-    }
-
-    public void TestModePeriodicRobotSpecific()
     {
         int i = ((Integer) testWheelChooser.getSelected()).intValue();
 
@@ -126,6 +96,35 @@ public class Application extends com.taurus.Application {
                 drive.run(controller);
                 break;
         }
+    }
+
+    public void TeleopDeInitRobotSpecific()
+    {
+
+    }
+
+    public void AutonomousInitRobotSpecific()
+    {
+
+    }
+
+    public void AutonomousPeriodicRobotSpecific()
+    {
+
+    }
+
+    public void AutonomousDeInitRobotSpecific()
+    {
+
+    }
+
+    public void TestModeInitRobotSpecific()
+    {
+
+    }
+
+    public void TestModePeriodicRobotSpecific()
+    {
     }
 
     public void TestModeDeInitRobotSpecific()
