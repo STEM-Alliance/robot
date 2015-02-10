@@ -1,7 +1,5 @@
 package com.taurus.robotspecific2015;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 import com.taurus.Utilities;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveVector;
