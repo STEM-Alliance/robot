@@ -61,6 +61,7 @@ public abstract class Application {
         PDP = new PowerDistributionPanel();
 
         controllerChooser = new ControllerChooser();
+        controller = controllerChooser.GetController();
     }
     
     public void TeleopInit()
@@ -83,14 +84,14 @@ public abstract class Application {
             SmartDashboard.putNumber("Dash Task Length", Timer.getFPGATimestamp() - TimeLastDash);
         }
 
-        if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
-        {
-            TimeLastSwerve = Timer.getFPGATimestamp();
-            
-            drive.run(controller);
-            
-            SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
-        }
+//        if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
+//        {
+//            TimeLastSwerve = Timer.getFPGATimestamp();
+//            
+//            drive.run(controller);
+//            
+//            SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
+//        }
 
         TeleopPeriodicRobotSpecific();
     }
@@ -109,6 +110,7 @@ public abstract class Application {
     public void AutonomousInit()
     {
         // TODO: Put common routine here
+        controller = controllerChooser.GetController();
         
         AutonomousInitRobotSpecific();
     }
@@ -130,6 +132,7 @@ public abstract class Application {
     public void TestModeInit()
     {
         // TODO: Put common routine here
+        controller = controllerChooser.GetController();
 
         TestModeInitRobotSpecific();
     }
