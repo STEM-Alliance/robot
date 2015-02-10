@@ -31,9 +31,9 @@ public class Application extends com.taurus.Application
         autoChooser.addObject("Grab tote", Integer.valueOf(2));
         autoChooser.addObject("Grab container", Integer.valueOf(3));
         autoChooser.addObject("Grab 2 totes moving left", Integer.valueOf(4));
-        autoChooser.addObject("Grab 2 totes moving right", Integer.valueOf(5));
+//        autoChooser.addObject("Grab 2 totes moving right", Integer.valueOf(5));
         autoChooser.addObject("Grab container, 2 totes middle", Integer.valueOf(6));
-        autoChooser.addObject("Grab container 2 totes side", Integer.valueOf(7));
+//        autoChooser.addObject("Grab container 2 totes side", Integer.valueOf(7));
         autoChooser.addObject("Container + tote", Integer.valueOf(8));
         autoChooser.addObject("3 totes", Integer.valueOf(9));
         autoChooser.addObject("Container + 3 totes", Integer.valueOf(10));

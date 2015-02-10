@@ -1,7 +1,8 @@
 package com.taurus.robotspecific2015;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 import com.taurus.Utilities;
-import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveVector;
 
@@ -9,7 +10,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous 
 {
@@ -18,8 +18,6 @@ public class Autonomous
     private Lift lift;
     private Vision vision;
     
-    private int automode;
-    
     Command autoCommand;
     
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision, int automode)
@@ -27,7 +25,6 @@ public class Autonomous
         this.drive = drive;
         this.lift = lift;
         this.vision = vision;
-        this.automode = automode;
         
         drive.ZeroGyro();
         
@@ -54,6 +51,26 @@ public class Autonomous
             case 4:
                 drive.SetGyroZero(270);
                 autoCommand = new Grab2TotesMovingLeftAndDriveToScoringZone();
+                break;
+            
+            case 6:
+                drive.SetGyroZero(90);
+                autoCommand = new GrabContainer2TotesMiddleScoringZone();
+                break;
+                
+            case 8:
+                drive.SetGyroZero(90);
+                autoCommand = new GrabContainer1ToteAndGotoScoringZone();
+                break;
+                
+            case 9:
+                drive.SetGyroZero(270);
+                autoCommand = new Grab3TotesGoToScoringZone();
+                break;
+                
+            case 10:
+                drive.SetGyroZero(90);
+                autoCommand = new GrabContainer3TotesMiddleScoringZone();
                 break;
         }
         
@@ -112,10 +129,69 @@ public class Autonomous
         public NavigateAroundContainerToPickUpTote()
         {
             addSequential(new DriveForTime(new SwerveVector(0, 1), 0, 270, 1));
+            addSequential(new DriveForTime(new SwerveVector(-1, 0), 0, 270, 1));
             addSequential(new DriveTowardToteWithVision());
         }
     }
+
+    private class Grab3TotesGoToScoringZone extends CommandGroup
+    {
+        public Grab3TotesGoToScoringZone()
+        {
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));
+            addParallel(new PickupFloorTotes(2));
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new DriveAndDrop());
+        }
+    }
     
+    private class GrabContainer1ToteAndGotoScoringZone extends CommandGroup
+    {
+        public GrabContainer1ToteAndGotoScoringZone()
+        {
+            addSequential(new PickupContainer());
+            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0, 90));
+            addParallel(new PickupFloorTotes(0));
+            addSequential(new DriveToAutoScoringZone());
+        }
+    }
+    
+    private class GrabContainer2TotesMiddleScoringZone extends CommandGroup
+    {
+        public GrabContainer2TotesMiddleScoringZone()
+        {
+            addSequential(new PickupContainer());
+            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0, 90));
+            addParallel(new PickupFloorTotes(1));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));   //TODO adjust speed to match rotation
+            addSequential(new DriveToAutoScoringZone());
+        }
+    }
+    
+    private class GrabContainer3TotesMiddleScoringZone extends CommandGroup
+    {
+        public GrabContainer3TotesMiddleScoringZone()
+        {
+            addSequential(new PickupContainer());
+            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0, 90));
+            addParallel(new PickupFloorTotes(2));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));   //TODO adjust speed to match rotation
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new DriveAndDrop());
+        }
+    }
+    
+    private class DriveAndDrop extends CommandGroup
+    {
+        public DriveAndDrop()
+        {
+            addSequential(new DriveToAutoScoringZone());
+            addSequential(new DropToteStack());
+            addSequential(new DriveForTime(new SwerveVector(1, 0), 0, 270, 1));
+        }
+    }
+        
     private class DriveTowardToteWithVision extends Command
     {
         double lastDistance = Double.POSITIVE_INFINITY;        
@@ -133,6 +209,7 @@ public class Autonomous
             double slideP = Application.prefs.getDouble("SlideP", 1);
             double targetX = Application.prefs.getDouble("SlideTargetX", .5);
             double forwardSpeed = Application.prefs.getDouble("AutoSpeed", .5);
+            double lastPosition = Application.prefs.getDouble("LastDistance", .5);
             
             SwerveVector Velocity;
             double Heading;
@@ -140,17 +217,20 @@ public class Autonomous
             if (vision.getToteSeen())
             {
                 lastDistance = vision.getResultY();
+            }
+            
+            // TODO: numbers
+            if (lastDistance > lastPosition)
+            {
+                Heading = 225;
+            }
+            else
+            {
+                Heading = 270;
+            }
                 
-                // TODO: numbers
-                if (lastDistance > .5)
-                {
-                    Heading = 225;
-                }
-                else
-                {
-                    Heading = 270;
-                }
-                
+            if (vision.getToteSeen())
+            {
                 Velocity = new SwerveVector(
                         -forwardSpeed, 
                         Utilities.clampToRange((vision.getResultX() - targetX) * slideP, 
@@ -158,17 +238,6 @@ public class Autonomous
             }
             else
             {
-                // TODO numbers
-                if (lastDistance > .5)
-                {
-                    // Drive back-left pointing 45 degrees
-                    Heading = 225;
-                }
-                else
-                {
-                    Heading = 270;
-                }
-                
                 Velocity = SwerveVector.NewFromMagAngle(forwardSpeed, Heading);
             }
             
