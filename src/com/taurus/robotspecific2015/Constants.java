@@ -37,10 +37,10 @@ public abstract class Constants {
     public static final int MOTOR_DIRECTION_BACKWARD = -1;
 
     // Sensors
-    public static final int CHANNEL_DIGITAL_TOTE_INTAKE = 8;
-    public static final int CHANNEL_DIGITAL_CAR_ZERO = 9;
-    public static final int CHANNEL_DIGITAL_EJECTOR_OUT = 10;
-    public static final int CHANNEL_DIGITAL_EJECTOR_IN = 11;
+    public static final int CHANNEL_DIGITAL_CAR_ZERO = 6;
+    public static final int CHANNEL_DIGITAL_TOTE_INTAKE = 7;
+    public static final int CHANNEL_DIGITAL_EJECTOR_OUT = 8;
+    public static final int CHANNEL_DIGITAL_EJECTOR_IN = 9;
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
@@ -54,6 +54,10 @@ public abstract class Constants {
 
     public static enum CYLINDER_STATE {
         NONE, EXTENDED, EXTENDING, CONTRACTED, CONTRACTING
+    }
+
+    public static enum CYLINDER_ACTION {
+        NONE, EXTEND, CONTRACT
     }
     
     public static enum STATE_LIFT_ACTION {

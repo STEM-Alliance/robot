@@ -148,10 +148,13 @@ public final class PIDController implements LiveWindowSendable {
         {
             if (key.equals("p") || key.equals("i"))
             {
-                if (getP() != table.getNumber("p", 0.0) || getI() != table.getNumber("i", 0.0))
+                if (getP() != table.getNumber("p", 0.0) ||
+                        getI() != table.getNumber("i", 0.0) || 
+                        getD() != table.getNumber("d", 0.0))
                 {
                     setP(table.getNumber("p", 0.0));
                     setI(table.getNumber("i", 0.0));
+                    setD(table.getNumber("d", 0.0));
                 }
             }
 //            else if (key.equals("setpoint"))
@@ -187,6 +190,7 @@ public final class PIDController implements LiveWindowSendable {
         {
             table.putNumber("p", getP());
             table.putNumber("i", getI());
+            table.putNumber("d", getD());
             table.addTableListener(listener, false);
         }
     }

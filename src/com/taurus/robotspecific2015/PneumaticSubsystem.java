@@ -17,7 +17,7 @@ public class PneumaticSubsystem {
     private final double TimeExtend;
     private final double TimeContract;
 
-    private CYLINDER_STATE State = CYLINDER_STATE.NONE;
+    private CYLINDER_STATE State;
     
     private double TimeStart;
 
@@ -29,11 +29,11 @@ public class PneumaticSubsystem {
      * @param module module id of PCU
      * @param timeExtend time it takes to extend
      * @param timeContract time it takes to contract
-     * @param startExtended whether to start extended or contracted
+     * @param startAction whether to start extended or contracted
      */
     public PneumaticSubsystem(int[] channels,
             int module, double timeExtend, double timeContract,
-            boolean startExtended)
+            Constants.CYLINDER_ACTION startAction)
     {
         // Save any constants
         Module = module;
@@ -42,15 +42,30 @@ public class PneumaticSubsystem {
         TimeExtend = timeExtend;
         TimeContract = timeContract;
         solenoid = new DoubleSolenoid(Module, ChannelExtend, ChannelContract);
-
+        State = CYLINDER_STATE.NONE;
+                
         // Move all solenoids to initial positions
-        if (startExtended)
+        Run(startAction);
+    }
+    
+    /**
+     * Perform an action, either extend/contract/nothing
+     * @param Action extend/contract/no action
+     * @return true if finished
+     */
+    public boolean Run(Constants.CYLINDER_ACTION Action)
+    {
+        if(Action == Constants.CYLINDER_ACTION.EXTEND)
         {
-            Extend();
+            return Extend();
+        }
+        else if(Action == Constants.CYLINDER_ACTION.CONTRACT)
+        {
+            return Contract();
         }
         else
         {
-            Contract();
+            return false;
         }
     }
 
@@ -67,9 +82,11 @@ public class PneumaticSubsystem {
             // Already extended
             done = true;
         }
-        else if (State == CYLINDER_STATE.CONTRACTING || State == CYLINDER_STATE.CONTRACTED)
+        else if (State == CYLINDER_STATE.CONTRACTING ||
+                 State == CYLINDER_STATE.CONTRACTED ||
+                 State == CYLINDER_STATE.NONE)
         {
-            // If we are not moving, start extending
+            // If we are not extended/extending
             solenoid.set(DoubleSolenoid.Value.kForward);
 
             // Update current state
@@ -102,9 +119,11 @@ public class PneumaticSubsystem {
             // Already contracted
             done = true;
         }
-        else if (State == CYLINDER_STATE.EXTENDING || State == CYLINDER_STATE.EXTENDED)
+        else if (State == CYLINDER_STATE.EXTENDING ||
+                 State == CYLINDER_STATE.EXTENDED ||
+                 State == CYLINDER_STATE.NONE)
         {
-            // If we are not moving, start contracting
+            // If we are not contracted/contracting
             solenoid.set(DoubleSolenoid.Value.kReverse);
 
             // Update current state
@@ -126,7 +145,7 @@ public class PneumaticSubsystem {
 
     /**
      * Return current position of solenoids
-     * @return true if it is extended, false if contracted
+     * @return true if it is extended/contracting, false if contracted/extending
      */
     public boolean IsExtended()
     {

@@ -33,19 +33,19 @@ public class Lift extends Subsystem {
         StackEjector = new Ejector();
         CylindersRails = new PneumaticSubsystem(Constants.CHANNEL_RAIL,
                 Constants.MODULE_ID_PCU, Constants.TIME_EXTEND_RAILS,
-                Constants.TIME_CONTRACT_RAILS, true);
+                Constants.TIME_CONTRACT_RAILS, Constants.CYLINDER_ACTION.EXTEND);
         CylindersContainerCar = new PneumaticSubsystem(
                 Constants.CHANNEL_CONTAINER_CAR, Constants.MODULE_ID_PCU,
                 Constants.TIME_EXTEND_CONTAINER_CAR,
-                Constants.TIME_CONTRACT_CONTAINER_CAR, false);
+                Constants.TIME_CONTRACT_CONTAINER_CAR, Constants.CYLINDER_ACTION.CONTRACT);
         CylindersContainerFixed = new PneumaticSubsystem(
                 Constants.CHANNEL_CONTAINER_FIXED, Constants.MODULE_ID_PCU,
                 Constants.TIME_EXTEND_CONTAINER_FIXED,
-                Constants.TIME_CONTRACT_CONTAINER_FIXED, false);
+                Constants.TIME_CONTRACT_CONTAINER_FIXED, Constants.CYLINDER_ACTION.CONTRACT);
         CylindersStackHolder = new PneumaticSubsystem(
                 Constants.CHANNEL_STACK_HOLDER, Constants.MODULE_ID_PCU,
                 Constants.TIME_EXTEND_STACK_HOLDER,
-                Constants.TIME_CONTRACT_STACK_HOLDER, false);
+                Constants.TIME_CONTRACT_STACK_HOLDER, Constants.CYLINDER_ACTION.CONTRACT);
         ToteIntakeSensor = new SensorDigital(
                 Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
     }
