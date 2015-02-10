@@ -28,6 +28,11 @@ public class Car {
         }
     }
 
+    public LinearActuator GetActuator()
+    {
+        return Actuator;
+    }
+    
     /**
      * Get the position of the car
      * @return
