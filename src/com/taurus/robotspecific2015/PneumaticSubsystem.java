@@ -130,6 +130,6 @@ public class PneumaticSubsystem {
      */
     public boolean IsExtended()
     {
-        return State == CYLINDER_STATE.EXTENDED;
+        return State == CYLINDER_STATE.EXTENDED || State == CYLINDER_STATE.CONTRACTING;
     }
 }

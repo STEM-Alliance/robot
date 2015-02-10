@@ -12,8 +12,9 @@ public class Application extends com.taurus.Application
     private Lift lift;
         
     private STATE_LIFT_ACTION CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-    
+
     private SendableChooser autoChooser;
+    private SendableChooser testChooser;
     private Autonomous autonomous;
     
     public Application()
@@ -133,11 +134,14 @@ public class Application extends com.taurus.Application
     
     public void TestModeInitRobotSpecific()
     {
+        testChooser = new SendableChooser();
+        testChooser.addDefault("Pneumatics", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
+        testChooser.addObject("Motors", Integer.valueOf(Constants.TEST_MODE_MOTORS));
+        SmartDashboard.putData("Test", testChooser);
     }
 
     public void TestModePeriodicRobotSpecific()
     {
-        int testMode = 0;
         boolean button1 = controller.getRawButtion(1);
         boolean button2 = controller.getRawButtion(2);
         boolean button3 = controller.getRawButtion(3);
@@ -146,10 +150,11 @@ public class Application extends com.taurus.Application
         boolean button6 = controller.getRawButtion(6);
 
         // test modes for cylinders and motors and features.
-        switch (testMode)
+        switch (((Integer) testChooser.getSelected()).intValue())
         {
             case Constants.TEST_MODE_PNEUMATIC:
                 PneumaticSubsystem testCylinders;
+                boolean action = true;
 
                 if (button1)
                 {
@@ -170,26 +175,30 @@ public class Application extends com.taurus.Application
                 else
                 {
                     testCylinders = lift.GetCylindersRails();
+                    action = false;
                 }
 
-                // Toggle selected cylinders to opposite position
-                if (testCylinders.IsExtended())
+                if(action)
                 {
-                    testCylinders.Contract();
-                }
-                else
-                {
-                    testCylinders.Extend();
+                    // Toggle selected cylinders to opposite position
+                    if (testCylinders.IsExtended())
+                    {
+                        testCylinders.Contract();
+                    }
+                    else
+                    {
+                        testCylinders.Extend();
+                    }
                 }
                 break;
             case Constants.TEST_MODE_MOTORS:
                 if (button1)
                 {
-                    lift.GetCar().SetPosition(0);
+                    lift.GetCar().GetActuator().SetSpeedRaw(1);
                 }
                 else if (button2)
                 {
-                    lift.GetCar().SetPosition(1);
+                    lift.GetCar().GetActuator().SetSpeedRaw(-.5);
                 }
                 else if (button3)
                 {
@@ -206,6 +215,10 @@ public class Application extends com.taurus.Application
                 else if (button6)
                 {
                     lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_BACKWARD);
+                }
+                else
+                {
+                    lift.GetEjector().SetMotors(0);
                 }
                 break;
             default:
