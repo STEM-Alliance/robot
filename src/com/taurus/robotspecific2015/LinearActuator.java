@@ -3,51 +3,38 @@ package com.taurus.robotspecific2015;
 import com.taurus.PIDController;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
  * A Linear actuator subsystem using motor(s) and an encoder
  *
  */
-public class LinearActuator {
+public abstract class LinearActuator {
 
-    private Encoder Enc;
-    private PIDController EncPIController;
+    private PIDController ActuatorPIController;
+    private double ActP = 1;
+    private double ActI = 0;
+    private double ActD = 0.1;
+    
     private MotorSystem Motors;
-
-    private double EncP = 1;
-    private double EncI = 0;
-    private double EncD = 0.1;
 
     private double[] Positions;
     private double PositionThreshold;
     private static final double PositionThresholdDefault = 0.5;
 
-    /**
-     * Create a new linear actuator using motor(s) and an encoder
-     * @param MotorPins pin(s) to control the motor(s)
-     * @param MotorScaling scale the speed of the motor(s) output
-     * @param EncoderPins 2 pins, A and B, that the encoder is connected to
-     * @param InchesPerPulse distance of travel per pulse on the encoder, in inches
-     * @param Positions array of positions in inches to use for setpoints, readings
-     * @param PositionThreshold threshold in inches to use when determining the position
-     */
+
     public LinearActuator(int[] MotorPins, double[] MotorScaling,
-            int[] EncoderPins, double InchesPerPulse, double[] Positions,
-            double PositionThreshold)
+            double[] Positions, double PositionThreshold)
     {
         Motors = new MotorSystem(MotorPins);
         Motors.SetScale(MotorScaling);
 
-        Enc = new Encoder(EncoderPins[0], EncoderPins[1]);
-        Enc.setDistancePerPulse(InchesPerPulse);
-
-        EncPIController = new PIDController(EncP, EncI, EncD, 1.0);
-
         this.Positions = Positions;
         this.PositionThreshold = PositionThreshold;
+        
+        ActuatorPIController = new PIDController(ActP, ActI, ActD, 1.0);
     }
+
 
     /**
      * Create a new linear actuator using motor(s) and an encoder with the default
@@ -59,19 +46,15 @@ public class LinearActuator {
      * @param Positions array of positions in inches to use for setpoints, readings
      */
     public LinearActuator(int[] MotorPins, double[] MotorScaling,
-            int[] EncoderPins, double InchesPerPulse, double[] Positions)
+            double[] Positions)
     {
-        this(MotorPins, MotorScaling, EncoderPins, InchesPerPulse,
-                Positions, PositionThresholdDefault);
+        this(MotorPins, MotorScaling, Positions, PositionThresholdDefault);
     }
 
     /**
      * Zero the distance
      */
-    public void Zero()
-    {
-        Enc.reset();
-    }
+    public abstract void Zero();
 
     /**
      * Set the desired position index
@@ -84,7 +67,7 @@ public class LinearActuator {
 
         // use the PI to get the desired speed based on distance from current
         // position
-        double speed = EncPIController.update(Positions[i], GetDistance(),
+        double speed = ActuatorPIController.update(Positions[i], GetDistance(),
                 time);
 
         Motors.Set(speed);
@@ -164,13 +147,17 @@ public class LinearActuator {
     }
 
     /**
+     * Get the raw value of the sensor
+     * 
+     * @return
+     */
+    public abstract double GetRaw();
+    
+    /**
      * Get the distance, in inches, from the zero point
      * 
      * @return
      */
-    public double GetDistance()
-    {
-        return Enc.getDistance();
-    }
+    public abstract double GetDistance();
 
 }
