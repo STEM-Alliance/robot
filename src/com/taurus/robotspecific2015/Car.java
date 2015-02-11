@@ -10,10 +10,11 @@ public class Car {
 
     public Car()
     {
-        Actuator = new LinearActuator(Constants.LIFT_MOTOR_PINS,
-                Constants.LIFT_MOTOR_SCALING, Constants.LIFT_ENCODER_PINS,
-                Constants.LIFT_ENCODER_INCHES_PER_PULSE,
-                Constants.LIFT_POSTITIONS);
+        Actuator = new LinearActuatorEncoder(Constants.LIFT_MOTOR_PINS,
+                Constants.LIFT_MOTOR_SCALING,
+                Constants.LIFT_POSTITIONS,
+                Constants.LIFT_ENCODER_PINS,
+                Constants.LIFT_ENCODER_INCHES_PER_PULSE);
         
         ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
 
