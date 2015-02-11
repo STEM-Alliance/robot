@@ -100,7 +100,7 @@ public abstract class Constants {
     // Test mode
     public static final int TEST_MODE_PNEUMATIC = 0;
     public static final int TEST_MODE_MOTORS = 1;
-    public static final int TEST_MODE_SENSOR = 2;
+    public static final int TEST_MODE_ACTUATOR = 2;
 
     // Autonomous mode
     public static enum AUTO_STATE_MACHINE_L {

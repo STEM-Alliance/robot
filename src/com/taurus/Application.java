@@ -85,18 +85,14 @@ public abstract class Application {
             SmartDashboard.putNumber("Dash Task Length", Timer.getFPGATimestamp() - TimeLastDash);
         }
 
-        // Only run if not in test mode
-        if(!DriverStation.getInstance().isTest())
-        {
-            if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
-            {
-                TimeLastSwerve = Timer.getFPGATimestamp();
-                
-                drive.run(controller);
-                
-                SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
-            }
-        }
+//        if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
+//        {
+//            TimeLastSwerve = Timer.getFPGATimestamp();
+//            
+//            drive.run(controller);
+//            
+//            SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
+//        }
 
         TeleopPeriodicRobotSpecific();
     }
