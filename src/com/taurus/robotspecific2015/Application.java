@@ -50,28 +50,36 @@ public class Application extends com.taurus.Application
     public void TeleopPeriodicRobotSpecific()
     {
         // TODO: Do we want a button to cancel the current routine?
-        
-        // if not currently running anything, try and find a button
-        // do this first so we can run the action this run rather than
-        // waiting until the next time this task is ran
-        if(CurrentLiftAction == STATE_LIFT_ACTION.NO_ACTION)
+        if(controller.getBrake())
         {
-            // find if a button is pressed, then execute
-            if (controller.getAddChuteTote())
+            CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+        }
+        else
+        {
+            lift.GetCar().ZeroIfNeeded();
+            
+            // if not currently running anything, try and find a button
+            // do this first so we can run the action this run rather than
+            // waiting until the next time this task is ran
+            if(CurrentLiftAction == STATE_LIFT_ACTION.NO_ACTION)
             {
-                CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
-            }
-            else if (controller.getAddFloorTote())
-            {
-                CurrentLiftAction = STATE_LIFT_ACTION.ADD_FLOOR_TOTE;
-            }
-            else if (controller.getAddContainer())
-            {
-                CurrentLiftAction = STATE_LIFT_ACTION.ADD_CONTAINER;
-            }
-            else if (controller.getEjectStack())
-            {
-                CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
+                // find if a button is pressed, then execute
+                if (controller.getAddChuteTote())
+                {
+                    CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
+                }
+                else if (controller.getAddFloorTote())
+                {
+                    CurrentLiftAction = STATE_LIFT_ACTION.ADD_FLOOR_TOTE;
+                }
+                else if (controller.getAddContainer())
+                {
+                    CurrentLiftAction = STATE_LIFT_ACTION.ADD_CONTAINER;
+                }
+                else if (controller.getEjectStack())
+                {
+                    CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
+                }
             }
         }
 
@@ -137,6 +145,7 @@ public class Application extends com.taurus.Application
         testChooser = new SendableChooser();
         testChooser.addDefault("Pneumatics", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
         testChooser.addObject("Motors", Integer.valueOf(Constants.TEST_MODE_MOTORS));
+        testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
     }
 
@@ -148,6 +157,7 @@ public class Application extends com.taurus.Application
         boolean button4 = controller.getRawButtion(4);
         boolean button5 = controller.getRawButtion(5);
         boolean button6 = controller.getRawButtion(6);
+        lift.GetCar().ZeroIfNeeded();
 
         // test modes for cylinders and motors and features.
         switch (((Integer) testChooser.getSelected()).intValue())
@@ -202,6 +212,29 @@ public class Application extends com.taurus.Application
                 }
                 else if (button3)
                 {
+                    lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_FORWARD);
+                }
+                else if (button4)
+                {
+                    lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_BACKWARD);
+                }
+                else
+                {
+                    lift.GetCar().GetActuator().SetSpeedRaw(0);
+                    lift.GetEjector().SetMotors(0);
+                }
+                break;
+            case Constants.TEST_MODE_ACTUATOR:
+                if (button1)
+                {
+                    lift.GetCar().SetPosition(0);
+                }
+                else if (button2)
+                {
+                    lift.GetCar().SetPosition(1);
+                }
+                else if (button3)
+                {
                     lift.GetCar().SetPosition(2);
                 }
                 else if (button4)
@@ -218,6 +251,7 @@ public class Application extends com.taurus.Application
                 }
                 else
                 {
+                    lift.GetCar().GetActuator().SetSpeedRaw(0);
                     lift.GetEjector().SetMotors(0);
                 }
                 break;
