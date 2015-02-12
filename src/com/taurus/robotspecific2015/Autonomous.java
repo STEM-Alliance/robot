@@ -85,7 +85,7 @@ public class Autonomous
         public DriveToAutoScoringZone()
         {
             // TODO: numbers
-            addSequential(new DriveForTime(new SwerveVector(0, 1), 0, -1, 2));
+            addSequential(new Drive(new SwerveVector(0, 1), 0, -1), 2);
         }
     }
     
@@ -126,8 +126,9 @@ public class Autonomous
     {
         public NavigateAroundContainerToPickUpTote()
         {
-            addSequential(new DriveForTime(new SwerveVector(0, 1), 0, 270, 1));
-            addSequential(new DriveForTime(new SwerveVector(-1, 0), 0, 270, 1));
+            // TODO: numbers
+            addSequential(new Drive(new SwerveVector(0, 1), 0, 270), 1);
+            addSequential(new Drive(new SwerveVector(-1, 0), 0, 270), 1);
             addSequential(new DriveTowardToteWithVision());
         }
     }
@@ -184,69 +185,71 @@ public class Autonomous
     {
         public DriveAndDrop()
         {
+            // TODO: numbers
             addSequential(new DriveToAutoScoringZone());
             addSequential(new DropToteStack());
-            addSequential(new DriveForTime(new SwerveVector(1, 0), 0, 270, 1));
+            addSequential(new Drive(new SwerveVector(1, 0), 0, 270), 1);
         }
     }
         
-    private class DriveTowardToteWithVision extends Command
+    private class DriveTowardToteWithVision extends CommandGroup
     {
-        double lastDistance = Double.POSITIVE_INFINITY;        
+        public DriveTowardToteWithVision()
+        {
+            addSequential(new DriveBackwardsToLineUpTote());
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));
+        }
+    }
+    
+    private class DriveBackwardsToLineUpTote extends Command
+    {
+        boolean Finished = false;
 
         @Override
         protected void initialize()
         {
-            requires(drive);            
+            requires(drive);
+            this.Finished = false;
         }
 
         @Override
         protected void execute()
         {
             double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
-            double slideP = Application.prefs.getDouble("SlideP", 1);
-            double targetX = Application.prefs.getDouble("SlideTargetX", .5);
-            double forwardSpeed = Application.prefs.getDouble("AutoSpeed", .5);
-            double lastPosition = Application.prefs.getDouble("LastDistance", .5);
+            double slideP = Application.prefs.getDouble("SlideP", 2);
+            double targetX = Application.prefs.getDouble("SlideTargetX", .75);
+            double xErrorThreshold = Application.prefs.getDouble("SlideTargetXError", .1);
             
             SwerveVector Velocity;
-            double Heading;
-            
-            if (vision.getToteSeen())
-            {
-                lastDistance = vision.getResultY();
-            }
-            
-            // TODO: numbers
-            if (lastDistance > lastPosition)
-            {
-                Heading = 225;
-            }
-            else
-            {
-                Heading = 270;
-            }
                 
             if (vision.getToteSeen())
             {
-                Velocity = new SwerveVector(
-                        -forwardSpeed, 
-                        Utilities.clampToRange((vision.getResultX() - targetX) * slideP, 
-                            -maxSlide, maxSlide));
+                double xError = vision.getResultX() - targetX;
+                
+                if (Math.abs(xError) < xErrorThreshold)
+                {
+                    this.Finished = true;
+                }
+                
+                double slideVelocity = Utilities.clampToRange(
+                        xError * slideP, 
+                        -maxSlide, maxSlide);
+                
+                Velocity = new SwerveVector(0, slideVelocity);
+
             }
             else
             {
-                Velocity = SwerveVector.NewFromMagAngle(forwardSpeed, Heading);
+                Velocity = new SwerveVector(0, -maxSlide);
             }
             
-            drive.setGearHigh(false);
-            drive.UpdateDrive(Velocity, 0, Heading);
+            drive.UpdateDrive(Velocity, 0, 270);
         }
 
         @Override
         protected boolean isFinished()
         {
-            return lift.GetToteIntakeSensor().IsOn();
+            return this.Finished;
         }
 
         @Override
@@ -384,19 +387,17 @@ public class Autonomous
         
     }
     
-    private class DriveForTime extends Command
+    private class Drive extends Command
     {
         private SwerveVector Velocity;
         private double Rotation;
         private double Heading;
-        private double EndTime;
         
-        public DriveForTime(SwerveVector velocity, double rotation, double heading, double TimeDelta)
+        public Drive(SwerveVector velocity, double rotation, double heading)
         {
             this.Velocity = velocity;
             this.Rotation = rotation;
             this.Heading = heading;
-            this.EndTime = Timer.getFPGATimestamp() + TimeDelta;
         }
 
         @Override
@@ -414,7 +415,7 @@ public class Autonomous
         @Override
         protected boolean isFinished()
         {
-            return Timer.getFPGATimestamp() > this.EndTime;
+            return false;
         }
 
         @Override
