@@ -10,10 +10,12 @@ public class Car {
 
     public Car()
     {
-        Actuator = new LinearActuator(Constants.LIFT_MOTOR_PINS,
-                Constants.LIFT_MOTOR_SCALING, Constants.LIFT_ENCODER_PINS,
-                Constants.LIFT_ENCODER_INCHES_PER_PULSE,
-                Constants.LIFT_POSTITIONS);
+        Actuator = new LinearActuatorPot(Constants.LIFT_MOTOR_PINS,
+                Constants.LIFT_MOTOR_SCALING,
+                Constants.LIFT_POSTITIONS,
+                Constants.LIFT_THRESHOLD,
+                Constants.LIFT_POT_PIN,
+                Constants.LIFT_POT_DISTANCE);
         
         ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
 
@@ -24,7 +26,7 @@ public class Car {
         }
         else
         {
-            Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+            //Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
         }
     }
 
@@ -120,5 +122,13 @@ public class Car {
     public double GetHeight()
     {
         return Actuator.GetDistance();
+    }
+
+    public void ZeroIfNeeded()
+    {
+        if (ZeroSensor.IsOn())
+        {
+            Actuator.Zero();
+        }
     }
 }
