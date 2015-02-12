@@ -208,7 +208,7 @@ public class Application extends com.taurus.Application
                 }
                 else if (button2)
                 {
-                    lift.GetCar().GetActuator().SetSpeedRaw(-.5);
+                    lift.GetCar().GetActuator().SetSpeedRaw(-1);
                 }
                 else if (button3)
                 {
@@ -276,6 +276,9 @@ public class Application extends com.taurus.Application
 
     public void DisabledPeriodicRobotSpecific()
     {
+        lift.GetCar().ZeroIfNeeded();        // TODO: Get the value of one sensor and report that
+        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
+        SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight() );
 
     }
 

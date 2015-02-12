@@ -14,7 +14,7 @@ public abstract class LinearActuator {
     private PIDController ActuatorPIController;
     private double ActP = 1;
     private double ActI = 0;
-    private double ActD = 0.1;
+    private double ActD = 0;
     
     private MotorSystem Motors;
 

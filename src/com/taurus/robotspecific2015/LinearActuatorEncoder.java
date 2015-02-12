@@ -37,6 +37,9 @@ public class LinearActuatorEncoder extends LinearActuator {
             double[] Positions, int[] EncoderPins, double InchesPerPulse)
     {
         super(MotorPins, MotorScaling, Positions);
+
+        Enc = new Encoder(EncoderPins[0], EncoderPins[1]);
+        Enc.setDistancePerPulse(InchesPerPulse);
     }
 
     /**

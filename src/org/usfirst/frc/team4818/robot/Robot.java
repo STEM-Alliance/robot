@@ -30,11 +30,17 @@ public class Robot extends SampleRobot {
                     app = new com.taurus.swerve.Application();
                     SmartDashboard.putString("Application", "Swerve");
                     break;
-                
+
                 case 1:
                     // Run 2015 specific
                     app = new com.taurus.robotspecific2015.Application();
                     SmartDashboard.putString("Application", "2015");
+                    break;
+
+                case 2:
+                    // Run test
+                    app = new com.taurus.TestApplication();
+                    SmartDashboard.putString("Application", "Test");
                     break;
                     
                 default:
