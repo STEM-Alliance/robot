@@ -3,8 +3,10 @@ package com.taurus.robotspecific2015;
 import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class LinearActuatorPotentiometer extends LinearActuator {
+
+public class LinearActuatorPot extends LinearActuator {
 
     private MagnetoPot Pot;
     private double DistanceFullTurn;
@@ -24,7 +26,7 @@ public class LinearActuatorPotentiometer extends LinearActuator {
      * @param PotPin Analog input pin for the potentiometer
      * @param DistanceFullTurn distance in inches a full turn translates to
      */
-    public LinearActuatorPotentiometer(int[] MotorPins, double[] MotorScaling,
+    public LinearActuatorPot(int[] MotorPins, double[] MotorScaling,
             double[] Positions, double PositionThreshold,
             int PotPin, double DistanceFullTurn)
     {
@@ -38,13 +40,36 @@ public class LinearActuatorPotentiometer extends LinearActuator {
         FullTurns = 0;
     }
 
+    
+    /**
+     * Create a new linear actuator using motor(s) and an encoder
+     * @param MotorPins pin(s) to control the motor(s)
+     * @param MotorScaling scale the speed of the motor(s) output
+     * @param Positions array of positions in inches to use for setpoints, readings
+     * @param PotPin Analog input pin for the potentiometer
+     * @param DistanceFullTurn distance in inches a full turn translates to
+     */
+    public LinearActuatorPot(int[] MotorPins, double[] MotorScaling,
+            double[] Positions, 
+            int PotPin, double DistanceFullTurn)
+    {
+        super(MotorPins, MotorScaling, Positions );
+        
+        Pot = new MagnetoPot(PotPin);
+        this.DistanceFullTurn = DistanceFullTurn;
+
+        ZeroVal = 0;
+        LastVal = 0;
+        FullTurns = 0;
+    }
+    
     /**
      * {@inheritDoc}
      */
     public void Zero()
     {
         ZeroVal = GetRaw();
-        LastVal = ZeroVal;
+        LastVal = 0;
         FullTurns = 0;
     }
 
