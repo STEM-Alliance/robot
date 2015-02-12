@@ -6,9 +6,9 @@
 
 package com.taurus.swerve;
 
+import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
@@ -38,15 +38,13 @@ public class SwerveWheel {
     private double maxRotationSpeed = .75;
 
     private double AngleOrienation = 0;
-    private double AngleInMin = 0.041; // measured from raw sensor input
-    private double AngleInMax = 0.961; // measured from raw sensor input
 
     // motor
     private CANTalon MotorDrive;
     public Talon MotorAngle;
 
     // sensor
-    public AnalogPotentiometer AnglePot;
+    public MagnetoPot AnglePot;
     //private Encoder DriveEncoder;
 
     // controller
@@ -105,7 +103,7 @@ public class SwerveWheel {
 
         // AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) +
         // Math.abs(SpinMax), -SpinMin);
-        AnglePot = new AnalogPotentiometer(PotPin);
+        AnglePot = new MagnetoPot(PotPin, 360);
         AngleController = new SwerveAngleController(name + ".ctl");
 
         AngleOrienation = Orientation;
@@ -195,19 +193,7 @@ public class SwerveWheel {
      */
     public double getAnglePotValue()
     {
-        // update the values if needed
-        if (AnglePot.get() > AngleInMax)
-        {
-            AngleInMax = AnglePot.get();
-        }
-        if (AnglePot.get() < AngleInMin)
-        {
-            AngleInMin = AnglePot.get();
-        }
-
-        // scale it based on the calibration values
-        return Utilities.scaleToRange(AnglePot.get(), AngleInMin, AngleInMax,
-                0, 360);
+        return AnglePot.get();
     }
 
     /**

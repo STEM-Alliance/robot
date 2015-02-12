@@ -44,14 +44,12 @@ public abstract class Constants {
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
-    public static final double[] LIFT_MOTOR_SCALING = { 1 };
-    public static final int[] LIFT_ENCODER_PINS = { 0, 1 };
-    public static final int LIFT_ENCODER_PULSES = 64;
-    // TODO - find distance of lift traveled for one full rotation
-    public static final double LIFT_ENCODER_FULL_TURN_DISTANCE = 1;
-    public static final double LIFT_ENCODER_INCHES_PER_PULSE = LIFT_ENCODER_FULL_TURN_DISTANCE / LIFT_ENCODER_PULSES;
-    public static final double[] LIFT_POSTITIONS = { 0, 6, 12, 18 };
-
+    public static final double[] LIFT_MOTOR_SCALING = { -1 };
+    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 12, 21.325 };
+    public static final int  LIFT_POT_PIN = 4;
+    public static final double  LIFT_POT_DISTANCE = 3.14;
+    public static final double  LIFT_THRESHOLD = .25;
+    
     public static enum CYLINDER_STATE {
         NONE, EXTENDED, EXTENDING, CONTRACTED, CONTRACTING
     }
