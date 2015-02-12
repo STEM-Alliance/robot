@@ -49,6 +49,16 @@ public class Lift extends Subsystem {
         ToteIntakeSensor = new SensorDigital(
                 Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
     }
+    
+    public boolean CarryTotes()
+    {
+        this.StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+        this.StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
+        this.StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+        this.StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
+        
+        return CylindersRails.Extend() & CylindersStackHolder.Extend() & LiftCar.GoToChute();
+    }
 
     /**
      * Routine to add a new tote to existing stack from chute
@@ -57,6 +67,10 @@ public class Lift extends Subsystem {
      */
     public boolean AddChuteToteToStack(int MaxTotesInStack)
     {
+        this.StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
+        this.StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+        this.StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
+        
         switch (StateAddChuteToteToStack)
         {
             case INIT:
@@ -67,7 +81,7 @@ public class Lift extends Subsystem {
                     {
                         StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                     }
-                    else if (LiftCar.GoToChute())
+                    else if (LiftCar.GoToChute() & CylindersRails.Extend())
                     {
                         StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INTAKE_TOTE;
                     }
@@ -129,6 +143,10 @@ public class Lift extends Subsystem {
      */
     public boolean AddFloorToteToStack(int MaxTotesInStack)
     {
+        this.StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+        this.StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
+        this.StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
+        
         switch (StateAddFloorToteToStack)
         {
             case INIT:
@@ -218,6 +236,10 @@ public class Lift extends Subsystem {
      */
     public boolean AddContainerToStack()
     {
+        this.StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+        this.StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+        this.StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
+        
         if (TotesInStack == 0 && ContainerInStack == false) // Sanity check this
                                                             // should even be
                                                             // called
@@ -225,7 +247,7 @@ public class Lift extends Subsystem {
             switch (StateAddContainerToStack)
             {
                 case INIT:
-                    if (GetCylindersRails().Contract())
+                    if (GetCylindersRails().Contract() & ToteIntakeSensor.IsOn())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                     }
@@ -285,6 +307,10 @@ public class Lift extends Subsystem {
      */
     public boolean EjectStack()
     {
+        this.StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+        this.StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
+        this.StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+        
         switch (StateEjectStack)
         {
             case LIFT_CAR:
@@ -308,7 +334,7 @@ public class Lift extends Subsystem {
                     }
                     else
                     {
-                        if (LiftCar.GoToStack())
+                        if (CylindersRails.Extend() & LiftCar.GoToStack())
                         {
                             StateEjectStack = STATE_EJECT_STACK.STACK_HOLDER_CONTRACT;
                         }
@@ -377,6 +403,10 @@ public class Lift extends Subsystem {
      */
     public boolean DropStack()
     {
+        this.StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+        this.StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
+        this.StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+        
         switch (StateEjectStack)
         {
             case LIFT_CAR:
