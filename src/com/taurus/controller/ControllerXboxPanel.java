@@ -219,4 +219,53 @@ public class ControllerXboxPanel implements Controller {
         fieldRelativeLast = panel.getBlackLeftButton();
         return fieldRelative;
     }
+
+    @Override
+    public boolean getTrigger(Hand hand)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getAddChuteTote()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getAddFloorTote()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getAddContainer()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getEjectStack()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getCarHome()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getCarTop()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
