@@ -39,8 +39,18 @@ public interface Controller {
 
     public static final double DEADBAND = 0.0;
 
+    /**
+     * Get x axis value between -1 and 1 for specified hand
+     * @param hand
+     * @return
+     */
     public double getX(Hand hand);
 
+    /**
+     * Get y axis value between -1 and 1 for specified hand
+     * @param hand
+     * @return
+     */
     public double getY(Hand hand);
 
     /**
@@ -95,6 +105,11 @@ public interface Controller {
      */
     public double getAngleDrive_Heading();
 
+    /**
+     * Get the rotation for Angle Drive
+     * 
+     * @return The rotation rate in rad/s.
+     */
     public double getAngleDrive_Rotation();
 
     /**
@@ -105,6 +120,11 @@ public interface Controller {
      */
     public SwerveVector getAngleDrive_Velocity();
 
+    /**
+     * Get a raw button state
+     * @param button
+     * @return
+     */
     public boolean getRawButtion(int button);
     
     /**
@@ -113,7 +133,9 @@ public interface Controller {
      * @return true if high gear, else low gear
      */
     public boolean getHighGearEnable();
-
+    
+    public boolean getTrigger(Hand hand);
+    
     /**
      * Get the brake
      * 
@@ -128,8 +150,32 @@ public interface Controller {
      */
     public boolean getResetGyro();
 
+    /**
+     * get if in field relative
+     * 
+     * @return
+     */
     public boolean getFieldRelative();
 
+    /**
+     * Get the dpad input
+     * @return
+     */
     public double getDPad();
 
+    /**
+     * 
+     * @return
+     */
+    public boolean getAddChuteTote();
+
+    public boolean getAddFloorTote();
+
+    public boolean getAddContainer();
+    
+    public boolean getEjectStack();
+    
+    public boolean getCarHome();
+
+    public boolean getCarTop();
 }

@@ -10,41 +10,54 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends SampleRobot {    
 
     private Application app;
+    private int appIndex = -1;
     
     public void robotInit()
     {
-        int appToRun = Preferences.getInstance().getInt("Application", 1);
+        GetApp();
+    }
+    
+    private void GetApp()
+    {
+        int appIndexNew = Preferences.getInstance().getInt("Application", 1);
         
-        switch(appToRun)
+        if(appIndex != appIndexNew || appIndex == -1)
         {
-            case 0:
-                // Run Swerve
-                app = new com.taurus.swerve.Application();
-                SmartDashboard.putString("Application", "Swerve");
-                break;
+            switch(appIndexNew)
+            {
+                case 0:
+                    // Run Swerve
+                    app = new com.taurus.swerve.Application();
+                    SmartDashboard.putString("Application", "Swerve");
+                    break;
+
+                case 1:
+                    // Run 2015 specific
+                    app = new com.taurus.robotspecific2015.Application();
+                    SmartDashboard.putString("Application", "2015");
+                    break;
+
+                case 2:
+                    // Run test
+                    app = new com.taurus.TestApplication();
+                    SmartDashboard.putString("Application", "Test");
+                    break;
+                    
+                default:
+                    // Run 2015 specific
+                    app = new com.taurus.robotspecific2015.Application();
+                    SmartDashboard.putString("Application", "2015");
+                    break;
+            }
             
-            case 1:
-                // Run 2015 specific
-                app = new com.taurus.robotspecific2015.Application();
-                SmartDashboard.putString("Application", "2015");
-                break;
-            
-            case 2:
-                // Run Vision test
-                app = new com.taurus.robotspecific2015.VisionApplication();
-                SmartDashboard.putString("Application", "Vision");
-                break;
-                
-            default:
-                // Run 2015 specific
-                app = new com.taurus.robotspecific2015.Application();
-                SmartDashboard.putString("Application", "Swerve");
-                break;
+            appIndex = appIndexNew;
         }
     }
 
     public void operatorControl()
     {
+        GetApp();
+        
         app.TeleopInit();
         
         while (isOperatorControl() && isEnabled())
@@ -58,6 +71,8 @@ public class Robot extends SampleRobot {
     
     public void autonomous()
     {
+        GetApp();
+        
         app.AutonomousInit();
         
         while (isAutonomous() && isEnabled())
@@ -82,6 +97,8 @@ public class Robot extends SampleRobot {
     
     public void test()
     {
+        GetApp();
+        
         app.TestModeInit();
         
         while (isTest() && isEnabled())
