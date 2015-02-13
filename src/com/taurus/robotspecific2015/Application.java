@@ -2,6 +2,7 @@ package com.taurus.robotspecific2015;
 
 import com.taurus.robotspecific2015.Constants.*;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -44,79 +45,96 @@ public class Application extends com.taurus.Application
     
     public void TeleopInitRobotSpecific()
     {
-
+        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+        lift.init();
     }
 
     public void TeleopPeriodicRobotSpecific()
     {
-        // TODO: Do we want a button to cancel the current routine?
-        if(controller.getBrake())
+        SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight() );
+        SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
+        SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
+        SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
+
+
+        if(controller.getTrigger(Hand.kRight))
         {
-            CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+            lift.GetCar().GoToZero();
+        }
+        else if(controller.getTrigger(Hand.kLeft))
+        {
+            lift.GetCar().GoToTop();
         }
         else
         {
+            if(controller.getBrake())
+            {
+                CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                lift.init();
+            }
+            
             lift.GetCar().ZeroIfNeeded();
             
             // if not currently running anything, try and find a button
             // do this first so we can run the action this run rather than
             // waiting until the next time this task is ran
-            if(CurrentLiftAction == STATE_LIFT_ACTION.NO_ACTION)
+            
+            // find if a button is pressed, then execute
+            if (controller.getAddChuteTote())
             {
-                // find if a button is pressed, then execute
-                if (controller.getAddChuteTote())
-                {
-                    CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
-                }
-                else if (controller.getAddFloorTote())
-                {
-                    CurrentLiftAction = STATE_LIFT_ACTION.ADD_FLOOR_TOTE;
-                }
-                else if (controller.getAddContainer())
-                {
-                    CurrentLiftAction = STATE_LIFT_ACTION.ADD_CONTAINER;
-                }
-                else if (controller.getEjectStack())
-                {
-                    CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
-                }
+                CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
+            }
+            else if (controller.getAddFloorTote())
+            {
+                CurrentLiftAction = STATE_LIFT_ACTION.ADD_FLOOR_TOTE;
+            }
+            else if (controller.getAddContainer())
+            {
+                CurrentLiftAction = STATE_LIFT_ACTION.ADD_CONTAINER;
+            }
+            else if (controller.getEjectStack())
+            {
+                CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
+            }
+
+            switch(CurrentLiftAction)
+            {
+                case ADD_CHUTE_TOTE:
+                    if(lift.AddChuteToteToStack(5))
+                    {
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                    }
+                    break;
+                    
+                case ADD_FLOOR_TOTE:
+                    if(lift.AddFloorToteToStack(5))
+                    {
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                    }
+                    break;
+                    
+                case ADD_CONTAINER:
+                    if(lift.AddContainerToStack())
+                    {
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                    }
+                    break;
+                    
+                case EJECT_STACK:
+                    if(lift.EjectStack())
+                    {
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                    }
+                    break;
+                    
+                case NO_ACTION:
+                default:
+                    lift.GetCar().GetActuator().SetSpeedRaw(0);
+                    break;
             }
         }
-
-        switch(CurrentLiftAction)
-        {
-            case ADD_CHUTE_TOTE:
-                if(lift.AddChuteToteToStack(5))
-                {
-                    CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                }
-                break;
-                
-            case ADD_FLOOR_TOTE:
-                if(lift.AddFloorToteToStack(5))
-                {
-                    CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                }
-                break;
-                
-            case ADD_CONTAINER:
-                if(lift.AddContainerToStack())
-                {
-                    CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                }
-                break;
-                
-            case EJECT_STACK:
-                if(lift.EjectStack())
-                {
-                    CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                }
-                break;
-                
-            case NO_ACTION:
-            default:
-                break;
-        }
+        
+        SmartDashboard.putNumber("CurrentLiftAction", CurrentLiftAction.ordinal());
     }
 
     public void TeleopDeInitRobotSpecific()
@@ -178,10 +196,10 @@ public class Application extends com.taurus.Application
                 {
                     testCylinders = lift.GetCylindersContainerFixed();
                 }   
-                else if (button4)
-                {
-                    testCylinders = lift.GetCylindersStackHolder();
-                }
+//                else if (button4)
+//                {
+//                    testCylinders = lift.GetCylindersStackHolder();
+//                }
                 else
                 {
                     testCylinders = lift.GetCylindersRails();

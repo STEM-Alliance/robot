@@ -2,15 +2,20 @@ package com.taurus.robotspecific2015;
 
 public abstract class Constants {
     // Pneumatics
-    public static final int MODULE_ID_PCU = 9;
-    public static final int MODULE_ID_PCU_2 = 10;
+    private static final int MODULE_ID_PCU = 9;
+    private static final int MODULE_ID_PCU_2 = 10;
+    
+    public static final int PCU_RAIL = MODULE_ID_PCU;
+    public static final int PCU_CONTAINER_CAR = MODULE_ID_PCU;
+    public static final int PCU_CONTAINER_FIXED = MODULE_ID_PCU;
+    public static final int PCU_STOP = MODULE_ID_PCU;
+    public static final int PCU_PUSHER = MODULE_ID_PCU_2;
 
-    public static final int[] CHANNEL_RAIL = { 0, 1 };
-    public static final int[] CHANNEL_CONTAINER_CAR = { 2, 3 };
-    public static final int[] CHANNEL_CONTAINER_FIXED = { 4, 5 };
-    public static final int[] CHANNEL_STACK_HOLDER = { 6, 7 };
+    public static final int[] CHANNEL_RAIL = { 3, 2 };
+    public static final int[] CHANNEL_CONTAINER_CAR = { 5, 4 };
+    public static final int[] CHANNEL_CONTAINER_FIXED = { 7, 6 };
     public static final int[] CHANNEL_STOP = { 0, 1 };
-    public static final int[] CHANNEL_PUSHER = { 2, 3 };
+    public static final int[] CHANNEL_PUSHER = { 0, 1 };
 
     // TODO - what is the amount of time required to extend?
     public static final double TIME_EXTEND_RAILS = 1;
@@ -45,7 +50,7 @@ public abstract class Constants {
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
     public static final double[] LIFT_MOTOR_SCALING = { -1 };
-    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 12, 21.325 };
+    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 10.25, 20.75 };
     public static final int  LIFT_POT_PIN = 4;
     public static final double  LIFT_POT_DISTANCE = 3.14;
     public static final double  LIFT_THRESHOLD = .25;

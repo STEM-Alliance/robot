@@ -3,6 +3,7 @@ package com.taurus.robotspecific2015;
 import com.taurus.PIDController;
 import com.taurus.Utilities;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -12,8 +13,8 @@ import edu.wpi.first.wpilibj.Timer;
 public abstract class LinearActuator {
 
     private PIDController ActuatorPIController;
-    private double ActP = 1;
-    private double ActI = 0;
+    private double ActP = 1.0 / 3.0;  // full speed at 3 in error
+    private double ActI = 0.5;
     private double ActD = 0;
     
     private MotorSystem Motors;
@@ -64,12 +65,16 @@ public abstract class LinearActuator {
     public void SetPosition(int i)
     {
         double time = Timer.getFPGATimestamp();
+        
+        Positions[i] = Application.prefs.getDouble("Positions_" + i + "", Positions[i]);
 
         // use the PI to get the desired speed based on distance from current
         // position
         double speed = ActuatorPIController.update(Positions[i], GetDistance(),
                 time);
-
+        
+        speed = Utilities.clampToRange(speed, -.8, .8);
+        
         Motors.Set(speed);
     }
 

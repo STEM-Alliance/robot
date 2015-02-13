@@ -168,12 +168,17 @@ public class ControllerXbox implements Controller {
         return xbox.getBumper(Hand.kRight);
     }
 
+    public boolean getTrigger(Hand hand)
+    {
+        return xbox.getTrigger(hand);
+    }
+    
     /**
      * {@inheritDoc}
      */
     public boolean getBrake()
     {
-        return xbox.getBButton();
+        return xbox.getBumper(Hand.kRight);
     }
 
     /**
