@@ -71,6 +71,7 @@ public class LinearActuatorPot extends LinearActuator {
         ZeroVal = GetRaw();
         LastVal = 0;
         FullTurns = 0;
+        super.LastPosition = 0;
     }
 
     /**

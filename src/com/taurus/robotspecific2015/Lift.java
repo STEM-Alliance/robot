@@ -57,6 +57,8 @@ public class Lift extends Subsystem {
         this.StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
         this.StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
         this.StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
+        this.TotesInStack = 0;
+        this.ToteOnRails = false;
     }
     
     public boolean CarryTotes()
@@ -87,21 +89,22 @@ public class Lift extends Subsystem {
         switch (StateAddChuteToteToStack)
         {
             case INIT:
-                if (TotesInStack < MaxTotesInStack) // Sanity check this should
-                                                    // even be called
+                if (ToteOnRails)
                 {
-                    if (ToteOnRails)
-                    {
-                        StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
-                    }
-                    else if (LiftCar.GoToChute() & CylindersRails.Extend())
+                    StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                }
+                else if (LiftCar.GoToChute() & CylindersRails.Extend())
+                {
+                    if (TotesInStack < MaxTotesInStack)// even be called
                     {
                         StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INTAKE_TOTE;
                     }
+                    // else wait for the return state with the toteintakesensor
                 }
                 break;
             case INTAKE_TOTE:
                 LiftCar.UpdateLastPosition();
+
                 // When sensor triggered, go to next state to lift the tote
                 if (ToteIntakeSensor.IsOn())
                 {
@@ -269,15 +272,15 @@ public class Lift extends Subsystem {
             switch (StateAddContainerToStack)
             {
                 case INIT:
-                    if (GetCylindersRails().Contract() & ToteIntakeSensor.IsOn())
+                    //TODO verify the tote intake sensor works for grabbing containers
+                    if (CylindersRails.Contract() & ToteIntakeSensor.IsOn())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                     }
                     break;
-                // TODO: Need sensor to tell us when the container is in
-                // position to secure with pneumatics
+
                 case CONTAINER_CAR_EXTEND:
-                    if (GetCylindersContainerCar().Extend())
+                    if (CylindersContainerCar.Extend())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.LIFT_CAR;
                     }
@@ -322,6 +325,7 @@ public class Lift extends Subsystem {
                     break;
             }
         }
+        SmartDashboard.putBoolean("ContainerInStack", ContainerInStack);
         
         SmartDashboard.putNumber("StateAddContainerToStack", StateAddContainerToStack.ordinal());
         
