@@ -28,10 +28,10 @@ public class SwerveWheel {
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
 
-    private Servo Shifter;
-    private int ShifterValueHigh;
-    private int ShifterValueLow;
-    private boolean HighGear;
+//    private Servo Shifter;
+//    private int ShifterValueHigh;
+//    private int ShifterValueLow;
+//    private boolean HighGear;
 
     private boolean Brake;
 
@@ -79,8 +79,8 @@ public class SwerveWheel {
      *            Pin for angle motor controller
      */
     public SwerveWheel(String name, double[] Position, double Orientation,
-            int[] EncoderPins, int PotPin, int DriveAddress, int AnglePin,
-            int ShiftPin, int[] ShiftVals)
+            /*int[] EncoderPins, */int PotPin, int DriveAddress, int AnglePin
+            /*int ShiftPin, int[] ShiftVals*/)
     {
         Name = name;
 
@@ -90,10 +90,10 @@ public class SwerveWheel {
         MotorDrive = new CANTalon(DriveAddress);
         MotorAngle = new Talon(AnglePin);
 
-        HighGear = true;
-        Shifter = new Servo(ShiftPin);
-        ShifterValueHigh = ShiftVals[0];
-        ShifterValueLow = ShiftVals[1];
+//        HighGear = true;
+//        Shifter = new Servo(ShiftPin);
+//        ShifterValueHigh = ShiftVals[0];
+//        ShifterValueLow = ShiftVals[1];
 
         //DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         //DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
@@ -117,10 +117,10 @@ public class SwerveWheel {
      * @return Actual vector reading of wheel
      */
     public SwerveVector setDesired(SwerveVector NewDesired,
-            boolean NewHighGear, boolean NewBrake)
+           /* boolean NewHighGear,*/ boolean NewBrake)
     {
         WheelDesired = NewDesired;
-        HighGear = NewHighGear;
+//        HighGear = NewHighGear;
         Brake = NewBrake;
 
         return updateTask();
@@ -168,23 +168,23 @@ public class SwerveWheel {
      * 
      * @return Whether the wheel is in high gear
      */
-    public boolean getIsHighGear()
-    {
-        return HighGear;
-    }
+//    public boolean getIsHighGear()
+//    {
+//        return HighGear;
+//    }
 
-    private void updateShifter()
-    {
-        if (HighGear)
-        {
-            Shifter.setAngle(ShifterValueHigh);
-
-        }
-        else
-        {
-            Shifter.setAngle(ShifterValueLow);
-        }
-    }
+//    private void updateShifter()
+//    {
+//        if (HighGear)
+//        {
+//            Shifter.setAngle(ShifterValueHigh);
+//
+//        }
+//        else
+//        {
+//            Shifter.setAngle(ShifterValueLow);
+//        }
+//    }
 
     /**
      * Get the angle of the potentiometer
@@ -219,7 +219,7 @@ public class SwerveWheel {
         boolean reverse = updateAngleMotor(WheelDesired.getAngle(),
                 WheelDesired.getMag());
 
-        updateShifter();
+//        updateShifter();
 
         updateDriveMotor(reverse);
 

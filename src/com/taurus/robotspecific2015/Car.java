@@ -111,8 +111,7 @@ public class Car {
      */
     public boolean GoToBottom()
     {
-        Actuator.SetPosition(0);
-        return Actuator.GetPosition() == 0;
+        return ZeroIfNeeded();
     }
     
     /**
@@ -124,11 +123,37 @@ public class Car {
         return Actuator.GetDistance();
     }
 
-    public void ZeroIfNeeded()
+    public void GoToTop()
+    {
+        Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_FORWARD);
+    }
+    
+
+    public void GoToZero()
+    {
+        if(!ZeroIfNeeded())
+        {
+            Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+        }
+        else
+        {
+            Actuator.SetSpeedRaw(0);
+        }
+    }
+    
+    public boolean ZeroIfNeeded()
     {
         if (ZeroSensor.IsOn())
         {
             Actuator.Zero();
+            return true;
         }
+        return false;
+    }
+
+    public Sensor GetZeroSensor()
+    {
+        // TODO Auto-generated method stub
+        return ZeroSensor;
     }
 }

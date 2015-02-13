@@ -133,7 +133,9 @@ public interface Controller {
      * @return true if high gear, else low gear
      */
     public boolean getHighGearEnable();
-
+    
+    public boolean getTrigger(Hand hand);
+    
     /**
      * Get the brake
      * 

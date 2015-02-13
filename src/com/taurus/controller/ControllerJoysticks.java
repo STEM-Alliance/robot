@@ -248,4 +248,11 @@ public class ControllerJoysticks implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public boolean getTrigger(Hand hand)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
