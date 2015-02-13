@@ -101,8 +101,8 @@ public class Lift extends Subsystem {
                 }
                 break;
             case INTAKE_TOTE:
+                LiftCar.UpdateLastPosition();
                 // When sensor triggered, go to next state to lift the tote
-                LiftCar.GoToChute();
                 if (ToteIntakeSensor.IsOn())
                 {
                     StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
@@ -124,7 +124,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case HANDLE_CONTAINER:
-                LiftCar.GoToStack();
+                LiftCar.UpdateLastPosition();
                 if (TotesInStack == 0)
                 {
                     if (GetCylindersContainerFixed().Contract())
@@ -180,6 +180,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case INTAKE_TOTE:
+                LiftCar.UpdateLastPosition();
                 if (ToteIntakeSensor.IsOn())
                 {
                     StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.GRAB_TOTE;
@@ -214,6 +215,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case HANDLE_CONTAINER:
+                LiftCar.UpdateLastPosition();
                 if (TotesInStack == 0)
                 {
                     if (GetCylindersContainerFixed().Contract())
@@ -246,7 +248,7 @@ public class Lift extends Subsystem {
         SmartDashboard.putNumber("StateAddFloorToteToStack", StateAddFloorToteToStack.ordinal());
         
         return TotesInStack >= MaxTotesInStack
-                && LiftCar.GetPosition() == POSITION_CAR.CHUTE;
+                && LiftCar.GetPosition() == LIFT_POSITIONS_E.CHUTE;
     }
 
     /**
@@ -288,12 +290,14 @@ public class Lift extends Subsystem {
                     }
                     break;
                 case CONTAINER_FIXED_EXTEND:
+                    LiftCar.UpdateLastPosition();
                     if (GetCylindersContainerFixed().Extend())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_CONTRACT;
                     }
                     break;
                 case CONTAINER_CAR_CONTRACT:
+                    LiftCar.UpdateLastPosition();
                     if (GetCylindersContainerCar().Contract())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.LOWER_CAR;
@@ -306,6 +310,7 @@ public class Lift extends Subsystem {
                     }
                     break;
                 case RESET:
+                    LiftCar.UpdateLastPosition();
                     if (GetCylindersRails().Extend())
                     {
                         ContainerInStack = true;
@@ -365,6 +370,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case STACK_HOLDER_CONTRACT:
+                LiftCar.UpdateLastPosition();
                 //if (GetCylindersStackHolder().Contract())
                 if(true)
                 {
@@ -379,6 +385,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case EJECT_STACK:
+                LiftCar.UpdateLastPosition();
                 if (StackEjector.EjectStack())
                 {
                     ToteOnRails = false;
@@ -465,6 +472,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case STACK_HOLDER_CONTRACT:
+                LiftCar.UpdateLastPosition();
                 if (true/*GetCylindersStackHolder().Contract()*/)
                 {
                     ToteOnRails = true;
@@ -478,6 +486,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case EJECT_STACK:
+                LiftCar.UpdateLastPosition();
                 if (CylindersRails.Contract())
                 {
                     ToteOnRails = false;

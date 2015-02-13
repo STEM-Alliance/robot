@@ -23,6 +23,20 @@ public class MotorSystem {
     }
 
     /**
+     * Enable/disable the safety option, and set the timeout for it to trigger
+     * @param enabled
+     * @param timeout
+     */
+    public void SetSafety(boolean enabled, double timeout)
+    {
+        for (int index = 0; index < Talons.size(); index++)
+        {
+            Talons.get(index).setSafetyEnabled(enabled);
+            Talons.get(index).setExpiration(timeout);
+        }
+    }
+
+    /**
      * Set the Talons to a speed between -1 and 1
      * 
      * @param speed

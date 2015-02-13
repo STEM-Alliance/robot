@@ -57,11 +57,11 @@ public class Application extends com.taurus.Application
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
 
 
-        if(controller.getTrigger(Hand.kRight))
+        if(controller.getCarHome())
         {
             lift.GetCar().GoToZero();
         }
-        else if(controller.getTrigger(Hand.kLeft))
+        else if(controller.getCarTop())
         {
             lift.GetCar().GoToTop();
         }
@@ -96,7 +96,7 @@ public class Application extends com.taurus.Application
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
             }
-
+            
             switch(CurrentLiftAction)
             {
                 case ADD_CHUTE_TOTE:
@@ -230,47 +230,47 @@ public class Application extends com.taurus.Application
                 }
                 else if (button3)
                 {
-                    lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_FORWARD);
+                    //lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_FORWARD);
                 }
                 else if (button4)
                 {
-                    lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_BACKWARD);
+                    //lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_BACKWARD);
                 }
                 else
                 {
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
-                    lift.GetEjector().SetMotors(0);
+                    //lift.GetEjector().SetMotors(0);
                 }
                 break;
             case Constants.TEST_MODE_ACTUATOR:
                 if (button1)
                 {
-                    lift.GetCar().SetPosition(0);
+                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.ZERO);
                 }
                 else if (button2)
                 {
-                    lift.GetCar().SetPosition(1);
+                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.CHUTE);
                 }
                 else if (button3)
                 {
-                    lift.GetCar().SetPosition(2);
+                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.DESTACK);
                 }
                 else if (button4)
                 {
-                    lift.GetCar().SetPosition(3);
+                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.STACK);
                 }
                 else if (button5)
                 {
-                    lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_FORWARD);
+                    //lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_FORWARD);
                 }
                 else if (button6)
                 {
-                    lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_BACKWARD);
+                    //lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_BACKWARD);
                 }
                 else
                 {
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
-                    lift.GetEjector().SetMotors(0);
+                    //lift.GetEjector().SetMotors(0);
                 }
                 break;
             default:

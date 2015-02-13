@@ -1,6 +1,6 @@
 package com.taurus.robotspecific2015;
 
-import com.taurus.robotspecific2015.Constants.POSITION_CAR;
+import com.taurus.robotspecific2015.Constants.LIFT_POSITIONS_E;
 
 // State machine for lift
 public class Car {
@@ -39,39 +39,20 @@ public class Car {
      * Get the position of the car
      * @return
      */
-    public POSITION_CAR GetPosition()
+    public LIFT_POSITIONS_E GetPosition()
     {
-        POSITION_CAR result = POSITION_CAR.MOVING;
-        int position = Actuator.GetPosition();
-
-        if (position == 3)
-        {
-            result = POSITION_CAR.STACK;
-        }
-        else if (position == 2)
-        {
-            result = POSITION_CAR.DESTACK;
-        }
-        else if (position == 1)
-        {
-            result = POSITION_CAR.CHUTE;
-        }
-        else if (position == 0)
-        {
-            result = POSITION_CAR.BOTTOM;
-        }
-        return result;
+        return LIFT_POSITIONS_E.fromInt(Actuator.GetPosition());
     }
     
     /**
      * Go to position
-     * @param i position index
+     * @param position position enum val
      * @return
      */
-    public boolean SetPosition(int i)
+    public boolean SetPosition(LIFT_POSITIONS_E position)
     {
-        Actuator.SetPosition(i);
-        return Actuator.GetPosition() == i;
+        Actuator.SetPosition(position.ordinal());
+        return Actuator.GetPosition() == position.ordinal();
     }
 
     /**
@@ -80,8 +61,7 @@ public class Car {
      */
     public boolean GoToStack()
     {
-        Actuator.SetPosition(3);
-        return Actuator.GetPosition() == 3;
+        return SetPosition(LIFT_POSITIONS_E.STACK);
     }
 
     /**
@@ -91,8 +71,7 @@ public class Car {
      */
     public boolean GoToDestack()
     {
-        Actuator.SetPosition(2);
-        return Actuator.GetPosition() == 2;
+        return SetPosition(LIFT_POSITIONS_E.DESTACK);
     }
 
     /**
@@ -101,8 +80,7 @@ public class Car {
      */
     public boolean GoToChute()
     {
-        Actuator.SetPosition(1);
-        return Actuator.GetPosition() == 1;
+        return SetPosition(LIFT_POSITIONS_E.CHUTE);
     }
 
     /**
@@ -127,17 +105,16 @@ public class Car {
     {
         Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_FORWARD);
     }
-    
 
     public void GoToZero()
     {
-        if(!ZeroIfNeeded())
+        if(ZeroIfNeeded())
         {
-            Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+            Actuator.SetSpeedRaw(0);
         }
         else
         {
-            Actuator.SetSpeedRaw(0);
+            Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
         }
     }
     
@@ -153,7 +130,11 @@ public class Car {
 
     public Sensor GetZeroSensor()
     {
-        // TODO Auto-generated method stub
         return ZeroSensor;
+    }
+
+    public void UpdateLastPosition()
+    {
+        Actuator.UpdateLastPosition();
     }
 }

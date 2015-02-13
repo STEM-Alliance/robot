@@ -19,6 +19,7 @@ public abstract class LinearActuator {
     
     private MotorSystem Motors;
 
+    private int LastPosition;
     private double[] Positions;
     private double PositionThreshold;
     private static final double PositionThresholdDefault = 0.5;
@@ -29,11 +30,13 @@ public abstract class LinearActuator {
     {
         Motors = new MotorSystem(MotorPins);
         Motors.SetScale(MotorScaling);
+        Motors.SetSafety(true, .5);
 
         this.Positions = Positions;
         this.PositionThreshold = PositionThreshold;
         
         ActuatorPIController = new PIDController(ActP, ActI, ActD, 1.0);
+        LastPosition = 0;
     }
 
 
@@ -57,6 +60,11 @@ public abstract class LinearActuator {
      */
     public abstract void Zero();
 
+    public void UpdateLastPosition()
+    {
+        SetPosition(LastPosition);
+    }
+    
     /**
      * Set the desired position index
      * 
@@ -76,6 +84,8 @@ public abstract class LinearActuator {
         speed = Utilities.clampToRange(speed, -.8, .8);
         
         Motors.Set(speed);
+        
+        LastPosition = i;
     }
 
     /**
