@@ -1,53 +1,70 @@
 package com.taurus.robotspecific2015;
 
-import com.taurus.PIController;
+import com.taurus.PIDController;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 
-public class LinearMotorEncoder {
+/**
+ * A Linear actuator subsystem using motor(s) and an encoder
+ *
+ */
+public abstract class LinearActuator {
 
-    private Encoder Enc;
-    private PIController EncPIController;
+    private PIDController ActuatorPIController;
+    private double ActP = 1.0 / 3.0;  // full speed at 3 in error
+    private double ActI = 0.5;
+    private double ActD = 0;
+    
     private MotorSystem Motors;
 
-    private double EncP = 1;
-    private double EncI = 0;
-
+    protected int LastPosition;
     private double[] Positions;
-    private double POSITION_THRESHOLD = .5;
+    private double PositionThreshold;
+    private static final double PositionThresholdDefault = 0.5;
+
+
+    public LinearActuator(int[] MotorPins, double[] MotorScaling,
+            double[] Positions, double PositionThreshold)
+    {
+        Motors = new MotorSystem(MotorPins);
+        Motors.SetScale(MotorScaling);
+        Motors.SetSafety(true, .5);
+
+        this.Positions = Positions;
+        this.PositionThreshold = PositionThreshold;
+        
+        ActuatorPIController = new PIDController(ActP, ActI, ActD, 1.0);
+        LastPosition = 0;
+    }
+
 
     /**
-     * Create a new linear encoder sensor
+     * Create a new linear actuator using motor(s) and an encoder with the default
+     * position threshold of .5
      * @param MotorPins pin(s) to control the motor(s)
      * @param MotorScaling scale the speed of the motor(s) output
      * @param EncoderPins 2 pins, A and B, that the encoder is connected to
      * @param InchesPerPulse distance of travel per pulse on the encoder, in inches
-     * @param Positions array of positions in inches to use for setpoints, reading
+     * @param Positions array of positions in inches to use for setpoints, readings
      */
-    public LinearMotorEncoder(int[] MotorPins, double[] MotorScaling,
-            int[] EncoderPins, double InchesPerPulse, double[] Positions)
+    public LinearActuator(int[] MotorPins, double[] MotorScaling,
+            double[] Positions)
     {
-        Motors = new MotorSystem(MotorPins);
-        Motors.SetScale(MotorScaling);
-
-        Enc = new Encoder(EncoderPins[0], EncoderPins[1]);
-        Enc.setDistancePerPulse(InchesPerPulse);
-
-        EncPIController = new PIController(EncP, EncI, 1.0);
-
-        this.Positions = Positions;
+        this(MotorPins, MotorScaling, Positions, PositionThresholdDefault);
     }
 
     /**
      * Zero the distance
      */
-    public void Zero()
-    {
-        Enc.reset();
-    }
+    public abstract void Zero();
 
+    public void UpdateLastPosition()
+    {
+        SetPosition(LastPosition);
+    }
+    
     /**
      * Set the desired position index
      * 
@@ -56,13 +73,19 @@ public class LinearMotorEncoder {
     public void SetPosition(int i)
     {
         double time = Timer.getFPGATimestamp();
+        
+        Positions[i] = Application.prefs.getDouble("Positions_" + i + "", Positions[i]);
 
         // use the PI to get the desired speed based on distance from current
         // position
-        double speed = EncPIController.update(Positions[i], GetDistance(),
+        double speed = ActuatorPIController.update(Positions[i], GetDistance(),
                 time);
-
+        
+        speed = Utilities.clampToRange(speed, -.8, .8);
+        
         Motors.Set(speed);
+        
+        LastPosition = i;
     }
 
     /**
@@ -84,7 +107,7 @@ public class LinearMotorEncoder {
                     - Positions[i]);
 
             // then see if that distance is close enough using the threshold
-            if (DistanceFromPosition < POSITION_THRESHOLD)
+            if (DistanceFromPosition < PositionThreshold)
             {
                 position = i;
                 break;
@@ -139,13 +162,17 @@ public class LinearMotorEncoder {
     }
 
     /**
+     * Get the raw value of the sensor
+     * 
+     * @return
+     */
+    public abstract double GetRaw();
+    
+    /**
      * Get the distance, in inches, from the zero point
      * 
      * @return
      */
-    public double GetDistance()
-    {
-        return Enc.getDistance();
-    }
+    public abstract double GetDistance();
 
 }

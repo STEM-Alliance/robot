@@ -6,11 +6,10 @@
 
 package com.taurus.swerve;
 
+import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 
@@ -29,26 +28,24 @@ public class SwerveWheel {
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
 
-    private Servo Shifter;
-    private int ShifterValueHigh;
-    private int ShifterValueLow;
-    private boolean HighGear;
+//    private Servo Shifter;
+//    private int ShifterValueHigh;
+//    private int ShifterValueLow;
+//    private boolean HighGear;
 
     private boolean Brake;
 
     private double maxRotationSpeed = .75;
 
     private double AngleOrienation = 0;
-    private double AngleInMin = 0.041; // measured from raw sensor input
-    private double AngleInMax = 0.961; // measured from raw sensor input
 
     // motor
     private CANTalon MotorDrive;
     public Talon MotorAngle;
 
     // sensor
-    public AnalogPotentiometer AnglePot;
-    private Encoder DriveEncoder;
+    public MagnetoPot AnglePot;
+    //private Encoder DriveEncoder;
 
     // controller
     private SwerveAngleController AngleController;
@@ -82,8 +79,8 @@ public class SwerveWheel {
      *            Pin for angle motor controller
      */
     public SwerveWheel(String name, double[] Position, double Orientation,
-            int[] EncoderPins, int PotPin, int DriveAddress, int AnglePin,
-            int ShiftPin, int[] ShiftVals)
+            /*int[] EncoderPins, */int PotPin, int DriveAddress, int AnglePin
+            /*int ShiftPin, int[] ShiftVals*/)
     {
         Name = name;
 
@@ -93,20 +90,20 @@ public class SwerveWheel {
         MotorDrive = new CANTalon(DriveAddress);
         MotorAngle = new Talon(AnglePin);
 
-        HighGear = true;
-        Shifter = new Servo(ShiftPin);
-        ShifterValueHigh = ShiftVals[0];
-        ShifterValueLow = ShiftVals[1];
+//        HighGear = true;
+//        Shifter = new Servo(ShiftPin);
+//        ShifterValueHigh = ShiftVals[0];
+//        ShifterValueLow = ShiftVals[1];
 
-        DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
-        DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
+        //DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
+        //DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
 
 //        DriveEncoderFilter = new VelocityCalculator();
 //        DriveEncoderController = new PIController(DriveP, DriveI, 1.0);
 
         // AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) +
         // Math.abs(SpinMax), -SpinMin);
-        AnglePot = new AnalogPotentiometer(PotPin);
+        AnglePot = new MagnetoPot(PotPin, 360);
         AngleController = new SwerveAngleController(name + ".ctl");
 
         AngleOrienation = Orientation;
@@ -120,10 +117,10 @@ public class SwerveWheel {
      * @return Actual vector reading of wheel
      */
     public SwerveVector setDesired(SwerveVector NewDesired,
-            boolean NewHighGear, boolean NewBrake)
+           /* boolean NewHighGear,*/ boolean NewBrake)
     {
         WheelDesired = NewDesired;
-        HighGear = NewHighGear;
+//        HighGear = NewHighGear;
         Brake = NewBrake;
 
         return updateTask();
@@ -146,7 +143,8 @@ public class SwerveWheel {
      */
     public SwerveVector getActual()
     {
-        WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
+     //   WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
+        WheelActual.setMagAngle(WheelDesired.getMag(), getAnglePotValue());
         return WheelActual;
     }
 
@@ -170,23 +168,23 @@ public class SwerveWheel {
      * 
      * @return Whether the wheel is in high gear
      */
-    public boolean getIsHighGear()
-    {
-        return HighGear;
-    }
+//    public boolean getIsHighGear()
+//    {
+//        return HighGear;
+//    }
 
-    private void updateShifter()
-    {
-        if (HighGear)
-        {
-            Shifter.setAngle(ShifterValueHigh);
-
-        }
-        else
-        {
-            Shifter.setAngle(ShifterValueLow);
-        }
-    }
+//    private void updateShifter()
+//    {
+//        if (HighGear)
+//        {
+//            Shifter.setAngle(ShifterValueHigh);
+//
+//        }
+//        else
+//        {
+//            Shifter.setAngle(ShifterValueLow);
+//        }
+//    }
 
     /**
      * Get the angle of the potentiometer
@@ -195,19 +193,7 @@ public class SwerveWheel {
      */
     public double getAnglePotValue()
     {
-        // update the values if needed
-        if (AnglePot.get() > AngleInMax)
-        {
-            AngleInMax = AnglePot.get();
-        }
-        if (AnglePot.get() < AngleInMin)
-        {
-            AngleInMin = AnglePot.get();
-        }
-
-        // scale it based on the calibration values
-        return Utilities.scaleToRange(AnglePot.get(), AngleInMin, AngleInMax,
-                0, 360);
+        return AnglePot.get();
     }
 
     /**
@@ -233,7 +219,7 @@ public class SwerveWheel {
         boolean reverse = updateAngleMotor(WheelDesired.getAngle(),
                 WheelDesired.getMag());
 
-        updateShifter();
+//        updateShifter();
 
         updateDriveMotor(reverse);
 

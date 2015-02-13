@@ -6,12 +6,13 @@
 
 package com.taurus.swerve;
 
-import com.taurus.PIController;
+import com.taurus.PIDController;
 import com.taurus.Utilities;
 import com.taurus.controller.Controller;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,19 +21,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * 
  * @author Team 4818 Taurus Robotics
  */
-public class SwerveChassis {
+public class SwerveChassis extends Subsystem {
 
     private SwerveWheel[] Wheels;
 
     private boolean FieldRelative;
-    private boolean GearHigh;
+//    private boolean GearHigh;
     private boolean Brake;
     private double LastHeading;
 
-    private PIController ChassisAngleController;
+    private PIDController ChassisAngleController;
     private double ChassisP = 1.3 / 180; // Full speed rotation at error of 90
                                          // degrees.
     private double ChassisI = 0;
+    private double ChassisD = 0;
     
     private SwerveIMU Gyro;
     SerialPort serial_port;
@@ -52,7 +54,7 @@ public class SwerveChassis {
      */
     public SwerveChassis()
     {
-        ChassisAngleController = new PIController(ChassisP, ChassisI, 1.0);
+        ChassisAngleController = new PIDController(ChassisP, ChassisI, ChassisD, 1.0);
         
         LastVelocity = new SwerveVector(0,0);
 
@@ -81,12 +83,12 @@ public class SwerveChassis {
             Wheels[i] = new SwerveWheel("wheel" + i,
                     SwerveConstants.WheelPositions[i],
                     Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
-                    SwerveConstants.WheelEncoderPins[i],
+//                    SwerveConstants.WheelEncoderPins[i],
                     SwerveConstants.WheelPotPins[i],
-                    SwerveConstants.WheelDriveMotorPins[i],
-                    SwerveConstants.WheelAngleMotorPins[i],
-                    SwerveConstants.WheelShiftServoPins[i],
-                    SwerveConstants.WheelShiftServoVals[i]);
+                    SwerveConstants.WheelDriveMotorAddress[i],
+                    SwerveConstants.WheelAngleMotorPins[i]);
+//                    SwerveConstants.WheelShiftServoPins[i],
+//                    SwerveConstants.WheelShiftServoVals[i]);
         }
 
     }
@@ -125,7 +127,7 @@ public class SwerveChassis {
         }
 
         // set various options for the chassis
-        setGearHigh(controller.getHighGearEnable());
+//        setGearHigh(controller.getHighGearEnable());
         setBrake(controller.getBrake());
         setFieldRelative(controller.getFieldRelative());
         if (controller.getResetGyro())
@@ -199,7 +201,7 @@ public class SwerveChassis {
             Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
         }
 
-        UpdateShifter();
+//        UpdateShifter();
 
         return setWheelVectors(Velocity, Rotation);
     }
@@ -271,7 +273,7 @@ public class SwerveChassis {
 
             // Set the wheel speed
             WheelsActual[i] = Wheels[i]
-                    .setDesired(WheelScaled, GearHigh, Brake);
+                    .setDesired(WheelScaled,/* GearHigh,*/ Brake);
         }
 
         return WheelsActual;
@@ -375,19 +377,19 @@ public class SwerveChassis {
     /**
      * Update the Shifting/Gear servo
      */
-    public void UpdateShifter()
-    {
-        // switch to the desired gear
-        if (GearHigh)
-        {
-            SmartDashboard.putString("Gear", "High");
-
-        }
-        else
-        {
-            SmartDashboard.putString("Gear", "Low");
-        }
-    }
+//    public void UpdateShifter()
+//    {
+//        // switch to the desired gear
+//        if (GearHigh)
+//        {
+//            SmartDashboard.putString("Gear", "High");
+//
+//        }
+//        else
+//        {
+//            SmartDashboard.putString("Gear", "Low");
+//        }
+//    }
 
     /**
      * Set if driving is field relative or robot relative
@@ -415,20 +417,20 @@ public class SwerveChassis {
      * @param GearHigh
      *            if true, shift to high gear, else low gear
      */
-    public void setGearHigh(boolean GearHigh)
-    {
-        this.GearHigh = GearHigh;
-    }
+//    public void setGearHigh(boolean GearHigh)
+//    {
+//        this.GearHigh = GearHigh;
+//    }
 
     /**
      * Get the shifting gear
      * 
      * @return true if currently in high gear, else false
      */
-    public boolean getGearHigh()
-    {
-        return GearHigh;
-    }
+//    public boolean getGearHigh()
+//    {
+//        return GearHigh;
+//    }
 
     /**
      * Get the actual reading of a wheel
@@ -462,5 +464,11 @@ public class SwerveChassis {
     public SwerveWheel getWheel(int index)
     {
         return Wheels[index];
+    }
+
+    @Override
+    protected void initDefaultCommand()
+    {
+        // TODO Auto-generated method stub
     }
 }

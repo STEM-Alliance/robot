@@ -28,7 +28,7 @@ public class Application extends com.taurus.Application {
         testChooser.addObject("Wheel To Heading",
                 Integer.valueOf(TEST_MODE_CALIBRATION_3));
 
-        SmartDashboard.putData("Test", testChooser);
+        SmartDashboard.putData("Test Mode", testChooser);
 
         testWheelChooser = new SendableChooser();
         testWheelChooser.addDefault("Front Left", Integer.valueOf(0));
@@ -45,36 +45,6 @@ public class Application extends com.taurus.Application {
 
     public void TeleopPeriodicRobotSpecific()
     {
-
-    }
-
-    public void TeleopDeInitRobotSpecific()
-    {
-
-    }
-
-    public void AutonomousInitRobotSpecific()
-    {
-
-    }
-
-    public void AutonomousPeriodicRobotSpecific()
-    {
-
-    }
-
-    public void AutonomousDeInitRobotSpecific()
-    {
-
-    }
-
-    public void TestModeInitRobotSpecific()
-    {
-
-    }
-
-    public void TestModePeriodicRobotSpecific()
-    {
         int i = ((Integer) testWheelChooser.getSelected()).intValue();
 
         switch (((Integer) testChooser.getSelected()).intValue())
@@ -83,7 +53,7 @@ public class Application extends com.taurus.Application {
              // use the left joystick to control the wheel module
                 SwerveVector WheelActual = drive.getWheel(i).setDesired(
                         controller.getHaloDrive_Velocity(),
-                        controller.getHighGearEnable(), controller.getBrake());
+                      /*  controller.getHighGearEnable(),*/ controller.getBrake());
 
                 // display in SmartDashboard
                 SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
@@ -91,8 +61,8 @@ public class Application extends com.taurus.Application {
                         WheelActual.getAngle());
 
                 // if the button is not held down, we're in high gear
-                drive.setGearHigh(controller.getHighGearEnable());
-                drive.UpdateShifter();
+//                drive.setGearHigh(controller.getHighGearEnable());
+//                drive.UpdateShifter();
                 break;
 
             case TEST_MODE_CALIBRATION_1:
@@ -126,6 +96,35 @@ public class Application extends com.taurus.Application {
                 drive.run(controller);
                 break;
         }
+    }
+
+    public void TeleopDeInitRobotSpecific()
+    {
+
+    }
+
+    public void AutonomousInitRobotSpecific()
+    {
+
+    }
+
+    public void AutonomousPeriodicRobotSpecific()
+    {
+
+    }
+
+    public void AutonomousDeInitRobotSpecific()
+    {
+
+    }
+
+    public void TestModeInitRobotSpecific()
+    {
+
+    }
+
+    public void TestModePeriodicRobotSpecific()
+    {
     }
 
     public void TestModeDeInitRobotSpecific()

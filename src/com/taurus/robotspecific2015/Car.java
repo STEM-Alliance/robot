@@ -1,83 +1,140 @@
 package com.taurus.robotspecific2015;
 
-import com.taurus.robotspecific2015.Constants.POSITION_CAR;
+import com.taurus.robotspecific2015.Constants.LIFT_POSITIONS_E;
 
 // State machine for lift
-public class Car 
-{    
-    int[] EncoderPins = null;  //TODO create constant
-    double InchesPerPulse = 0; //TODO create constants
-    double[] Positions = {0, 1, 2, 3};  //TODO Create constants
-    
-    LinearMotorEncoder MotorEncoder;
-    SensorDigital ZeroSensor;
-    
+public class Car {
+
+    private LinearActuator Actuator;
+    private SensorDigital ZeroSensor;
+
     public Car()
     {
-        MotorEncoder = new LinearMotorEncoder(Constants.PINS_MOTOR, Constants.SCALING_MOTOR, EncoderPins, InchesPerPulse, Positions);
-        ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
+        Actuator = new LinearActuatorPot(Constants.LIFT_MOTOR_PINS,
+                Constants.LIFT_MOTOR_SCALING,
+                Constants.LIFT_POSTITIONS,
+                Constants.LIFT_THRESHOLD,
+                Constants.LIFT_POT_PIN,
+                Constants.LIFT_POT_DISTANCE);
         
+        ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
+
         // Move the motor until you hit a sensor, then zero the encoder position
         if (ZeroSensor.IsOn())
         {
-            MotorEncoder.Zero();
+            Actuator.Zero();
         }
         else
         {
-            MotorEncoder.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+            //Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+        }
+    }
+
+    public LinearActuator GetActuator()
+    {
+        return Actuator;
+    }
+    
+    /**
+     * Get the position of the car
+     * @return
+     */
+    public LIFT_POSITIONS_E GetPosition()
+    {
+        return LIFT_POSITIONS_E.fromInt(Actuator.GetPosition());
+    }
+    
+    /**
+     * Go to position
+     * @param position position enum val
+     * @return
+     */
+    public boolean SetPosition(LIFT_POSITIONS_E position)
+    {
+        Actuator.SetPosition(position.ordinal());
+        return Actuator.GetPosition() == position.ordinal();
+    }
+
+    /**
+     * Move car to where the new tote will be held in place by the stack holder
+     * @return
+     */
+    public boolean GoToStack()
+    {
+        return SetPosition(LIFT_POSITIONS_E.STACK);
+    }
+
+    /**
+     * Move car to position that pushes last tote high enough to make room to
+     * disengage stack holder
+     * @return
+     */
+    public boolean GoToDestack()
+    {
+        return SetPosition(LIFT_POSITIONS_E.DESTACK);
+    }
+
+    /**
+     * Move car to position that can receive totes from chute
+     * @return
+     */
+    public boolean GoToChute()
+    {
+        return SetPosition(LIFT_POSITIONS_E.CHUTE);
+    }
+
+    /**
+     * Move car to bottom position
+     * @return
+     */
+    public boolean GoToBottom()
+    {
+        return ZeroIfNeeded();
+    }
+    
+    /**
+     * Get the current height of the car in inches
+     * @return
+     */
+    public double GetHeight()
+    {
+        return Actuator.GetDistance();
+    }
+
+    public void GoToTop()
+    {
+        Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_FORWARD);
+    }
+
+    public void GoToZero()
+    {
+        if(ZeroIfNeeded())
+        {
+            Actuator.SetSpeedRaw(0);
+        }
+        else
+        {
+            Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
         }
     }
     
-    public POSITION_CAR GetPosition()
+    public boolean ZeroIfNeeded()
     {
-        POSITION_CAR result = POSITION_CAR.MOVING;
-        int position = MotorEncoder.GetPosition();
-                
-        if (position == 3) 
+        if (ZeroSensor.IsOn())
         {
-            result = POSITION_CAR.STACK;
+            Actuator.Zero();
+            return true;
         }
-        else if (position == 2)
-        {
-            result = POSITION_CAR.DESTACK;
-        }
-        else if (position == 1)
-        {
-            result = POSITION_CAR.CHUTE;
-        }
-        else if (position == 0)
-        {
-            result = POSITION_CAR.BOTTOM;
-        }
-        return result;
+        return false;
     }
 
-    // Move car to where the new tote will be held in place by the stack holder
-    public boolean GoToStack()
+    public Sensor GetZeroSensor()
     {
-        MotorEncoder.SetPosition(3);
-        return MotorEncoder.GetPosition() == 3;
+        return ZeroSensor;
     }
 
-    // Move car to position that pushes last tote high enough to make room to
-    // disengage stack holder    
-    public boolean GoToDestack()
+    public void UpdateLastPosition()
     {
-        MotorEncoder.SetPosition(2);
-        return MotorEncoder.GetPosition() == 2;
-    }
-
-    // Move car to position that can receive totes from chute
-    public boolean GoToChute()
-    {
-        MotorEncoder.SetPosition(1);
-        return MotorEncoder.GetPosition() == 1;
-    }
-
-    // Move car to bottom position
-    public boolean GoToBottom()
-    {
-        MotorEncoder.SetPosition(0);
-        return MotorEncoder.GetPosition() == 0;
+        Actuator.UpdateLastPosition();
     }
 }
