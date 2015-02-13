@@ -255,4 +255,22 @@ public class ControllerJoysticks implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getCarHome()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getCarTop()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

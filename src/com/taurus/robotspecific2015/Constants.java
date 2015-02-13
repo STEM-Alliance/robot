@@ -33,11 +33,6 @@ public abstract class Constants {
     public static final double TIME_CONTRACT_STOP = 1;
     public static final double TIME_CONTRACT_PUSHER = 1;
 
-    // Motors
-    public static final int[] PINS_EJECTOR = { 9 };
-
-    public static final double[] SCALING_EJECTOR = { 1 };
-
     public static final int MOTOR_DIRECTION_FORWARD = 1;
     public static final int MOTOR_DIRECTION_BACKWARD = -1;
 
@@ -50,10 +45,31 @@ public abstract class Constants {
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
     public static final double[] LIFT_MOTOR_SCALING = { -1 };
-    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 10.25, 20.75 };
     public static final int  LIFT_POT_PIN = 4;
     public static final double  LIFT_POT_DISTANCE = 3.14;
     public static final double  LIFT_THRESHOLD = .25;
+    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 10.25, 20.75 };
+    
+    // Car
+    public static enum LIFT_POSITIONS_E {
+        ZERO, CHUTE, DESTACK, STACK, MOVING;
+
+        public static LIFT_POSITIONS_E fromInt(int x) {
+            switch(x) {
+                case 0:
+                    return ZERO;
+                case 1:
+                    return CHUTE;
+                case 2:
+                    return DESTACK;
+                case 3:
+                    return STACK;
+                case 4:
+                    return MOVING;
+            }
+            return null;
+        }
+    }
     
     public static enum CYLINDER_STATE {
         NONE, EXTENDED, EXTENDING, CONTRACTED, CONTRACTING
@@ -84,10 +100,6 @@ public abstract class Constants {
         LIFT_CAR, STACK_HOLDER_CONTRACT, LOWER_CAR, EJECT_STACK, RESET,
     }
 
-    // Car
-    public static enum POSITION_CAR {
-        STACK, DESTACK, CHUTE, BOTTOM, MOVING
-    }
 
     // Ejector
     public static enum STATE_EJECT {

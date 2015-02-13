@@ -174,5 +174,8 @@ public interface Controller {
     public boolean getAddContainer();
     
     public boolean getEjectStack();
+    
+    public boolean getCarHome();
 
+    public boolean getCarTop();
 }
