@@ -48,11 +48,11 @@ public abstract class Constants {
     public static final int  LIFT_POT_PIN = 4;
     public static final double  LIFT_POT_DISTANCE = 3.14;
     public static final double  LIFT_THRESHOLD = .25;
-    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 10.25, 20.75 };
+    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 10.25, 20.75, 3.25, 20 };
     
     // Car
     public static enum LIFT_POSITIONS_E {
-        ZERO, CHUTE, DESTACK, STACK, MOVING;
+        ZERO, CHUTE, DESTACK, STACK, CONTAINER_GRAB, CONTAINER_STACK, MOVING;
 
         public static LIFT_POSITIONS_E fromInt(int x) {
             switch(x) {
@@ -65,6 +65,10 @@ public abstract class Constants {
                 case 3:
                     return STACK;
                 case 4:
+                    return CONTAINER_GRAB;
+                case 5:
+                    return CONTAINER_STACK;
+                case 6:
                     return MOVING;
             }
             return null;

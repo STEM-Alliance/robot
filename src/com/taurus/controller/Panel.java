@@ -44,16 +44,16 @@ public class Panel {
          * The integer value representing this enumeration
          */
         public final int value;
-        private static final int kYellowLeft_val = 1;
-        private static final int kGreenLeft_val = 2;
-        private static final int kBlackLeft_val = 3;
-        private static final int kWhiteLeft_val = 4;
-        private static final int kYellowRight_val = 5;
-        private static final int kGreenRight_val = 6;
-        private static final int kBlackRight_val = 7;
-        private static final int kWhiteRight_val = 8;
-        private static final int kSwitchLeft_val = 9;
-        private static final int kSwitchRight_val = 10;
+        private static final int kYellowR_val = 1;
+        private static final int kGreenR_val = 2;
+        private static final int kBlackR_val = 3;
+        private static final int kWhiteR_val = 4;
+        private static final int kYellowL_val = 5;
+        private static final int kGreenL_val = 6;
+        private static final int kBlackL_val = 7;
+        private static final int kWhiteL_val = 8;
+        private static final int kSwitchR_val = 9;
+        private static final int kSwitchL_val = 10;
         private static final int kKey_val = 11;
         private static final int kFoot_val = 12;
 
@@ -62,26 +62,26 @@ public class Panel {
             this.value = value;
         }
 
-        public static final ButtonType kYellowLeft = new ButtonType(kYellowLeft_val);
+        public static final ButtonType kYellowR = new ButtonType(kYellowR_val);
         
-        public static final ButtonType kGreenLeft = new ButtonType(kGreenLeft_val);
+        public static final ButtonType kGreenR = new ButtonType(kGreenR_val);
         
-        public static final ButtonType kBlackLeft = new ButtonType(kBlackLeft_val);
+        public static final ButtonType kBlackR = new ButtonType(kBlackR_val);
         
-        public static final ButtonType kWhiteLeft = new ButtonType(kWhiteLeft_val);
+        public static final ButtonType kWhiteR = new ButtonType(kWhiteR_val);
 
 
-        public static final ButtonType kYellowRight = new ButtonType(kYellowRight_val);
+        public static final ButtonType kYellowL = new ButtonType(kYellowL_val);
         
-        public static final ButtonType kGreenRight = new ButtonType(kGreenRight_val);
+        public static final ButtonType kGreenL = new ButtonType(kGreenL_val);
         
-        public static final ButtonType kBlackRight = new ButtonType(kBlackRight_val);
+        public static final ButtonType kBlackL = new ButtonType(kBlackL_val);
         
-        public static final ButtonType kWhiteRight = new ButtonType(kWhiteRight_val);
+        public static final ButtonType kWhiteL = new ButtonType(kWhiteL_val);
         
-        public static final ButtonType kSwitchLeft = new ButtonType(kSwitchLeft_val);
+        public static final ButtonType kSwitchR = new ButtonType(kSwitchR_val);
 
-        public static final ButtonType kSwitchRight = new ButtonType(kSwitchRight_val);
+        public static final ButtonType kSwitchL = new ButtonType(kSwitchL_val);
 
         public static final ButtonType kKey = new ButtonType(kKey_val);
         
@@ -180,63 +180,13 @@ public class Panel {
     }
 
     /**
-     * Get State of Green Left Button
-     * 
-     * @return State of button
-     */
-    public boolean getGreenLeftButton()
-    {
-        return getButton(ButtonType.kGreenLeft);
-    }
-
-    /**
-     * Get State of Yellow Left Button
-     * 
-     * @return State of button
-     */
-    public boolean getYellowLeftButton()
-    {
-        return getButton(ButtonType.kYellowLeft);
-    }
-
-    /**
-     * Get State of Black Left Button
-     * 
-     * @return State of button
-     */
-    public boolean getBlackLeftButton()
-    {
-        return getButton(ButtonType.kBlackLeft);
-    }
-
-    /**
-     * Get State of White Left Button
-     * 
-     * @return State of button
-     */
-    public boolean getWhiteLeftButton()
-    {
-        return getButton(ButtonType.kWhiteLeft);
-    }
-
-    /**
-     * Get State of Switch Left
-     * 
-     * @return State of switch
-     */
-    public boolean getSwitchLeft()
-    {
-        return getButton(ButtonType.kSwitchLeft);
-    }
-
-    /**
      * Get State of Green Right Button
      * 
      * @return State of button
      */
-    public boolean getGreenRightButton()
+    public boolean getGreenRButton()
     {
-        return getButton(ButtonType.kGreenRight);
+        return getButton(ButtonType.kGreenR);
     }
 
     /**
@@ -244,9 +194,9 @@ public class Panel {
      * 
      * @return State of button
      */
-    public boolean getYellowRightButton()
+    public boolean getYellowRButton()
     {
-        return getButton(ButtonType.kYellowRight);
+        return getButton(ButtonType.kYellowR);
     }
 
     /**
@@ -254,9 +204,9 @@ public class Panel {
      * 
      * @return State of button
      */
-    public boolean getBlackRightButton()
+    public boolean getBlackRButton()
     {
-        return getButton(ButtonType.kBlackRight);
+        return getButton(ButtonType.kBlackR);
     }
 
     /**
@@ -264,9 +214,9 @@ public class Panel {
      * 
      * @return State of button
      */
-    public boolean getWhiteRightButton()
+    public boolean getWhiteRButton()
     {
-        return getButton(ButtonType.kWhiteRight);
+        return getButton(ButtonType.kWhiteR);
     }
 
     /**
@@ -274,9 +224,59 @@ public class Panel {
      * 
      * @return State of switch
      */
-    public boolean getSwitchRight()
+    public boolean getSwitchR()
     {
-        return getButton(ButtonType.kSwitchRight);
+        return getButton(ButtonType.kSwitchR);
+    }
+
+    /**
+     * Get State of Green Left Button
+     * 
+     * @return State of button
+     */
+    public boolean getGreenLButton()
+    {
+        return getButton(ButtonType.kGreenL);
+    }
+
+    /**
+     * Get State of Yellow Left Button
+     * 
+     * @return State of button
+     */
+    public boolean getYellowLButton()
+    {
+        return getButton(ButtonType.kYellowL);
+    }
+
+    /**
+     * Get State of Black Left Button
+     * 
+     * @return State of button
+     */
+    public boolean getBlackLButton()
+    {
+        return getButton(ButtonType.kBlackL);
+    }
+
+    /**
+     * Get State of White Left Button
+     * 
+     * @return State of button
+     */
+    public boolean getWhiteLButton()
+    {
+        return getButton(ButtonType.kWhiteL);
+    }
+
+    /**
+     * Get State of Switch Right
+     * 
+     * @return State of switch
+     */
+    public boolean getSwitchL()
+    {
+        return getButton(ButtonType.kSwitchL);
     }
     
     /**

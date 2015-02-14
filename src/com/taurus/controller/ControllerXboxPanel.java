@@ -207,65 +207,66 @@ public class ControllerXboxPanel implements Controller {
 
     public boolean getResetGyro()
     {
-        return panel.getYellowLeftButton();
+        return panel.getYellowRButton();
     }
 
     public boolean getFieldRelative()
     {
-        if (!fieldRelativeLast && panel.getBlackLeftButton())
+        if (!fieldRelativeLast && panel.getGreenRButton())
         {
             fieldRelative = !fieldRelative;
         }
-        fieldRelativeLast = panel.getBlackLeftButton();
+        fieldRelativeLast = panel.getGreenRButton();
         return fieldRelative;
     }
 
     @Override
     public boolean getTrigger(Hand hand)
     {
-        // TODO Auto-generated method stub
-        return false;
+        return xbox.getTrigger(hand);
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean getAddChuteTote()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return xbox.getAButton();
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean getAddFloorTote()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return xbox.getBButton();
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean getAddContainer()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return xbox.getXButton();
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public boolean getEjectStack()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return xbox.getYButton();
     }
 
     @Override
     public boolean getCarHome()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return panel.getGreenLButton();
     }
 
     @Override
     public boolean getCarTop()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return panel.getYellowLButton();
     }
 }
