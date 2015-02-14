@@ -128,7 +128,7 @@ public class SwerveChassis extends Subsystem {
 
         // set various options for the chassis
 //        setGearHigh(controller.getHighGearEnable());
-        setBrake(controller.getBrake());
+        setBrake(controller.getSwerveBrake());
         setFieldRelative(controller.getFieldRelative());
         if (controller.getResetGyro())
         {

@@ -200,9 +200,9 @@ public class ControllerXboxPanel implements Controller {
      * 
      * @return
      */
-    public boolean getBrake()
+    public boolean getSwerveBrake()
     {
-        return xbox.getBButton();
+        return xbox.getBumper(Hand.kLeft);
     }
 
     public boolean getResetGyro()
@@ -268,5 +268,17 @@ public class ControllerXboxPanel implements Controller {
     public boolean getCarTop()
     {
         return panel.getYellowLButton();
+    }
+
+    @Override
+    public boolean getStopAction()
+    {
+        return xbox.getBumper(Hand.kRight);
+    }
+
+    @Override
+    public boolean getFakeToteAdd()
+    {
+        return panel.getBlackLButton();
     }
 }

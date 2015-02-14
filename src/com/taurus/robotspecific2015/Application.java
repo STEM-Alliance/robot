@@ -67,7 +67,7 @@ public class Application extends com.taurus.Application
         }
         else
         {
-            if(controller.getBrake())
+            if(controller.getStopAction())
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                 lift.init();

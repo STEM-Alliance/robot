@@ -49,6 +49,17 @@ public class Car {
      * @param position position enum val
      * @return
      */
+    public boolean SetPosition(LIFT_POSITIONS_E position, double MaxSpeed)
+    {
+        Actuator.SetPosition(position.ordinal(), MaxSpeed);
+        return Actuator.GetPosition() == position.ordinal();
+    }
+    
+    /**
+     * Go to position
+     * @param position position enum val
+     * @return
+     */
     public boolean SetPosition(LIFT_POSITIONS_E position)
     {
         Actuator.SetPosition(position.ordinal());
@@ -61,7 +72,7 @@ public class Car {
      */
     public boolean GoToStack()
     {
-        return SetPosition(LIFT_POSITIONS_E.STACK);
+        return SetPosition(LIFT_POSITIONS_E.STACK, .8);
     }
 
     /**
@@ -71,7 +82,7 @@ public class Car {
      */
     public boolean GoToDestack()
     {
-        return SetPosition(LIFT_POSITIONS_E.DESTACK);
+        return SetPosition(LIFT_POSITIONS_E.DESTACK, .7);
     }
 
     /**
@@ -80,7 +91,7 @@ public class Car {
      */
     public boolean GoToChute()
     {
-        return SetPosition(LIFT_POSITIONS_E.CHUTE);
+        return SetPosition(LIFT_POSITIONS_E.CHUTE, .7);
     }    
 
     /**
@@ -89,7 +100,7 @@ public class Car {
      */
     public boolean GoToContainerGrab()
     {
-        return SetPosition(LIFT_POSITIONS_E.CONTAINER_GRAB);
+        return SetPosition(LIFT_POSITIONS_E.CONTAINER_GRAB, .7);
     }
     
     /**
@@ -98,7 +109,7 @@ public class Car {
      */
     public boolean GoToContainerStack()
     {
-        return SetPosition(LIFT_POSITIONS_E.CONTAINER_STACK);
+        return SetPosition(LIFT_POSITIONS_E.CONTAINER_STACK, .7);
     }
 
     /**
@@ -107,6 +118,7 @@ public class Car {
      */
     public boolean GoToBottom()
     {
+        GoToZero();
         return ZeroIfNeeded();
     }
     
@@ -129,10 +141,11 @@ public class Car {
         if(ZeroIfNeeded())
         {
             Actuator.SetSpeedRaw(0);
+            Actuator.ResetError();
         }
         else
         {
-            Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+            Actuator.SetSpeedRaw(-.7);
         }
     }
     

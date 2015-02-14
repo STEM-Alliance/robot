@@ -9,9 +9,6 @@
 	<widget field="TotesInStack" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="474"/>
 	</widget>
-	<widget field="StateAddChuteToteToStack" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="334" y="398"/>
-	</widget>
 	<widget field="CurrentLiftAction" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="335" y="373"/>
 	</widget>
@@ -347,11 +344,4 @@
 		<height>1021</height>
 	</widget>
 </live-window>
-	<hidden field="pot read"/>
-	<hidden field="Actuator Distance"/>
-	<hidden field="Zero sensor"/>
-	<hidden field="CarEnc"/>
-	<hidden field="Test Wheel Mag Actual"/>
-	<hidden field="Test Wheel Angle Actual"/>
-	<hidden field="motor set"/>
 </xml>
