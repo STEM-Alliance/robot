@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 public abstract class LinearActuator {
 
     private PIDController ActuatorPIController;
-    private double ActP = 1.0 / 3.0;  // full speed at 3 in error
+    private double ActP = 2.0 / 5.0;  // full speed at 3 in error
     private double ActI = 0.5;
     private double ActD = 0;
     
