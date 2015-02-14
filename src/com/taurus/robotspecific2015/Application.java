@@ -134,7 +134,7 @@ public class Application extends com.taurus.Application
             }
         }
         
-        SmartDashboard.putNumber("CurrentLiftAction", CurrentLiftAction.ordinal());
+        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
     }
 
     public void TeleopDeInitRobotSpecific()
@@ -196,10 +196,10 @@ public class Application extends com.taurus.Application
                 {
                     testCylinders = lift.GetCylindersContainerFixed();
                 }   
-//                else if (button4)
-//                {
-//                    testCylinders = lift.GetCylindersStackHolder();
-//                }
+                else if (button4)
+                {
+                    testCylinders = lift.GetCylindersStackHolder();
+                }
                 else
                 {
                     testCylinders = lift.GetCylindersRails();
@@ -261,7 +261,7 @@ public class Application extends com.taurus.Application
                 }
                 else if (button5)
                 {
-                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.CONTAINER_GRAB);
+                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.CHUTE);
                 }
                 else if (button6)
                 {
