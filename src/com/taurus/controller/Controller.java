@@ -141,7 +141,7 @@ public interface Controller {
      * 
      * @return
      */
-    public boolean getBrake();
+    public boolean getSwerveBrake();
 
     /**
      * Get if the gyro should be reset
@@ -178,4 +178,14 @@ public interface Controller {
     public boolean getCarHome();
 
     public boolean getCarTop();
+    
+    public boolean getFakeToteAdd();
+    
+
+    /**
+     * Get the stop action
+     * 
+     * @return
+     */
+    public boolean getStopAction();
 }

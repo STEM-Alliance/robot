@@ -106,7 +106,7 @@ public class Lift extends Subsystem {
                 LiftCar.UpdateLastPosition();
 
                 // When sensor triggered, go to next state to lift the tote
-                if (ToteIntakeSensor.IsOn())
+                if (ToteIntakeSensor.IsOn() || Application.controller.getFakeToteAdd())
                 {
                     StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                 }
@@ -130,7 +130,7 @@ public class Lift extends Subsystem {
                 LiftCar.UpdateLastPosition();
                 if (TotesInStack == 0)
                 {
-                    if (GetCylindersContainerFixed().Contract())
+                    if (CylindersContainerFixed.Contract())
                     {
                         StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
                     }
@@ -141,19 +141,23 @@ public class Lift extends Subsystem {
                 }
                 break;
             case RESET:
-                StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
-                TotesInStack = TotesInStack + 1;
+
+                if (LiftCar.GoToBottom())
+                {
+                    StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+                    TotesInStack = TotesInStack + 1;
+                }
                 break;
             default:
                 // TODO: Put error condition here
                 break;
         }
         
-        SmartDashboard.putNumber("StateAddChuteToteToStack", StateAddChuteToteToStack.ordinal());
+        SmartDashboard.putString("StateAddChuteToteToStack", StateAddChuteToteToStack.toString());
 
         // If the sensor triggered, and we have 5 totes, we have six totes and
         // this method is "done"
-        return TotesInStack >= MaxTotesInStack && ToteIntakeSensor.IsOn();
+        return TotesInStack >= MaxTotesInStack && (ToteIntakeSensor.IsOn() || Application.controller.getFakeToteAdd());
     }
 
     /**
@@ -184,7 +188,7 @@ public class Lift extends Subsystem {
                 break;
             case INTAKE_TOTE:
                 LiftCar.UpdateLastPosition();
-                if (ToteIntakeSensor.IsOn())
+                if (ToteIntakeSensor.IsOn()  || Application.controller.getFakeToteAdd())
                 {
                     StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.GRAB_TOTE;
                 }
@@ -248,7 +252,7 @@ public class Lift extends Subsystem {
                 break;
         }
         
-        SmartDashboard.putNumber("StateAddFloorToteToStack", StateAddFloorToteToStack.ordinal());
+        SmartDashboard.putString("StateAddFloorToteToStack", StateAddFloorToteToStack.toString());
         
         return TotesInStack >= MaxTotesInStack
                 && LiftCar.GetPosition() == LIFT_POSITIONS_E.CHUTE;
@@ -273,7 +277,7 @@ public class Lift extends Subsystem {
             {
                 case INIT:
                     //TODO verify the tote intake sensor works for grabbing containers
-                    if (GetCar().GoToContainerGrab() & CylindersRails.Contract() & ToteIntakeSensor.IsOn())
+                    if (GetCar().GoToContainerGrab() & CylindersRails.Contract() & (ToteIntakeSensor.IsOn() || Application.controller.getFakeToteAdd()))
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                     }
@@ -327,7 +331,7 @@ public class Lift extends Subsystem {
         }
         SmartDashboard.putBoolean("ContainerInStack", ContainerInStack);
         
-        SmartDashboard.putNumber("StateAddContainerToStack", StateAddContainerToStack.ordinal());
+        SmartDashboard.putString("StateAddContainerToStack", StateAddContainerToStack.toString());
         
         return ContainerInStack;
     }
@@ -404,7 +408,7 @@ public class Lift extends Subsystem {
                 break;
         }
         
-        SmartDashboard.putNumber("StateEjectStack", StateEjectStack.ordinal());
+        SmartDashboard.putString("StateEjectStack", StateEjectStack.toString());
         
         return StateEjectStack == STATE_EJECT_STACK.RESET;
     }
