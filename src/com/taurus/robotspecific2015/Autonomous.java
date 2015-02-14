@@ -16,7 +16,7 @@ public class Autonomous
     private Lift lift;
     private Vision vision;
     
-    Command autoCommand;
+    Command autoCommand = null;
     
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision, int automode)
     {
@@ -72,7 +72,10 @@ public class Autonomous
                 break;
         }
         
-        autoCommand.start();
+        if (autoCommand != null)
+        {
+            autoCommand.start();
+        }
     }
     
     public void Run()
@@ -204,11 +207,15 @@ public class Autonomous
     private class DriveBackwardsToLineUpTote extends Command
     {
         boolean Finished = false;
+        
+        public DriveBackwardsToLineUpTote()
+        {
+            requires(drive);
+        }
 
         @Override
         protected void initialize()
         {
-            requires(drive);
             this.Finished = false;
         }
 
@@ -268,12 +275,16 @@ public class Autonomous
     
     private class DropToteStack extends Command
     {
-        private boolean Finished = false;        
+        private boolean Finished = false;  
+        
+        public DropToteStack()
+        {
+            requires(lift);
+        }
 
         @Override
         protected void initialize()
         {
-            requires(lift);
             this.Finished = false;
         }
 
@@ -307,11 +318,15 @@ public class Autonomous
     private class PickupContainer extends Command
     {
         private boolean Finished = false;
+        
+        public PickupContainer()
+        {
+            requires(lift);
+        }
 
         @Override
         protected void initialize()
         {
-            requires(lift);
             this.Finished = false;
         }
 
@@ -351,12 +366,12 @@ public class Autonomous
         {
             this.MaxTotesInStack = MaxTotesInStack;
             this.Finished = false;
+            requires(lift);
         }
         
         @Override
         protected void initialize()
         {
-            requires(lift);
             Finished = false;
         }
 
@@ -398,12 +413,12 @@ public class Autonomous
             this.Velocity = velocity;
             this.Rotation = rotation;
             this.Heading = heading;
+            requires(drive);
         }
 
         @Override
         protected void initialize()
         {
-            requires(drive);
         }
 
         @Override
@@ -442,12 +457,12 @@ public class Autonomous
             this.Velocity = velocity;
             this.Rotation = rotation;
             this.Heading = heading;
+            requires(drive);
         }
 
         @Override
         protected void initialize()
         {
-            requires(drive);
         }
 
         @Override
