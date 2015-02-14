@@ -81,6 +81,24 @@ public class Car {
     public boolean GoToChute()
     {
         return SetPosition(LIFT_POSITIONS_E.CHUTE);
+    }    
+
+    /**
+     * Move car to position that can grab containers
+     * @return
+     */
+    public boolean GoToContainerGrab()
+    {
+        return SetPosition(LIFT_POSITIONS_E.CONTAINER_GRAB);
+    }
+    
+    /**
+     * Move car to position that can stack containers
+     * @return
+     */
+    public boolean GoToContainerStack()
+    {
+        return SetPosition(LIFT_POSITIONS_E.CONTAINER_STACK);
     }
 
     /**

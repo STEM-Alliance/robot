@@ -261,11 +261,11 @@ public class Application extends com.taurus.Application
                 }
                 else if (button5)
                 {
-                    //lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_FORWARD);
+                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.CONTAINER_GRAB);
                 }
                 else if (button6)
                 {
-                    //lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_BACKWARD);
+                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.CONTAINER_STACK);
                 }
                 else
                 {

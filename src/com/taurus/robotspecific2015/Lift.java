@@ -273,21 +273,21 @@ public class Lift extends Subsystem {
             {
                 case INIT:
                     //TODO verify the tote intake sensor works for grabbing containers
-                    if (CylindersRails.Contract() & ToteIntakeSensor.IsOn())
+                    if (GetCar().GoToContainerGrab() & CylindersRails.Contract() & ToteIntakeSensor.IsOn())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                     }
                     break;
 
                 case CONTAINER_CAR_EXTEND:
+                    GetCar().UpdateLastPosition();
                     if (CylindersContainerCar.Extend())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.LIFT_CAR;
                     }
                     break;
                 case LIFT_CAR:
-                    if (LiftCar.GoToStack()) // TODO: Add new height for adding
-                                             // container to stack?
+                    if (LiftCar.GoToContainerStack())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_FIXED_EXTEND;
                     }
@@ -307,7 +307,7 @@ public class Lift extends Subsystem {
                     }
                     break;
                 case LOWER_CAR:
-                    if (LiftCar.GoToChute())
+                    if (LiftCar.GoToContainerGrab())
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.RESET;
                     }
