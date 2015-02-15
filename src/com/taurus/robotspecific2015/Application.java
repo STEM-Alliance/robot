@@ -305,7 +305,7 @@ public class Application extends com.taurus.Application
             case Constants.TEST_MODE_SONGS:
                 if (button1)
                 {
-                    if(SongTimer - Timer.getFPGATimestamp() > Songs.CupsStep)
+                    if(Timer.getFPGATimestamp() - SongTimer > Songs.CupsStep)
                     {
                         if(Songs.Cups[0][SongIndex] == 1)
                         {
@@ -334,6 +334,11 @@ public class Application extends com.taurus.Application
                             lift.GetCylindersContainerFixed().GetRaw().set(Value.kReverse);
                         }
                         SongIndex++;
+                        SongTimer = Timer.getFPGATimestamp();
+                        if(SongIndex >= Songs.Cups[0].length)
+                        {
+                            SongIndex = 0;
+                        }
                     }
                     
                 }
