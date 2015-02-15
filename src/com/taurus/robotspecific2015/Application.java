@@ -2,6 +2,8 @@ package com.taurus.robotspecific2015;
 
 import com.taurus.robotspecific2015.Constants.*;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,6 +19,9 @@ public class Application extends com.taurus.Application
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
+    
+    private double SongTimer = 0;
+    private int SongIndex = 0;
     
     public Application()
     {
@@ -164,6 +169,7 @@ public class Application extends com.taurus.Application
         testChooser.addDefault("Pneumatics", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
         testChooser.addObject("Motors", Integer.valueOf(Constants.TEST_MODE_MOTORS));
         testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
+        testChooser.addObject("Songs", Integer.valueOf(Constants.TEST_MODE_SONGS));
         SmartDashboard.putData("Test", testChooser);
     }
 
@@ -273,6 +279,42 @@ public class Application extends com.taurus.Application
                     //lift.GetEjector().SetMotors(0);
                 }
                 break;
+
+            case Constants.TEST_MODE_SONGS:
+                if (button1)
+                {
+                    if(SongTimer - Timer.getFPGATimestamp() > Songs.CupsStep)
+                    {
+                        if(Songs.Cups[0][SongIndex] == 1)
+                        {
+                            lift.GetEjector().GetStop().GetRaw().set(Value.kForward);
+                        }
+                        else if(Songs.Cups[0][SongIndex] == 2)
+                        {
+                            lift.GetEjector().GetStop().GetRaw().set(Value.kReverse);
+                        }
+                        
+                        if(Songs.Cups[1][SongIndex] == 1)
+                        {
+                            lift.GetCylindersContainerCar().GetRaw().set(Value.kForward);
+                        }
+                        else if(Songs.Cups[1][SongIndex] == 2)
+                        {
+                            lift.GetCylindersContainerCar().GetRaw().set(Value.kReverse);
+                        }
+                        
+                        if(Songs.Cups[2][SongIndex] == 1)
+                        {
+                            lift.GetCylindersContainerFixed().GetRaw().set(Value.kForward);
+                        }
+                        else if(Songs.Cups[2][SongIndex] == 2)
+                        {
+                            lift.GetCylindersContainerFixed().GetRaw().set(Value.kReverse);
+                        }
+                        SongIndex++;
+                    }
+                    
+                }
             default:
                 break;
         }
