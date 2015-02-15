@@ -10,10 +10,6 @@ import edu.wpi.first.wpilibj.Timer;
 
 // Wraps FIRST code to control a group of pneumatic cylinders
 public class PneumaticSubsystem {
-    private final int ChannelExtend;
-    private final int ChannelContract;
-    private final int Module;
-    
     private final double TimeExtend;
     private final double TimeContract;
 
@@ -36,12 +32,32 @@ public class PneumaticSubsystem {
             Constants.CYLINDER_ACTION startAction)
     {
         // Save any constants
-        Module = module;
-        ChannelExtend = channels[0];
-        ChannelContract = channels[1];
+        int Module = module;
+        int ChannelExtend = channels[0];
+        int ChannelContract = channels[1];
         TimeExtend = timeExtend;
         TimeContract = timeContract;
         solenoid = new DoubleSolenoid(Module, ChannelExtend, ChannelContract);
+        State = CYLINDER_STATE.NONE;
+                
+        // Move all solenoids to initial positions
+        Run(startAction);
+    }
+    
+    /**
+     * Initialize PCU (pneumatic control unit) for this pneumatic subsytem
+     * @param solenoid a double solenoid
+     * @param timeExtend time it takes to extend
+     * @param timeContract time it takes to contract
+     * @param startAction whether to start extended or contracted
+     */
+    public PneumaticSubsystem(DoubleSolenoid solenoid, double timeExtend, double timeContract,
+            Constants.CYLINDER_ACTION startAction)
+    {
+        // Save any constants
+        TimeExtend = timeExtend;
+        TimeContract = timeContract;
+        this.solenoid = solenoid;
         State = CYLINDER_STATE.NONE;
                 
         // Move all solenoids to initial positions
