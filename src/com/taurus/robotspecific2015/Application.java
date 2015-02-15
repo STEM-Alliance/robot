@@ -3,7 +3,6 @@ package com.taurus.robotspecific2015;
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -63,6 +62,18 @@ public class Application extends com.taurus.Application
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
         SmartDashboard.putNumber("Distance Left", 12.402*Math.pow(distance_sensor_left.getVoltage(), -1.074) / 2.54);
         SmartDashboard.putNumber("Distance Right", 12.402*Math.pow(distance_sensor_right.getVoltage(), -1.074) / 2.54);
+        
+        SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
+        SmartDashboard.putBoolean("ToteOnRails", lift.GetToteOnRails());
+        SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
+        SmartDashboard.putBoolean("CylindersRails.IsExtended()", lift.GetCylindersRails().IsExtended());
+
+        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
+        SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
+        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack().toString());
+        SmartDashboard.putString("StateAddContainerToStack", lift.GetStateAddContainerToStack().toString());
+        SmartDashboard.putString("StateAddFloorToteToStack", lift.GetStateAddFloorToteToStack().toString());
+
     }
 
     public void TeleopPeriodicRobotSpecific()
@@ -146,7 +157,6 @@ public class Application extends com.taurus.Application
             }
         }
         
-        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
     }
 
     public void TeleopDeInitRobotSpecific()

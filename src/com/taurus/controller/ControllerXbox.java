@@ -281,4 +281,18 @@ public class ControllerXbox implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public boolean getManualLift()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getFakePostion()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
