@@ -9,34 +9,37 @@ public abstract class Constants {
     public static final int PCU_CONTAINER_CAR = MODULE_ID_PCU;
     public static final int PCU_CONTAINER_FIXED = MODULE_ID_PCU;
     public static final int PCU_STOP = MODULE_ID_PCU;
+    public static final int PCU_STACK_HOLDER = MODULE_ID_PCU_2;
     public static final int PCU_PUSHER = MODULE_ID_PCU_2;
 
     public static final int[] CHANNEL_RAIL = { 3, 2 };
     public static final int[] CHANNEL_CONTAINER_CAR = { 5, 4 };
     public static final int[] CHANNEL_CONTAINER_FIXED = { 7, 6 };
     public static final int[] CHANNEL_STOP = { 0, 1 };
-    public static final int[] CHANNEL_PUSHER = { 0, 1 };
+    public static final int[] CHANNEL_PUSHER = { 2, 3 };
+    public static final int[] CHANNEL_STACK_HOLDER = { 0, 1};
 
     // TODO - what is the amount of time required to extend?
-    public static final double TIME_EXTEND_RAILS = 1;
-    public static final double TIME_EXTEND_CONTAINER_CAR = 1;
-    public static final double TIME_EXTEND_CONTAINER_FIXED = 1;
-    public static final double TIME_EXTEND_STACK_HOLDER = 1;
-    public static final double TIME_EXTEND_STOP = 1;
+    public static final double TIME_EXTEND_RAILS = .3;
+    public static final double TIME_EXTEND_CONTAINER_CAR = .3;
+    public static final double TIME_EXTEND_CONTAINER_FIXED = .3;
+    public static final double TIME_EXTEND_STACK_HOLDER = .3;
+    public static final double TIME_EXTEND_STOP = .3;
     public static final double TIME_EXTEND_PUSHER = 1;
 
     // TODO - what is the amount of time required to contract?
-    public static final double TIME_CONTRACT_RAILS = 1;
-    public static final double TIME_CONTRACT_CONTAINER_CAR = 1;
-    public static final double TIME_CONTRACT_CONTAINER_FIXED = 1;
-    public static final double TIME_CONTRACT_STACK_HOLDER = 1;
-    public static final double TIME_CONTRACT_STOP = 1;
+    public static final double TIME_CONTRACT_RAILS = .3;
+    public static final double TIME_CONTRACT_CONTAINER_CAR = .3;
+    public static final double TIME_CONTRACT_CONTAINER_FIXED = .3;
+    public static final double TIME_CONTRACT_STACK_HOLDER = .3;
+    public static final double TIME_CONTRACT_STOP = .3;
     public static final double TIME_CONTRACT_PUSHER = 1;
 
     public static final int MOTOR_DIRECTION_FORWARD = 1;
     public static final int MOTOR_DIRECTION_BACKWARD = -1;
 
     // Sensors
+    public static final int CHANNEL_DIGITAL_CAR_TOP = 5;
     public static final int CHANNEL_DIGITAL_CAR_ZERO = 6;
     public static final int CHANNEL_DIGITAL_TOTE_INTAKE = 7;
     public static final int CHANNEL_DIGITAL_EJECTOR_OUT = 8;
@@ -48,11 +51,14 @@ public abstract class Constants {
     public static final int  LIFT_POT_PIN = 4;
     public static final double  LIFT_POT_DISTANCE = 3.14;
     public static final double  LIFT_THRESHOLD = .25;
-    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 10.25, 20.75, 3.25, 20 };
+    public static final double[] LIFT_POSTITIONS = { 0, 2.5, 10.25, 20, 20.75 };
     
+    public static final int DISTANCE_SENSOR_LEFT_PIN = 5;
+    public static final int DISTANCE_SENSOR_RIGHT_PIN = 6;
+        
     // Car
     public static enum LIFT_POSITIONS_E {
-        ZERO, CHUTE, DESTACK, STACK, CONTAINER_GRAB, CONTAINER_STACK, MOVING;
+        ZERO, CHUTE, DESTACK, CONTAINER_STACK, STACK, MOVING;
 
         public static LIFT_POSITIONS_E fromInt(int x) {
             switch(x) {
@@ -63,12 +69,10 @@ public abstract class Constants {
                 case 2:
                     return DESTACK;
                 case 3:
-                    return STACK;
-                case 4:
-                    return CONTAINER_GRAB;
-                case 5:
                     return CONTAINER_STACK;
-                case 6:
+                case 4:
+                    return STACK;
+                case 5:
                     return MOVING;
             }
             return null;

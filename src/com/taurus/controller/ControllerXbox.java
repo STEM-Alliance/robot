@@ -196,9 +196,9 @@ public class ControllerXbox implements Controller {
     /**
      * {@inheritDoc}
      */
-    public boolean getBrake()
+    public boolean getSwerveBrake()
     {
-        return xbox.getBumper(Hand.kRight);
+        return xbox.getBumper(Hand.kLeft);
     }
 
     /**
@@ -267,5 +267,18 @@ public class ControllerXbox implements Controller {
     public boolean getEjectStack()
     {
         return xbox.getYButton();
+    }
+
+    @Override
+    public boolean getStopAction()
+    {
+        return xbox.getBumper(Hand.kRight);
+    }
+
+    @Override
+    public boolean getFakeToteAdd()
+    {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

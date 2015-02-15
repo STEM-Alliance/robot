@@ -177,7 +177,7 @@ public class ControllerJoysticks implements Controller {
     /**
      * {@inheritDoc}
      */
-    public boolean getBrake()
+    public boolean getSwerveBrake()
     {
         return left.getRawButton(3);
     }
@@ -269,6 +269,20 @@ public class ControllerJoysticks implements Controller {
      * {@inheritDoc}
      */
     public boolean getCarTop()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getStopAction()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getFakeToteAdd()
     {
         // TODO Auto-generated method stub
         return false;

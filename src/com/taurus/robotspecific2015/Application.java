@@ -4,6 +4,7 @@ import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,6 +14,8 @@ public class Application extends com.taurus.Application
 {
     private Vision vision = new Vision();
     private Lift lift;
+    private AnalogInput distance_sensor_left;
+    private AnalogInput distance_sensor_right;
         
     private STATE_LIFT_ACTION CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
 
@@ -29,6 +32,8 @@ public class Application extends com.taurus.Application
 
         lift = new Lift();
         vision = new Vision();
+        distance_sensor_left = new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
+        distance_sensor_right = new AnalogInput(Constants.DISTANCE_SENSOR_RIGHT_PIN);
         
         vision.Start();
         
@@ -53,14 +58,21 @@ public class Application extends com.taurus.Application
         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
         lift.init();
     }
-
-    public void TeleopPeriodicRobotSpecific()
+    
+    private void UpdateDashboard()
     {
+        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight() );
         SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
         SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
+        SmartDashboard.putNumber("Distance Left", 12.402*Math.pow(distance_sensor_left.getVoltage(), -1.074) / 2.54);
+        SmartDashboard.putNumber("Distance Right", 12.402*Math.pow(distance_sensor_right.getVoltage(), -1.074) / 2.54);
+    }
 
+    public void TeleopPeriodicRobotSpecific()
+    {
+        UpdateDashboard();
 
         if(controller.getCarHome())
         {
@@ -72,7 +84,7 @@ public class Application extends com.taurus.Application
         }
         else
         {
-            if(controller.getBrake())
+            if(controller.getStopAction())
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                 lift.init();
@@ -139,7 +151,7 @@ public class Application extends com.taurus.Application
             }
         }
         
-        SmartDashboard.putNumber("CurrentLiftAction", CurrentLiftAction.ordinal());
+        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
     }
 
     public void TeleopDeInitRobotSpecific()
@@ -156,6 +168,8 @@ public class Application extends com.taurus.Application
 
     public void AutonomousPeriodicRobotSpecific()
     {
+        lift.GetCar().ZeroIfNeeded(); 
+        UpdateDashboard();
         autonomous.Run();
     }
 
@@ -202,10 +216,18 @@ public class Application extends com.taurus.Application
                 {
                     testCylinders = lift.GetCylindersContainerFixed();
                 }   
-//                else if (button4)
-//                {
-//                    testCylinders = lift.GetCylindersStackHolder();
-//                }
+                else if (button4)
+                {
+                    testCylinders = lift.GetCylindersStackHolder();
+                }
+                else if (button5)
+                {
+                    testCylinders = lift.GetEjector().GetCylindersStop();
+                }
+                else if (button6)
+                {
+                    testCylinders = lift.GetEjector().GetCylindersPusher();
+                }
                 else
                 {
                     testCylinders = lift.GetCylindersRails();
@@ -267,7 +289,7 @@ public class Application extends com.taurus.Application
                 }
                 else if (button5)
                 {
-                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.CONTAINER_GRAB);
+                    lift.GetCar().SetPosition(LIFT_POSITIONS_E.CHUTE);
                 }
                 else if (button6)
                 {
@@ -318,10 +340,9 @@ public class Application extends com.taurus.Application
             default:
                 break;
         }
-        
-        // TODO: Get the value of one sensor and report that
-        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
-        SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight() );
+
+        lift.GetCar().ZeroIfNeeded(); 
+        UpdateDashboard();
     }
 
     public void TestModeDeInitRobotSpecific()
@@ -336,9 +357,8 @@ public class Application extends com.taurus.Application
 
     public void DisabledPeriodicRobotSpecific()
     {
-        lift.GetCar().ZeroIfNeeded();        // TODO: Get the value of one sensor and report that
-        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
-        SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight() );
+        lift.GetCar().ZeroIfNeeded(); 
+        UpdateDashboard();
 
     }
 
