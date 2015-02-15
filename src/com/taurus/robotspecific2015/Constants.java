@@ -20,19 +20,19 @@ public abstract class Constants {
     public static final int[] CHANNEL_STACK_HOLDER = { 0, 1};
 
     // TODO - what is the amount of time required to extend?
-    public static final double TIME_EXTEND_RAILS = 1;
-    public static final double TIME_EXTEND_CONTAINER_CAR = 1;
-    public static final double TIME_EXTEND_CONTAINER_FIXED = 1;
-    public static final double TIME_EXTEND_STACK_HOLDER = 1;
-    public static final double TIME_EXTEND_STOP = 1;
+    public static final double TIME_EXTEND_RAILS = .3;
+    public static final double TIME_EXTEND_CONTAINER_CAR = .3;
+    public static final double TIME_EXTEND_CONTAINER_FIXED = .3;
+    public static final double TIME_EXTEND_STACK_HOLDER = .3;
+    public static final double TIME_EXTEND_STOP = .3;
     public static final double TIME_EXTEND_PUSHER = 1;
 
     // TODO - what is the amount of time required to contract?
-    public static final double TIME_CONTRACT_RAILS = 1;
-    public static final double TIME_CONTRACT_CONTAINER_CAR = 1;
-    public static final double TIME_CONTRACT_CONTAINER_FIXED = 1;
-    public static final double TIME_CONTRACT_STACK_HOLDER = 1;
-    public static final double TIME_CONTRACT_STOP = 1;
+    public static final double TIME_CONTRACT_RAILS = .3;
+    public static final double TIME_CONTRACT_CONTAINER_CAR = .3;
+    public static final double TIME_CONTRACT_CONTAINER_FIXED = .3;
+    public static final double TIME_CONTRACT_STACK_HOLDER = .3;
+    public static final double TIME_CONTRACT_STOP = .3;
     public static final double TIME_CONTRACT_PUSHER = 1;
 
     public static final int MOTOR_DIRECTION_FORWARD = 1;
@@ -51,8 +51,11 @@ public abstract class Constants {
     public static final int  LIFT_POT_PIN = 4;
     public static final double  LIFT_POT_DISTANCE = 3.14;
     public static final double  LIFT_THRESHOLD = .25;
-    public static final double[] LIFT_POSTITIONS = { 0, 3.25, 10.25, 20, 20.75 };
+    public static final double[] LIFT_POSTITIONS = { 0, 2.5, 10.25, 20, 20.75 };
     
+    public static final int DISTANCE_SENSOR_LEFT_PIN = 5;
+    public static final int DISTANCE_SENSOR_RIGHT_PIN = 6;
+        
     // Car
     public static enum LIFT_POSITIONS_E {
         ZERO, CHUTE, DESTACK, CONTAINER_STACK, STACK, MOVING;

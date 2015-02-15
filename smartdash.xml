@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Distance Right" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="495"/>
+	</widget>
+	<widget field="Distance Left" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="474"/>
+	</widget>
 	<widget field="StateEjectStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="324" y="440"/>
 	</widget>
@@ -58,11 +64,11 @@
 		<property name="Text" value="Add Chute Tote - A"/>
 	</static-widget>
 	<widget field="Actuator Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="952" y="418"/>
+		<location x="909" y="410"/>
 		<width>123</width>
 	</widget>
 	<widget field="Actuator Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1069" y="440"/>
+		<location x="926" y="434"/>
 		<width>106</width>
 	</widget>
 	<widget field="Zero Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -72,12 +78,12 @@
 		<location x="110" y="0"/>
 	</widget>
 	<widget field="ToteIntakeSensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="769" y="413"/>
+		<location x="765" y="409"/>
 		<width>126</width>
 	</widget>
 	<widget field="Car Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1084" y="419"/>
-		<width>93</width>
+		<location x="800" y="430"/>
+		<width>101</width>
 		<height>20</height>
 	</widget>
 	<widget field="Autonomous mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
@@ -346,14 +352,24 @@
 			<height>20</height>
 			<width>293</width>
 		</widget>
-		<widget field="DigitalInput[5]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+		<widget field="DigitalInput[5]" type="Table" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
 			<location x="6" y="1014"/>
+			<height>20</height>
+			<width>293</width>
+		</widget>
+		<widget field="AnalogInput[5]" type="Analog Input" class="edu.wpi.first.smartdashboard.livewindow.elements.SingleNumberDisplay">
+			<location x="6" y="1034"/>
+			<height>20</height>
+			<width>293</width>
+		</widget>
+		<widget field="AnalogInput[6]" type="Analog Input" class="edu.wpi.first.smartdashboard.livewindow.elements.SingleNumberDisplay">
+			<location x="6" y="1054"/>
 			<height>20</height>
 			<width>293</width>
 		</widget>
 		<location x="239" y="-449"/>
 		<width>305</width>
-		<height>1041</height>
+		<height>1081</height>
 	</widget>
 	<widget field="IMU" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
 		<widget field="Gyro" type="Table" class="edu.wpi.first.smartdashboard.gui.elements.Compass">
