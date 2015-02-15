@@ -224,8 +224,8 @@ public class Autonomous
         {
             double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
             double slideP = Application.prefs.getDouble("SlideP", 2);
-            double targetX = Application.prefs.getDouble("SlideTargetX", .75);
-            double xErrorThreshold = Application.prefs.getDouble("SlideTargetXError", .1);
+            double targetX = Application.prefs.getDouble("SlideTargetX", .8);
+            double xErrorThreshold = Application.prefs.getDouble("SlideTargetXError", .03);
             
             SwerveVector Velocity;
                 
