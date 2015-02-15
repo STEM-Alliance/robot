@@ -388,7 +388,7 @@ public class Lift extends Subsystem {
                 break;
             case STACK_HOLDER_CONTRACT:
                 LiftCar.UpdateLastPosition();
-                if (GetCylindersStackHolder().Contract())
+                if (GetCylindersStackHolder().Extend())
                 {
                     ToteOnRails = true;
                     StateEjectStack = STATE_EJECT_STACK.LOWER_CAR;
@@ -402,7 +402,7 @@ public class Lift extends Subsystem {
                 break;
             case EJECT_STACK:
                 LiftCar.UpdateLastPosition();
-                if (StackEjector.EjectStack())
+                if (StackEjector.EjectStack() & GetCylindersStackHolder().Contract())
                 {
                     ToteOnRails = false;
                     StateEjectStack = STATE_EJECT_STACK.RESET;

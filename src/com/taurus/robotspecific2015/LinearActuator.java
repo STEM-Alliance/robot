@@ -14,7 +14,7 @@ public abstract class LinearActuator {
 
     private PIDController ActuatorPIController;
     private double ActP = 2.0 / 5.0;  // full speed at 3 in error
-    private double ActI = 0.5;
+    private double ActI = 0.8;
     private double ActD = 0;
     
     private MotorSystem Motors;
