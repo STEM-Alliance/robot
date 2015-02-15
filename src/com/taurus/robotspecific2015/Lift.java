@@ -3,7 +3,6 @@ package com.taurus.robotspecific2015;
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // Manages manipulators and supporting systems
 public class Lift extends Subsystem {
@@ -83,10 +82,6 @@ public class Lift extends Subsystem {
         this.StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
         this.StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
         
-        SmartDashboard.putNumber("TotesInStack", TotesInStack);
-        SmartDashboard.putBoolean("ToteOnRails", ToteOnRails);
-        SmartDashboard.putBoolean("CylindersRails.IsExtended()", CylindersRails.IsExtended());
-        
         switch (StateAddChuteToteToStack)
         {
             case INIT:
@@ -104,7 +99,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case INTAKE_TOTE:
-                LiftCar.GoToChute();
+                LiftCar.GoToChute() ;
 
                 // When sensor triggered, go to next state to lift the tote
                 if (ToteIntakeSensor.IsOn() || Application.controller.getFakeToteAdd())
@@ -161,8 +156,6 @@ public class Lift extends Subsystem {
                 break;
         }
         
-        SmartDashboard.putString("StateAddChuteToteToStack", StateAddChuteToteToStack.toString());
-
         // If the sensor triggered, and we have 5 totes, we have six totes and
         // this method is "done"
         return TotesInStack >= MaxTotesInStack && (ToteIntakeSensor.IsOn() || Application.controller.getFakeToteAdd());
@@ -261,7 +254,6 @@ public class Lift extends Subsystem {
                 break;
         }
         
-        SmartDashboard.putString("StateAddFloorToteToStack", StateAddFloorToteToStack.toString());
         
         return TotesInStack >= MaxTotesInStack
                 && LiftCar.GetPosition() == LIFT_POSITIONS_E.CHUTE;
@@ -338,9 +330,6 @@ public class Lift extends Subsystem {
                     break;
             }
         }
-        SmartDashboard.putBoolean("ContainerInStack", ContainerInStack);
-        
-        SmartDashboard.putString("StateAddContainerToStack", StateAddContainerToStack.toString());
         
         return ContainerInStack;
     }
@@ -416,7 +405,6 @@ public class Lift extends Subsystem {
                 break;
         }
         
-        SmartDashboard.putString("StateEjectStack", StateEjectStack.toString());
         
         return StateEjectStack == STATE_EJECT_STACK.RESET;
     }
@@ -617,6 +605,35 @@ public class Lift extends Subsystem {
     @Override
     protected void initDefaultCommand()
     {
-        // TODO Auto-generated method stub
+    }
+
+    public int GetTotesInStack()
+    {
+        return TotesInStack;
+    }
+    public boolean GetToteOnRails()
+    {
+        return ToteOnRails;
+    }
+    public boolean GetContainerInStack()
+    {
+        return ContainerInStack;
+    }
+    
+    public STATE_ADD_CHUTE_TOTE_TO_STACK GetStateAddChuteToteToStack()
+    {
+        return StateAddChuteToteToStack;
+    }
+    public STATE_ADD_FLOOR_TOTE_TO_STACK GetStateAddFloorToteToStack()
+    {
+        return StateAddFloorToteToStack;
+    }
+    public STATE_ADD_CONTAINER_TO_STACK GetStateAddContainerToStack()
+    {
+        return StateAddContainerToStack;
+    }
+    public STATE_EJECT_STACK GetStateEjectStack()
+    {
+        return StateEjectStack;
     }
 }

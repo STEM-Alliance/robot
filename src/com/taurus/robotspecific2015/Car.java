@@ -14,10 +14,8 @@ public class Car {
     public Car()
     {
         Actuator = new LinearActuatorPot(Constants.LIFT_MOTOR_PINS,
-                Constants.LIFT_MOTOR_SCALING,
-                Constants.LIFT_POSTITIONS,
-                Constants.LIFT_THRESHOLD,
-                Constants.LIFT_POT_PIN,
+                Constants.LIFT_MOTOR_SCALING, Constants.LIFT_POSTITIONS,
+                Constants.LIFT_THRESHOLD, Constants.LIFT_POT_PIN,
                 Constants.LIFT_POT_DISTANCE);
 
         ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
@@ -30,7 +28,7 @@ public class Car {
         }
         else
         {
-            //Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
+            // Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_BACKWARD);
         }
     }
 
@@ -38,19 +36,22 @@ public class Car {
     {
         return Actuator;
     }
-    
+
     /**
      * Get the position of the car
+     * 
      * @return
      */
     public LIFT_POSITIONS_E GetPosition()
     {
         return LIFT_POSITIONS_E.fromInt(Actuator.GetPosition());
     }
-    
+
     /**
      * Go to position
-     * @param position position enum val
+     * 
+     * @param position
+     *            position enum val
      * @return
      */
     public boolean SetPosition(LIFT_POSITIONS_E position, double MaxSpeed)
@@ -58,10 +59,12 @@ public class Car {
         Actuator.SetPosition(position.ordinal(), MaxSpeed);
         return Actuator.GetPosition() == position.ordinal();
     }
-    
+
     /**
      * Go to position
-     * @param position position enum val
+     * 
+     * @param position
+     *            position enum val
      * @return
      */
     public boolean SetPosition(LIFT_POSITIONS_E position)
@@ -69,26 +72,27 @@ public class Car {
         Actuator.SetPosition(position.ordinal());
         return Actuator.GetPosition() == position.ordinal();
     }
-    
+
     private double TopTime = 0;
     private boolean waiting = false;
-    
+
     /**
      * Move car to where the new tote will be held in place by the stack holder
+     * 
      * @return
      */
     public boolean GoToStack()
     {
         if (waiting)
         {
-            if(Timer.getFPGATimestamp() - TopTime > .5)
+            if (Timer.getFPGATimestamp() - TopTime > .5)
             {
                 waiting = false;
                 return true;
             }
             return false;
         }
-        else if(TopSensor.IsOn())
+        else if (TopSensor.IsOn())
         {
             waiting = true;
             TopTime = Timer.getFPGATimestamp();
@@ -96,61 +100,90 @@ public class Car {
             return false;
         }
         else
-        {            
+        {
             SetPosition(LIFT_POSITIONS_E.STACK, .7);
             return false;
         }
-        
-        
-//        if(TopSensor.IsOn() || waiting)
-//        {
-//            waiting = true;
-//            Actuator.SetSpeedRaw(0);
-//            
-//            if(Timer.getFPGATimestamp() - TopTime > .5)
-//            {
-//                return true;
-//            }
-//            return false;
-//        }
-//        else
-//        {
-//            TopTime = Timer.getFPGATimestamp();
-//            SetPosition(LIFT_POSITIONS_E.STACK, .7);
-//            return false;
-//        }
+
+        // if(TopSensor.IsOn() || waiting)
+        // {
+        // waiting = true;
+        // Actuator.SetSpeedRaw(0);
+        //
+        // if(Timer.getFPGATimestamp() - TopTime > .5)
+        // {
+        // return true;
+        // }
+        // return false;
+        // }
+        // else
+        // {
+        // TopTime = Timer.getFPGATimestamp();
+        // SetPosition(LIFT_POSITIONS_E.STACK, .7);
+        // return false;
+        // }
     }
 
     /**
      * Move car to position that pushes last tote high enough to make room to
      * disengage stack holder
+     * 
      * @return
      */
     public boolean GoToDestack()
     {
-        return SetPosition(LIFT_POSITIONS_E.DESTACK, .7);
+        if (Application.controller.getManualLift())
+        {
+            return Application.controller.getFakePostion();
+        }
+        else
+        {
+            return SetPosition(LIFT_POSITIONS_E.DESTACK, .7);
+
+        }
+
     }
 
     /**
      * Move car to position that can receive totes from chute
+     * 
      * @return
      */
     public boolean GoToChute()
     {
-        return SetPosition(LIFT_POSITIONS_E.CHUTE, .7);
-    }    
+        if (Application.controller.getManualLift())
+        {
+            return Application.controller.getFakePostion();
+        }
+        else
+        {
+            return SetPosition(LIFT_POSITIONS_E.CHUTE, .7);
+
+        }
+    }
 
     /**
      * Move car to position that can grab containers
+     * 
      * @return
      */
     public boolean GoToContainerGrab()
     {
-        return GoToBottom();
+        if (Application.controller.getManualLift())
+        {
+            return Application.controller.getFakePostion();
+        }
+        else
+        {
+            return GoToBottom();
+
+        }
+
     }
-    
+
     /**
      * Move car to position that can stack containers
+     * 
      * @return
      */
     public boolean GoToContainerStack()
@@ -160,6 +193,7 @@ public class Car {
 
     /**
      * Move car to bottom position
+     * 
      * @return
      */
     public boolean GoToBottom()
@@ -167,9 +201,10 @@ public class Car {
         GoToZero();
         return ZeroIfNeeded();
     }
-    
+
     /**
      * Get the current height of the car in inches
+     * 
      * @return
      */
     public double GetHeight()
@@ -183,11 +218,10 @@ public class Car {
     }
 
     private double ZeroSpeedTimer = 0;
-    
-    
+
     public void GoToZero()
     {
-        if(ZeroIfNeeded())
+        if (ZeroIfNeeded())
         {
             Actuator.SetSpeedRaw(0);
             Actuator.ResetError();
@@ -195,19 +229,19 @@ public class Car {
         }
         else
         {
-            if(ZeroSpeedTimer == 0)
+            if (ZeroSpeedTimer == 0)
             {
                 ZeroSpeedTimer = Timer.getFPGATimestamp();
             }
-            if(Timer.getFPGATimestamp() - ZeroSpeedTimer < .3)
+            if (Timer.getFPGATimestamp() - ZeroSpeedTimer < .3)
             {
                 Actuator.SetSpeedRaw(-.3);
             }
-            else if(Timer.getFPGATimestamp() - ZeroSpeedTimer < .5)
+            else if (Timer.getFPGATimestamp() - ZeroSpeedTimer < .5)
             {
                 Actuator.SetSpeedRaw(-.4);
             }
-            else if(Timer.getFPGATimestamp() - ZeroSpeedTimer < .7)
+            else if (Timer.getFPGATimestamp() - ZeroSpeedTimer < .7)
             {
                 Actuator.SetSpeedRaw(-.5);
             }
@@ -217,7 +251,7 @@ public class Car {
             }
         }
     }
-    
+
     public boolean ZeroIfNeeded()
     {
         if (ZeroSensor.IsOn())

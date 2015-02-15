@@ -181,6 +181,10 @@ public interface Controller {
     
     public boolean getFakeToteAdd();
     
+    public boolean getManualLift();
+    
+    public boolean getFakePostion();
+    
 
     /**
      * Get the stop action

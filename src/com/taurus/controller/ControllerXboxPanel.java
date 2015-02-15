@@ -8,7 +8,7 @@ public class ControllerXboxPanel implements Controller {
 
     private Xbox xbox;
     private Panel panel;
-    
+
     public static final double DEADBAND = 0.2;
 
     private boolean fieldRelative;
@@ -184,7 +184,7 @@ public class ControllerXboxPanel implements Controller {
     {
         return xbox.getPOV();
     }
-    
+
     /**
      * Get whether the high gear should be enabled
      * 
@@ -280,5 +280,19 @@ public class ControllerXboxPanel implements Controller {
     public boolean getFakeToteAdd()
     {
         return panel.getBlackLButton();
+    }
+
+    @Override
+    public boolean getManualLift()
+    {
+        return panel.getSwitchL();
+
+    }
+
+    @Override
+    public boolean getFakePostion()
+    {
+
+        return panel.getWhiteLButton();
     }
 }
