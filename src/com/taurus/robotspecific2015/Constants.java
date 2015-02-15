@@ -25,7 +25,7 @@ public abstract class Constants {
     public static final double TIME_EXTEND_CONTAINER_FIXED = .3;
     public static final double TIME_EXTEND_STACK_HOLDER = .3;
     public static final double TIME_EXTEND_STOP = .3;
-    public static final double TIME_EXTEND_PUSHER = 1;
+    public static final double TIME_EXTEND_PUSHER = 2;
 
     // TODO - what is the amount of time required to contract?
     public static final double TIME_CONTRACT_RAILS = .3;
@@ -33,7 +33,10 @@ public abstract class Constants {
     public static final double TIME_CONTRACT_CONTAINER_FIXED = .3;
     public static final double TIME_CONTRACT_STACK_HOLDER = .3;
     public static final double TIME_CONTRACT_STOP = .3;
-    public static final double TIME_CONTRACT_PUSHER = 1;
+    public static final double TIME_CONTRACT_PUSHER = .5;
+    
+    public static final double PUSHER_FORWARD_SPEED = 0.8;
+    public static final double PUSHER_REVERSE_SPEED = 1;
 
     public static final int MOTOR_DIRECTION_FORWARD = 1;
     public static final int MOTOR_DIRECTION_BACKWARD = -1;

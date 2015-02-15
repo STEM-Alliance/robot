@@ -1,5 +1,6 @@
 package com.taurus.robotspecific2015;
 
+import com.taurus.DoubleSolenoidPulser;
 import com.taurus.robotspecific2015.Constants.*;
 
 public class Ejector {
@@ -7,21 +8,26 @@ public class Ejector {
 
     private PneumaticSubsystem CylindersStop;
     private PneumaticSubsystem CylindersPusher;
-    private Sensor OutSensor;
-    private Sensor InSensor;
+    private DoubleSolenoidPulser CylindersPusherPulser;
 
     public Ejector()
     {
         CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP,
                 Constants.PCU_STOP, Constants.TIME_EXTEND_STOP,
                 Constants.TIME_CONTRACT_STOP, Constants.CYLINDER_ACTION.EXTEND);
-        CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER,
-                Constants.PCU_PUSHER, Constants.TIME_EXTEND_PUSHER,
-                Constants.TIME_CONTRACT_PUSHER, Constants.CYLINDER_ACTION.CONTRACT);
         
-        OutSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_OUT);
-        InSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_IN);
-
+        CylindersPusherPulser = new DoubleSolenoidPulser(
+                Constants.PCU_PUSHER, 
+                Constants.CHANNEL_PUSHER[0],
+                Constants.CHANNEL_PUSHER[1],
+                Application.prefs.getDouble("PusherForward", Constants.PUSHER_FORWARD_SPEED),
+                Application.prefs.getDouble("PusherReverse", Constants.PUSHER_REVERSE_SPEED));
+        
+        CylindersPusher = new PneumaticSubsystem(
+                CylindersPusherPulser,
+                Constants.TIME_EXTEND_PUSHER,
+                Constants.TIME_CONTRACT_PUSHER,
+                Constants.CYLINDER_ACTION.EXTEND);
     }
 
     /**
@@ -40,10 +46,10 @@ public class Ejector {
                 }
                 break;
             case MOVE_OUT:
-                //if (MoveOut())
-                {
-                    StateEject = STATE_EJECT.RESET;
-                }
+            // if (MoveOut())
+            {
+                StateEject = STATE_EJECT.RESET;
+            }
                 break;
             // IMPORTANT: Resetting the Ejector needs to happen, but with a
             // seperate method call
@@ -70,7 +76,7 @@ public class Ejector {
         {
             // IMPORTANT: Use single '&' to execute all cleanup routines
             // asynchronously
-            if (/*MoveIn() & */CylindersPusher.Contract())
+            if (/* MoveIn() & */CylindersPusher.Contract())
             {
                 finishedReset = true;
                 StateEject = STATE_EJECT.PUSHER_EXTEND;
@@ -88,7 +94,7 @@ public class Ejector {
     {
         boolean done = false;
 
-        if (CylindersStop.Extend()/* && MoveOut()*/)
+        if (CylindersStop.Extend()/* && MoveOut() */)
         {
             done = true;
         }
@@ -104,20 +110,26 @@ public class Ejector {
     {
         boolean done = false;
 
-        if (CylindersStop.Contract()/* && MoveIn()*/)
+        if (CylindersStop.Contract()/* && MoveIn() */)
         {
             done = true;
         }
         return done;
     }
-    
+
     public PneumaticSubsystem GetCylindersStop()
     {
         return CylindersStop;
     }
-    
+
     public PneumaticSubsystem GetCylindersPusher()
     {
         return CylindersPusher;
     }
+    
+    public DoubleSolenoidPulser getCylindersPusherPulser()
+    {
+        return CylindersPusherPulser;
+    }
+    
 }
