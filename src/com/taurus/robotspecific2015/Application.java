@@ -45,6 +45,11 @@ public class Application extends com.taurus.Application
         autoChooser.addObject("Container + 3 totes", Integer.valueOf(10));
         
         SmartDashboard.putData("Autonomous mode", autoChooser);
+        testChooser = new SendableChooser();
+        testChooser.addDefault("Pneumatics", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
+        testChooser.addObject("Motors", Integer.valueOf(Constants.TEST_MODE_MOTORS));
+        testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
+        SmartDashboard.putData("Test", testChooser);
     }
     
     public void TeleopInitRobotSpecific()
@@ -184,11 +189,6 @@ public class Application extends com.taurus.Application
     
     public void TestModeInitRobotSpecific()
     {
-        testChooser = new SendableChooser();
-        testChooser.addDefault("Pneumatics", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
-        testChooser.addObject("Motors", Integer.valueOf(Constants.TEST_MODE_MOTORS));
-        testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
-        SmartDashboard.putData("Test", testChooser);
     }
 
     public void TestModePeriodicRobotSpecific()

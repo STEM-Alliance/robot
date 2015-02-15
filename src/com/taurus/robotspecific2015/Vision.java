@@ -1,5 +1,7 @@
 package com.taurus.robotspecific2015;
 
+import java.text.DecimalFormat;
+
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.*;
 
@@ -11,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Vision implements Runnable {
 
     private final double TIME_RATE_VISION = .033;
+    private DecimalFormat df = new DecimalFormat("#.##");
 
     private SendableChooser imageChooser = new SendableChooser();
 
@@ -249,7 +252,7 @@ public class Vision implements Runnable {
                         }
                         
                         SmartDashboard.putNumber("Area", biggestArea);
-                        SmartDashboard.putString("Center", biggestX+","+biggestY);
+                        SmartDashboard.putString("Center", df.format(biggestX) + "," + df.format(biggestY));
                         SmartDashboard.putNumber("Orientation", biggestOrientation);
                         
                         synchronized (visionThread)
