@@ -151,4 +151,9 @@ public class PneumaticSubsystem {
     {
         return State == CYLINDER_STATE.EXTENDED || State == CYLINDER_STATE.CONTRACTING;
     }
+    
+    public DoubleSolenoid GetRaw()
+    {
+        return solenoid;
+    }
 }

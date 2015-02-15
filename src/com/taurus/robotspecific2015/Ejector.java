@@ -110,4 +110,9 @@ public class Ejector {
         }
         return done;
     }
+    
+    public PneumaticSubsystem GetStop()
+    {
+        return CylindersStop;
+    }
 }
