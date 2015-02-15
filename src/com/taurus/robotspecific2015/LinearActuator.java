@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.Timer;
 public abstract class LinearActuator {
 
     private PIDController ActuatorPIController;
-    private double ActP = 1.0 / 3.0;  // full speed at 3 in error
-    private double ActI = 0.5;
+    private double ActP = 2.0 / 5.0;  // full speed at 3 in error
+    private double ActI = 0.8;
     private double ActD = 0;
     
     private MotorSystem Motors;
@@ -65,12 +65,18 @@ public abstract class LinearActuator {
         SetPosition(LastPosition);
     }
     
+    public void ResetError()
+    {
+        ActuatorPIController.integral = 0;
+        ActuatorPIController.lastError = 0;
+    }
+    
     /**
      * Set the desired position index
      * 
      * @param Position index to the positions array to move to
      */
-    public void SetPosition(int i)
+    public void SetPosition(int i, double MaxSpeed)
     {
         double time = Timer.getFPGATimestamp();
         
@@ -81,11 +87,21 @@ public abstract class LinearActuator {
         double speed = ActuatorPIController.update(Positions[i], GetDistance(),
                 time);
         
-        speed = Utilities.clampToRange(speed, -.8, .8);
+        speed = Utilities.clampToRange(speed, -MaxSpeed, MaxSpeed);
         
         Motors.Set(speed);
         
         LastPosition = i;
+    }
+    
+    /**
+     * Set the desired position index
+     * 
+     * @param Position index to the positions array to move to
+     */
+    public void SetPosition(int i)
+    {
+        SetPosition(i, 1.0);
     }
 
     /**

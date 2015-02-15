@@ -115,4 +115,14 @@ public class Ejector {
     {
         return CylindersStop;
     }
+    
+    public PneumaticSubsystem GetCylindersStop()
+    {
+        return CylindersStop;
+    }
+    
+    public PneumaticSubsystem GetCylindersPusher()
+    {
+        return CylindersPusher;
+    }
 }

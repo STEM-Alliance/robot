@@ -46,7 +46,7 @@ public abstract class Application {
     public SwerveChassis drive;
 
     // Joysticks
-    public Controller controller;
+    public static Controller controller;
     private ControllerChooser controllerChooser;
 
     private PowerDistributionPanel PDP;
