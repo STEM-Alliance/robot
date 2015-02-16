@@ -55,17 +55,17 @@ public class PneumaticSubsystem {
      */
     public boolean Run(Constants.CYLINDER_ACTION Action)
     {
-        if(Action == Constants.CYLINDER_ACTION.EXTEND)
+        if (Action == Constants.CYLINDER_ACTION.EXTEND)
         {
             return Extend();
         }
-        else if(Action == Constants.CYLINDER_ACTION.CONTRACT)
+        else if (Action == Constants.CYLINDER_ACTION.CONTRACT)
         {
             return Contract();
         }
         else
         {
-            return false;
+            return true;
         }
     }
 
@@ -75,35 +75,29 @@ public class PneumaticSubsystem {
      */
     public boolean Extend()
     {
-        boolean done = false;
+        solenoid.set(DoubleSolenoid.Value.kForward);
 
-        if (State == CYLINDER_STATE.EXTENDED)
+        switch (State)
         {
-            // Already extended
-            done = true;
-        }
-        else if (State == CYLINDER_STATE.CONTRACTING ||
-                 State == CYLINDER_STATE.CONTRACTED ||
-                 State == CYLINDER_STATE.NONE)
-        {
-            // If we are not extended/extending
-            solenoid.set(DoubleSolenoid.Value.kForward);
-
-            // Update current state
-            TimeStart = Timer.getFPGATimestamp();
-            State = CYLINDER_STATE.EXTENDING;
-        }
-        else
-        {
-            // We are extending. Check if we are done extending.
-            if (Timer.getFPGATimestamp() - TimeStart > TimeExtend)
-            {
-                State = CYLINDER_STATE.EXTENDED; // Record the position
-                done = true;
-            }
+            case CONTRACTED:
+            case CONTRACTING:
+            case NONE:
+                TimeStart = Timer.getFPGATimestamp();
+                State = CYLINDER_STATE.EXTENDING;
+                break;
+                
+            case EXTENDING:                
+                if (Timer.getFPGATimestamp() > TimeStart + TimeExtend)
+                {
+                    State = CYLINDER_STATE.EXTENDED;
+                }
+                break;
+                
+            case EXTENDED:
+                break;
         }
 
-        return done;
+        return State == CYLINDER_STATE.EXTENDED;
     }
 
     /**
@@ -112,35 +106,29 @@ public class PneumaticSubsystem {
      */
     public boolean Contract()
     {
-        boolean done = false;
+        solenoid.set(DoubleSolenoid.Value.kReverse);
 
-        if (State == CYLINDER_STATE.CONTRACTED)
+        switch (State)
         {
-            // Already contracted
-            done = true;
-        }
-        else if (State == CYLINDER_STATE.EXTENDING ||
-                 State == CYLINDER_STATE.EXTENDED ||
-                 State == CYLINDER_STATE.NONE)
-        {
-            // If we are not contracted/contracting
-            solenoid.set(DoubleSolenoid.Value.kReverse);
-
-            // Update current state
-            TimeStart = Timer.getFPGATimestamp();
-            State = CYLINDER_STATE.CONTRACTING;
-        }
-        else
-        {
-            // We are contracting. Check if we are done contracting.
-            if (Timer.getFPGATimestamp() - TimeStart > TimeContract)
-            {
-                State = CYLINDER_STATE.CONTRACTED; // Record the position
-                done = true;
-            }
+            case EXTENDED:
+            case EXTENDING:
+            case NONE:
+                TimeStart = Timer.getFPGATimestamp();
+                State = CYLINDER_STATE.CONTRACTING;
+                break;
+                
+            case CONTRACTING:                
+                if (Timer.getFPGATimestamp() > TimeStart + TimeContract)
+                {
+                    State = CYLINDER_STATE.CONTRACTED;
+                }
+                break;
+                
+            case CONTRACTED:
+                break;
         }
 
-        return done;
+        return State == CYLINDER_STATE.CONTRACTED;
     }
 
     /**
@@ -149,6 +137,39 @@ public class PneumaticSubsystem {
      */
     public boolean IsExtended()
     {
-        return State == CYLINDER_STATE.EXTENDED || State == CYLINDER_STATE.CONTRACTING;
+        switch (GetState())
+        {
+            case EXTENDED:
+            case CONTRACTING:
+                return true;
+                
+            default:
+                return false;
+        }
+    }
+    
+    public CYLINDER_STATE GetState()
+    {
+        switch (State)
+        {
+            case EXTENDING:
+                if (Timer.getFPGATimestamp() > TimeStart + TimeExtend)
+                {
+                    State = CYLINDER_STATE.EXTENDED;
+                }
+                break;
+                
+            case CONTRACTING:                
+                if (Timer.getFPGATimestamp() > TimeStart + TimeContract)
+                {
+                    State = CYLINDER_STATE.CONTRACTED;
+                }
+                break;
+                
+            default:
+                break;
+        }
+        
+        return State;
     }
 }

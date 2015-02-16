@@ -85,8 +85,8 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putBoolean("ToteOnRails", lift.GetToteOnRails());
         SmartDashboard.putBoolean("ContainerInStack",
                 lift.GetContainerInStack());
-        SmartDashboard.putBoolean("CylindersRails.IsExtended()", lift
-                .GetCylindersRails().IsExtended());
+        SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
+        SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
 
         SmartDashboard.putString("CurrentLiftAction_",
                 CurrentLiftAction.toString());
