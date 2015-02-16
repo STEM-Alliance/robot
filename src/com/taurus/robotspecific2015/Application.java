@@ -48,11 +48,10 @@ public class Application extends com.taurus.Application {
         autoChooser.addObject("Container + 3 totes", Integer.valueOf(10));
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
+        
         testChooser = new SendableChooser();
-        testChooser.addDefault("Pneumatics",
+        testChooser.addDefault("Pneumatics/Motors",
                 Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
-        testChooser.addObject("Motors",
-                Integer.valueOf(Constants.TEST_MODE_MOTORS));
         testChooser.addObject("Actuator",
                 Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
@@ -157,6 +156,10 @@ public class Application extends com.taurus.Application {
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
             }
+            else if (controller.getDropStack())
+            {
+                CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
+            }
 
             switch (CurrentLiftAction)
             {
@@ -198,6 +201,13 @@ public class Application extends com.taurus.Application {
                     }
                     break;
 
+                case DROP_STACK:
+                    if (lift.DropStack())
+                    {
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                    }
+                    break;
+                    
                 case NO_ACTION:
                 default:
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
@@ -236,12 +246,14 @@ public class Application extends com.taurus.Application {
 
     public void TestModePeriodicRobotSpecific()
     {
-        boolean button1 = controller.getRawButtion(1);
-        boolean button2 = controller.getRawButtion(2);
-        boolean button3 = controller.getRawButtion(3);
-        boolean button4 = controller.getRawButtion(4);
-        boolean button5 = controller.getRawButtion(5);
-        boolean button6 = controller.getRawButtion(6);
+        boolean button1 = controller.getRawButton(1);
+        boolean button2 = controller.getRawButton(2);
+        boolean button3 = controller.getRawButton(3);
+        boolean button4 = controller.getRawButton(4);
+        boolean button5 = controller.getRawButton(5);
+        boolean button6 = controller.getRawButton(6);
+        boolean button15 = controller.getRawButton(15);
+        boolean button16 = controller.getRawButton(16);
         lift.GetCar().ZeroIfNeeded();
 
         // test modes for cylinders and motors and features.
@@ -293,28 +305,13 @@ public class Application extends com.taurus.Application {
                         testCylinders.Extend();
                     }
                 }
-                break;
-            case Constants.TEST_MODE_MOTORS:
-                if (button1)
+                if (button15)
                 {
-                    lift.GetCar().GetActuator().SetSpeedRaw(1);
+                    lift.GetCar().GetActuator().SetSpeedRaw(.7);
                 }
-                else if (button2)
+                else if (button16)
                 {
-                    lift.GetCar().GetActuator().SetSpeedRaw(-1);
-                }
-                else if (button3)
-                {
-                    // lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_FORWARD);
-                }
-                else if (button4)
-                {
-                    // lift.GetEjector().SetMotors(Constants.MOTOR_DIRECTION_BACKWARD);
-                }
-                else
-                {
-                    lift.GetCar().GetActuator().SetSpeedRaw(0);
-                    // lift.GetEjector().SetMotors(0);
+                    lift.GetCar().GetActuator().SetSpeedRaw(-.7);
                 }
                 break;
             case Constants.TEST_MODE_ACTUATOR:

@@ -125,7 +125,7 @@ public interface Controller {
      * @param button
      * @return
      */
-    public boolean getRawButtion(int button);
+    public boolean getRawButton(int button);
     
     /**
      * Get whether the high gear should be enabled
@@ -193,4 +193,6 @@ public interface Controller {
      * @return
      */
     public boolean getStopAction();
+
+    public boolean getDropStack();
 }

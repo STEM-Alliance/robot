@@ -175,9 +175,16 @@ public class ControllerXboxPanel implements Controller {
         return value;
     }
 
-    public boolean getRawButtion(int button)
+    public boolean getRawButton(int button)
     {
-        return xbox.getRawButton(button);
+        if(button <= Xbox.ButtonType.kCount.value)
+        {
+            return xbox.getRawButton(button);
+        }
+        else
+        {
+            return panel.getRawButton(button - Xbox.ButtonType.kCount.value);
+        }
     }
 
     public double getDPad()
@@ -279,7 +286,7 @@ public class ControllerXboxPanel implements Controller {
     @Override
     public boolean getFakeToteAdd()
     {
-        return panel.getBlackLButton();
+        return xbox.getStart();
     }
 
     @Override
@@ -300,5 +307,11 @@ public class ControllerXboxPanel implements Controller {
     public boolean getEjector()
     {
         return panel.getBlackRButton();
+    }
+
+    @Override
+    public boolean getDropStack()
+    {
+        return panel.getWhiteRButton();
     }
 }

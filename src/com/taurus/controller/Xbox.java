@@ -90,12 +90,16 @@ public class Xbox extends GenericHID {
         private static final int kStart_val = 8;
         private static final int kLeftStick_val = 9;
         private static final int kRightStick_val = 10;
+        private static final int kCount_val = 10;
 
         private ButtonType(int value)
         {
             this.value = value;
         }
 
+        public static final ButtonType kCount = new ButtonType(
+                kCount_val);
+        
         /**
          * Button: X-Joystick
          */

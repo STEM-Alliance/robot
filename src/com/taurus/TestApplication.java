@@ -37,12 +37,12 @@ public class TestApplication extends Application {
     public void TeleopPeriodicRobotSpecific()
     {
         
-        boolean button1 = controller.getRawButtion(1);
-        boolean button2 = controller.getRawButtion(2);
-        boolean button3 = controller.getRawButtion(3);
-        boolean button4 = controller.getRawButtion(4);
-        boolean button5 = controller.getRawButtion(5);
-        boolean button6 = controller.getRawButtion(6);
+        boolean button1 = controller.getRawButton(1);
+        boolean button2 = controller.getRawButton(2);
+        boolean button3 = controller.getRawButton(3);
+        boolean button4 = controller.getRawButton(4);
+        boolean button5 = controller.getRawButton(5);
+        boolean button6 = controller.getRawButton(6);
         if (button1)
         {
             Actuator.SetPosition(0);
