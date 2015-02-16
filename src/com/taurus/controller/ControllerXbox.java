@@ -155,7 +155,7 @@ public class ControllerXbox implements Controller {
     /**
      * {@inheritDoc}
      */
-    public boolean getRawButtion(int button)
+    public boolean getRawButton(int button)
     {
         return xbox.getRawButton(button);
     }
@@ -298,6 +298,13 @@ public class ControllerXbox implements Controller {
 
     @Override
     public boolean getEjector()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getDropStack()
     {
         // TODO Auto-generated method stub
         return false;

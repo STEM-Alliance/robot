@@ -15,9 +15,9 @@ public class ControllerChooser {
     {
 
         controllerChooser = new SendableChooser();
-        controllerChooser.addDefault("Xbox", XBOX);
+        controllerChooser.addDefault("Xbox & Panel", XBOXPANEL);
+        controllerChooser.addObject("Xbox", XBOX);
         controllerChooser.addObject("Joysticks", JOY);
-        controllerChooser.addObject("Xbox & Panel", XBOXPANEL);
         SmartDashboard.putData("Controller", controllerChooser);
     }
 

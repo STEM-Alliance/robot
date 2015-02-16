@@ -409,7 +409,7 @@ public class Lift extends Subsystem {
             // seperate method call
             // This allows robot to asynchronous drive and reset the Ejector
             default:
-                // TODO: Put error condition here
+             
                 break;
         }
         
@@ -425,20 +425,16 @@ public class Lift extends Subsystem {
     public boolean ResetEjectStack()
     {
         boolean finishedReset = false;
-
-        if (StateEjectStack == STATE_EJECT_STACK.RESET)
+        // IMPORTANT: Use single '&' to execute all cleanup routines
+        // asynchronously
+        if (StackEjector.ResetEjectStack()
+            & GetCylindersStackHolder().Contract())
         {
-            // IMPORTANT: Use single '&' to execute all cleanup routines
-            // asynchronously
-            if (StackEjector.ResetEjectStack()
-                & GetCylindersStackHolder().Contract())
-            {
-                finishedReset = true;
-                ContainerInStack = false;
-                TotesInStack = 0;
-                ToteOnRails = false;
-                StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
-            }
+            finishedReset = true;
+            ContainerInStack = false;
+            TotesInStack = 0;
+            ToteOnRails = false;
+            StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
         }
         return finishedReset;
     }
@@ -468,9 +464,7 @@ public class Lift extends Subsystem {
                 {
                     if (ToteOnRails)
                     {
-                        if (LiftCar.GoToDestack()) // TODO: Add new height for
-                                                   // adding
-                                                   // container to stack?
+                        if (LiftCar.GoToDestack())
                         {
                             StateEjectStack = STATE_EJECT_STACK.STACK_HOLDER_CONTRACT;
                         }
@@ -486,7 +480,7 @@ public class Lift extends Subsystem {
                 break;
             case STACK_HOLDER_CONTRACT:
                 LiftCar.UpdateLastPosition();
-                if (GetCylindersStackHolder().Contract())
+                if (GetCylindersStackHolder().Extend())
                 {
                     ToteOnRails = true;
                     StateEjectStack = STATE_EJECT_STACK.LOWER_CAR;
@@ -525,18 +519,16 @@ public class Lift extends Subsystem {
     {
         boolean finishedReset = false;
 
-        if (StateEjectStack == STATE_EJECT_STACK.RESET)
+        // IMPORTANT: Use single '&' to execute all cleanup routines
+        // asynchronously
+        if (GetCylindersRails().Extend()
+            & GetCylindersStackHolder().Contract())
         {
-            // IMPORTANT: Use single '&' to execute all cleanup routines
-            // asynchronously
-            if (GetCylindersRails().Extend()
-                & GetCylindersStackHolder().Extend())
-            {
-                finishedReset = true;
-                ContainerInStack = false;
-                TotesInStack = 0;
-                StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
-            }
+            finishedReset = true;
+            ContainerInStack = false;
+            TotesInStack = 0;
+            ToteOnRails = false;
+            StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
         }
         return finishedReset;
     }

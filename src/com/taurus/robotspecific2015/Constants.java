@@ -88,7 +88,7 @@ public abstract class Constants {
     }
     
     public static enum STATE_LIFT_ACTION {
-        NO_ACTION, ADD_CHUTE_TOTE, ADD_FLOOR_TOTE, ADD_CONTAINER, EJECT_STACK
+        NO_ACTION, ADD_CHUTE_TOTE, ADD_FLOOR_TOTE, ADD_CONTAINER, EJECT_STACK, DROP_STACK
     }
     
     // Lift
