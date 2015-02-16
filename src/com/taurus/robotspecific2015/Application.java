@@ -17,6 +17,8 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
+    
+    private LEDs leds;
 
     public Application()
     {
@@ -55,14 +57,19 @@ public class Application extends com.taurus.Application {
         testChooser.addObject("Actuator",
                 Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
+        
+        leds = new LEDs();
+        leds.setAll(new Color(0,0,0));
     }
 
     public void TeleopInitRobotSpecific()
     {
         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
         lift.init();
+        leds.FlashAll(Color.Green, Color.White, 1);
     }
 
+    
     private void UpdateDashboard()
     {
         SmartDashboard.putBoolean("ToteIntakeSensor", lift
@@ -103,6 +110,7 @@ public class Application extends com.taurus.Application {
 
     public void TeleopPeriodicRobotSpecific()
     {
+        leds.run();
         UpdateDashboard();
 
         if (controller.getCarHome())
@@ -227,6 +235,7 @@ public class Application extends com.taurus.Application {
         drive.ZeroGyro();
         int automode = ((Integer) autoChooser.getSelected()).intValue();
         autonomous = new Autonomous(drive, lift, vision, automode);
+        leds.setAll(new Color(0,0xfff,0));
     }
 
     public void AutonomousPeriodicRobotSpecific()
@@ -255,6 +264,7 @@ public class Application extends com.taurus.Application {
         boolean button15 = controller.getRawButton(15);
         boolean button16 = controller.getRawButton(16);
         lift.GetCar().ZeroIfNeeded();
+        
 
         // test modes for cylinders and motors and features.
         switch (((Integer) testChooser.getSelected()).intValue())
