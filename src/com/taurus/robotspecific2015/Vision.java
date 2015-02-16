@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.*;
+import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,12 +19,12 @@ public class Vision implements Runnable {
     private SendableChooser imageChooser = new SendableChooser();
 
     private static final String ATTR_VIDEO_MODE = "AcquisitionAttributes::VideoMode";
-//    private static final String ATTR_WB_MODE = "CameraAttributes::WhiteBalance::Mode";
-//    private static final String ATTR_WB_VALUE = "CameraAttributes::WhiteBalance::Value";
-//    private static final String ATTR_EX_MODE = "CameraAttributes::Exposure::Mode";
-//    private static final String ATTR_EX_VALUE = "CameraAttributes::Exposure::Value";
-//    private static final String ATTR_BR_MODE = "CameraAttributes::Brightness::Mode";
-//    private static final String ATTR_BR_VALUE = "CameraAttributes::Brightness::Value";
+    private static final String ATTR_WB_MODE = "CameraAttributes::WhiteBalance::Mode";
+    private static final String ATTR_WB_VALUE = "CameraAttributes::WhiteBalance::Value";
+    private static final String ATTR_EX_MODE = "CameraAttributes::Exposure::Mode";
+    private static final String ATTR_EX_VALUE = "CameraAttributes::Exposure::Value";
+    private static final String ATTR_BR_MODE = "CameraAttributes::Brightness::Mode";
+    private static final String ATTR_BR_VALUE = "CameraAttributes::Brightness::Value";
 
     private int session;
     private Image frame, frameWithLine, frameTH;
@@ -115,15 +116,34 @@ public class Vision implements Runnable {
         // SmartDashboard.putString("Modes", Modes);
 
         int videoMode = Application.prefs.getInt("VIDEO_MODE", 93);
-
         NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, videoMode);
+        
+//        int whiteBalance = Application.prefs.getInt("WhiteBalance", 4500);
+//        NIVision.IMAQdxSetAttributeString(session, ATTR_WB_MODE, "Manual");
+//        NIVision.IMAQdxSetAttributeI64(session, ATTR_WB_VALUE, whiteBalance);
+        
+//        int exposure = Application.prefs.getInt("Exposure", 1);
+//        NIVision.IMAQdxSetAttributeString(session, ATTR_EX_MODE, "Manual");
+//        NIVision.IMAQdxSetAttributeI64(session, ATTR_EX_VALUE, exposure);
+        
+        {
+            double brightness = Application.prefs.getDouble("Brightness", .25);
+            
+            NIVision.IMAQdxSetAttributeString(session, ATTR_BR_MODE, "Manual");
+            long minv = NIVision.IMAQdxGetAttributeMinimumI64(session, ATTR_BR_VALUE);
+            long maxv = NIVision.IMAQdxGetAttributeMaximumI64(session, ATTR_BR_VALUE);
+            
+            long val = (long)Utilities.scaleToRange(brightness, 0, 1, minv, maxv);
+            NIVision.IMAQdxSetAttributeI64(session, ATTR_BR_VALUE, val);
+        }
+        
         NIVision.IMAQdxConfigureGrab(session);
 
         NIVision.IMAQdxStartAcquisition(session);
 
         double TimeLastVision = 0;
 
-        CameraServer.getInstance().setQuality(15);
+        CameraServer.getInstance().setQuality(30);
 
         NIVision.IMAQdxGrab(session, frame, 1);
         GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
@@ -217,7 +237,7 @@ public class Vision implements Runnable {
                             new ParticleFilterCriteria2[] {
                                 new ParticleFilterCriteria2(
                                         MeasurementType.MT_AREA_BY_IMAGE_AREA, 
-                                        /*lower*/ Application.prefs.getInt("AreaMin", 10), 
+                                        /*lower*/ Application.prefs.getInt("AreaMin", 1), 
                                         /*upper*/ Application.prefs.getInt("AreaMax", 76800), 
                                         /*calibrated*/ 0, /*exclude*/ 0),
                             };

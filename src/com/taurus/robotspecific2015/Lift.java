@@ -182,7 +182,7 @@ public class Lift extends Subsystem {
                         StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.LIFT_TOTE;
                     }
                 }
-                else if (LiftCar.GoToBottom() & CylindersRails.Contract() & StackEjector.StopIn())
+                else if (LiftCar.GoToBottom() & CylindersRails.Contract() & CylindersStackHolder.Extend() & StackEjector.StopIn())
                 {
                     StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INTAKE_TOTE;
                 }
@@ -278,7 +278,7 @@ public class Lift extends Subsystem {
             {
                 case INIT:
                     //TODO verify the tote intake sensor works for grabbing containers
-                    if (GetCar().GoToContainerGrab() & CylindersRails.Contract() & (ToteIntakeSensor.IsOn() || Application.controller.getFakeToteAdd()))
+                    if (GetCar().GoToContainerGrab() & CylindersRails.Contract() & CylindersStackHolder.Contract() & (ToteIntakeSensor.IsOn() || Application.controller.getFakeToteAdd()))
                     {
                         StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                     }

@@ -15,9 +15,9 @@ public abstract class Constants {
     public static final int[] CHANNEL_RAIL = { 3, 2 };
     public static final int[] CHANNEL_CONTAINER_CAR = { 5, 4 };
     public static final int[] CHANNEL_CONTAINER_FIXED = { 7, 6 };
-    public static final int[] CHANNEL_STOP = { 0, 1 };
-    public static final int[] CHANNEL_PUSHER = { 2, 3 };
-    public static final int[] CHANNEL_STACK_HOLDER = { 0, 1};
+    public static final int[] CHANNEL_STOP = { 1, 0 };
+    public static final int[] CHANNEL_PUSHER = { 3, 2 };
+    public static final int[] CHANNEL_STACK_HOLDER = { 1, 0};
 
     // TODO - what is the amount of time required to extend?
     public static final double TIME_EXTEND_RAILS = .3;
