@@ -14,6 +14,7 @@ public class Lift extends Subsystem {
     private int TotesInStack = 0;
     
     private double EjectTimer = 0;
+    private double BottomTimer = 0;
     
     private STATE_ADD_CHUTE_TOTE_TO_STACK StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
     private STATE_ADD_FLOOR_TOTE_TO_STACK StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
@@ -139,17 +140,25 @@ public class Lift extends Subsystem {
                 {
                     if (CylindersContainerFixed.Contract())
                     {
-                        StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
+                        StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.BOTTOM;
                     }
                 }
                 else
                 {
+                    StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.BOTTOM;
+                }
+                break;
+                
+            case BOTTOM:
+
+                if (LiftCar.GoToBottom())
+                {
+                    BottomTimer = Timer.getFPGATimestamp();
                     StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
                 }
                 break;
             case RESET:
-
-                if (LiftCar.GoToBottom())
+                if(Timer.getFPGATimestamp() - BottomTimer > .3)
                 {
                     StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
                     TotesInStack = TotesInStack + 1;
@@ -186,7 +195,7 @@ public class Lift extends Subsystem {
                         StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.LIFT_TOTE;
                     }
                 }
-                else if (LiftCar.GoToBottom() & CylindersRails.Contract() & CylindersStackHolder.Extend() & StackEjector.StopIn())
+                else if (LiftCar.GoToBottom() & CylindersRails.Contract() & CylindersStackHolder.Contract() & StackEjector.StopIn())
                 {
                     StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INTAKE_TOTE;
                 }

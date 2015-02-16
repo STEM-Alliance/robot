@@ -65,14 +65,18 @@ public abstract class Constants {
                 case 0:
                     return ZERO;
                 case 1:
-                    return CHUTE;
+                    return EJECT;
                 case 2:
-                    return DESTACK;
+                    return CHUTE;
                 case 3:
-                    return CONTAINER_STACK;
+                    return DESTACK;
                 case 4:
-                    return STACK;
+                    return NOODLE_LOAD;
                 case 5:
+                    return CONTAINER_STACK;
+                case 6:
+                    return STACK;
+                case 7:
                     return MOVING;
             }
             return null;
@@ -93,7 +97,7 @@ public abstract class Constants {
     
     // Lift
     public static enum STATE_ADD_CHUTE_TOTE_TO_STACK {
-        INIT, INTAKE_TOTE, LIFT_TOTE, HANDLE_CONTAINER, RESET
+        INIT, INTAKE_TOTE, LIFT_TOTE, HANDLE_CONTAINER, BOTTOM, RESET
     }
 
     public static enum STATE_ADD_FLOOR_TOTE_TO_STACK {

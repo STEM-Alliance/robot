@@ -313,6 +313,10 @@ public class Application extends com.taurus.Application {
                 {
                     lift.GetCar().GetActuator().SetSpeedRaw(-.7);
                 }
+                else
+                {
+                    lift.GetCar().GetActuator().SetSpeedRaw(0);
+                }
                 break;
             case Constants.TEST_MODE_ACTUATOR:
                 if (button1)
