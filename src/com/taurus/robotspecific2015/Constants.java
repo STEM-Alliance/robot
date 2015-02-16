@@ -51,14 +51,14 @@ public abstract class Constants {
     public static final int  LIFT_POT_PIN = 4;
     public static final double  LIFT_POT_DISTANCE = 3.14;
     public static final double  LIFT_THRESHOLD = .25;
-    public static final double[] LIFT_POSTITIONS = { 0, 2.5, 10.25, 20, 20.75 };
+    public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20, 20.75 };
     
     public static final int DISTANCE_SENSOR_LEFT_PIN = 5;
     public static final int DISTANCE_SENSOR_RIGHT_PIN = 6;
         
     // Car
     public static enum LIFT_POSITIONS_E {
-        ZERO, CHUTE, DESTACK, CONTAINER_STACK, STACK, MOVING;
+        ZERO, EJECT, CHUTE, DESTACK, NOODLE_LOAD, CONTAINER_STACK, STACK, MOVING;
 
         public static LIFT_POSITIONS_E fromInt(int x) {
             switch(x) {
