@@ -188,7 +188,14 @@ public class Car {
      */
     public boolean GoToContainerStack()
     {
-        return SetPosition(LIFT_POSITIONS_E.CONTAINER_STACK, .7);
+        if (Application.controller.getManualLift())
+        {
+            return Application.controller.getFakePostion();
+        }
+        else
+        {
+            return SetPosition(LIFT_POSITIONS_E.CONTAINER_STACK, .7);
+        }
     }
 
     /**
@@ -275,5 +282,17 @@ public class Car {
     public Sensor GetTopSensor()
     {
         return TopSensor;
+    }
+
+    public boolean GoToEject()
+    {
+        if (Application.controller.getManualLift())
+        {
+            return Application.controller.getFakePostion();
+        }
+        else
+        {
+            return SetPosition(LIFT_POSITIONS_E.EJECT, .5);
+        }
     }
 }

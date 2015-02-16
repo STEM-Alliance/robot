@@ -2,6 +2,7 @@ package com.taurus.robotspecific2015;
 
 import com.taurus.robotspecific2015.Constants.*;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 // Manages manipulators and supporting systems
@@ -11,6 +12,9 @@ public class Lift extends Subsystem {
     private boolean ContainerInStack = false;
     private boolean ToteOnRails = false;
     private int TotesInStack = 0;
+    
+    private double EjectTimer = 0;
+    
     private STATE_ADD_CHUTE_TOTE_TO_STACK StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
     private STATE_ADD_FLOOR_TOTE_TO_STACK StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
     private STATE_ADD_CONTAINER_TO_STACK StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
@@ -89,7 +93,7 @@ public class Lift extends Subsystem {
                 {
                     StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                 }
-                else if (LiftCar.GoToChute() & CylindersRails.Extend() & StackEjector.StopOut())
+                else if (LiftCar.GoToChute() & CylindersRails.Extend() & CylindersStackHolder.Contract() & StackEjector.StopOut())
                 {
                     if (TotesInStack < MaxTotesInStack)// even be called
                     {
@@ -384,17 +388,21 @@ public class Lift extends Subsystem {
                 }
                 break;
             case LOWER_CAR:
-                if (LiftCar.GoToChute())
+                if (LiftCar.GoToEject())
                 {
+                    EjectTimer = Timer.getFPGATimestamp();
                     StateEjectStack = STATE_EJECT_STACK.EJECT_STACK;
                 }
                 break;
             case EJECT_STACK:
                 LiftCar.UpdateLastPosition();
-                if (StackEjector.EjectStack() & GetCylindersStackHolder().Contract())
+                if(Timer.getFPGATimestamp() - EjectTimer > .5)
                 {
-                    ToteOnRails = false;
-                    StateEjectStack = STATE_EJECT_STACK.RESET;
+                    if (StackEjector.EjectStack())
+                    {
+                        ToteOnRails = false;
+                        StateEjectStack = STATE_EJECT_STACK.RESET;
+                    }
                 }
                 break;
             // IMPORTANT: Resetting the Ejector needs to happen, but with a
@@ -423,11 +431,12 @@ public class Lift extends Subsystem {
             // IMPORTANT: Use single '&' to execute all cleanup routines
             // asynchronously
             if (StackEjector.ResetEjectStack()
-                & GetCylindersStackHolder().Extend())
+                & GetCylindersStackHolder().Contract())
             {
                 finishedReset = true;
                 ContainerInStack = false;
                 TotesInStack = 0;
+                ToteOnRails = false;
                 StateEjectStack = STATE_EJECT_STACK.LIFT_CAR;
             }
         }

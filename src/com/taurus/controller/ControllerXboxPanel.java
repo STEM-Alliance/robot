@@ -295,4 +295,10 @@ public class ControllerXboxPanel implements Controller {
 
         return panel.getWhiteLButton();
     }
+
+    @Override
+    public boolean getEjector()
+    {
+        return panel.getBlackRButton();
+    }
 }

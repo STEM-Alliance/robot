@@ -185,7 +185,8 @@ public interface Controller {
     
     public boolean getFakePostion();
     
-
+    public boolean getEjector();
+    
     /**
      * Get the stop action
      * 
