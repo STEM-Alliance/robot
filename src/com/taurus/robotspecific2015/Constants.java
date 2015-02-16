@@ -17,7 +17,7 @@ public abstract class Constants {
     public static final int[] CHANNEL_CONTAINER_FIXED = { 7, 6 };
     public static final int[] CHANNEL_STOP = { 1, 0 };
     public static final int[] CHANNEL_PUSHER = { 3, 2 };
-    public static final int[] CHANNEL_STACK_HOLDER = { 1, 0};
+    public static final int[] CHANNEL_STACK_HOLDER = { 1, 0 };
 
     // TODO - what is the amount of time required to extend?
     public static final double TIME_EXTEND_RAILS = .3;
@@ -25,7 +25,7 @@ public abstract class Constants {
     public static final double TIME_EXTEND_CONTAINER_FIXED = .3;
     public static final double TIME_EXTEND_STACK_HOLDER = .3;
     public static final double TIME_EXTEND_STOP = .3;
-    public static final double TIME_EXTEND_PUSHER = 1;
+    public static final double TIME_EXTEND_PUSHER = 1.5;
 
     // TODO - what is the amount of time required to contract?
     public static final double TIME_CONTRACT_RAILS = .3;
@@ -33,7 +33,7 @@ public abstract class Constants {
     public static final double TIME_CONTRACT_CONTAINER_FIXED = .3;
     public static final double TIME_CONTRACT_STACK_HOLDER = .3;
     public static final double TIME_CONTRACT_STOP = .3;
-    public static final double TIME_CONTRACT_PUSHER = 1;
+    public static final double TIME_CONTRACT_PUSHER = .5;
 
     public static final int MOTOR_DIRECTION_FORWARD = 1;
     public static final int MOTOR_DIRECTION_BACKWARD = -1;
@@ -42,8 +42,6 @@ public abstract class Constants {
     public static final int CHANNEL_DIGITAL_CAR_TOP = 5;
     public static final int CHANNEL_DIGITAL_CAR_ZERO = 6;
     public static final int CHANNEL_DIGITAL_TOTE_INTAKE = 7;
-    public static final int CHANNEL_DIGITAL_EJECTOR_OUT = 8;
-    public static final int CHANNEL_DIGITAL_EJECTOR_IN = 9;
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };

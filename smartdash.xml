@@ -1,23 +1,18 @@
 <xml version="1.0">
 <dashboard>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Image">
-		<location x="920" y="436"/>
-		<width>429</width>
-		<height>229</height>
-		<property name="Image File" value="C:\Users\Taurus Robotics\Documents\workspace\2015\ControllerInfo.png"/>
-		<property name="Maintain Aspect Ratio" value="true"/>
-	</static-widget>
+	<widget field="CylindersRails.State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="626" y="434"/>
+	</widget>
+	<widget field="CylindersPusher.State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="615" y="456"/>
+		<width>193</width>
+	</widget>
 	<widget field="Test" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="266" y="5"/>
 	</widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Image">
-		<location x="1068" y="-4"/>
-		<property name="Image File" value="C:\Users\Taurus Robotics\Documents\workspace\2015\Panel.png"/>
-		<property name="Maintain Aspect Ratio" value="true"/>
-	</static-widget>
 	<widget field="StateAddFloorToteToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="323" y="458"/>
-		<width>278</width>
+		<width>262</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Distance Right" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -32,41 +27,36 @@
 	</widget>
 	<widget field="StateEjectStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="376" y="435"/>
-		<width>225</width>
+		<width>210</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="StateAddContainerToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="322" y="413"/>
-		<width>278</width>
+		<width>263</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="ContainerInStack" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="654" y="389"/>
+		<location x="672" y="388"/>
 		<width>135</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="CurrentLiftAction_" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="362" y="366"/>
-		<width>237</width>
+		<width>223</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="StateAddChuteToteToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="317" y="390"/>
-		<width>281</width>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="CylindersRails.IsExtended()" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="611" y="436"/>
-		<width>180</width>
+		<width>268</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="ToteOnRails" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="679" y="411"/>
+		<location x="697" y="411"/>
 		<width>110</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="TotesInStack" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="674" y="364"/>
+		<location x="693" y="365"/>
 		<width>115</width>
 		<property name="Editable" value="false"/>
 	</widget>
@@ -182,16 +172,6 @@
 	</widget>
 </dashboard>
 <live-window>
-	<widget field="IMU" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
-		<widget field="Gyro" type="Table" class="edu.wpi.first.smartdashboard.gui.elements.Compass">
-			<location x="6" y="16"/>
-			<height>150</height>
-			<width>250</width>
-		</widget>
-		<location x="0" y="24"/>
-		<width>262</width>
-		<height>173</height>
-	</widget>
 	<widget field="Ungrouped" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
 		<widget field="DigitalInput[8]" type="Table" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
 			<location x="6" y="16"/>
@@ -327,5 +307,17 @@
 		<width>305</width>
 		<height>673</height>
 	</widget>
+	<widget field="IMU" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<widget field="Gyro" type="Table" class="edu.wpi.first.smartdashboard.gui.elements.Compass">
+			<location x="6" y="16"/>
+			<height>150</height>
+			<width>250</width>
+		</widget>
+		<location x="0" y="24"/>
+		<width>262</width>
+		<height>173</height>
+	</widget>
 </live-window>
+	<hidden field="CylindersRails.IsExtended()"/>
+	<hidden field="CylindersPusher.IsExtended()"/>
 </xml>
