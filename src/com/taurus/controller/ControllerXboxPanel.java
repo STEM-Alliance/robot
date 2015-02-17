@@ -1,5 +1,6 @@
 package com.taurus.controller;
 
+import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -325,5 +326,11 @@ public class ControllerXboxPanel implements Controller {
     public boolean getLowSpeed()
     {
         return xbox.getTrigger(Hand.kRight);
+    }
+
+    @Override
+    public void setRumble(Hand hand, float value)
+    {
+        xbox.setRumble(hand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble, value);
     }
 }
