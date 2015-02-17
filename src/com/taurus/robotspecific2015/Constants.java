@@ -46,11 +46,12 @@ public abstract class Constants {
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
     public static final double[] LIFT_MOTOR_SCALING = { -1 };
-    public static final int  LIFT_POT_PIN = 4;
-    public static final double  LIFT_POT_DISTANCE = 3.14;
-    public static final double  LIFT_THRESHOLD = .25;
-    public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20, 20.75 };
-    
+    public static final int LIFT_POT_PIN = 4;
+    public static final double LIFT_POT_DISTANCE = 3.14;
+    public static final double LIFT_THRESHOLD = .25;
+    public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20,
+            20.75 };
+
     public static final double LIFT_CAR_SPEED_UP = 0.8;
     public static final double LIFT_CAR_SPEED_DOWN = 0.7;
     public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.3;
@@ -110,27 +111,39 @@ public abstract class Constants {
         ADD_CHUTE_TOTE,
         ADD_FLOOR_TOTE,
         ADD_CONTAINER,
+        CARRY_STACK,
         EJECT_STACK,
         DROP_STACK
     }
 
     // Lift
     public static enum STATE_ADD_CHUTE_TOTE_TO_STACK {
-        INIT, INTAKE_TOTE, LIFT_TOTE, HANDLE_CONTAINER, BOTTOM, RESET
+        INIT, LIFT_TOTE, RESET
     }
 
     public static enum STATE_ADD_FLOOR_TOTE_TO_STACK {
-        INIT, INTAKE_TOTE, GRAB_TOTE, LIFT_TOTE, HANDLE_CONTAINER, RESET
+        INIT, GRAB_TOTE, LIFT_TOTE, RESET
     }
 
     public static enum STATE_ADD_CONTAINER_TO_STACK {
-        INIT, CONTAINER_CAR_EXTEND, LIFT_CAR, CONTAINER_FIXED_EXTEND, CONTAINER_CAR_CONTRACT, LOWER_CAR, RESET
+        INIT, CONTAINER_CAR_EXTEND, LIFT_CAR, CONTAINER_FIXED_EXTEND, RESET
     }
 
+    public static enum STATE_CARRY {
+        INIT, STACK_HOLDER_RELEASE, LOWER_CAR
+    }
+        
     public static enum STATE_EJECT_STACK {
-        LIFT_CAR, STACK_HOLDER_CONTRACT, LOWER_CAR, EJECT_STACK, RESET,
+        INIT, EJECT, RESET
+    }
+    
+    public static enum STATE_DROP_STACK {
+        INIT, LOWER_STACK, RELEASE, BACK_UP
     }
 
+    public static enum RAIL_CONTENTS {
+        EMPTY, TOTE, STACK
+    }
 
     // Ejector
     public static enum STATE_EJECT {
