@@ -1,6 +1,6 @@
 package com.taurus.robotspecific2015;
 
-import com.sun.javafx.binding.StringFormatter;
+import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.SPI;
@@ -8,16 +8,18 @@ import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 
-public class LEDs {// implements Runnable{
+public class LEDs implements Runnable {
 
     SPI spi;
     DigitalOutput latch;
-    Color colors[][];
-    boolean Flash;
-    double FlashRateS;
-    double FlashTimer;
-    int colorSet;
+    volatile ArrayList<Color[]> colors;
+    volatile boolean Flash;
+    volatile double FlashRateS;
+    volatile double FlashTimer;
+    volatile int colorSet;
+    Thread thread;
     
+    public static final int NumOfColors = 4;
     
     public LEDs()
     {
@@ -26,17 +28,38 @@ public class LEDs {// implements Runnable{
         spi.setMSBFirst();
         latch = new DigitalOutput(Constants.LED_LATCH);
 
-        colors = new Color[2][4];
+        colors = new ArrayList<Color[]>();
+        colors.add(new Color[NumOfColors]);
+        
         Flash = false;
         FlashTimer = 0;
+        
+        thread = new Thread(this);
+    }
+    
+    public void start()
+    {
+        thread.start();
+    }
+    
+
+    public synchronized void setFrame(LEDEffect.EFFECT effect, Color[] start, Color[] end)
+    {
+        colors.clear();
+        colors.add(newColors);
+        Flash = false;
     }
 
-    public void setAll(Color color)
+    public synchronized void setAll(Color color)
     {
-        for (int i = 0; i < colors[0].length; i++)
+        Color[] newColor = new Color[NumOfColors];
+        colors.clear();
+        
+        for (int i = 0; i < NumOfColors; i++)
         {
-            this.colors[0][i] = color;
+            newColor[i] = color;
         }
+        colors.add(newColor);
         Flash = false;
     }
 
@@ -45,9 +68,9 @@ public class LEDs {// implements Runnable{
         this.setAll(new Color(r, g, b));
     }
 
-    public void set(int i, Color color)
+    public synchronized void set(int i, Color color)
     {
-        this.colors[0][i] = color;
+        colors.get(0)[i] = color;
         Flash = false;
     }
 
@@ -64,30 +87,32 @@ public class LEDs {// implements Runnable{
         return sb.toString();
     }
     
-    public void FlashAll(Color color1, Color color2, double FlashRateS)
+    public synchronized void FlashAll(ArrayList<Color[]> NewColors, double FlashRateS)
     {
-        for (int i = 0; i < colors[0].length; i++)
-        {
-            this.colors[0][i] = color1;
-        }
-        for (int i = 0; i < colors[1].length; i++)
-        {
-            this.colors[1][i] = color2;
-        }
+        colors.clear();
+        colors = NewColors;
         
         Flash = true;
         this.FlashRateS = FlashRateS;
     }
-
+    
     public void run()
     {
-        byte[] out = new byte[(int) (colors[0].length * 4.5)];
+        while (true)
+        {
+            updateColors();
+        }
+    }
+
+    public synchronized void updateColors()
+    {
+        byte[] out = new byte[(int) (NumOfColors * 4.5)];
 
         if(!Flash)
         {
-            for (int i = 0; i < colors[0].length; i++)
+            for (int i = 0; i < NumOfColors; i++)
             {
-                colors[0][i].Get(i % 2 == 0 ? false : true, out, (int) (i * 4.5));
+                colors.get(0)[i].Get(i % 2 == 0 ? false : true, out, (int) (i * 4.5));
             }
         }
         else
@@ -95,19 +120,17 @@ public class LEDs {// implements Runnable{
             
             if(Timer.getFPGATimestamp() - FlashTimer < FlashRateS)
             {
-                for (int i = 0; i < colors[colorSet].length; i++)
+                for (int i = 0; i < NumOfColors; i++)
                 {
-                    colors[colorSet][i].Get(i % 2 == 0 ? false : true, out, (int) (i * 4.5));
+                    colors.get(colorSet)[i].Get(i % 2 == 0 ? false : true, out, (int) (i * 4.5));
                 }
             }
             else
             {
                 FlashTimer = Timer.getFPGATimestamp();
-                colorSet = (colorSet + 1) % colors.length;
+                colorSet = (colorSet + 1) % colors.size();
             }
         }
-        
-        
 
         String text = byteArrayToHex(out);
         SmartDashboard.putString("LEDs", text);
