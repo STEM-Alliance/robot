@@ -32,20 +32,15 @@ public class Application extends com.taurus.Application {
         vision.Start();
 
         autoChooser = new SendableChooser();
-        autoChooser.addDefault("Do nothing", Integer.valueOf(0));
-        autoChooser.addObject("Push tote", Integer.valueOf(1));
-        autoChooser.addObject("Grab tote", Integer.valueOf(2));
-        autoChooser.addObject("Grab container", Integer.valueOf(3));
-        autoChooser.addObject("Grab 2 totes moving left", Integer.valueOf(4));
-        // autoChooser.addObject("Grab 2 totes moving right",
-        // Integer.valueOf(5));
-        autoChooser.addObject("Grab container, 2 totes middle",
-                Integer.valueOf(6));
-        // autoChooser.addObject("Grab container 2 totes side",
-        // Integer.valueOf(7));
-        autoChooser.addObject("Container + tote", Integer.valueOf(8));
-        autoChooser.addObject("3 totes", Integer.valueOf(9));
-        autoChooser.addObject("Container + 3 totes", Integer.valueOf(10));
+        autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
+        autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
+        autoChooser.addObject("1 tote", AUTO_MODE.GRAB_1_TOTE);
+        autoChooser.addObject("2 totes", AUTO_MODE.GRAB_2_TOTES);
+        autoChooser.addObject("3 totes", AUTO_MODE.GRAB_3_TOTES);
+        autoChooser.addObject("Container", AUTO_MODE.GRAB_CONTAINER);
+        autoChooser.addObject("Container + tote", AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE);
+        autoChooser.addObject("Container + 2 totes", AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES);
+        autoChooser.addObject("Container + 3 totes", AUTO_MODE.GRAB_CONTAINER_AND_3_TOTES);
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
         
@@ -225,7 +220,7 @@ public class Application extends com.taurus.Application {
     public void AutonomousInitRobotSpecific()
     {
         drive.ZeroGyro();
-        int automode = ((Integer) autoChooser.getSelected()).intValue();
+        AUTO_MODE automode = (AUTO_MODE) autoChooser.getSelected();
         autonomous = new Autonomous(drive, lift, vision, automode);
     }
 

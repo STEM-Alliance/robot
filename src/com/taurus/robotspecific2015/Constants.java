@@ -136,6 +136,18 @@ public abstract class Constants {
     public static final int TEST_MODE_ACTUATOR = 2;
 
     // Autonomous mode
+    public static enum AUTO_MODE {
+        DO_NOTHING,
+        GO_TO_ZONE,
+        GRAB_1_TOTE,
+        GRAB_2_TOTES,
+        GRAB_3_TOTES,
+        GRAB_CONTAINER,
+        GRAB_CONTAINER_AND_1_TOTE,
+        GRAB_CONTAINER_AND_2_TOTES,
+        GRAB_CONTAINER_AND_3_TOTES
+    }
+
     public static enum AUTO_STATE_MACHINE_L {
         START, DRIVE_FORWARD, DRIVE_STOP, DRIVE_RIGHT, END,
     }
