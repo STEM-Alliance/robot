@@ -3,7 +3,6 @@ package com.taurus.robotspecific2015;
 import com.taurus.PIDController;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 
 /**

@@ -10,7 +10,6 @@ import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 
 /**
