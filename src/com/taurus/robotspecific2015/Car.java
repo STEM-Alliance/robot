@@ -110,7 +110,7 @@ public class Car {
                 break;
                 
             case WAITING:
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .5)
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .25)
                 {
                     ZeroState = ZERO_STATE.ZEROED;
                 }
