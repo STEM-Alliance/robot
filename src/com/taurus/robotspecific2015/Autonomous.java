@@ -1,132 +1,129 @@
 package com.taurus.robotspecific2015;
 
 import com.taurus.Utilities;
+import com.taurus.robotspecific2015.Constants.AUTO_MODE;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveVector;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
-public class Autonomous 
-{
-    
+public class Autonomous {
+
     private SwerveChassis drive;
     private Lift lift;
     private Vision vision;
-    
+
     Command autoCommand = null;
-    
-    public Autonomous(SwerveChassis drive, Lift lift, Vision vision, int automode)
+
+    public Autonomous(SwerveChassis drive, Lift lift, Vision vision,
+            AUTO_MODE automode)
     {
         this.drive = drive;
         this.lift = lift;
         this.vision = vision;
-        
+
         drive.ZeroGyro();
-        
+
         switch (automode)
         {
             default:
-            case 0:                
+            case DO_NOTHING:
                 break;
-                
-            case 1:
+
+            case GO_TO_ZONE:
                 autoCommand = new DriveToAutoScoringZone();
                 break;
-            
-            case 2:
+
+            case GRAB_1_TOTE:
                 drive.SetGyroZero(270);
                 autoCommand = new GrabToteAndDriveToAutoScoringZone();
                 break;
-                
-            case 3:
-                drive.SetGyroZero(90);
-                autoCommand = new GrabContainerAndDriveToAutoScoringZone();
-                break;
-                
-            case 4:
+
+            case GRAB_2_TOTES:
                 drive.SetGyroZero(270);
                 autoCommand = new Grab2TotesMovingLeftAndDriveToScoringZone();
                 break;
-            
-            case 6:
-                drive.SetGyroZero(90);
-                autoCommand = new GrabContainer2TotesMiddleScoringZone();
-                break;
-                
-            case 8:
-                drive.SetGyroZero(90);
-                autoCommand = new GrabContainer1ToteAndGotoScoringZone();
-                break;
-                
-            case 9:
+
+            case GRAB_3_TOTES:
                 drive.SetGyroZero(270);
                 autoCommand = new Grab3TotesGoToScoringZone();
                 break;
                 
-            case 10:
+            case GRAB_CONTAINER:
+                drive.SetGyroZero(90);
+                autoCommand = new GrabContainerAndDriveToAutoScoringZone();
+                break;
+
+            case GRAB_CONTAINER_AND_1_TOTE:
+                drive.SetGyroZero(90);
+                autoCommand = new GrabContainer1ToteAndGotoScoringZone();
+                break;
+
+            case GRAB_CONTAINER_AND_2_TOTES:
+                drive.SetGyroZero(90);
+                autoCommand = new GrabContainer2TotesMiddleScoringZone();
+                break;
+
+            case GRAB_CONTAINER_AND_3_TOTES:
                 drive.SetGyroZero(90);
                 autoCommand = new GrabContainer3TotesMiddleScoringZone();
                 break;
         }
-        
+
         if (autoCommand != null)
         {
             autoCommand.start();
         }
     }
-    
+
     public void Run()
     {
         Scheduler.getInstance().run();
     }
-        
-    private class DriveToAutoScoringZone extends CommandGroup
-    {
+
+    private class DriveToAutoScoringZone extends CommandGroup {
         public DriveToAutoScoringZone()
         {
             // TODO: numbers
             addSequential(new Drive(new SwerveVector(0, 1), 0, -1), 2);
         }
     }
-    
-    
-    private class GrabToteAndDriveToAutoScoringZone extends CommandGroup
-    {
+
+    private class GrabToteAndDriveToAutoScoringZone extends CommandGroup {
         public GrabToteAndDriveToAutoScoringZone()
         {
             // TODO: numbers
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
+                    270));
             addSequential(new PickupFloorTotes(0));
             addSequential(new DriveToAutoScoringZone());
         }
     }
-    
-    private class GrabContainerAndDriveToAutoScoringZone extends CommandGroup
-    {
+
+    private class GrabContainerAndDriveToAutoScoringZone extends CommandGroup {
         public GrabContainerAndDriveToAutoScoringZone()
         {
             addSequential(new PickupContainer());
             addSequential(new DriveToAutoScoringZone());
         }
     }
-    
-    private class Grab2TotesMovingLeftAndDriveToScoringZone extends CommandGroup
-    {
+
+    private class Grab2TotesMovingLeftAndDriveToScoringZone extends
+            CommandGroup {
         public Grab2TotesMovingLeftAndDriveToScoringZone()
         {
             // TODO: numbers
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
+                    270));
             addParallel(new PickupFloorTotes(1));
             addSequential(new NavigateAroundContainerToPickUpTote());
             addSequential(new DriveToAutoScoringZone());
         }
     }
-    
-    private class NavigateAroundContainerToPickUpTote extends CommandGroup
-    {
+
+    private class NavigateAroundContainerToPickUpTote extends CommandGroup {
         public NavigateAroundContainerToPickUpTote()
         {
             // TODO: numbers
@@ -136,56 +133,57 @@ public class Autonomous
         }
     }
 
-    private class Grab3TotesGoToScoringZone extends CommandGroup
-    {
+    private class Grab3TotesGoToScoringZone extends CommandGroup {
         public Grab3TotesGoToScoringZone()
         {
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
+                    270));
             addParallel(new PickupFloorTotes(2));
             addSequential(new NavigateAroundContainerToPickUpTote());
             addSequential(new NavigateAroundContainerToPickUpTote());
             addSequential(new DriveAndDrop());
         }
     }
-    
-    private class GrabContainer1ToteAndGotoScoringZone extends CommandGroup
-    {
+
+    private class GrabContainer1ToteAndGotoScoringZone extends CommandGroup {
         public GrabContainer1ToteAndGotoScoringZone()
         {
             addSequential(new PickupContainer());
-            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0, 90));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0,
+                    90));
             addParallel(new PickupFloorTotes(0));
             addSequential(new DriveToAutoScoringZone());
         }
     }
-    
-    private class GrabContainer2TotesMiddleScoringZone extends CommandGroup
-    {
+
+    private class GrabContainer2TotesMiddleScoringZone extends CommandGroup {
         public GrabContainer2TotesMiddleScoringZone()
         {
             addSequential(new PickupContainer());
-            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0, 90));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0,
+                    90));
             addParallel(new PickupFloorTotes(1));
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));   //TODO adjust speed to match rotation
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
+                    270)); // TODO adjust speed to match rotation
             addSequential(new DriveToAutoScoringZone());
         }
     }
-    
-    private class GrabContainer3TotesMiddleScoringZone extends CommandGroup
-    {
+
+    private class GrabContainer3TotesMiddleScoringZone extends CommandGroup {
         public GrabContainer3TotesMiddleScoringZone()
         {
             addSequential(new PickupContainer());
-            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0, 90));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0,
+                    90));
             addParallel(new PickupFloorTotes(2));
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));   //TODO adjust speed to match rotation
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
+                    270)); // TODO adjust speed to match rotation
             addSequential(new NavigateAroundContainerToPickUpTote());
             addSequential(new DriveAndDrop());
         }
     }
-    
-    private class DriveAndDrop extends CommandGroup
-    {
+
+    private class DriveAndDrop extends CommandGroup {
         public DriveAndDrop()
         {
             // TODO: numbers
@@ -194,20 +192,19 @@ public class Autonomous
             addSequential(new Drive(new SwerveVector(1, 0), 0, 270), 1);
         }
     }
-        
-    private class DriveTowardToteWithVision extends CommandGroup
-    {
+
+    private class DriveTowardToteWithVision extends CommandGroup {
         public DriveTowardToteWithVision()
         {
             addSequential(new DriveBackwardsToLineUpTote());
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270));
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
+                    270));
         }
     }
-    
-    private class DriveBackwardsToLineUpTote extends Command
-    {
+
+    private class DriveBackwardsToLineUpTote extends Command {
         boolean Finished = false;
-        
+
         public DriveBackwardsToLineUpTote()
         {
             requires(drive);
@@ -225,23 +222,23 @@ public class Autonomous
             double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
             double slideP = Application.prefs.getDouble("SlideP", 2);
             double targetX = Application.prefs.getDouble("SlideTargetX", .55);
-            double xErrorThreshold = Application.prefs.getDouble("SlideTargetXError", .05);
-            
+            double xErrorThreshold = Application.prefs.getDouble(
+                    "SlideTargetXError", .05);
+
             SwerveVector Velocity;
-                
+
             if (vision.getToteSeen())
             {
                 double xError = vision.getResultX() - targetX;
-                
+
                 if (Math.abs(xError) < xErrorThreshold)
                 {
                     this.Finished = true;
                 }
-                
-                double slideVelocity = Utilities.clampToRange(
-                        xError * slideP, 
+
+                double slideVelocity = Utilities.clampToRange(xError * slideP,
                         -maxSlide, maxSlide);
-                
+
                 Velocity = new SwerveVector(0, slideVelocity);
 
             }
@@ -249,7 +246,7 @@ public class Autonomous
             {
                 Velocity = new SwerveVector(0, -maxSlide);
             }
-            
+
             drive.UpdateDrive(Velocity, 0, 270);
         }
 
@@ -270,13 +267,12 @@ public class Autonomous
         {
             end();
         }
-        
+
     }
-    
-    private class DropToteStack extends Command
-    {
-        private boolean Finished = false;  
-        
+
+    private class DropToteStack extends Command {
+        private boolean Finished = false;
+
         public DropToteStack()
         {
             requires(lift);
@@ -304,7 +300,7 @@ public class Autonomous
         protected void end()
         {
             // TODO Auto-generated method stub
-            
+
         }
 
         @Override
@@ -312,13 +308,12 @@ public class Autonomous
         {
             end();
         }
-        
+
     }
-    
-    private class PickupContainer extends Command
-    {
+
+    private class PickupContainer extends Command {
         private boolean Finished = false;
-        
+
         public PickupContainer()
         {
             requires(lift);
@@ -346,7 +341,7 @@ public class Autonomous
         protected void end()
         {
             // TODO Auto-generated method stub
-            
+
         }
 
         @Override
@@ -354,21 +349,20 @@ public class Autonomous
         {
             end();
         }
-        
+
     }
-    
-    private class PickupFloorTotes extends Command
-    {
+
+    private class PickupFloorTotes extends Command {
         private int MaxTotesInStack;
         private boolean Finished;
-        
+
         public PickupFloorTotes(int MaxTotesInStack)
         {
             this.MaxTotesInStack = MaxTotesInStack;
             this.Finished = false;
             requires(lift);
         }
-        
+
         @Override
         protected void initialize()
         {
@@ -391,7 +385,7 @@ public class Autonomous
         protected void end()
         {
             // TODO Auto-generated method stub
-            
+
         }
 
         @Override
@@ -399,15 +393,14 @@ public class Autonomous
         {
             end();
         }
-        
+
     }
-    
-    private class Drive extends Command
-    {
+
+    private class Drive extends Command {
         private SwerveVector Velocity;
         private double Rotation;
         private double Heading;
-        
+
         public Drive(SwerveVector velocity, double rotation, double heading)
         {
             this.Velocity = velocity;
@@ -445,14 +438,14 @@ public class Autonomous
             end();
         }
     }
-    
-    private class DriveUntilToteSensed extends Command
-    {
+
+    private class DriveUntilToteSensed extends Command {
         private SwerveVector Velocity;
         private double Rotation;
         private double Heading;
-        
-        public DriveUntilToteSensed(SwerveVector velocity, double rotation, double heading)
+
+        public DriveUntilToteSensed(SwerveVector velocity, double rotation,
+                double heading)
         {
             this.Velocity = velocity;
             this.Rotation = rotation;
@@ -489,5 +482,5 @@ public class Autonomous
             end();
         }
     }
-    
+
 }
