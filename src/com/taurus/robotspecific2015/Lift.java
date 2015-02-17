@@ -105,6 +105,7 @@ public class Lift extends Subsystem {
                             & TotesInStack < MaxTotesInStack)
                         {
                             RailContents = RAIL_CONTENTS.TOTE;
+
                             StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                         }
                         break;
@@ -132,9 +133,14 @@ public class Lift extends Subsystem {
                     & CylindersRails.Extend()
                     & CylindersStackHolder.Contract())
                 {
-                    // The stack holder has latched the tote.
+                    // The stack holder has latched.
+                    if (RailContents == RAIL_CONTENTS.TOTE)
+                    {
+                        // The tote is now in the stack.
+                        TotesInStack = TotesInStack + 1;
+                    }
+                    
                     RailContents = RAIL_CONTENTS.EMPTY;
-                    TotesInStack = TotesInStack + 1;
                     StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
 
                 }
@@ -224,9 +230,14 @@ public class Lift extends Subsystem {
                     & CylindersStackHolder.Contract())
                 {
                     // Locked into place.
+                    if (RailContents == RAIL_CONTENTS.TOTE)
+                    {
+                        // The tote is now in the stack.
+                        TotesInStack = TotesInStack + 1;
+                    }
+                    
                     RailContents = RAIL_CONTENTS.EMPTY;
                     StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
-                    TotesInStack = TotesInStack + 1;
                 }
                 break;
         }
@@ -363,6 +374,12 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Extend()
                     & StackEjector.StopIn())
                 {
+                    if (RailContents == RAIL_CONTENTS.TOTE)
+                    {
+                        // The tote is now in the stack.
+                        TotesInStack = TotesInStack + 1;
+                    }
+                
                     RailContents = RAIL_CONTENTS.STACK;
                     StateCarry = STATE_CARRY.LOWER_CAR;
                 }
@@ -408,6 +425,8 @@ public class Lift extends Subsystem {
                     & StackEjector.EjectStack())
                 {
                     RailContents = RAIL_CONTENTS.EMPTY;
+                    TotesInStack = 0;
+                    ContainerInStack = false;
 
                     if (Application.controller.getEjectStack())
                     {
@@ -435,6 +454,16 @@ public class Lift extends Subsystem {
      */
     public boolean DropStack()
     {
+        return DropStack(false);
+    }
+    
+    /**
+     * Place the stack on the ground and release the rails
+     * 
+     * @return true if finished
+     */
+    public boolean DropStack(boolean keepContainer)
+    {
         switch (StateDropStack)
         {
             case INIT:
@@ -446,7 +475,7 @@ public class Lift extends Subsystem {
 
             case LOWER_STACK:
                 if (LiftCar.GoToBottom()
-                    & CylindersContainerFixed.Contract()
+                    & (keepContainer || CylindersContainerFixed.Contract())
                     & CylindersStackHolder.Contract())
                 {
                     StateDropStack = STATE_DROP_STACK.RELEASE;
@@ -458,6 +487,10 @@ public class Lift extends Subsystem {
                     & CylindersRails.Contract()
                     & StackEjector.StopIn())
                 {
+                    RailContents = RAIL_CONTENTS.EMPTY;
+                    TotesInStack = 0;
+                    ContainerInStack = false;
+
                     StateDropStack = STATE_DROP_STACK.BACK_UP;
                 }
                 break;
@@ -579,5 +612,15 @@ public class Lift extends Subsystem {
     public STATE_CARRY GetStateCarryStack()
     {
         return StateCarry;
+    }
+
+    public STATE_DROP_STACK GetStateDropStack()
+    {
+        return StateDropStack;
+    }
+
+    public STATE_EJECT_STACK GetStateEjectStack()
+    {
+        return StateEjectStack;
     }
 }
