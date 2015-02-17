@@ -12,9 +12,12 @@ public class Lift extends Subsystem {
     private RAIL_CONTENTS RailContents = RAIL_CONTENTS.EMPTY;
     private int TotesInStack = 0;
 
-    private STATE_ADD_CHUTE_TOTE_TO_STACK StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
-    private STATE_ADD_FLOOR_TOTE_TO_STACK StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
-    private STATE_ADD_CONTAINER_TO_STACK StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
+    private STATE_ADD_CHUTE_TOTE_TO_STACK StateAddChuteToteToStack =
+            STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+    private STATE_ADD_FLOOR_TOTE_TO_STACK StateAddFloorToteToStack =
+            STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+    private STATE_ADD_CONTAINER_TO_STACK StateAddContainerToStack =
+            STATE_ADD_CONTAINER_TO_STACK.INIT;
     private STATE_CARRY StateCarry = STATE_CARRY.INIT;
     private STATE_DROP_STACK StateDropStack = STATE_DROP_STACK.INIT;
     private STATE_EJECT_STACK StateEjectStack = STATE_EJECT_STACK.INIT;
@@ -26,6 +29,7 @@ public class Lift extends Subsystem {
     private PneumaticSubsystem CylindersContainerFixed;
     private PneumaticSubsystem CylindersStackHolder;
     private SensorDigital ToteIntakeSensor;
+    private boolean AutonomousToteTriggered;
 
     /**
      * Initialize lift and all objects owned by the lift
@@ -34,27 +38,33 @@ public class Lift extends Subsystem {
     {
         LiftCar = new Car();
         StackEjector = new Ejector();
-        CylindersRails = new PneumaticSubsystem(Constants.CHANNEL_RAIL,
-                Constants.PCU_RAIL, Constants.TIME_EXTEND_RAILS,
-                Constants.TIME_CONTRACT_RAILS, Constants.CYLINDER_ACTION.EXTEND);
-        CylindersContainerCar = new PneumaticSubsystem(
-                Constants.CHANNEL_CONTAINER_CAR, Constants.PCU_CONTAINER_CAR,
-                Constants.TIME_EXTEND_CONTAINER_CAR,
-                Constants.TIME_CONTRACT_CONTAINER_CAR,
-                Constants.CYLINDER_ACTION.CONTRACT);
-        CylindersContainerFixed = new PneumaticSubsystem(
-                Constants.CHANNEL_CONTAINER_FIXED,
-                Constants.PCU_CONTAINER_FIXED,
-                Constants.TIME_EXTEND_CONTAINER_FIXED,
-                Constants.TIME_CONTRACT_CONTAINER_FIXED,
-                Constants.CYLINDER_ACTION.CONTRACT);
-        CylindersStackHolder = new PneumaticSubsystem(
-                Constants.CHANNEL_STACK_HOLDER, Constants.PCU_STACK_HOLDER,
-                Constants.TIME_EXTEND_STACK_HOLDER,
-                Constants.TIME_CONTRACT_STACK_HOLDER,
-                Constants.CYLINDER_ACTION.CONTRACT);
-        ToteIntakeSensor = new SensorDigital(
-                Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
+        CylindersRails =
+                new PneumaticSubsystem(Constants.CHANNEL_RAIL,
+                        Constants.PCU_RAIL, Constants.TIME_EXTEND_RAILS,
+                        Constants.TIME_CONTRACT_RAILS,
+                        Constants.CYLINDER_ACTION.EXTEND);
+        CylindersContainerCar =
+                new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_CAR,
+                        Constants.PCU_CONTAINER_CAR,
+                        Constants.TIME_EXTEND_CONTAINER_CAR,
+                        Constants.TIME_CONTRACT_CONTAINER_CAR,
+                        Constants.CYLINDER_ACTION.CONTRACT);
+        CylindersContainerFixed =
+                new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_FIXED,
+                        Constants.PCU_CONTAINER_FIXED,
+                        Constants.TIME_EXTEND_CONTAINER_FIXED,
+                        Constants.TIME_CONTRACT_CONTAINER_FIXED,
+                        Constants.CYLINDER_ACTION.CONTRACT);
+        CylindersStackHolder =
+                new PneumaticSubsystem(Constants.CHANNEL_STACK_HOLDER,
+                        Constants.PCU_STACK_HOLDER,
+                        Constants.TIME_EXTEND_STACK_HOLDER,
+                        Constants.TIME_CONTRACT_STACK_HOLDER,
+                        Constants.CYLINDER_ACTION.CONTRACT);
+        ToteIntakeSensor =
+                new SensorDigital(Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
+
+        init();
     }
 
     private void initStates()
@@ -73,12 +83,19 @@ public class Lift extends Subsystem {
         this.TotesInStack = 0;
         this.ContainerInStack = false;
         this.RailContents = RAIL_CONTENTS.EMPTY;
+        this.AutonomousToteTriggered = false;
     }
 
     public boolean IsToteInPlace()
     {
-        return ToteIntakeSensor.IsOn()
+        return AutonomousToteTriggered
+               || ToteIntakeSensor.IsOn()
                || Application.controller.getFakeToteAdd();
+    }
+
+    public void SetAutonomousToteTriggered(boolean b)
+    {
+        this.AutonomousToteTriggered = b;
     }
 
     /**
@@ -106,7 +123,8 @@ public class Lift extends Subsystem {
                         {
                             RailContents = RAIL_CONTENTS.TOTE;
 
-                            StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                            StateAddChuteToteToStack =
+                                    STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                         }
                         break;
 
@@ -114,7 +132,8 @@ public class Lift extends Subsystem {
                     case STACK:
                         if (TotesInStack < MaxTotesInStack)
                         {
-                            StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                            StateAddChuteToteToStack =
+                                    STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                         }
                         break;
                 }
@@ -139,9 +158,10 @@ public class Lift extends Subsystem {
                         // The tote is now in the stack.
                         TotesInStack = TotesInStack + 1;
                     }
-                    
+
                     RailContents = RAIL_CONTENTS.EMPTY;
-                    StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
+                    StateAddChuteToteToStack =
+                            STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
 
                 }
                 break;
@@ -149,7 +169,8 @@ public class Lift extends Subsystem {
             case RESET:
                 if (LiftCar.GoToBottom())
                 {
-                    StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+                    StateAddChuteToteToStack =
+                            STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
                 }
                 break;
         }
@@ -181,7 +202,8 @@ public class Lift extends Subsystem {
                             & StackEjector.StopIn()
                             & IsToteInPlace())
                         {
-                            StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.GRAB_TOTE;
+                            StateAddFloorToteToStack =
+                                    STATE_ADD_FLOOR_TOTE_TO_STACK.GRAB_TOTE;
                         }
                         break;
 
@@ -189,7 +211,8 @@ public class Lift extends Subsystem {
                     case STACK:
                         if (TotesInStack < MaxTotesInStack)
                         {
-                            StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.LIFT_TOTE;
+                            StateAddFloorToteToStack =
+                                    STATE_ADD_FLOOR_TOTE_TO_STACK.LIFT_TOTE;
                         }
                         else
                         {
@@ -213,11 +236,13 @@ public class Lift extends Subsystem {
 
                         if (TotesInStack < MaxTotesInStack)
                         {
-                            StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.LIFT_TOTE;
+                            StateAddFloorToteToStack =
+                                    STATE_ADD_FLOOR_TOTE_TO_STACK.LIFT_TOTE;
                         }
                         else
                         {
-                            StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+                            StateAddFloorToteToStack =
+                                    STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
                         }
                     }
                 }
@@ -235,9 +260,10 @@ public class Lift extends Subsystem {
                         // The tote is now in the stack.
                         TotesInStack = TotesInStack + 1;
                     }
-                    
+
                     RailContents = RAIL_CONTENTS.EMPTY;
-                    StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+                    StateAddFloorToteToStack =
+                            STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
                 }
                 break;
         }
@@ -271,7 +297,8 @@ public class Lift extends Subsystem {
                         & CylindersContainerCar.Contract()
                         & IsToteInPlace())
                     {
-                        StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
+                        StateAddContainerToStack =
+                                STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                     }
                 }
                 break;
@@ -281,14 +308,16 @@ public class Lift extends Subsystem {
                     & CylindersRails.Extend()
                     & CylindersContainerCar.Extend())
                 {
-                    StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.LIFT_CAR;
+                    StateAddContainerToStack =
+                            STATE_ADD_CONTAINER_TO_STACK.LIFT_CAR;
                 }
                 break;
 
             case LIFT_CAR:
                 if (LiftCar.GoToStack())
                 {
-                    StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.CONTAINER_FIXED_EXTEND;
+                    StateAddContainerToStack =
+                            STATE_ADD_CONTAINER_TO_STACK.CONTAINER_FIXED_EXTEND;
                 }
                 break;
 
@@ -296,7 +325,8 @@ public class Lift extends Subsystem {
                 if (LiftCar.GoToStack() & GetCylindersContainerFixed().Extend())
                 {
                     ContainerInStack = true;
-                    StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.RESET;
+                    StateAddContainerToStack =
+                            STATE_ADD_CONTAINER_TO_STACK.RESET;
                 }
                 break;
 
@@ -305,7 +335,8 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Contract()
                     & CylindersRails.Contract())
                 {
-                    StateAddContainerToStack = STATE_ADD_CONTAINER_TO_STACK.INIT;
+                    StateAddContainerToStack =
+                            STATE_ADD_CONTAINER_TO_STACK.INIT;
                 }
                 break;
         }
@@ -379,7 +410,7 @@ public class Lift extends Subsystem {
                         // The tote is now in the stack.
                         TotesInStack = TotesInStack + 1;
                     }
-                
+
                     RailContents = RAIL_CONTENTS.STACK;
                     StateCarry = STATE_CARRY.LOWER_CAR;
                 }
@@ -456,7 +487,7 @@ public class Lift extends Subsystem {
     {
         return DropStack(false);
     }
-    
+
     /**
      * Place the stack on the ground and release the rails
      * 
