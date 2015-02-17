@@ -137,7 +137,7 @@ public class SwerveChassis extends Subsystem {
                     CrawlMode = true;
                     
                     SwerveVector drive = new SwerveVector();
-                    drive.setMagAngle(1, dpad);
+                    drive.setMagAngle(1, dpad - 90);
                     
                     UpdateDrive(drive,
                             controller.getHaloDrive_Rotation(),
@@ -254,6 +254,15 @@ public class SwerveChassis extends Subsystem {
         if (RobotVelocity.getMag() > 1.0)
         {
             RobotVelocity.setMag(1.0);
+        }        
+
+        if(CrawlMode)
+        {
+            RobotVelocity.setMag(RobotVelocity.getMag() * .4);
+        }
+        else if(!Application.controller.getHighSpeed())
+        {
+            RobotVelocity.setMag(RobotVelocity.getMag() * .75);
         }
         
         RobotVelocity = restrictVelocity(RobotVelocity);
@@ -282,15 +291,6 @@ public class SwerveChassis extends Subsystem {
 
         // grab max velocity from the dash
         MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY", MaxAvailableVelocity);
-
-        if(CrawlMode)
-        {
-            MaxAvailableVelocity = MaxAvailableVelocity * .4;
-        }
-        else if(!Application.controller.getHighSpeed())
-        {
-            MaxAvailableVelocity = MaxAvailableVelocity * .75;
-        }
         
         // determine ratio to scale all wheel velocities by
         double Ratio = MaxAvailableVelocity / MaxWantedVeloc;
