@@ -27,7 +27,7 @@ public class Lift extends Subsystem {
     private PneumaticSubsystem CylindersContainerCar;
     private PneumaticSubsystem CylindersContainerFixed;
     private PneumaticSubsystem CylindersStackHolder;
-    
+
     private SensorDigital ToteIntakeSensor;
     private boolean AutonomousToteTriggered;
 
@@ -341,7 +341,7 @@ public class Lift extends Subsystem {
                 if (LiftCar.GoToStack() & GetCylindersContainerFixed().Extend())
                 {
                     ContainerInStack = true;
-                    
+
                     StateAddContainerToStack =
                             STATE_ADD_CONTAINER_TO_STACK.RESET;
                 }
@@ -526,9 +526,8 @@ public class Lift extends Subsystem {
                 {
                     CylindersContainerFixed.Contract();
                 }
-                
-                if (LiftCar.GoToBottom()
-                    & CylindersStackHolder.Contract())
+
+                if (LiftCar.GoToBottom() & CylindersStackHolder.Contract())
                 {
                     StateDropStack = STATE_DROP_STACK.RELEASE;
                 }
@@ -549,7 +548,7 @@ public class Lift extends Subsystem {
 
             case BACK_UP:
                 // TODO: implement
-                
+
                 // Note: relies on other modes to reset the state to INIT.
                 break;
         }
