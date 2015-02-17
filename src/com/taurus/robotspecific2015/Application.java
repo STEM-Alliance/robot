@@ -1,5 +1,7 @@
 package com.taurus.robotspecific2015;
 
+import java.util.ArrayList;
+
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -60,13 +62,20 @@ public class Application extends com.taurus.Application {
         
         leds = new LEDs();
         leds.setAll(new Color(0,0,0));
+        leds.start();
     }
 
     public void TeleopInitRobotSpecific()
     {
         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
         lift.init();
-        leds.FlashAll(Color.Green, Color.White, 1);
+        
+        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+
+        colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
+        colors.add(new Color[]{Color.Random(), Color.Black, Color.Cyan, Color.Green});
+        colors.add(new Color[]{Color.Random(), Color.Green, Color.White, Color.Yellow});
+        leds.FlashAll(colors, 1);
     }
 
     
@@ -110,7 +119,6 @@ public class Application extends com.taurus.Application {
 
     public void TeleopPeriodicRobotSpecific()
     {
-        leds.run();
         UpdateDashboard();
 
         if (controller.getCarHome())

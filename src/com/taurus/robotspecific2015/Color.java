@@ -1,5 +1,7 @@
 package com.taurus.robotspecific2015;
 
+import edu.wpi.first.wpilibj.Timer;
+
 
 public class Color {
     public static final Color Black = new Color(0, 0, 0);
@@ -23,6 +25,20 @@ public class Color {
         this.blue = blue;
     }
 
+    public static Color Random()
+    {
+        java.util.Random rand = new java.util.Random();
+        int r = rand.nextBoolean() ? 0 : 0xfff;
+        Timer.delay(.001);
+        int g = rand.nextBoolean() ? 0 : 0xfff;
+        Timer.delay(.001);
+        int b = rand.nextBoolean() ? 0 : 0xfff;
+        
+        Color c = new Color(r, g, b);
+        
+        return c;
+    }
+    
     public void Get(boolean offset, byte[] out, int i)
     {
         if(offset)
@@ -61,5 +77,14 @@ public class Color {
 //        out[2] = (byte) 0x00;
 //        out[3] = (byte) 0x0f;
 //        out[4] = (byte) 0xff;
+    }
+    
+    public static Color Fade(Color start, Color end, double percent)
+    {
+        double r = (start.red - end.red) * percent + start.red;
+        double g = (start.green - end.green) * percent + start.green;
+        double b = (start.blue - end.blue) * percent + start.blue;
+        
+        return new Color((int)r, (int)g, (int)b);
     }
 }
