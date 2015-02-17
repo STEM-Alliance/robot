@@ -198,4 +198,6 @@ public interface Controller {
     public boolean getStopAction();
 
     public boolean getDropStack();
+    
+    public void setRumble(Hand hand, float value);
 }

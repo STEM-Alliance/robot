@@ -329,4 +329,11 @@ public class ControllerJoysticks implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public void setRumble(Hand hand, float value)
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }
