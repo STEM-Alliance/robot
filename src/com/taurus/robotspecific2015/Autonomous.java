@@ -292,8 +292,10 @@ public class Autonomous {
     }
 
     private class TriggerToteSensed extends Command {
-        // TODO: Implement
-
+        public TriggerToteSensed()
+        {
+        }
+        
         @Override
         protected void initialize()
         {
@@ -302,18 +304,19 @@ public class Autonomous {
         @Override
         protected void execute()
         {
-            // TODO Auto-generated method stub
+            lift.SetAutonomousToteTriggered(true);
         }
 
         @Override
         protected boolean isFinished()
         {
-            return true;
+            return lift.GetCylindersRails().IsExtended();
         }
 
         @Override
         protected void end()
         {
+            lift.SetAutonomousToteTriggered(false);
         }
 
         @Override
@@ -408,7 +411,7 @@ public class Autonomous {
         @Override
         protected void execute()
         {
-            this.Finished = lift.DropStack();
+            this.Finished = lift.DropStack(true);
         }
 
         @Override
