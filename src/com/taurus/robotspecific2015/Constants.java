@@ -51,6 +51,14 @@ public abstract class Constants {
     public static final double  LIFT_THRESHOLD = .25;
     public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20, 20.75 };
     
+    public static final double LIFT_CAR_SPEED_UP = 0.8;
+    public static final double LIFT_CAR_SPEED_DOWN = 0.7;
+    public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.3;
+    
+    public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.5;
+    public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.5;
+    
+    
     public static final int DISTANCE_SENSOR_LEFT_PIN = 5;
     public static final int DISTANCE_SENSOR_RIGHT_PIN = 6;
         

@@ -48,7 +48,7 @@ public class SwerveChassis extends Subsystem {
     private double lastVelocityTimestamp;
 
     private DriveScheme driveScheme;
-
+    
     /**
      * sets up individual wheels and their positions relative to robot center
      */
@@ -125,7 +125,7 @@ public class SwerveChassis extends Subsystem {
                         controller.getDPad());
                 break;
         }
-
+        
         // set various options for the chassis
 //        setGearHigh(controller.getHighGearEnable());
         setBrake(controller.getSwerveBrake());
@@ -256,6 +256,15 @@ public class SwerveChassis extends Subsystem {
         // grab max velocity from the dash
         MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY", MaxAvailableVelocity);
 
+        if(Application.controller.getLowSpeed())
+        {
+            MaxAvailableVelocity = MaxAvailableVelocity * .4;
+        }
+        else if(!Application.controller.getHighSpeed())
+        {
+            MaxAvailableVelocity = MaxAvailableVelocity * .75;
+        }
+        
         // determine ratio to scale all wheel velocities by
         double Ratio = MaxAvailableVelocity / MaxWantedVeloc;
 

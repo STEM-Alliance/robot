@@ -9,7 +9,7 @@ public class ControllerXboxPanel implements Controller {
     private Xbox xbox;
     private Panel panel;
 
-    public static final double DEADBAND = 0.2;
+    public static final double DEADBAND = 0.25;
 
     private boolean fieldRelative;
     private boolean fieldRelativeLast;
@@ -313,5 +313,17 @@ public class ControllerXboxPanel implements Controller {
     public boolean getDropStack()
     {
         return panel.getWhiteRButton();
+    }
+
+    @Override
+    public boolean getHighSpeed()
+    {
+        return panel.getSwitchR();
+    }
+
+    @Override
+    public boolean getLowSpeed()
+    {
+        return xbox.getTrigger(Hand.kRight);
     }
 }

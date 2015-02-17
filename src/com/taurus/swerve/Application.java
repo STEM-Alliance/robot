@@ -67,7 +67,7 @@ public class Application extends com.taurus.Application {
 
             case TEST_MODE_CALIBRATION_1:
                 drive.getWheel(i).MotorAngle
-                        .set(controller.getX(Hand.kRight) * .3);
+                        .set(controller.getX(Hand.kRight) * .4);
                 SmartDashboard.putNumber("motor set",
                         drive.getWheel(i).MotorAngle.get());
                 SmartDashboard.putNumber("pot read", drive.getWheel(i)

@@ -125,7 +125,7 @@ public class Lift extends Subsystem {
                     }
                     else
                     {
-                        StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
+                        StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.BOTTOM;
                     }
                 }
                 break;
@@ -397,7 +397,7 @@ public class Lift extends Subsystem {
                 }
                 break;
             case LOWER_CAR:
-                if (LiftCar.GoToEject())
+                if (LiftCar.GoToEject() & GetEjector().StopOut())
                 {
                     EjectTimer = Timer.getFPGATimestamp();
                     StateEjectStack = STATE_EJECT_STACK.EJECT_STACK;
