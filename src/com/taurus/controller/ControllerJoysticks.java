@@ -243,6 +243,13 @@ public class ControllerJoysticks implements Controller {
     }
 
     @Override
+    public boolean getCarryStack()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
     public boolean getEjectStack()
     {
         // TODO Auto-generated method stub

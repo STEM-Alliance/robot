@@ -75,22 +75,16 @@ public class Application extends com.taurus.Application {
                         / 2.54);
 
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
-        SmartDashboard.putBoolean("ToteOnRails", lift.GetToteOnRails());
-        SmartDashboard.putBoolean("ContainerInStack",
-                lift.GetContainerInStack());
+        SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
+        SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
         SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
         SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
 
-        SmartDashboard.putString("CurrentLiftAction_",
-                CurrentLiftAction.toString());
-        SmartDashboard.putString("StateAddChuteToteToStack", lift
-                .GetStateAddChuteToteToStack().toString());
-        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack()
-                .toString());
-        SmartDashboard.putString("StateAddContainerToStack", lift
-                .GetStateAddContainerToStack().toString());
-        SmartDashboard.putString("StateAddFloorToteToStack", lift
-                .GetStateAddFloorToteToStack().toString());
+        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
+        SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
+        SmartDashboard.putString("StateEjectStack", lift.GetStateCarryStack().toString());
+        SmartDashboard.putString("StateAddContainerToStack", lift.GetStateAddContainerToStack().toString());
+        SmartDashboard.putString("StateAddFloorToteToStack", lift.GetStateAddFloorToteToStack().toString());
 
     }
 
@@ -178,19 +172,9 @@ public class Application extends com.taurus.Application {
                     break;
 
                 case EJECT_STACK:
-                    if (!lift.GetEjector().GetCylindersPusher().IsExtended())
+                    if (lift.EjectStack())
                     {
-                        if (lift.EjectStack())
-                        {
-                            CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                        }
-                    }
-                    else
-                    {
-                        if (lift.ResetEjectStack())
-                        {
-                            CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                        }
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
                     break;
 

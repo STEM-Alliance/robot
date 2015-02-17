@@ -7,10 +7,20 @@ import edu.wpi.first.wpilibj.Timer;
 
 // State machine for lift
 public class Car {
+    
+    private enum ZERO_STATE {
+        MOVING,
+        WAITING,
+        ZEROED
+    }
 
     private LinearActuator Actuator;
     private SensorDigital ZeroSensor;
     private SensorDigital TopSensor;
+    
+    private ZERO_STATE ZeroState = ZERO_STATE.MOVING;
+    private double ZeroWaitStartTime = 0;
+    private double ZeroSpeedTimer = 0;
 
     public Car()
     {
@@ -74,9 +84,6 @@ public class Car {
         return Actuator.GetPosition() == position.ordinal();
     }
 
-    private double TopTime = 0;
-    private boolean waiting = false;
-
     /**
      * Move car to where the new tote will be held in place by the stack holder
      * 
@@ -84,45 +91,36 @@ public class Car {
      */
     public boolean GoToStack()
     {
-        if (waiting)
+        boolean atTop = TopSensor.IsOn() || SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP);
+        
+        if (!atTop)
         {
-            if (Timer.getFPGATimestamp() - TopTime > .5) // TODO
-            {
-                waiting = false;
-                return true;
-            }
-            return false;
+            ZeroState = ZERO_STATE.MOVING;            
         }
-        else if (TopSensor.IsOn())
+        
+        switch (ZeroState)
         {
-            waiting = true;
-            TopTime = Timer.getFPGATimestamp();
-            Actuator.SetSpeedRaw(0);
-            return false;
+            case MOVING:
+                if (atTop)
+                {
+                    ZeroState = ZERO_STATE.WAITING;
+                    ZeroWaitStartTime = Timer.getFPGATimestamp();
+                    Actuator.SetSpeedRaw(0);
+                }
+                break;
+                
+            case WAITING:
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .25)
+                {
+                    ZeroState = ZERO_STATE.ZEROED;
+                }
+                break;
+                
+            case ZEROED:
+                break;
         }
-        else
-        {
-            SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP);
-            return false;
-        }
-
-        // if(TopSensor.IsOn() || waiting)
-        // {
-        // waiting = true;
-        // Actuator.SetSpeedRaw(0);
-        //
-        // if(Timer.getFPGATimestamp() - TopTime > .5)
-        // {
-        // return true;
-        // }
-        // return false;
-        // }
-        // else
-        // {
-        // TopTime = Timer.getFPGATimestamp();
-        // SetPosition(LIFT_POSITIONS_E.STACK, .7);
-        // return false;
-        // }
+        
+        return ZeroState == ZERO_STATE.ZEROED;
     }
 
     /**
@@ -205,9 +203,42 @@ public class Car {
      * @return
      */
     public boolean GoToBottom()
-    {
-        GoToZero();
-        return ZeroIfNeeded();
+    {   
+        boolean atBottom = ZeroSensor.IsOn();
+        
+        if (!atBottom)
+        {
+            ZeroState = ZERO_STATE.MOVING;            
+        }
+        
+        switch (ZeroState)
+        {
+            case MOVING:
+                GoToZero();
+                
+                if (atBottom)
+                {
+                    Actuator.SetSpeedRaw(0);
+                    ZeroState = ZERO_STATE.WAITING;
+                    ZeroWaitStartTime = Timer.getFPGATimestamp();
+                }
+                break;
+                
+            case WAITING:
+                Actuator.SetSpeedRaw(0);
+                
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .25)
+                {
+                    ZeroState = ZERO_STATE.ZEROED;
+                }
+                break;
+                
+            case ZEROED:
+                Actuator.SetSpeedRaw(0);
+                break;
+        }
+        
+        return ZeroState == ZERO_STATE.ZEROED;
     }
 
     /**
@@ -225,10 +256,8 @@ public class Car {
         Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_UP);
     }
 
-    private double ZeroSpeedTimer = 0;
-
     public void GoToZero()
-    {
+    {   
         if (ZeroIfNeeded())
         {
             Actuator.SetSpeedRaw(0);
