@@ -43,12 +43,10 @@ public class Application extends com.taurus.Application {
         autoChooser.addObject("Container + 3 totes", AUTO_MODE.GRAB_CONTAINER_AND_3_TOTES);
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
-        
+
         testChooser = new SendableChooser();
-        testChooser.addDefault("Pneumatics/Motors",
-                Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
-        testChooser.addObject("Actuator",
-                Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
+        testChooser.addDefault("Pneumatics/Motors", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
+        testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
     }
 
@@ -60,21 +58,21 @@ public class Application extends com.taurus.Application {
 
     private void UpdateDashboard()
     {
-        SmartDashboard.putBoolean("ToteIntakeSensor", lift
-                .GetToteIntakeSensor().IsOn());
+        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
-        SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor()
-                .IsOn());
-        SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator()
-                .GetRaw());
-        SmartDashboard.putNumber("Actuator Position", lift.GetCar()
-                .GetActuator().GetPositionRaw());
+        SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
+        SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
+        SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
         SmartDashboard
-                .putNumber("Distance Left", 12.402 * Math.pow(
-                        distance_sensor_left.getVoltage(), -1.074) / 2.54);
+                .putNumber("Distance Left", 
+                        12.402 
+                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
+                        / 2.54);        
         SmartDashboard
-                .putNumber("Distance Right", 12.402 * Math.pow(
-                        distance_sensor_right.getVoltage(), -1.074) / 2.54);
+                .putNumber("Distance Right", 
+                        12.402 
+                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
+                        / 2.54);
 
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
         SmartDashboard.putBoolean("ToteOnRails", lift.GetToteOnRails());
@@ -202,7 +200,7 @@ public class Application extends com.taurus.Application {
                         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
                     break;
-                    
+
                 case NO_ACTION:
                 default:
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
