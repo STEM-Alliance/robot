@@ -104,6 +104,7 @@ public class Lift extends Subsystem {
                             & IsToteInPlace()
                             & TotesInStack < MaxTotesInStack)
                         {
+                            RailContents = RAIL_CONTENTS.TOTE;
                             StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                         }
                         break;
