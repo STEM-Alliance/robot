@@ -118,13 +118,15 @@ public class Lift extends Subsystem {
                             & CylindersStackHolder.Contract()
                             & CylindersContainerCar.Contract()
                             & StackEjector.StopOut()
-                            & IsToteInPlace()
-                            & TotesInStack < MaxTotesInStack)
+                            & IsToteInPlace())
                         {
                             RailContents = RAIL_CONTENTS.TOTE;
 
-                            StateAddChuteToteToStack =
-                                    STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                            if (TotesInStack < MaxTotesInStack)
+                            {
+                                StateAddChuteToteToStack =
+                                        STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                            }
                         }
                         break;
 
