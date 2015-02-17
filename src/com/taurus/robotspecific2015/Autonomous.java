@@ -49,6 +49,8 @@ public class Autonomous {
                 break;
 
             case GRAB_2_TOTES_NO_CONTAINER:
+                drive.SetGyroZero(270);
+                autoCommand = new Grab2TotesNoContainer();
                 break;
                 
             case GRAB_3_TOTES:
