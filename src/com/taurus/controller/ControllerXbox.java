@@ -262,12 +262,18 @@ public class ControllerXbox implements Controller {
         return xbox.getXButton();
     }
 
+    @Override
+    public boolean getCarryStack()
+    {
+        return xbox.getYButton();
+    }
+
     /**
      * {@inheritDoc}
      */
     public boolean getEjectStack()
     {
-        return xbox.getYButton();
+        return false;
     }
 
     @Override

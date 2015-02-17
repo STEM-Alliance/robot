@@ -72,10 +72,12 @@ public class Application extends com.taurus.Application {
     private void UpdateDashboard()
     {
         SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
+        
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
         SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
         SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
+        
         SmartDashboard
                 .putNumber("Distance Left", 
                         12.402 
@@ -88,22 +90,20 @@ public class Application extends com.taurus.Application {
                         / 2.54);
 
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
-        SmartDashboard.putBoolean("ToteOnRails", lift.GetToteOnRails());
-        SmartDashboard.putBoolean("ContainerInStack",
-                lift.GetContainerInStack());
+        SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
+        SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
+        
         SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
         SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
 
-        SmartDashboard.putString("CurrentLiftAction_",
-                CurrentLiftAction.toString());
-        SmartDashboard.putString("StateAddChuteToteToStack", lift
-                .GetStateAddChuteToteToStack().toString());
-        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack()
-                .toString());
-        SmartDashboard.putString("StateAddContainerToStack", lift
-                .GetStateAddContainerToStack().toString());
-        SmartDashboard.putString("StateAddFloorToteToStack", lift
-                .GetStateAddFloorToteToStack().toString());
+        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
+        
+        SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
+        SmartDashboard.putString("StateAddContainerToStack", lift.GetStateAddContainerToStack().toString());
+        SmartDashboard.putString("StateAddFloorToteToStack", lift.GetStateAddFloorToteToStack().toString());
+        SmartDashboard.putString("StateCarryStack", lift.GetStateCarryStack().toString());
+        SmartDashboard.putString("StateDropStack", lift.GetStateDropStack().toString());
+        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack().toString());
 
     }
 
@@ -191,19 +191,9 @@ public class Application extends com.taurus.Application {
                     break;
 
                 case EJECT_STACK:
-                    if (!lift.GetEjector().GetCylindersPusher().IsExtended())
+                    if (lift.EjectStack())
                     {
-                        if (lift.EjectStack())
-                        {
-                            CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                        }
-                    }
-                    else
-                    {
-                        if (lift.ResetEjectStack())
-                        {
-                            CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                        }
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
                     break;
 
