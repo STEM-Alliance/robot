@@ -104,6 +104,8 @@ public class Lift extends Subsystem {
                             & IsToteInPlace()
                             & TotesInStack < MaxTotesInStack)
                         {
+                            RailContents = RAIL_CONTENTS.TOTE;
+
                             StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                         }
                         break;
@@ -407,6 +409,8 @@ public class Lift extends Subsystem {
                     & StackEjector.EjectStack())
                 {
                     RailContents = RAIL_CONTENTS.EMPTY;
+                    TotesInStack = 0;
+                    ContainerInStack = false;
 
                     if (Application.controller.getEjectStack())
                     {
@@ -457,6 +461,10 @@ public class Lift extends Subsystem {
                     & CylindersRails.Contract()
                     & StackEjector.StopIn())
                 {
+                    RailContents = RAIL_CONTENTS.EMPTY;
+                    TotesInStack = 0;
+                    ContainerInStack = false;
+
                     StateDropStack = STATE_DROP_STACK.BACK_UP;
                 }
                 break;
