@@ -17,6 +17,8 @@ public class Autonomous {
 
     Command autoCommand = null;
 
+    boolean dropSmallStack = true;
+
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision,
             AUTO_MODE automode)
     {
@@ -38,37 +40,60 @@ public class Autonomous {
 
             case GRAB_1_TOTE:
                 drive.SetGyroZero(270);
-                autoCommand = new GrabToteAndDriveToAutoScoringZone();
+                autoCommand = new GrabTote();
                 break;
 
             case GRAB_2_TOTES:
                 drive.SetGyroZero(270);
-                autoCommand = new Grab2TotesMovingLeftAndDriveToScoringZone();
+                autoCommand = new Grab2Totes();
                 break;
 
+            case GRAB_2_TOTES_NO_CONTAINER:
+                break;
+                
             case GRAB_3_TOTES:
                 drive.SetGyroZero(270);
-                autoCommand = new Grab3TotesGoToScoringZone();
+                autoCommand = new Grab3Totes();
+                break;
+
+            case GRAB_3_TOTES_NO_LEFT_CONTAINER:
+                drive.SetGyroZero(270);
+                autoCommand = new Grab3TotesNoLeftContainer();
+                break;
+                
+            case GRAB_3_TOTES_NO_RIGHT_CONTAINER:
+                drive.SetGyroZero(270);
+                autoCommand = new Grab3TotesNoRightContainer();
+                break;
+                
+            case GRAB_3_TOTES_NO_CONTAINERS:
+                drive.SetGyroZero(270);
+                autoCommand = new Grab3TotesNoContainers();
                 break;
                 
             case GRAB_CONTAINER:
                 drive.SetGyroZero(90);
-                autoCommand = new GrabContainerAndDriveToAutoScoringZone();
+                autoCommand = new GrabContainer();
                 break;
 
             case GRAB_CONTAINER_AND_1_TOTE:
                 drive.SetGyroZero(90);
-                autoCommand = new GrabContainer1ToteAndGotoScoringZone();
+                autoCommand = new GrabContainer1Tote();
                 break;
 
             case GRAB_CONTAINER_AND_2_TOTES:
                 drive.SetGyroZero(90);
-                autoCommand = new GrabContainer2TotesMiddleScoringZone();
+                autoCommand = new GrabContainer2Totes();
                 break;
 
             case GRAB_CONTAINER_AND_3_TOTES:
                 drive.SetGyroZero(90);
-                autoCommand = new GrabContainer3TotesMiddleScoringZone();
+                autoCommand = new GrabContainer3Totes();
+                break;
+                
+            case GRAB_CONTAINER_AND_3_TOTES_NO_LEFT_CONTAINER:
+                drive.SetGyroZero(90);
+                autoCommand = new GrabContainer3TotesNoLeftContainer();
                 break;
         }
 
@@ -83,122 +108,216 @@ public class Autonomous {
         Scheduler.getInstance().run();
     }
 
+    private class DriveLeftToGrabTote extends CommandGroup {
+        public DriveLeftToGrabTote()
+        {
+            // TODO: speed and timeout 
+            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
+                    270), 1.0);
+            addSequential(new TriggerToteSensed());
+        }
+    }
+
+    private class DriveRightToGrabTote extends CommandGroup {
+        public DriveRightToGrabTote()
+        {
+            // TODO: speed and timeout 
+            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0,
+                    90), 1.0);
+            addSequential(new TriggerToteSensed());
+        }
+    }
+
     private class DriveToAutoScoringZone extends CommandGroup {
         public DriveToAutoScoringZone()
         {
-            // TODO: numbers
+            // TODO: speed and timeout 
             addSequential(new Drive(new SwerveVector(0, 1), 0, -1), 2);
         }
     }
-
-    private class GrabToteAndDriveToAutoScoringZone extends CommandGroup {
-        public GrabToteAndDriveToAutoScoringZone()
+    
+    private class DeliverAndDropTotes extends CommandGroup {
+        public DeliverAndDropTotes()
         {
-            // TODO: numbers
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
-                    270));
-            addSequential(new PickupFloorTotes(0));
             addSequential(new DriveToAutoScoringZone());
-        }
-    }
 
-    private class GrabContainerAndDriveToAutoScoringZone extends CommandGroup {
-        public GrabContainerAndDriveToAutoScoringZone()
-        {
-            addSequential(new PickupContainer());
-            addSequential(new DriveToAutoScoringZone());
-        }
-    }
+            if (lift.GetTotesInStack() >= 2 || dropSmallStack)
+            {
+                addSequential(new DropToteStack());
 
-    private class Grab2TotesMovingLeftAndDriveToScoringZone extends
-            CommandGroup {
-        public Grab2TotesMovingLeftAndDriveToScoringZone()
-        {
-            // TODO: numbers
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
-                    270));
-            addParallel(new PickupFloorTotes(1));
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new DriveToAutoScoringZone());
+                // Back up
+                // TODO: speed and timeout 
+                addSequential(new Drive(new SwerveVector(.2, 0), 0, 270), 1);
+            }
         }
     }
 
     private class NavigateAroundContainerToPickUpTote extends CommandGroup {
         public NavigateAroundContainerToPickUpTote()
         {
-            // TODO: numbers
+            // TODO: speed and timeout 
             addSequential(new Drive(new SwerveVector(0, 1), 0, 270), 1);
             addSequential(new Drive(new SwerveVector(-1, 0), 0, 270), 1);
-            addSequential(new DriveTowardToteWithVision());
-        }
-    }
-
-    private class Grab3TotesGoToScoringZone extends CommandGroup {
-        public Grab3TotesGoToScoringZone()
-        {
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
-                    270));
-            addParallel(new PickupFloorTotes(2));
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new DriveAndDrop());
-        }
-    }
-
-    private class GrabContainer1ToteAndGotoScoringZone extends CommandGroup {
-        public GrabContainer1ToteAndGotoScoringZone()
-        {
-            addSequential(new PickupContainer());
-            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0,
-                    90));
-            addParallel(new PickupFloorTotes(0));
-            addSequential(new DriveToAutoScoringZone());
-        }
-    }
-
-    private class GrabContainer2TotesMiddleScoringZone extends CommandGroup {
-        public GrabContainer2TotesMiddleScoringZone()
-        {
-            addSequential(new PickupContainer());
-            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0,
-                    90));
-            addParallel(new PickupFloorTotes(1));
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
-                    270)); // TODO adjust speed to match rotation
-            addSequential(new DriveToAutoScoringZone());
-        }
-    }
-
-    private class GrabContainer3TotesMiddleScoringZone extends CommandGroup {
-        public GrabContainer3TotesMiddleScoringZone()
-        {
-            addSequential(new PickupContainer());
-            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0,
-                    90));
-            addParallel(new PickupFloorTotes(2));
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
-                    270)); // TODO adjust speed to match rotation
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new DriveAndDrop());
-        }
-    }
-
-    private class DriveAndDrop extends CommandGroup {
-        public DriveAndDrop()
-        {
-            // TODO: numbers
-            addSequential(new DriveToAutoScoringZone());
-            addSequential(new DropToteStack());
-            addSequential(new Drive(new SwerveVector(1, 0), 0, 270), 1);
-        }
-    }
-
-    private class DriveTowardToteWithVision extends CommandGroup {
-        public DriveTowardToteWithVision()
-        {
             addSequential(new DriveBackwardsToLineUpTote());
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
-                    270));
+            addSequential(new DriveLeftToGrabTote());
+        }
+    }
+
+    private class GrabTote extends CommandGroup {
+        public GrabTote()
+        {
+            addParallel(new PickupFloorTotes(0));
+            addSequential(new TriggerToteSensed());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class Grab2Totes extends CommandGroup {
+        public Grab2Totes()
+        {
+            addParallel(new PickupFloorTotes(1));
+            addSequential(new TriggerToteSensed());
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class Grab2TotesNoContainer extends CommandGroup {
+        public Grab2TotesNoContainer()
+        {
+            addParallel(new PickupFloorTotes(1));
+            addSequential(new TriggerToteSensed());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class Grab3Totes extends CommandGroup {
+        public Grab3Totes()
+        {
+            addParallel(new PickupFloorTotes(2));
+            addSequential(new TriggerToteSensed());
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class Grab3TotesNoLeftContainer extends CommandGroup {
+        public Grab3TotesNoLeftContainer()
+        {
+            addParallel(new PickupFloorTotes(2));
+            addSequential(new TriggerToteSensed());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class Grab3TotesNoRightContainer extends CommandGroup {
+        public Grab3TotesNoRightContainer()
+        {
+            addParallel(new PickupFloorTotes(2));
+            addSequential(new TriggerToteSensed());
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class Grab3TotesNoContainers extends CommandGroup {
+        public Grab3TotesNoContainers()
+        {
+            addParallel(new PickupFloorTotes(2));
+            addSequential(new TriggerToteSensed());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class GrabContainer extends CommandGroup {
+        public GrabContainer()
+        {
+            addSequential(new PickupContainer());
+            addSequential(new DriveToAutoScoringZone());
+        }
+    }
+
+    private class GrabContainer1Tote extends CommandGroup {
+        public GrabContainer1Tote()
+        {
+            addSequential(new PickupContainer());
+            addParallel(new PickupFloorTotes(0));
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class GrabContainer2Totes extends CommandGroup {
+        public GrabContainer2Totes()
+        {
+            addSequential(new PickupContainer());
+            addParallel(new PickupFloorTotes(1));
+            addSequential(new DriveRightToGrabTote());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class GrabContainer3Totes extends CommandGroup {
+        public GrabContainer3Totes()
+        {
+            addSequential(new PickupContainer());
+            addParallel(new PickupFloorTotes(2));
+            addSequential(new DriveRightToGrabTote());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new NavigateAroundContainerToPickUpTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class GrabContainer3TotesNoLeftContainer extends CommandGroup {
+        public GrabContainer3TotesNoLeftContainer()
+        {
+            addSequential(new PickupContainer());
+            addParallel(new PickupFloorTotes(2));
+            addSequential(new DriveRightToGrabTote());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new DriveLeftToGrabTote());
+            addSequential(new DeliverAndDropTotes());
+        }
+    }
+
+    private class TriggerToteSensed extends Command {
+        // TODO: Implement
+
+        @Override
+        protected void initialize()
+        {
+        }
+
+        @Override
+        protected void execute()
+        {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        protected boolean isFinished()
+        {
+            return true;
+        }
+
+        @Override
+        protected void end()
+        {
+        }
+
+        @Override
+        protected void interrupted()
+        {
+            end();
         }
     }
 
@@ -222,8 +341,8 @@ public class Autonomous {
             double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
             double slideP = Application.prefs.getDouble("SlideP", 2);
             double targetX = Application.prefs.getDouble("SlideTargetX", .55);
-            double xErrorThreshold = Application.prefs.getDouble(
-                    "SlideTargetXError", .05);
+            double xErrorThreshold =
+                    Application.prefs.getDouble("SlideTargetXError", .05);
 
             SwerveVector Velocity;
 
@@ -236,8 +355,9 @@ public class Autonomous {
                     this.Finished = true;
                 }
 
-                double slideVelocity = Utilities.clampToRange(xError * slideP,
-                        -maxSlide, maxSlide);
+                double slideVelocity =
+                        Utilities.clampToRange(xError * slideP, -maxSlide,
+                                maxSlide);
 
                 Velocity = new SwerveVector(0, slideVelocity);
 
@@ -267,7 +387,6 @@ public class Autonomous {
         {
             end();
         }
-
     }
 
     private class DropToteStack extends Command {
@@ -299,8 +418,6 @@ public class Autonomous {
         @Override
         protected void end()
         {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -308,7 +425,6 @@ public class Autonomous {
         {
             end();
         }
-
     }
 
     private class PickupContainer extends Command {
@@ -340,8 +456,6 @@ public class Autonomous {
         @Override
         protected void end()
         {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -349,7 +463,6 @@ public class Autonomous {
         {
             end();
         }
-
     }
 
     private class PickupFloorTotes extends Command {
@@ -384,8 +497,6 @@ public class Autonomous {
         @Override
         protected void end()
         {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
