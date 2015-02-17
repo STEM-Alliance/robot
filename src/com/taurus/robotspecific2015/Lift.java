@@ -587,4 +587,14 @@ public class Lift extends Subsystem {
     {
         return StateCarry;
     }
+
+    public STATE_DROP_STACK GetStateDropStack()
+    {
+        return StateDropStack;
+    }
+
+    public STATE_EJECT_STACK GetStateEjectStack()
+    {
+        return StateEjectStack;
+    }
 }

@@ -59,10 +59,12 @@ public class Application extends com.taurus.Application {
     private void UpdateDashboard()
     {
         SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
+        
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
         SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
         SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
+        
         SmartDashboard
                 .putNumber("Distance Left", 
                         12.402 
@@ -77,14 +79,18 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
         SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
         SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
+        
         SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
         SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
 
         SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
+        
         SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
-        SmartDashboard.putString("StateEjectStack", lift.GetStateCarryStack().toString());
         SmartDashboard.putString("StateAddContainerToStack", lift.GetStateAddContainerToStack().toString());
         SmartDashboard.putString("StateAddFloorToteToStack", lift.GetStateAddFloorToteToStack().toString());
+        SmartDashboard.putString("StateCarryStack", lift.GetStateCarryStack().toString());
+        SmartDashboard.putString("StateDropStack", lift.GetStateDropStack().toString());
+        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack().toString());
 
     }
 
