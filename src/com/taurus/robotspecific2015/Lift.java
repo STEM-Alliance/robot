@@ -133,9 +133,14 @@ public class Lift extends Subsystem {
                     & CylindersRails.Extend()
                     & CylindersStackHolder.Contract())
                 {
-                    // The stack holder has latched the tote.
+                    // The stack holder has latched.
+                    if (RailContents == RAIL_CONTENTS.TOTE)
+                    {
+                        // The tote is now in the stack.
+                        TotesInStack = TotesInStack + 1;
+                    }
+                    
                     RailContents = RAIL_CONTENTS.EMPTY;
-                    TotesInStack = TotesInStack + 1;
                     StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
 
                 }
@@ -225,9 +230,14 @@ public class Lift extends Subsystem {
                     & CylindersStackHolder.Contract())
                 {
                     // Locked into place.
+                    if (RailContents == RAIL_CONTENTS.TOTE)
+                    {
+                        // The tote is now in the stack.
+                        TotesInStack = TotesInStack + 1;
+                    }
+                    
                     RailContents = RAIL_CONTENTS.EMPTY;
                     StateAddFloorToteToStack = STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
-                    TotesInStack = TotesInStack + 1;
                 }
                 break;
         }
@@ -364,6 +374,12 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Extend()
                     & StackEjector.StopIn())
                 {
+                    if (RailContents == RAIL_CONTENTS.TOTE)
+                    {
+                        // The tote is now in the stack.
+                        TotesInStack = TotesInStack + 1;
+                    }
+                
                     RailContents = RAIL_CONTENTS.STACK;
                     StateCarry = STATE_CARRY.LOWER_CAR;
                 }
