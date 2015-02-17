@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 // Manages manipulators and supporting systems
 public class Lift extends Subsystem {
 
-    // TODO add container state variable
     private boolean ContainerInStack = false;
     private RAIL_CONTENTS RailContents = RAIL_CONTENTS.EMPTY;
     private int TotesInStack = 0;
@@ -28,6 +27,7 @@ public class Lift extends Subsystem {
     private PneumaticSubsystem CylindersContainerCar;
     private PneumaticSubsystem CylindersContainerFixed;
     private PneumaticSubsystem CylindersStackHolder;
+    
     private SensorDigital ToteIntakeSensor;
     private boolean AutonomousToteTriggered;
 
@@ -98,6 +98,11 @@ public class Lift extends Subsystem {
         this.AutonomousToteTriggered = b;
     }
 
+    @Override
+    protected void initDefaultCommand()
+    {
+    }
+
     /**
      * Routine to add a new tote to existing stack from chute
      * 
@@ -136,6 +141,15 @@ public class Lift extends Subsystem {
                         {
                             StateAddChuteToteToStack =
                                     STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                        }
+                        else
+                        {
+                            // Hold steady.
+                            LiftCar.GoToChute();
+                            CylindersRails.Extend();
+                            CylindersStackHolder.Contract();
+                            CylindersContainerCar.Contract();
+                            StackEjector.StopOut();
                         }
                         break;
                 }
@@ -327,6 +341,7 @@ public class Lift extends Subsystem {
                 if (LiftCar.GoToStack() & GetCylindersContainerFixed().Extend())
                 {
                     ContainerInStack = true;
+                    
                     StateAddContainerToStack =
                             STATE_ADD_CONTAINER_TO_STACK.RESET;
                 }
@@ -507,8 +522,12 @@ public class Lift extends Subsystem {
                 break;
 
             case LOWER_STACK:
+                if (!keepContainer)
+                {
+                    CylindersContainerFixed.Contract();
+                }
+                
                 if (LiftCar.GoToBottom()
-                    & (keepContainer || CylindersContainerFixed.Contract())
                     & CylindersStackHolder.Contract())
                 {
                     StateDropStack = STATE_DROP_STACK.RELEASE;
@@ -529,7 +548,8 @@ public class Lift extends Subsystem {
                 break;
 
             case BACK_UP:
-                // TODO
+                // TODO: implement
+                
                 // Note: relies on other modes to reset the state to INIT.
                 break;
         }
@@ -605,11 +625,6 @@ public class Lift extends Subsystem {
     public PneumaticSubsystem GetCylindersStackHolder()
     {
         return CylindersStackHolder;
-    }
-
-    @Override
-    protected void initDefaultCommand()
-    {
     }
 
     public int GetTotesInStack()
