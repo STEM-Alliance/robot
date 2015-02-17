@@ -330,4 +330,11 @@ public class ControllerXbox implements Controller {
     {
         xbox.setRumble(hand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble, value);
     }
+
+    @Override
+    public double getHaloDrive_Heading45()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }

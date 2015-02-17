@@ -336,4 +336,11 @@ public class ControllerJoysticks implements Controller {
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public double getHaloDrive_Heading45()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }

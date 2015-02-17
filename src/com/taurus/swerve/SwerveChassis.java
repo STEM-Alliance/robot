@@ -48,6 +48,8 @@ public class SwerveChassis extends Subsystem {
 
     private DriveScheme driveScheme;
     
+    private boolean CrawlMode = false;
+    
     /**
      * sets up individual wheels and their positions relative to robot center
      */
@@ -104,31 +106,57 @@ public class SwerveChassis extends Subsystem {
                     SwerveConstants.WheelOrientationAngle[i]));
         }
         
+        CrawlMode = controller.getLowSpeed();
+        
         // Use the Joystick inputs to update the drive system
         switch (driveScheme.get())
         {
             case DriveScheme.ANGLE_DRIVE:
+                setFieldRelative(controller.getFieldRelative());
+                
                 UpdateDrive(controller.getAngleDrive_Velocity(), 0,
                         controller.getAngleDrive_Heading());
                 break;
 
             case DriveScheme.HALO_DRIVE:
+                setFieldRelative(controller.getFieldRelative());
+                
                 UpdateHaloDrive(controller.getHaloDrive_Velocity(),
                         controller.getHaloDrive_Rotation());
                 break;
 
             default:
             case DriveScheme.COMBO_DRIVE:
-                UpdateDrive(controller.getHaloDrive_Velocity(),
-                        controller.getHaloDrive_Rotation(),
-                        controller.getDPad());
+                double dpad = controller.getDPad();
+                
+                if(dpad != -1)
+                {
+                    // use non field relative
+                    setFieldRelative(false);
+                    
+                    CrawlMode = true;
+                    
+                    SwerveVector drive = new SwerveVector();
+                    drive.setMagAngle(1, dpad);
+                    
+                    UpdateDrive(drive,
+                            controller.getHaloDrive_Rotation(),
+                            controller.getHaloDrive_Heading45());
+                }
+                else
+                {
+                    setFieldRelative(controller.getFieldRelative());
+                    
+                    UpdateDrive(controller.getHaloDrive_Velocity(),
+                            controller.getHaloDrive_Rotation(),
+                            controller.getHaloDrive_Heading45());
+                }
                 break;
         }
         
         // set various options for the chassis
 //        setGearHigh(controller.getHighGearEnable());
         setBrake(controller.getSwerveBrake());
-        setFieldRelative(controller.getFieldRelative());
         if (controller.getResetGyro())
         {
             ZeroGyro();
@@ -255,7 +283,7 @@ public class SwerveChassis extends Subsystem {
         // grab max velocity from the dash
         MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY", MaxAvailableVelocity);
 
-        if(Application.controller.getLowSpeed())
+        if(CrawlMode)
         {
             MaxAvailableVelocity = MaxAvailableVelocity * .4;
         }

@@ -122,6 +122,22 @@ public class ControllerXboxPanel implements Controller {
         return value;
     }
 
+    @Override
+    public double getHaloDrive_Heading45()
+    {
+        double val = -1;
+        
+        if(xbox.getBack())
+        {
+            val = 45;
+        }
+        else if(xbox.getStart())
+        {
+            val = -45;
+        }
+        return val;
+    }
+    
     /**
      * Get the heading/angle in degrees for Angle Drive
      * 
@@ -200,7 +216,7 @@ public class ControllerXboxPanel implements Controller {
      */
     public boolean getHighGearEnable()
     {
-        return xbox.getBumper(Hand.kRight);
+        return false;
     }
 
     /**
@@ -210,7 +226,7 @@ public class ControllerXboxPanel implements Controller {
      */
     public boolean getSwerveBrake()
     {
-        return xbox.getBumper(Hand.kLeft);
+        return false; 
     }
 
     public boolean getResetGyro()
@@ -281,13 +297,13 @@ public class ControllerXboxPanel implements Controller {
     @Override
     public boolean getStopAction()
     {
-        return xbox.getBumper(Hand.kRight);
+        return panel.getWhiteRButton();
     }
 
     @Override
     public boolean getFakeToteAdd()
     {
-        return xbox.getStart();
+        return xbox.getBumper(Hand.kLeft);
     }
 
     @Override
@@ -313,7 +329,7 @@ public class ControllerXboxPanel implements Controller {
     @Override
     public boolean getDropStack()
     {
-        return panel.getWhiteRButton();
+        return xbox.getBumper(Hand.kRight);
     }
 
     @Override

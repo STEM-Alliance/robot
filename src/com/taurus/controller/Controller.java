@@ -98,6 +98,8 @@ public interface Controller {
      */
     public SwerveVector getHaloDrive_Velocity();
 
+    public double getHaloDrive_Heading45();
+    
     /**
      * Get the heading/angle in degrees for Angle Drive
      * 
