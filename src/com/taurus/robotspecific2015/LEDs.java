@@ -1,6 +1,7 @@
 package com.taurus.robotspecific2015;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.SPI;
@@ -10,76 +11,98 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class LEDs implements Runnable {
 
-    SPI spi;
-    DigitalOutput latch;
-    volatile ArrayList<Color[]> colors;
-    volatile boolean Flash;
-    volatile double FlashRateS;
-    volatile double FlashTimer;
-    volatile int colorSet;
-    Thread thread;
+    private SPI spi;
+    private DigitalOutput latch;
+    private volatile  ConcurrentLinkedQueue<LEDEffect> effectQueue;
+    private Thread thread;
+    private boolean StopRequested = false;
     
     public static final int NumOfColors = 4;
+    public static final long TimeService = 100;  // milliseconds
     
     public LEDs()
     {
+        Color[] DefaultBlack = new Color[NumOfColors];
+        ArrayList<Color[]> DefaultColors = new ArrayList<Color[]>();        
+        LEDEffect DefaultEffect;
+        
+        // Hardware
         spi = new SPI(Port.kOnboardCS0);
         spi.setClockRate(3000000);
         spi.setMSBFirst();
         latch = new DigitalOutput(Constants.LED_LATCH);
 
-        colors = new ArrayList<Color[]>();
-        colors.add(new Color[NumOfColors]);
-        
-        Flash = false;
-        FlashTimer = 0;
+        // Effects/Colors
+        for (int index = 0; index < DefaultBlack.length; index++)
+        {
+            DefaultBlack[index] = Color.Black;
+        }
+        DefaultColors.add(DefaultBlack);
+        DefaultEffect = new LEDEffect(DefaultColors, LEDEffect.EFFECT.SOLID, Double.MAX_VALUE, Double.MAX_VALUE);
+        effectQueue = new ConcurrentLinkedQueue<LEDEffect>();        
+        effectQueue.add(DefaultEffect);
         
         thread = new Thread(this);
     }
     
+    // Start service thread for LEDs
     public void start()
     {
         thread.start();
     }
-    
 
-    public synchronized void setFrame(LEDEffect.EFFECT effect, Color[] start, Color[] end)
+    public synchronized void AddEffect(ArrayList<LEDEffect> effects, boolean clearEffects)
     {
-        colors.clear();
-        colors.add(newColors);
-        Flash = false;
-    }
-
-    public synchronized void setAll(Color color)
-    {
-        Color[] newColor = new Color[NumOfColors];
-        colors.clear();
-        
-        for (int i = 0; i < NumOfColors; i++)
+        if (clearEffects)
         {
-            newColor[i] = color;
+            effectQueue.clear();
         }
-        colors.add(newColor);
-        Flash = false;
+        for (int index = 0; index < effects.size(); index++)
+        {
+            effectQueue.add(effects.get(index));
+        }
+        
+        this.notify();  // Wake the LED thread with an interrupt
     }
-
-    public void setAll(byte r, byte g, byte b)
+    
+    @SuppressWarnings("null")
+    public void run()
     {
-        this.setAll(new Color(r, g, b));
-    }
+        LEDEffect currentEffect = null;
+        
+        while (!StopRequested)
+        {
+            long waitTime = Long.MAX_VALUE;
 
-    public synchronized void set(int i, Color color)
+            // Is there an effect to run?                
+            if (currentEffect != null || !currentEffect.isDone())
+            {
+                updateColors(currentEffect.getColors());
+                waitTime = TimeService;
+            }
+            else if (effectQueue.peek() != null)
+            {
+                currentEffect = effectQueue.poll();
+            }
+            
+            // Wait for timeout or interrupt from another thread adding an effect
+            try
+            {
+                this.wait(waitTime);  // Wait (until interrupt) for another thread to add an effect
+            }
+            catch (InterruptedException e)
+            {
+                // We timed out or were interrupted while waiting
+            }
+        }
+    }
+    
+    public synchronized void stop()
     {
-        colors.get(0)[i] = color;
-        Flash = false;
+        StopRequested = true;
     }
-
-    public void set(int i, byte r, byte g, byte b)
-    {
-        this.set(i, new Color(r, g, b));
-    }
-
-    public static String byteArrayToHex(byte[] a)
+    
+    private static String byteArrayToHex(byte[] a)
     {
         StringBuilder sb = new StringBuilder(a.length * 2);
         for (byte b : a)
@@ -87,51 +110,15 @@ public class LEDs implements Runnable {
         return sb.toString();
     }
     
-    public synchronized void FlashAll(ArrayList<Color[]> NewColors, double FlashRateS)
-    {
-        colors.clear();
-        colors = NewColors;
-        
-        Flash = true;
-        this.FlashRateS = FlashRateS;
-    }
-    
-    public void run()
-    {
-        while (true)
-        {
-            updateColors();
-        }
-    }
-
-    public synchronized void updateColors()
+    private synchronized void updateColors(Color[] colors)
     {
         byte[] out = new byte[(int) (NumOfColors * 4.5)];
-
-        if(!Flash)
+        
+        for (int i = 0; i < NumOfColors; i++)
         {
-            for (int i = 0; i < NumOfColors; i++)
-            {
-                colors.get(0)[i].Get(i % 2 == 0 ? false : true, out, (int) (i * 4.5));
-            }
+            colors[i].Get(i % 2 == 0 ? false : true, out, (int) (i * 4.5));
         }
-        else
-        {
-            
-            if(Timer.getFPGATimestamp() - FlashTimer < FlashRateS)
-            {
-                for (int i = 0; i < NumOfColors; i++)
-                {
-                    colors.get(colorSet)[i].Get(i % 2 == 0 ? false : true, out, (int) (i * 4.5));
-                }
-            }
-            else
-            {
-                FlashTimer = Timer.getFPGATimestamp();
-                colorSet = (colorSet + 1) % colors.size();
-            }
-        }
-
+        
         String text = byteArrayToHex(out);
         SmartDashboard.putString("LEDs", text);
 
@@ -144,5 +131,4 @@ public class LEDs implements Runnable {
         Timer.delay(.001);
         latch.set(false);
     }
-
 }
