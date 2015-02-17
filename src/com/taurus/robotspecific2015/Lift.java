@@ -438,6 +438,16 @@ public class Lift extends Subsystem {
      */
     public boolean DropStack()
     {
+        return DropStack(false);
+    }
+    
+    /**
+     * Place the stack on the ground and release the rails
+     * 
+     * @return true if finished
+     */
+    public boolean DropStack(boolean keepContainer)
+    {
         switch (StateDropStack)
         {
             case INIT:
@@ -449,7 +459,7 @@ public class Lift extends Subsystem {
 
             case LOWER_STACK:
                 if (LiftCar.GoToBottom()
-                    & CylindersContainerFixed.Contract()
+                    & (keepContainer || CylindersContainerFixed.Contract())
                     & CylindersStackHolder.Contract())
                 {
                     StateDropStack = STATE_DROP_STACK.RELEASE;
