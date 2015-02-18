@@ -162,6 +162,10 @@ public class Application extends com.taurus.Application {
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
             }
+            else if (controller.getCarryStack())
+            {
+                CurrentLiftAction = STATE_LIFT_ACTION.CARRY_STACK;
+            }
             else if (controller.getDropStack())
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
@@ -192,6 +196,13 @@ public class Application extends com.taurus.Application {
 
                 case EJECT_STACK:
                     if (lift.EjectStack())
+                    {
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                    }
+                    break;
+
+                case CARRY_STACK:
+                    if (lift.LowerStackToCarryHeight())
                     {
                         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }

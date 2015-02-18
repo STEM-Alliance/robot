@@ -30,11 +30,11 @@ public class SwerveChassis extends Subsystem {
     private double LastHeading;
 
     private PIDController ChassisAngleController;
-    private double ChassisP = 1.3 / 180; // Full speed rotation at error of 90
+    private double ChassisP = 3.0 / 180; // /1.3 / 180; // Full speed rotation at error of 90
                                          // degrees.
     private double ChassisI = 0;
     private double ChassisD = 0;
-    
+   
     private SwerveIMU Gyro;
     SerialPort serial_port;
     

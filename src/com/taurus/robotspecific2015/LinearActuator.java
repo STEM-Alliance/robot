@@ -86,6 +86,8 @@ public abstract class LinearActuator {
         double speed = ActuatorPIController.update(Positions[i], GetDistance(),
                 time);
         
+        MaxSpeed = Utilities.clampToRange(MaxSpeed, -1, 1);
+        
         speed = Utilities.clampToRange(speed, -MaxSpeed, MaxSpeed);
         
         Motors.Set(speed);

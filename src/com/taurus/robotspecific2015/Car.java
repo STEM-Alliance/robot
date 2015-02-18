@@ -11,7 +11,8 @@ public class Car {
     private enum ZERO_STATE {
         MOVING,
         WAITING,
-        ZEROED
+        ZEROED_TOP,
+        ZEROED_BOTTOM,
     }
 
     private LinearActuator Actuator;
@@ -21,6 +22,8 @@ public class Car {
     private ZERO_STATE ZeroState = ZERO_STATE.MOVING;
     private double ZeroWaitStartTime = 0;
     private double ZeroSpeedTimer = 0;
+    private double ZeroTimeoutStart = 0;
+    private double ZeroTimeout = 3;
 
     public Car()
     {
@@ -67,6 +70,7 @@ public class Car {
      */
     public boolean SetPosition(LIFT_POSITIONS_E position, double MaxSpeed)
     {
+        ZeroTimeoutStart = 0;
         Actuator.SetPosition(position.ordinal(), MaxSpeed);
         return Actuator.GetPosition() == position.ordinal();
     }
@@ -80,6 +84,7 @@ public class Car {
      */
     public boolean SetPosition(LIFT_POSITIONS_E position)
     {
+        ZeroTimeoutStart = 0;
         Actuator.SetPosition(position.ordinal());
         return Actuator.GetPosition() == position.ordinal();
     }
@@ -89,17 +94,15 @@ public class Car {
      * 
      * @return
      */
-    public boolean GoToStack()
+    public boolean GoToStack(int ToteCount)
     {
-        boolean atTop = TopSensor.IsOn() || SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP);
-        
-        if (!atTop)
-        {
-            ZeroState = ZERO_STATE.MOVING;            
-        }
+        double speedAdjust = 1.0 - Constants.LIFT_CAR_SPEED_UP;
+        speedAdjust = speedAdjust * (ToteCount / 6.0);
+        boolean atTop = TopSensor.IsOn() || SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
         
         switch (ZeroState)
         {
+            default:
             case MOVING:
                 if (atTop)
                 {
@@ -110,17 +113,25 @@ public class Car {
                 break;
                 
             case WAITING:
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .25)
+                Actuator.SetSpeedRaw(0);
+                
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .5)
                 {
-                    ZeroState = ZERO_STATE.ZEROED;
+                    ZeroState = ZERO_STATE.ZEROED_TOP;
                 }
                 break;
                 
-            case ZEROED:
+            case ZEROED_TOP:
+                Actuator.SetSpeedRaw(0);                
+                
+                if (!atTop)
+                {
+                    ZeroState = ZERO_STATE.MOVING;            
+                }
                 break;
         }
         
-        return ZeroState == ZERO_STATE.ZEROED;
+        return ZeroState == ZERO_STATE.ZEROED_TOP;
     }
 
     /**
@@ -206,6 +217,15 @@ public class Car {
     {   
         boolean atBottom = ZeroSensor.IsOn();
         
+        if (ZeroTimeoutStart == 0)
+        {
+            ZeroTimeoutStart = Timer.getFPGATimestamp();
+        }       
+        else if (Timer.getFPGATimestamp() > ZeroTimeoutStart + ZeroTimeout )
+        {
+            atBottom = true;
+        }
+        
         if (!atBottom)
         {
             ZeroState = ZERO_STATE.MOVING;            
@@ -213,6 +233,7 @@ public class Car {
         
         switch (ZeroState)
         {
+            default:
             case MOVING:
                 GoToZero();
                 
@@ -229,16 +250,17 @@ public class Car {
                 
                 if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .25)
                 {
-                    ZeroState = ZERO_STATE.ZEROED;
+                    ZeroState = ZERO_STATE.ZEROED_BOTTOM;
                 }
                 break;
                 
-            case ZEROED:
+            case ZEROED_BOTTOM:
                 Actuator.SetSpeedRaw(0);
+                ZeroTimeoutStart = 0;
                 break;
         }
         
-        return ZeroState == ZERO_STATE.ZEROED;
+        return ZeroState == ZERO_STATE.ZEROED_BOTTOM;
     }
 
     /**
