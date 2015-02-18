@@ -28,6 +28,10 @@ public class LEDEffect {
     
     /**
      * Create a new LED Effect that will tell you what color to output over the effect duration
+     * @param settings colors (related to mode)
+     * @param mode which effect to general over time
+     * @param duration time until the effect is done (seconds)
+     * @param period time to repeat the effect, if period < duration (seconds)
      */
     public LEDEffect(ArrayList<Color[]> settings, EFFECT mode, double duration, double period)
     {
@@ -77,10 +81,10 @@ public class LEDEffect {
                     ColorsCurrent[index] = ColorsSettings.get(0)[Math.floorMod(index + spinOffset, ColorsCurrent.length)];
                 }
                 break;
-            case STEP:  // TODO
+            case STEP:
                 int stepOffset = (int) (stage * ColorsCurrent.length);  // Which offset into list of color settings
                 
-                ColorsCurrent = ColorsSettings.get(Math.floorMod(stepOffset, ColorsSettings.size())]);
+                ColorsCurrent = ColorsSettings.get(Math.floorMod(stepOffset, ColorsSettings.size()));
                 break;
             case SOLID:
             default:

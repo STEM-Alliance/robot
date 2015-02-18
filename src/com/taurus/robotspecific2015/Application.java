@@ -61,21 +61,20 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putData("Test", testChooser);
         
         leds = new LEDs();
-        leds.setAll(new Color(0,0,0));
         leds.start();
     }
 
     public void TeleopInitRobotSpecific()
     {
-        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-        lift.init();
-        
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
+        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+        lift.init();        
 
+        // Set LEDs
         colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
         colors.add(new Color[]{Color.Random(), Color.Black, Color.Cyan, Color.Green});
         colors.add(new Color[]{Color.Random(), Color.Green, Color.White, Color.Yellow});
-        leds.FlashAll(colors, 1);
+        leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.FLASH, Double.MAX_VALUE, 2), true);
     }
 
     
@@ -240,10 +239,15 @@ public class Application extends com.taurus.Application {
 
     public void AutonomousInitRobotSpecific()
     {
+        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+        
         drive.ZeroGyro();
         int automode = ((Integer) autoChooser.getSelected()).intValue();
         autonomous = new Autonomous(drive, lift, vision, automode);
-        leds.setAll(new Color(0,0xfff,0));
+        
+        // Set LEDs
+        colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
+        leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, Double.MAX_VALUE, 2), true);
     }
 
     public void AutonomousPeriodicRobotSpecific()
