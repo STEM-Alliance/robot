@@ -1,5 +1,6 @@
 package com.taurus.robotspecific2015;
 
+import com.taurus.Utilities;
 import com.taurus.robotspecific2015.Constants.LIFT_POSITIONS_E;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -85,7 +86,7 @@ public class Car {
     {
         if (waiting)
         {
-            if (Timer.getFPGATimestamp() - TopTime > .5)
+            if (Timer.getFPGATimestamp() - TopTime > .5) // TODO
             {
                 waiting = false;
                 return true;
@@ -101,7 +102,7 @@ public class Car {
         }
         else
         {
-            SetPosition(LIFT_POSITIONS_E.STACK, .7);
+            SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP);
             return false;
         }
 
@@ -138,8 +139,8 @@ public class Car {
         }
         else
         {
-            return SetPosition(LIFT_POSITIONS_E.DESTACK, .7);
-
+            return SetPosition(LIFT_POSITIONS_E.DESTACK,
+                    Constants.LIFT_CAR_SPEED_UP);
         }
 
     }
@@ -157,8 +158,8 @@ public class Car {
         }
         else
         {
-            return SetPosition(LIFT_POSITIONS_E.CHUTE, .7);
-
+            return SetPosition(LIFT_POSITIONS_E.CHUTE,
+                    Constants.LIFT_CAR_SPEED_DOWN);
         }
     }
 
@@ -176,7 +177,6 @@ public class Car {
         else
         {
             return GoToBottom();
-
         }
 
     }
@@ -194,7 +194,8 @@ public class Car {
         }
         else
         {
-            return SetPosition(LIFT_POSITIONS_E.CONTAINER_STACK, .7);
+            return SetPosition(LIFT_POSITIONS_E.CONTAINER_STACK,
+                    Constants.LIFT_CAR_SPEED_DOWN);
         }
     }
 
@@ -221,7 +222,7 @@ public class Car {
 
     public void GoToTop()
     {
-        Actuator.SetSpeedRaw(Constants.MOTOR_DIRECTION_FORWARD);
+        Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_UP);
     }
 
     private double ZeroSpeedTimer = 0;
@@ -240,21 +241,23 @@ public class Car {
             {
                 ZeroSpeedTimer = Timer.getFPGATimestamp();
             }
-            if (Timer.getFPGATimestamp() - ZeroSpeedTimer < .3)
+            if (Timer.getFPGATimestamp() - ZeroSpeedTimer < Constants.LIFT_CAR_TIME_DOWN_INITIAL)
             {
-                Actuator.SetSpeedRaw(-.3);
+                Actuator.SetSpeedRaw(-Constants.LIFT_CAR_SPEED_DOWN_INITIAL);
             }
-            else if (Timer.getFPGATimestamp() - ZeroSpeedTimer < .5)
+            else if (Timer.getFPGATimestamp() - ZeroSpeedTimer
+                    - Constants.LIFT_CAR_TIME_DOWN_INITIAL < Constants.LIFT_CAR_TIME_DOWN_INCREASING)
             {
-                Actuator.SetSpeedRaw(-.4);
-            }
-            else if (Timer.getFPGATimestamp() - ZeroSpeedTimer < .7)
-            {
-                Actuator.SetSpeedRaw(-.5);
+                Actuator.SetSpeedRaw(-Utilities.scaleToRange(
+                        Timer.getFPGATimestamp(), 
+                        ZeroSpeedTimer + Constants.LIFT_CAR_TIME_DOWN_INITIAL,
+                        ZeroSpeedTimer + Constants.LIFT_CAR_TIME_DOWN_INITIAL + Constants.LIFT_CAR_TIME_DOWN_INCREASING,
+                        Constants.LIFT_CAR_SPEED_DOWN_INITIAL,
+                        Constants.LIFT_CAR_SPEED_DOWN));
             }
             else
             {
-                Actuator.SetSpeedRaw(-.6);
+                Actuator.SetSpeedRaw(-Constants.LIFT_CAR_SPEED_DOWN);
             }
         }
     }
@@ -292,7 +295,7 @@ public class Car {
         }
         else
         {
-            return SetPosition(LIFT_POSITIONS_E.EJECT, .5);
+            return SetPosition(LIFT_POSITIONS_E.EJECT, Constants.LIFT_CAR_SPEED_DOWN_INITIAL);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.taurus.controller;
 
+import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -9,7 +10,7 @@ public class ControllerXboxPanel implements Controller {
     private Xbox xbox;
     private Panel panel;
 
-    public static final double DEADBAND = 0.2;
+    public static final double DEADBAND = 0.25;
 
     private boolean fieldRelative;
     private boolean fieldRelativeLast;
@@ -121,6 +122,22 @@ public class ControllerXboxPanel implements Controller {
         return value;
     }
 
+    @Override
+    public double getHaloDrive_Heading45()
+    {
+        double val = -1;
+        
+        if(xbox.getBack())
+        {
+            val = 45;
+        }
+        else if(xbox.getStart())
+        {
+            val = -45;
+        }
+        return val;
+    }
+    
     /**
      * Get the heading/angle in degrees for Angle Drive
      * 
@@ -199,7 +216,7 @@ public class ControllerXboxPanel implements Controller {
      */
     public boolean getHighGearEnable()
     {
-        return xbox.getBumper(Hand.kRight);
+        return false;
     }
 
     /**
@@ -209,7 +226,7 @@ public class ControllerXboxPanel implements Controller {
      */
     public boolean getSwerveBrake()
     {
-        return xbox.getBumper(Hand.kLeft);
+        return false; 
     }
 
     public boolean getResetGyro()
@@ -280,13 +297,13 @@ public class ControllerXboxPanel implements Controller {
     @Override
     public boolean getStopAction()
     {
-        return xbox.getBumper(Hand.kRight);
+        return panel.getWhiteRButton();
     }
 
     @Override
     public boolean getFakeToteAdd()
     {
-        return xbox.getStart();
+        return xbox.getBumper(Hand.kLeft);
     }
 
     @Override
@@ -312,6 +329,24 @@ public class ControllerXboxPanel implements Controller {
     @Override
     public boolean getDropStack()
     {
-        return panel.getWhiteRButton();
+        return xbox.getBumper(Hand.kRight);
+    }
+
+    @Override
+    public boolean getHighSpeed()
+    {
+        return panel.getSwitchR();
+    }
+
+    @Override
+    public boolean getLowSpeed()
+    {
+        return xbox.getTrigger(Hand.kRight);
+    }
+
+    @Override
+    public void setRumble(Hand hand, float value)
+    {
+        xbox.setRumble(hand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble, value);
     }
 }

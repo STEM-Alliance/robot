@@ -3,9 +3,6 @@ package com.taurus.robotspecific2015;
 import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-
 public class LinearActuatorPot extends LinearActuator {
 
     private MagnetoPot Pot;

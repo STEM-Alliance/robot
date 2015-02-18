@@ -1,5 +1,6 @@
 package com.taurus.controller;
 
+import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -308,5 +309,32 @@ public class ControllerXbox implements Controller {
     {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public boolean getHighSpeed()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getLowSpeed()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setRumble(Hand hand, float value)
+    {
+        xbox.setRumble(hand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble, value);
+    }
+
+    @Override
+    public double getHaloDrive_Heading45()
+    {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

@@ -3,7 +3,6 @@ package com.taurus;
 import com.taurus.robotspecific2015.Constants;
 import com.taurus.robotspecific2015.LinearActuator;
 import com.taurus.robotspecific2015.LinearActuatorPot;
-import com.taurus.robotspecific2015.PneumaticSubsystem;
 import com.taurus.robotspecific2015.SensorDigital;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

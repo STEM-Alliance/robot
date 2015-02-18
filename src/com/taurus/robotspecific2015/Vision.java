@@ -19,10 +19,10 @@ public class Vision implements Runnable {
     private SendableChooser imageChooser = new SendableChooser();
 
     private static final String ATTR_VIDEO_MODE = "AcquisitionAttributes::VideoMode";
-    private static final String ATTR_WB_MODE = "CameraAttributes::WhiteBalance::Mode";
-    private static final String ATTR_WB_VALUE = "CameraAttributes::WhiteBalance::Value";
-    private static final String ATTR_EX_MODE = "CameraAttributes::Exposure::Mode";
-    private static final String ATTR_EX_VALUE = "CameraAttributes::Exposure::Value";
+//    private static final String ATTR_WB_MODE = "CameraAttributes::WhiteBalance::Mode";
+//    private static final String ATTR_WB_VALUE = "CameraAttributes::WhiteBalance::Value";
+//    private static final String ATTR_EX_MODE = "CameraAttributes::Exposure::Mode";
+//    private static final String ATTR_EX_VALUE = "CameraAttributes::Exposure::Value";
     private static final String ATTR_BR_MODE = "CameraAttributes::Brightness::Mode";
     private static final String ATTR_BR_VALUE = "CameraAttributes::Brightness::Value";
 
