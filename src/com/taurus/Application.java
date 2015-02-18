@@ -1,11 +1,9 @@
 package com.taurus;
 
-
 import com.taurus.controller.Controller;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.swerve.SwerveChassis;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
@@ -85,14 +83,14 @@ public abstract class Application {
             //SmartDashboard.putNumber("Dash Task Length", Timer.getFPGATimestamp() - TimeLastDash);
         }
 
-//        if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
-//        {
-//            TimeLastSwerve = Timer.getFPGATimestamp();
-//            
-//            drive.run(controller);
-//            
-//            SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
-//        }
+        if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
+        {
+            TimeLastSwerve = Timer.getFPGATimestamp();
+            
+            drive.run(controller);
+            
+            SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
+        }
 
         TeleopPeriodicRobotSpecific();
     }

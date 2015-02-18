@@ -98,6 +98,8 @@ public interface Controller {
      */
     public SwerveVector getHaloDrive_Velocity();
 
+    public double getHaloDrive_Heading45();
+    
     /**
      * Get the heading/angle in degrees for Angle Drive
      * 
@@ -163,6 +165,9 @@ public interface Controller {
      */
     public double getDPad();
 
+    public boolean getHighSpeed();
+    public boolean getLowSpeed();
+    
     /**
      * 
      * @return
@@ -195,4 +200,6 @@ public interface Controller {
     public boolean getStopAction();
 
     public boolean getDropStack();
+    
+    public void setRumble(Hand hand, float value);
 }

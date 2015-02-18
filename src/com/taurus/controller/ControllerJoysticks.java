@@ -315,4 +315,32 @@ public class ControllerJoysticks implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public boolean getHighSpeed()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getLowSpeed()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setRumble(Hand hand, float value)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public double getHaloDrive_Heading45()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }

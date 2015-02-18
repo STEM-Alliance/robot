@@ -28,36 +28,42 @@ public class Application extends com.taurus.Application {
 
         lift = new Lift();
         vision = new Vision();
-        distance_sensor_left = new AnalogInput(
-                Constants.DISTANCE_SENSOR_LEFT_PIN);
-        distance_sensor_right = new AnalogInput(
-                Constants.DISTANCE_SENSOR_RIGHT_PIN);
+        distance_sensor_left =
+                new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
+        distance_sensor_right =
+                new AnalogInput(Constants.DISTANCE_SENSOR_RIGHT_PIN);
 
         vision.Start();
 
         autoChooser = new SendableChooser();
-        autoChooser.addDefault("Do nothing", Integer.valueOf(0));
-        autoChooser.addObject("Push tote", Integer.valueOf(1));
-        autoChooser.addObject("Grab tote", Integer.valueOf(2));
-        autoChooser.addObject("Grab container", Integer.valueOf(3));
-        autoChooser.addObject("Grab 2 totes moving left", Integer.valueOf(4));
-        // autoChooser.addObject("Grab 2 totes moving right",
-        // Integer.valueOf(5));
-        autoChooser.addObject("Grab container, 2 totes middle",
-                Integer.valueOf(6));
-        // autoChooser.addObject("Grab container 2 totes side",
-        // Integer.valueOf(7));
-        autoChooser.addObject("Container + tote", Integer.valueOf(8));
-        autoChooser.addObject("3 totes", Integer.valueOf(9));
-        autoChooser.addObject("Container + 3 totes", Integer.valueOf(10));
+        autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
+        autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
+        autoChooser.addObject("1 tote", AUTO_MODE.GRAB_1_TOTE);
+        autoChooser.addObject("2 totes", AUTO_MODE.GRAB_2_TOTES);
+        autoChooser.addObject("2 totes (no container)",
+                AUTO_MODE.GRAB_2_TOTES_NO_CONTAINER);
+        autoChooser.addObject("3 totes", AUTO_MODE.GRAB_3_TOTES);
+        autoChooser.addObject("3 totes (no left container)",
+                AUTO_MODE.GRAB_3_TOTES_NO_LEFT_CONTAINER);
+        autoChooser.addObject("3 totes (no right container)",
+                AUTO_MODE.GRAB_3_TOTES_NO_RIGHT_CONTAINER);
+        autoChooser.addObject("3 totes (no containers)",
+                AUTO_MODE.GRAB_3_TOTES_NO_CONTAINERS);
+        autoChooser.addObject("Container", AUTO_MODE.GRAB_CONTAINER);
+        autoChooser.addObject("Container + tote",
+                AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE);
+        autoChooser.addObject("Container + 2 totes",
+                AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES);
+        autoChooser.addObject("Container + 3 totes",
+                AUTO_MODE.GRAB_CONTAINER_AND_3_TOTES);
+        autoChooser.addObject("Container + 3 totes (no left container)",
+                AUTO_MODE.GRAB_CONTAINER_AND_3_TOTES_NO_LEFT_CONTAINER);
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
-        
+
         testChooser = new SendableChooser();
-        testChooser.addDefault("Pneumatics/Motors",
-                Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
-        testChooser.addObject("Actuator",
-                Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
+        testChooser.addDefault("Pneumatics/Motors", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
+        testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
         
         leds = new LEDs();
@@ -80,28 +86,28 @@ public class Application extends com.taurus.Application {
     
     private void UpdateDashboard()
     {
-        SmartDashboard.putBoolean("ToteIntakeSensor", lift
-                .GetToteIntakeSensor().IsOn());
+        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
-        SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor()
-                .IsOn());
-        SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator()
-                .GetRaw());
-        SmartDashboard.putNumber("Actuator Position", lift.GetCar()
-                .GetActuator().GetPositionRaw());
+        SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
+        SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
+        SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
         SmartDashboard
-                .putNumber("Distance Left", 12.402 * Math.pow(
-                        distance_sensor_left.getVoltage(), -1.074) / 2.54);
+                .putNumber("Distance Left", 
+                        12.402 
+                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
+                        / 2.54);        
         SmartDashboard
-                .putNumber("Distance Right", 12.402 * Math.pow(
-                        distance_sensor_right.getVoltage(), -1.074) / 2.54);
+                .putNumber("Distance Right", 
+                        12.402 
+                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
+                        / 2.54);
 
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
         SmartDashboard.putBoolean("ToteOnRails", lift.GetToteOnRails());
         SmartDashboard.putBoolean("ContainerInStack",
                 lift.GetContainerInStack());
-        SmartDashboard.putBoolean("CylindersRails.IsExtended()", lift
-                .GetCylindersRails().IsExtended());
+        SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
+        SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
 
         SmartDashboard.putString("CurrentLiftAction_",
                 CurrentLiftAction.toString());
@@ -222,7 +228,7 @@ public class Application extends com.taurus.Application {
                         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
                     break;
-                    
+
                 case NO_ACTION:
                 default:
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
@@ -242,7 +248,7 @@ public class Application extends com.taurus.Application {
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
         
         drive.ZeroGyro();
-        int automode = ((Integer) autoChooser.getSelected()).intValue();
+        AUTO_MODE automode = (AUTO_MODE) autoChooser.getSelected();
         autonomous = new Autonomous(drive, lift, vision, automode);
         
         // Set LEDs

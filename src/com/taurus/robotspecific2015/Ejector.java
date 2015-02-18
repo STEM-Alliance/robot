@@ -7,8 +7,6 @@ public class Ejector {
 
     private PneumaticSubsystem CylindersStop;
     private PneumaticSubsystem CylindersPusher;
-    private Sensor OutSensor;
-    private Sensor InSensor;
 
     public Ejector()
     {
@@ -18,9 +16,6 @@ public class Ejector {
         CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER,
                 Constants.PCU_PUSHER, Constants.TIME_EXTEND_PUSHER,
                 Constants.TIME_CONTRACT_PUSHER, Constants.CYLINDER_ACTION.CONTRACT);
-        
-        OutSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_OUT);
-        InSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_EJECTOR_IN);
 
     }
 
