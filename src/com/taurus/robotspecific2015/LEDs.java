@@ -51,16 +51,13 @@ public class LEDs implements Runnable {
         thread.start();
     }
 
-    public synchronized void AddEffect(ArrayList<LEDEffect> effects, boolean clearEffects)
+    public void AddEffect(LEDEffect effect, boolean clearEffects)
     {
         if (clearEffects)
         {
             effectQueue.clear();
         }
-        for (int index = 0; index < effects.size(); index++)
-        {
-            effectQueue.add(effects.get(index));
-        }
+        effectQueue.add(effect);
         
         this.notify();  // Wake the LED thread with an interrupt
     }
@@ -97,7 +94,7 @@ public class LEDs implements Runnable {
         }
     }
     
-    public synchronized void stop()
+    public void stop()
     {
         StopRequested = true;
     }
@@ -110,7 +107,7 @@ public class LEDs implements Runnable {
         return sb.toString();
     }
     
-    private synchronized void updateColors(Color[] colors)
+    private void updateColors(Color[] colors)
     {
         byte[] out = new byte[(int) (NumOfColors * 4.5)];
         
