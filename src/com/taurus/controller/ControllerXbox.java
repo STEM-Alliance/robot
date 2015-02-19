@@ -13,7 +13,7 @@ public class ControllerXbox implements Controller {
 
     private boolean fieldRelative;
     private boolean fieldRelativeLast;
-
+    
     /**
      * Create a new Xbox Controller object
      */
@@ -342,5 +342,10 @@ public class ControllerXbox implements Controller {
     {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public void setRumble(Hand hand, float value, double length)
+    {
     }
 }

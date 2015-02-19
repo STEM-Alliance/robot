@@ -2,15 +2,16 @@ package com.taurus.robotspecific2015;
 
 public abstract class Constants {
     // Pneumatics
-    private static final int MODULE_ID_PCU = 9;
-    private static final int MODULE_ID_PCU_2 = 10;
+    private static final int MODULE_ID_PCM = 9;
+    private static final int MODULE_ID_PCM_2 = 10;
+    public static final int COMPRESSOR_PCM = MODULE_ID_PCM;
 
-    public static final int PCU_RAIL = MODULE_ID_PCU;
-    public static final int PCU_CONTAINER_CAR = MODULE_ID_PCU;
-    public static final int PCU_CONTAINER_FIXED = MODULE_ID_PCU;
-    public static final int PCU_STOP = MODULE_ID_PCU;
-    public static final int PCU_STACK_HOLDER = MODULE_ID_PCU_2;
-    public static final int PCU_PUSHER = MODULE_ID_PCU_2;
+    public static final int PCM_RAIL = MODULE_ID_PCM;
+    public static final int PCM_CONTAINER_CAR = MODULE_ID_PCM;
+    public static final int PCM_CONTAINER_FIXED = MODULE_ID_PCM;
+    public static final int PCM_STOP = MODULE_ID_PCM;
+    public static final int PCM_STACK_HOLDER = MODULE_ID_PCM_2;
+    public static final int PCM_PUSHER = MODULE_ID_PCM_2;
 
     public static final int[] CHANNEL_RAIL = { 3, 2 };
     public static final int[] CHANNEL_CONTAINER_CAR = { 5, 4 };
@@ -39,9 +40,10 @@ public abstract class Constants {
     public static final int MOTOR_DIRECTION_BACKWARD = -1;
 
     // Sensors
-    public static final int CHANNEL_DIGITAL_CAR_TOP = 5;
-    public static final int CHANNEL_DIGITAL_CAR_ZERO = 6;
-    public static final int CHANNEL_DIGITAL_TOTE_INTAKE = 7;
+    public static final int CHANNEL_DIGITAL_CAR_TOP_RIGHT = 4;
+    public static final int CHANNEL_DIGITAL_CAR_TOP_LEFT = 5;
+    public static final int CHANNEL_DIGITAL_CAR_ZERO_LEFT = 6;
+    public static final int CHANNEL_DIGITAL_CAR_ZERO_RIGHT = 7;
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
@@ -113,7 +115,8 @@ public abstract class Constants {
         ADD_CONTAINER,
         CARRY_STACK,
         EJECT_STACK,
-        DROP_STACK
+        DROP_STACK,
+        ZERO_LIFT
     }
 
     // Lift

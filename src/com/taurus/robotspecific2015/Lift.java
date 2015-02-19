@@ -2,6 +2,7 @@ package com.taurus.robotspecific2015;
 
 import com.taurus.robotspecific2015.Constants.*;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 // Manages manipulators and supporting systems
@@ -30,6 +31,8 @@ public class Lift extends Subsystem {
 
     private SensorDigital ToteIntakeSensor;
     private boolean AutonomousToteTriggered;
+    
+    private double StopperWaitTime = 0;
 
     /**
      * Initialize lift and all objects owned by the lift
@@ -40,29 +43,29 @@ public class Lift extends Subsystem {
         StackEjector = new Ejector();
         CylindersRails =
                 new PneumaticSubsystem(Constants.CHANNEL_RAIL,
-                        Constants.PCU_RAIL, Constants.TIME_EXTEND_RAILS,
+                        Constants.PCM_RAIL, Constants.TIME_EXTEND_RAILS,
                         Constants.TIME_CONTRACT_RAILS,
                         Constants.CYLINDER_ACTION.EXTEND);
         CylindersContainerCar =
                 new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_CAR,
-                        Constants.PCU_CONTAINER_CAR,
+                        Constants.PCM_CONTAINER_CAR,
                         Constants.TIME_EXTEND_CONTAINER_CAR,
                         Constants.TIME_CONTRACT_CONTAINER_CAR,
                         Constants.CYLINDER_ACTION.CONTRACT);
         CylindersContainerFixed =
                 new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_FIXED,
-                        Constants.PCU_CONTAINER_FIXED,
+                        Constants.PCM_CONTAINER_FIXED,
                         Constants.TIME_EXTEND_CONTAINER_FIXED,
                         Constants.TIME_CONTRACT_CONTAINER_FIXED,
                         Constants.CYLINDER_ACTION.CONTRACT);
         CylindersStackHolder =
                 new PneumaticSubsystem(Constants.CHANNEL_STACK_HOLDER,
-                        Constants.PCU_STACK_HOLDER,
+                        Constants.PCM_STACK_HOLDER,
                         Constants.TIME_EXTEND_STACK_HOLDER,
                         Constants.TIME_CONTRACT_STACK_HOLDER,
                         Constants.CYLINDER_ACTION.CONTRACT);
-        ToteIntakeSensor =
-                new SensorDigital(Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
+//        ToteIntakeSensor =
+//                new SensorDigital(Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
 
         init();
     }
@@ -133,6 +136,8 @@ public class Lift extends Subsystem {
                             {
                                 StateAddChuteToteToStack =
                                         STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                                
+                                StopperWaitTime = Timer.getFPGATimestamp();
                             }
                         }
                         break;
@@ -143,6 +148,8 @@ public class Lift extends Subsystem {
                         {
                             StateAddChuteToteToStack =
                                     STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                            
+                            StopperWaitTime = Timer.getFPGATimestamp();
                         }
                         else
                         {
@@ -166,7 +173,6 @@ public class Lift extends Subsystem {
                 }
 
                 if (LiftCar.GoToStack(TotesInStack + 1)
-                    & StackEjector.StopIn()
                     & CylindersRails.Extend()
                     & CylindersStackHolder.Contract())
                 {
@@ -181,6 +187,11 @@ public class Lift extends Subsystem {
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
 
+                }
+                // wait 2 seconds before putting in the stopper
+                else if(Timer.getFPGATimestamp() - StopperWaitTime > 2)
+                {
+                    StackEjector.StopIn();
                 }
                 break;
 
@@ -233,6 +244,7 @@ public class Lift extends Subsystem {
                         {
                             StateAddFloorToteToStack =
                                     STATE_ADD_FLOOR_TOTE_TO_STACK.LIFT_TOTE;
+                            StopperWaitTime = Timer.getFPGATimestamp();
                         }
                         else
                         {
@@ -258,6 +270,7 @@ public class Lift extends Subsystem {
                         {
                             StateAddFloorToteToStack =
                                     STATE_ADD_FLOOR_TOTE_TO_STACK.LIFT_TOTE;
+                            StopperWaitTime = Timer.getFPGATimestamp();
                         }
                         else
                         {
@@ -277,7 +290,6 @@ public class Lift extends Subsystem {
                 }
 
                 if (LiftCar.GoToStack(TotesInStack + 1)
-                    & StackEjector.StopIn()
                     & CylindersRails.Extend()
                     & CylindersStackHolder.Contract())
                 {
@@ -291,6 +303,11 @@ public class Lift extends Subsystem {
                     RailContents = RAIL_CONTENTS.EMPTY;
                     StateAddFloorToteToStack =
                             STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+                }
+                // wait 2 seconds before putting in the stopper
+                else if(Timer.getFPGATimestamp() - StopperWaitTime > 2)
+                {
+                    StackEjector.StopIn();
                 }
                 break;
         }
