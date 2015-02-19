@@ -16,8 +16,10 @@ public class Car {
     }
 
     private LinearActuator Actuator;
-    private SensorDigital ZeroSensor;
-    private SensorDigital TopSensor;
+    private SensorDigital ZeroSensorLeft;
+    private SensorDigital TopSensorLeft;
+    private SensorDigital ZeroSensorRight;
+    private SensorDigital TopSensorRight;
     
     private ZERO_STATE ZeroState = ZERO_STATE.MOVING;
     private double ZeroWaitStartTime = 0;
@@ -32,11 +34,14 @@ public class Car {
                 Constants.LIFT_THRESHOLD, Constants.LIFT_POT_PIN,
                 Constants.LIFT_POT_DISTANCE);
 
-        ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
-        TopSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_TOP);
+        ZeroSensorLeft = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO_LEFT);
+        TopSensorLeft = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_TOP_LEFT);
+
+        ZeroSensorRight = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO_RIGHT);
+        TopSensorRight = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_TOP_RIGHT);
 
         // Move the motor until you hit a sensor, then zero the encoder position
-        if (ZeroSensor.IsOn())
+        if (ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn())
         {
             Actuator.Zero();
         }
@@ -98,7 +103,8 @@ public class Car {
     {
         double speedAdjust = 1.0 - Constants.LIFT_CAR_SPEED_UP;
         speedAdjust = speedAdjust * (ToteCount / 6.0);
-        boolean atTop = TopSensor.IsOn() || SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
+        boolean atTop = (TopSensorLeft.IsOn() && TopSensorRight.IsOn())
+                || SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
         
         switch (ZeroState)
         {
@@ -215,7 +221,7 @@ public class Car {
      */
     public boolean GoToBottom()
     {   
-        boolean atBottom = ZeroSensor.IsOn();
+        boolean atBottom = ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn();
         
         if (ZeroTimeoutStart == 0)
         {
@@ -278,13 +284,14 @@ public class Car {
         Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_UP);
     }
 
-    public void GoToZero()
+    public boolean GoToZero()
     {   
         if (ZeroIfNeeded())
         {
             Actuator.SetSpeedRaw(0);
             Actuator.ResetError();
             ZeroSpeedTimer = 0;
+            return true;
         }
         else
         {
@@ -310,12 +317,14 @@ public class Car {
             {
                 Actuator.SetSpeedRaw(-Constants.LIFT_CAR_SPEED_DOWN);
             }
+            
+            return false;
         }
     }
 
     public boolean ZeroIfNeeded()
     {
-        if (ZeroSensor.IsOn())
+        if (ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn())
         {
             Actuator.Zero();
             return true;
@@ -325,7 +334,7 @@ public class Car {
 
     public Sensor GetZeroSensor()
     {
-        return ZeroSensor;
+        return ZeroSensorLeft;
     }
 
     public void UpdateLastPosition()
@@ -335,7 +344,7 @@ public class Car {
 
     public Sensor GetTopSensor()
     {
-        return TopSensor;
+        return TopSensorLeft;
     }
 
     public boolean GoToEject()

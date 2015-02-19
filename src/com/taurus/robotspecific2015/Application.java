@@ -3,6 +3,8 @@ package com.taurus.robotspecific2015;
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -17,6 +19,9 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
+    private boolean CompressorChargedOnce;
+    private Compressor compressor;
+    private double CompressorTimer;
 
     public Application()
     {
@@ -30,6 +35,9 @@ public class Application extends com.taurus.Application {
                 new AnalogInput(Constants.DISTANCE_SENSOR_RIGHT_PIN);
 
         vision.Start();
+        
+        compressor = new Compressor(Constants.COMPRESSOR_PCM);
+        compressor.setClosedLoopControl(true);
 
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
@@ -65,8 +73,10 @@ public class Application extends com.taurus.Application {
 
     public void TeleopInitRobotSpecific()
     {
-        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+        CurrentLiftAction = STATE_LIFT_ACTION.ZERO_LIFT;
         lift.init();
+        CompressorChargedOnce = false;
+        CompressorTimer = Timer.getFPGATimestamp();
     }
 
     private void UpdateDashboard()
@@ -111,6 +121,32 @@ public class Application extends com.taurus.Application {
     {
         UpdateDashboard();
 
+        // only check every 3 seconds
+        if(Timer.getFPGATimestamp() - CompressorTimer > 3)
+        {
+            // disable/enable the compressor if we're moving/still
+            // but only if we've fully charged once
+            if(!CompressorChargedOnce)
+            {
+                if(!compressor.enabled())
+                {
+                    CompressorChargedOnce = true;
+                }
+            }
+            else
+            {
+                if(drive.getGyro().isMoving())
+                {
+                    compressor.stop();
+                }
+                else
+                {
+                    compressor.start();
+                }
+            }
+            CompressorTimer = Timer.getFPGATimestamp();
+        }
+        
         if (controller.getCarHome())
         {
             lift.GetCar().GoToZero();
@@ -215,6 +251,13 @@ public class Application extends com.taurus.Application {
                     }
                     break;
 
+                case ZERO_LIFT:
+                    if (lift.GetCar().GoToZero())
+                    {
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                    }
+                    break;
+                    
                 case NO_ACTION:
                 default:
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
