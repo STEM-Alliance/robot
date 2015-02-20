@@ -19,9 +19,9 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
-    private boolean CompressorChargedOnce;
-    private Compressor compressor;
-    private double CompressorTimer;
+//    private boolean CompressorChargedOnce;
+//    private Compressor compressor;
+//    private double CompressorTimer;
 
     public Application()
     {
@@ -36,8 +36,8 @@ public class Application extends com.taurus.Application {
 
         vision.Start();
         
-        compressor = new Compressor(Constants.COMPRESSOR_PCM);
-        compressor.setClosedLoopControl(true);
+//        compressor = new Compressor(Constants.COMPRESSOR_PCM);
+//        compressor.setClosedLoopControl(true);
 
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
@@ -75,13 +75,13 @@ public class Application extends com.taurus.Application {
     {
         CurrentLiftAction = STATE_LIFT_ACTION.ZERO_LIFT;
         lift.init();
-        CompressorChargedOnce = false;
-        CompressorTimer = Timer.getFPGATimestamp();
+//        CompressorChargedOnce = false;
+//        CompressorTimer = Timer.getFPGATimestamp();
     }
 
     private void UpdateDashboard()
     {
-        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
+//        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
         
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
         SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
@@ -121,31 +121,31 @@ public class Application extends com.taurus.Application {
     {
         UpdateDashboard();
 
-        // only check every 3 seconds
-        if(Timer.getFPGATimestamp() - CompressorTimer > 3)
-        {
-            // disable/enable the compressor if we're moving/still
-            // but only if we've fully charged once
-            if(!CompressorChargedOnce)
-            {
-                if(!compressor.enabled())
-                {
-                    CompressorChargedOnce = true;
-                }
-            }
-            else
-            {
-                if(drive.getGyro().isMoving())
-                {
-                    compressor.stop();
-                }
-                else
-                {
-                    compressor.start();
-                }
-            }
-            CompressorTimer = Timer.getFPGATimestamp();
-        }
+//        // only check every 3 seconds
+//        if(Timer.getFPGATimestamp() - CompressorTimer > 3)
+//        {
+//            // disable/enable the compressor if we're moving/still
+//            // but only if we've fully charged once
+//            if(!CompressorChargedOnce)
+//            {
+//                if(!compressor.enabled())
+//                {
+//                    CompressorChargedOnce = true;
+//                }
+//            }
+//            else
+//            {
+//                if(drive.getGyro().isMoving())
+//                {
+//                    compressor.stop();
+//                }
+//                else
+//                {
+//                    compressor.start();
+//                }
+//            }
+//            CompressorTimer = Timer.getFPGATimestamp();
+//        }
         
         if (controller.getCarHome())
         {
