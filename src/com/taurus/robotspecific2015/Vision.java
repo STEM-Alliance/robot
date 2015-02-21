@@ -26,7 +26,8 @@ public class Vision implements Runnable {
     private static final String ATTR_BR_MODE = "CameraAttributes::Brightness::Mode";
     private static final String ATTR_BR_VALUE = "CameraAttributes::Brightness::Value";
 
-    private int session;
+    private int sessionFront;
+    private int sessionBack;
     private Image frame, frameWithLine, frameTH;
 
     Thread visionThread;
@@ -102,7 +103,9 @@ public class Vision implements Runnable {
 
         // the camera name (ex "cam0") can be found through the roborio web
         // interface
-        session = NIVision.IMAQdxOpenCamera("cam0",
+        sessionFront = NIVision.IMAQdxOpenCamera("cam0",
+                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        sessionBack = NIVision.IMAQdxOpenCamera("cam1",
                 NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 
         // print to dashboard a list of all available video modes
@@ -116,7 +119,8 @@ public class Vision implements Runnable {
         // SmartDashboard.putString("Modes", Modes);
 
         int videoMode = Application.prefs.getInt("VIDEO_MODE", 93);
-        NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, videoMode);
+        NIVision.IMAQdxSetAttributeU32(sessionFront, ATTR_VIDEO_MODE, videoMode);
+        NIVision.IMAQdxSetAttributeU32(sessionBack, ATTR_VIDEO_MODE, videoMode);
         
 //        int whiteBalance = Application.prefs.getInt("WhiteBalance", 4500);
 //        NIVision.IMAQdxSetAttributeString(session, ATTR_WB_MODE, "Manual");
@@ -129,23 +133,24 @@ public class Vision implements Runnable {
         {
             double brightness = Application.prefs.getDouble("Brightness", .25);
             
-            NIVision.IMAQdxSetAttributeString(session, ATTR_BR_MODE, "Manual");
-            long minv = NIVision.IMAQdxGetAttributeMinimumI64(session, ATTR_BR_VALUE);
-            long maxv = NIVision.IMAQdxGetAttributeMaximumI64(session, ATTR_BR_VALUE);
+            NIVision.IMAQdxSetAttributeString(sessionFront, ATTR_BR_MODE, "Manual");
+            long minv = NIVision.IMAQdxGetAttributeMinimumI64(sessionFront, ATTR_BR_VALUE);
+            long maxv = NIVision.IMAQdxGetAttributeMaximumI64(sessionFront, ATTR_BR_VALUE);
             
             long val = (long)Utilities.scaleToRange(brightness, 0, 1, minv, maxv);
-            NIVision.IMAQdxSetAttributeI64(session, ATTR_BR_VALUE, val);
+            NIVision.IMAQdxSetAttributeI64(sessionFront, ATTR_BR_VALUE, val);
         }
-        
-        NIVision.IMAQdxConfigureGrab(session);
 
-        NIVision.IMAQdxStartAcquisition(session);
+        //TODO choose based on which mode (ie use back when getting totes from chute)
+        NIVision.IMAQdxConfigureGrab(sessionFront);
+
+        NIVision.IMAQdxStartAcquisition(sessionFront);
 
         double TimeLastVision = 0;
 
         CameraServer.getInstance().setQuality(30);
 
-        NIVision.IMAQdxGrab(session, frame, 1);
+        NIVision.IMAQdxGrab(sessionFront, frame, 1);
         GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
 
         // set up the lines for tote detection
@@ -193,7 +198,7 @@ public class Vision implements Runnable {
                 
                 try
                 {
-                    NIVision.IMAQdxGrab(session, frame, 1);
+                    NIVision.IMAQdxGrab(sessionFront, frame, 1);
                     
                     SmartDashboard.putString("FrameSize", size.width+","+size.height);
                     
