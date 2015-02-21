@@ -22,7 +22,7 @@ public class TestApplication extends Application {
                 Constants.LIFT_THRESHOLD,
                 Constants.LIFT_POT_PIN,
                 Constants.LIFT_POT_DISTANCE);
-        ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO);
+        ZeroSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO_LEFT);
     }
 
     @Override

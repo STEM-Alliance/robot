@@ -2,15 +2,16 @@ package com.taurus.robotspecific2015;
 
 public abstract class Constants {
     // Pneumatics
-    private static final int MODULE_ID_PCU = 9;
-    private static final int MODULE_ID_PCU_2 = 10;
+    private static final int MODULE_ID_PCM = 9;
+    private static final int MODULE_ID_PCM_2 = 10;
+    public static final int COMPRESSOR_PCM = MODULE_ID_PCM;
 
-    public static final int PCU_RAIL = MODULE_ID_PCU;
-    public static final int PCU_CONTAINER_CAR = MODULE_ID_PCU;
-    public static final int PCU_CONTAINER_FIXED = MODULE_ID_PCU;
-    public static final int PCU_STOP = MODULE_ID_PCU;
-    public static final int PCU_STACK_HOLDER = MODULE_ID_PCU_2;
-    public static final int PCU_PUSHER = MODULE_ID_PCU_2;
+    public static final int PCM_RAIL = MODULE_ID_PCM;
+    public static final int PCM_CONTAINER_CAR = MODULE_ID_PCM;
+    public static final int PCM_CONTAINER_FIXED = MODULE_ID_PCM;
+    public static final int PCM_STOP = MODULE_ID_PCM;
+    public static final int PCM_STACK_HOLDER = MODULE_ID_PCM_2;
+    public static final int PCM_PUSHER = MODULE_ID_PCM_2;
 
     public static final int[] CHANNEL_RAIL = { 3, 2 };
     public static final int[] CHANNEL_CONTAINER_CAR = { 5, 4 };
@@ -24,7 +25,7 @@ public abstract class Constants {
     public static final double TIME_EXTEND_CONTAINER_CAR = .3;
     public static final double TIME_EXTEND_CONTAINER_FIXED = .3;
     public static final double TIME_EXTEND_STACK_HOLDER = .3;
-    public static final double TIME_EXTEND_STOP = .3;
+    public static final double TIME_EXTEND_STOP = .1;
     public static final double TIME_EXTEND_PUSHER = 1.5;
 
     // TODO - what is the amount of time required to contract?
@@ -32,30 +33,32 @@ public abstract class Constants {
     public static final double TIME_CONTRACT_CONTAINER_CAR = .3;
     public static final double TIME_CONTRACT_CONTAINER_FIXED = .3;
     public static final double TIME_CONTRACT_STACK_HOLDER = .3;
-    public static final double TIME_CONTRACT_STOP = .3;
+    public static final double TIME_CONTRACT_STOP = .1;
     public static final double TIME_CONTRACT_PUSHER = .5;
 
     public static final int MOTOR_DIRECTION_FORWARD = 1;
     public static final int MOTOR_DIRECTION_BACKWARD = -1;
 
     // Sensors
-    public static final int CHANNEL_DIGITAL_CAR_TOP = 5;
-    public static final int CHANNEL_DIGITAL_CAR_ZERO = 6;
-    public static final int CHANNEL_DIGITAL_TOTE_INTAKE = 7;
+    public static final int CHANNEL_DIGITAL_CAR_TOP_RIGHT = 4;
+    public static final int CHANNEL_DIGITAL_CAR_TOP_LEFT = 5;
+    public static final int CHANNEL_DIGITAL_CAR_ZERO_LEFT = 6;
+    public static final int CHANNEL_DIGITAL_CAR_ZERO_RIGHT = 7;
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
     public static final double[] LIFT_MOTOR_SCALING = { -1 };
-    public static final int  LIFT_POT_PIN = 4;
-    public static final double  LIFT_POT_DISTANCE = 3.14;
-    public static final double  LIFT_THRESHOLD = .25;
-    public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20, 20.75 };
-    
+    public static final int LIFT_POT_PIN = 4;
+    public static final double LIFT_POT_DISTANCE = 3.14;
+    public static final double LIFT_THRESHOLD = .25;
+    public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20,
+            20.75 };
+
     public static final double LIFT_CAR_SPEED_UP = 0.8;
     public static final double LIFT_CAR_SPEED_DOWN = 0.7;
     public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.3;
 
-    public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.5;
+    public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.2;
     public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.5;
 
     public static final int DISTANCE_SENSOR_LEFT_PIN = 5;
@@ -110,27 +113,40 @@ public abstract class Constants {
         ADD_CHUTE_TOTE,
         ADD_FLOOR_TOTE,
         ADD_CONTAINER,
+        CARRY_STACK,
         EJECT_STACK,
-        DROP_STACK
+        DROP_STACK,
+        ZERO_LIFT
     }
 
     // Lift
     public static enum STATE_ADD_CHUTE_TOTE_TO_STACK {
-        INIT, INTAKE_TOTE, LIFT_TOTE, HANDLE_CONTAINER, BOTTOM, RESET
+        INIT, LIFT_TOTE, RESET
     }
 
     public static enum STATE_ADD_FLOOR_TOTE_TO_STACK {
-        INIT, INTAKE_TOTE, GRAB_TOTE, LIFT_TOTE, HANDLE_CONTAINER, RESET
+        INIT, GRAB_TOTE, LIFT_TOTE
     }
 
     public static enum STATE_ADD_CONTAINER_TO_STACK {
-        INIT, CONTAINER_CAR_EXTEND, LIFT_CAR, CONTAINER_FIXED_EXTEND, CONTAINER_CAR_CONTRACT, LOWER_CAR, RESET
+        INIT, CONTAINER_CAR_EXTEND, LIFT_CAR, CONTAINER_FIXED_EXTEND, RESET
     }
 
+    public static enum STATE_CARRY {
+        INIT, STACK_HOLDER_RELEASE, LOWER_CAR
+    }
+        
     public static enum STATE_EJECT_STACK {
-        LIFT_CAR, STACK_HOLDER_CONTRACT, LOWER_CAR, EJECT_STACK, RESET,
+        INIT, EJECT, RESET
+    }
+    
+    public static enum STATE_DROP_STACK {
+        INIT, LOWER_STACK, RELEASE, BACK_UP
     }
 
+    public static enum RAIL_CONTENTS {
+        EMPTY, TOTE, STACK
+    }
 
     // Ejector
     public static enum STATE_EJECT {

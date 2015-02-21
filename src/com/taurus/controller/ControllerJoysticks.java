@@ -243,6 +243,13 @@ public class ControllerJoysticks implements Controller {
     }
 
     @Override
+    public boolean getCarryStack()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
     public boolean getEjectStack()
     {
         // TODO Auto-generated method stub
@@ -303,7 +310,7 @@ public class ControllerJoysticks implements Controller {
     }
 
     @Override
-    public boolean getEjector()
+    public boolean getReleaseContainer()
     {
         // TODO Auto-generated method stub
         return false;
@@ -342,5 +349,12 @@ public class ControllerJoysticks implements Controller {
     {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public void setRumble(Hand hand, float value, double length)
+    {
+        // TODO Auto-generated method stub
+        
     }
 }
