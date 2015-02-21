@@ -1,6 +1,8 @@
 package com.taurus.robotspecific2015;
 
 import com.taurus.robotspecific2015.Constants.*;
+import com.taurus.swerve.SwerveChassis;
+import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -33,12 +35,15 @@ public class Lift extends Subsystem {
     private boolean AutonomousToteTriggered;
     
     private double StopperWaitTime = 0;
+    private SwerveChassis drive;
+    private boolean DropDriveFirstTime;
 
     /**
      * Initialize lift and all objects owned by the lift
      */
-    public Lift()
+    public Lift(SwerveChassis drive)
     {
+        this.drive = drive;
         LiftCar = new Car();
         StackEjector = new Ejector();
         CylindersRails =
@@ -87,6 +92,7 @@ public class Lift extends Subsystem {
         this.ContainerInStack = false;
         this.RailContents = RAIL_CONTENTS.EMPTY;
         this.AutonomousToteTriggered = false;
+        this.DropDriveFirstTime = false;
     }
 
     public boolean IsToteInPlace()
@@ -159,6 +165,7 @@ public class Lift extends Subsystem {
                             CylindersStackHolder.Contract();
                             CylindersContainerCar.Contract();
                             StackEjector.StopOut();
+                            
                         }
                         break;
                 }
@@ -340,6 +347,7 @@ public class Lift extends Subsystem {
                         & CylindersContainerFixed.Extend()
                         & CylindersContainerCar.Contract()
                         & StackEjector.StopIn()
+                        
                         & IsToteInPlace())
                     {
                         StateAddContainerToStack =
@@ -550,6 +558,7 @@ public class Lift extends Subsystem {
      */
     public boolean DropStack(boolean keepContainer)
     {
+        boolean Finish= false;
         switch (StateDropStack)
         {
             case INIT:
@@ -562,7 +571,7 @@ public class Lift extends Subsystem {
                     CylindersContainerFixed.Contract();
                 }
 
-                if (LiftCar.GoToBottom() & CylindersStackHolder.Contract())
+                if (LiftCar.GoToBottom() & CylindersStackHolder.Extend())
                 {
                     StateDropStack = STATE_DROP_STACK.RELEASE;
                 }
@@ -578,17 +587,19 @@ public class Lift extends Subsystem {
                     ContainerInStack = false;
 
                     StateDropStack = STATE_DROP_STACK.BACK_UP;
+                    DropDriveFirstTime = true;
                 }
                 break;
 
             case BACK_UP:
-                // TODO: implement
-
-                // Note: relies on other modes to reset the state to INIT.
+                SwerveVector vector = new SwerveVector();
+                vector.setMagAngle(1, 180);
+                Finish = drive.autoRun(vector, 2, DropDriveFirstTime);
+                
                 break;
         }
 
-        return StateDropStack == STATE_DROP_STACK.BACK_UP;
+        return Finish;
     }
 
     /**

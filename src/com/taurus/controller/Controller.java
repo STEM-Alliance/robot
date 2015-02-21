@@ -189,7 +189,7 @@ public interface Controller {
     
     public boolean getFakePostion();
     
-    public boolean getEjector();
+    public boolean getReleaseContainer();
     
     /**
      * Get the stop action

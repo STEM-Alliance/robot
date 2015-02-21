@@ -337,7 +337,7 @@ public class ControllerXboxPanel implements Controller, Runnable {
     }
 
     @Override
-    public boolean getEjector()
+    public boolean getReleaseContainer()
     {
         return panel.getBlackRButton();
     }

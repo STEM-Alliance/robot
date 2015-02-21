@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision implements Runnable {
 
-    private final double TIME_RATE_VISION = .033;
+    private final double TIME_RATE_VISION = .05;//.033;
     private DecimalFormat df = new DecimalFormat("#.##");
 
     private SendableChooser imageChooser = new SendableChooser();
