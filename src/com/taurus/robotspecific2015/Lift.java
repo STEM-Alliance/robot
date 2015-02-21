@@ -495,7 +495,8 @@ public class Lift extends Subsystem {
 
         }
 
-        return LiftCar.GetPosition() == LIFT_POSITIONS_E.EJECT
+        return (LiftCar.GetPosition() == LIFT_POSITIONS_E.EJECT ||
+                (Application.controller.getFakePostion() && Application.controller.getManualLift()))
                && RailContents == RAIL_CONTENTS.STACK;
     }
 
@@ -595,7 +596,7 @@ public class Lift extends Subsystem {
                 SwerveVector vector = new SwerveVector();
                 vector.setMagAngle(1, 180);
                 Finish = drive.autoRun(vector, 2, DropDriveFirstTime);
-                
+                DropDriveFirstTime = false;
                 break;
         }
 
