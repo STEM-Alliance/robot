@@ -234,7 +234,7 @@ public class Application extends com.taurus.Application {
                 case CARRY_STACK:
                     if (lift.LowerStackToCarryHeight())
                     {
-                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                        CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
                     }
                     break;
 
