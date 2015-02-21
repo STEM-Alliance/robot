@@ -10,6 +10,7 @@ import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Talon;
 
 /**
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.Talon;
  */
 public class SwerveWheel {
     String Name;
+    int Number;
 
     // wheel stuff
     private SwerveVector WheelPosition; // wheel location from center of robot
@@ -36,7 +38,7 @@ public class SwerveWheel {
 
     private double maxRotationSpeed = .75;
 
-    private double AngleOrienation = 0;
+    private double AngleOrientation = 0;
 
     // motor
     private CANTalon MotorDrive;
@@ -45,6 +47,14 @@ public class SwerveWheel {
     // sensor
     public MagnetoPot AnglePot;
     //private Encoder DriveEncoder;
+    
+    public DigitalInput CalibrationSensor;
+    
+    /**
+     * angle that the sensor is mounted compared to 0
+     */
+    public double CalibrationSensorAngle;
+    private final double CALIBRATION_MINIMUM = 10;
 
     // controller
     private SwerveAngleController AngleController;
@@ -62,8 +72,8 @@ public class SwerveWheel {
     /**
      * Set up the wheel with the specific IO and orientation on the robot
      * 
-     * @param name
-     *            Name of the wheel for display purposes
+     * @param Number
+     *            Number of the wheel
      * @param Position
      *            Wheel position relative to robot center as array
      * @param Orientation
@@ -77,11 +87,13 @@ public class SwerveWheel {
      * @param AnglePin
      *            Pin for angle motor controller
      */
-    public SwerveWheel(String name, double[] Position, double Orientation,
-            /*int[] EncoderPins, */int PotPin, int DriveAddress, int AnglePin
-            /*int ShiftPin, int[] ShiftVals*/)
+    public SwerveWheel(int Number, double[] Position, double Orientation,
+            /*int[] EncoderPins, */int PotPin, int DriveAddress, int AnglePin,
+            /*int ShiftPin, int[] ShiftVals*/
+            int AngleCalibrationPin)
     {
-        Name = name;
+        Name = "Wheel" + this.Number;
+        this.Number = Number;
 
         WheelPosition = new SwerveVector(Position);
         WheelActual = new SwerveVector(0, 0);
@@ -103,9 +115,11 @@ public class SwerveWheel {
         // AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) +
         // Math.abs(SpinMax), -SpinMin);
         AnglePot = new MagnetoPot(PotPin, 360);
-        AngleController = new SwerveAngleController(name + ".ctl");
+        AngleController = new SwerveAngleController(Name + ".ctl");
 
-        AngleOrienation = Orientation;
+        AngleOrientation = Orientation;
+        
+        CalibrationSensor = new DigitalInput(AngleCalibrationPin);
     }
 
     /**
@@ -156,11 +170,6 @@ public class SwerveWheel {
     {
         return WheelPosition;
     }
-
-    public void setOrientation(double orientation)
-    {
-        this.AngleOrienation = orientation;
-    }
     
     /**
      * Get whether the wheel is in high gear or low gear
@@ -194,17 +203,37 @@ public class SwerveWheel {
     {
         return AnglePot.get();
     }
-
+    
     /**
-     * Adjust the angle for the orientation value
+     * Adjust the angle for the orientation value.
+     * Will auto calibrate if the calibration sensor is triggered
      * 
      * @param angle
-     * @return
+     * @return adjusted angle from orientation value
      */
     private double AdjustAngle(double angle)
     {
-        angle = Utilities.wrapToRange(angle + 270 - AngleOrienation, 0, 360);
-        return angle;
+        this.AngleOrientation = Application.prefs.getDouble("Wheel_Orientation_" + Number, AngleOrientation);
+
+        double AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
+        
+        if(CalibrationSensor.get())
+        {
+            // the Calibration Sensor is triggered, so we should be facing forward
+            if(Math.abs(Utilities.wrapToRange(AdjustedAngle, -180, 180)) > CALIBRATION_MINIMUM)
+            {
+                // we're more than CALIBRATION_MINIMUM away, yet the sensor is triggered,
+                // we need to then update the angle
+                this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0, 360);
+                
+                Application.prefs.putDouble("Wheel_Orientation_" + Number, AngleOrientation);
+                
+                AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
+            }
+            
+        }
+        
+        return AdjustedAngle;
     }
 
     /**

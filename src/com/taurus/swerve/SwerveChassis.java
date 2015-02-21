@@ -87,19 +87,16 @@ public class SwerveChassis extends Subsystem {
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
-            Wheels[i] =
-                    new SwerveWheel(
-                            "wheel" + i,
-                            SwerveConstants.WheelPositions[i],
-                            Application.prefs.getDouble("Wheel_Orientation_"
-                                                        + i,
-                                    SwerveConstants.WheelOrientationAngle[i]),
-                            // SwerveConstants.WheelEncoderPins[i],
-                            SwerveConstants.WheelPotPins[i],
-                            SwerveConstants.WheelDriveMotorAddress[i],
-                            SwerveConstants.WheelAngleMotorPins[i]);
-            // SwerveConstants.WheelShiftServoPins[i],
-            // SwerveConstants.WheelShiftServoVals[i]);
+            Wheels[i] = new SwerveWheel(i,
+                    SwerveConstants.WheelPositions[i],
+                    Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
+//                    SwerveConstants.WheelEncoderPins[i],
+                    SwerveConstants.WheelPotPins[i],
+                    SwerveConstants.WheelDriveMotorAddress[i],
+                    SwerveConstants.WheelAngleMotorPins[i],
+//                    SwerveConstants.WheelShiftServoPins[i],
+//                    SwerveConstants.WheelShiftServoVals[i],
+                    SwerveConstants.WheelAngleCalibrationPins[i]);
         }
 
     }
@@ -144,12 +141,6 @@ public class SwerveChassis extends Subsystem {
         }
         else
         {
-            for (int i = 0; i < SwerveConstants.WheelCount; i++)
-            {
-                Wheels[i].setOrientation(Application.prefs.getDouble(
-                        "Wheel_Orientation_" + i,
-                        SwerveConstants.WheelOrientationAngle[i]));
-            }
 
             CrawlMode = controller.getLowSpeed();
 
