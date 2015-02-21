@@ -43,6 +43,8 @@ public class Lift extends Subsystem {
     private final LEDEffect effectsIntakeReady;
     private final LEDEffect effectsIntakeNotReady;
     private final LEDEffect effectsReadyToDrive;
+    private final LEDEffect effectsInTransit;
+    private final LEDEffect effectsScore;
 
     /**
      * Initialize lift and all objects owned by the lift
@@ -88,6 +90,14 @@ public class Lift extends Subsystem {
         colors.clear();
         colors.add(new Color[]{Color.Cyan, Color.Red, Color.Yellow, Color.Magenta});
         effectsReadyToDrive = new LEDEffect(colors, LEDEffect.EFFECT.SPIN, Double.MAX_VALUE, 1);
+        colors.clear();
+        colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
+        colors.add(new Color[]{Color.Orange, Color.Orange, Color.Orange, Color.Orange});
+        effectsInTransit = new LEDEffect(colors, LEDEffect.EFFECT.FLASH, 4, .5);
+        colors.clear();
+        colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
+        colors.add(new Color[]{Color.Cyan, Color.Orange, Color.Cyan, Color.Orange});
+        effectsScore = new LEDEffect(colors, LEDEffect.EFFECT.FADE, 6, 2);
 
         init();
     }
@@ -527,6 +537,7 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Extend()
                     & StackEjector.StopIn())
                 {
+                    Application.leds.AddEffect(effectsInTransit, true);
                     StateCarry = STATE_CARRY.INIT;
                 }
                 break;
@@ -548,6 +559,7 @@ public class Lift extends Subsystem {
         switch (StateEjectStack)
         {
             case INIT:
+                Application.leds.AddEffect(effectsScore, true);
                 StateEjectStack = STATE_EJECT_STACK.EJECT;
                 break;
 
@@ -601,6 +613,7 @@ public class Lift extends Subsystem {
         switch (StateDropStack)
         {
             case INIT:
+                Application.leds.AddEffect(effectsScore, true);
                 StateDropStack = STATE_DROP_STACK.LOWER_STACK;
                 break;
 
