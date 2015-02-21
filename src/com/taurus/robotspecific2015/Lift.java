@@ -1,5 +1,7 @@
 package com.taurus.robotspecific2015;
 
+import java.util.ArrayList;
+
 import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveVector;
@@ -37,6 +39,10 @@ public class Lift extends Subsystem {
     private double StopperWaitTime = 0;
     private SwerveChassis drive;
     private boolean DropDriveFirstTime;
+    
+    private final LEDEffect effectsIntakeReady;
+    private final LEDEffect effectsIntakeNotReady;
+    private final LEDEffect effectsReadyToDrive;
 
     /**
      * Initialize lift and all objects owned by the lift
@@ -71,10 +77,24 @@ public class Lift extends Subsystem {
                         Constants.CYLINDER_ACTION.CONTRACT);
 //        ToteIntakeSensor =
 //                new SensorDigital(Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
+        
+        // Setup LEDs
+        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+        colors.add(new Color[]{Color.Green, Color.Green, Color.Green, Color.Green});
+        effectsIntakeReady = new LEDEffect(colors, LEDEffect.EFFECT.SOLID, 4, 4);
+        colors.clear();
+        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
+        effectsIntakeNotReady = new LEDEffect(colors, LEDEffect.EFFECT.SOLID, 4, 4);
+        colors.clear();
+        colors.add(new Color[]{Color.Cyan, Color.Red, Color.Yellow, Color.Magenta});
+        effectsReadyToDrive = new LEDEffect(colors, LEDEffect.EFFECT.SPIN, Double.MAX_VALUE, 1);
 
         init();
     }
 
+    /**
+     *  Reset state machines
+     */
     private void initStates()
     {
         this.StateAddChuteToteToStack = STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
@@ -85,6 +105,9 @@ public class Lift extends Subsystem {
         this.StateEjectStack = STATE_EJECT_STACK.INIT;
     }
 
+    /**
+     *  Reset class variables
+     */
     public void init()
     {
         this.initStates();
@@ -142,7 +165,8 @@ public class Lift extends Subsystem {
                             {
                                 StateAddChuteToteToStack =
                                         STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
-                                
+
+                                Application.leds.AddEffect(effectsIntakeNotReady, true);
                                 StopperWaitTime = Timer.getFPGATimestamp();
                             }
                         }
@@ -155,6 +179,7 @@ public class Lift extends Subsystem {
                             StateAddChuteToteToStack =
                                     STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                             
+                            Application.leds.AddEffect(effectsIntakeNotReady, true);
                             StopperWaitTime = Timer.getFPGATimestamp();
                         }
                         else
@@ -164,8 +189,7 @@ public class Lift extends Subsystem {
                             CylindersRails.Extend();
                             CylindersStackHolder.Contract();
                             CylindersContainerCar.Contract();
-                            StackEjector.StopOut();
-                            
+                            StackEjector.StopOut();                            
                         }
                         break;
                 }
@@ -203,6 +227,20 @@ public class Lift extends Subsystem {
                 break;
 
             case RESET:
+                // Determine if we are within a distance above the bottom, preemptively set LEDs
+                if (LiftCar.GetHeight() < Constants.LIFT_CHUTE_READY_HEIGHT)
+                {
+                    if (TotesInStack < MaxTotesInStack)
+                    {
+                        Application.leds.AddEffect(effectsIntakeReady, true);
+                    }
+                    else
+                    {
+                        // Indicate that we are ready to drive off
+                        Application.leds.AddEffect(effectsReadyToDrive, true);
+                    }
+                }
+                
                 if (LiftCar.GoToBottom())
                 {
                     StateAddChuteToteToStack =
