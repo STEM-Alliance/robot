@@ -304,7 +304,7 @@ public class ControllerXbox implements Controller {
     }
 
     @Override
-    public boolean getEjector()
+    public boolean getReleaseContainer()
     {
         // TODO Auto-generated method stub
         return false;
