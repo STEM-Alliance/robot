@@ -67,7 +67,7 @@ public abstract class Application {
     {
         controller = controllerChooser.GetController();
         
-        drive.ZeroGyro();
+        //drive.ZeroGyro();
 
         TeleopInitRobotSpecific();
     }

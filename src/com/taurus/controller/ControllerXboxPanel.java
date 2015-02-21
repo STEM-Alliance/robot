@@ -1,11 +1,13 @@
 package com.taurus.controller;
 
+import com.taurus.Utilities;
 import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.swerve.SwerveVector;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
-public class ControllerXboxPanel implements Controller {
+public class ControllerXboxPanel implements Controller, Runnable {
 
     private Xbox xbox;
     private Panel panel;
@@ -15,6 +17,11 @@ public class ControllerXboxPanel implements Controller {
     private boolean fieldRelative;
     private boolean fieldRelativeLast;
 
+    private Thread thread;
+    private volatile float RumbleVal = 0;
+    private volatile Hand RumbleHand = Hand.kLeft;
+    private volatile double RumbleTime = 0;
+    
     /**
      * Create a new Xbox Controller object
      */
@@ -25,6 +32,9 @@ public class ControllerXboxPanel implements Controller {
 
         fieldRelative = true;
         fieldRelativeLast = false;
+        
+        thread = new Thread();
+        thread.setPriority(Thread.MIN_PRIORITY);
     }
 
     public double getX(Hand hand)
@@ -274,12 +284,18 @@ public class ControllerXboxPanel implements Controller {
         return xbox.getXButton();
     }
 
+    @Override
+    public boolean getCarryStack()
+    {
+        return xbox.getYButton();
+    }
+
     /**
      * {@inheritDoc}
      */
     public boolean getEjectStack()
     {
-        return xbox.getYButton();
+        return false;
     }
 
     @Override
@@ -321,7 +337,7 @@ public class ControllerXboxPanel implements Controller {
     }
 
     @Override
-    public boolean getEjector()
+    public boolean getReleaseContainer()
     {
         return panel.getBlackRButton();
     }
@@ -348,5 +364,41 @@ public class ControllerXboxPanel implements Controller {
     public void setRumble(Hand hand, float value)
     {
         xbox.setRumble(hand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble, value);
+    }
+
+    @Override
+    /**
+     * Set rumble for a specified time; starts a new thread
+     * @param hand hand to rumble
+     * @param value intensity of rumble (0 and 1)
+     * @param length length in seconds
+     */
+    public synchronized void setRumble(Hand hand, float value, double length)
+    {
+        if(!thread.isAlive())
+        {
+            RumbleHand = hand;
+            RumbleVal = value;
+            RumbleTime = length;
+            thread.start();
+        }
+    }
+    
+    public void run()
+    {
+        RumbleType Rumble = RumbleHand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble;
+        
+        xbox.setRumble(Rumble, RumbleVal);
+        
+        try
+        {
+            Thread.sleep((long) (RumbleTime * 1000));
+        }
+        catch (InterruptedException e)
+        {
+            // TODO Auto-generated catch block
+        }
+        
+        xbox.setRumble(Rumble, 0);
     }
 }

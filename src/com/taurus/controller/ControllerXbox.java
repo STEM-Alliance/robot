@@ -13,7 +13,7 @@ public class ControllerXbox implements Controller {
 
     private boolean fieldRelative;
     private boolean fieldRelativeLast;
-
+    
     /**
      * Create a new Xbox Controller object
      */
@@ -262,12 +262,18 @@ public class ControllerXbox implements Controller {
         return xbox.getXButton();
     }
 
+    @Override
+    public boolean getCarryStack()
+    {
+        return xbox.getYButton();
+    }
+
     /**
      * {@inheritDoc}
      */
     public boolean getEjectStack()
     {
-        return xbox.getYButton();
+        return false;
     }
 
     @Override
@@ -298,7 +304,7 @@ public class ControllerXbox implements Controller {
     }
 
     @Override
-    public boolean getEjector()
+    public boolean getReleaseContainer()
     {
         // TODO Auto-generated method stub
         return false;
@@ -336,5 +342,10 @@ public class ControllerXbox implements Controller {
     {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public void setRumble(Hand hand, float value, double length)
+    {
     }
 }

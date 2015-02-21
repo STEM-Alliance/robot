@@ -11,10 +11,10 @@ public class Ejector {
     public Ejector()
     {
         CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP,
-                Constants.PCU_STOP, Constants.TIME_EXTEND_STOP,
+                Constants.PCM_STOP, Constants.TIME_EXTEND_STOP,
                 Constants.TIME_CONTRACT_STOP, Constants.CYLINDER_ACTION.EXTEND);
         CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER,
-                Constants.PCU_PUSHER, Constants.TIME_EXTEND_PUSHER,
+                Constants.PCM_PUSHER, Constants.TIME_EXTEND_PUSHER,
                 Constants.TIME_CONTRACT_PUSHER, Constants.CYLINDER_ACTION.CONTRACT);
 
     }

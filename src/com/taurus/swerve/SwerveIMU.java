@@ -1,11 +1,11 @@
 package com.taurus.swerve;
 
-import com.kauailabs.nav6.frc.IMU;
+import com.kauailabs.nav6.frc.IMUAdvanced;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.SerialPort;
 
-public class SwerveIMU extends IMU{
+public class SwerveIMU extends IMUAdvanced{
     
     private float customYaw;
     

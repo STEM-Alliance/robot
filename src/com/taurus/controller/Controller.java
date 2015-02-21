@@ -34,9 +34,6 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
  */
 public interface Controller {
 
-    public static final int HALO_DRIVE = 0;
-    public static final int ANGLE_DRIVE = 1;
-
     public static final double DEADBAND = 0.0;
 
     /**
@@ -178,6 +175,8 @@ public interface Controller {
 
     public boolean getAddContainer();
     
+    public boolean getCarryStack();
+    
     public boolean getEjectStack();
     
     public boolean getCarHome();
@@ -190,7 +189,7 @@ public interface Controller {
     
     public boolean getFakePostion();
     
-    public boolean getEjector();
+    public boolean getReleaseContainer();
     
     /**
      * Get the stop action
@@ -202,4 +201,8 @@ public interface Controller {
     public boolean getDropStack();
     
     public void setRumble(Hand hand, float value);
+    
+    public void setRumble(Hand hand, float value, double length);
+    
+    
 }

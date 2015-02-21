@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -19,6 +21,9 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
+//    private boolean CompressorChargedOnce;
+//    private Compressor compressor;
+//    private double CompressorTimer;
     
     private LEDs leds;
 
@@ -26,7 +31,7 @@ public class Application extends com.taurus.Application {
     {
         super();
 
-        lift = new Lift();
+        lift = new Lift(super.drive);
         vision = new Vision();
         distance_sensor_left =
                 new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
@@ -34,6 +39,9 @@ public class Application extends com.taurus.Application {
                 new AnalogInput(Constants.DISTANCE_SENSOR_RIGHT_PIN);
 
         vision.Start();
+        
+//        compressor = new Compressor(Constants.COMPRESSOR_PCM);
+//        compressor.setClosedLoopControl(true);
 
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
@@ -73,8 +81,10 @@ public class Application extends com.taurus.Application {
     public void TeleopInitRobotSpecific()
     {
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+        CurrentLiftAction = STATE_LIFT_ACTION.ZERO_LIFT;
         lift.init();        
+//        CompressorChargedOnce = false;
+//        CompressorTimer = Timer.getFPGATimestamp();
 
         // Set LEDs
         colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
@@ -86,11 +96,13 @@ public class Application extends com.taurus.Application {
     
     private void UpdateDashboard()
     {
-        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
+//        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
+        
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
         SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
         SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
+        
         SmartDashboard
                 .putNumber("Distance Left", 
                         12.402 
@@ -103,22 +115,20 @@ public class Application extends com.taurus.Application {
                         / 2.54);
 
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
-        SmartDashboard.putBoolean("ToteOnRails", lift.GetToteOnRails());
-        SmartDashboard.putBoolean("ContainerInStack",
-                lift.GetContainerInStack());
+        SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
+        SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
+        
         SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
         SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
 
-        SmartDashboard.putString("CurrentLiftAction_",
-                CurrentLiftAction.toString());
-        SmartDashboard.putString("StateAddChuteToteToStack", lift
-                .GetStateAddChuteToteToStack().toString());
-        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack()
-                .toString());
-        SmartDashboard.putString("StateAddContainerToStack", lift
-                .GetStateAddContainerToStack().toString());
-        SmartDashboard.putString("StateAddFloorToteToStack", lift
-                .GetStateAddFloorToteToStack().toString());
+        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
+        
+        SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
+        SmartDashboard.putString("StateAddContainerToStack", lift.GetStateAddContainerToStack().toString());
+        SmartDashboard.putString("StateAddFloorToteToStack", lift.GetStateAddFloorToteToStack().toString());
+        SmartDashboard.putString("StateCarryStack", lift.GetStateCarryStack().toString());
+        SmartDashboard.putString("StateDropStack", lift.GetStateDropStack().toString());
+        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack().toString());
 
     }
 
@@ -126,6 +136,32 @@ public class Application extends com.taurus.Application {
     {
         UpdateDashboard();
 
+//        // only check every 3 seconds
+//        if(Timer.getFPGATimestamp() - CompressorTimer > 3)
+//        {
+//            // disable/enable the compressor if we're moving/still
+//            // but only if we've fully charged once
+//            if(!CompressorChargedOnce)
+//            {
+//                if(!compressor.enabled())
+//                {
+//                    CompressorChargedOnce = true;
+//                }
+//            }
+//            else
+//            {
+//                if(drive.getGyro().isMoving())
+//                {
+//                    compressor.stop();
+//                }
+//                else
+//                {
+//                    compressor.start();
+//                }
+//            }
+//            CompressorTimer = Timer.getFPGATimestamp();
+//        }
+        
         if (controller.getCarHome())
         {
             lift.GetCar().GoToZero();
@@ -134,16 +170,10 @@ public class Application extends com.taurus.Application {
         {
             lift.GetCar().GoToTop();
         }
-        else if (controller.getEjector())
+        else if (controller.getReleaseContainer())
         {
-            if (lift.GetEjector().GetCylindersPusher().IsExtended())
-            {
-                lift.GetEjector().GetCylindersPusher().Contract();
-            }
-            else
-            {
-                lift.GetEjector().GetCylindersPusher().Extend();
-            }
+            lift.GetCylindersContainerFixed().Contract();
+            lift.GetCylindersContainerCar().Contract();
         }
 
         else
@@ -177,6 +207,10 @@ public class Application extends com.taurus.Application {
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
             }
+            else if (controller.getCarryStack())
+            {
+                CurrentLiftAction = STATE_LIFT_ACTION.CARRY_STACK;
+            }
             else if (controller.getDropStack())
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
@@ -206,19 +240,16 @@ public class Application extends com.taurus.Application {
                     break;
 
                 case EJECT_STACK:
-                    if (!lift.GetEjector().GetCylindersPusher().IsExtended())
+                    if (lift.EjectStack())
                     {
-                        if (lift.EjectStack())
-                        {
-                            CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                        }
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
-                    else
+                    break;
+
+                case CARRY_STACK:
+                    if (lift.LowerStackToCarryHeight())
                     {
-                        if (lift.ResetEjectStack())
-                        {
-                            CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                        }
+                        CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
                     }
                     break;
 
@@ -229,6 +260,13 @@ public class Application extends com.taurus.Application {
                     }
                     break;
 
+                case ZERO_LIFT:
+                    if (lift.GetCar().GoToZero())
+                    {
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                    }
+                    break;
+                    
                 case NO_ACTION:
                 default:
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
