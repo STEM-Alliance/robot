@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Application extends com.taurus.Application {
+    private boolean endOfMatchEffectSent;
+    
     private Vision vision = new Vision();
     private Lift lift;
     private AnalogInput distance_sensor_left;
@@ -21,11 +23,13 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
+    
 //    private boolean CompressorChargedOnce;
 //    private Compressor compressor;
 //    private double CompressorTimer;
     
-    private LEDs leds;
+    protected static LEDs leds;
+    private final LEDEffect effectEndOfMatch;
 
     public Application()
     {
@@ -76,6 +80,11 @@ public class Application extends com.taurus.Application {
         
         leds = new LEDs();
         leds.start();
+        endOfMatchEffectSent = false;
+        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
+        colors.add(new Color[]{Color.Black, Color.Black, Color.Black, Color.Black});
+        effectEndOfMatch = new LEDEffect(colors, LEDEffect.EFFECT.FLASH, 5, .5);
     }
 
     public void TeleopInitRobotSpecific()
@@ -175,7 +184,6 @@ public class Application extends com.taurus.Application {
             lift.GetCylindersContainerFixed().Contract();
             lift.GetCylindersContainerCar().Contract();
         }
-
         else
         {
             if (controller.getStopAction())
@@ -272,6 +280,11 @@ public class Application extends com.taurus.Application {
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
                     break;
             }
+            
+            if (endOfMatchEffectSent || Timer.getMatchTime() > 120)
+            {
+                leds.AddEffect(effectEndOfMatch, true);
+            }
         }
 
     }
@@ -290,8 +303,8 @@ public class Application extends com.taurus.Application {
         autonomous = new Autonomous(drive, lift, vision, automode);
         
         // Set LEDs
-        colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
-        leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, Double.MAX_VALUE, 2), true);
+        colors.add(new Color[]{Color.Green, Color.White, Color.Blue, Color.Red});
+        leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, 15, 2), true);
     }
 
     public void AutonomousPeriodicRobotSpecific()
