@@ -120,4 +120,9 @@ public class SwerveConstants {
      */
     public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity
             * DriveGearRatio;
+
+    /**
+     * Digital input pins for the angle calibration reed switch
+     */
+    public static final int[] WheelAngleCalibrationPins = { 0, 1, 2, 3 };
 }
