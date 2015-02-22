@@ -222,6 +222,7 @@ public class Car {
     public boolean GoToBottom()
     {   
         boolean atBottom = ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn();
+        boolean done = false;
         
         if (ZeroTimeoutStart == 0)
         {
@@ -254,7 +255,7 @@ public class Car {
             case WAITING:
                 Actuator.SetSpeedRaw(0);
                 
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .25)
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .15)
                 {
                     ZeroState = ZERO_STATE.ZEROED_BOTTOM;
                 }
@@ -263,10 +264,11 @@ public class Car {
             case ZEROED_BOTTOM:
                 Actuator.SetSpeedRaw(0);
                 ZeroTimeoutStart = 0;
+                done = true;
                 break;
         }
         
-        return ZeroState == ZERO_STATE.ZEROED_BOTTOM;
+        return done;
     }
 
     /**
