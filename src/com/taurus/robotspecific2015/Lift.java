@@ -33,7 +33,6 @@ public class Lift extends Subsystem {
     private PneumaticSubsystem CylindersContainerFixed;
     private PneumaticSubsystem CylindersStackHolder;
 
-    private SensorDigital ToteIntakeSensor;
     private boolean AutonomousToteTriggered;
     
     private double StopperWaitTime = 0;
@@ -77,8 +76,6 @@ public class Lift extends Subsystem {
                         Constants.TIME_EXTEND_STACK_HOLDER,
                         Constants.TIME_CONTRACT_STACK_HOLDER,
                         Constants.CYLINDER_ACTION.CONTRACT);
-//        ToteIntakeSensor =
-//                new SensorDigital(Constants.CHANNEL_DIGITAL_TOTE_INTAKE);
         
         // Setup LEDs
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
@@ -593,7 +590,7 @@ public class Lift extends Subsystem {
     }
 
     /**
-     * Place the stack on the ground and release the rails
+     * Place the stack on the ground and release the rails, then automatically back up
      * 
      * @return true if finished
      */
@@ -603,7 +600,7 @@ public class Lift extends Subsystem {
     }
 
     /**
-     * Place the stack on the ground and release the rails
+     * Place the stack on the ground and release the rails, then automatically back up
      * 
      * @return true if finished
      */
@@ -672,16 +669,6 @@ public class Lift extends Subsystem {
     public Ejector GetEjector()
     {
         return StackEjector;
-    }
-
-    /**
-     * get the tote intake sensor object
-     * 
-     * @return
-     */
-    public Sensor GetToteIntakeSensor()
-    {
-        return ToteIntakeSensor;
     }
 
     /**

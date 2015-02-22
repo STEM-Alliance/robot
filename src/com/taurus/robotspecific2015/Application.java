@@ -267,6 +267,7 @@ public class Application extends com.taurus.Application {
                 case CARRY_STACK:
                     if (lift.LowerStackToCarryHeight())
                     {
+                        // automatically drop the stack
                         CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
                     }
                     break;
@@ -274,7 +275,8 @@ public class Application extends com.taurus.Application {
                 case DROP_STACK:
                     if (lift.DropStack())
                     {
-                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                        // automatically go into chute tote
+                        CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
                     }
                     break;
 
