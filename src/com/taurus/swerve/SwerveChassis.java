@@ -236,11 +236,9 @@ public class SwerveChassis extends Subsystem {
                 // pressing on the dpad
                 // set the rotation using a PI controller based on current robot
                 // heading and new desired heading
-                Error =
-                        Utilities.wrapToRange(Heading - Gyro.getYaw(), -180,
+                Error = Utilities.wrapToRange(Heading - Gyro.getYaw(), -180,
                                 180);
-                Rotation =
-                        ChassisAngleController.update(Error,
+                Rotation = ChassisAngleController.update(Error,
                                 Timer.getFPGATimestamp());
                 LastHeading = Heading;
             }
@@ -249,11 +247,9 @@ public class SwerveChassis extends Subsystem {
                 // not pressing on dpad
                 // set the rotation using a PI controller based on current robot
                 // heading and new desired heading
-                Error =
-                        Utilities.wrapToRange(LastHeading - Gyro.getYaw(),
+                Error = Utilities.wrapToRange(LastHeading - Gyro.getYaw(),
                                 -180, 180);
-                Rotation =
-                        ChassisAngleController.update(Error,
+                Rotation = ChassisAngleController.update(Error,
                                 Timer.getFPGATimestamp());
             }
         }
@@ -315,6 +311,13 @@ public class SwerveChassis extends Subsystem {
             RobotVelocity.setMag(1.0);
         }
 
+        // limit before slowing speed so it runs using the original values
+        // set limitations on rotation,
+        // so if driving full speed it doesn't take priority
+        double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + MinRotationAdjust, 1);
+        RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
+        
+        // scale the speed down unless we're in high speed mode
         if (CrawlMode)
         {
             RobotVelocity.setMag(RobotVelocity.getMag() * .4);
@@ -326,13 +329,6 @@ public class SwerveChassis extends Subsystem {
 
         RobotVelocity = restrictVelocity(RobotVelocity);
 
-        // set limitations on rotation,
-        // so if driving full speed it doesn't take priority
-        double RotationAdjust =
-                Math.min(1 - RobotVelocity.getMag() + MinRotationAdjust, 1);
-        RobotRotation =
-                Utilities.clampToRange(RobotRotation, -RotationAdjust,
-                        RotationAdjust);
 
         // calculate vectors for each wheel
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
@@ -353,8 +349,7 @@ public class SwerveChassis extends Subsystem {
         }
 
         // grab max velocity from the dash
-        MaxAvailableVelocity =
-                Application.prefs.getDouble("MAX_ROBOT_VELOCITY",
+        MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY",
                         MaxAvailableVelocity);
 
         // determine ratio to scale all wheel velocities by
@@ -369,13 +364,11 @@ public class SwerveChassis extends Subsystem {
         {
             // Scale values for each wheel
             SwerveVector WheelScaled =
-                    SwerveVector.NewFromMagAngle(WheelsUnscaled[i].getMag()
-                                                 * Ratio,
+                    SwerveVector.NewFromMagAngle(WheelsUnscaled[i].getMag() * Ratio,
                             WheelsUnscaled[i].getAngle());
 
             // Set the wheel speed
-            WheelsActual[i] =
-                    Wheels[i].setDesired(WheelScaled,/* GearHigh, */Brake);
+            WheelsActual[i] = Wheels[i].setDesired(WheelScaled,/* GearHigh, */Brake);
         }
 
         return WheelsActual;
@@ -396,9 +389,7 @@ public class SwerveChassis extends Subsystem {
         SwerveVector delta = robotVelocity.subtract(LastVelocity);
 
         // grab the max acceleration value from the dash
-        MaxAcceleration =
-                Application.prefs
-                        .getDouble("MAX_ACCELERATION", MaxAcceleration);
+        MaxAcceleration = Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration);
 
         // determine if we are accelerating/decelerating too slow
         if (delta.getMag() > MaxAcceleration * TimeDelta)
