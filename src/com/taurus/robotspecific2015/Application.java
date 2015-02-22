@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +22,8 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
+    
+    private boolean StartTeleInChute = false;
     
 //    private boolean CompressorChargedOnce;
 //    private Compressor compressor;
@@ -90,7 +91,16 @@ public class Application extends com.taurus.Application {
     public void TeleopInitRobotSpecific()
     {
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        CurrentLiftAction = STATE_LIFT_ACTION.ZERO_LIFT;
+        
+        if(StartTeleInChute)
+        {
+            CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
+        }
+        else
+        {
+            CurrentLiftAction = STATE_LIFT_ACTION.ZERO_LIFT;
+        }
+        
         lift.init();        
 //        CompressorChargedOnce = false;
 //        CompressorTimer = Timer.getFPGATimestamp();
@@ -312,6 +322,8 @@ public class Application extends com.taurus.Application {
         lift.GetCar().ZeroIfNeeded();
         UpdateDashboard();
         autonomous.Run();
+        
+        StartTeleInChute = true;
     }
 
     public void AutonomousDeInitRobotSpecific()
