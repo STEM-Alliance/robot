@@ -54,12 +54,16 @@ public class SwerveChassis extends Subsystem {
     private double AutoTimeLength;
     private boolean AutoRunEnable;
     private double AutoTimeStart;
+    
+    private final Controller controller;
 
     /**
      * sets up individual wheels and their positions relative to robot center
      */
-    public SwerveChassis()
+    public SwerveChassis(Controller controller)
     {
+        this.controller = controller;
+        
         ChassisAngleController =
                 new PIDController(ChassisP, ChassisI, ChassisD, 1.0);
 
@@ -124,7 +128,7 @@ public class SwerveChassis extends Subsystem {
      * 
      * @param controller
      */
-    public void run(Controller controller)
+    public void run()
     {
         if (AutoRunEnable)
         {
@@ -315,7 +319,7 @@ public class SwerveChassis extends Subsystem {
         {
             RobotVelocity.setMag(RobotVelocity.getMag() * .4);
         }
-        else if (!Application.controller.getHighSpeed())
+        else if (!controller.getHighSpeed())
         {
             RobotVelocity.setMag(RobotVelocity.getMag() * .75);
         }

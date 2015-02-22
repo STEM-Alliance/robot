@@ -2,6 +2,8 @@ package com.taurus.robotspecific2015;
 
 import java.util.ArrayList;
 
+import com.taurus.Utilities;
+
 import edu.wpi.first.wpilibj.Timer;
 
 public class LEDEffect {
@@ -78,13 +80,13 @@ public class LEDEffect {
                 // Select circular index into the number of total color settings
                 for (int index = 0; index < ColorsCurrent.length; index++)
                 {
-                    ColorsCurrent[index] = ColorsSettings.get(0)[Math.floorMod(index + spinOffset, ColorsCurrent.length)];
+                    ColorsCurrent[index] = ColorsSettings.get(0)[Utilities.floorMod(index + spinOffset, ColorsCurrent.length)];
                 }
                 break;
             case STEP:
                 int stepOffset = (int) (stage * ColorsCurrent.length);  // Which offset into list of color settings
                 
-                ColorsCurrent = ColorsSettings.get(Math.floorMod(stepOffset, ColorsSettings.size()));
+                ColorsCurrent = ColorsSettings.get(Utilities.floorMod(stepOffset, ColorsSettings.size()));
                 break;
             case SOLID:
             default:
