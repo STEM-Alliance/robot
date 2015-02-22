@@ -1,10 +1,8 @@
 package com.taurus.controller;
 
-import com.taurus.Utilities;
 import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.swerve.SwerveVector;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class ControllerXboxPanel implements Controller, Runnable {
