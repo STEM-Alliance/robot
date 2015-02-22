@@ -583,7 +583,8 @@ public class Autonomous {
         @Override
         protected boolean isFinished()
         {
-            return lift.GetToteIntakeSensor().IsOn();
+            //TODO: base this off of time??
+            return false;//lift.GetToteIntakeSensor().IsOn();
         }
 
         @Override
