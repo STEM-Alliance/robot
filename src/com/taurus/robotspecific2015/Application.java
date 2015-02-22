@@ -36,7 +36,8 @@ public class Application extends com.taurus.Application {
     {
         super();
 
-        lift = new Lift(super.drive);
+        lift = new Lift(super.drive, super.controller);
+        
         vision = new Vision();
         distance_sensor_left =
                 new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
@@ -187,7 +188,7 @@ public class Application extends com.taurus.Application {
         }
         else if (controller.getCarTop())
         {
-            lift.GetCar().GoToTop();
+            lift.GetCar().GoUp();
         }
         else if (controller.getReleaseContainer())
         {

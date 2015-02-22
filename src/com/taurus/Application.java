@@ -41,10 +41,10 @@ public abstract class Application {
     private double TimeLastSwerve = 0;
 
     // Motor Objects
-    public SwerveChassis drive;
+    protected SwerveChassis drive;
 
     // Joysticks
-    public static Controller controller;
+    protected Controller controller;
     private ControllerChooser controllerChooser;
 
     private PowerDistributionPanel PDP;
@@ -55,7 +55,7 @@ public abstract class Application {
     {
         prefs = Preferences.getInstance();
         
-        drive = new SwerveChassis();
+        drive = new SwerveChassis(controller);
         
         PDP = new PowerDistributionPanel();
 
@@ -87,7 +87,7 @@ public abstract class Application {
         {
             TimeLastSwerve = Timer.getFPGATimestamp();
             
-            drive.run(controller);
+            drive.run();
             
             SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
         }
