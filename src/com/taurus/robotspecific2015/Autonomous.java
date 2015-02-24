@@ -1,13 +1,18 @@
 package com.taurus.robotspecific2015;
 
+import com.taurus.AutoAction;
+import com.taurus.AutoParallel;
+import com.taurus.AutoSequence;
 import com.taurus.Utilities;
 import com.taurus.robotspecific2015.Constants.AUTO_MODE;
+import com.taurus.robotspecific2015.Constants.AUTO_STATE;
+import com.taurus.robotspecific2015.Constants.LIFT_POSITIONS_E;
+import com.taurus.robotspecific2015.Constants.RAIL_CONTENTS;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveVector;
 
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous {
 
@@ -15,9 +20,11 @@ public class Autonomous {
     private Lift lift;
     private Vision vision;
 
-    Command autoCommand = null;
+    AUTO_MODE autoMode;
+    AUTO_STATE autoState;
 
     boolean dropSmallStack = true;
+    private double autoStateChangeTime;
 
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision,
             AUTO_MODE automode)
@@ -25,324 +32,371 @@ public class Autonomous {
         this.drive = drive;
         this.lift = lift;
         this.vision = vision;
+        this.autoMode = automode;
 
         drive.ZeroGyro();
-
-        switch (automode)
+        
+        switch (autoMode)
         {
-            default:
             case DO_NOTHING:
+                this.autoState = AUTO_STATE.STOP;
                 break;
-
+                
             case GO_TO_ZONE:
-                autoCommand = new DriveToAutoScoringZone();
-                break;
-
-            case GRAB_1_TOTE:
-                drive.SetGyroZero(270);
-                autoCommand = new GrabTote();
-                break;
-
-            case GRAB_2_TOTES:
-                drive.SetGyroZero(270);
-                autoCommand = new Grab2Totes();
-                break;
-
-            case GRAB_2_TOTES_NO_CONTAINER:
-                drive.SetGyroZero(270);
-                autoCommand = new Grab2TotesNoContainer();
-                break;
-                
-            case GRAB_3_TOTES:
-                drive.SetGyroZero(270);
-                autoCommand = new Grab3Totes();
-                break;
-
-            case GRAB_3_TOTES_NO_LEFT_CONTAINER:
-                drive.SetGyroZero(270);
-                autoCommand = new Grab3TotesNoLeftContainer();
-                break;
-                
-            case GRAB_3_TOTES_NO_RIGHT_CONTAINER:
-                drive.SetGyroZero(270);
-                autoCommand = new Grab3TotesNoRightContainer();
-                break;
-                
-            case GRAB_3_TOTES_NO_CONTAINERS:
-                drive.SetGyroZero(270);
-                autoCommand = new Grab3TotesNoContainers();
+                autoStateChangeTime = Timer.getMatchTime();
+                this.autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
                 break;
                 
             case GRAB_CONTAINER:
-                drive.SetGyroZero(90);
-                autoCommand = new GrabContainer();
-                break;
-
+            case GRAB_CONTAINER_AND_LINE_UP:
             case GRAB_CONTAINER_AND_1_TOTE:
-                drive.SetGyroZero(90);
-                autoCommand = new GrabContainer1Tote();
-                break;
-
             case GRAB_CONTAINER_AND_2_TOTES:
                 drive.SetGyroZero(90);
-                autoCommand = new GrabContainer2Totes();
+                this.autoState = AUTO_STATE.GRAB_CONTAINER;
                 break;
-
-            case GRAB_CONTAINER_AND_3_TOTES:
-                drive.SetGyroZero(90);
-                autoCommand = new GrabContainer3Totes();
-                break;
-                
-            case GRAB_CONTAINER_AND_3_TOTES_NO_LEFT_CONTAINER:
-                drive.SetGyroZero(90);
-                autoCommand = new GrabContainer3TotesNoLeftContainer();
-                break;
-        }
-
-        if (autoCommand != null)
-        {
-            autoCommand.start();
-        }
-    }
-
-    public void Run()
-    {
-        Scheduler.getInstance().run();
-    }
-
-    private class DriveLeftToGrabTote extends CommandGroup {
-        public DriveLeftToGrabTote()
-        {
-            // TODO: speed and timeout 
-            addSequential(new DriveUntilToteSensed(new SwerveVector(-1, 0), 0,
-                    270), 1.0);
-            addSequential(new TriggerToteSensed());
-        }
-    }
-
-    private class DriveRightToGrabTote extends CommandGroup {
-        public DriveRightToGrabTote()
-        {
-            // TODO: speed and timeout 
-            addSequential(new DriveUntilToteSensed(new SwerveVector(1, 0), 0,
-                    90), 1.0);
-            addSequential(new TriggerToteSensed());
-        }
-    }
-
-    private class DriveToAutoScoringZone extends CommandGroup {
-        public DriveToAutoScoringZone()
-        {
-            // TODO: speed and timeout 
-            addSequential(new Drive(new SwerveVector(0, 1), 0, -1), 2);
         }
     }
     
-    private class DeliverAndDropTotes extends CommandGroup {
-        public DeliverAndDropTotes()
+    public void Run()
+    {
+        switch (autoState)
         {
-            addSequential(new DriveToAutoScoringZone());
+            case GRAB_CONTAINER:
+                drive.UpdateDrive(new SwerveVector(), 0, 90);
+                lift.AddContainerToStack();
+                
+                if (lift.GetContainerInStack())
+                {
+                    switch (autoMode)
+                    {
+                        case GRAB_CONTAINER:
+                            autoStateChangeTime = Timer.getMatchTime();
+                            autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
+                            break;
+                            
+                        case GRAB_CONTAINER_AND_1_TOTE:
+                        case GRAB_CONTAINER_AND_2_TOTES:
+                            autoStateChangeTime = Timer.getMatchTime();
+                            autoState = AUTO_STATE.DRIVE_RIGHT_TO_GRAB_TOTE;
+                            break;
+                            
+                        case GRAB_CONTAINER_AND_LINE_UP:
+                            autoState = AUTO_STATE.LINE_UP;
+                            break;
+                            
+                        default:
+                            autoState = AUTO_STATE.STOP;
+                            break;                        
+                    }
+                }
+                break;
+                
+            case DRIVE_RIGHT_TO_GRAB_TOTE:
+                if (Timer.getMatchTime() - autoStateChangeTime > 1)
+                {
+                    autoState = AUTO_STATE.GRAB_RIGHT_SIDE_TOTE;
+                }
+                else
+                {
+                    drive.UpdateDrive(new SwerveVector(1, 0), 0, 90);
+                    lift.AddFloorToteToStack(0);
+                }
+                break;
+                
+            case GRAB_RIGHT_SIDE_TOTE:
+                lift.SetAutonomousToteTriggered(true);
+                drive.UpdateDrive(new SwerveVector(), 0, 90);
 
-            if (lift.GetTotesInStack() >= 2 || dropSmallStack)
+                if (autoMode == AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE)
+                {
+                    if (lift.AddFloorToteToStack(0))
+                    {
+                        lift.SetAutonomousToteTriggered(false);
+                        autoStateChangeTime = Timer.getMatchTime();
+                        autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
+                    }   
+                }
+                else if (autoMode == AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES)
+                {
+                    lift.AddFloorToteToStack(1);
+                    
+                    if (lift.GetTotesInStack() > 0 
+                            && lift.GetCar().GetActuator().GetPositionRaw() <= LIFT_POSITIONS_E.DESTACK.ordinal())
+                    {
+                        lift.SetAutonomousToteTriggered(false);
+                        autoStateChangeTime = Timer.getMatchTime();
+                        autoState = AUTO_STATE.DRIVE_LEFT_TO_GRAB_TOTE;
+                    }
+                }
+                else
+                {
+                    autoState = AUTO_STATE.STOP;
+                }
+                break;
+                
+            case DRIVE_LEFT_TO_GRAB_TOTE:
+                if (Timer.getMatchTime() - autoStateChangeTime > 1)
+                {
+                    autoState = AUTO_STATE.GRAB_LEFT_SIDE_TOTE;
+                }
+                else
+                {
+                    drive.UpdateDrive(new SwerveVector(-1, 0), 0, 180);
+                    lift.AddFloorToteToStack(1);
+                }
+                break;
+                
+            case GRAB_LEFT_SIDE_TOTE:
+                lift.SetAutonomousToteTriggered(true);
+                drive.UpdateDrive(new SwerveVector(), 0, 180);
+                    
+                if (lift.AddFloorToteToStack(1))
+                {
+                    lift.SetAutonomousToteTriggered(false);
+                    autoStateChangeTime = Timer.getMatchTime();
+                    autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
+                }
+                break;
+
+            case DRIVE_TO_AUTO_ZONE:
+                break;
+                
+            case LOWER_TOTES:
+                break;
+            case DROP_TOTES:
+                break;
+            case BACK_UP:
+                break;
+
+            case LINE_UP:
+                drive.UpdateDrive(new SwerveVector(), 0, 45);
+                lift.AddChuteToteToStack(0);
+                break;
+                
+            default:
+            case STOP:
+                drive.UpdateDrive(new SwerveVector(), 0, -1);
+                lift.GetCar().GetActuator().SetSpeedRaw(0);
+                break;
+            
+        }
+    }
+
+    private AutoAction DriveLeftToGrabTote()
+    {
+        // TODO: speed and timeout
+        return new AutoSequence(
+                new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270),
+                new TriggerToteSensed());
+    }
+
+    private AutoAction DriveRightToGrabTote()
+    {
+        // TODO: speed and timeout
+        return new AutoSequence(
+                new DriveUntilToteSensed(new SwerveVector(1, 0), 0, 90),
+                new TriggerToteSensed());
+    }
+
+    private AutoAction DriveToAutoScoringZone()
+    {
+        // TODO: speed and timeout
+        return new Drive(new SwerveVector(0, 1), 0, -1, 3);
+    }
+    
+    private AutoAction DeliverAndDropTotes()
+    {
+        return DeliverAndDropTotes(false);
+    }
+    
+    private AutoAction DeliverAndDropTotes(boolean isFull)
+    {
+        if (isFull || dropSmallStack)
+        {
+            return new AutoSequence(
+                    DriveToAutoScoringZone());
+        }
+        else
+        {
+            // TODO: speed and timeout
+            return new AutoSequence(
+                    DriveToAutoScoringZone(),
+                    new DropToteStack(),
+                    new Drive(new SwerveVector(.2, 0), 0, 270, 1));  // Back up
+        }
+    }
+    
+    private AutoAction NavigateAroundContainerToPickUpTote()
+    {
+        // TODO: speed and timeout
+        return new AutoSequence(
+                new Drive(new SwerveVector(0, 1), 0, 270, 1),
+                new Drive(new SwerveVector(-1, 0), 0, 270, 1),
+                new DriveBackwardsToLineUpTote(),
+                DriveLeftToGrabTote());
+    }
+    
+    private AutoAction GrabTote()
+    {
+        return new AutoParallel(
+                new PickupFloorTotes(0), 
+                new AutoSequence(
+                    new TriggerToteSensed(),
+                    DeliverAndDropTotes()));
+    }
+    
+    private AutoAction Grab2Totes()
+    {
+        return new AutoParallel(
+                new PickupFloorTotes(1), 
+                new AutoSequence(
+                    new TriggerToteSensed(), 
+                    NavigateAroundContainerToPickUpTote(),
+                    DeliverAndDropTotes()));
+    }
+    
+    private AutoAction Grab2TotesNoContainer()
+    {
+        return new AutoParallel(
+                new PickupFloorTotes(1), 
+                new AutoSequence(
+                    new TriggerToteSensed(), 
+                    DriveLeftToGrabTote(),
+                    DeliverAndDropTotes()));
+    }
+    
+    private AutoAction Grab3Totes()
+    {
+        return new AutoParallel(
+                new PickupFloorTotes(2), 
+                new AutoSequence(
+                    new TriggerToteSensed(), 
+                    NavigateAroundContainerToPickUpTote(),
+                    NavigateAroundContainerToPickUpTote(),
+                    DeliverAndDropTotes(true)));
+    }
+    
+    private AutoAction Grab3TotesNoLeftContainer()
+    {
+        return new AutoParallel(
+                new PickupFloorTotes(2), 
+                new AutoSequence(
+                    new TriggerToteSensed(), 
+                    DriveLeftToGrabTote(),
+                    NavigateAroundContainerToPickUpTote(),
+                    DeliverAndDropTotes(true)));
+    }
+    
+    private AutoAction Grab3TotesNoRightContainer()
+    {
+        return new AutoParallel(
+                new PickupFloorTotes(2), 
+                new AutoSequence(
+                    new TriggerToteSensed(), 
+                    NavigateAroundContainerToPickUpTote(),
+                    DriveLeftToGrabTote(),
+                    DeliverAndDropTotes(true)));
+    }
+    
+    private AutoAction Grab3TotesNoContainers()
+    {
+        return new AutoParallel(
+                new PickupFloorTotes(2), 
+                new AutoSequence(
+                    new TriggerToteSensed(), 
+                    DriveLeftToGrabTote(),
+                    DriveLeftToGrabTote(),
+                    DeliverAndDropTotes(true)));
+    }
+    
+    private AutoAction GrabContainer()
+    {
+        return new AutoSequence(
+                new PickupContainer(), 
+                DriveToAutoScoringZone());
+    }
+    
+    private AutoAction GrabContainerAndLineUp()
+    {
+        return new AutoSequence(
+                new PickupContainer(),
+                new Drive(new SwerveVector(), 0, 45, 5));
+    }
+    
+    private AutoAction GrabContainer1Tote()
+    {
+        return new AutoSequence(
+                new PickupContainer(), 
+                new AutoParallel(
+                        new PickupFloorTotes(0), 
+                        new AutoSequence(
+                            DriveLeftToGrabTote(),
+                            DeliverAndDropTotes())));
+    }
+
+    private AutoAction GrabContainer2Totes()
+    {
+        return new AutoSequence(
+                new PickupContainer(), 
+                new AutoParallel(
+                        new PickupFloorTotes(1), 
+                        new AutoSequence(
+                            DriveRightToGrabTote(), 
+                            DriveLeftToGrabTote(),
+                            DeliverAndDropTotes())));
+    }
+    
+    private AutoAction GrabContainer3Totes()
+    {
+        return new AutoSequence(
+                new PickupContainer(), 
+                new AutoParallel(
+                        new PickupFloorTotes(2), 
+                        new AutoSequence(
+                            DriveRightToGrabTote(), 
+                            DriveLeftToGrabTote(),
+                            NavigateAroundContainerToPickUpTote(),
+                            DeliverAndDropTotes(true))));
+    }
+
+    private AutoAction GrabContainer3TotesNoLeftContainer()
+    {
+        return new AutoSequence(
+                new PickupContainer(), 
+                new AutoParallel(
+                        new PickupFloorTotes(2), 
+                        new AutoSequence(
+                            DriveRightToGrabTote(), 
+                            DriveLeftToGrabTote(),
+                            DriveLeftToGrabTote(),
+                            DeliverAndDropTotes(true))));
+    }
+
+    private class TriggerToteSensed implements AutoAction {
+
+        @Override
+        public boolean execute()
+        {
+            if (!lift.IsToteInPlace())
             {
-                addSequential(new DropToteStack());
-
-                // Back up
-                // TODO: speed and timeout 
-                addSequential(new Drive(new SwerveVector(.2, 0), 0, 270), 1);
+                lift.SetAutonomousToteTriggered(true);
+                return false;
+            }
+            else
+            {
+                lift.SetAutonomousToteTriggered(false);
+                return true;
             }
         }
     }
 
-    private class NavigateAroundContainerToPickUpTote extends CommandGroup {
-        public NavigateAroundContainerToPickUpTote()
-        {
-            // TODO: speed and timeout 
-            addSequential(new Drive(new SwerveVector(0, 1), 0, 270), 1);
-            addSequential(new Drive(new SwerveVector(-1, 0), 0, 270), 1);
-            addSequential(new DriveBackwardsToLineUpTote());
-            addSequential(new DriveLeftToGrabTote());
-        }
-    }
-
-    private class GrabTote extends CommandGroup {
-        public GrabTote()
-        {
-            addParallel(new PickupFloorTotes(0));
-            addSequential(new TriggerToteSensed());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class Grab2Totes extends CommandGroup {
-        public Grab2Totes()
-        {
-            addParallel(new PickupFloorTotes(1));
-            addSequential(new TriggerToteSensed());
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class Grab2TotesNoContainer extends CommandGroup {
-        public Grab2TotesNoContainer()
-        {
-            addParallel(new PickupFloorTotes(1));
-            addSequential(new TriggerToteSensed());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class Grab3Totes extends CommandGroup {
-        public Grab3Totes()
-        {
-            addParallel(new PickupFloorTotes(2));
-            addSequential(new TriggerToteSensed());
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class Grab3TotesNoLeftContainer extends CommandGroup {
-        public Grab3TotesNoLeftContainer()
-        {
-            addParallel(new PickupFloorTotes(2));
-            addSequential(new TriggerToteSensed());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class Grab3TotesNoRightContainer extends CommandGroup {
-        public Grab3TotesNoRightContainer()
-        {
-            addParallel(new PickupFloorTotes(2));
-            addSequential(new TriggerToteSensed());
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class Grab3TotesNoContainers extends CommandGroup {
-        public Grab3TotesNoContainers()
-        {
-            addParallel(new PickupFloorTotes(2));
-            addSequential(new TriggerToteSensed());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class GrabContainer extends CommandGroup {
-        public GrabContainer()
-        {
-            addSequential(new PickupContainer());
-            addSequential(new DriveToAutoScoringZone());
-        }
-    }
-
-    private class GrabContainer1Tote extends CommandGroup {
-        public GrabContainer1Tote()
-        {
-            addSequential(new PickupContainer());
-            addParallel(new PickupFloorTotes(0));
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class GrabContainer2Totes extends CommandGroup {
-        public GrabContainer2Totes()
-        {
-            addSequential(new PickupContainer());
-            addParallel(new PickupFloorTotes(1));
-            addSequential(new DriveRightToGrabTote());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class GrabContainer3Totes extends CommandGroup {
-        public GrabContainer3Totes()
-        {
-            addSequential(new PickupContainer());
-            addParallel(new PickupFloorTotes(2));
-            addSequential(new DriveRightToGrabTote());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new NavigateAroundContainerToPickUpTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class GrabContainer3TotesNoLeftContainer extends CommandGroup {
-        public GrabContainer3TotesNoLeftContainer()
-        {
-            addSequential(new PickupContainer());
-            addParallel(new PickupFloorTotes(2));
-            addSequential(new DriveRightToGrabTote());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new DriveLeftToGrabTote());
-            addSequential(new DeliverAndDropTotes());
-        }
-    }
-
-    private class TriggerToteSensed extends Command {
-        public TriggerToteSensed()
-        {
-        }
-        
-        @Override
-        protected void initialize()
-        {
-        }
+    private class DriveBackwardsToLineUpTote implements AutoAction {
 
         @Override
-        protected void execute()
+        public boolean execute()
         {
-            lift.SetAutonomousToteTriggered(true);
-        }
+            SmartDashboard.putString("AutoState", "DriveBackwardsToLineUpTote");
 
-        @Override
-        protected boolean isFinished()
-        {
-            return lift.GetCylindersRails().IsExtended();
-        }
-
-        @Override
-        protected void end()
-        {
-            lift.SetAutonomousToteTriggered(false);
-        }
-
-        @Override
-        protected void interrupted()
-        {
-            end();
-        }
-    }
-
-    private class DriveBackwardsToLineUpTote extends Command {
-        boolean Finished = false;
-
-        public DriveBackwardsToLineUpTote()
-        {
-            requires(drive);
-        }
-
-        @Override
-        protected void initialize()
-        {
-            this.Finished = false;
-        }
-
-        @Override
-        protected void execute()
-        {
             double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
             double slideP = Application.prefs.getDouble("SlideP", 2);
             double targetX = Application.prefs.getDouble("SlideTargetX", .55);
@@ -350,6 +404,7 @@ public class Autonomous {
                     Application.prefs.getDouble("SlideTargetXError", .05);
 
             SwerveVector Velocity;
+            boolean Finished = false;
 
             if (vision.getToteSeen())
             {
@@ -357,7 +412,7 @@ public class Autonomous {
 
                 if (Math.abs(xError) < xErrorThreshold)
                 {
-                    this.Finished = true;
+                    Finished = true;
                 }
 
                 double slideVelocity =
@@ -373,189 +428,84 @@ public class Autonomous {
             }
 
             drive.UpdateDrive(Velocity, 0, 270);
-        }
 
-        @Override
-        protected boolean isFinished()
-        {
-            return this.Finished;
-        }
-
-        @Override
-        protected void end()
-        {
-            drive.UpdateDrive(new SwerveVector(), 0, -1);
-        }
-
-        @Override
-        protected void interrupted()
-        {
-            end();
+            return Finished;
         }
     }
 
-    private class DropToteStack extends Command {
-        private boolean Finished = false;
-
-        public DropToteStack()
-        {
-            requires(lift);
-        }
+    private class DropToteStack implements AutoAction {
 
         @Override
-        protected void initialize()
+        public boolean execute()
         {
-            this.Finished = false;
-        }
-
-        @Override
-        protected void execute()
-        {
-            this.Finished = lift.DropStack(true);
-        }
-
-        @Override
-        protected boolean isFinished()
-        {
-            return this.Finished;
-        }
-
-        @Override
-        protected void end()
-        {
-        }
-
-        @Override
-        protected void interrupted()
-        {
-            end();
+            return lift.DropStack(true);
         }
     }
 
-    private class PickupContainer extends Command {
-        private boolean Finished = false;
-
-        public PickupContainer()
-        {
-            requires(lift);
-        }
+    private class PickupContainer implements AutoAction {
 
         @Override
-        protected void initialize()
+        public boolean execute()
         {
-            this.Finished = false;
-        }
-
-        @Override
-        protected void execute()
-        {
-            this.Finished = lift.AddContainerToStack();
-        }
-
-        @Override
-        protected boolean isFinished()
-        {
-            return this.Finished;
-        }
-
-        @Override
-        protected void end()
-        {
-        }
-
-        @Override
-        protected void interrupted()
-        {
-            end();
+            return lift.AddContainerToStack();
         }
     }
 
-    private class PickupFloorTotes extends Command {
+    private class PickupFloorTotes implements AutoAction {
         private int MaxTotesInStack;
-        private boolean Finished;
 
         public PickupFloorTotes(int MaxTotesInStack)
         {
             this.MaxTotesInStack = MaxTotesInStack;
-            this.Finished = false;
-            requires(lift);
         }
 
         @Override
-        protected void initialize()
+        public boolean execute()
         {
-            Finished = false;
-        }
-
-        @Override
-        protected void execute()
-        {
-            this.Finished = lift.AddFloorToteToStack(MaxTotesInStack);
-        }
-
-        @Override
-        protected boolean isFinished()
-        {
-            return this.Finished;
-        }
-
-        @Override
-        protected void end()
-        {
-        }
-
-        @Override
-        protected void interrupted()
-        {
-            end();
+            return lift.AddFloorToteToStack(MaxTotesInStack);
         }
 
     }
 
-    private class Drive extends Command {
+    private class Drive implements AutoAction {
         private SwerveVector Velocity;
         private double Rotation;
         private double Heading;
+        private double Time;
 
-        public Drive(SwerveVector velocity, double rotation, double heading)
+        private double startTime = 0;
+
+        public Drive(SwerveVector velocity, double rotation, double heading,
+                double time)
         {
             this.Velocity = velocity;
             this.Rotation = rotation;
             this.Heading = heading;
-            requires(drive);
+            this.Time = time;
         }
 
         @Override
-        protected void initialize()
+        public boolean execute()
         {
-        }
+            if (startTime == 0)
+            {
+                startTime = Timer.getFPGATimestamp();
+            }
 
-        @Override
-        protected void execute()
-        {
-            drive.UpdateDrive(Velocity, Rotation, Heading);
-        }
-
-        @Override
-        protected boolean isFinished()
-        {
-            return false;
-        }
-
-        @Override
-        protected void end()
-        {
-            drive.UpdateDrive(new SwerveVector(), 0, -1);
-        }
-
-        @Override
-        protected void interrupted()
-        {
-            end();
+            if (Timer.getFPGATimestamp() > startTime + this.Time)
+            {
+                drive.UpdateDrive(new SwerveVector(), 0, -1);
+                return true;
+            }
+            else
+            {
+                drive.UpdateDrive(Velocity, Rotation, Heading);
+                return false;
+            }
         }
     }
 
-    private class DriveUntilToteSensed extends Command {
+    private class DriveUntilToteSensed implements AutoAction {
         private SwerveVector Velocity;
         private double Rotation;
         private double Heading;
@@ -566,37 +516,14 @@ public class Autonomous {
             this.Velocity = velocity;
             this.Rotation = rotation;
             this.Heading = heading;
-            requires(drive);
         }
 
         @Override
-        protected void initialize()
-        {
-        }
-
-        @Override
-        protected void execute()
+        public boolean execute()
         {
             drive.UpdateDrive(Velocity, Rotation, Heading);
-        }
-
-        @Override
-        protected boolean isFinished()
-        {
             //TODO: base this off of time??
             return false;//lift.GetToteIntakeSensor().IsOn();
-        }
-
-        @Override
-        protected void end()
-        {
-            drive.UpdateDrive(new SwerveVector(), 0, -1);
-        }
-
-        @Override
-        protected void interrupted()
-        {
-            end();
         }
     }
 
