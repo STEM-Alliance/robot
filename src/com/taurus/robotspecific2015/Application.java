@@ -52,26 +52,12 @@ public class Application extends com.taurus.Application {
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
         autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
-        autoChooser.addObject("1 tote", AUTO_MODE.GRAB_1_TOTE);
-        autoChooser.addObject("2 totes", AUTO_MODE.GRAB_2_TOTES);
-        autoChooser.addObject("2 totes (no container)",
-                AUTO_MODE.GRAB_2_TOTES_NO_CONTAINER);
-        autoChooser.addObject("3 totes", AUTO_MODE.GRAB_3_TOTES);
-        autoChooser.addObject("3 totes (no left container)",
-                AUTO_MODE.GRAB_3_TOTES_NO_LEFT_CONTAINER);
-        autoChooser.addObject("3 totes (no right container)",
-                AUTO_MODE.GRAB_3_TOTES_NO_RIGHT_CONTAINER);
-        autoChooser.addObject("3 totes (no containers)",
-                AUTO_MODE.GRAB_3_TOTES_NO_CONTAINERS);
         autoChooser.addObject("Container", AUTO_MODE.GRAB_CONTAINER);
+        autoChooser.addObject("Container + line up", AUTO_MODE.GRAB_CONTAINER);
         autoChooser.addObject("Container + tote",
                 AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE);
         autoChooser.addObject("Container + 2 totes",
                 AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES);
-        autoChooser.addObject("Container + 3 totes",
-                AUTO_MODE.GRAB_CONTAINER_AND_3_TOTES);
-        autoChooser.addObject("Container + 3 totes (no left container)",
-                AUTO_MODE.GRAB_CONTAINER_AND_3_TOTES_NO_LEFT_CONTAINER);
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
 
