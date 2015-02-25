@@ -22,8 +22,9 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
-    
+
     private boolean StartTeleInChute = false;
+    private boolean StartTeleGyroCal = true;
     
 //    private boolean CompressorChargedOnce;
 //    private Compressor compressor;
@@ -88,7 +89,13 @@ public class Application extends com.taurus.Application {
             CurrentLiftAction = STATE_LIFT_ACTION.ZERO_LIFT;
         }
         
-        lift.init();        
+        lift.init();
+        
+        if(StartTeleGyroCal)
+        {
+            drive.ZeroGyro();
+        }
+        
 //        CompressorChargedOnce = false;
 //        CompressorTimer = Timer.getFPGATimestamp();
 
@@ -109,16 +116,16 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
         
-        SmartDashboard
-                .putNumber("Distance Left", 
-                        12.402 
-                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
-                        / 2.54);        
-        SmartDashboard
-                .putNumber("Distance Right", 
-                        12.402 
-                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
-                        / 2.54);
+//        SmartDashboard
+//                .putNumber("Distance Left", 
+//                        12.402 
+//                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
+//                        / 2.54);        
+//        SmartDashboard
+//                .putNumber("Distance Right", 
+//                        12.402 
+//                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
+//                        / 2.54);
 
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
         SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
@@ -312,7 +319,9 @@ public class Application extends com.taurus.Application {
         UpdateDashboard();
         autonomous.Run();
         
+        // TODO set these
         StartTeleInChute = true;
+        StartTeleGyroCal = false;
     }
 
     public void AutonomousDeInitRobotSpecific()
