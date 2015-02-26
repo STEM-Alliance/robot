@@ -33,16 +33,10 @@ public class Vision implements Runnable {
     private static final String ATTR_BR_VALUE =
             "CameraAttributes::Brightness::Value";
 
-    private int sessionFront;
-    private int sessionBack;
+    private int session = -1;
     private Image frame, frameTH;
 
     Thread visionThread;
-
-    private double ToteLineStartX = 100 / 320;
-    private double ToteLineStartY = 60 / 240;
-    private double ToteLineEndX = 60 / 320;
-    private double ToteLineEndY = 180 / 240;
 
     private boolean toteDetectionOn = true;
 
@@ -102,65 +96,33 @@ public class Vision implements Runnable {
     @Override
     public void run()
     {
-            frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-            frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 0);
-            sessionFront = Foo ("cam0");
-
-        GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
+        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+        frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 0);
         
-        double TimeLastVision = 0;
-
-        // set up the lines for tote detection
-        Point[][] ToteLines =
-                new Point[][] {
-                        {
-                                new Point((int) (ToteLineStartX * size.width),
-                                        (int) (ToteLineStartY * size.height)),
-                                new Point((int) (size.width - ToteLineStartX
-                                                              * size.width),
-                                        (int) (ToteLineStartY * size.height)),
-                                new Point(
-                                        (int) (ToteLineStartX * size.width + 1),
-                                        (int) (ToteLineStartY * size.height)),
-                                new Point((int) (size.width
-                                                 - ToteLineStartX
-                                                 * size.width + 1),
-                                        (int) (ToteLineStartY * size.height)), },
-                        {
-                                new Point((int) (ToteLineEndX * size.width),
-                                        (int) (ToteLineEndY * size.height)),
-                                new Point((int) (size.width - ToteLineEndX
-                                                              * size.width),
-                                        (int) (ToteLineEndY * size.height)),
-                                new Point(
-                                        (int) (ToteLineEndX * size.width + 1),
-                                        (int) (ToteLineEndY * size.height)),
-                                new Point((int) (size.width
-                                                 - ToteLineEndX
-                                                 * size.width + 1),
-                                        (int) (ToteLineEndY * size.height)), }, };
+        int prevImageToSend = -1;
 
         while (true)
         {
+            // grab from the chooser which image to use
+            int imageToSend = ((Integer) imageChooser.getSelected()).intValue();
+
+            if (session == -1 || prevImageToSend != imageToSend)    
+            {
+                session = OpenCamera(imageToSend == 1 ? "cam2" : "cam0");
+            }
+            
+            GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
+
+            double TimeLastVision = 0;
+
             if ((Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
             {
                 TimeLastVision = Timer.getFPGATimestamp();
 
-                // grab from the chooser which image to use
-                int imageToSend =
-                        ((Integer) imageChooser.getSelected()).intValue();
-
                 try
                 {
-                    if (imageToSend == 0 || imageToSend == 2)
-                    {
-                        NIVision.IMAQdxGrab(sessionFront, frame, 1);
-                    }
-                    else if (imageToSend == 1)
-                    {
-                        NIVision.IMAQdxGrab(sessionBack, frame, 1);
-                    }
-
+                    NIVision.IMAQdxGrab(session, frame, 1);
+                    
                     SmartDashboard.putString("FrameSize", size.width
                                                           + ","
                                                           + size.height);
@@ -278,8 +240,8 @@ public class Vision implements Runnable {
 
         // NIVision.IMAQdxStopAcquisition(session);
     }
-    
-    private int Foo (String CamName)
+
+    private int OpenCamera(String CamName)
     {
         int session = -1;
         try
@@ -302,8 +264,7 @@ public class Vision implements Runnable {
             // SmartDashboard.putString("Modes", Modes);
 
             int videoMode = Application.prefs.getInt("VIDEO_MODE", 93);
-            NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE,
-                    videoMode);
+            NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, videoMode);
 
             // int whiteBalance = Application.prefs.getInt("WhiteBalance",
             // 4500);
@@ -342,7 +303,7 @@ public class Vision implements Runnable {
             NIVision.IMAQdxConfigureGrab(session);
 
             NIVision.IMAQdxStartAcquisition(session);
-            
+
             CameraServer.getInstance().setQuality(30);
 
         }

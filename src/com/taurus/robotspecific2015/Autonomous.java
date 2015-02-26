@@ -159,13 +159,26 @@ public class Autonomous {
                 break;
 
             case DRIVE_TO_AUTO_ZONE:
+                if (Timer.getMatchTime() - autoStateChangeTime > 2)
+                {
+                    autoState = AUTO_STATE.STOP;
+                }
+                else
+                {
+                    drive.UpdateDrive(new SwerveVector(0, 1), 0, -1);
+                }
                 break;
                 
             case LOWER_TOTES:
+                autoState = AUTO_STATE.STOP;
                 break;
+                
             case DROP_TOTES:
+                autoState = AUTO_STATE.STOP;
                 break;
+                
             case BACK_UP:
+                autoState = AUTO_STATE.STOP;
                 break;
 
             case LINE_UP:
@@ -182,349 +195,47 @@ public class Autonomous {
         }
     }
 
-    private AutoAction DriveLeftToGrabTote()
-    {
-        // TODO: speed and timeout
-        return new AutoSequence(
-                new DriveUntilToteSensed(new SwerveVector(-1, 0), 0, 270),
-                new TriggerToteSensed());
-    }
-
-    private AutoAction DriveRightToGrabTote()
-    {
-        // TODO: speed and timeout
-        return new AutoSequence(
-                new DriveUntilToteSensed(new SwerveVector(1, 0), 0, 90),
-                new TriggerToteSensed());
-    }
-
-    private AutoAction DriveToAutoScoringZone()
-    {
-        // TODO: speed and timeout
-        return new Drive(new SwerveVector(0, 1), 0, -1, 3);
-    }
-    
-    private AutoAction DeliverAndDropTotes()
-    {
-        return DeliverAndDropTotes(false);
-    }
-    
-    private AutoAction DeliverAndDropTotes(boolean isFull)
-    {
-        if (isFull || dropSmallStack)
-        {
-            return new AutoSequence(
-                    DriveToAutoScoringZone());
-        }
-        else
-        {
-            // TODO: speed and timeout
-            return new AutoSequence(
-                    DriveToAutoScoringZone(),
-                    new DropToteStack(),
-                    new Drive(new SwerveVector(.2, 0), 0, 270, 1));  // Back up
-        }
-    }
-    
-    private AutoAction NavigateAroundContainerToPickUpTote()
-    {
-        // TODO: speed and timeout
-        return new AutoSequence(
-                new Drive(new SwerveVector(0, 1), 0, 270, 1),
-                new Drive(new SwerveVector(-1, 0), 0, 270, 1),
-                new DriveBackwardsToLineUpTote(),
-                DriveLeftToGrabTote());
-    }
-    
-    private AutoAction GrabTote()
-    {
-        return new AutoParallel(
-                new PickupFloorTotes(0), 
-                new AutoSequence(
-                    new TriggerToteSensed(),
-                    DeliverAndDropTotes()));
-    }
-    
-    private AutoAction Grab2Totes()
-    {
-        return new AutoParallel(
-                new PickupFloorTotes(1), 
-                new AutoSequence(
-                    new TriggerToteSensed(), 
-                    NavigateAroundContainerToPickUpTote(),
-                    DeliverAndDropTotes()));
-    }
-    
-    private AutoAction Grab2TotesNoContainer()
-    {
-        return new AutoParallel(
-                new PickupFloorTotes(1), 
-                new AutoSequence(
-                    new TriggerToteSensed(), 
-                    DriveLeftToGrabTote(),
-                    DeliverAndDropTotes()));
-    }
-    
-    private AutoAction Grab3Totes()
-    {
-        return new AutoParallel(
-                new PickupFloorTotes(2), 
-                new AutoSequence(
-                    new TriggerToteSensed(), 
-                    NavigateAroundContainerToPickUpTote(),
-                    NavigateAroundContainerToPickUpTote(),
-                    DeliverAndDropTotes(true)));
-    }
-    
-    private AutoAction Grab3TotesNoLeftContainer()
-    {
-        return new AutoParallel(
-                new PickupFloorTotes(2), 
-                new AutoSequence(
-                    new TriggerToteSensed(), 
-                    DriveLeftToGrabTote(),
-                    NavigateAroundContainerToPickUpTote(),
-                    DeliverAndDropTotes(true)));
-    }
-    
-    private AutoAction Grab3TotesNoRightContainer()
-    {
-        return new AutoParallel(
-                new PickupFloorTotes(2), 
-                new AutoSequence(
-                    new TriggerToteSensed(), 
-                    NavigateAroundContainerToPickUpTote(),
-                    DriveLeftToGrabTote(),
-                    DeliverAndDropTotes(true)));
-    }
-    
-    private AutoAction Grab3TotesNoContainers()
-    {
-        return new AutoParallel(
-                new PickupFloorTotes(2), 
-                new AutoSequence(
-                    new TriggerToteSensed(), 
-                    DriveLeftToGrabTote(),
-                    DriveLeftToGrabTote(),
-                    DeliverAndDropTotes(true)));
-    }
-    
-    private AutoAction GrabContainer()
-    {
-        return new AutoSequence(
-                new PickupContainer(), 
-                DriveToAutoScoringZone());
-    }
-    
-    private AutoAction GrabContainerAndLineUp()
-    {
-        return new AutoSequence(
-                new PickupContainer(),
-                new Drive(new SwerveVector(), 0, 45, 5));
-    }
-    
-    private AutoAction GrabContainer1Tote()
-    {
-        return new AutoSequence(
-                new PickupContainer(), 
-                new AutoParallel(
-                        new PickupFloorTotes(0), 
-                        new AutoSequence(
-                            DriveLeftToGrabTote(),
-                            DeliverAndDropTotes())));
-    }
-
-    private AutoAction GrabContainer2Totes()
-    {
-        return new AutoSequence(
-                new PickupContainer(), 
-                new AutoParallel(
-                        new PickupFloorTotes(1), 
-                        new AutoSequence(
-                            DriveRightToGrabTote(), 
-                            DriveLeftToGrabTote(),
-                            DeliverAndDropTotes())));
-    }
-    
-    private AutoAction GrabContainer3Totes()
-    {
-        return new AutoSequence(
-                new PickupContainer(), 
-                new AutoParallel(
-                        new PickupFloorTotes(2), 
-                        new AutoSequence(
-                            DriveRightToGrabTote(), 
-                            DriveLeftToGrabTote(),
-                            NavigateAroundContainerToPickUpTote(),
-                            DeliverAndDropTotes(true))));
-    }
-
-    private AutoAction GrabContainer3TotesNoLeftContainer()
-    {
-        return new AutoSequence(
-                new PickupContainer(), 
-                new AutoParallel(
-                        new PickupFloorTotes(2), 
-                        new AutoSequence(
-                            DriveRightToGrabTote(), 
-                            DriveLeftToGrabTote(),
-                            DriveLeftToGrabTote(),
-                            DeliverAndDropTotes(true))));
-    }
-
-    private class TriggerToteSensed implements AutoAction {
-
-        @Override
-        public boolean execute()
-        {
-            if (!lift.IsToteInPlace())
-            {
-                lift.SetAutonomousToteTriggered(true);
-                return false;
-            }
-            else
-            {
-                lift.SetAutonomousToteTriggered(false);
-                return true;
-            }
-        }
-    }
-
-    private class DriveBackwardsToLineUpTote implements AutoAction {
-
-        @Override
-        public boolean execute()
-        {
-            SmartDashboard.putString("AutoState", "DriveBackwardsToLineUpTote");
-
-            double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
-            double slideP = Application.prefs.getDouble("SlideP", 2);
-            double targetX = Application.prefs.getDouble("SlideTargetX", .55);
-            double xErrorThreshold =
-                    Application.prefs.getDouble("SlideTargetXError", .05);
-
-            SwerveVector Velocity;
-            boolean Finished = false;
-
-            if (vision.getToteSeen())
-            {
-                double xError = vision.getResultX() - targetX;
-
-                if (Math.abs(xError) < xErrorThreshold)
-                {
-                    Finished = true;
-                }
-
-                double slideVelocity =
-                        Utilities.clampToRange(xError * slideP, -maxSlide,
-                                maxSlide);
-
-                Velocity = new SwerveVector(0, slideVelocity);
-
-            }
-            else
-            {
-                Velocity = new SwerveVector(0, -maxSlide);
-            }
-
-            drive.UpdateDrive(Velocity, 0, 270);
-
-            return Finished;
-        }
-    }
-
-    private class DropToteStack implements AutoAction {
-
-        @Override
-        public boolean execute()
-        {
-            return lift.DropStack(true);
-        }
-    }
-
-    private class PickupContainer implements AutoAction {
-
-        @Override
-        public boolean execute()
-        {
-            return lift.AddContainerToStack();
-        }
-    }
-
-    private class PickupFloorTotes implements AutoAction {
-        private int MaxTotesInStack;
-
-        public PickupFloorTotes(int MaxTotesInStack)
-        {
-            this.MaxTotesInStack = MaxTotesInStack;
-        }
-
-        @Override
-        public boolean execute()
-        {
-            return lift.AddFloorToteToStack(MaxTotesInStack);
-        }
-
-    }
-
-    private class Drive implements AutoAction {
-        private SwerveVector Velocity;
-        private double Rotation;
-        private double Heading;
-        private double Time;
-
-        private double startTime = 0;
-
-        public Drive(SwerveVector velocity, double rotation, double heading,
-                double time)
-        {
-            this.Velocity = velocity;
-            this.Rotation = rotation;
-            this.Heading = heading;
-            this.Time = time;
-        }
-
-        @Override
-        public boolean execute()
-        {
-            if (startTime == 0)
-            {
-                startTime = Timer.getFPGATimestamp();
-            }
-
-            if (Timer.getFPGATimestamp() > startTime + this.Time)
-            {
-                drive.UpdateDrive(new SwerveVector(), 0, -1);
-                return true;
-            }
-            else
-            {
-                drive.UpdateDrive(Velocity, Rotation, Heading);
-                return false;
-            }
-        }
-    }
-
-    private class DriveUntilToteSensed implements AutoAction {
-        private SwerveVector Velocity;
-        private double Rotation;
-        private double Heading;
-
-        public DriveUntilToteSensed(SwerveVector velocity, double rotation,
-                double heading)
-        {
-            this.Velocity = velocity;
-            this.Rotation = rotation;
-            this.Heading = heading;
-        }
-
-        @Override
-        public boolean execute()
-        {
-            drive.UpdateDrive(Velocity, Rotation, Heading);
-            //TODO: base this off of time??
-            return false;//lift.GetToteIntakeSensor().IsOn();
-        }
-    }
+//    private class DriveBackwardsToLineUpTote implements AutoAction {
+//
+//        @Override
+//        public boolean execute()
+//        {
+//            SmartDashboard.putString("AutoState", "DriveBackwardsToLineUpTote");
+//
+//            double maxSlide = Application.prefs.getDouble("MaxSlide", 1);
+//            double slideP = Application.prefs.getDouble("SlideP", 2);
+//            double targetX = Application.prefs.getDouble("SlideTargetX", .55);
+//            double xErrorThreshold =
+//                    Application.prefs.getDouble("SlideTargetXError", .05);
+//
+//            SwerveVector Velocity;
+//            boolean Finished = false;
+//
+//            if (vision.getToteSeen())
+//            {
+//                double xError = vision.getResultX() - targetX;
+//
+//                if (Math.abs(xError) < xErrorThreshold)
+//                {
+//                    Finished = true;
+//                }
+//
+//                double slideVelocity =
+//                        Utilities.clampToRange(xError * slideP, -maxSlide,
+//                                maxSlide);
+//
+//                Velocity = new SwerveVector(0, slideVelocity);
+//
+//            }
+//            else
+//            {
+//                Velocity = new SwerveVector(0, -maxSlide);
+//            }
+//
+//            drive.UpdateDrive(Velocity, 0, 270);
+//
+//            return Finished;
+//        }
+//    }
 
 }
