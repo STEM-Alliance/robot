@@ -124,5 +124,5 @@ public class SwerveConstants {
     /**
      * Digital input pins for the angle calibration reed switch
      */
-    public static final int[] WheelAngleCalibrationPins = { 0, 1, 2, 3 };
+    public static final int[] WheelAngleCalibrationPins = { 1, 2, 3, 8 };
 }
