@@ -141,14 +141,14 @@ public class Autonomous {
                 }
                 else
                 {
-                    drive.UpdateDrive(new SwerveVector(-1, 0), 0, 180);
+                    drive.UpdateDrive(new SwerveVector(-1, 0), 0, 270);
                     lift.AddFloorToteToStack(1);
                 }
                 break;
                 
             case GRAB_LEFT_SIDE_TOTE:
                 lift.SetAutonomousToteTriggered(true);
-                drive.UpdateDrive(new SwerveVector(), 0, 180);
+                drive.UpdateDrive(new SwerveVector(), 0, 270);
                     
                 if (lift.AddFloorToteToStack(1))
                 {
@@ -159,26 +159,53 @@ public class Autonomous {
                 break;
 
             case DRIVE_TO_AUTO_ZONE:
-                if (Timer.getMatchTime() - autoStateChangeTime > 2)
+                if (Timer.getMatchTime() - autoStateChangeTime > 1.5)
+                {
+                    switch (autoMode)
+                    {
+                        default:
+                        case GO_TO_ZONE:
+                        case GRAB_CONTAINER:
+                            autoState = AUTO_STATE.STOP;
+                            break;
+                            
+                        case GRAB_CONTAINER_AND_1_TOTE:
+                        case GRAB_CONTAINER_AND_2_TOTES:
+                            autoState = AUTO_STATE.DROP_TOTES;
+                            break;
+                    }
+                }
+                else
+                {
+                    drive.UpdateDrive(new SwerveVector(0, 1), 0, 270);
+                }
+                break;
+                
+            case LOWER_TOTES:
+                drive.UpdateDrive(new SwerveVector(), 0, 270);
+                if (lift.LowerStackToCarryHeight())
+                {
+                    autoState = AUTO_STATE.DROP_TOTES;
+                }
+                break;
+                
+            case DROP_TOTES:
+                drive.UpdateDrive(new SwerveVector(), 0, 270);
+                if (lift.DropStack(true))
+                {
+                    autoState = AUTO_STATE.BACK_UP;
+                }
+                break;
+                
+            case BACK_UP:
+                if (Timer.getMatchTime() - autoStateChangeTime > 1)
                 {
                     autoState = AUTO_STATE.STOP;
                 }
                 else
                 {
-                    drive.UpdateDrive(new SwerveVector(0, 1), 0, -1);
+                    drive.UpdateDrive(new SwerveVector(.2, 0), 0, 270);
                 }
-                break;
-                
-            case LOWER_TOTES:
-                autoState = AUTO_STATE.STOP;
-                break;
-                
-            case DROP_TOTES:
-                autoState = AUTO_STATE.STOP;
-                break;
-                
-            case BACK_UP:
-                autoState = AUTO_STATE.STOP;
                 break;
 
             case LINE_UP:
