@@ -93,7 +93,7 @@ public class Application extends com.taurus.Application {
                 break;
             case TEST_MODE_NORMAL:
             default:
-                drive.run(controller);
+                drive.run();
                 break;
         }
     }

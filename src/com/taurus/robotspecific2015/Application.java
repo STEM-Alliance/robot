@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Application extends com.taurus.Application {
+    private boolean endOfMatchEffectSent;
+    
     private Vision vision = new Vision();
     private Lift lift;
     private AnalogInput distance_sensor_left;
@@ -21,17 +22,23 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
+
+    private boolean StartTeleInChute = false;
+    private boolean StartTeleGyroCal = true;
+    
 //    private boolean CompressorChargedOnce;
 //    private Compressor compressor;
 //    private double CompressorTimer;
     
-    private LEDs leds;
+    protected static LEDs leds;
+    private final LEDEffect effectEndOfMatch;
 
     public Application()
     {
         super();
 
-        lift = new Lift(super.drive);
+        lift = new Lift(super.drive, super.controller);
+        
         vision = new Vision();
         distance_sensor_left =
                 new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
@@ -46,26 +53,12 @@ public class Application extends com.taurus.Application {
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
         autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
-        autoChooser.addObject("1 tote", AUTO_MODE.GRAB_1_TOTE);
-        autoChooser.addObject("2 totes", AUTO_MODE.GRAB_2_TOTES);
-        autoChooser.addObject("2 totes (no container)",
-                AUTO_MODE.GRAB_2_TOTES_NO_CONTAINER);
-        autoChooser.addObject("3 totes", AUTO_MODE.GRAB_3_TOTES);
-        autoChooser.addObject("3 totes (no left container)",
-                AUTO_MODE.GRAB_3_TOTES_NO_LEFT_CONTAINER);
-        autoChooser.addObject("3 totes (no right container)",
-                AUTO_MODE.GRAB_3_TOTES_NO_RIGHT_CONTAINER);
-        autoChooser.addObject("3 totes (no containers)",
-                AUTO_MODE.GRAB_3_TOTES_NO_CONTAINERS);
         autoChooser.addObject("Container", AUTO_MODE.GRAB_CONTAINER);
+        autoChooser.addObject("Container + line up", AUTO_MODE.GRAB_CONTAINER);
         autoChooser.addObject("Container + tote",
                 AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE);
         autoChooser.addObject("Container + 2 totes",
                 AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES);
-        autoChooser.addObject("Container + 3 totes",
-                AUTO_MODE.GRAB_CONTAINER_AND_3_TOTES);
-        autoChooser.addObject("Container + 3 totes (no left container)",
-                AUTO_MODE.GRAB_CONTAINER_AND_3_TOTES_NO_LEFT_CONTAINER);
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
 
@@ -76,13 +69,33 @@ public class Application extends com.taurus.Application {
         
         leds = new LEDs();
         leds.start();
+        endOfMatchEffectSent = false;
+        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
+        colors.add(new Color[]{Color.Black, Color.Black, Color.Black, Color.Black});
+        effectEndOfMatch = new LEDEffect(colors, LEDEffect.EFFECT.FLASH, 5, .5);
     }
 
     public void TeleopInitRobotSpecific()
     {
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        CurrentLiftAction = STATE_LIFT_ACTION.ZERO_LIFT;
-        lift.init();        
+        
+        if(StartTeleInChute)
+        {
+            CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
+        }
+        else
+        {
+            CurrentLiftAction = STATE_LIFT_ACTION.ZERO_LIFT;
+        }
+        
+        lift.init();
+        
+        if(StartTeleGyroCal)
+        {
+            drive.ZeroGyro();
+        }
+        
 //        CompressorChargedOnce = false;
 //        CompressorTimer = Timer.getFPGATimestamp();
 
@@ -103,16 +116,16 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
         
-        SmartDashboard
-                .putNumber("Distance Left", 
-                        12.402 
-                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
-                        / 2.54);        
-        SmartDashboard
-                .putNumber("Distance Right", 
-                        12.402 
-                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
-                        / 2.54);
+//        SmartDashboard
+//                .putNumber("Distance Left", 
+//                        12.402 
+//                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
+//                        / 2.54);        
+//        SmartDashboard
+//                .putNumber("Distance Right", 
+//                        12.402 
+//                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
+//                        / 2.54);
 
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
         SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
@@ -168,14 +181,13 @@ public class Application extends com.taurus.Application {
         }
         else if (controller.getCarTop())
         {
-            lift.GetCar().GoToTop();
+            lift.GetCar().GoUp();
         }
         else if (controller.getReleaseContainer())
         {
             lift.GetCylindersContainerFixed().Contract();
             lift.GetCylindersContainerCar().Contract();
         }
-
         else
         {
             if (controller.getStopAction())
@@ -249,6 +261,7 @@ public class Application extends com.taurus.Application {
                 case CARRY_STACK:
                     if (lift.LowerStackToCarryHeight())
                     {
+                        // automatically drop the stack
                         CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
                     }
                     break;
@@ -256,7 +269,8 @@ public class Application extends com.taurus.Application {
                 case DROP_STACK:
                     if (lift.DropStack())
                     {
-                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                        // automatically go into chute tote
+                        CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
                     }
                     break;
 
@@ -271,6 +285,11 @@ public class Application extends com.taurus.Application {
                 default:
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
                     break;
+            }
+            
+            if (endOfMatchEffectSent || Timer.getMatchTime() > 120)
+            {
+                leds.AddEffect(effectEndOfMatch, true);
             }
         }
 
@@ -290,8 +309,8 @@ public class Application extends com.taurus.Application {
         autonomous = new Autonomous(drive, lift, vision, automode);
         
         // Set LEDs
-        colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
-        leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, Double.MAX_VALUE, 2), true);
+        colors.add(new Color[]{Color.Green, Color.White, Color.Blue, Color.Red});
+        leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, 15, 2), true);
     }
 
     public void AutonomousPeriodicRobotSpecific()
@@ -299,6 +318,10 @@ public class Application extends com.taurus.Application {
         lift.GetCar().ZeroIfNeeded();
         UpdateDashboard();
         autonomous.Run();
+        
+        // TODO set these
+        StartTeleInChute = true;
+        StartTeleGyroCal = false;
     }
 
     public void AutonomousDeInitRobotSpecific()

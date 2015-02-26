@@ -53,9 +53,10 @@ public abstract class Constants {
     public static final double LIFT_THRESHOLD = .25;
     public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20,
             20.75 };
+    public static final double LIFT_CHUTE_READY_HEIGHT = 5;
 
-    public static final double LIFT_CAR_SPEED_UP = 0.8;
-    public static final double LIFT_CAR_SPEED_DOWN = 0.7;
+    public static final double LIFT_CAR_SPEED_UP = 0.9;
+    public static final double LIFT_CAR_SPEED_DOWN = 0.9;
     public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.3;
 
     public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.2;
@@ -164,18 +165,29 @@ public abstract class Constants {
     public static enum AUTO_MODE {
         DO_NOTHING,
         GO_TO_ZONE,
-        GRAB_1_TOTE,
-        GRAB_2_TOTES,
-        GRAB_2_TOTES_NO_CONTAINER,
-        GRAB_3_TOTES,
-        GRAB_3_TOTES_NO_LEFT_CONTAINER,
-        GRAB_3_TOTES_NO_RIGHT_CONTAINER,
-        GRAB_3_TOTES_NO_CONTAINERS,
         GRAB_CONTAINER,
+        GRAB_CONTAINER_AND_LINE_UP,
         GRAB_CONTAINER_AND_1_TOTE,
         GRAB_CONTAINER_AND_2_TOTES,
-        GRAB_CONTAINER_AND_3_TOTES,
-        GRAB_CONTAINER_AND_3_TOTES_NO_LEFT_CONTAINER,
+    }
+    
+    public static enum AUTO_STATE {
+        GRAB_CONTAINER,
+        
+        DRIVE_RIGHT_TO_GRAB_TOTE,
+        GRAB_RIGHT_SIDE_TOTE,
+        
+        DRIVE_LEFT_TO_GRAB_TOTE,
+        GRAB_LEFT_SIDE_TOTE,
+        
+        DRIVE_TO_AUTO_ZONE,
+        
+        LOWER_TOTES,
+        DROP_TOTES,
+        BACK_UP,
+        
+        STOP,
+        LINE_UP,
     }
 
     public static enum AUTO_STATE_MACHINE_L {
