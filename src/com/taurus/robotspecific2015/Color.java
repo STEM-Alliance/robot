@@ -12,6 +12,7 @@ public class Color {
     public static final Color Blue = new Color(0, 0, 0xfff);
     public static final Color Magenta = new Color(0xfff, 0, 0xfff);
     public static final Color White = new Color(0xfff, 0xfff, 0xfff);
+    public static final Color Orange = new Color(0xfff, 0x666, 0x000);
     
     private int red;
     private int green;
