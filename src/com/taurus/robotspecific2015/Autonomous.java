@@ -39,10 +39,12 @@ public class Autonomous {
         switch (autoMode)
         {
             case DO_NOTHING:
+                drive.SetGyroZero(45);
                 this.autoState = AUTO_STATE.STOP;
                 break;
                 
             case GO_TO_ZONE:
+                drive.SetGyroZero(90);
                 autoStateChangeTime = Timer.getMatchTime();
                 this.autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
                 break;
@@ -51,7 +53,7 @@ public class Autonomous {
             case GRAB_CONTAINER_AND_LINE_UP:
             case GRAB_CONTAINER_AND_1_TOTE:
             case GRAB_CONTAINER_AND_2_TOTES:
-                drive.SetGyroZero(90);
+                drive.SetGyroZero(45);
                 this.autoState = AUTO_STATE.GRAB_CONTAINER;
                 break;
         }
@@ -62,7 +64,7 @@ public class Autonomous {
         switch (autoState)
         {
             case GRAB_CONTAINER:
-                drive.UpdateDrive(new SwerveVector(), 0, 90);
+                drive.UpdateDrive(new SwerveVector(), 0, -1);
                 lift.SetAutonomousToteTriggered(true);
                 lift.AddContainerToStack();
                 
@@ -183,13 +185,13 @@ public class Autonomous {
                 }
                 else
                 {
-                    drive.UpdateDrive(new SwerveVector(0, 1), 0, 270);
+                    drive.UpdateDrive(new SwerveVector(0, 1), 0, -1);
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
                 }
                 break;
                 
             case LOWER_TOTES:
-                drive.UpdateDrive(new SwerveVector(), 0, 270);
+                drive.UpdateDrive(new SwerveVector(), 0, -1);
                 if (lift.LowerStackToCarryHeight())
                 {
                     autoState = AUTO_STATE.DROP_TOTES;
@@ -197,10 +199,10 @@ public class Autonomous {
                 break;
                 
             case DROP_TOTES:
-                drive.UpdateDrive(new SwerveVector(), 0, 270);
+                drive.UpdateDrive(new SwerveVector(), 0, -1);
                 if (lift.DropStack(true))
                 {
-                    autoState = AUTO_STATE.BACK_UP;
+                    autoState = AUTO_STATE.STOP;
                 }
                 break;
                 
@@ -211,7 +213,7 @@ public class Autonomous {
                 }
                 else
                 {
-                    drive.UpdateDrive(new SwerveVector(.2, 0), 0, 270);
+                    drive.UpdateDrive(new SwerveVector(.2, 0), 0, -1);
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
                 }
                 break;
