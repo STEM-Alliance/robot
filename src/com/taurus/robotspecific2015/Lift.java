@@ -180,7 +180,7 @@ public class Lift extends Subsystem {
                                 StateAddChuteToteToStack =
                                         STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
 
-                                Application.leds.AddEffect(effectsIntakeNotReady, true);
+//                                Application.leds.AddEffect(effectsIntakeNotReady, true);
                                 StopperWaitTime = Timer.getFPGATimestamp();
                             }
                         }
@@ -193,7 +193,7 @@ public class Lift extends Subsystem {
                             StateAddChuteToteToStack =
                                     STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                             
-                            Application.leds.AddEffect(effectsIntakeNotReady, true);
+//                            Application.leds.AddEffect(effectsIntakeNotReady, true);
                             StopperWaitTime = Timer.getFPGATimestamp();
                         }
                         else
@@ -246,12 +246,12 @@ public class Lift extends Subsystem {
                 {
                     if (TotesInStack < MaxTotesInStack)
                     {
-                        Application.leds.AddEffect(effectsIntakeReady, true);
+//                        Application.leds.AddEffect(effectsIntakeReady, true);
                     }
                     else
                     {
                         // Indicate that we are ready to drive off
-                        Application.leds.AddEffect(effectsReadyToDrive, true);
+//                        Application.leds.AddEffect(effectsReadyToDrive, true);
                     }
                 }
                 
@@ -388,7 +388,7 @@ public class Lift extends Subsystem {
                 this.initStates();
 
                 if (RailContents == RAIL_CONTENTS.EMPTY
-                    && !ContainerInStack
+                    //&& !ContainerInStack
                     && TotesInStack == 0)
                 {
                     // Sanity check this should even be called.
@@ -396,7 +396,7 @@ public class Lift extends Subsystem {
                     if (LiftCar.GoToBottom()
                         & CylindersRails.Contract()
                         & CylindersStackHolder.Extend()
-                        & CylindersContainerFixed.Extend()
+                        & CylindersContainerFixed.Contract()
                         & CylindersContainerCar.Contract()
                         & StackEjector.StopIn()
                         
@@ -541,7 +541,7 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Extend()
                     & StackEjector.StopIn())
                 {
-                    Application.leds.AddEffect(effectsInTransit, true);
+//                    Application.leds.AddEffect(effectsInTransit, true);
                     StateCarry = STATE_CARRY.INIT;
                 }
                 break;
@@ -563,7 +563,7 @@ public class Lift extends Subsystem {
         switch (StateEjectStack)
         {
             case INIT:
-                Application.leds.AddEffect(effectsScore, true);
+//                Application.leds.AddEffect(effectsScore, true);
                 StateEjectStack = STATE_EJECT_STACK.EJECT;
                 break;
 
@@ -617,7 +617,7 @@ public class Lift extends Subsystem {
         switch (StateDropStack)
         {
             case INIT:
-                Application.leds.AddEffect(effectsScore, true);
+//                Application.leds.AddEffect(effectsScore, true);
                 StateDropStack = STATE_DROP_STACK.LOWER_STACK;
                 break;
 

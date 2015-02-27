@@ -20,14 +20,14 @@ public class Vision implements Runnable {
 
     private static final String ATTR_VIDEO_MODE =
             "AcquisitionAttributes::VideoMode";
-    // private static final String ATTR_WB_MODE =
-    // "CameraAttributes::WhiteBalance::Mode";
-    // private static final String ATTR_WB_VALUE =
-    // "CameraAttributes::WhiteBalance::Value";
-    // private static final String ATTR_EX_MODE =
-    // "CameraAttributes::Exposure::Mode";
-    // private static final String ATTR_EX_VALUE =
-    // "CameraAttributes::Exposure::Value";
+     private static final String ATTR_WB_MODE =
+     "CameraAttributes::WhiteBalance::Mode";
+     private static final String ATTR_WB_VALUE =
+     "CameraAttributes::WhiteBalance::Value";
+     private static final String ATTR_EX_MODE =
+     "CameraAttributes::Exposure::Mode";
+     private static final String ATTR_EX_VALUE =
+     "CameraAttributes::Exposure::Value";
     private static final String ATTR_BR_MODE =
             "CameraAttributes::Brightness::Mode";
     private static final String ATTR_BR_VALUE =
@@ -80,26 +80,29 @@ public class Vision implements Runnable {
     {
         imageChooser = new SendableChooser();
         imageChooser.addDefault("Input Front", Integer.valueOf(0));
-        imageChooser.addDefault("Input Back", Integer.valueOf(1));
+        imageChooser.addObject("Input Back", Integer.valueOf(1));
         imageChooser.addObject("Thresholded", Integer.valueOf(2));
         SmartDashboard.putData("Image to show", imageChooser);
 
+        CameraServer.getInstance().setQuality(30);
+
         visionThread = new Thread(this);
+        visionThread.setPriority(Thread.MIN_PRIORITY);
     }
 
     public void Start()
     {
-        visionThread.setPriority(Thread.MIN_PRIORITY);
         visionThread.start();
     }
 
     @Override
     public void run()
     {
-        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-        frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 0);
-        
         int prevImageToSend = -1;
+
+        double TimeLastVision = 0;
+
+        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
         while (true)
         {
@@ -108,20 +111,36 @@ public class Vision implements Runnable {
 
             if (session == -1 || prevImageToSend != imageToSend)    
             {
-                session = OpenCamera(imageToSend == 1 ? "cam2" : "cam0");
+                prevImageToSend = imageToSend;
+                
+                try
+                {
+                    if (session != -1)
+                    {
+                        NIVision.IMAQdxStopAcquisition(session);
+                        NIVision.IMAQdxUnconfigureAcquisition(session);
+                        NIVision.IMAQdxCloseCamera(session);
+                        session = -1;
+                    }
+                }
+                catch (Exception e)
+                {
+                    SmartDashboard.putString("Vision error", e.getMessage());
+                }
+                
+                session = OpenCamera(imageToSend == 1 ? "cam0" : "cam1");
             }
-            
-            GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
 
-            double TimeLastVision = 0;
 
-            if ((Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
+            if (session != -1 && (Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
             {
                 TimeLastVision = Timer.getFPGATimestamp();
 
                 try
                 {
                     NIVision.IMAQdxGrab(session, frame, 1);
+                    
+                    GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
                     
                     SmartDashboard.putString("FrameSize", size.width
                                                           + ","
@@ -136,7 +155,9 @@ public class Vision implements Runnable {
                     if (toteDetectionOn)
                     {
                         // tote detection is on, so adjust the image to filter
-                        // out all the nonsense
+                        // out all the nonsense                        
+
+                        frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
 
                         NIVision.imaqColorThreshold(frameTH, frame, 255,
                                 ColorMode.HSL,
@@ -223,11 +244,12 @@ public class Vision implements Runnable {
                             resultY = biggestY / size.height;
                             resultOrientation = biggestOrientation;
                         }
-                    }
+                    }                    
+
                 }
                 catch (Exception e)
                 {
-                    SmartDashboard.putString("Vision error", e.getMessage());
+                    SmartDashboard.putString("Vision error", "Processing:" + e.getMessage());
                 }
 
                 SmartDashboard.putNumber("Vision Task Length",
@@ -252,7 +274,15 @@ public class Vision implements Runnable {
                     NIVision.IMAQdxOpenCamera(
                             CamName,
                             NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        }
+        catch (Exception e)
+        {
+            SmartDashboard.putString("Vision error", "Open:" + e.getMessage());
+            return -1;
+        }
 
+        try
+        {
             // print to dashboard a list of all available video modes
             // NIVision.dxEnumerateVideoModesResult enumerated =
             // NIVision.IMAQdxEnumerateVideoModes(session);
@@ -268,8 +298,8 @@ public class Vision implements Runnable {
 
             // int whiteBalance = Application.prefs.getInt("WhiteBalance",
             // 4500);
-            // NIVision.IMAQdxSetAttributeString(session, ATTR_WB_MODE,
-            // "Manual");
+//            NIVision.IMAQdxSetAttributeString(session, ATTR_WB_MODE,
+//                    "Manual");
             // NIVision.IMAQdxSetAttributeI64(session, ATTR_WB_VALUE,
             // whiteBalance);
 
@@ -297,14 +327,9 @@ public class Vision implements Runnable {
                 NIVision.IMAQdxSetAttributeI64(session, ATTR_BR_VALUE, val);
             }
 
-            // TODO choose based on which mode (ie use back when getting totes
-            // from
-            // chute)
             NIVision.IMAQdxConfigureGrab(session);
 
             NIVision.IMAQdxStartAcquisition(session);
-
-            CameraServer.getInstance().setQuality(30);
 
         }
         catch (Exception e)

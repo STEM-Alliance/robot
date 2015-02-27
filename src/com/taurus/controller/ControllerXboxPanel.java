@@ -1,5 +1,6 @@
 package com.taurus.controller;
 
+import com.taurus.controller.Xbox.ButtonType;
 import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.swerve.SwerveVector;
 
@@ -335,7 +336,7 @@ public class ControllerXboxPanel implements Controller, Runnable {
     }
 
     @Override
-    public boolean getReleaseContainer()
+    public boolean getReleaseEverything()
     {
         return panel.getBlackRButton();
     }
@@ -398,5 +399,17 @@ public class ControllerXboxPanel implements Controller, Runnable {
         }
         
         xbox.setRumble(Rumble, 0);
+    }
+
+    @Override
+    public boolean getWheelCal()
+    {
+        return panel.getBlackLButton();
+    }
+
+    @Override
+    public boolean getInitialize()
+    {
+        return xbox.getButton(ButtonType.kLeftStick) && xbox.getButton(ButtonType.kRightStick);
     }
 }

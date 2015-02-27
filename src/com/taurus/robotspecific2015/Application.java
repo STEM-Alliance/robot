@@ -30,16 +30,18 @@ public class Application extends com.taurus.Application {
 //    private Compressor compressor;
 //    private double CompressorTimer;
     
-    protected static LEDs leds;
+    //protected static LEDs leds;
     private final LEDEffect effectEndOfMatch;
 
     public Application()
     {
         super();
+        
+//        leds = new LEDs();
+//        leds.start();
 
         lift = new Lift(super.drive, super.controller);
         
-        vision = new Vision();
         distance_sensor_left =
                 new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
         distance_sensor_right =
@@ -67,8 +69,6 @@ public class Application extends com.taurus.Application {
         testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
         
-        leds = new LEDs();
-        leds.start();
         endOfMatchEffectSent = false;
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
         colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
@@ -103,7 +103,7 @@ public class Application extends com.taurus.Application {
         colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
         colors.add(new Color[]{Color.Random(), Color.Black, Color.Cyan, Color.Green});
         colors.add(new Color[]{Color.Random(), Color.Green, Color.White, Color.Yellow});
-        leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.FLASH, Double.MAX_VALUE, 2), true);
+        //leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.FLASH, Double.MAX_VALUE, 2), true);
     }
 
     
@@ -183,10 +183,14 @@ public class Application extends com.taurus.Application {
         {
             lift.GetCar().GoUp();
         }
-        else if (controller.getReleaseContainer())
+        else if (controller.getReleaseEverything())
         {
             lift.GetCylindersContainerFixed().Contract();
+            lift.GetCylindersStackHolder().Extend();
+            lift.GetCylindersRails().Contract();
             lift.GetCylindersContainerCar().Contract();
+            lift.GetEjector().StopIn();
+            
         }
         else
         {
@@ -270,7 +274,8 @@ public class Application extends com.taurus.Application {
                     if (lift.DropStack())
                     {
                         // automatically go into chute tote
-                        CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
+                        //CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
                     break;
 
@@ -289,7 +294,7 @@ public class Application extends com.taurus.Application {
             
             if (endOfMatchEffectSent || Timer.getMatchTime() > 120)
             {
-                leds.AddEffect(effectEndOfMatch, true);
+                //leds.AddEffect(effectEndOfMatch, true);
             }
         }
 
@@ -310,7 +315,7 @@ public class Application extends com.taurus.Application {
         
         // Set LEDs
         colors.add(new Color[]{Color.Green, Color.White, Color.Blue, Color.Red});
-        leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, 15, 2), true);
+        //leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, 15, 2), true);
     }
 
     public void AutonomousPeriodicRobotSpecific()

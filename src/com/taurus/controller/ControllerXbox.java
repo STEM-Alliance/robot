@@ -304,7 +304,7 @@ public class ControllerXbox implements Controller {
     }
 
     @Override
-    public boolean getReleaseContainer()
+    public boolean getReleaseEverything()
     {
         // TODO Auto-generated method stub
         return false;
@@ -347,5 +347,19 @@ public class ControllerXbox implements Controller {
     @Override
     public void setRumble(Hand hand, float value, double length)
     {
+    }
+
+    @Override
+    public boolean getWheelCal()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getInitialize()
+    {
+        // TODO Auto-generated method stub
+        return false;
     }
 }
