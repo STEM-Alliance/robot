@@ -126,7 +126,7 @@ public class Lift extends Subsystem {
     {
         this.initStates();
         this.TotesInStack = 0;
-        this.ContainerInStack = false;
+        //this.ContainerInStack = false;
         this.RailContents = RAIL_CONTENTS.EMPTY;
         this.AutonomousToteTriggered = false;
         this.DropDriveFirstTime = false;
@@ -234,7 +234,7 @@ public class Lift extends Subsystem {
 
                 }
                 // wait 2 seconds before putting in the stopper
-                else if(Timer.getFPGATimestamp() - StopperWaitTime > 2)
+                else if(Timer.getFPGATimestamp() - StopperWaitTime > 1)
                 {
                     StackEjector.StopIn();
                 }
@@ -396,12 +396,12 @@ public class Lift extends Subsystem {
                     if (LiftCar.GoToBottom()
                         & CylindersRails.Contract()
                         & CylindersStackHolder.Extend()
-                        & CylindersContainerFixed.Contract()
                         & CylindersContainerCar.Contract()
                         & StackEjector.StopIn()
                         
                         & IsToteInPlace())
                     {
+                        CylindersContainerFixed.Contract();
                         StateAddContainerToStack =
                                 STATE_ADD_CONTAINER_TO_STACK.CONTAINER_CAR_EXTEND;
                     }
@@ -504,8 +504,8 @@ public class Lift extends Subsystem {
                         LiftCar.GoToChute();
                         CylindersRails.Extend();
                         CylindersStackHolder.Extend();
-                        CylindersContainerCar.Extend();
-                        CylindersContainerFixed.Extend();
+                        CylindersContainerCar.Contract();
+                        CylindersContainerFixed.Contract();
                         StackEjector.StopOut();
                         break;
                 }
@@ -519,7 +519,7 @@ public class Lift extends Subsystem {
                 if (CylindersStackHolder.Extend()
                     & CylindersContainerFixed.Contract()
                     & CylindersRails.Extend()
-                    & CylindersContainerCar.Extend()
+                    & CylindersContainerCar.Contract()
                     & StackEjector.StopIn())
                 {
                     if (RailContents == RAIL_CONTENTS.TOTE)
@@ -538,7 +538,7 @@ public class Lift extends Subsystem {
                     & CylindersStackHolder.Extend()
                     & CylindersContainerFixed.Contract()
                     & CylindersRails.Extend()
-                    & CylindersContainerCar.Extend()
+                    & CylindersContainerCar.Contract()
                     & StackEjector.StopIn())
                 {
 //                    Application.leds.AddEffect(effectsInTransit, true);
@@ -568,20 +568,22 @@ public class Lift extends Subsystem {
                 break;
 
             case EJECT:
-                if (LiftCar.GoToEject()
-                    & StackEjector.StopIn()
-                    & StackEjector.EjectStack()
-                    & CylindersContainerFixed.Contract())
+                if(CylindersContainerFixed.Contract() & CylindersContainerCar.Contract())
                 {
-                    RailContents = RAIL_CONTENTS.EMPTY;
-                    TotesInStack = 0;
-                    ContainerInStack = false;
-
-                    if (controller.getEjectStack())
+                    if (LiftCar.GoToEject()
+                        & StackEjector.StopIn()
+                        & StackEjector.EjectStack())
                     {
-                        // Wait for the driver to press eject again to retract
-                        // the piston (yes, I know, ewww...).
-                        StateEjectStack = STATE_EJECT_STACK.RESET;
+                        RailContents = RAIL_CONTENTS.EMPTY;
+                        TotesInStack = 0;
+                        ContainerInStack = false;
+    
+                        if (controller.getEjectStack())
+                        {
+                            // Wait for the driver to press eject again to retract
+                            // the piston (yes, I know, ewww...).
+                            StateEjectStack = STATE_EJECT_STACK.RESET;
+                        }
                     }
                 }
                 break;
@@ -761,5 +763,18 @@ public class Lift extends Subsystem {
     public STATE_EJECT_STACK GetStateEjectStack()
     {
         return StateEjectStack;
+    }
+
+    public void SetContainerInStack(boolean b)
+    {
+        ContainerInStack = b;
+    }
+    
+    public void SetToteOnRails(boolean b)
+    {
+        if(b)
+        {
+            RailContents = RAIL_CONTENTS.TOTE;
+        }
     }
 }

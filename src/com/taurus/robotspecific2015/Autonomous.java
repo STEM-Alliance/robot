@@ -25,6 +25,7 @@ public class Autonomous {
 
     boolean dropSmallStack = true;
     private double autoStateChangeTime;
+    private float startingAngle;
 
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision,
             AUTO_MODE automode)
@@ -36,10 +37,12 @@ public class Autonomous {
 
         drive.ZeroGyro();
         
+        this.startingAngle = Application.prefs.getFloat("StartingAngle", 45);
+        
         switch (autoMode)
         {
             case DO_NOTHING:
-                drive.SetGyroZero(45);
+                drive.SetGyroZero(startingAngle);
                 this.autoState = AUTO_STATE.STOP;
                 break;
                 
@@ -53,7 +56,7 @@ public class Autonomous {
             case GRAB_CONTAINER_AND_LINE_UP:
             case GRAB_CONTAINER_AND_1_TOTE:
             case GRAB_CONTAINER_AND_2_TOTES:
-                drive.SetGyroZero(45);
+                drive.SetGyroZero(startingAngle);
                 this.autoState = AUTO_STATE.GRAB_CONTAINER;
                 break;
         }
@@ -67,7 +70,9 @@ public class Autonomous {
                 drive.UpdateDrive(new SwerveVector(), 0, -1);
                 lift.SetAutonomousToteTriggered(true);
                 
-                if (lift.AddContainerToStack())
+                lift.AddContainerToStack();
+                
+                if (lift.GetContainerInStack() && lift.GetCar().GetActuator().GetPositionRaw() > LIFT_POSITIONS_E.DESTACK.ordinal())
                 {
                     switch (autoMode)
                     {
@@ -167,26 +172,31 @@ public class Autonomous {
                 break;
 
             case DRIVE_TO_AUTO_ZONE:
-                if (Timer.getFPGATimestamp() - autoStateChangeTime > 6.0)
+                if (Timer.getFPGATimestamp() - autoStateChangeTime > 4.0)
                 {
-                    switch (autoMode)
+                    drive.UpdateDrive(new SwerveVector(), 0, -1);
+                    
+                    if (lift.AddContainerToStack())
                     {
-                        default:
-                        case GO_TO_ZONE:
-                        case GRAB_CONTAINER:
-                            autoState = AUTO_STATE.STOP;
-                            break;
-                            
-                        case GRAB_CONTAINER_AND_1_TOTE:
-                        case GRAB_CONTAINER_AND_2_TOTES:
-                            autoState = AUTO_STATE.DROP_TOTES;
-                            break;
+                        switch (autoMode)
+                        {
+                            default:
+                            case GO_TO_ZONE:
+                            case GRAB_CONTAINER:
+                                autoState = AUTO_STATE.STOP;
+                                break;
+                                
+                            case GRAB_CONTAINER_AND_1_TOTE:
+                            case GRAB_CONTAINER_AND_2_TOTES:
+                                autoState = AUTO_STATE.DROP_TOTES;
+                                break;
+                        }
                     }
                 }
                 else
                 {
-                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.5, 270), 0, -1);
-                    lift.GetCar().GetActuator().SetSpeedRaw(0);
+                    lift.AddContainerToStack();
+                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(1, 270), 0, -1);
                 }
                 break;
                 

@@ -197,6 +197,7 @@ public class Application extends com.taurus.Application {
             if (controller.getStopAction())
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
+                lift.SetContainerInStack(false);
                 lift.init();
             }
 
@@ -225,11 +226,17 @@ public class Application extends com.taurus.Application {
             }
             else if (controller.getCarryStack())
             {
+                lift.SetToteOnRails(true);
                 CurrentLiftAction = STATE_LIFT_ACTION.CARRY_STACK;
             }
             else if (controller.getDropStack())
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
+            }
+            else if (controller.getCarryStackNoTote())
+            {
+                lift.SetToteOnRails(false);
+                CurrentLiftAction = STATE_LIFT_ACTION.CARRY_STACK;
             }
 
             switch (CurrentLiftAction)
@@ -266,7 +273,8 @@ public class Application extends com.taurus.Application {
                     if (lift.LowerStackToCarryHeight())
                     {
                         // automatically drop the stack
-                        CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
+                        //CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
+                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
                     break;
 
@@ -308,6 +316,9 @@ public class Application extends com.taurus.Application {
     public void AutonomousInitRobotSpecific()
     {
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
+        
+        lift.init();
+        lift.SetContainerInStack(false);
         
         drive.ZeroGyro();
         AUTO_MODE automode = (AUTO_MODE) autoChooser.getSelected();

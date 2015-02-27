@@ -412,4 +412,10 @@ public class ControllerXboxPanel implements Controller, Runnable {
     {
         return xbox.getButton(ButtonType.kLeftStick) && xbox.getButton(ButtonType.kRightStick);
     }
+
+    @Override
+    public boolean getCarryStackNoTote()
+    {
+        return xbox.getTrigger(Hand.kLeft);
+    }
 }

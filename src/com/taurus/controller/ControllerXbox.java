@@ -362,4 +362,11 @@ public class ControllerXbox implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public boolean getCarryStackNoTote()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
