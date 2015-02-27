@@ -9,12 +9,6 @@
 	<widget field="Swerve Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1229" y="58"/>
 	</widget>
-	<widget field="Test Wheel" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="0" y="479"/>
-	</widget>
-	<widget field="Test Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="1336" y="117"/>
-	</widget>
 	<widget field="CylindersRails.State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="626" y="434"/>
 	</widget>

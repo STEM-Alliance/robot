@@ -204,6 +204,8 @@ public interface Controller {
 
     public boolean getDropStack();
     
+    public boolean getCarryStackNoTote();
+    
     public void setRumble(Hand hand, float value);
     
     public void setRumble(Hand hand, float value, double length);

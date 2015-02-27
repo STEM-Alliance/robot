@@ -21,6 +21,7 @@ public class Car {
     private SensorDigital TopSensorLeft;
     private SensorDigital ZeroSensorRight;
     private SensorDigital TopSensorRight;
+    private SensorDigital ChuteHeightSensor;
     
     private ZERO_STATE ZeroState = ZERO_STATE.MOVING;
     private double ZeroWaitStartTime = 0;
@@ -48,6 +49,8 @@ public class Car {
 
         ZeroSensorRight = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_ZERO_RIGHT);
         TopSensorRight = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_TOP_RIGHT);
+        
+        ChuteHeightSensor = new SensorDigital(Constants.CHANNEL_DIGITAL_CAR_CHUTE);
 
         // If we're at the bottom when initializing, zero the actuator
         if (ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn())
@@ -180,7 +183,8 @@ public class Car {
         else
         {
             return SetPosition(LIFT_POSITIONS_E.CHUTE,
-                    Constants.LIFT_CAR_SPEED_DOWN);
+                        Constants.LIFT_CAR_SPEED_DOWN) 
+                    || this.ChuteHeightSensor.IsOn();
         }
     }
 
@@ -265,7 +269,7 @@ public class Car {
                 // wait a little bit to ensure we resync/zero properly
                 Actuator.SetSpeedRaw(0);
                 
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .15)
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .3)
                 {
                     ZeroState = ZERO_STATE.ZEROED_BOTTOM;
                 }

@@ -44,6 +44,7 @@ public abstract class Constants {
     public static final int CHANNEL_DIGITAL_CAR_TOP_LEFT = 5;
     public static final int CHANNEL_DIGITAL_CAR_ZERO_LEFT = 6;
     public static final int CHANNEL_DIGITAL_CAR_ZERO_RIGHT = 7;
+    public static final int CHANNEL_DIGITAL_CAR_CHUTE = 9;
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
