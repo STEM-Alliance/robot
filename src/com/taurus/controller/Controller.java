@@ -188,8 +188,12 @@ public interface Controller {
     public boolean getManualLift();
     
     public boolean getFakePostion();
+
+    public boolean getReleaseEverything();
+
+    public boolean getWheelCal();
     
-    public boolean getReleaseContainer();
+    public boolean getInitialize();
     
     /**
      * Get the stop action

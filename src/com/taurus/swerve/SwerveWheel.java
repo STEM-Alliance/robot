@@ -8,6 +8,7 @@ package com.taurus.swerve;
 
 import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
+import com.taurus.controller.Controller;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -54,7 +55,7 @@ public class SwerveWheel {
      * angle that the sensor is mounted compared to 0
      */
     public double CalibrationSensorAngle;
-    private final double CALIBRATION_MINIMUM = 10;
+    private final double CALIBRATION_MINIMUM = 20;
 
     // controller
     private SwerveAngleController AngleController;
@@ -69,6 +70,8 @@ public class SwerveWheel {
     // deadband
     private static final double MinSpeed = 0.08;
 
+    private final Controller controller;
+    
     /**
      * Set up the wheel with the specific IO and orientation on the robot
      * 
@@ -90,7 +93,7 @@ public class SwerveWheel {
     public SwerveWheel(int Number, double[] Position, double Orientation,
             /*int[] EncoderPins, */int PotPin, int DriveAddress, int AnglePin,
             /*int ShiftPin, int[] ShiftVals*/
-            int AngleCalibrationPin)
+            int AngleCalibrationPin, Controller controller)
     {
         Name = "Wheel" + this.Number;
         this.Number = Number;
@@ -120,6 +123,8 @@ public class SwerveWheel {
         AngleOrientation = Orientation;
         
         CalibrationSensor = new DigitalInput(AngleCalibrationPin);
+        
+        this.controller = controller;
     }
 
     /**
@@ -217,20 +222,24 @@ public class SwerveWheel {
 
         double AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
         
-        if(CalibrationSensor.get())
+        
+        if(controller.getWheelCal())
         {
-            // the Calibration Sensor is triggered, so we should be facing forward
-            if(Math.abs(Utilities.wrapToRange(AdjustedAngle, -180, 180)) > CALIBRATION_MINIMUM)
+            if(CalibrationSensor.get())
             {
-                // we're more than CALIBRATION_MINIMUM away, yet the sensor is triggered,
-                // we need to then update the angle
-                this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0, 360);
+                // the Calibration Sensor is triggered, so we should be facing forward
+                if(Math.abs(Utilities.wrapToRange(AdjustedAngle, -180, 180)) > CALIBRATION_MINIMUM)
+                {
+                    // we're more than CALIBRATION_MINIMUM away, yet the sensor is triggered,
+                    // we need to then update the angle
+                    this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0, 360);
+                    
+                    Application.prefs.putDouble("Wheel_Orientation_" + Number, AngleOrientation);
+                    
+                    AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
+                }
                 
-                Application.prefs.putDouble("Wheel_Orientation_" + Number, AngleOrientation);
-                
-                AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
             }
-            
         }
         
         return AdjustedAngle;

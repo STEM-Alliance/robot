@@ -100,7 +100,8 @@ public class SwerveChassis extends Subsystem {
                     SwerveConstants.WheelAngleMotorPins[i],
 //                    SwerveConstants.WheelShiftServoPins[i],
 //                    SwerveConstants.WheelShiftServoVals[i],
-                    SwerveConstants.WheelAngleCalibrationPins[i]);
+                    SwerveConstants.WheelAngleCalibrationPins[i],
+                    controller);
         }
 
     }

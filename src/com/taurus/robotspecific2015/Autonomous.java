@@ -63,6 +63,7 @@ public class Autonomous {
         {
             case GRAB_CONTAINER:
                 drive.UpdateDrive(new SwerveVector(), 0, 90);
+                lift.SetAutonomousToteTriggered(true);
                 lift.AddContainerToStack();
                 
                 if (lift.GetContainerInStack())
@@ -72,20 +73,25 @@ public class Autonomous {
                         case GRAB_CONTAINER:
                             autoStateChangeTime = Timer.getMatchTime();
                             autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
+
+                            lift.SetAutonomousToteTriggered(false);
                             break;
                             
                         case GRAB_CONTAINER_AND_1_TOTE:
                         case GRAB_CONTAINER_AND_2_TOTES:
                             autoStateChangeTime = Timer.getMatchTime();
                             autoState = AUTO_STATE.DRIVE_RIGHT_TO_GRAB_TOTE;
+                            lift.SetAutonomousToteTriggered(false);
                             break;
                             
                         case GRAB_CONTAINER_AND_LINE_UP:
                             autoState = AUTO_STATE.LINE_UP;
+                            lift.SetAutonomousToteTriggered(false);
                             break;
                             
                         default:
                             autoState = AUTO_STATE.STOP;
+                            lift.SetAutonomousToteTriggered(false);
                             break;                        
                     }
                 }
@@ -178,6 +184,7 @@ public class Autonomous {
                 else
                 {
                     drive.UpdateDrive(new SwerveVector(0, 1), 0, 270);
+                    lift.GetCar().GetActuator().SetSpeedRaw(0);
                 }
                 break;
                 
@@ -205,6 +212,7 @@ public class Autonomous {
                 else
                 {
                     drive.UpdateDrive(new SwerveVector(.2, 0), 0, 270);
+                    lift.GetCar().GetActuator().SetSpeedRaw(0);
                 }
                 break;
 

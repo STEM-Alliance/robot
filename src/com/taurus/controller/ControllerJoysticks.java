@@ -310,7 +310,7 @@ public class ControllerJoysticks implements Controller {
     }
 
     @Override
-    public boolean getReleaseContainer()
+    public boolean getReleaseEverything()
     {
         // TODO Auto-generated method stub
         return false;
@@ -356,5 +356,19 @@ public class ControllerJoysticks implements Controller {
     {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public boolean getWheelCal()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getInitialize()
+    {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

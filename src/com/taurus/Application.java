@@ -54,19 +54,17 @@ public abstract class Application {
     public Application()
     {
         prefs = Preferences.getInstance();
-        
-        drive = new SwerveChassis(controller);
-        
+                
         PDP = new PowerDistributionPanel();
 
         controllerChooser = new ControllerChooser();
         controller = controllerChooser.GetController();
+        
+        drive = new SwerveChassis(controller);
     }
     
     public void TeleopInit()
     {
-        controller = controllerChooser.GetController();
-        
         //drive.ZeroGyro();
 
         TeleopInitRobotSpecific();
