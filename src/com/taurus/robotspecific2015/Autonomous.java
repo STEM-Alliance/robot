@@ -44,8 +44,8 @@ public class Autonomous {
                 break;
                 
             case GO_TO_ZONE:
-                drive.SetGyroZero(90);
-                autoStateChangeTime = Timer.getMatchTime();
+                drive.SetGyroZero(0);
+                autoStateChangeTime = Timer.getFPGATimestamp();
                 this.autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
                 break;
                 
@@ -66,14 +66,13 @@ public class Autonomous {
             case GRAB_CONTAINER:
                 drive.UpdateDrive(new SwerveVector(), 0, -1);
                 lift.SetAutonomousToteTriggered(true);
-                lift.AddContainerToStack();
                 
-                if (lift.GetContainerInStack())
+                if (lift.AddContainerToStack())
                 {
                     switch (autoMode)
                     {
                         case GRAB_CONTAINER:
-                            autoStateChangeTime = Timer.getMatchTime();
+                            autoStateChangeTime = Timer.getFPGATimestamp();
                             autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
 
                             lift.SetAutonomousToteTriggered(false);
@@ -81,13 +80,14 @@ public class Autonomous {
                             
                         case GRAB_CONTAINER_AND_1_TOTE:
                         case GRAB_CONTAINER_AND_2_TOTES:
-                            autoStateChangeTime = Timer.getMatchTime();
+                            autoStateChangeTime = Timer.getFPGATimestamp();
                             autoState = AUTO_STATE.DRIVE_RIGHT_TO_GRAB_TOTE;
                             lift.SetAutonomousToteTriggered(false);
                             break;
                             
                         case GRAB_CONTAINER_AND_LINE_UP:
-                            autoState = AUTO_STATE.LINE_UP;
+                            //autoState = AUTO_STATE.LINE_UP;
+                            autoState = AUTO_STATE.STOP;
                             lift.SetAutonomousToteTriggered(false);
                             break;
                             
@@ -100,13 +100,13 @@ public class Autonomous {
                 break;
                 
             case DRIVE_RIGHT_TO_GRAB_TOTE:
-                if (Timer.getMatchTime() - autoStateChangeTime > 1)
+                if (Timer.getFPGATimestamp() - autoStateChangeTime > 1)
                 {
                     autoState = AUTO_STATE.GRAB_RIGHT_SIDE_TOTE;
                 }
                 else
                 {
-                    drive.UpdateDrive(new SwerveVector(1, 0), 0, 90);
+                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.5, 0), 0, 0);
                     lift.AddFloorToteToStack(0);
                 }
                 break;
@@ -120,7 +120,7 @@ public class Autonomous {
                     if (lift.AddFloorToteToStack(0))
                     {
                         lift.SetAutonomousToteTriggered(false);
-                        autoStateChangeTime = Timer.getMatchTime();
+                        autoStateChangeTime = Timer.getFPGATimestamp();
                         autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
                     }   
                 }
@@ -132,7 +132,7 @@ public class Autonomous {
                             && lift.GetCar().GetActuator().GetPositionRaw() <= LIFT_POSITIONS_E.DESTACK.ordinal())
                     {
                         lift.SetAutonomousToteTriggered(false);
-                        autoStateChangeTime = Timer.getMatchTime();
+                        autoStateChangeTime = Timer.getFPGATimestamp();
                         autoState = AUTO_STATE.DRIVE_LEFT_TO_GRAB_TOTE;
                     }
                 }
@@ -143,13 +143,13 @@ public class Autonomous {
                 break;
                 
             case DRIVE_LEFT_TO_GRAB_TOTE:
-                if (Timer.getMatchTime() - autoStateChangeTime > 1)
+                if (Timer.getFPGATimestamp() - autoStateChangeTime > 1)
                 {
                     autoState = AUTO_STATE.GRAB_LEFT_SIDE_TOTE;
                 }
                 else
                 {
-                    drive.UpdateDrive(new SwerveVector(-1, 0), 0, 270);
+                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.5, 180), 0, 180);
                     lift.AddFloorToteToStack(1);
                 }
                 break;
@@ -161,13 +161,13 @@ public class Autonomous {
                 if (lift.AddFloorToteToStack(1))
                 {
                     lift.SetAutonomousToteTriggered(false);
-                    autoStateChangeTime = Timer.getMatchTime();
+                    autoStateChangeTime = Timer.getFPGATimestamp();
                     autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
                 }
                 break;
 
             case DRIVE_TO_AUTO_ZONE:
-                if (Timer.getMatchTime() - autoStateChangeTime > 1.5)
+                if (Timer.getFPGATimestamp() - autoStateChangeTime > 3.0)
                 {
                     switch (autoMode)
                     {
@@ -185,7 +185,7 @@ public class Autonomous {
                 }
                 else
                 {
-                    drive.UpdateDrive(new SwerveVector(0, 1), 0, -1);
+                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.5, 270), 0, -1);
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
                 }
                 break;
@@ -207,19 +207,19 @@ public class Autonomous {
                 break;
                 
             case BACK_UP:
-                if (Timer.getMatchTime() - autoStateChangeTime > 1)
+                if (Timer.getFPGATimestamp() - autoStateChangeTime > 1)
                 {
                     autoState = AUTO_STATE.STOP;
                 }
                 else
                 {
-                    drive.UpdateDrive(new SwerveVector(.2, 0), 0, -1);
+                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.2, 0), 0, -1);
                     lift.GetCar().GetActuator().SetSpeedRaw(0);
                 }
                 break;
 
             case LINE_UP:
-                drive.UpdateDrive(new SwerveVector(), 0, 45);
+                drive.UpdateDrive(new SwerveVector(), 0, -45);
                 lift.AddChuteToteToStack(0);
                 break;
                 

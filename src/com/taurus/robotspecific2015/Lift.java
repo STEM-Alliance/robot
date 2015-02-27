@@ -166,8 +166,8 @@ public class Lift extends Subsystem {
                 switch (RailContents)
                 {
                     case EMPTY:
-                        if (LiftCar.GoToChute()
-                            & CylindersRails.Extend()
+                        LiftCar.GoToChute();
+                        if( CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
                             & CylindersContainerCar.Contract()
                             & StackEjector.StopOut()

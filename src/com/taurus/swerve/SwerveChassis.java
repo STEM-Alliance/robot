@@ -429,6 +429,7 @@ public class SwerveChassis extends Subsystem {
     public void SetGyroZero(float yaw)
     {
         Gyro.setZero(yaw);
+        LastHeading = yaw;
     }
 
     /**
