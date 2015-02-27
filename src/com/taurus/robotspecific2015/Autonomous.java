@@ -167,7 +167,7 @@ public class Autonomous {
                 break;
 
             case DRIVE_TO_AUTO_ZONE:
-                if (Timer.getFPGATimestamp() - autoStateChangeTime > 3.0)
+                if (Timer.getFPGATimestamp() - autoStateChangeTime > 6.0)
                 {
                     switch (autoMode)
                     {
