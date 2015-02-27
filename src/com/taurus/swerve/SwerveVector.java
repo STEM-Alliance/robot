@@ -5,6 +5,8 @@
  */
 package com.taurus.swerve;
 
+import com.taurus.Utilities;
+
 /**
  * Auto calculate angle and magnitude/angular velocity/distance from x and y
  * values
@@ -95,8 +97,9 @@ public class SwerveVector {
      */
     public void setMagAngle(double mag, double angle)
     {
-        x = Math.cos(Math.toRadians(angle)) * mag;
-        y = Math.sin(Math.toRadians(angle)) * mag;
+        double realAngle = Math.toRadians(Utilities.wrapToRange(angle, 0, 360));
+        x = Math.cos(realAngle) * mag;
+        y = Math.sin(realAngle) * mag;
     }
 
     /**
