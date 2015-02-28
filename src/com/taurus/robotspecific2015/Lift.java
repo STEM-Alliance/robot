@@ -792,4 +792,10 @@ public class Lift extends Subsystem {
             RailContents = RAIL_CONTENTS.TOTE;
         }
     }
+
+    // Dislog a stuck tote by jittering the car
+    public void ShakeCar()
+    {
+        LiftCar.ShakeCar();        
+    }
 }

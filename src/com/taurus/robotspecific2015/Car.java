@@ -28,6 +28,8 @@ public class Car {
     private double ZeroSpeedTimer = 0;
     private double ZeroTimeoutStart = 0;
     private double ZeroTimeout = 3;
+    private double ShakeStartTime = Timer.getFPGATimestamp();
+    private boolean IsShakeUp = true;  // Shake down first because ShakeStartTime will have elapsed     
     
     private final Controller controller;
 
@@ -398,5 +400,25 @@ public class Car {
         {
             return SetPosition(LIFT_POSITIONS_E.EJECT, Constants.LIFT_CAR_SPEED_DOWN_INITIAL);
         }
+    }
+    
+    // Dislodge a stuck tote by jittering the car
+    public void ShakeCar()
+    {
+        // Is it time to reverse the direction?
+        if(Timer.getFPGATimestamp() - ShakeStartTime > Constants.LIFT_CAR_TIME_SHAKE)
+        {
+            // Reverse direction and reset timer
+            if (IsShakeUp)
+            {
+                Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_SHAKE_DOWN);
+            }
+            else
+            {
+                Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_SHAKE_UP);   
+            }
+            ShakeStartTime = Timer.getFPGATimestamp();
+            IsShakeUp = !IsShakeUp;  // Reverse state for next time
+        } 
     }
 }
