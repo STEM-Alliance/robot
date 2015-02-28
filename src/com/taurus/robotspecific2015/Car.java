@@ -201,7 +201,7 @@ public class Car {
         }
         else
         {
-            return GoToBottom();
+            return GoToBottom(6);
         }
 
     }
@@ -229,7 +229,7 @@ public class Car {
      * 
      * @return true if we're at the bottom
      */
-    public boolean GoToBottom()
+    public boolean GoToBottom(int TotesInStack)
     {   
         boolean atBottom = ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn();
         boolean done = false;
@@ -254,7 +254,7 @@ public class Car {
             default:
             case MOVING:
                 // start moving down
-                GoToZero();
+                GoToZero(TotesInStack);
                 
                 if (atBottom)
                 {
@@ -309,7 +309,7 @@ public class Car {
      * Go to the zero position (bottom). Will start slow and ramp speed as time increases
      * @return true if we're at the bottom, else false
      */
-    public boolean GoToZero()
+    public boolean GoToZero(int TotesInStack)
     {
         if (ZeroIfNeeded())
         {
@@ -330,7 +330,7 @@ public class Car {
             if (Timer.getFPGATimestamp() - ZeroSpeedTimer < Constants.LIFT_CAR_TIME_DOWN_INITIAL)
             {
                 // initial speed
-                Actuator.SetSpeedRaw(-Constants.LIFT_CAR_SPEED_DOWN_INITIAL);
+                Actuator.SetSpeedRaw(-Constants.LIFT_CAR_SPEED_DOWN_INITIAL );
             }
             else if (Timer.getFPGATimestamp() - ZeroSpeedTimer
                     - Constants.LIFT_CAR_TIME_DOWN_INITIAL < Constants.LIFT_CAR_TIME_DOWN_INCREASING)
