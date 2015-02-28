@@ -37,7 +37,7 @@ public class Autonomous {
 
         drive.ZeroGyro();
         
-        this.startingAngle = Application.prefs.getFloat("StartingAngle", 45);
+        this.startingAngle = Application.prefs.getFloat("StartingAngle", -45);
         
         switch (autoMode)
         {
@@ -53,7 +53,7 @@ public class Autonomous {
                 break;
                 
             case GRAB_CONTAINER:
-            case GRAB_CONTAINER_AND_LINE_UP:
+            case GRAB_CONTAINER_NO_MOVE:
             case GRAB_CONTAINER_AND_1_TOTE:
             case GRAB_CONTAINER_AND_2_TOTES:
                 drive.SetGyroZero(startingAngle);
@@ -90,8 +90,10 @@ public class Autonomous {
                             lift.SetAutonomousToteTriggered(false);
                             break;
                             
-                        case GRAB_CONTAINER_AND_LINE_UP:
+                        case GRAB_CONTAINER_NO_MOVE:
                             //autoState = AUTO_STATE.LINE_UP;
+                            
+                            
                             autoState = AUTO_STATE.STOP;
                             lift.SetAutonomousToteTriggered(false);
                             break;
