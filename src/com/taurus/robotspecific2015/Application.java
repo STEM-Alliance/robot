@@ -56,11 +56,11 @@ public class Application extends com.taurus.Application {
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
         autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
         autoChooser.addObject("Container", AUTO_MODE.GRAB_CONTAINER);
-        autoChooser.addObject("Container + line up", AUTO_MODE.GRAB_CONTAINER);
-        autoChooser.addObject("Container + tote",
-                AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE);
-        autoChooser.addObject("Container + 2 totes",
-                AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES);
+        autoChooser.addObject("Container No Move", AUTO_MODE.GRAB_CONTAINER_NO_MOVE);
+       //autoChooser.addObject("Container + tote",
+       //         AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE);
+       //autoChooser.addObject("Container + 2 totes",
+       //         AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES);
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
 
@@ -340,7 +340,7 @@ public class Application extends com.taurus.Application {
         autonomous.Run();
         
         // TODO set these
-        StartTeleInChute = true;
+        StartTeleInChute = false;
         StartTeleGyroCal = false;
     }
 

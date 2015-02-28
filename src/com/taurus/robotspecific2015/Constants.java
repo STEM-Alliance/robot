@@ -170,7 +170,7 @@ public abstract class Constants {
         DO_NOTHING,
         GO_TO_ZONE,
         GRAB_CONTAINER,
-        GRAB_CONTAINER_AND_LINE_UP,
+        GRAB_CONTAINER_NO_MOVE,
         GRAB_CONTAINER_AND_1_TOTE,
         GRAB_CONTAINER_AND_2_TOTES,
     }
