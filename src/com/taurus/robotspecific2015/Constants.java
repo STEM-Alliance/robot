@@ -57,7 +57,7 @@ public abstract class Constants {
     public static final double LIFT_CHUTE_READY_HEIGHT = 5;
 
     public static final double LIFT_CAR_SPEED_UP = 0.9;
-    public static final double LIFT_CAR_SPEED_DOWN = 0.9;
+    public static final double LIFT_CAR_SPEED_DOWN = 0.7;
     public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.3;
 
     public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.2;

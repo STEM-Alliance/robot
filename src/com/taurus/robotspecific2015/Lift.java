@@ -161,7 +161,14 @@ public class Lift extends Subsystem {
             case INIT:
                 this.initStates();
 
-                CylindersContainerFixed.Extend();
+                if(ContainerInStack && TotesInStack < 1)
+                {
+                    CylindersContainerFixed.Extend();
+                }
+                else
+                {
+                    CylindersContainerFixed.Contract();
+                }
 
                 switch (RailContents)
                 {
@@ -255,7 +262,7 @@ public class Lift extends Subsystem {
                     }
                 }
                 
-                if (LiftCar.GoToBottom())
+                if (LiftCar.GoToBottom(TotesInStack))
                 {
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
@@ -280,12 +287,19 @@ public class Lift extends Subsystem {
             case INIT:
                 this.initStates();
 
-                CylindersContainerFixed.Extend();
+                if(ContainerInStack && TotesInStack < 1)
+                {
+                    CylindersContainerFixed.Extend();
+                }
+                else
+                {
+                    CylindersContainerFixed.Contract();
+                }
 
                 switch (RailContents)
                 {
                     case EMPTY:
-                        if (LiftCar.GoToBottom()
+                        if (LiftCar.GoToBottom(6)
                             & CylindersRails.Contract()
                             & CylindersStackHolder.Contract()
                             & CylindersContainerCar.Contract()
@@ -393,7 +407,7 @@ public class Lift extends Subsystem {
                 {
                     // Sanity check this should even be called.
 
-                    if (LiftCar.GoToBottom()
+                    if (LiftCar.GoToBottom(6)
                         & CylindersRails.Contract()
                         & CylindersStackHolder.Extend()
                         & CylindersContainerCar.Contract()
@@ -409,7 +423,7 @@ public class Lift extends Subsystem {
                 break;
 
             case CONTAINER_CAR_EXTEND:
-                if (LiftCar.GoToBottom()
+                if (LiftCar.GoToBottom(6)
                     & CylindersRails.Extend()
                     & CylindersContainerCar.Extend())
                 {
@@ -437,7 +451,7 @@ public class Lift extends Subsystem {
                 break;
 
             case RESET:
-                if (LiftCar.GoToBottom()
+                if (LiftCar.GoToBottom(6)
                     & CylindersContainerCar.Contract()
                     & CylindersRails.Contract()
                     & CylindersContainerFixed.Extend())
@@ -629,7 +643,7 @@ public class Lift extends Subsystem {
                     CylindersContainerFixed.Contract();
                 }
 
-                if (LiftCar.GoToBottom() & CylindersStackHolder.Extend())
+                if (LiftCar.GoToBottom(TotesInStack) & CylindersStackHolder.Extend())
                 {
                     StateDropStack = STATE_DROP_STACK.RELEASE;
                 }
@@ -645,15 +659,16 @@ public class Lift extends Subsystem {
                     ContainerInStack = false;
 
                     StateDropStack = STATE_DROP_STACK.BACK_UP;
+                    Finish = true;
                     DropDriveFirstTime = true;
                 }
                 break;
 
             case BACK_UP:
-                SwerveVector vector = new SwerveVector();
-                vector.setMagAngle(1, 180);
-                Finish = drive.autoRun(vector, 2, DropDriveFirstTime);
-                DropDriveFirstTime = false;
+                //SwerveVector vector = new SwerveVector();
+                //vector.setMagAngle(1, 180);
+                //Finish = true; //drive.autoRun(vector, 2, DropDriveFirstTime);
+                //DropDriveFirstTime = false;
                 break;
         }
 
