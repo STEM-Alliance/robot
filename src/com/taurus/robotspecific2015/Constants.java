@@ -51,17 +51,18 @@ public abstract class Constants {
     public static final double[] LIFT_MOTOR_SCALING = { -1 };
     public static final int LIFT_POT_PIN = 4;
     public static final double LIFT_POT_DISTANCE = 3.14;
-    public static final double LIFT_THRESHOLD = .25;
+    public static final double LIFT_THRESHOLD = .4;
     public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20,
             20.75 };
     public static final double LIFT_CHUTE_READY_HEIGHT = 5;
 
-    public static final double LIFT_CAR_SPEED_UP = 0.9;
+    public static final double LIFT_CAR_SPEED_UP = 1.0;
     public static final double LIFT_CAR_SPEED_DOWN = 0.7;
     public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.3;
     public static final double LIFT_CAR_SPEED_SHAKE_UP = 1;
-    public static final double LIFT_CAR_SPEED_SHAKE_DOWN = 1;
-    public static final double LIFT_CAR_TIME_SHAKE = .5;
+    public static final double LIFT_CAR_SPEED_SHAKE_DOWN = -1;
+    public static final double LIFT_CAR_TIME_SHAKE_UP = .2;
+    public static final double LIFT_CAR_TIME_SHAKE_DOWN = .1;
     
     public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.2;
     public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.5;

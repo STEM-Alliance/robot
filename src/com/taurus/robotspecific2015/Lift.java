@@ -520,7 +520,7 @@ public class Lift extends Subsystem {
                         CylindersStackHolder.Extend();
                         CylindersContainerCar.Contract();
                         CylindersContainerFixed.Contract();
-                        StackEjector.StopOut();
+//                        StackEjector.StopOut();
                         break;
                 }
                 break;

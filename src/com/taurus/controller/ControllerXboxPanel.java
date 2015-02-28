@@ -423,6 +423,6 @@ public class ControllerXboxPanel implements Controller, Runnable {
     public boolean getLiftShake()
     {
        
-        return panel.getBlackRButton();
+        return panel.getBlackLButton();
     }
 }

@@ -406,19 +406,28 @@ public class Car {
     public void ShakeCar()
     {
         // Is it time to reverse the direction?
-        if(Timer.getFPGATimestamp() - ShakeStartTime > Constants.LIFT_CAR_TIME_SHAKE)
+
+        if (IsShakeUp)
         {
-            // Reverse direction and reset timer
-            if (IsShakeUp)
+            if((Timer.getFPGATimestamp() - ShakeStartTime > Constants.LIFT_CAR_TIME_SHAKE_UP)
+                    /*|| (ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn())*/)
             {
+                // Reverse direction and reset timer
                 Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_SHAKE_DOWN);
+                ShakeStartTime = Timer.getFPGATimestamp();
+                IsShakeUp = !IsShakeUp;  // Reverse state for next time
             }
-            else
+        }
+        else
+        {
+            if((Timer.getFPGATimestamp() - ShakeStartTime > Constants.LIFT_CAR_TIME_SHAKE_DOWN)
+                    /*|| (ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn())*/)
             {
-                Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_SHAKE_UP);   
+            // Reverse direction and reset timer
+                Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_SHAKE_UP);
+                ShakeStartTime = Timer.getFPGATimestamp();
+                IsShakeUp = !IsShakeUp;  // Reverse state for next time
             }
-            ShakeStartTime = Timer.getFPGATimestamp();
-            IsShakeUp = !IsShakeUp;  // Reverse state for next time
-        } 
+        }
     }
 }
