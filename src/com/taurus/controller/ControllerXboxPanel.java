@@ -404,7 +404,7 @@ public class ControllerXboxPanel implements Controller, Runnable {
     @Override
     public boolean getWheelCal()
     {
-        return panel.getBlackLButton();
+        return false;
     }
 
     @Override
@@ -417,5 +417,12 @@ public class ControllerXboxPanel implements Controller, Runnable {
     public boolean getCarryStackNoTote()
     {
         return xbox.getTrigger(Hand.kLeft);
+    }
+
+    @Override
+    public boolean getLiftShake()
+    {
+       
+        return panel.getBlackRButton();
     }
 }

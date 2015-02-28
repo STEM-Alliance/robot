@@ -195,6 +195,8 @@ public interface Controller {
     
     public boolean getInitialize();
     
+    public boolean getLiftShake();
+    
     /**
      * Get the stop action
      * 

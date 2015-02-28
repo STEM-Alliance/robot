@@ -192,6 +192,10 @@ public class Application extends com.taurus.Application {
             lift.GetEjector().StopIn();
             
         }
+        else if(controller.getLiftShake())
+        {
+            lift.ShakeCar();
+        }
         else
         {
             if (controller.getStopAction())
