@@ -72,14 +72,21 @@ public class LEDs implements Runnable {
             long waitTime = Long.MAX_VALUE;
 
             // Is there an effect to run?                
-            if (currentEffect != null || !currentEffect.isDone())
+            if (currentEffect == null)
+            {
+                if (effectQueue.peek() != null)
+                {
+                    currentEffect = effectQueue.poll();
+                }
+            }
+            else if (!currentEffect.isDone())
             {
                 updateColors(currentEffect.getColors());
                 waitTime = TimeService;
             }
-            else if (effectQueue.peek() != null)
+            else
             {
-                currentEffect = effectQueue.poll();
+                currentEffect = null;  // Current effect is done
             }
             
             // Wait for timeout or interrupt from another thread adding an effect
