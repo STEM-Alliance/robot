@@ -62,7 +62,7 @@ public abstract class Constants {
     public static final double LIFT_CAR_SPEED_SHAKE_UP = 1;
     public static final double LIFT_CAR_SPEED_SHAKE_DOWN = -1;
     public static final double LIFT_CAR_TIME_SHAKE_UP = .2;
-    public static final double LIFT_CAR_TIME_SHAKE_DOWN = .1;
+    public static final double LIFT_CAR_TIME_SHAKE_DOWN = .175;
     
     public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.2;
     public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.5;
@@ -172,8 +172,8 @@ public abstract class Constants {
         GO_TO_ZONE,
         GRAB_CONTAINER,
         GRAB_CONTAINER_NO_MOVE,
-        GRAB_CONTAINER_AND_1_TOTE,
-        GRAB_CONTAINER_AND_2_TOTES,
+        GRAB_CONTAINER_RIGHT_CHUTE,
+        GRAB_CONTAINER_LEFT_CHUTE,
     }
     
     public static enum AUTO_STATE {

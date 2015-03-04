@@ -325,10 +325,10 @@ public class ControllerXbox implements Controller {
     }
 
     @Override
-    public boolean getLowSpeed()
+    public double getLowSpeed()
     {
         // TODO Auto-generated method stub
-        return false;
+        return 0.0;
     }
 
     @Override

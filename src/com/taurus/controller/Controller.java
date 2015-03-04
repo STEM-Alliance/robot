@@ -163,7 +163,7 @@ public interface Controller {
     public double getDPad();
 
     public boolean getHighSpeed();
-    public boolean getLowSpeed();
+    public double getLowSpeed();
     
     /**
      * 

@@ -2,9 +2,11 @@ package com.taurus.robotspecific2015;
 
 import java.util.ArrayList;
 
+import com.taurus.controller.Controller;
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,11 +27,8 @@ public class Application extends com.taurus.Application {
 
     private boolean StartTeleInChute = false;
     private boolean StartTeleGyroCal = true;
-    
-//    private boolean CompressorChargedOnce;
-//    private Compressor compressor;
-//    private double CompressorTimer;
-    
+    public double StartMatchTime = 0;
+
     //protected static LEDs leds;
     private final LEDEffect effectEndOfMatch;
 
@@ -48,19 +47,16 @@ public class Application extends com.taurus.Application {
                 new AnalogInput(Constants.DISTANCE_SENSOR_RIGHT_PIN);
 
         vision.Start();
-        
-//        compressor = new Compressor(Constants.COMPRESSOR_PCM);
-//        compressor.setClosedLoopControl(true);
 
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
-        autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
+      //autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
         autoChooser.addObject("Container", AUTO_MODE.GRAB_CONTAINER);
         autoChooser.addObject("Container No Move", AUTO_MODE.GRAB_CONTAINER_NO_MOVE);
-       //autoChooser.addObject("Container + tote",
-       //         AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE);
-       //autoChooser.addObject("Container + 2 totes",
-       //         AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES);
+        autoChooser.addObject("Container + tote",
+                AUTO_MODE.GRAB_CONTAINER_RIGHT_CHUTE);
+        autoChooser.addObject("Container + 2 totes",
+                AUTO_MODE.GRAB_CONTAINER_LEFT_CHUTE);
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
 
@@ -78,6 +74,8 @@ public class Application extends com.taurus.Application {
 
     public void TeleopInitRobotSpecific()
     {
+        StartMatchTime = Timer.getFPGATimestamp();
+        
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
         
         if(StartTeleInChute)
@@ -148,32 +146,16 @@ public class Application extends com.taurus.Application {
     public void TeleopPeriodicRobotSpecific()
     {
         UpdateDashboard();
-
-//        // only check every 3 seconds
-//        if(Timer.getFPGATimestamp() - CompressorTimer > 3)
-//        {
-//            // disable/enable the compressor if we're moving/still
-//            // but only if we've fully charged once
-//            if(!CompressorChargedOnce)
-//            {
-//                if(!compressor.enabled())
-//                {
-//                    CompressorChargedOnce = true;
-//                }
-//            }
-//            else
-//            {
-//                if(drive.getGyro().isMoving())
-//                {
-//                    compressor.stop();
-//                }
-//                else
-//                {
-//                    compressor.start();
-//                }
-//            }
-//            CompressorTimer = Timer.getFPGATimestamp();
-//        }
+        
+        if(StartMatchTime > 105.0 && StartMatchTime < 110.0)
+        {
+            controller.setRumble(Hand.kLeft , 1);
+        }
+        else
+        {
+            controller.setRumble(Hand.kLeft , 0);    
+        }
+        
         
         if (controller.getCarHome())
         {
