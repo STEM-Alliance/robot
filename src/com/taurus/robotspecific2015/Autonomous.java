@@ -54,8 +54,8 @@ public class Autonomous {
                 
             case GRAB_CONTAINER:
             case GRAB_CONTAINER_NO_MOVE:
-            case GRAB_CONTAINER_AND_1_TOTE:
-            case GRAB_CONTAINER_AND_2_TOTES:
+            case GRAB_CONTAINER_RIGHT_CHUTE:
+            case GRAB_CONTAINER_LEFT_CHUTE:
                 drive.SetGyroZero(startingAngle);
                 this.autoState = AUTO_STATE.GRAB_CONTAINER;
                 break;
@@ -83,13 +83,15 @@ public class Autonomous {
                             lift.SetAutonomousToteTriggered(false);
                             break;
                             
-                        case GRAB_CONTAINER_AND_1_TOTE:
-                        case GRAB_CONTAINER_AND_2_TOTES:
-                            autoStateChangeTime = Timer.getFPGATimestamp();
-                            autoState = AUTO_STATE.DRIVE_RIGHT_TO_GRAB_TOTE;
+                        case GRAB_CONTAINER_RIGHT_CHUTE:
+                       
                             lift.SetAutonomousToteTriggered(false);
                             break;
+                        case GRAB_CONTAINER_LEFT_CHUTE:
+                           
                             
+                            lift.SetAutonomousToteTriggered(false);
+                            break;
                         case GRAB_CONTAINER_NO_MOVE:
                             //autoState = AUTO_STATE.LINE_UP;
                             
@@ -122,7 +124,7 @@ public class Autonomous {
                 lift.SetAutonomousToteTriggered(true);
                 drive.UpdateDrive(new SwerveVector(), 0, 90);
 
-                if (autoMode == AUTO_MODE.GRAB_CONTAINER_AND_1_TOTE)
+                if (autoMode == AUTO_MODE.GRAB_CONTAINER_RIGHT_CHUTE)
                 {
                     if (lift.AddFloorToteToStack(0))
                     {
@@ -131,7 +133,7 @@ public class Autonomous {
                         autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
                     }   
                 }
-                else if (autoMode == AUTO_MODE.GRAB_CONTAINER_AND_2_TOTES)
+                else if (autoMode == AUTO_MODE.GRAB_CONTAINER_LEFT_CHUTE)
                 {
                     lift.AddFloorToteToStack(1);
                     
@@ -188,8 +190,8 @@ public class Autonomous {
                                 autoState = AUTO_STATE.STOP;
                                 break;
                                 
-                            case GRAB_CONTAINER_AND_1_TOTE:
-                            case GRAB_CONTAINER_AND_2_TOTES:
+                            case GRAB_CONTAINER_RIGHT_CHUTE:
+                            case GRAB_CONTAINER_LEFT_CHUTE:
                                 autoState = AUTO_STATE.DROP_TOTES;
                                 break;
                         }

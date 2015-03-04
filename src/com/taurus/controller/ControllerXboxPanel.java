@@ -354,9 +354,9 @@ public class ControllerXboxPanel implements Controller, Runnable {
     }
 
     @Override
-    public boolean getLowSpeed()
+    public double getLowSpeed()
     {
-        return xbox.getTrigger(Hand.kRight);
+        return xbox.getTriggerVal(Hand.kRight);
     }
 
     @Override

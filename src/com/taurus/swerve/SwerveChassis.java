@@ -49,7 +49,7 @@ public class SwerveChassis extends Subsystem {
 
     private DriveScheme driveScheme;
 
-    private boolean CrawlMode = false;
+    private double CrawlMode = 0.0;
     private SwerveVector AutoVector;
     private double AutoTimeLength;
     private boolean AutoRunEnable;
@@ -134,7 +134,7 @@ public class SwerveChassis extends Subsystem {
             {
                 setFieldRelative(false);
 
-                CrawlMode = true;
+                CrawlMode = 1;
 
                 UpdateDrive(AutoVector, 0, -1);
                 
@@ -175,7 +175,7 @@ public class SwerveChassis extends Subsystem {
                         // use non field relative
                         setFieldRelative(false);
 
-                        CrawlMode = true;
+                        CrawlMode = 1;
 
                         SwerveVector drive = new SwerveVector();
                         drive.setMagAngle(1, dpad - 90);
@@ -310,13 +310,13 @@ public class SwerveChassis extends Subsystem {
         RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
         
         // scale the speed down unless we're in high speed mode
-        if (CrawlMode)
+
+        RobotVelocity.setMag(RobotVelocity.getMag() * (SwerveConstants.DriveSpeedCrawl + 
+                (1 - SwerveConstants.DriveSpeedCrawl) * controller.getLowSpeed()));
+        
+        if (!controller.getHighSpeed())
         {
-            RobotVelocity.setMag(RobotVelocity.getMag() * .4);
-        }
-        else if (!controller.getHighSpeed())
-        {
-            RobotVelocity.setMag(RobotVelocity.getMag() * .75);
+            RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DriveSpeedNormal);
         }
 
         RobotVelocity = restrictVelocity(RobotVelocity);
