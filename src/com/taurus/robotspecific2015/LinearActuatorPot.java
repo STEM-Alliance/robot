@@ -70,6 +70,21 @@ public class LinearActuatorPot extends LinearActuator {
         FullTurns = 0;
         super.LastPosition = 0;
     }
+    
+    /**
+     * {@inheritDoc}
+     * Zero the pot from the top-most position, accounting for the difference
+     * between the current position and actual zero position
+     */
+    public void Ceiling()
+    {
+        double span = super.Positions[Positions.length - 1] - super.Positions[0]; // Difference between ceiling and zero
+        
+        ZeroVal = GetRaw() - span;  // Pot value - difference between top and bottom positions = distance from bottom position
+        FullTurns = (int)Math.floor(span / DistanceFullTurn);  // Number of full turns in total distance possible
+        LastVal = span - FullTurns * DistanceFullTurn;  // Partial = total distance - all full turns possible
+        super.LastPosition = super.Positions.length - 1;  // Last position in array is ceiling position
+    }
 
     /**
      * {@inheritDoc}

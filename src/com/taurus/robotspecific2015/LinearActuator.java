@@ -19,7 +19,7 @@ public abstract class LinearActuator {
     private MotorSystem Motors;
 
     protected int LastPosition;
-    private double[] Positions;
+    protected double[] Positions;
     private double PositionThreshold;
     private static final double PositionThresholdDefault = 0.5;
 
