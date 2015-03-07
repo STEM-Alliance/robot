@@ -16,7 +16,7 @@ public class Car {
         ZEROED_BOTTOM,
     }
 
-    private LinearActuator Actuator;
+    private LinearActuatorPot Actuator;
     private SensorDigital ZeroSensorLeft;
     private SensorDigital TopSensorLeft;
     private SensorDigital ZeroSensorRight;
@@ -178,6 +178,8 @@ public class Car {
      */
     public boolean GoToChute()
     {
+        // TODO: Now going from STACK to CHUTE, do we need the same speed scaling as BOTTOM?
+        
         if (controller.getManualLift())
         {
             return controller.getFakePostion();
@@ -203,7 +205,7 @@ public class Car {
         }
         else
         {
-            return GoToBottom(6);
+            return GoToBottom();
         }
 
     }
@@ -231,7 +233,7 @@ public class Car {
      * 
      * @return true if we're at the bottom
      */
-    public boolean GoToBottom(int TotesInStack)
+    public boolean GoToBottom()
     {   
         boolean atBottom = ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn();
         boolean done = false;
@@ -256,7 +258,7 @@ public class Car {
             default:
             case MOVING:
                 // start moving down
-                GoToZero(TotesInStack);
+                GoToZero();
                 
                 if (atBottom)
                 {
@@ -311,7 +313,7 @@ public class Car {
      * Go to the zero position (bottom). Will start slow and ramp speed as time increases
      * @return true if we're at the bottom, else false
      */
-    public boolean GoToZero(int TotesInStack)
+    public boolean GoToZero()
     {
         if (ZeroIfNeeded())
         {
@@ -361,10 +363,16 @@ public class Car {
      */
     public boolean ZeroIfNeeded()
     {
-        // if either zero sensor is triggered, zero the height of the actuator
+        // If either zero sensor is triggered, zero the actuator and set current height to zero
         if (ZeroSensorLeft.IsOn() || ZeroSensorRight.IsOn())
         {
             Actuator.Zero();
+            return true;
+        }
+        // If either top sensor is triggered, zero the actuator and set current height to top
+        else if (TopSensorLeft.IsOn() || TopSensorRight.IsOn())
+        {
+            Actuator.Ceiling();
             return true;
         }
         return false;
@@ -406,7 +414,6 @@ public class Car {
     public void ShakeCar()
     {
         // Is it time to reverse the direction?
-
         if (IsShakeUp)
         {
             if((Timer.getFPGATimestamp() - ShakeStartTime > Constants.LIFT_CAR_TIME_SHAKE_UP)

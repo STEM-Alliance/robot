@@ -262,7 +262,7 @@ public class Lift extends Subsystem {
                     }
                 }
                 
-                if (LiftCar.GoToBottom(TotesInStack))
+                if (LiftCar.GoToChute())
                 {
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
@@ -299,7 +299,7 @@ public class Lift extends Subsystem {
                 switch (RailContents)
                 {
                     case EMPTY:
-                        if (LiftCar.GoToBottom(6)
+                        if (LiftCar.GoToBottom()
                             & CylindersRails.Contract()
                             & CylindersStackHolder.Contract()
                             & CylindersContainerCar.Contract()
@@ -407,7 +407,7 @@ public class Lift extends Subsystem {
                 {
                     // Sanity check this should even be called.
 
-                    if (LiftCar.GoToBottom(6)
+                    if (LiftCar.GoToBottom()
                         & CylindersRails.Contract()
                         & CylindersStackHolder.Extend()
                         & CylindersContainerCar.Contract()
@@ -423,7 +423,7 @@ public class Lift extends Subsystem {
                 break;
 
             case CONTAINER_CAR_EXTEND:
-                if (LiftCar.GoToBottom(6)
+                if (LiftCar.GoToBottom()
                     & CylindersRails.Extend()
                     & CylindersContainerCar.Extend())
                 {
@@ -451,7 +451,7 @@ public class Lift extends Subsystem {
                 break;
 
             case RESET:
-                if (LiftCar.GoToBottom(6)
+                if (LiftCar.GoToBottom()
                     & CylindersContainerCar.Contract()
                     & CylindersRails.Contract()
                     & CylindersContainerFixed.Extend())
@@ -643,7 +643,7 @@ public class Lift extends Subsystem {
                     CylindersContainerFixed.Contract();
                 }
 
-                if (LiftCar.GoToBottom(TotesInStack) & CylindersStackHolder.Extend())
+                if (LiftCar.GoToBottom() & CylindersStackHolder.Extend())
                 {
                     StateDropStack = STATE_DROP_STACK.RELEASE;
                 }
