@@ -1,7 +1,6 @@
-package com.taurus.robotspecific2015;
+package com.taurus.led;
 
 import edu.wpi.first.wpilibj.Timer;
-
 
 public class Color {
     public static final Color Black = new Color(0, 0, 0);
@@ -16,8 +15,7 @@ public class Color {
     
     private int red;
     private int green;
-    private int blue;
-    
+    private int blue;    
     
     public Color(int red, int green, int blue)
     {
@@ -87,5 +85,15 @@ public class Color {
         double b = (start.blue - end.blue) * percent + start.blue;
         
         return new Color((int)r, (int)g, (int)b);
+    }
+    
+    /**
+     * Get the string representation in RGB format
+     * 
+     * @return R G B
+     */
+    public String toString()
+    {
+        return String.format("%3x %3x %3x", red, green, blue); 
     }
 }

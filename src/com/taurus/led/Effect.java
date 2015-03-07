@@ -1,4 +1,4 @@
-package com.taurus.robotspecific2015;
+package com.taurus.led;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class LEDEffect {
+public class Effect {
 
     private Color[] ColorsCurrent;
     private ArrayList<Color[]> ColorsSettings;
@@ -35,7 +35,7 @@ public class LEDEffect {
      * @param duration time until the effect is done (seconds)
      * @param period time to repeat the effect, if period < duration (seconds)
      */
-    public LEDEffect(ArrayList<Color[]> settings, EFFECT mode, double duration, double period)
+    public Effect(ArrayList<Color[]> settings, EFFECT mode, double duration, double period)
     {
         ColorsSettings = settings;
         ColorsCurrent = new Color[settings.get(0).length];
@@ -50,6 +50,10 @@ public class LEDEffect {
         }
     }
     
+    /**
+     * What are the current colors of this effect, which change with time
+     * @return colors at this time
+     */
     public Color[] getColors()
     {
         double time = Timer.getFPGATimestamp() - StartTime;
@@ -97,16 +101,28 @@ public class LEDEffect {
         return ColorsCurrent;
     }
     
+    /**
+     * How often is this effect changing?
+     * @return period
+     */
     public double getPeriod()
     {
         return Period;
     }
-    
+
+    /**
+     * Start the effect, allowing it to alter returned color(s) over time
+     */
     public void start()
     {
         StartTime = Timer.getFPGATimestamp();
     }
     
+    /**
+     * Get if the effect duration has expired
+     * 
+     * @return Done?
+     */
     public boolean isDone()
     {
         boolean result = false;
