@@ -159,7 +159,7 @@ public class Application extends com.taurus.Application {
         
         if (controller.getCarHome())
         {
-            lift.GetCar().GoToZero(6);
+            lift.GetCar().GoToZero();
         }
         else if (controller.getCarTop())
         {
@@ -274,7 +274,7 @@ public class Application extends com.taurus.Application {
                     break;
 
                 case ZERO_LIFT:
-                    if (lift.GetCar().GoToZero(6))
+                    if (lift.GetCar().GoToZero())
                     {
                         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
