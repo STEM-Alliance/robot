@@ -93,7 +93,6 @@ public class Autonomous {
                             lift.SetAutonomousToteTriggered(false);
                             break;
                         case GRAB_CONTAINER_NO_MOVE:
-                            //autoState = AUTO_STATE.LINE_UP;
                             
                             
                             autoState = AUTO_STATE.STOP;
@@ -108,72 +107,72 @@ public class Autonomous {
                 }
                 break;
                 
-            case DRIVE_RIGHT_TO_GRAB_TOTE:
-                if (Timer.getFPGATimestamp() - autoStateChangeTime > 1)
-                {
-                    autoState = AUTO_STATE.GRAB_RIGHT_SIDE_TOTE;
-                }
-                else
-                {
-                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.5, 0), 0, 0);
-                    lift.AddFloorToteToStack(0);
-                }
-                break;
+//            case DRIVE_RIGHT_TO_GRAB_TOTE:
+//                if (Timer.getFPGATimestamp() - autoStateChangeTime > 1)
+//                {
+//                    autoState = AUTO_STATE.GRAB_RIGHT_SIDE_TOTE;
+//                }
+//                else
+//                {
+//                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.5, 0), 0, 0);
+//                    lift.AddFloorToteToStack(0);
+//                }
+//                break;
                 
-            case GRAB_RIGHT_SIDE_TOTE:
-                lift.SetAutonomousToteTriggered(true);
-                drive.UpdateDrive(new SwerveVector(), 0, 90);
-
-                if (autoMode == AUTO_MODE.GRAB_CONTAINER_RIGHT_CHUTE)
-                {
-                    if (lift.AddFloorToteToStack(0))
-                    {
-                        lift.SetAutonomousToteTriggered(false);
-                        autoStateChangeTime = Timer.getFPGATimestamp();
-                        autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
-                    }   
-                }
-                else if (autoMode == AUTO_MODE.GRAB_CONTAINER_LEFT_CHUTE)
-                {
-                    lift.AddFloorToteToStack(1);
-                    
-                    if (lift.GetTotesInStack() > 0 
-                            && lift.GetCar().GetActuator().GetPositionRaw() <= LIFT_POSITIONS_E.DESTACK.ordinal())
-                    {
-                        lift.SetAutonomousToteTriggered(false);
-                        autoStateChangeTime = Timer.getFPGATimestamp();
-                        autoState = AUTO_STATE.DRIVE_LEFT_TO_GRAB_TOTE;
-                    }
-                }
-                else
-                {
-                    autoState = AUTO_STATE.STOP;
-                }
-                break;
-                
-            case DRIVE_LEFT_TO_GRAB_TOTE:
-                if (Timer.getFPGATimestamp() - autoStateChangeTime > 1)
-                {
-                    autoState = AUTO_STATE.GRAB_LEFT_SIDE_TOTE;
-                }
-                else
-                {
-                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.5, 180), 0, 180);
-                    lift.AddFloorToteToStack(1);
-                }
-                break;
-                
-            case GRAB_LEFT_SIDE_TOTE:
-                lift.SetAutonomousToteTriggered(true);
-                drive.UpdateDrive(new SwerveVector(), 0, 270);
-                    
-                if (lift.AddFloorToteToStack(1))
-                {
-                    lift.SetAutonomousToteTriggered(false);
-                    autoStateChangeTime = Timer.getFPGATimestamp();
-                    autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
-                }
-                break;
+//            case GRAB_RIGHT_SIDE_TOTE:
+//                lift.SetAutonomousToteTriggered(true);
+//                drive.UpdateDrive(new SwerveVector(), 0, 90);
+//
+//                if (autoMode == AUTO_MODE.GRAB_CONTAINER_RIGHT_CHUTE)
+//                {
+//                    if (lift.AddFloorToteToStack(0))
+//                    {
+//                        lift.SetAutonomousToteTriggered(false);
+//                        autoStateChangeTime = Timer.getFPGATimestamp();
+//                        autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
+//                    }   
+//                }
+//                else if (autoMode == AUTO_MODE.GRAB_CONTAINER_LEFT_CHUTE)
+//                {
+//                    lift.AddFloorToteToStack(1);
+//                    
+//                    if (lift.GetTotesInStack() > 0 
+//                            && lift.GetCar().GetActuator().GetPositionRaw() <= LIFT_POSITIONS_E.DESTACK.ordinal())
+//                    {
+//                        lift.SetAutonomousToteTriggered(false);
+//                        autoStateChangeTime = Timer.getFPGATimestamp();
+//                        autoState = AUTO_STATE.DRIVE_LEFT_TO_GRAB_TOTE;
+//                    }
+//                }
+//                else
+//                {
+//                    autoState = AUTO_STATE.STOP;
+//                }
+//                break;
+//                
+//            case DRIVE_LEFT_TO_GRAB_TOTE:
+//                if (Timer.getFPGATimestamp() - autoStateChangeTime > 1)
+//                {
+//                    autoState = AUTO_STATE.GRAB_LEFT_SIDE_TOTE;
+//                }
+//                else
+//                {
+//                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(.5, 180), 0, 180);
+//                    lift.AddFloorToteToStack(1);
+//                }
+//                break;
+//                
+//            case GRAB_LEFT_SIDE_TOTE:
+//                lift.SetAutonomousToteTriggered(true);
+//                drive.UpdateDrive(new SwerveVector(), 0, 270);
+//                    
+//                if (lift.AddFloorToteToStack(1))
+//                {
+//                    lift.SetAutonomousToteTriggered(false);
+//                    autoStateChangeTime = Timer.getFPGATimestamp();
+//                    autoState = AUTO_STATE.DRIVE_TO_AUTO_ZONE;
+//                }
+//                break;
 
             case DRIVE_TO_AUTO_ZONE:
                 if (Timer.getFPGATimestamp() - autoStateChangeTime > 4.0)
