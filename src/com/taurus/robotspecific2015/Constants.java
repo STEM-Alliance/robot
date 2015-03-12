@@ -45,6 +45,13 @@ public abstract class Constants {
     public static final int CHANNEL_DIGITAL_CAR_ZERO_LEFT = 6;
     public static final int CHANNEL_DIGITAL_CAR_ZERO_RIGHT = 7;
     public static final int CHANNEL_DIGITAL_CAR_CHUTE = 9;
+    
+    //Distance Sensors
+    public static final int[] ULTRASONIC_SENSOR_BACK_LEFT = {11, 12};
+    public static final int[] ULTRASONIC_SENSOR_BACK_RIGHT = {13, 14};
+    public static final int[] ULTRASONIC_SENSOR_ANGLE_LEFT = {15, 16};
+    public static final int[] ULTRASONIC_SENSOR_ANGLE_RIGHT = {17, 18};
+
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };

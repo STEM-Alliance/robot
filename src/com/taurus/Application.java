@@ -2,6 +2,7 @@ package com.taurus;
 
 import com.taurus.controller.Controller;
 import com.taurus.controller.ControllerChooser;
+import com.taurus.robotspecific2015.UltraSonicDrive;
 import com.taurus.swerve.SwerveChassis;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -60,7 +61,8 @@ public abstract class Application {
         controllerChooser = new ControllerChooser();
         controller = controllerChooser.GetController();
         
-        drive = new SwerveChassis(controller);
+        drive = new UltraSonicDrive(controller);
+        
     }
     
     public void TeleopInit()

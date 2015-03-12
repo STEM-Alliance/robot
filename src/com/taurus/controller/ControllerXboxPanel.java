@@ -425,4 +425,10 @@ public class ControllerXboxPanel implements Controller, Runnable {
        
         return panel.getBlackLButton();
     }
+
+    @Override
+    public boolean getLeftThumb()
+    {
+        return xbox.getTop(Hand.kLeft);
+    }
 }

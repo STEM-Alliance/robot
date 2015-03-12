@@ -147,6 +147,8 @@ public interface Controller {
      * 
      * @return
      */
+    public boolean getLeftThumb();
+    
     public boolean getResetGyro();
 
     /**
