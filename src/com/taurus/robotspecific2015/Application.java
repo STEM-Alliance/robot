@@ -3,9 +3,9 @@ package com.taurus.robotspecific2015;
 import java.util.ArrayList;
 
 import com.taurus.controller.Controller;
-import com.taurus.led.Color;
-import com.taurus.led.Effect;
-import com.taurus.led.LEDs;
+//import com.taurus.led.Color;
+//import com.taurus.led.Effect;
+//import com.taurus.led.LEDs;
 import com.taurus.robotspecific2015.Constants.*;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -32,8 +32,8 @@ public class Application extends com.taurus.Application {
     private boolean StartTeleGyroCal = true;
     public double StartMatchTime = 0;
 
-    protected static LEDs leds;
-    private final Effect effectEndOfMatch;
+//    protected static LEDs leds;
+//    private final Effect effectEndOfMatch;
 
     public Application()
     {
@@ -66,21 +66,21 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putData("Test", testChooser);
         
         // LEDs
-        LEDController ledHardware = new LEDController();
-        leds = new LEDs(ledHardware, ledHardware.NumOfColors, Thread.NORM_PRIORITY - 2);  // Below normal priority
-//        leds.start();  // Comment this line to disable LEDs
-        endOfMatchEffectSent = false;
-        ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
-        colors.add(new Color[]{Color.Black, Color.Black, Color.Black, Color.Black});
-        effectEndOfMatch = new Effect(colors, Effect.EFFECT.FLASH, 5, .5);
+////        LEDController ledHardware = new LEDController();
+//        leds = new LEDs(ledHardware, ledHardware.NumOfColors, Thread.NORM_PRIORITY - 2);  // Below normal priority
+////        leds.start();  // Comment this line to disable LEDs
+//        endOfMatchEffectSent = false;
+//        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+//        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
+//        colors.add(new Color[]{Color.Black, Color.Black, Color.Black, Color.Black});
+//        effectEndOfMatch = new Effect(colors, Effect.EFFECT.FLASH, 5, .5);
     }
 
     public void TeleopInitRobotSpecific()
     {
         StartMatchTime = Timer.getFPGATimestamp();
         
-        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+//        ArrayList<Color[]> colors = new ArrayList<Color[]>();
         
         if(StartTeleInChute)
         {
@@ -102,9 +102,9 @@ public class Application extends com.taurus.Application {
 //        CompressorTimer = Timer.getFPGATimestamp();
 
         // Set LEDs
-        colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
-        colors.add(new Color[]{Color.Random(), Color.Black, Color.Cyan, Color.Green});
-        colors.add(new Color[]{Color.Random(), Color.Green, Color.White, Color.Yellow});
+//        colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
+//        colors.add(new Color[]{Color.Random(), Color.Black, Color.Cyan, Color.Green});
+//        colors.add(new Color[]{Color.Random(), Color.Green, Color.White, Color.Yellow});
         //leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.FLASH, Double.MAX_VALUE, 2), true);
     }
 
@@ -305,7 +305,7 @@ public class Application extends com.taurus.Application {
 
     public void AutonomousInitRobotSpecific()
     {
-        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+//        ArrayList<Color[]> colors = new ArrayList<Color[]>();
         
         lift.init();
         lift.SetContainerInStack(false);
@@ -315,7 +315,7 @@ public class Application extends com.taurus.Application {
         autonomous = new Autonomous(drive, lift, vision, automode);
         
         // Set LEDs
-        colors.add(new Color[]{Color.Green, Color.White, Color.Blue, Color.Red});
+//        colors.add(new Color[]{Color.Green, Color.White, Color.Blue, Color.Red});
         //leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, 15, 2), true);
     }
 

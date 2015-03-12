@@ -3,8 +3,8 @@ package com.taurus.robotspecific2015;
 import java.util.ArrayList;
 
 import com.taurus.controller.Controller;
-import com.taurus.led.Color;
-import com.taurus.led.Effect;
+//import com.taurus.led.Color;
+//import com.taurus.led.Effect;
 import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
 
@@ -41,11 +41,11 @@ public class Lift extends Subsystem {
     private final SwerveChassis drive;
     private boolean DropDriveFirstTime;
     
-    private final Effect effectsIntakeReady;
-    private final Effect effectsIntakeNotReady;
-    private final Effect effectsReadyToDrive;
-    private final Effect effectsInTransit;
-    private final Effect effectsScore;
+//    private final Effect effectsIntakeReady;
+//    private final Effect effectsIntakeNotReady;
+//    private final Effect effectsReadyToDrive;
+//    private final Effect effectsInTransit;
+//    private final Effect effectsScore;
 
     private final Controller controller;
     
@@ -86,23 +86,23 @@ public class Lift extends Subsystem {
                         Constants.CYLINDER_ACTION.CONTRACT);
         
         // Setup LEDs
-        ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        colors.add(new Color[]{Color.Green, Color.Green, Color.Green, Color.Green});
-        effectsIntakeReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
-        colors.clear();
-        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
-        effectsIntakeNotReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
-        colors.clear();
-        colors.add(new Color[]{Color.Cyan, Color.Red, Color.Yellow, Color.Magenta});
-        effectsReadyToDrive = new Effect(colors, Effect.EFFECT.SPIN, Double.MAX_VALUE, 1);
-        colors.clear();
-        colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
-        colors.add(new Color[]{Color.Orange, Color.Orange, Color.Orange, Color.Orange});
-        effectsInTransit = new Effect(colors, Effect.EFFECT.FLASH, 4, .5);
-        colors.clear();
-        colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
-        colors.add(new Color[]{Color.Cyan, Color.Orange, Color.Cyan, Color.Orange});
-        effectsScore = new Effect(colors, Effect.EFFECT.FADE, 6, 2);
+//        ArrayList<Color[]> colors = new ArrayList<Color[]>();
+//        colors.add(new Color[]{Color.Green, Color.Green, Color.Green, Color.Green});
+//        effectsIntakeReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
+//        colors.clear();
+//        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
+//        effectsIntakeNotReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
+//        colors.clear();
+//        colors.add(new Color[]{Color.Cyan, Color.Red, Color.Yellow, Color.Magenta});
+//        effectsReadyToDrive = new Effect(colors, Effect.EFFECT.SPIN, Double.MAX_VALUE, 1);
+//        colors.clear();
+//        colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
+//        colors.add(new Color[]{Color.Orange, Color.Orange, Color.Orange, Color.Orange});
+//        effectsInTransit = new Effect(colors, Effect.EFFECT.FLASH, 4, .5);
+//        colors.clear();
+//        colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
+//        colors.add(new Color[]{Color.Cyan, Color.Orange, Color.Cyan, Color.Orange});
+//        effectsScore = new Effect(colors, Effect.EFFECT.FADE, 6, 2);
 
         init();
     }
