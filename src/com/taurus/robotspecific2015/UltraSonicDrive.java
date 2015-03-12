@@ -1,21 +1,20 @@
 package com.taurus.robotspecific2015;
 
+import com.taurus.UltrasonicMaxBotix;
 import com.taurus.controller.Controller;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveVector;
 
-import edu.wpi.first.wpilibj.Ultrasonic;
-
-public class UltraSonicDrive extends SwerveChassis {
-    private Ultrasonic ultra;
+public class UltrasonicDrive extends SwerveChassis {
+    private UltrasonicMaxBotix ultra;
     private int output = 7;
     private int input = 8;
     private double driveRate = .1;
 
-    public UltraSonicDrive(Controller controller)
+    public UltrasonicDrive(Controller controller)
     {
         super(controller);
-        ultra = new Ultrasonic(output, input);
+        ultra = new UltrasonicMaxBotix(output, input);
         ultra.setAutomaticMode(true);
 
     }
