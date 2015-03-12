@@ -173,6 +173,10 @@ public class Application extends com.taurus.Application {
                 lift.SetContainerInStack(false);
                 lift.init();
             }
+            
+            if(controller.getLeftThumb()){
+                UltraSonicDrive.setUltrasonic(true, true);
+            }
 
             lift.GetCar().ZeroIfNeeded();
 
