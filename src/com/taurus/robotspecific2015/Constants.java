@@ -48,10 +48,10 @@ public abstract class Constants {
     public static final int CHANNEL_DIGITAL_CAR_CHUTE = 9;
     
     //Distance Sensors
-    public static final int[] ULTRASONIC_SENSOR_BACK_LEFT = {11, 12};
-    public static final int[] ULTRASONIC_SENSOR_BACK_RIGHT = {13, 14};
-    public static final int[] ULTRASONIC_SENSOR_ANGLE_LEFT = {15, 16};
-    public static final int[] ULTRASONIC_SENSOR_ANGLE_RIGHT = {17, 18};
+    public static final int[] ULTRASONIC_SENSOR_BACK_LEFT = {10, 11};
+    public static final int[] ULTRASONIC_SENSOR_BACK_RIGHT = {12, 13};
+    public static final int[] ULTRASONIC_SENSOR_ANGLE_LEFT = {14, 15};
+    public static final int[] ULTRASONIC_SENSOR_ANGLE_RIGHT = {16, 17};
 
 
     // Lift setup

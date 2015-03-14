@@ -57,6 +57,11 @@ public class UltraSonicDrive extends SwerveChassis {
         SmartDashboard.putNumber("Back Right Distance Sensor", ultraBR.getRangeInches());
 
         distance = (ultraBR.getRangeInches() + ultraBL.getRangeInches()) / 2;
+        SmartDashboard.putNumber("UltraSonicSensor Back Left", ultraBL.getRangeInches());
+        SmartDashboard.putNumber("UltraSonicSensor Back Right", ultraBR.getRangeInches());
+        SmartDashboard.putNumber("UltraSonicSensor Angle Left", ultraAL.getRangeInches());
+        SmartDashboard.putNumber("UltraSonicSensor Angle Right", ultraAR.getRangeInches());
+
         if (UltraSonic && (distance < 48))
         {
             //this.UltrasonicLineUp(left);
