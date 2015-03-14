@@ -13,7 +13,7 @@ import com.taurus.controller.Controller;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Talon;
-
+import edu.wpi.first.wpilibj.Victor;
 /**
  * Handle motor outputs and feedback for an individual wheel
  * 
@@ -43,7 +43,8 @@ public class SwerveWheel {
 
     // motor
     private CANTalon MotorDrive;
-    public Talon MotorAngle;
+    public Victor MotorAngle;
+//    public Talon MotorAngle;
 
     // sensor
     public MagnetoPot AnglePot;
@@ -102,7 +103,8 @@ public class SwerveWheel {
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new CANTalon(DriveAddress);
-        MotorAngle = new Talon(AnglePin);
+//        MotorAngle = new Talon(AnglePin);
+        MotorAngle = new Victor(AnglePin);
 
 //        HighGear = true;
 //        Shifter = new Servo(ShiftPin);
