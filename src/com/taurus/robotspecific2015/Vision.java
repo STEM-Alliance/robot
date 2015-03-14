@@ -33,9 +33,6 @@ public class Vision implements Runnable {
     private static final String ATTR_BR_VALUE =
             "CameraAttributes::Brightness::Value";
 
-    private int session = -1;
-    private Image frame, frameTH;
-
     Thread visionThread;
 
     private boolean toteDetectionOn = true;
@@ -81,7 +78,8 @@ public class Vision implements Runnable {
         imageChooser = new SendableChooser();
         imageChooser.addDefault("Input Front", Integer.valueOf(0));
         imageChooser.addObject("Input Back", Integer.valueOf(1));
-        imageChooser.addObject("Thresholded", Integer.valueOf(2));
+        imageChooser.addObject("Thresholded Front", Integer.valueOf(2));
+        imageChooser.addObject("Thresholded Back", Integer.valueOf(3));
         SmartDashboard.putData("Image to show", imageChooser);
 
         CameraServer.getInstance().setQuality(30);
@@ -98,11 +96,17 @@ public class Vision implements Runnable {
     @Override
     public void run()
     {
+        int session = -1;
+        Image frame, frameTH, frameDownsampled, frameTHDownsampled;
+        
         int prevImageToSend = -1;
 
         double TimeLastVision = 0;
 
-        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+        frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
+        frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
+        frameDownsampled = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
+        frameTHDownsampled = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
 
         while (true)
         {
@@ -128,11 +132,11 @@ public class Vision implements Runnable {
                     SmartDashboard.putString("Vision error", e.getMessage());
                 }
                 
-                session = OpenCamera(imageToSend == 1 ? "cam0" : "cam1");
+                session = OpenCamera(imageToSend == 1 ? "cam0" : "cam2");
             }
 
 
-            if (session != -1 && (Timer.getFPGATimestamp() - TimeLastVision) > TIME_RATE_VISION)
+            if (session != -1)
             {
                 TimeLastVision = Timer.getFPGATimestamp();
 
@@ -148,16 +152,23 @@ public class Vision implements Runnable {
 
                     if (imageToSend == 0 || imageToSend == 1)
                     {
+                        NIVision.imaqScale(frameDownsampled, frame, 4, 4, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+                        
+                        GetImageSizeResult sizeDownsampled = 
+                                NIVision.imaqGetImageSize(frameDownsampled);
+                        SmartDashboard.putString("FrameSizeDownsampled", 
+                                sizeDownsampled.width
+                                + ","
+                                + sizeDownsampled.height);
+                        
                         // just send the raw image
-                        CameraServer.getInstance().setImage(frame);
+                        CameraServer.getInstance().setImage(frameDownsampled);
                     }
 
                     if (toteDetectionOn)
                     {
                         // tote detection is on, so adjust the image to filter
-                        // out all the nonsense                        
-
-                        frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
+                        // out all the nonsense
 
                         NIVision.imaqColorThreshold(frameTH, frame, 255,
                                 ColorMode.HSL,
@@ -169,11 +180,20 @@ public class Vision implements Runnable {
                                         Application.prefs.getInt("Lmin", 100),
                                         Application.prefs.getInt("Lmax", 255)));
 
-                        if (imageToSend == 2)
+                        if (imageToSend == 2 || imageToSend == 3)
                         {
+                            NIVision.imaqScale(frameTHDownsampled, frameTH, 4, 4, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+                            
+                            GetImageSizeResult sizeDownsampled = 
+                                    NIVision.imaqGetImageSize(frameTHDownsampled);
+                            SmartDashboard.putString("FrameSizeDownsampled", 
+                                    sizeDownsampled.width
+                                    + ","
+                                    + sizeDownsampled.height);
+                            
                             // send the raw black/white image that should have
                             // just yellow totes
-                            CameraServer.getInstance().setImage(frameTH);
+                            CameraServer.getInstance().setImage(frameTHDownsampled);
                         }
 
                         // filter out any missed particles that aren't the tote
