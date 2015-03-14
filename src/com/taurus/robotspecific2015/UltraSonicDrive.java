@@ -6,6 +6,8 @@ import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveConstants;
 import com.taurus.swerve.SwerveVector;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class UltraSonicDrive extends SwerveChassis {
     private UltrasonicMaxBotix ultraAR;
     private UltrasonicMaxBotix ultraAL;
@@ -51,10 +53,13 @@ public class UltraSonicDrive extends SwerveChassis {
 
     public void run()
     {
+        SmartDashboard.putNumber("Back Left Distance Sensor", ultraBL.getRangeInches());
+        SmartDashboard.putNumber("Back Right Distance Sensor", ultraBR.getRangeInches());
+
         distance = (ultraBR.getRangeInches() + ultraBL.getRangeInches()) / 2;
         if (UltraSonic && (distance < 48))
         {
-            this.UltrasonicLineUp(left);
+            //this.UltrasonicLineUp(left);
 
         }
         else

@@ -13,12 +13,13 @@ public abstract class Constants {
     public static final int PCM_STACK_HOLDER = MODULE_ID_PCM_2;
     public static final int PCM_PUSHER = MODULE_ID_PCM_2;
 
-    public static final int[] CHANNEL_RAIL = { 3, 2 };
-    public static final int[] CHANNEL_CONTAINER_CAR = { 5, 4 };
+   // need to reassign pins for SolidJr
+    public static final int[] CHANNEL_RAIL = { 1, 0 };
+    public static final int[] CHANNEL_CONTAINER_CAR = { 9, 8 };
     public static final int[] CHANNEL_CONTAINER_FIXED = { 7, 6 };
-    public static final int[] CHANNEL_STOP = { 1, 0 };
+    public static final int[] CHANNEL_STOP = { 3, 2 };
     public static final int[] CHANNEL_PUSHER = { 3, 2 };
-    public static final int[] CHANNEL_STACK_HOLDER = { 1, 0 };
+    public static final int[] CHANNEL_STACK_HOLDER = { 5, 4 };
 
     // TODO - what is the amount of time required to extend?
     public static final double TIME_EXTEND_RAILS = .3;
