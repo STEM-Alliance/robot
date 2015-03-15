@@ -14,9 +14,9 @@ public class UltraSonicDrive extends SwerveChassis {
     private UltrasonicMaxBotix ultraBL;
     private UltrasonicMaxBotix ultraBR;
     private double driveRate = .1;
-    private boolean UltraSonic;
+    private static boolean UltraSonic;
     private double distance;
-    private boolean left;
+    private static boolean left;
 
     public UltraSonicDrive(Controller controller)
     {
@@ -42,9 +42,6 @@ public class UltraSonicDrive extends SwerveChassis {
         ultraAL.setAutomaticMode(true);
         ultraBL.setAutomaticMode(true);
         ultraBR.setAutomaticMode(true);
-
-    }
-
     public void setUltrasonic(boolean x, boolean l)
     {
         UltraSonic = x;
@@ -62,17 +59,14 @@ public class UltraSonicDrive extends SwerveChassis {
         SmartDashboard.putNumber("UltraSonicSensor Angle Left", ultraAL.getRangeInches());
         SmartDashboard.putNumber("UltraSonicSensor Angle Right", ultraAR.getRangeInches());
 
-        if (UltraSonic && (distance < 48))
+        if (controller.getUltrasonicLineup() && (distance < 48))
         {
-            //this.UltrasonicLineUp(left);
-
+            this.UltrasonicLineUp(true);  // Drive based on sensors
         }
         else
         {
-            super.run();
-
+            super.run();  // Normal swerve drive
         }
-
     }
 
     public void UltrasonicLineUp(boolean left)
@@ -107,13 +101,11 @@ public class UltraSonicDrive extends SwerveChassis {
         {
             xerror = ultraAR.getRangeInches() * Math.sin(Math.PI / 4);
             xvel = (xerror - 12) * driveRate;
-
         }
         else
         {
             xerror = ultraAL.getRangeInches() * Math.sin(Math.PI / 4);
             xvel = -(xerror - 12) * driveRate;
-
         }
         return xvel;
     }

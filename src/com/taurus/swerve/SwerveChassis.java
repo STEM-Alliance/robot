@@ -55,7 +55,7 @@ public class SwerveChassis extends Subsystem {
     private boolean AutoRunEnable;
     private double AutoTimeStart;
     
-    private final Controller controller;
+    protected final Controller controller;
 
     /**
      * sets up individual wheels and their positions relative to robot center

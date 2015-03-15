@@ -245,12 +245,13 @@ public class ControllerXboxPanel implements Controller, Runnable {
 
     public boolean getFieldRelative()
     {
-        if (!fieldRelativeLast && panel.getGreenRButton())
-        {
-            fieldRelative = !fieldRelative;
-        }
-        fieldRelativeLast = panel.getGreenRButton();
-        return fieldRelative;
+//        if (!fieldRelativeLast && panel.getGreenRButton())
+//        {
+//            fieldRelative = !fieldRelative;
+//        }
+//        fieldRelativeLast = panel.getGreenRButton();
+//        return fieldRelative;
+        return false;  // Feature disabled
     }
 
     @Override
@@ -430,5 +431,11 @@ public class ControllerXboxPanel implements Controller, Runnable {
     public boolean getLeftThumb()
     {
         return xbox.getTop(Hand.kLeft);
+    }
+    
+    @Override
+    public boolean getUltrasonicLineup()
+    {
+        return panel.getGreenRButton();
     }
 }
