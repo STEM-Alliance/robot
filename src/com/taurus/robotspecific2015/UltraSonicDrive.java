@@ -17,9 +17,10 @@ public class UltraSonicDrive extends SwerveChassis {
     
     private double driveRate = .6;
     
-    private static boolean UltraSonic;
     private double distance;
     private static boolean left;
+    private static boolean right;
+    private static double dpad;
     
     private static final double DISTANCE_FROM_WALL = 24.0;
 
@@ -48,13 +49,22 @@ public class UltraSonicDrive extends SwerveChassis {
         ultraBL.setAutomaticMode(true);
         ultraBR.setAutomaticMode(true);
     }
-    
-    public void setUltrasonic(boolean x, boolean l)
+    /**
+     *  Set drive mode to ultrasonic lineup vs normal drive mode
+     * @param left
+     * @param right
+     * @param dpad
+     */
+    public void setUltrasonic(boolean left, boolean right, double dpad)
     {
-        UltraSonic = x;
-        left = l;
+        this.right = right;
+        this.left = left;
+        this.dpad = dpad;
     }
 
+    /**
+     *  Call to service the drive
+     */
     public void run()
     {
         SmartDashboard.putNumber("Back Left Distance Sensor", ultraBL.getRangeInches());
@@ -66,7 +76,7 @@ public class UltraSonicDrive extends SwerveChassis {
         SmartDashboard.putNumber("UltraSonicSensor Angle Left", ultraAL.getRangeInches());
         SmartDashboard.putNumber("UltraSonicSensor Angle Right", ultraAR.getRangeInches());
 
-        if (UltraSonic/*controller.getUltrasonicLineup()*/ && (distance < 48))
+        if ((left || right)/*controller.getUltrasonicLineup()*/ && (distance < 48))
         {
             SmartDashboard.putBoolean("Lineup", true);
             this.UltrasonicLineUp(true);  // Drive based on sensors
@@ -78,6 +88,10 @@ public class UltraSonicDrive extends SwerveChassis {
         }
     }
 
+    /**
+     * Determine how to update swerve drive
+     * @param left
+     */
     public void UltrasonicLineUp(boolean left)
     {
         this.setFieldRelative(false);
@@ -89,6 +103,14 @@ public class UltraSonicDrive extends SwerveChassis {
             double distanceFromDesired = (distance - DISTANCE_FROM_WALL);
             yvel = Utilities.clampToRange(distanceFromDesired, -1, 1) * driveRate;
             //xvel = alignToChute(left);
+            if(this.dpad == 90)
+            {
+                xvel = 1 * driveRate;
+            }
+            else if(this.dpad == 270)
+            {
+                xvel = -1 * driveRate;
+            }
         }
         
         SmartDashboard.putNumber("LineupY", yvel);
