@@ -3,18 +3,35 @@ package com.taurus.robotspecific2015;
 import java.util.ArrayList;
 
 import com.taurus.controller.Controller;
+import com.taurus.controller.ControllerChooser;
 import com.taurus.led.Color;
 import com.taurus.led.Effect;
 import com.taurus.led.LEDs;
 import com.taurus.robotspecific2015.Constants.*;
+import com.taurus.swerve.SwerveChassis;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Application extends com.taurus.Application {
+public class Application implements com.taurus.Application {
+    // App generic
+    private final double TIME_RATE_DASH = .2;
+    private final double TIME_RATE_SWERVE = .01;
+    private double TimeLastDash = 0;
+    private double TimeLastSwerve = 0;
+
+    protected SwerveChassis drive;
+    protected Controller controller;
+    private ControllerChooser controllerChooser;
+    private PowerDistributionPanel PDP;
+    public static Preferences prefs;
+    
+    // App specific
     private boolean endOfMatchEffectSent;
     
     private Vision vision = new Vision();
@@ -37,9 +54,15 @@ public class Application extends com.taurus.Application {
 
     public Application()
     {
-        super();
-
-        lift = new Lift(super.drive, super.controller);
+        // App generic
+        prefs = Preferences.getInstance();        
+        PDP = new PowerDistributionPanel();
+        controllerChooser = new ControllerChooser();
+        controller = controllerChooser.GetController();        
+        drive = new SwerveChassis(controller);
+        
+        // App specific
+        lift = new Lift(drive, controller);
         
         distance_sensor_left =
                 new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
@@ -76,7 +99,7 @@ public class Application extends com.taurus.Application {
         effectEndOfMatch = new Effect(colors, Effect.EFFECT.FLASH, 5, .5);
     }
 
-    public void TeleopInitRobotSpecific()
+    public void TeleopInit()
     {
         StartMatchTime = Timer.getFPGATimestamp();
         
@@ -108,47 +131,28 @@ public class Application extends com.taurus.Application {
         //leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.FLASH, Double.MAX_VALUE, 2), true);
     }
 
-    
-    private void UpdateDashboard()
+    public void TeleopPeriodic()
     {
-//        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
-        
-        SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
-        SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
-        SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
-        SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
-        
-//        SmartDashboard
-//                .putNumber("Distance Left", 
-//                        12.402 
-//                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
-//                        / 2.54);        
-//        SmartDashboard
-//                .putNumber("Distance Right", 
-//                        12.402 
-//                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
-//                        / 2.54);
+        // Service drive
+        if ((Timer.getFPGATimestamp() - TimeLastDash) > TIME_RATE_DASH)
+        {
+            TimeLastDash = Timer.getFPGATimestamp();
+            
+            UpdateDashboard();
+            
+            //SmartDashboard.putNumber("Dash Task Length", Timer.getFPGATimestamp() - TimeLastDash);
+        }
 
-        SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
-        SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
-        SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
+        if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
+        {
+            TimeLastSwerve = Timer.getFPGATimestamp();
+            
+            drive.run();
+            
+            SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
+        }
         
-        SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
-        SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
-
-        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
-        
-        SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
-        SmartDashboard.putString("StateAddContainerToStack", lift.GetStateAddContainerToStack().toString());
-        SmartDashboard.putString("StateAddFloorToteToStack", lift.GetStateAddFloorToteToStack().toString());
-        SmartDashboard.putString("StateCarryStack", lift.GetStateCarryStack().toString());
-        SmartDashboard.putString("StateDropStack", lift.GetStateDropStack().toString());
-        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack().toString());
-
-    }
-
-    public void TeleopPeriodicRobotSpecific()
-    {
+        // Service Lift
         UpdateDashboard();
         
         if(StartMatchTime > 105.0 && StartMatchTime < 110.0)
@@ -298,14 +302,16 @@ public class Application extends com.taurus.Application {
 
     }
 
-    public void TeleopDeInitRobotSpecific()
+    public void TeleopDeInit()
     {
 
     }
 
-    public void AutonomousInitRobotSpecific()
+    public void AutonomousInit()
     {
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
+        
+        controller = controllerChooser.GetController();
         
         lift.init();
         lift.SetContainerInStack(false);
@@ -319,7 +325,7 @@ public class Application extends com.taurus.Application {
         //leds.AddEffect(new LEDEffect(colors, LEDEffect.EFFECT.SPIN, 15, 2), true);
     }
 
-    public void AutonomousPeriodicRobotSpecific()
+    public void AutonomousPeriodic()
     {
         lift.GetCar().ZeroIfNeeded();
         UpdateDashboard();
@@ -330,15 +336,16 @@ public class Application extends com.taurus.Application {
         StartTeleGyroCal = false;
     }
 
-    public void AutonomousDeInitRobotSpecific()
+    public void AutonomousDeInit()
     {
     }
 
-    public void TestModeInitRobotSpecific()
+    public void TestModeInit()
     {
+        controller = controllerChooser.GetController();
     }
 
-    public void TestModePeriodicRobotSpecific()
+    public void TestModePeriodic()
     {
         boolean button1 = controller.getRawButton(1);
         boolean button2 = controller.getRawButton(2);
@@ -452,24 +459,107 @@ public class Application extends com.taurus.Application {
         UpdateDashboard();
     }
 
-    public void TestModeDeInitRobotSpecific()
+    public void TestModeDeInit()
     {
 
     }
 
-    public void DisabledInitRobotSpecific()
+    public void DisabledInit()
     {
 
     }
 
-    public void DisabledPeriodicRobotSpecific()
+    public void DisabledPeriodic()
     {
         lift.GetCar().ZeroIfNeeded();
         UpdateDashboard();
     }
 
-    public void DisabledDeInitRobotSpecific()
+    public void DisabledDeInit()
     {
 
+    }
+    
+    private void UpdateDashboard()
+    {
+//      for (int i = 0; i < 16; i++)
+//      {
+//          SmartDashboard.putNumber("PDP " + i, PDP.getCurrent(i));
+//      }
+//
+//      SmartDashboard.putNumber("PDP Total Current", PDP.getTotalCurrent());
+//      SmartDashboard.putNumber("PDP Total Power", PDP.getTotalPower());
+//      SmartDashboard.putNumber("PDP Total Energy", PDP.getTotalEnergy());
+      SmartDashboard.putNumber("Voltage", PDP.getVoltage());
+
+      // display the joysticks on smart dashboard
+//      SmartDashboard.putNumber("Left Mag",
+//              controller.getMagnitude(Hand.kLeft));
+//      SmartDashboard.putNumber("Left Angle",
+//              controller.getDirectionDegrees(Hand.kLeft));
+//      SmartDashboard.putNumber("Right Mag",
+//              controller.getMagnitude(Hand.kRight));
+//      SmartDashboard.putNumber("Right Angle",
+//              controller.getDirectionDegrees(Hand.kRight));
+
+//      if (driveScheme.get() == DriveScheme.ANGLE_DRIVE)
+//      {
+//          SmartDashboard.putNumber("Angle heading",
+//                  controller.getAngleDrive_Heading());
+//      }
+//
+//      // display each wheel's mag and angle in SmartDashboard
+//      for (int i = 0; i < SwerveConstants.WheelCount; i++)
+//      {
+//          SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag",
+//                  drive.getWheelActual(i).getMag());
+//          SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle",
+//                  drive.getWheelActual(i).getAngle());
+//      }
+
+      SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getYaw());
+      SmartDashboard.putNumber("Last Heading", drive.getLastHeading());
+      SmartDashboard.putBoolean("Field Relative", drive.getFieldRelative());
+
+      SmartDashboard.putBoolean("Brake", drive.getBrake());
+      
+      
+      
+      
+      
+      
+//        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
+        
+        SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
+        SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
+        SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
+        SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
+        
+//        SmartDashboard
+//                .putNumber("Distance Left", 
+//                        12.402 
+//                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
+//                        / 2.54);        
+//        SmartDashboard
+//                .putNumber("Distance Right", 
+//                        12.402 
+//                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
+//                        / 2.54);
+
+        SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
+        SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
+        SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
+        
+        SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
+        SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
+
+        SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
+        
+        SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
+        SmartDashboard.putString("StateAddContainerToStack", lift.GetStateAddContainerToStack().toString());
+        SmartDashboard.putString("StateAddFloorToteToStack", lift.GetStateAddFloorToteToStack().toString());
+        SmartDashboard.putString("StateCarryStack", lift.GetStateCarryStack().toString());
+        SmartDashboard.putString("StateDropStack", lift.GetStateDropStack().toString());
+        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack().toString());
     }
 }
