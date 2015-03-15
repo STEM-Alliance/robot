@@ -42,7 +42,7 @@ public abstract class Application {
     private double TimeLastSwerve = 0;
 
     // Motor Objects
-    protected SwerveChassis drive;
+    protected UltraSonicDrive drive;
 
     // Joysticks
     protected Controller controller;

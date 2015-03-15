@@ -14,9 +14,9 @@ public class UltraSonicDrive extends SwerveChassis {
     private UltrasonicMaxBotix ultraBL;
     private UltrasonicMaxBotix ultraBR;
     private double driveRate = .1;
-    private static boolean UltraSonic;
+    private boolean UltraSonic;
     private double distance;
-    private static boolean left;
+    private boolean left;
 
     public UltraSonicDrive(Controller controller)
     {
@@ -45,7 +45,7 @@ public class UltraSonicDrive extends SwerveChassis {
 
     }
 
-    public static void setUltrasonic(boolean x, boolean l)
+    public void setUltrasonic(boolean x, boolean l)
     {
         UltraSonic = x;
         left = l;
