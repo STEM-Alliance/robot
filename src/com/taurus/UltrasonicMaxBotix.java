@@ -1,6 +1,8 @@
 package com.taurus;
 
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.Counter;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.tables.ITable;
+
 
 
 /**
@@ -78,6 +81,10 @@ public class UltrasonicMaxBotix extends SensorBase implements PIDSource, LiveWin
         
         private static final double mmPerIn = 25.4;
         private static final double uS_Per_S = 1000000.0;
+        
+        private final int DistanceBufferLength = 8;
+        private int DistanceBufferIndex = 0;
+        private double m_distanceBuffer[];
             
         /**
          * Manually set/change the number of uSeconds per MM
@@ -157,6 +164,8 @@ public class UltrasonicMaxBotix extends SensorBase implements PIDSource, LiveWin
             UsageReporting.report(tResourceType.kResourceType_Ultrasonic,
                     m_instances);
             LiveWindow.addSensor("Ultrasonic", m_echoChannel.getChannel(), this);
+            
+            m_distanceBuffer = new double[DistanceBufferLength];
         }
 
         /**
@@ -222,6 +231,8 @@ public class UltrasonicMaxBotix extends SensorBase implements PIDSource, LiveWin
             m_echoChannel = echoChannel;
             m_units = units;
             initialize();
+            
+            
         }
 
         /**
@@ -357,7 +368,8 @@ public class UltrasonicMaxBotix extends SensorBase implements PIDSource, LiveWin
          * @return true if the range is valid
          */
         public boolean isRangeValid() {
-            return m_counter.get() > 1 && m_counter.getPeriod() * uS_Per_S / uS_Per_MM / mmPerIn < 400;
+            double inches = m_counter.getPeriod() * uS_Per_S / uS_Per_MM / mmPerIn;
+            return m_counter.get() > 1 && inches < 400 && inches > 10;
         }
 
         /**
@@ -371,12 +383,30 @@ public class UltrasonicMaxBotix extends SensorBase implements PIDSource, LiveWin
             if (isRangeValid()) {
                 
                 double currentInches = m_counter.getPeriod() * uS_Per_S / uS_Per_MM / mmPerIn;
-                double weightedAvg = (m_oldDistance + currentInches)/2;
-                m_oldDistance = currentInches;
+                
+                
+                
+                // using m_distanceBuffer as a circular buffer here
+                if(DistanceBufferIndex >= DistanceBufferLength)
+                {
+                    DistanceBufferIndex = 0;
+                }
+                m_distanceBuffer[DistanceBufferIndex++] = currentInches;
+                
+                
+                double weightedAvg = 0;
+                for(int i = 0; i < DistanceBufferLength; i++)
+                {
+                    weightedAvg += m_distanceBuffer[i];
+                }
+                
+                weightedAvg /= DistanceBufferLength;
+                
+                m_oldDistance = weightedAvg;
                 return weightedAvg;
                 
             } else {
-                return 0;
+                return m_oldDistance;
             }
         }
 
