@@ -331,7 +331,7 @@ public class Application extends com.taurus.Application {
         boolean button15 = controller.getRawButton(15);
         boolean button16 = controller.getRawButton(16);
         lift.GetCar().ZeroIfNeeded();
-        
+        lift.GetCar().CeilingIfNeeded();
 
         // test modes for cylinders and motors and features.
         switch (((Integer) testChooser.getSelected()).intValue())

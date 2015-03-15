@@ -87,6 +87,8 @@ public abstract class Application {
         {
             TimeLastSwerve = Timer.getFPGATimestamp();
             
+            //if(controller.getUltrasonicLineup())
+            
             drive.run();
             
             SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);

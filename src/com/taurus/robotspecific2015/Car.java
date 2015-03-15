@@ -369,8 +369,14 @@ public class Car {
             Actuator.Zero();
             return true;
         }
+        return false;
+    }
+    
+    public boolean CeilingIfNeeded()
+    {
+
         // If either top sensor is triggered, zero the actuator and set current height to top
-        else if (TopSensorLeft.IsOn() || TopSensorRight.IsOn())
+        if (TopSensorLeft.IsOn() || TopSensorRight.IsOn())
         {
             Actuator.Ceiling();
             return true;
