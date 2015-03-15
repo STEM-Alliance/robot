@@ -42,6 +42,8 @@ public class UltraSonicDrive extends SwerveChassis {
         ultraAL.setAutomaticMode(true);
         ultraBL.setAutomaticMode(true);
         ultraBR.setAutomaticMode(true);
+    }
+    
     public void setUltrasonic(boolean x, boolean l)
     {
         UltraSonic = x;
@@ -59,7 +61,7 @@ public class UltraSonicDrive extends SwerveChassis {
         SmartDashboard.putNumber("UltraSonicSensor Angle Left", ultraAL.getRangeInches());
         SmartDashboard.putNumber("UltraSonicSensor Angle Right", ultraAR.getRangeInches());
 
-        if (controller.getUltrasonicLineup() && (distance < 48))
+        if (UltraSonic/*controller.getUltrasonicLineup()*/ && (distance < 48))
         {
             this.UltrasonicLineUp(true);  // Drive based on sensors
         }
