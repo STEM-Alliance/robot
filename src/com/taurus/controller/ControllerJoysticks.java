@@ -392,4 +392,10 @@ public class ControllerJoysticks implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+    
+    @Override
+    public boolean getUltrasonicLineup()
+    {
+        return false;
+    }
 }

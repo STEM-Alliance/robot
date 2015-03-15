@@ -383,4 +383,9 @@ public class ControllerXbox implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+            
+    public boolean getUltrasonicLineup()
+    {
+        return false;
+    }
 }
