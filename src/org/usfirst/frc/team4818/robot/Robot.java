@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Robot extends SampleRobot {    
+public class Robot extends SampleRobot {
 
     private Application app;
     private int appIndex = -1;
@@ -85,14 +85,14 @@ public class Robot extends SampleRobot {
     
     public void disabled()
     {
-        app.DisableInit();
+        app.DisabledInit();
         
         while (isDisabled())
         {
-            app.DisablePeriodic();
+            app.DisabledPeriodic();
         }
         
-        app.DisableDeInit();
+        app.DisabledInit();
     }
     
     public void test()

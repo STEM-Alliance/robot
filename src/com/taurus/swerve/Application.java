@@ -1,11 +1,30 @@
 package com.taurus.swerve;
 
+import com.taurus.controller.Controller;
+import com.taurus.controller.ControllerChooser;
+
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Application extends com.taurus.Application {
+public class Application implements com.taurus.Application {
+    
+    // App generic
+    private final double TIME_RATE_DASH = .2;
+    private final double TIME_RATE_SWERVE = .01;    
+    private double TimeLastDash = 0;
+    private double TimeLastSwerve = 0;
 
+    protected SwerveChassis drive;
+    protected Controller controller;
+    private ControllerChooser controllerChooser;
+    private PowerDistributionPanel PDP;
+    public static Preferences prefs;
+    
+    // App specific
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
     private final int TEST_MODE_CALIBRATION_1 = 2;
@@ -17,6 +36,14 @@ public class Application extends com.taurus.Application {
     
     public Application()
     {
+        // App generic
+        prefs = Preferences.getInstance();        
+        PDP = new PowerDistributionPanel();
+        controllerChooser = new ControllerChooser();
+        controller = controllerChooser.GetController();        
+        drive = new SwerveChassis(controller);
+        
+        // App specific
         // set up the choosers for running tests while in teleop mode
         testChooser = new SendableChooser();
         testChooser.addDefault("Normal", Integer.valueOf(TEST_MODE_NORMAL));
@@ -38,13 +65,32 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putData("Test Wheel", testWheelChooser);
     }
     
-    public void TeleopInitRobotSpecific()
+    public void TeleopInit()
     {
 
     }
 
-    public void TeleopPeriodicRobotSpecific()
+    public void TeleopPeriodic()
     {
+        // Service drive
+        if ((Timer.getFPGATimestamp() - TimeLastDash) > TIME_RATE_DASH)
+        {
+            TimeLastDash = Timer.getFPGATimestamp();
+            
+            UpdateDashboard();
+            
+            //SmartDashboard.putNumber("Dash Task Length", Timer.getFPGATimestamp() - TimeLastDash);
+        }
+
+        if ((Timer.getFPGATimestamp() - TimeLastSwerve) > TIME_RATE_SWERVE)
+        {
+            TimeLastSwerve = Timer.getFPGATimestamp();
+            
+            drive.run();
+            
+            SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
+        }
+        
         int i = ((Integer) testWheelChooser.getSelected()).intValue();
 
         switch (((Integer) testChooser.getSelected()).intValue())
@@ -98,52 +144,99 @@ public class Application extends com.taurus.Application {
         }
     }
 
-    public void TeleopDeInitRobotSpecific()
+    public void TeleopDeInit()
     {
 
     }
 
-    public void AutonomousInitRobotSpecific()
+    public void AutonomousInit()
+    {
+        controller = controllerChooser.GetController();
+    }
+
+    public void AutonomousPeriodic()
     {
 
     }
 
-    public void AutonomousPeriodicRobotSpecific()
+    public void AutonomousDeInit()
     {
 
     }
 
-    public void AutonomousDeInitRobotSpecific()
+    public void TestModeInit()
+    {
+        controller = controllerChooser.GetController();
+    }
+
+    public void TestModePeriodic()
+    {
+    }
+
+    public void TestModeDeInit()
     {
 
     }
 
-    public void TestModeInitRobotSpecific()
+    public void DisabledInit()
     {
 
     }
 
-    public void TestModePeriodicRobotSpecific()
-    {
-    }
-
-    public void TestModeDeInitRobotSpecific()
+    public void DisabledPeriodic()
     {
 
     }
 
-    public void DisabledInitRobotSpecific()
+    public void DisabledDeInit()
     {
 
     }
-
-    public void DisabledPeriodicRobotSpecific()
+    
+    /**
+     * Update the dashboard with the common entries
+     */
+    private void UpdateDashboard()
     {
+//        for (int i = 0; i < 16; i++)
+//        {
+//            SmartDashboard.putNumber("PDP " + i, PDP.getCurrent(i));
+//        }
+//
+//        SmartDashboard.putNumber("PDP Total Current", PDP.getTotalCurrent());
+//        SmartDashboard.putNumber("PDP Total Power", PDP.getTotalPower());
+//        SmartDashboard.putNumber("PDP Total Energy", PDP.getTotalEnergy());
+        SmartDashboard.putNumber("Voltage", PDP.getVoltage());
 
-    }
+        // display the joysticks on smart dashboard
+//        SmartDashboard.putNumber("Left Mag",
+//                controller.getMagnitude(Hand.kLeft));
+//        SmartDashboard.putNumber("Left Angle",
+//                controller.getDirectionDegrees(Hand.kLeft));
+//        SmartDashboard.putNumber("Right Mag",
+//                controller.getMagnitude(Hand.kRight));
+//        SmartDashboard.putNumber("Right Angle",
+//                controller.getDirectionDegrees(Hand.kRight));
 
-    public void DisabledDeInitRobotSpecific()
-    {
+//        if (driveScheme.get() == DriveScheme.ANGLE_DRIVE)
+//        {
+//            SmartDashboard.putNumber("Angle heading",
+//                    controller.getAngleDrive_Heading());
+//        }
+//
+//        // display each wheel's mag and angle in SmartDashboard
+//        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+//        {
+//            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag",
+//                    drive.getWheelActual(i).getMag());
+//            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle",
+//                    drive.getWheelActual(i).getAngle());
+//        }
 
+        SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getYaw());
+        SmartDashboard.putNumber("Last Heading", drive.getLastHeading());
+        SmartDashboard.putBoolean("Field Relative", drive.getFieldRelative());
+
+        SmartDashboard.putBoolean("Brake", drive.getBrake());
     }
 }
