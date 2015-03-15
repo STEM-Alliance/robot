@@ -50,8 +50,8 @@ public abstract class Constants {
     //Distance Sensors
     public static final int[] ULTRASONIC_SENSOR_BACK_LEFT = {10, 11};
     public static final int[] ULTRASONIC_SENSOR_BACK_RIGHT = {12, 13};
-    public static final int[] ULTRASONIC_SENSOR_ANGLE_LEFT = {14, 15};
-    public static final int[] ULTRASONIC_SENSOR_ANGLE_RIGHT = {16, 17};
+    public static final int[] ULTRASONIC_SENSOR_ANGLE_LEFT = {1, 2};
+    public static final int[] ULTRASONIC_SENSOR_ANGLE_RIGHT = {3, 8};
 
 
     // Lift setup

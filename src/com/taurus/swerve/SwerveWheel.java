@@ -124,7 +124,7 @@ public class SwerveWheel {
 
         AngleOrientation = Orientation;
         
-        CalibrationSensor = new DigitalInput(AngleCalibrationPin);
+        //CalibrationSensor = new DigitalInput(AngleCalibrationPin);
         
         this.controller = controller;
     }
@@ -227,21 +227,21 @@ public class SwerveWheel {
         
         if(controller.getWheelCal())
         {
-            if(CalibrationSensor.get())
-            {
-                // the Calibration Sensor is triggered, so we should be facing forward
-                if(Math.abs(Utilities.wrapToRange(AdjustedAngle, -180, 180)) > CALIBRATION_MINIMUM)
-                {
-                    // we're more than CALIBRATION_MINIMUM away, yet the sensor is triggered,
-                    // we need to then update the angle
-                    this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0, 360);
-                    
-                    Application.prefs.putDouble("Wheel_Orientation_" + Number, AngleOrientation);
-                    
-                    AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
-                }
-                
-            }
+//            if(CalibrationSensor.get())
+//            {
+//                // the Calibration Sensor is triggered, so we should be facing forward
+//                if(Math.abs(Utilities.wrapToRange(AdjustedAngle, -180, 180)) > CALIBRATION_MINIMUM)
+//                {
+//                    // we're more than CALIBRATION_MINIMUM away, yet the sensor is triggered,
+//                    // we need to then update the angle
+//                    this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0, 360);
+//                    
+//                    Application.prefs.putDouble("Wheel_Orientation_" + Number, AngleOrientation);
+//                    
+//                    AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
+//                }
+//                
+//            }
         }
         
         return AdjustedAngle;
