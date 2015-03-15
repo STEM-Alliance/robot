@@ -15,7 +15,7 @@ public abstract class Constants {
 
    // need to reassign pins for SolidJr
     public static final int[] CHANNEL_RAIL = { 1, 0 };
-    public static final int[] CHANNEL_CONTAINER_CAR = { 9, 8 };
+    public static final int[] CHANNEL_CONTAINER_CAR = { 7, 6 };
     public static final int[] CHANNEL_CONTAINER_FIXED = { 7, 6 };
     public static final int[] CHANNEL_STOP = { 3, 2 };
     public static final int[] CHANNEL_PUSHER = { 3, 2 };
