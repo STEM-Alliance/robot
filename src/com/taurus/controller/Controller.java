@@ -214,5 +214,5 @@ public interface Controller {
     
     public void setRumble(Hand hand, float value, double length);
     
-    
+    public boolean getUltrasonicLineup();   
 }

@@ -141,8 +141,7 @@ public class Application extends com.taurus.Application {
         else
         {
             controller.setRumble(Hand.kLeft , 0);    
-        }
-        
+        }        
         
         if (controller.getCarHome())
         {
