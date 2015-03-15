@@ -1,6 +1,7 @@
 package com.taurus.robotspecific2015;
 
 import com.taurus.UltrasonicMaxBotix;
+import com.taurus.Utilities;
 import com.taurus.controller.Controller;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveConstants;
@@ -13,10 +14,14 @@ public class UltraSonicDrive extends SwerveChassis {
     private UltrasonicMaxBotix ultraAL;
     private UltrasonicMaxBotix ultraBL;
     private UltrasonicMaxBotix ultraBR;
-    private double driveRate = .1;
+    
+    private double driveRate = .6;
+    
     private static boolean UltraSonic;
     private double distance;
     private static boolean left;
+    
+    private static final double DISTANCE_FROM_WALL = 24.0;
 
     public UltraSonicDrive(Controller controller)
     {
@@ -63,10 +68,12 @@ public class UltraSonicDrive extends SwerveChassis {
 
         if (UltraSonic/*controller.getUltrasonicLineup()*/ && (distance < 48))
         {
+            SmartDashboard.putBoolean("Lineup", true);
             this.UltrasonicLineUp(true);  // Drive based on sensors
         }
         else
         {
+            SmartDashboard.putBoolean("Lineup", false);
             super.run();  // Normal swerve drive
         }
     }
@@ -77,14 +84,18 @@ public class UltraSonicDrive extends SwerveChassis {
         double angleError = setParallelToWall();
         double yvel = 0;
         double xvel = 0;
-        if (Math.abs(angleError) < 15)
+        if (Math.abs(angleError) < 10)
         {
-            yvel = -(distance - 30) * driveRate;
-            xvel = alignToChute(left);
+            double distanceFromDesired = (distance - DISTANCE_FROM_WALL);
+            yvel = Utilities.clampToRange(distanceFromDesired, -1, 1) * driveRate;
+            //xvel = alignToChute(left);
         }
+        
+        SmartDashboard.putNumber("LineupY", yvel);
+        SmartDashboard.putNumber("LineupAngle", angleError);
 
         SwerveVector vec = new SwerveVector(xvel, yvel);
-        this.UpdateDrive(vec, angleError / 100.0, -1);
+        this.UpdateDrive(vec, angleError / 60.0, -1);
     }
 
     public double setParallelToWall()
@@ -92,7 +103,7 @@ public class UltraSonicDrive extends SwerveChassis {
         double error =
                 Math.atan((ultraBR.getRangeInches() - ultraBL.getRangeInches())
                           / SwerveConstants.ChassisWidth);
-        return error;
+        return Math.toDegrees(error);
     }
 
     public double alignToChute(boolean left)
