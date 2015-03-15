@@ -176,6 +176,10 @@ public class Application extends com.taurus.Application {
             if(controller.getLeftThumb()){
                 drive.setUltrasonic(true, true);
             }
+            else
+            {
+                drive.setUltrasonic(false, true);
+            }
 
             lift.GetCar().ZeroIfNeeded();
 
