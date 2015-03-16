@@ -2,7 +2,7 @@ package com.taurus.robotspecific2015;
 
 import java.util.ArrayList;
 
-import com.taurus.controller.Controller;
+import com.taurus.controller.SwerveController;
 import com.taurus.led.Color;
 import com.taurus.led.Effect;
 import com.taurus.robotspecific2015.Constants.*;
@@ -47,14 +47,14 @@ public class Lift extends Subsystem {
     private final Effect effectsInTransit;
     private final Effect effectsScore;
 
-    private final Controller controller;
+    private final ControllerXboxPanel controller;
     
     /** 
      * Initialize lift and all objects owned by the lift
      * @param drive Chassis object, used to control driving from lift states
      * @param controller main controller object
      */
-    public Lift(SwerveChassis drive, Controller controller)
+    public Lift(SwerveChassis drive, ControllerXboxPanel controller)
     {
         this.drive = drive;
         this.controller = controller;

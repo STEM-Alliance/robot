@@ -1,7 +1,7 @@
 package com.taurus.robotspecific2015;
 
 import com.taurus.Utilities;
-import com.taurus.controller.Controller;
+import com.taurus.controller.SwerveController;
 import com.taurus.robotspecific2015.Constants.LIFT_POSITIONS_E;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -31,13 +31,13 @@ public class Car {
     private double ShakeStartTime = Timer.getFPGATimestamp();
     private boolean IsShakeUp = true;  // Shake down first because ShakeStartTime will have elapsed     
     
-    private final Controller controller;
+    private final ControllerXboxPanel controller;
 
     /**
      * Constructor for the car
      * @param controller main controller object
      */
-    public Car(Controller controller)
+    public Car(ControllerXboxPanel controller)
     {
         this.controller = controller;
         

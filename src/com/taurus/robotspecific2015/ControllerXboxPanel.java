@@ -1,12 +1,15 @@
-package com.taurus.controller;
+package com.taurus.robotspecific2015;
 
+import com.taurus.controller.SwerveController;
+import com.taurus.controller.Panel;
+import com.taurus.controller.Xbox;
 import com.taurus.controller.Xbox.ButtonType;
 import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
-public class ControllerXboxPanel implements Controller, Runnable {
+public class ControllerXboxPanel implements SwerveController, Runnable {
 
     private Xbox xbox;
     private Panel panel;
@@ -131,7 +134,6 @@ public class ControllerXboxPanel implements Controller, Runnable {
         return value;
     }
 
-    @Override
     public double getHaloDrive_Heading45()
     {
         double val = -1;
@@ -283,7 +285,6 @@ public class ControllerXboxPanel implements Controller, Runnable {
         return xbox.getXButton();
     }
 
-    @Override
     public boolean getCarryStack()
     {
         return xbox.getYButton();
@@ -297,75 +298,61 @@ public class ControllerXboxPanel implements Controller, Runnable {
         return false;
     }
 
-    @Override
     public boolean getCarHome()
     {
         return panel.getGreenLButton();
     }
 
-    @Override
     public boolean getCarTop()
     {
         return panel.getYellowLButton();
     }
 
-    @Override
     public boolean getStopAction()
     {
         return panel.getWhiteRButton();
     }
 
-    @Override
     public boolean getFakeToteAdd()
     {
         return xbox.getBumper(Hand.kLeft);
     }
 
-    @Override
     public boolean getManualLift()
     {
         return panel.getSwitchL();
-
     }
 
-    @Override
     public boolean getFakePostion()
     {
-
         return panel.getWhiteLButton();
     }
 
-    @Override
     public boolean getReleaseEverything()
     {
         return panel.getBlackRButton();
     }
 
-    @Override
     public boolean getDropStack()
     {
         return xbox.getBumper(Hand.kRight);
     }
 
-    @Override
     public boolean getHighSpeed()
     {
         return panel.getSwitchR();
     }
 
-    @Override
     public double getLowSpeed()
     {
         return xbox.getTriggerVal(Hand.kRight);
     }
 
-    @Override
     public void setRumble(Hand hand, float value)
     {
         xbox.setRumble(hand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble, value);
     }
 
-    @Override
     /**
      * Set rumble for a specified time; starts a new thread
      * @param hand hand to rumble
@@ -400,29 +387,24 @@ public class ControllerXboxPanel implements Controller, Runnable {
         
         xbox.setRumble(Rumble, 0);
     }
-
-    @Override
+    
     public boolean getWheelCal()
     {
         return false;
     }
 
-    @Override
     public boolean getInitialize()
     {
         return xbox.getButton(ButtonType.kLeftStick) && xbox.getButton(ButtonType.kRightStick);
     }
 
-    @Override
     public boolean getCarryStackNoTote()
     {
         return xbox.getTrigger(Hand.kLeft);
     }
 
-    @Override
     public boolean getLiftShake()
-    {
-       
+    {       
         return panel.getBlackLButton();
     }
 }

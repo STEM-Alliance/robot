@@ -2,7 +2,7 @@ package com.taurus.robotspecific2015;
 
 import java.util.ArrayList;
 
-import com.taurus.controller.Controller;
+import com.taurus.controller.SwerveController;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.led.Color;
 import com.taurus.led.Effect;
@@ -26,7 +26,7 @@ public class Application implements com.taurus.Application {
     private double TimeLastSwerve = 0;
 
     protected SwerveChassis drive;
-    protected Controller controller;
+    protected ControllerXboxPanel controller;
     private ControllerChooser controllerChooser;
     private PowerDistributionPanel PDP;
     public static Preferences prefs;
@@ -58,7 +58,7 @@ public class Application implements com.taurus.Application {
         prefs = Preferences.getInstance();        
         PDP = new PowerDistributionPanel();
         controllerChooser = new ControllerChooser();
-        controller = controllerChooser.GetController();        
+        controller = new ControllerXboxPanel();        
         drive = new SwerveChassis(controller);
         
         // App specific
@@ -311,7 +311,7 @@ public class Application implements com.taurus.Application {
     {
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
         
-        controller = controllerChooser.GetController();
+        controller = new ControllerXboxPanel();
         
         lift.init();
         lift.SetContainerInStack(false);
@@ -342,7 +342,7 @@ public class Application implements com.taurus.Application {
 
     public void TestModeInit()
     {
-        controller = controllerChooser.GetController();
+        controller = new ControllerXboxPanel();
     }
 
     public void TestModePeriodic()

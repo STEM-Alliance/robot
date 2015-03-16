@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
  * 
  * @author Team 4818 Taurus Robotics
  */
-public interface Controller {
+public interface SwerveController {
 
     public static final double DEADBAND = 0.0;
 
@@ -94,7 +94,7 @@ public interface Controller {
      * @return The vector of the joystick.
      */
     public SwerveVector getHaloDrive_Velocity();
-
+    
     public double getHaloDrive_Heading45();
     
     /**
@@ -161,56 +161,9 @@ public interface Controller {
      * @return
      */
     public double getDPad();
-
+    
     public boolean getHighSpeed();
     public double getLowSpeed();
-    
-    /**
-     * 
-     * @return
-     */
-    public boolean getAddChuteTote();
-
-    public boolean getAddFloorTote();
-
-    public boolean getAddContainer();
-    
-    public boolean getCarryStack();
-    
-    public boolean getEjectStack();
-    
-    public boolean getCarHome();
-
-    public boolean getCarTop();
-    
-    public boolean getFakeToteAdd();
-    
-    public boolean getManualLift();
-    
-    public boolean getFakePostion();
-
-    public boolean getReleaseEverything();
 
     public boolean getWheelCal();
-    
-    public boolean getInitialize();
-    
-    public boolean getLiftShake();
-    
-    /**
-     * Get the stop action
-     * 
-     * @return
-     */
-    public boolean getStopAction();
-
-    public boolean getDropStack();
-    
-    public boolean getCarryStackNoTote();
-    
-    public void setRumble(Hand hand, float value);
-    
-    public void setRumble(Hand hand, float value, double length);
-    
-    
 }

@@ -1,6 +1,6 @@
 package com.taurus.swerve;
 
-import com.taurus.controller.Controller;
+import com.taurus.controller.SwerveController;
 import com.taurus.controller.ControllerChooser;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -19,7 +19,7 @@ public class Application implements com.taurus.Application {
     private double TimeLastSwerve = 0;
 
     protected SwerveChassis drive;
-    protected Controller controller;
+    protected SwerveController controller;
     private ControllerChooser controllerChooser;
     private PowerDistributionPanel PDP;
     public static Preferences prefs;
