@@ -1,5 +1,7 @@
 package com.taurus.controller;
 
+import com.taurus.robotspecific2015.ControllerXboxPanel;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,23 +23,23 @@ public class ControllerChooser {
         SmartDashboard.putData("Controller", controllerChooser);
     }
 
-    public Controller GetController()
+    public SwerveController GetController()
     {
-        Controller result;
+        SwerveController result;
 
         switch (((Integer) controllerChooser.getSelected()).intValue())
         {
             case XBOX:
-                result = new ControllerXbox();
+                result = new SwerveXbox();
                 break;
             case JOY:
-                result = new ControllerJoysticks();
+                result = new SwerveJoysticks();
                 break;
             case XBOXPANEL:
                 result = new ControllerXboxPanel();
                 break;
             default:
-                result = new ControllerXbox();
+                result = new SwerveXbox();
                 break;
         }
 

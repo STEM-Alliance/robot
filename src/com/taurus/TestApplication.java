@@ -1,6 +1,6 @@
 package com.taurus;
 
-import com.taurus.controller.Controller;
+import com.taurus.controller.SwerveController;
 import com.taurus.controller.ControllerChooser;
 import com.taurus.robotspecific2015.Constants;
 import com.taurus.robotspecific2015.LinearActuator;
@@ -22,7 +22,7 @@ public class TestApplication implements Application {
     private double TimeLastSwerve = 0;
 
     protected SwerveChassis drive;
-    protected Controller controller;
+    protected SwerveController controller;
     private ControllerChooser controllerChooser;
     private PowerDistributionPanel PDP;
     public static Preferences prefs;

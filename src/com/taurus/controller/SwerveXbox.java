@@ -1,11 +1,10 @@
 package com.taurus.controller;
 
-import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
-public class ControllerXbox implements Controller {
+public class SwerveXbox implements SwerveController {
 
     private Xbox xbox;
 
@@ -17,7 +16,7 @@ public class ControllerXbox implements Controller {
     /**
      * Create a new Xbox Controller object
      */
-    public ControllerXbox()
+    public SwerveXbox()
     {
         xbox = new Xbox(0);
 
@@ -191,8 +190,7 @@ public class ControllerXbox implements Controller {
     public boolean getCarTop()
     {
         return xbox.getTrigger(Hand.kLeft);
-    }
-    
+    }    
     
     /**
      * {@inheritDoc}
@@ -238,142 +236,26 @@ public class ControllerXbox implements Controller {
         return xbox.getPOV();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getAddChuteTote()
+    public boolean getWheelCal()
     {
-        return xbox.getAButton();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getAddFloorTote()
-    {
-        return xbox.getBButton();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getAddContainer()
-    {
-        return xbox.getXButton();
-    }
-
-    @Override
-    public boolean getCarryStack()
-    {
-        return xbox.getYButton();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getEjectStack()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean getStopAction()
-    {
-        return xbox.getBumper(Hand.kRight);
-    }
-
-    @Override
-    public boolean getFakeToteAdd()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getManualLift()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getFakePostion()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getReleaseEverything()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getDropStack()
-    {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean getHighSpeed()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public double getLowSpeed()
     {
-        // TODO Auto-generated method stub
-        return 0.0;
-    }
-
-    @Override
-    public void setRumble(Hand hand, float value)
-    {
-        xbox.setRumble(hand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble, value);
+        return 0;
     }
 
     @Override
     public double getHaloDrive_Heading45()
     {
-        // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public void setRumble(Hand hand, float value, double length)
-    {
-    }
-
-    @Override
-    public boolean getWheelCal()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getInitialize()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getCarryStackNoTote()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getLiftShake()
-    {
-        // TODO Auto-generated method stub
-        return false;
     }
 }

@@ -8,7 +8,7 @@ package com.taurus.swerve;
 
 import com.taurus.PIDController;
 import com.taurus.Utilities;
-import com.taurus.controller.Controller;
+import com.taurus.controller.SwerveController;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
@@ -55,12 +55,12 @@ public class SwerveChassis extends Subsystem {
     private boolean AutoRunEnable;
     private double AutoTimeStart;
     
-    private final Controller controller;
+    private final SwerveController controller;
 
     /**
      * sets up individual wheels and their positions relative to robot center
      */
-    public SwerveChassis(Controller controller)
+    public SwerveChassis(SwerveController controller)
     {
         this.controller = controller;
         

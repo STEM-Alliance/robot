@@ -5,7 +5,7 @@ import com.taurus.swerve.SwerveVector;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 
-public class ControllerJoysticks implements Controller {
+public class SwerveJoysticks implements SwerveController {
 
     private Joystick left;
     private Joystick right;
@@ -18,7 +18,7 @@ public class ControllerJoysticks implements Controller {
     /**
      * Create a new Joysticks Controller object
      */
-    public ControllerJoysticks()
+    public SwerveJoysticks()
     {
         left = new Joystick(0);
         right = new Joystick(1);
@@ -208,7 +208,6 @@ public class ControllerJoysticks implements Controller {
      */
     public double getDPad()
     {
-        // TODO Auto-generated method stub
         return 0;
     }
 
@@ -217,172 +216,36 @@ public class ControllerJoysticks implements Controller {
      */
     public double getAngleDrive_Rotation()
     {
-        // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public boolean getAddChuteTote()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getAddFloorTote()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getAddContainer()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getCarryStack()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getEjectStack()
-    {
-        // TODO Auto-generated method stub
-        return false;
     }
 
     @Override
     public boolean getTrigger(Hand hand)
     {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getCarHome()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getCarTop()
-    {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean getStopAction()
+    public boolean getWheelCal()
     {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getFakeToteAdd()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getManualLift()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getFakePostion()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getReleaseEverything()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getDropStack()
-    {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean getHighSpeed()
     {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public double getLowSpeed()
     {
-        // TODO Auto-generated method stub
-        return 0.0;
-    }
-
-    @Override
-    public void setRumble(Hand hand, float value)
-    {
-        // TODO Auto-generated method stub
-        
+        return 0;
     }
 
     @Override
     public double getHaloDrive_Heading45()
     {
-        // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public void setRumble(Hand hand, float value, double length)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public boolean getWheelCal()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getInitialize()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getCarryStackNoTote()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean getLiftShake()
-    {
-        // TODO Auto-generated method stub
-        return false;
     }
 }
