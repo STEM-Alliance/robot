@@ -117,6 +117,8 @@ public class Car {
         boolean atTop = (TopSensorLeft.IsOn() && TopSensorRight.IsOn())
                 || SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
         
+        CeilingIfNeeded();
+        
         switch (ZeroState)
         {
             default:
