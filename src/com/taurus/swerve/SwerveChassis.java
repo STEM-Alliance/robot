@@ -128,23 +128,23 @@ public class SwerveChassis extends Subsystem {
      */
     public void run()
     {
-        if (AutoRunEnable)
-        {
-            if((Timer.getFPGATimestamp() - AutoTimeStart) < AutoTimeLength)
-            {
-                setFieldRelative(false);
-
-                CrawlMode = 1;
-
-                UpdateDrive(AutoVector, 0, -1);
-                
-            }
-            else 
-            {
-                AutoRunEnable = false;
-            }
-        }
-        else
+//        if (AutoRunEnable)
+//        {
+//            if((Timer.getFPGATimestamp() - AutoTimeStart) < AutoTimeLength)
+//            {
+//                setFieldRelative(false);
+//
+//                CrawlMode = 1;
+//
+//                UpdateDrive(AutoVector, 0, -1);
+//                
+//            }
+//            else 
+//            {
+//                AutoRunEnable = false;
+//            }
+//        }
+//        else
         {
 
             CrawlMode = controller.getLowSpeed();
@@ -175,7 +175,7 @@ public class SwerveChassis extends Subsystem {
                         // use non field relative
                         setFieldRelative(false);
 
-                        CrawlMode = 1;
+                        CrawlMode = 0;
 
                         SwerveVector drive = new SwerveVector();
                         drive.setMagAngle(1, dpad - 90);
@@ -309,15 +309,20 @@ public class SwerveChassis extends Subsystem {
         double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + MinRotationAdjust, 1);
         RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
         
+        RobotRotation *= (SwerveConstants.DriveSpeedCrawl + (1 - SwerveConstants.DriveSpeedCrawl) * CrawlMode);
+        
         // scale the speed down unless we're in high speed mode
-
+        
         RobotVelocity.setMag(RobotVelocity.getMag() * (SwerveConstants.DriveSpeedCrawl + 
-                (1 - SwerveConstants.DriveSpeedCrawl) * controller.getLowSpeed()));
+                (1 - SwerveConstants.DriveSpeedCrawl) * CrawlMode));
         
         if (!controller.getHighSpeed())
         {
+            RobotRotation *=SwerveConstants.DriveSpeedNormal;
             RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DriveSpeedNormal);
         }
+        
+        
 
         RobotVelocity = restrictVelocity(RobotVelocity);
 
