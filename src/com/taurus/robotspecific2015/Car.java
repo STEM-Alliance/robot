@@ -112,11 +112,14 @@ public class Car {
      */
     public boolean GoToStack(int ToteCount)
     {
+        
+        boolean finished = false;
+        
         double speedAdjust = 1.0 - Constants.LIFT_CAR_SPEED_UP;
         speedAdjust = speedAdjust * (ToteCount / 6.0);
-        boolean atTop = (TopSensorLeft.IsOn() && TopSensorRight.IsOn())
-                || SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
+        boolean atTop = (TopSensorLeft.IsOn() && TopSensorRight.IsOn());
         
+        SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
         switch (ZeroState)
         {
             default:
@@ -132,7 +135,7 @@ public class Car {
             case WAITING:
                 Actuator.SetSpeedRaw(0);
                 
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .5)
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .2)
                 {
                     ZeroState = ZERO_STATE.ZEROED_TOP;
                 }
@@ -145,10 +148,14 @@ public class Car {
                 {
                     ZeroState = ZERO_STATE.MOVING;            
                 }
+                else
+                {
+                    finished = true;
+                }
                 break;
         }
         
-        return ZeroState == ZERO_STATE.ZEROED_TOP;
+        return finished;
     }
 
     /**
@@ -176,7 +183,7 @@ public class Car {
      * 
      * @return
      */
-    public boolean GoToChute()
+    public boolean GoToChute(boolean lowSpeed)
     {
         if (controller.getManualLift())
         {
@@ -184,9 +191,18 @@ public class Car {
         }
         else
         {
-            return SetPosition(LIFT_POSITIONS_E.CHUTE,
-                        Constants.LIFT_CAR_SPEED_DOWN) 
-                    || this.ChuteHeightSensor.IsOn();
+            if(lowSpeed)
+            {
+                return SetPosition(LIFT_POSITIONS_E.CHUTE,
+                            Constants.LIFT_CAR_SPEED_DOWN) 
+                        || this.ChuteHeightSensor.IsOn();
+            }
+            else
+            {
+                return SetPosition(LIFT_POSITIONS_E.CHUTE,
+                            Constants.LIFT_CAR_SPEED_DOWN * .75) 
+                        || this.ChuteHeightSensor.IsOn();
+            }
         }
     }
 
@@ -343,12 +359,12 @@ public class Car {
                         ZeroSpeedTimer + Constants.LIFT_CAR_TIME_DOWN_INITIAL,
                         ZeroSpeedTimer + Constants.LIFT_CAR_TIME_DOWN_INITIAL + Constants.LIFT_CAR_TIME_DOWN_INCREASING,
                         Constants.LIFT_CAR_SPEED_DOWN_INITIAL,
-                        Constants.LIFT_CAR_SPEED_DOWN));
+                        1.0));
             }
             else
             {
                 // at full speed
-                Actuator.SetSpeedRaw(-Constants.LIFT_CAR_SPEED_DOWN);
+                Actuator.SetSpeedRaw(-1.0);
             }
             
             return false;
