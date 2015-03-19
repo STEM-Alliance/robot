@@ -309,7 +309,7 @@ public class SwerveChassis extends Subsystem {
         double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + MinRotationAdjust, 1);
         RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
         
-        RobotRotation *= (SwerveConstants.DriveSpeedCrawl + (1 - SwerveConstants.DriveSpeedCrawl) * CrawlMode);
+        RobotRotation *= (SwerveConstants.DriveSpeedCrawl + (1 - SwerveConstants.DriveSpeedCrawl) * CrawlMode * .9);
         
         // scale the speed down unless we're in high speed mode
         
