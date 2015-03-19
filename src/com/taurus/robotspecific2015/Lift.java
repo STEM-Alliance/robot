@@ -3,9 +3,10 @@ package com.taurus.robotspecific2015;
 import java.util.ArrayList;
 
 import com.taurus.controller.Controller;
+import com.taurus.led.Color;
+import com.taurus.led.Effect;
 import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
-import com.taurus.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -40,11 +41,11 @@ public class Lift extends Subsystem {
     private final SwerveChassis drive;
     private boolean DropDriveFirstTime;
     
-    private final LEDEffect effectsIntakeReady;
-    private final LEDEffect effectsIntakeNotReady;
-    private final LEDEffect effectsReadyToDrive;
-    private final LEDEffect effectsInTransit;
-    private final LEDEffect effectsScore;
+    private final Effect effectsIntakeReady;
+    private final Effect effectsIntakeNotReady;
+    private final Effect effectsReadyToDrive;
+    private final Effect effectsInTransit;
+    private final Effect effectsScore;
 
     private final Controller controller;
     
@@ -87,21 +88,21 @@ public class Lift extends Subsystem {
         // Setup LEDs
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
         colors.add(new Color[]{Color.Green, Color.Green, Color.Green, Color.Green});
-        effectsIntakeReady = new LEDEffect(colors, LEDEffect.EFFECT.SOLID, 4, 4);
+        effectsIntakeReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
         colors.clear();
         colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
-        effectsIntakeNotReady = new LEDEffect(colors, LEDEffect.EFFECT.SOLID, 4, 4);
+        effectsIntakeNotReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
         colors.clear();
         colors.add(new Color[]{Color.Cyan, Color.Red, Color.Yellow, Color.Magenta});
-        effectsReadyToDrive = new LEDEffect(colors, LEDEffect.EFFECT.SPIN, Double.MAX_VALUE, 1);
+        effectsReadyToDrive = new Effect(colors, Effect.EFFECT.SPIN, Double.MAX_VALUE, 1);
         colors.clear();
         colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
         colors.add(new Color[]{Color.Orange, Color.Orange, Color.Orange, Color.Orange});
-        effectsInTransit = new LEDEffect(colors, LEDEffect.EFFECT.FLASH, 4, .5);
+        effectsInTransit = new Effect(colors, Effect.EFFECT.FLASH, 4, .5);
         colors.clear();
         colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
         colors.add(new Color[]{Color.Cyan, Color.Orange, Color.Cyan, Color.Orange});
-        effectsScore = new LEDEffect(colors, LEDEffect.EFFECT.FADE, 6, 2);
+        effectsScore = new Effect(colors, Effect.EFFECT.FADE, 6, 2);
 
         init();
     }
@@ -187,7 +188,7 @@ public class Lift extends Subsystem {
                                 StateAddChuteToteToStack =
                                         STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
 
-//                                Application.leds.AddEffect(effectsIntakeNotReady, true);
+                                Application.leds.AddEffect(effectsIntakeNotReady, true);
                                 StopperWaitTime = Timer.getFPGATimestamp();
                             }
                         }
@@ -200,7 +201,7 @@ public class Lift extends Subsystem {
                             StateAddChuteToteToStack =
                                     STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                             
-//                            Application.leds.AddEffect(effectsIntakeNotReady, true);
+                            Application.leds.AddEffect(effectsIntakeNotReady, true);
                             StopperWaitTime = Timer.getFPGATimestamp();
                         }
                         else
@@ -253,12 +254,12 @@ public class Lift extends Subsystem {
                 {
                     if (TotesInStack < MaxTotesInStack)
                     {
-//                        Application.leds.AddEffect(effectsIntakeReady, true);
+                        Application.leds.AddEffect(effectsIntakeReady, true);
                     }
                     else
                     {
                         // Indicate that we are ready to drive off
-//                        Application.leds.AddEffect(effectsReadyToDrive, true);
+                        Application.leds.AddEffect(effectsReadyToDrive, true);
                     }
                 }
                 
@@ -555,7 +556,7 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Contract()
                     & StackEjector.StopIn())
                 {
-//                    Application.leds.AddEffect(effectsInTransit, true);
+                    Application.leds.AddEffect(effectsInTransit, true);
                     StateCarry = STATE_CARRY.INIT;
                 }
                 break;
@@ -577,7 +578,7 @@ public class Lift extends Subsystem {
         switch (StateEjectStack)
         {
             case INIT:
-//                Application.leds.AddEffect(effectsScore, true);
+                Application.leds.AddEffect(effectsScore, true);
                 StateEjectStack = STATE_EJECT_STACK.EJECT;
                 break;
 
