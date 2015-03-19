@@ -79,8 +79,8 @@ public class Vision implements Runnable {
     public Vision()
     {
         imageChooser = new SendableChooser();
-        imageChooser.addDefault("Input Front", Integer.valueOf(0));
-        imageChooser.addObject("Input Back", Integer.valueOf(1));
+        imageChooser.addObject("Input Front", Integer.valueOf(0));
+        imageChooser.addDefault("Input Back", Integer.valueOf(1));
         imageChooser.addObject("Thresholded", Integer.valueOf(2));
         SmartDashboard.putData("Image to show", imageChooser);
 

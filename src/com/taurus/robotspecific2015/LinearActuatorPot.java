@@ -1,7 +1,11 @@
 package com.taurus.robotspecific2015;
 
+import javax.rmi.CORBA.Util;
+
 import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LinearActuatorPot extends LinearActuator {
 
@@ -80,10 +84,16 @@ public class LinearActuatorPot extends LinearActuator {
     {
         double span = super.Positions[Positions.length - 1] - super.Positions[0]; // Difference between ceiling and zero
         
-        ZeroVal = GetRaw() - span;  // Pot value - difference between top and bottom positions = distance from bottom position
-        FullTurns = (int)Math.floor(span / DistanceFullTurn);  // Number of full turns in total distance possible
-        LastVal = span - FullTurns * DistanceFullTurn;  // Partial = total distance - all full turns possible
+        FullTurns = (int)Math.floor(GetRaw() + span / DistanceFullTurn);  // Number of full turns in total distance possible
+        ZeroVal = Utilities.wrapToRange(GetRaw() - (span/DistanceFullTurn - FullTurns), 0, 1);  // Pot value - difference between top and bottom positions = distance from bottom position
         super.LastPosition = super.Positions.length - 1;  // Last position in array is ceiling position
+
+        LastVal = Utilities.wrapToRange(GetRaw() - ZeroVal, 0, 1);;  // Partial = total distance - all full turns possible
+        
+
+        SmartDashboard.putNumber("FullTurns", FullTurns);
+        SmartDashboard.putNumber("LastVal", LastVal);
+        SmartDashboard.putNumber("ZeroVal", ZeroVal);
     }
 
     /**
