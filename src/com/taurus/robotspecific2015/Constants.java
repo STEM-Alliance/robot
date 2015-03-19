@@ -65,7 +65,7 @@ public abstract class Constants {
     public static final double LIFT_CAR_TIME_SHAKE_DOWN = .175;
     
     public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.2;
-    public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.5;
+    public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.7;
 
     public static final int DISTANCE_SENSOR_LEFT_PIN = 5;
     public static final int DISTANCE_SENSOR_RIGHT_PIN = 6;
