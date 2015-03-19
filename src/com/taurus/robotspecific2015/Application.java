@@ -53,9 +53,9 @@ public class Application extends com.taurus.Application {
       //autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
         autoChooser.addObject("Container", AUTO_MODE.GRAB_CONTAINER);
         autoChooser.addObject("Container No Move", AUTO_MODE.GRAB_CONTAINER_NO_MOVE);
-        autoChooser.addObject("Container + tote",
+        autoChooser.addObject("Container + Right Chute",
                 AUTO_MODE.GRAB_CONTAINER_RIGHT_CHUTE);
-        autoChooser.addObject("Container + 2 totes",
+        autoChooser.addObject("Contanier + Left Chute",
                 AUTO_MODE.GRAB_CONTAINER_LEFT_CHUTE);
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
@@ -94,8 +94,6 @@ public class Application extends com.taurus.Application {
             drive.ZeroGyro();
         }
         
-//        CompressorChargedOnce = false;
-//        CompressorTimer = Timer.getFPGATimestamp();
 
         // Set LEDs
         colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
@@ -107,23 +105,12 @@ public class Application extends com.taurus.Application {
     
     private void UpdateDashboard()
     {
-//        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
         
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
         SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
         SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
         
-//        SmartDashboard
-//                .putNumber("Distance Left", 
-//                        12.402 
-//                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
-//                        / 2.54);        
-//        SmartDashboard
-//                .putNumber("Distance Right", 
-//                        12.402 
-//                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
-//                        / 2.54);
 
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
         SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
@@ -154,12 +141,11 @@ public class Application extends com.taurus.Application {
         else
         {
             controller.setRumble(Hand.kLeft , 0);    
-        }
-        
+        }        
         
         if (controller.getCarHome())
         {
-            lift.GetCar().GoToZero(6);
+            lift.GetCar().GoToZero();
         }
         else if (controller.getCarTop())
         {
@@ -185,6 +171,10 @@ public class Application extends com.taurus.Application {
                 CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                 lift.SetContainerInStack(false);
                 lift.init();
+            }
+            
+            if(controller.getLeftThumb()){
+                drive.setUltrasonic(true, true);
             }
 
             lift.GetCar().ZeroIfNeeded();
@@ -258,8 +248,6 @@ public class Application extends com.taurus.Application {
                 case CARRY_STACK:
                     if (lift.LowerStackToCarryHeight())
                     {
-                        // automatically drop the stack
-                        //CurrentLiftAction = STATE_LIFT_ACTION.DROP_STACK;
                         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
                     break;
@@ -267,14 +255,12 @@ public class Application extends com.taurus.Application {
                 case DROP_STACK:
                     if (lift.DropStack())
                     {
-                        // automatically go into chute tote
-                        //CurrentLiftAction = STATE_LIFT_ACTION.ADD_CHUTE_TOTE;
                         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
                     break;
 
                 case ZERO_LIFT:
-                    if (lift.GetCar().GoToZero(6))
+                    if (lift.GetCar().GoToZero())
                     {
                         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
@@ -345,7 +331,7 @@ public class Application extends com.taurus.Application {
         boolean button15 = controller.getRawButton(15);
         boolean button16 = controller.getRawButton(16);
         lift.GetCar().ZeroIfNeeded();
-        
+        lift.GetCar().CeilingIfNeeded();
 
         // test modes for cylinders and motors and features.
         switch (((Integer) testChooser.getSelected()).intValue())
