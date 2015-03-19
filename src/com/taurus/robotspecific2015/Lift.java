@@ -166,7 +166,7 @@ public class Lift extends Subsystem {
                 {
                     CylindersContainerFixed.Extend();
                 }
-                else
+                else if (ContainerInStack && TotesInStack >= 1)
                 {
                     CylindersContainerFixed.Contract();
                 }
@@ -174,7 +174,7 @@ public class Lift extends Subsystem {
                 switch (RailContents)
                 {
                     case EMPTY:
-                        LiftCar.GoToChute();
+                        LiftCar.GoToChute(false);
                         if( CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
                             & CylindersContainerCar.Contract()
@@ -207,7 +207,7 @@ public class Lift extends Subsystem {
                         else
                         {
                             // Hold steady.
-                            LiftCar.GoToChute();
+                            LiftCar.GoToChute(false);
                             CylindersRails.Extend();
                             CylindersStackHolder.Contract();
                             CylindersContainerCar.Contract();
@@ -218,7 +218,7 @@ public class Lift extends Subsystem {
                 break;
 
             case LIFT_TOTE:
-                if (TotesInStack != 0)
+                if (TotesInStack > 0)
                 {
                     // If this is not the first tote move the container holder
                     // out of the way.
@@ -242,7 +242,7 @@ public class Lift extends Subsystem {
 
                 }
                 // wait 2 seconds before putting in the stopper
-                else if(Timer.getFPGATimestamp() - StopperWaitTime > 1)
+                else if(Timer.getFPGATimestamp() - StopperWaitTime > .75)
                 {
                     StackEjector.StopIn();
                 }
@@ -516,7 +516,7 @@ public class Lift extends Subsystem {
 
                     case STACK:
                         // Hold the stack in place.
-                        LiftCar.GoToChute();
+                        LiftCar.GoToChute(true);
                         CylindersRails.Extend();
                         CylindersStackHolder.Extend();
                         CylindersContainerCar.Contract();
@@ -549,7 +549,7 @@ public class Lift extends Subsystem {
                 break;
 
             case LOWER_CAR:
-                if (LiftCar.GoToChute()
+                if (LiftCar.GoToChute(true)
                     & CylindersStackHolder.Extend()
                     & CylindersContainerFixed.Contract()
                     & CylindersRails.Extend()
