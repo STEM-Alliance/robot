@@ -124,6 +124,7 @@ public abstract class Constants {
         DROP_STACK,
         ZERO_LIFT
     }
+    public static double STACK_SPEED = .75;
 
     // Lift
     public static enum STATE_ADD_CHUTE_TOTE_TO_STACK {
