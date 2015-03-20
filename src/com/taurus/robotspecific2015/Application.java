@@ -50,13 +50,9 @@ public class Application extends com.taurus.Application {
 
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
-      //autoChooser.addObject("Go to zone", AUTO_MODE.GO_TO_ZONE);
-        autoChooser.addObject("Container", AUTO_MODE.GRAB_CONTAINER);
+        autoChooser.addObject("Container To Zone", AUTO_MODE.GRAB_CONTAINER);
         autoChooser.addObject("Container No Move", AUTO_MODE.GRAB_CONTAINER_NO_MOVE);
-        autoChooser.addObject("Container + tote",
-                AUTO_MODE.GRAB_CONTAINER_RIGHT_CHUTE);
-        autoChooser.addObject("Container + 2 totes",
-                AUTO_MODE.GRAB_CONTAINER_LEFT_CHUTE);
+
 
         SmartDashboard.putData("Autonomous mode", autoChooser);
 
@@ -97,9 +93,7 @@ public class Application extends com.taurus.Application {
         {
             drive.ZeroGyro();
         }
-        
-//        CompressorChargedOnce = false;
-//        CompressorTimer = Timer.getFPGATimestamp();
+
 
         // Set LEDs
         colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
@@ -111,7 +105,6 @@ public class Application extends com.taurus.Application {
     
     private void UpdateDashboard()
     {
-//        SmartDashboard.putBoolean("ToteIntakeSensor", lift.GetToteIntakeSensor().IsOn());
         
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
         SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
