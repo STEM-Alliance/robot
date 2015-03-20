@@ -52,7 +52,7 @@ public abstract class Constants {
     public static final int LIFT_POT_PIN = 4;
     public static final double LIFT_POT_DISTANCE = 3.14;
     public static final double LIFT_THRESHOLD = .4;
-    public static final double[] LIFT_POSTITIONS = { 0, 1, 2.5, 10.25, 18, 20,
+    public static final double[] LIFT_POSTITIONS = { 0, .6, 1, 10.25, 18, 20,
             20.75 };
     public static final double LIFT_CHUTE_READY_HEIGHT = 5;
 
@@ -61,8 +61,8 @@ public abstract class Constants {
     public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.3;
     public static final double LIFT_CAR_SPEED_SHAKE_UP = 1;
     public static final double LIFT_CAR_SPEED_SHAKE_DOWN = -1;
-    public static final double LIFT_CAR_TIME_SHAKE_UP = .2;
-    public static final double LIFT_CAR_TIME_SHAKE_DOWN = .175;
+    public static final double LIFT_CAR_TIME_SHAKE_UP = .3;
+    public static final double LIFT_CAR_TIME_SHAKE_DOWN = .225;
     
     public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.2;
     public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.7;
@@ -73,8 +73,8 @@ public abstract class Constants {
     // Car
     public static enum LIFT_POSITIONS_E {
         ZERO,
-        EJECT,
         CHUTE,
+        EJECT,
         DESTACK,
         NOODLE_LOAD,
         CONTAINER_STACK,
@@ -88,9 +88,9 @@ public abstract class Constants {
                 case 0:
                     return ZERO;
                 case 1:
-                    return EJECT;
-                case 2:
                     return CHUTE;
+                case 2:
+                    return EJECT;
                 case 3:
                     return DESTACK;
                 case 4:

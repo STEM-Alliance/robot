@@ -225,7 +225,7 @@ public class Lift extends Subsystem {
                     CylindersContainerFixed.Contract();
                 }
 
-                if (LiftCar.GoToStack(TotesInStack + 1)
+                if (LiftCar.GoToStack(TotesInStack + 1, ContainerInStack)
                     & CylindersRails.Extend()
                     & CylindersStackHolder.Contract())
                 {
@@ -239,6 +239,7 @@ public class Lift extends Subsystem {
                     RailContents = RAIL_CONTENTS.EMPTY;
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
+                    StopperWaitTime = Timer.getFPGATimestamp();
 
                 }
                 // wait 2 seconds before putting in the stopper
@@ -267,6 +268,10 @@ public class Lift extends Subsystem {
                 {
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+                }
+                else if(Timer.getFPGATimestamp() - StopperWaitTime > .5)
+                {
+                    StackEjector.StopOut();
                 }
                 break;
         }
@@ -363,7 +368,7 @@ public class Lift extends Subsystem {
                     CylindersContainerFixed.Contract();
                 }
 
-                if (LiftCar.GoToStack(TotesInStack + 1)
+                if (LiftCar.GoToStack(TotesInStack + 1, ContainerInStack)
                     & CylindersRails.Extend()
                     & CylindersStackHolder.Contract())
                 {
@@ -434,7 +439,8 @@ public class Lift extends Subsystem {
                 break;
 
             case LIFT_CAR:
-                if (LiftCar.GoToStack(0) & CylindersContainerFixed.Contract())
+                if (LiftCar.GoToStack(0, ContainerInStack) & CylindersContainerFixed.Contract())
+                   
                 {
                     StateAddContainerToStack =
                             STATE_ADD_CONTAINER_TO_STACK.CONTAINER_FIXED_EXTEND;
@@ -442,7 +448,7 @@ public class Lift extends Subsystem {
                 break;
 
             case CONTAINER_FIXED_EXTEND:
-                if (LiftCar.GoToStack(0) & CylindersContainerFixed.Extend())
+                if (LiftCar.GoToStack(0, ContainerInStack) & CylindersContainerFixed.Extend())
                 {
                     ContainerInStack = true;
 
@@ -488,7 +494,7 @@ public class Lift extends Subsystem {
                             CylindersContainerFixed.Contract();
                         }
                         
-                        if (LiftCar.GoToDestack()
+                        if (LiftCar.GoToDestack(ContainerInStack)
                             & CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
                             & CylindersContainerCar.Contract()
@@ -504,7 +510,7 @@ public class Lift extends Subsystem {
                             CylindersContainerFixed.Contract();
                         }
                         
-                        if (LiftCar.GoToStack(TotesInStack)
+                        if (LiftCar.GoToStack(TotesInStack, ContainerInStack)
                             & CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
                             & CylindersContainerCar.Contract()
