@@ -140,7 +140,7 @@ public class Car {
             case WAITING:
                 Actuator.SetSpeedRaw(0);
                 
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > 0)
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .2)
                 {
                     ZeroState = ZERO_STATE.ZEROED_TOP;
                 }
@@ -365,6 +365,9 @@ public class Car {
             else if (Timer.getFPGATimestamp() - ZeroSpeedTimer
                     - Constants.LIFT_CAR_TIME_DOWN_INITIAL < Constants.LIFT_CAR_TIME_DOWN_INCREASING)
             {
+                // if position is nearing bottom, slow down
+                // else increase as time increases
+                
                 // increase as time increases
                 Actuator.SetSpeedRaw(-Utilities.scaleToRange(
                         Timer.getFPGATimestamp(), 
@@ -372,12 +375,25 @@ public class Car {
                         ZeroSpeedTimer + Constants.LIFT_CAR_TIME_DOWN_INITIAL + Constants.LIFT_CAR_TIME_DOWN_INCREASING,
                         Constants.LIFT_CAR_SPEED_DOWN_INITIAL,
                         1.0));
+                
             }
-            else
-            {
+//            else
+//            {
+//                // at full speed
+//                Actuator.SetSpeedRaw(-1.0);
+//            }
+            else if (Timer.getFPGATimestamp() - ZeroSpeedTimer
+                    - Constants.LIFT_CAR_TIME_DOWN_INITIAL < Constants.LIFT_CAR_TIME_DOWN_FINAL)
+            {                   
                 // at full speed
                 Actuator.SetSpeedRaw(-1.0);
             }
+            else
+            {
+                // slow down so we don't ram the bottom 
+                Actuator.SetSpeedRaw(-0.5);
+            }
+            
             
             return false;
         }

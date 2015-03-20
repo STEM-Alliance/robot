@@ -1,5 +1,8 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Vision error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="238" y="135"/>
+	</widget>
 	<widget field="LEDs" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="242" y="114"/>
 	</widget>
