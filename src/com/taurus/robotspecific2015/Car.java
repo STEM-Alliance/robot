@@ -182,9 +182,9 @@ public class Car {
         {
             
             if(ContainerInStack){
-                return SetPosition(LIFT_POSITIONS_E.DESTACK, (Constants.LIFT_CAR_SPEED_UP) * containerLiftSpeed);
+                return SetPosition(LIFT_POSITIONS_E.DESTACK, Constants.LIFT_CAR_SPEED_UP * containerLiftSpeed * Constants.STACK_SPEED);
             } else{
-                return SetPosition(LIFT_POSITIONS_E.DESTACK, Constants.LIFT_CAR_SPEED_UP);
+                return SetPosition(LIFT_POSITIONS_E.DESTACK, Constants.LIFT_CAR_SPEED_UP * Constants.STACK_SPEED);
             }
         }
 
