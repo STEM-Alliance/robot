@@ -313,15 +313,23 @@ public class SwerveChassis extends Subsystem {
         
         // scale the speed down unless we're in high speed mode
         
-        RobotVelocity.setMag(RobotVelocity.getMag() * (SwerveConstants.DriveSpeedCrawl + 
-                (1 - SwerveConstants.DriveSpeedCrawl) * CrawlMode));
+        double crawlSpeed = Application.prefs.getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
         
         if (!controller.getHighSpeed())
         {
+            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + 
+                    (1 - crawlSpeed) * CrawlMode));
+            
+            
             RobotRotation *=SwerveConstants.DriveSpeedNormal;
             RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DriveSpeedNormal);
         }
-        
+        else
+        {
+            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + 
+                    (1 - crawlSpeed) * CrawlMode));
+            
+        }
         
 
         RobotVelocity = restrictVelocity(RobotVelocity);

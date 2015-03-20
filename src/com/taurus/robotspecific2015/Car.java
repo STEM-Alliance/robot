@@ -110,16 +110,21 @@ public class Car {
      * 
      * @return true when finished
      */
-    public boolean GoToStack(int ToteCount)
+    public boolean GoToStack(int ToteCount, boolean ContainerInStack)
     {
-        
+        double containerLiftSpeed = Application.prefs.getDouble("Lift_Speed_Container", .8);
         boolean finished = false;
         
         double speedAdjust = 1.0 - Constants.LIFT_CAR_SPEED_UP;
         speedAdjust = speedAdjust * (ToteCount / 6.0);
         boolean atTop = (TopSensorLeft.IsOn() && TopSensorRight.IsOn());
         
-        SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
+        
+        if(ContainerInStack){
+            SetPosition(LIFT_POSITIONS_E.STACK, (Constants.LIFT_CAR_SPEED_UP + speedAdjust) * containerLiftSpeed);
+        } else{
+            SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
+        }
         switch (ZeroState)
         {
             default:
@@ -135,7 +140,7 @@ public class Car {
             case WAITING:
                 Actuator.SetSpeedRaw(0);
                 
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .2)
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > 0)
                 {
                     ZeroState = ZERO_STATE.ZEROED_TOP;
                 }
@@ -164,16 +169,23 @@ public class Car {
      * 
      * @return
      */
-    public boolean GoToDestack()
+    public boolean GoToDestack(boolean ContainerInStack)
     {
+        double containerLiftSpeed = Application.prefs.getDouble("Lift_Speed_Drop_Container", .8);
+
+        
         if (controller.getManualLift())
         {
             return controller.getFakePostion();
         }
         else
         {
-            return SetPosition(LIFT_POSITIONS_E.DESTACK,
-                    Constants.LIFT_CAR_SPEED_UP);
+            
+            if(ContainerInStack){
+                return SetPosition(LIFT_POSITIONS_E.DESTACK, (Constants.LIFT_CAR_SPEED_UP) * containerLiftSpeed);
+            } else{
+                return SetPosition(LIFT_POSITIONS_E.DESTACK, Constants.LIFT_CAR_SPEED_UP);
+            }
         }
 
     }
