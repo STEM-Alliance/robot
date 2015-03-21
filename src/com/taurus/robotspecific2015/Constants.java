@@ -54,17 +54,17 @@ public abstract class Constants {
     public static final double LIFT_THRESHOLD = .4;
     public static final double[] LIFT_POSTITIONS = { 0, .6, 1, 10.25, 18, 20,
             20.75 };
-    public static final double LIFT_CHUTE_READY_HEIGHT = 5;
+    public static final double LIFT_CHUTE_READY_HEIGHT = 15;
 
     public static final double LIFT_CAR_SPEED_UP = 1.0;
     public static final double LIFT_CAR_SPEED_DOWN = 0.7;
     public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.3;
-    //public static final double LIFT_CAR_SPEED_DOWN_FINAL = -0.5;
+    // public static final double LIFT_CAR_SPEED_DOWN_FINAL = -0.5;
     public static final double LIFT_CAR_SPEED_SHAKE_UP = 1;
     public static final double LIFT_CAR_SPEED_SHAKE_DOWN = -1;
     public static final double LIFT_CAR_TIME_SHAKE_UP = .3;
     public static final double LIFT_CAR_TIME_SHAKE_DOWN = .225;
-    
+
     public static final double LIFT_CAR_TIME_DOWN_INITIAL = 0.2;
     public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.7;
     public static final double LIFT_CAR_TIME_DOWN_FINAL = 1;
@@ -126,6 +126,7 @@ public abstract class Constants {
         DROP_STACK,
         ZERO_LIFT
     }
+
     public static double STACK_SPEED = .75;
 
     // Lift
@@ -144,11 +145,11 @@ public abstract class Constants {
     public static enum STATE_CARRY {
         INIT, STACK_HOLDER_RELEASE, LOWER_CAR
     }
-        
+
     public static enum STATE_EJECT_STACK {
         INIT, EJECT, RESET
     }
-    
+
     public static enum STATE_DROP_STACK {
         INIT, LOWER_STACK, RELEASE, BACK_UP
     }
@@ -166,8 +167,8 @@ public abstract class Constants {
     public static final int TEST_MODE_PNEUMATIC = 0;
     public static final int TEST_MODE_MOTORS = 1;
     public static final int TEST_MODE_ACTUATOR = 2;
-    
-    public static final int LED_LATCH = 0;
+
+    public static final int LED_LATCH = 10;
 
     // Autonomous mode
     public static enum AUTO_MODE {
@@ -178,24 +179,21 @@ public abstract class Constants {
         GRAB_CONTAINER_RIGHT_CHUTE,
         GRAB_CONTAINER_LEFT_CHUTE,
     }
-    
+
     public static enum AUTO_STATE {
         GRAB_CONTAINER,
+
+        GRAB_CONTAINER_WAIT,
         
-        DRIVE_RIGHT_TO_GRAB_TOTE,
-        GRAB_RIGHT_SIDE_TOTE,
-        
-        DRIVE_LEFT_TO_GRAB_TOTE,
-        GRAB_LEFT_SIDE_TOTE,
-        
+        DRIVE_RIGHT_TO_GRAB_TOTE, GRAB_RIGHT_SIDE_TOTE,
+
+        DRIVE_LEFT_TO_GRAB_TOTE, GRAB_LEFT_SIDE_TOTE,
+
         DRIVE_TO_AUTO_ZONE,
-        
-        LOWER_TOTES,
-        DROP_TOTES,
-        BACK_UP,
-        
-        STOP,
-        LINE_UP,
+
+        LOWER_TOTES, DROP_TOTES, BACK_UP,
+
+        STOP, LINE_UP,
     }
 
     public static enum AUTO_STATE_MACHINE_L {

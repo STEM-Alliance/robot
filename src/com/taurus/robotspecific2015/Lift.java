@@ -8,6 +8,9 @@ import com.taurus.led.Effect;
 import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
 
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -48,6 +51,9 @@ public class Lift extends Subsystem {
     private final Effect effectsScore;
 
     private final Controller controller;
+    
+    public final LEDController LEDs;
+    public final Relay LED = new Relay(2);
     
     /** 
      * Initialize lift and all objects owned by the lift
@@ -103,6 +109,10 @@ public class Lift extends Subsystem {
         colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
         colors.add(new Color[]{Color.Cyan, Color.Orange, Color.Cyan, Color.Orange});
         effectsScore = new Effect(colors, Effect.EFFECT.FADE, 6, 2);
+        
+        LEDs = new LEDController();
+        LED.setDirection(Direction.kForward);
+        LED.set(Value.kForward);
 
         init();
     }
@@ -157,10 +167,13 @@ public class Lift extends Subsystem {
      */
     public boolean AddChuteToteToStack(int MaxTotesInStack)
     {
+
+        //LED.set(Value.kOn);
         switch (StateAddChuteToteToStack)
         {
             case INIT:
                 this.initStates();
+                LED.set(Value.kForward);
 
                 if(ContainerInStack && TotesInStack < 1)
                 {
@@ -188,7 +201,7 @@ public class Lift extends Subsystem {
                                 StateAddChuteToteToStack =
                                         STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
 
-                                Application.leds.AddEffect(effectsIntakeNotReady, true);
+                                //Application.leds.AddEffect(effectsIntakeNotReady, true);
                                 StopperWaitTime = Timer.getFPGATimestamp();
                             }
                         }
@@ -200,8 +213,9 @@ public class Lift extends Subsystem {
                         {
                             StateAddChuteToteToStack =
                                     STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
+                            LED.set(Value.kOff);
                             
-                            Application.leds.AddEffect(effectsIntakeNotReady, true);
+                            //Application.leds.AddEffect(effectsIntakeNotReady, true);
                             StopperWaitTime = Timer.getFPGATimestamp();
                         }
                         else
@@ -232,6 +246,7 @@ public class Lift extends Subsystem {
                     // The stack holder has latched.
                     if (RailContents == RAIL_CONTENTS.TOTE)
                     {
+                       
                         // The tote is now in the stack.
                         TotesInStack = TotesInStack + 1;
                     }
@@ -255,23 +270,43 @@ public class Lift extends Subsystem {
                 {
                     if (TotesInStack < MaxTotesInStack)
                     {
-                        Application.leds.AddEffect(effectsIntakeReady, true);
+                        //Application.leds.AddEffect(effectsIntakeReady, true);
+                        Color[] readyColor = {Color.Blue, Color.White, Color.Blue, Color.White};
+                        LEDs.update(readyColor);
+                        LED.set(Value.kOff);
                     }
                     else
                     {
                         // Indicate that we are ready to drive off
-                        Application.leds.AddEffect(effectsReadyToDrive, true);
+                        //Application.leds.AddEffect(effectsReadyToDrive, true);
                     }
                 }
+                else
+                {
+                    Color[] NotReadyColor = {Color.Black, Color.Black, Color.Black, Color.Black};
+                    LEDs.update(NotReadyColor);
+                    LED.set(Value.kForward);
+                }
                 
-                if (LiftCar.GoToBottom(TotesInStack))
+                if (LiftCar.GoToBottom(TotesInStack) )
                 {
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
+                    LED.set(Value.kForward);
+                    CylindersRails.Extend();
                 }
                 else if(Timer.getFPGATimestamp() - StopperWaitTime > .5)
                 {
                     StackEjector.StopOut();
+                    
+                    if(LiftCar.GetHeight() < 2)
+                    {
+                        CylindersRails.Extend();
+                    }
+                    else
+                    {
+                        CylindersRails.Contract();
+                    }
                 }
                 break;
         }
@@ -562,7 +597,7 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Contract()
                     & StackEjector.StopIn())
                 {
-                    Application.leds.AddEffect(effectsInTransit, true);
+                    //Application.leds.AddEffect(effectsInTransit, true);
                     StateCarry = STATE_CARRY.INIT;
                 }
                 break;
@@ -584,7 +619,7 @@ public class Lift extends Subsystem {
         switch (StateEjectStack)
         {
             case INIT:
-                Application.leds.AddEffect(effectsScore, true);
+                //Application.leds.AddEffect(effectsScore, true);
                 StateEjectStack = STATE_EJECT_STACK.EJECT;
                 break;
 

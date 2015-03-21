@@ -32,7 +32,7 @@ public class Application extends com.taurus.Application {
     private boolean StartTeleGyroCal = true;
     public double StartMatchTime = 0;
 
-    protected static LEDs leds;
+    //protected static LEDs leds;
     private final Effect effectEndOfMatch;
 
     public Application()
@@ -62,9 +62,9 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putData("Test", testChooser);
         
         // LEDs
-        LEDController ledHardware = new LEDController();
-        leds = new LEDs(ledHardware, ledHardware.NumOfColors, Thread.NORM_PRIORITY - 2);  // Below normal priority
-        leds.start();  // Comment this line to disable LEDs
+        //LEDController ledHardware = new LEDController();
+        //leds = new LEDs(ledHardware, ledHardware.NumOfColors, Thread.NORM_PRIORITY - 2);  // Below normal priority
+        //leds.start();  // Comment this line to disable LEDs
         endOfMatchEffectSent = false;
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
         colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
@@ -99,7 +99,7 @@ public class Application extends com.taurus.Application {
         colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
         colors.add(new Color[]{Color.Random(), Color.Black, Color.Cyan, Color.Green});
         colors.add(new Color[]{Color.Random(), Color.Green, Color.White, Color.Yellow});
-        leds.AddEffect(new Effect(colors, Effect.EFFECT.FLASH, Double.MAX_VALUE, 2), true);
+        //leds.AddEffect(new Effect(colors, Effect.EFFECT.FLASH, Double.MAX_VALUE, 2), true);
     }
 
     
@@ -309,7 +309,7 @@ public class Application extends com.taurus.Application {
         
         // Set LEDs
         colors.add(new Color[]{Color.Green, Color.White, Color.Blue, Color.Red});
-        leds.AddEffect(new Effect(colors, Effect.EFFECT.SPIN, 15, 2), true);
+        //leds.AddEffect(new Effect(colors, Effect.EFFECT.SPIN, 15, 2), true);
     }
 
     public void AutonomousPeriodicRobotSpecific()
