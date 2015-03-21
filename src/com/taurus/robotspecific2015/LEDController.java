@@ -19,6 +19,10 @@ public class LEDController extends Hardware{
     
     public static final int NumOfColors = 4;
     
+    public LEDController() {
+        init();
+    }
+    
     /**
      * {@inheritDoc}
      */

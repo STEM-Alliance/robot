@@ -70,8 +70,13 @@ public class Autonomous {
                 drive.UpdateDrive(new SwerveVector(), 0, -1);
                 lift.SetAutonomousToteTriggered(true);
                 
-                lift.AddContainerToStack();
+                if(lift.AddContainerToStack())
+                {
+                    this.autoState = AUTO_STATE.GRAB_CONTAINER_WAIT;
+                }
+                break;
                 
+            case GRAB_CONTAINER_WAIT:
                 if (lift.GetContainerInStack() && lift.GetCar().GetActuator().GetPositionRaw() > LIFT_POSITIONS_E.DESTACK.ordinal())
                 {
                     switch (autoMode)
