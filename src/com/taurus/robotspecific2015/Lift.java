@@ -20,6 +20,7 @@ public class Lift extends Subsystem {
     private boolean ContainerInStack = false;
     private RAIL_CONTENTS RailContents = RAIL_CONTENTS.EMPTY;
     private int TotesInStack = 0;
+    private double ledFlashTime = 0;
 
     private STATE_ADD_CHUTE_TOTE_TO_STACK StateAddChuteToteToStack =
             STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
@@ -39,11 +40,11 @@ public class Lift extends Subsystem {
     private PneumaticSubsystem CylindersStackHolder;
 
     private boolean AutonomousToteTriggered;
-    
+
     private double StopperWaitTime = 0;
     private final SwerveChassis drive;
     private boolean DropDriveFirstTime;
-    
+
     private final Effect effectsIntakeReady;
     private final Effect effectsIntakeNotReady;
     private final Effect effectsReadyToDrive;
@@ -51,20 +52,23 @@ public class Lift extends Subsystem {
     private final Effect effectsScore;
 
     private final Controller controller;
-    
+
     public final LEDController LEDs;
     public final Relay LED = new Relay(2);
-    
-    /** 
+
+    /**
      * Initialize lift and all objects owned by the lift
-     * @param drive Chassis object, used to control driving from lift states
-     * @param controller main controller object
+     * 
+     * @param drive
+     *            Chassis object, used to control driving from lift states
+     * @param controller
+     *            main controller object
      */
     public Lift(SwerveChassis drive, Controller controller)
     {
         this.drive = drive;
         this.controller = controller;
-        
+
         LiftCar = new Car(this.controller);
         StackEjector = new Ejector();
         CylindersRails =
@@ -90,26 +94,33 @@ public class Lift extends Subsystem {
                         Constants.TIME_EXTEND_STACK_HOLDER,
                         Constants.TIME_CONTRACT_STACK_HOLDER,
                         Constants.CYLINDER_ACTION.CONTRACT);
-        
+
         // Setup LEDs
         ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        colors.add(new Color[]{Color.Green, Color.Green, Color.Green, Color.Green});
+        colors.add(new Color[] { Color.Green, Color.Green, Color.Green,
+                Color.Green });
         effectsIntakeReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
         colors.clear();
-        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
+        colors.add(new Color[] { Color.Red, Color.Red, Color.Red, Color.Red });
         effectsIntakeNotReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
         colors.clear();
-        colors.add(new Color[]{Color.Cyan, Color.Red, Color.Yellow, Color.Magenta});
-        effectsReadyToDrive = new Effect(colors, Effect.EFFECT.SPIN, Double.MAX_VALUE, 1);
+        colors.add(new Color[] { Color.Cyan, Color.Red, Color.Yellow,
+                Color.Magenta });
+        effectsReadyToDrive =
+                new Effect(colors, Effect.EFFECT.SPIN, Double.MAX_VALUE, 1);
         colors.clear();
-        colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
-        colors.add(new Color[]{Color.Orange, Color.Orange, Color.Orange, Color.Orange});
+        colors.add(new Color[] { Color.White, Color.White, Color.White,
+                Color.White });
+        colors.add(new Color[] { Color.Orange, Color.Orange, Color.Orange,
+                Color.Orange });
         effectsInTransit = new Effect(colors, Effect.EFFECT.FLASH, 4, .5);
         colors.clear();
-        colors.add(new Color[]{Color.White, Color.White, Color.White, Color.White});
-        colors.add(new Color[]{Color.Cyan, Color.Orange, Color.Cyan, Color.Orange});
+        colors.add(new Color[] { Color.White, Color.White, Color.White,
+                Color.White });
+        colors.add(new Color[] { Color.Cyan, Color.Orange, Color.Cyan,
+                Color.Orange });
         effectsScore = new Effect(colors, Effect.EFFECT.FADE, 6, 2);
-        
+
         LEDs = new LEDController();
         LED.setDirection(Direction.kForward);
         LED.set(Value.kForward);
@@ -118,7 +129,7 @@ public class Lift extends Subsystem {
     }
 
     /**
-     *  Reset state machines
+     * Reset state machines
      */
     private void initStates()
     {
@@ -131,13 +142,13 @@ public class Lift extends Subsystem {
     }
 
     /**
-     *  Reset class variables
+     * Reset class variables
      */
     public void init()
     {
         this.initStates();
         this.TotesInStack = 0;
-        //this.ContainerInStack = false;
+        // this.ContainerInStack = false;
         this.RailContents = RAIL_CONTENTS.EMPTY;
         this.AutonomousToteTriggered = false;
         this.DropDriveFirstTime = false;
@@ -146,7 +157,7 @@ public class Lift extends Subsystem {
     public boolean IsToteInPlace()
     {
         return AutonomousToteTriggered
-//               || ToteIntakeSensor.IsOn()
+        // || ToteIntakeSensor.IsOn()
                || controller.getFakeToteAdd();
     }
 
@@ -168,14 +179,14 @@ public class Lift extends Subsystem {
     public boolean AddChuteToteToStack(int MaxTotesInStack)
     {
 
-        //LED.set(Value.kOn);
+        // LED.set(Value.kOn);
         switch (StateAddChuteToteToStack)
         {
             case INIT:
                 this.initStates();
                 LED.set(Value.kForward);
 
-                if(ContainerInStack && TotesInStack < 1)
+                if (ContainerInStack && TotesInStack < 1)
                 {
                     CylindersContainerFixed.Extend();
                 }
@@ -188,7 +199,7 @@ public class Lift extends Subsystem {
                 {
                     case EMPTY:
                         LiftCar.GoToChute(false);
-                        if( CylindersRails.Extend()
+                        if (CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
                             & CylindersContainerCar.Contract()
                             & StackEjector.StopOut()
@@ -201,7 +212,8 @@ public class Lift extends Subsystem {
                                 StateAddChuteToteToStack =
                                         STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
 
-                                //Application.leds.AddEffect(effectsIntakeNotReady, true);
+                                // Application.leds.AddEffect(effectsIntakeNotReady,
+                                // true);
                                 StopperWaitTime = Timer.getFPGATimestamp();
                             }
                         }
@@ -214,8 +226,9 @@ public class Lift extends Subsystem {
                             StateAddChuteToteToStack =
                                     STATE_ADD_CHUTE_TOTE_TO_STACK.LIFT_TOTE;
                             LED.set(Value.kOff);
-                            
-                            //Application.leds.AddEffect(effectsIntakeNotReady, true);
+
+                            // Application.leds.AddEffect(effectsIntakeNotReady,
+                            // true);
                             StopperWaitTime = Timer.getFPGATimestamp();
                         }
                         else
@@ -225,7 +238,7 @@ public class Lift extends Subsystem {
                             CylindersRails.Extend();
                             CylindersStackHolder.Contract();
                             CylindersContainerCar.Contract();
-                            StackEjector.StopOut();                            
+                            StackEjector.StopOut();
                         }
                         break;
                 }
@@ -239,6 +252,8 @@ public class Lift extends Subsystem {
                     CylindersContainerFixed.Contract();
                 }
 
+                LED.set(Value.kOff);
+
                 if (LiftCar.GoToStack(TotesInStack + 1, ContainerInStack)
                     & CylindersRails.Extend()
                     & CylindersStackHolder.Contract())
@@ -246,7 +261,7 @@ public class Lift extends Subsystem {
                     // The stack holder has latched.
                     if (RailContents == RAIL_CONTENTS.TOTE)
                     {
-                       
+
                         // The tote is now in the stack.
                         TotesInStack = TotesInStack + 1;
                     }
@@ -254,52 +269,84 @@ public class Lift extends Subsystem {
                     RailContents = RAIL_CONTENTS.EMPTY;
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
+                    ledFlashTime = Timer.getFPGATimestamp();
                     StopperWaitTime = Timer.getFPGATimestamp();
 
                 }
                 // wait 2 seconds before putting in the stopper
-                else if(Timer.getFPGATimestamp() - StopperWaitTime > .75)
+                if (Timer.getFPGATimestamp() - StopperWaitTime < .25)
+                {
+                    StackEjector.StopIn();
+                }
+                else if (Timer.getFPGATimestamp() - StopperWaitTime < .5)
+                {
+                    //StackEjector.StopOut();
+                }
+                else 
                 {
                     StackEjector.StopIn();
                 }
                 break;
 
             case RESET:
-                // Determine if we are within a distance above the bottom, preemptively set LEDs
+                // Determine if we are within a distance above the bottom,
+                // preemptively set LEDs
                 if (LiftCar.GetHeight() < Constants.LIFT_CHUTE_READY_HEIGHT)
                 {
                     if (TotesInStack < MaxTotesInStack)
                     {
-                        //Application.leds.AddEffect(effectsIntakeReady, true);
-                        Color[] readyColor = {Color.Blue, Color.White, Color.Blue, Color.White};
+                        // Application.leds.AddEffect(effectsIntakeReady, true);
+                        Color[] readyColor =
+                                { Color.Blue, Color.White, Color.Blue,
+                                        Color.White };
                         LEDs.update(readyColor);
-                        LED.set(Value.kOff);
+
+                        if (Timer.getFPGATimestamp() - ledFlashTime < .125)
+                        {
+                            LED.set(Value.kForward);
+                        }
+                        else if (Timer.getFPGATimestamp() - ledFlashTime < .25)
+                        {
+                            LED.set(Value.kOff);
+                        }
+                        else
+                        {
+                            ledFlashTime = Timer.getFPGATimestamp();
+                        }
+
+                        // else if x-y < 1
+                        //LED.set(Value.kForward);
+                        // else
+                        // if(Timer.getFPGATimestamp() - StopperWaitTime > .5)
                     }
                     else
                     {
                         // Indicate that we are ready to drive off
-                        //Application.leds.AddEffect(effectsReadyToDrive, true);
+                        // Application.leds.AddEffect(effectsReadyToDrive,
+                        // true);
                     }
                 }
                 else
                 {
-                    Color[] NotReadyColor = {Color.Black, Color.Black, Color.Black, Color.Black};
+                    Color[] NotReadyColor =
+                            { Color.Black, Color.Black, Color.Black,
+                                    Color.Black };
                     LEDs.update(NotReadyColor);
-                    LED.set(Value.kForward);
+                    LED.set(Value.kOff);
                 }
-                
-                if (LiftCar.GoToBottom(TotesInStack) )
+
+                if (LiftCar.GoToBottom(TotesInStack))
                 {
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
-                    LED.set(Value.kForward);
+                    //LED.set(Value.kForward);
                     CylindersRails.Extend();
                 }
-                else if(Timer.getFPGATimestamp() - StopperWaitTime > .5)
+                else if (Timer.getFPGATimestamp() - StopperWaitTime > 1)
                 {
+
                     StackEjector.StopOut();
-                    
-                    if(LiftCar.GetHeight() < 2)
+                    if (LiftCar.GetHeight() < 4)
                     {
                         CylindersRails.Extend();
                     }
@@ -318,7 +365,9 @@ public class Lift extends Subsystem {
 
     /**
      * Routine to add a new tote to existing stack from floor
-     * @param MaxTotesInStack Used to limit maximum carry capacity to exit states early
+     * 
+     * @param MaxTotesInStack
+     *            Used to limit maximum carry capacity to exit states early
      * @return true if finished
      */
     public boolean AddFloorToteToStack(int MaxTotesInStack)
@@ -328,7 +377,7 @@ public class Lift extends Subsystem {
             case INIT:
                 this.initStates();
 
-                if(ContainerInStack && TotesInStack < 1)
+                if (ContainerInStack && TotesInStack < 1)
                 {
                     CylindersContainerFixed.Extend();
                 }
@@ -416,12 +465,82 @@ public class Lift extends Subsystem {
 
                     RailContents = RAIL_CONTENTS.EMPTY;
                     StateAddFloorToteToStack =
-                            STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+                            STATE_ADD_FLOOR_TOTE_TO_STACK.RESET;
+                    StopperWaitTime = Timer.getFPGATimestamp();
+                    ledFlashTime = Timer.getFPGATimestamp();
                 }
                 // wait 2 seconds before putting in the stopper
-                else if(Timer.getFPGATimestamp() - StopperWaitTime > 2)
+                else if (Timer.getFPGATimestamp() - StopperWaitTime > 2)
                 {
                     StackEjector.StopIn();
+                }
+                break;
+            case RESET:
+                // Determine if we are within a distance above the bottom,
+                // preemptively set LEDs
+                if (LiftCar.GetHeight() < Constants.LIFT_CHUTE_READY_HEIGHT)
+                {
+                    if (TotesInStack < MaxTotesInStack)
+                    {
+                        // Application.leds.AddEffect(effectsIntakeReady, true);
+                        Color[] readyColor =
+                                { Color.Blue, Color.White, Color.Blue,
+                                        Color.White };
+                        LEDs.update(readyColor);
+
+                        if (Timer.getFPGATimestamp() - ledFlashTime < .125)
+                        {
+                            LED.set(Value.kForward);
+                        }
+                        else if (Timer.getFPGATimestamp() - ledFlashTime < .25)
+                        {
+                            LED.set(Value.kOff);
+                        }
+                        else
+                        {
+                            ledFlashTime = Timer.getFPGATimestamp();
+                        }
+
+                        // else if x-y < 1
+                        //LED.set(Value.kForward);
+                        // else
+                        // if(Timer.getFPGATimestamp() - StopperWaitTime > .5)
+                    }
+                    else
+                    {
+                        // Indicate that we are ready to drive off
+                        // Application.leds.AddEffect(effectsReadyToDrive,
+                        // true);
+                    }
+                }
+                else
+                {
+                    Color[] NotReadyColor =
+                            { Color.Black, Color.Black, Color.Black,
+                                    Color.Black };
+                    LEDs.update(NotReadyColor);
+                    LED.set(Value.kOff);
+                }
+
+                if (LiftCar.GoToBottom(TotesInStack))
+                {
+                    StateAddFloorToteToStack =
+                            STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
+                    //LED.set(Value.kForward);
+                    CylindersRails.Extend();
+                }
+                else if (Timer.getFPGATimestamp() - StopperWaitTime > .5)
+                {
+                    StackEjector.StopOut();
+
+                    if (LiftCar.GetHeight() < 4)
+                    {
+                        CylindersRails.Extend();
+                    }
+                    else
+                    {
+                        CylindersRails.Contract();
+                    }
                 }
                 break;
         }
@@ -443,7 +562,7 @@ public class Lift extends Subsystem {
                 this.initStates();
 
                 if (RailContents == RAIL_CONTENTS.EMPTY
-                    //&& !ContainerInStack
+                // && !ContainerInStack
                     && TotesInStack == 0)
                 {
                     // Sanity check this should even be called.
@@ -453,7 +572,7 @@ public class Lift extends Subsystem {
                         & CylindersStackHolder.Extend()
                         & CylindersContainerCar.Contract()
                         & StackEjector.StopIn()
-                        
+
                         & IsToteInPlace())
                     {
                         CylindersContainerFixed.Contract();
@@ -474,8 +593,9 @@ public class Lift extends Subsystem {
                 break;
 
             case LIFT_CAR:
-                if (LiftCar.GoToStack(0, ContainerInStack) & CylindersContainerFixed.Contract())
-                   
+                if (LiftCar.GoToStack(0, ContainerInStack)
+                    & CylindersContainerFixed.Contract())
+
                 {
                     StateAddContainerToStack =
                             STATE_ADD_CONTAINER_TO_STACK.CONTAINER_FIXED_EXTEND;
@@ -483,7 +603,8 @@ public class Lift extends Subsystem {
                 break;
 
             case CONTAINER_FIXED_EXTEND:
-                if (LiftCar.GoToStack(0, ContainerInStack) & CylindersContainerFixed.Extend())
+                if (LiftCar.GoToStack(0, ContainerInStack)
+                    & CylindersContainerFixed.Extend())
                 {
                     ContainerInStack = true;
 
@@ -528,7 +649,7 @@ public class Lift extends Subsystem {
                         {
                             CylindersContainerFixed.Contract();
                         }
-                        
+
                         if (LiftCar.GoToDestack(ContainerInStack)
                             & CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
@@ -544,7 +665,7 @@ public class Lift extends Subsystem {
                         {
                             CylindersContainerFixed.Contract();
                         }
-                        
+
                         if (LiftCar.GoToStack(TotesInStack, ContainerInStack)
                             & CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
@@ -562,7 +683,7 @@ public class Lift extends Subsystem {
                         CylindersStackHolder.Extend();
                         CylindersContainerCar.Contract();
                         CylindersContainerFixed.Contract();
-//                        StackEjector.StopOut();
+                        // StackEjector.StopOut();
                         break;
                 }
                 break;
@@ -597,15 +718,15 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Contract()
                     & StackEjector.StopIn())
                 {
-                    //Application.leds.AddEffect(effectsInTransit, true);
+                    // Application.leds.AddEffect(effectsInTransit, true);
                     StateCarry = STATE_CARRY.INIT;
                 }
                 break;
 
         }
 
-        return (LiftCar.GetPosition() == LIFT_POSITIONS_E.EJECT ||
-                (controller.getFakePostion() && controller.getManualLift()))
+        return (LiftCar.GetPosition() == LIFT_POSITIONS_E.EJECT || (controller
+                .getFakePostion() && controller.getManualLift()))
                && RailContents == RAIL_CONTENTS.STACK;
     }
 
@@ -619,12 +740,13 @@ public class Lift extends Subsystem {
         switch (StateEjectStack)
         {
             case INIT:
-                //Application.leds.AddEffect(effectsScore, true);
+                // Application.leds.AddEffect(effectsScore, true);
                 StateEjectStack = STATE_EJECT_STACK.EJECT;
                 break;
 
             case EJECT:
-                if(CylindersContainerFixed.Contract() & CylindersContainerCar.Contract())
+                if (CylindersContainerFixed.Contract()
+                    & CylindersContainerCar.Contract())
                 {
                     if (LiftCar.GoToEject()
                         & StackEjector.StopIn()
@@ -633,10 +755,11 @@ public class Lift extends Subsystem {
                         RailContents = RAIL_CONTENTS.EMPTY;
                         TotesInStack = 0;
                         ContainerInStack = false;
-    
+
                         if (controller.getEjectStack())
                         {
-                            // Wait for the driver to press eject again to retract
+                            // Wait for the driver to press eject again to
+                            // retract
                             // the piston (yes, I know, ewww...).
                             StateEjectStack = STATE_EJECT_STACK.RESET;
                         }
@@ -655,7 +778,8 @@ public class Lift extends Subsystem {
     }
 
     /**
-     * Place the stack on the ground and release the rails, then automatically back up
+     * Place the stack on the ground and release the rails, then automatically
+     * back up
      * 
      * @return true if finished
      */
@@ -665,17 +789,20 @@ public class Lift extends Subsystem {
     }
 
     /**
-     * Place the stack on the ground and release the rails, then automatically back up
-     * @param keepContainer true if you want to keep the container in the top holder
+     * Place the stack on the ground and release the rails, then automatically
+     * back up
+     * 
+     * @param keepContainer
+     *            true if you want to keep the container in the top holder
      * @return true if finished
      */
     public boolean DropStack(boolean keepContainer)
     {
-        boolean Finish= false;
+        boolean Finish = false;
         switch (StateDropStack)
         {
             case INIT:
-//                Application.leds.AddEffect(effectsScore, true);
+                // Application.leds.AddEffect(effectsScore, true);
                 StateDropStack = STATE_DROP_STACK.LOWER_STACK;
                 break;
 
@@ -685,7 +812,8 @@ public class Lift extends Subsystem {
                     CylindersContainerFixed.Contract();
                 }
 
-                if (LiftCar.GoToBottom(TotesInStack) & CylindersStackHolder.Extend())
+                if (LiftCar.GoToBottom(TotesInStack)
+                    & CylindersStackHolder.Extend())
                 {
                     StateDropStack = STATE_DROP_STACK.RELEASE;
                 }
@@ -707,10 +835,11 @@ public class Lift extends Subsystem {
                 break;
 
             case BACK_UP:
-                //SwerveVector vector = new SwerveVector();
-                //vector.setMagAngle(1, 180);
-                //Finish = true; //drive.autoRun(vector, 2, DropDriveFirstTime);
-                //DropDriveFirstTime = false;
+                // SwerveVector vector = new SwerveVector();
+                // vector.setMagAngle(1, 180);
+                // Finish = true; //drive.autoRun(vector, 2,
+                // DropDriveFirstTime);
+                // DropDriveFirstTime = false;
                 break;
         }
 
@@ -826,10 +955,10 @@ public class Lift extends Subsystem {
     {
         ContainerInStack = b;
     }
-    
+
     public void SetToteOnRails(boolean b)
     {
-        if(b)
+        if (b)
         {
             RailContents = RAIL_CONTENTS.TOTE;
         }
@@ -838,6 +967,6 @@ public class Lift extends Subsystem {
     // Dislog a stuck tote by jittering the car
     public void ShakeCar()
     {
-        LiftCar.ShakeCar();        
+        LiftCar.ShakeCar();
     }
 }

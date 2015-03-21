@@ -135,7 +135,7 @@ public abstract class Constants {
     }
 
     public static enum STATE_ADD_FLOOR_TOTE_TO_STACK {
-        INIT, GRAB_TOTE, LIFT_TOTE
+        INIT, GRAB_TOTE, LIFT_TOTE, RESET
     }
 
     public static enum STATE_ADD_CONTAINER_TO_STACK {
