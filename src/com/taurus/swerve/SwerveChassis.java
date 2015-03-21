@@ -175,7 +175,7 @@ public class SwerveChassis extends Subsystem {
                         // use non field relative
                         setFieldRelative(false);
 
-                        CrawlMode = 0;
+                        //CrawlMode = 0;
 
                         SwerveVector drive = new SwerveVector();
                         drive.setMagAngle(1, dpad - 90);

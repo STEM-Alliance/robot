@@ -140,7 +140,7 @@ public class Car {
             case WAITING:
                 Actuator.SetSpeedRaw(0);
                 
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .2)
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .4)
                 {
                     ZeroState = ZERO_STATE.ZEROED_TOP;
                 }
