@@ -59,7 +59,7 @@ public class Application implements com.taurus.Application {
         PDP = new PowerDistributionPanel();
         controllerChooser = new ControllerChooser();
         controller = new ControllerXboxPanel();        
-        drive = new SwerveChassis(controller);
+        drive = new UltraSonicDrive(controller);
         
         // App specific
         lift = new Lift(drive, controller);
@@ -167,7 +167,7 @@ public class Application implements com.taurus.Application {
         
         if (controller.getCarHome())
         {
-            lift.GetCar().GoToZero(6);
+            lift.GetCar().GoToZero(0);
         }
         else if (controller.getCarTop())
         {
