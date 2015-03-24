@@ -16,8 +16,8 @@ public class Application extends com.taurus.Application {
     
     private Vision vision = new Vision();
     private Lift lift;
-    private AnalogInput distance_sensor_left;
-    private AnalogInput distance_sensor_right;
+//    private AnalogInput distance_sensor_left;
+//    private AnalogInput distance_sensor_right;
 
     private STATE_LIFT_ACTION CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
 
@@ -41,10 +41,10 @@ public class Application extends com.taurus.Application {
 
         lift = new Lift(super.drive, super.controller);
         
-        distance_sensor_left =
-                new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
-        distance_sensor_right =
-                new AnalogInput(Constants.DISTANCE_SENSOR_RIGHT_PIN);
+//        distance_sensor_left =
+//                new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
+//        distance_sensor_right =
+//                new AnalogInput(Constants.DISTANCE_SENSOR_RIGHT_PIN);
 
         vision.Start();
 
@@ -174,11 +174,11 @@ public class Application extends com.taurus.Application {
             }
             
             if(controller.getLeftThumb()){
-                drive.setUltrasonic(true, true);
+                drive.setUltrasonic(true, true, controller.getDPad());
             }
             else
             {
-                drive.setUltrasonic(false, true);
+                drive.setUltrasonic(false, false, controller.getDPad());
             }
 
             lift.GetCar().ZeroIfNeeded();
