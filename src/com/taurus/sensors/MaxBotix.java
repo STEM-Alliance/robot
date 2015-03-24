@@ -45,7 +45,7 @@ public abstract class MaxBotix extends SensorBase implements PIDSource,
         }
     }
     
-    protected static final double kMaxUltrasonicTime = .05;
+    protected static final double kMaxUltrasonicTime = .075;
     
     protected static final double kmmPerIn = 25.4;
     protected static final double kuS_Per_S = 1000000.0;
@@ -76,7 +76,7 @@ public abstract class MaxBotix extends SensorBase implements PIDSource,
     
     protected static int m_instances = 0;
     
-    protected int m_distanceBufferLength = 8;
+    protected int m_distanceBufferLength = 4;
     protected int m_distanceBufferIndex = 0;
     protected double m_distanceBufferInches[];
 

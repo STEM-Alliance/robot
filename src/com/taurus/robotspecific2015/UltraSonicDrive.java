@@ -1,5 +1,6 @@
 package com.taurus.robotspecific2015;
 
+import com.taurus.PIDController;
 import com.taurus.Utilities;
 import com.taurus.controller.Controller;
 import com.taurus.sensors.MaxBotixAnalog;
@@ -7,6 +8,7 @@ import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveConstants;
 import com.taurus.swerve.SwerveVector;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class UltraSonicDrive extends SwerveChassis {
@@ -14,6 +16,11 @@ public class UltraSonicDrive extends SwerveChassis {
 //    private MaxBotixDigital ultraAL;
     private MaxBotixAnalog ultraBL;
     private MaxBotixAnalog ultraBR;
+    
+    private PIDController distancePID;
+    private double distanceP = .5;
+    private double distanceI = .3;
+    private double distanceD = 0.0;
     
     private double driveRate = .6;
     
@@ -23,9 +30,9 @@ public class UltraSonicDrive extends SwerveChassis {
     
     private double DISTANCE_FROM_WALL = 24.0;
     
-    private double DISTANCE_PRECISION = 1.0; 
+    private double DISTANCE_PRECISION = 2.0; 
     
-    private double ANGLE_PRECISION = 10.0;
+    private double ANGLE_PRECISION = 20.0;
 
     public UltraSonicDrive(Controller controller)
     {
@@ -51,6 +58,8 @@ public class UltraSonicDrive extends SwerveChassis {
 //        ultraAL.setAutomaticMode(true);
         ultraBL.setAutomaticMode(true);
         ultraBR.setAutomaticMode(true);
+        
+        distancePID = new PIDController(distanceP, distanceI, distanceD, 1);
     }
     
     /**
@@ -73,12 +82,12 @@ public class UltraSonicDrive extends SwerveChassis {
     {
         double AngleError = getAngleToWall();
         
-        double AverageDistanceFromWall = (ultraBR.getRangeInches() + ultraBL.getRangeInches()) / 2;
+        double AverageDistanceFromWall = (ultraBR.getRangeInchesAverage() + ultraBL.getRangeInchesAverage()) / 2;
         
         SmartDashboard.putNumber("Lineup Angle", AngleError);
         
-        SmartDashboard.putNumber("Lineup Back Left", ultraBL.getRangeInches());
-        SmartDashboard.putNumber("Lineup Back Right", ultraBR.getRangeInches());
+        SmartDashboard.putNumber("Lineup Back Left", ultraBL.getRangeInchesAverage());
+        SmartDashboard.putNumber("Lineup Back Right", ultraBR.getRangeInchesAverage());
         
 //        SmartDashboard.putNumber("UltraSonicSensor Angle Left", ultraAL.getRangeInches());
 //        SmartDashboard.putNumber("UltraSonicSensor Angle Right", ultraAR.getRangeInches());
@@ -107,6 +116,7 @@ public class UltraSonicDrive extends SwerveChassis {
         double yvel = 0;
         double xvel = 0;
         double rotation = 0;
+        double heading = -1;
         
         //TODO convert to using a PID controller
         if (Math.abs(AngleError) < ANGLE_PRECISION)
@@ -114,20 +124,23 @@ public class UltraSonicDrive extends SwerveChassis {
             // we're close to the correct angle
             if(Math.abs(DistanceError) > DISTANCE_PRECISION)
             {
-                yvel = Utilities.clampToRange(DistanceError, -1, 1) * driveRate;
+                yvel = distancePID.update(DistanceError, Timer.getFPGATimestamp());
+                //yvel = Utilities.clampToRange(DistanceError, -1, 1) * driveRate;
             }
             
             // enable if using the angle sensors to move left and right
             //xvel = alignToChute(left);
             
             // we're close to the wall, do we need to keep adjusting angle?
-            //rotation = AngleError / 60.0;
+            //rotation = AngleError / 100.0;
         }
         else
         {
             // too far off of the angle, so change rotation
-            rotation = (AngleError / 60.0);
+            //rotation = (AngleError / 60.0);
         }
+        
+        //rotationPID.update(AngleError, Timer.getFPGATimestamp());
         
         // only move in the x direction if the dpad is being pressed
         if(dpad == 90)
@@ -139,6 +152,8 @@ public class UltraSonicDrive extends SwerveChassis {
             xvel = -1 * driveRate;
         }
 
+        yvel *= driveRate;
+        
         SmartDashboard.putNumber("Lineup Y", yvel);
         SmartDashboard.putNumber("Lineup X", xvel);
         SmartDashboard.putNumber("Lineup Rotation", rotation);
@@ -146,16 +161,18 @@ public class UltraSonicDrive extends SwerveChassis {
         SwerveVector vec = new SwerveVector(xvel, yvel);
         
         rotation = Utilities.clampToRange(rotation, -1, 1);
+
+        heading = super.getGyro().getYaw() + AngleError;
         
         this.setFieldRelative(false);
-        this.UpdateDrive(vec, rotation, -1);
+        this.UpdateDrive(vec, rotation, heading);
         this.setFieldRelative(true);
     }
 
     public double getAngleToWall()
     {
         // use inverse tangent here
-        double error = Math.atan((ultraBR.getRangeInches() - ultraBL.getRangeInches())
+        double error = Math.atan((ultraBR.getRangeInchesAverage() - ultraBL.getRangeInchesAverage())
                           / SwerveConstants.ChassisWidth);
         return Math.toDegrees(error);
     }

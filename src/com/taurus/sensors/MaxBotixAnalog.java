@@ -116,8 +116,8 @@ public class MaxBotixAnalog extends MaxBotix {
         
         m_conversionToInches = kmV_Per_V / kmV_per_MM / kmmPerIn;
 
-        LiveWindow.addSensor("Ultrasonic",
-                ((DigitalInput) m_echoChannel).getChannel(), this);
+      //  LiveWindow.addSensor("Ultrasonic",
+        //        ((DigitalInput) m_echoChannel).getChannel(), this);
     }
     
     /**
