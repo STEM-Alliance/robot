@@ -13,13 +13,12 @@ public abstract class Constants {
     public static final int PCM_STACK_HOLDER = MODULE_ID_PCM_2;
     public static final int PCM_PUSHER = MODULE_ID_PCM_2;
 
-   // need to reassign pins for SolidJr
-    public static final int[] CHANNEL_RAIL = { 1, 0 };
-    public static final int[] CHANNEL_CONTAINER_CAR = { 7, 6 };
+    public static final int[] CHANNEL_RAIL = { 3, 2 };
+    public static final int[] CHANNEL_CONTAINER_CAR = { 5, 4 };
     public static final int[] CHANNEL_CONTAINER_FIXED = { 7, 6 };
-    public static final int[] CHANNEL_STOP = { 3, 2 };
+    public static final int[] CHANNEL_STOP = { 1, 0 };
     public static final int[] CHANNEL_PUSHER = { 3, 2 };
-    public static final int[] CHANNEL_STACK_HOLDER = { 5, 4 };
+    public static final int[] CHANNEL_STACK_HOLDER = { 1, 0 };
 
     // TODO - what is the amount of time required to extend?
     public static final double TIME_EXTEND_RAILS = .3;
@@ -47,12 +46,11 @@ public abstract class Constants {
     public static final int CHANNEL_DIGITAL_CAR_ZERO_RIGHT = 7;
     public static final int CHANNEL_DIGITAL_CAR_CHUTE = 9;
     
-    //Distance Sensors
-    public static final int[] ULTRASONIC_SENSOR_BACK_LEFT = {10, 11};
-    public static final int[] ULTRASONIC_SENSOR_BACK_RIGHT = {12, 13};
-    public static final int[] ULTRASONIC_SENSOR_ANGLE_LEFT = {1, 2};
-    public static final int[] ULTRASONIC_SENSOR_ANGLE_RIGHT = {3, 8};
-
+    // Ultrasonic
+    public static final int[] ULTRASONIC_SENSOR_BACK_LEFT = {10, 5};
+    public static final int[] ULTRASONIC_SENSOR_BACK_RIGHT = {11, 6};
+//    public static final int[] ULTRASONIC_SENSOR_ANGLE_LEFT = {1, 2};
+//    public static final int[] ULTRASONIC_SENSOR_ANGLE_RIGHT = {3, 8};
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
