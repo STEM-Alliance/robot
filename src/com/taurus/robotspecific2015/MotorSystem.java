@@ -1,11 +1,12 @@
 package com.taurus.robotspecific2015;
 
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Victor;
 
 import java.util.ArrayList;
 
 public class MotorSystem {
-    private ArrayList<Talon> Talons = new ArrayList<Talon>();
+    private ArrayList<Victor> Victors = new ArrayList<Victor>();
     private ArrayList<Double> Scaling = new ArrayList<Double>();
 
     /**
@@ -17,7 +18,7 @@ public class MotorSystem {
     {
         for (int index = 0; index < pins.length; index++)
         {
-            Talons.add(new Talon(pins[index]));
+            Victors.add(new Victor(pins[index]));
             Scaling.add((double) 1);
         }
     }
@@ -29,10 +30,10 @@ public class MotorSystem {
      */
     public void SetSafety(boolean enabled, double timeout)
     {
-        for (int index = 0; index < Talons.size(); index++)
+        for (int index = 0; index < Victors.size(); index++)
         {
-            Talons.get(index).setSafetyEnabled(enabled);
-            Talons.get(index).setExpiration(timeout);
+            Victors.get(index).setSafetyEnabled(enabled);
+            Victors.get(index).setExpiration(timeout);
         }
     }
 
@@ -43,9 +44,9 @@ public class MotorSystem {
      */
     public void Set(double speed)
     {
-        for (int index = 0; index < Talons.size(); index++)
+        for (int index = 0; index < Victors.size(); index++)
         {
-            Talons.get(index).set(speed * Scaling.get(index));
+            Victors.get(index).set(speed * Scaling.get(index));
         }
     }
 
@@ -56,7 +57,7 @@ public class MotorSystem {
      */
     public void SetScale(double[] motorScaling)
     {
-        for (int index = 0; index < Talons.size(); index++)
+        for (int index = 0; index < Victors.size(); index++)
         {
             Scaling.set(index, motorScaling[index]);
         }
