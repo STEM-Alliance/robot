@@ -18,7 +18,7 @@ public class UltraSonicDrive extends SwerveChassis {
     private MaxBotixAnalog ultraBR;
     
     private PIDController distancePID;
-    private double distanceP = .5;
+    private double distanceP = .4;
     private double distanceI = .3;
     private double distanceD = 0.0;
     
@@ -28,7 +28,7 @@ public class UltraSonicDrive extends SwerveChassis {
     private static boolean rightSide;
     private static double dpad;
     
-    private double DISTANCE_FROM_WALL = 24.0;
+    private double DISTANCE_FROM_WALL = 22.5;
     
     private double DISTANCE_PRECISION = 2.0; 
     
@@ -145,11 +145,11 @@ public class UltraSonicDrive extends SwerveChassis {
         // only move in the x direction if the dpad is being pressed
         if(dpad == 90)
         {
-            xvel = 1 * driveRate;
+            xvel = 1;
         }
         else if(dpad == 270)
         {
-            xvel = -1 * driveRate;
+            xvel = -1;
         }
 
         yvel *= driveRate;
