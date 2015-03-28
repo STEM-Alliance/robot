@@ -655,48 +655,7 @@ public class Lift extends Subsystem {
     }
 
     /**
-     * Place the stack on the ground, then push it onto the scoring platform
-     * 
-     * @return true if finished
-     */
-    public boolean EjectStack()
-    {
-        switch (StateEjectStack)
-        {
-            case INIT:
-                // Application.leds.AddEffect(effectsScore, true);
-                StateEjectStack = STATE_EJECT_STACK.EJECT;
-                break;
-
-            case EJECT:
-                if (CylindersContainerFixed.Contract()
-                    & CylindersContainerCar.Contract())
-                {
-                    if (LiftCar.GoToEject()
-                        & StackEjector.StopIn())
-                    {
-                        RailContents = RAIL_CONTENTS.EMPTY;
-                        TotesInStack = 0;
-                        ContainerInStack = false;
-
-                        if (controller.getEjectStack())
-                        {
-                            StateEjectStack = STATE_EJECT_STACK.RESET;
-                        }
-                    }
-                }
-                break;
-
-            case RESET:
-                break;
-        }
-
-        return StateEjectStack == STATE_EJECT_STACK.RESET;
-    }
-
-    /**
-     * Place the stack on the ground and release the rails, then automatically
-     * back up
+     * Place the stack on the ground and release the rails
      * 
      * @return true if finished
      */
@@ -706,8 +665,7 @@ public class Lift extends Subsystem {
     }
 
     /**
-     * Place the stack on the ground and release the rails, then automatically
-     * back up
+     * Place the stack on the ground and release the rails
      * 
      * @param keepContainer
      *            true if you want to keep the container in the top holder

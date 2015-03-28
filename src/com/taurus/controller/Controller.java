@@ -177,7 +177,7 @@ public interface Controller {
     
     public boolean getCarryStack();
     
-    public boolean getEjectStack();
+    public boolean getUltrasonicLineup();
     
     public boolean getCarHome();
 

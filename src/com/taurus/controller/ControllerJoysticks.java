@@ -250,13 +250,6 @@ public class ControllerJoysticks implements Controller {
     }
 
     @Override
-    public boolean getEjectStack()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
     public boolean getTrigger(Hand hand)
     {
         // TODO Auto-generated method stub
@@ -381,6 +374,13 @@ public class ControllerJoysticks implements Controller {
 
     @Override
     public boolean getLiftShake()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getUltrasonicLineup()
     {
         // TODO Auto-generated method stub
         return false;

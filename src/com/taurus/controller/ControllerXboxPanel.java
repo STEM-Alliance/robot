@@ -289,14 +289,6 @@ public class ControllerXboxPanel implements Controller, Runnable {
         return xbox.getYButton();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getEjectStack()
-    {
-        return false;
-    }
-
     @Override
     public boolean getCarHome()
     {
@@ -424,5 +416,11 @@ public class ControllerXboxPanel implements Controller, Runnable {
     {
        
         return panel.getBlackLButton();
+    }
+
+    @Override
+    public boolean getUltrasonicLineup()
+    {
+        return panel.getGreenRButton();
     }
 }

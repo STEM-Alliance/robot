@@ -28,7 +28,8 @@ public class Application extends com.taurus.Application {
     {
         super();
 
-        lift = new Lift(super.drive, super.controller);
+        drive = new UltraSonicDrive(controller);
+        lift = new Lift(drive, controller);
         
         vision.Start();
 
@@ -108,7 +109,7 @@ public class Application extends com.taurus.Application {
         
         if (controller.getCarHome())
         {
-            lift.GetCar().GoToZero(6);
+            lift.GetCar().GoToZero(0);
         }
         else if (controller.getCarTop())
         {
@@ -135,6 +136,8 @@ public class Application extends com.taurus.Application {
                 lift.SetContainerInStack(false);
                 lift.init();
             }
+            
+            ((UltraSonicDrive) drive).setUltrasonic(controller.getUltrasonicLineup(), controller.getDPad());
 
             lift.GetCar().ZeroIfNeeded();
 
