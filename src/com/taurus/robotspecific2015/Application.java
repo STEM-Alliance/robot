@@ -1,14 +1,7 @@
 package com.taurus.robotspecific2015;
 
-import java.util.ArrayList;
-
-import com.taurus.controller.Controller;
-import com.taurus.led.Color;
-import com.taurus.led.Effect;
-import com.taurus.led.LEDs;
 import com.taurus.robotspecific2015.Constants.*;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,8 +12,6 @@ public class Application extends com.taurus.Application {
     
     private Vision vision = new Vision();
     private Lift lift;
-    private AnalogInput distance_sensor_left;
-    private AnalogInput distance_sensor_right;
 
     private STATE_LIFT_ACTION CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
 
@@ -32,8 +23,6 @@ public class Application extends com.taurus.Application {
     private boolean StartTeleGyroCal = true;
     public double StartMatchTime = 0;
 
-    //protected static LEDs leds;
-    private final Effect effectEndOfMatch;
 
     public Application()
     {
@@ -41,11 +30,6 @@ public class Application extends com.taurus.Application {
 
         lift = new Lift(super.drive, super.controller);
         
-        distance_sensor_left =
-                new AnalogInput(Constants.DISTANCE_SENSOR_LEFT_PIN);
-        distance_sensor_right =
-                new AnalogInput(Constants.DISTANCE_SENSOR_RIGHT_PIN);
-
         vision.Start();
 
         autoChooser = new SendableChooser();
@@ -60,23 +44,11 @@ public class Application extends com.taurus.Application {
         testChooser.addDefault("Pneumatics/Motors", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
         testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
-        
-        // LEDs
-        //LEDController ledHardware = new LEDController();
-        //leds = new LEDs(ledHardware, ledHardware.NumOfColors, Thread.NORM_PRIORITY - 2);  // Below normal priority
-        //leds.start();  // Comment this line to disable LEDs
-        endOfMatchEffectSent = false;
-        ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        colors.add(new Color[]{Color.Red, Color.Red, Color.Red, Color.Red});
-        colors.add(new Color[]{Color.Black, Color.Black, Color.Black, Color.Black});
-        effectEndOfMatch = new Effect(colors, Effect.EFFECT.FLASH, 5, .5);
     }
 
     public void TeleopInitRobotSpecific()
     {
         StartMatchTime = Timer.getFPGATimestamp();
-        
-        ArrayList<Color[]> colors = new ArrayList<Color[]>();
         
         if(StartTeleInChute)
         {
@@ -93,13 +65,6 @@ public class Application extends com.taurus.Application {
         {
             drive.ZeroGyro();
         }
-
-
-        // Set LEDs
-        colors.add(new Color[]{Color.Random(), Color.White, Color.Blue, Color.Red});
-        colors.add(new Color[]{Color.Random(), Color.Black, Color.Cyan, Color.Green});
-        colors.add(new Color[]{Color.Random(), Color.Green, Color.White, Color.Yellow});
-        //leds.AddEffect(new Effect(colors, Effect.EFFECT.FLASH, Double.MAX_VALUE, 2), true);
     }
 
     
@@ -111,17 +76,6 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putNumber("Actuator Raw", lift.GetCar().GetActuator().GetRaw());
         SmartDashboard.putNumber("Actuator Position", lift.GetCar().GetActuator().GetPositionRaw());
         
-//        SmartDashboard
-//                .putNumber("Distance Left", 
-//                        12.402 
-//                        * Math.pow(distance_sensor_left.getVoltage(), -1.074) 
-//                        / 2.54);        
-//        SmartDashboard
-//                .putNumber("Distance Right", 
-//                        12.402 
-//                        * Math.pow(distance_sensor_right.getVoltage(), -1.074) 
-//                        / 2.54);
-
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
         SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
         SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
@@ -298,18 +252,12 @@ public class Application extends com.taurus.Application {
 
     public void AutonomousInitRobotSpecific()
     {
-        ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        
         lift.init();
         lift.SetContainerInStack(false);
         
         drive.ZeroGyro();
         AUTO_MODE automode = (AUTO_MODE) autoChooser.getSelected();
         autonomous = new Autonomous(drive, lift, vision, automode);
-        
-        // Set LEDs
-        colors.add(new Color[]{Color.Green, Color.White, Color.Blue, Color.Red});
-        //leds.AddEffect(new Effect(colors, Effect.EFFECT.SPIN, 15, 2), true);
     }
 
     public void AutonomousPeriodicRobotSpecific()
