@@ -51,9 +51,13 @@ public abstract class Application {
 
     public static Preferences prefs;
     
+    public static int ROBOT_VERSION = 0;
+    
     public Application()
     {
         prefs = Preferences.getInstance();
+        
+        ROBOT_VERSION = prefs.getInt("ROBOT_VERSION", ROBOT_VERSION);
                 
         PDP = new PowerDistributionPanel();
 
