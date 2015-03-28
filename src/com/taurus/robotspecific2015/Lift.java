@@ -1,10 +1,6 @@
 package com.taurus.robotspecific2015;
 
-import java.util.ArrayList;
-
 import com.taurus.controller.Controller;
-import com.taurus.led.Color;
-import com.taurus.led.Effect;
 import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
 
@@ -42,18 +38,9 @@ public class Lift extends Subsystem {
     private boolean AutonomousToteTriggered;
 
     private double StopperWaitTime = 0;
-    private final SwerveChassis drive;
-    private boolean DropDriveFirstTime;
-
-    private final Effect effectsIntakeReady;
-    private final Effect effectsIntakeNotReady;
-    private final Effect effectsReadyToDrive;
-    private final Effect effectsInTransit;
-    private final Effect effectsScore;
-
+    
     private final Controller controller;
 
-    public final LEDController LEDs;
     public final Relay LED = new Relay(2);
 
     /**
@@ -66,7 +53,6 @@ public class Lift extends Subsystem {
      */
     public Lift(SwerveChassis drive, Controller controller)
     {
-        this.drive = drive;
         this.controller = controller;
 
         LiftCar = new Car(this.controller);
@@ -95,33 +81,6 @@ public class Lift extends Subsystem {
                         Constants.TIME_CONTRACT_STACK_HOLDER,
                         Constants.CYLINDER_ACTION.CONTRACT);
 
-        // Setup LEDs
-        ArrayList<Color[]> colors = new ArrayList<Color[]>();
-        colors.add(new Color[] { Color.Green, Color.Green, Color.Green,
-                Color.Green });
-        effectsIntakeReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
-        colors.clear();
-        colors.add(new Color[] { Color.Red, Color.Red, Color.Red, Color.Red });
-        effectsIntakeNotReady = new Effect(colors, Effect.EFFECT.SOLID, 4, 4);
-        colors.clear();
-        colors.add(new Color[] { Color.Cyan, Color.Red, Color.Yellow,
-                Color.Magenta });
-        effectsReadyToDrive =
-                new Effect(colors, Effect.EFFECT.SPIN, Double.MAX_VALUE, 1);
-        colors.clear();
-        colors.add(new Color[] { Color.White, Color.White, Color.White,
-                Color.White });
-        colors.add(new Color[] { Color.Orange, Color.Orange, Color.Orange,
-                Color.Orange });
-        effectsInTransit = new Effect(colors, Effect.EFFECT.FLASH, 4, .5);
-        colors.clear();
-        colors.add(new Color[] { Color.White, Color.White, Color.White,
-                Color.White });
-        colors.add(new Color[] { Color.Cyan, Color.Orange, Color.Cyan,
-                Color.Orange });
-        effectsScore = new Effect(colors, Effect.EFFECT.FADE, 6, 2);
-
-        LEDs = new LEDController();
         LED.setDirection(Direction.kForward);
         LED.set(Value.kForward);
 
@@ -151,7 +110,6 @@ public class Lift extends Subsystem {
         // this.ContainerInStack = false;
         this.RailContents = RAIL_CONTENTS.EMPTY;
         this.AutonomousToteTriggered = false;
-        this.DropDriveFirstTime = false;
     }
 
     public boolean IsToteInPlace()
@@ -295,12 +253,6 @@ public class Lift extends Subsystem {
                 {
                     if (TotesInStack < MaxTotesInStack)
                     {
-                        // Application.leds.AddEffect(effectsIntakeReady, true);
-                        Color[] readyColor =
-                                { Color.Blue, Color.White, Color.Blue,
-                                        Color.White };
-                        LEDs.update(readyColor);
-
                         if (Timer.getFPGATimestamp() - ledFlashTime < .125)
                         {
                             LED.set(Value.kForward);
@@ -313,25 +265,15 @@ public class Lift extends Subsystem {
                         {
                             ledFlashTime = Timer.getFPGATimestamp();
                         }
-
-                        // else if x-y < 1
-                        //LED.set(Value.kForward);
-                        // else
-                        // if(Timer.getFPGATimestamp() - StopperWaitTime > .5)
                     }
                     else
                     {
                         // Indicate that we are ready to drive off
-                        // Application.leds.AddEffect(effectsReadyToDrive,
-                        // true);
+                        LED.set(Value.kForward);
                     }
                 }
                 else
                 {
-                    Color[] NotReadyColor =
-                            { Color.Black, Color.Black, Color.Black,
-                                    Color.Black };
-                    LEDs.update(NotReadyColor);
                     LED.set(Value.kOff);
                 }
 
@@ -339,7 +281,6 @@ public class Lift extends Subsystem {
                 {
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.INIT;
-                    //LED.set(Value.kForward);
                     CylindersRails.Extend();
                 }
                 else if (Timer.getFPGATimestamp() - StopperWaitTime > 1)
@@ -482,12 +423,6 @@ public class Lift extends Subsystem {
                 {
                     if (TotesInStack < MaxTotesInStack)
                     {
-                        // Application.leds.AddEffect(effectsIntakeReady, true);
-                        Color[] readyColor =
-                                { Color.Blue, Color.White, Color.Blue,
-                                        Color.White };
-                        LEDs.update(readyColor);
-
                         if (Timer.getFPGATimestamp() - ledFlashTime < .125)
                         {
                             LED.set(Value.kForward);
@@ -500,25 +435,15 @@ public class Lift extends Subsystem {
                         {
                             ledFlashTime = Timer.getFPGATimestamp();
                         }
-
-                        // else if x-y < 1
-                        //LED.set(Value.kForward);
-                        // else
-                        // if(Timer.getFPGATimestamp() - StopperWaitTime > .5)
                     }
                     else
                     {
                         // Indicate that we are ready to drive off
-                        // Application.leds.AddEffect(effectsReadyToDrive,
-                        // true);
+                        LED.set(Value.kForward);
                     }
                 }
                 else
                 {
-                    Color[] NotReadyColor =
-                            { Color.Black, Color.Black, Color.Black,
-                                    Color.Black };
-                    LEDs.update(NotReadyColor);
                     LED.set(Value.kOff);
                 }
 
@@ -526,7 +451,6 @@ public class Lift extends Subsystem {
                 {
                     StateAddFloorToteToStack =
                             STATE_ADD_FLOOR_TOTE_TO_STACK.INIT;
-                    //LED.set(Value.kForward);
                     CylindersRails.Extend();
                 }
                 else if (Timer.getFPGATimestamp() - StopperWaitTime > .5)
@@ -828,9 +752,8 @@ public class Lift extends Subsystem {
                     TotesInStack = 0;
                     ContainerInStack = false;
 
-                    StateDropStack = STATE_DROP_STACK.BACK_UP;
+                    StateDropStack = STATE_DROP_STACK.INIT;
                     Finish = true;
-                    DropDriveFirstTime = true;
                 }
                 break;
 
