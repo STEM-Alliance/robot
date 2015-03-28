@@ -20,7 +20,7 @@ public class MotorSystem {
     {
         for (int index = 0; index < pins.length; index++)
         {
-            if(Constants.ROBOT_VERSION == 0)
+            if(Application.ROBOT_VERSION == 0)
             {
                 Talons.add(new Talon(pins[index]));
             }
@@ -39,7 +39,7 @@ public class MotorSystem {
      */
     public void SetSafety(boolean enabled, double timeout)
     {
-        if(Constants.ROBOT_VERSION == 0)
+        if(Application.ROBOT_VERSION == 0)
         {
             for (int index = 0; index < Talons.size(); index++)
             {
@@ -64,7 +64,7 @@ public class MotorSystem {
      */
     public void Set(double speed)
     {
-        if(Constants.ROBOT_VERSION == 0)
+        if(Application.ROBOT_VERSION == 0)
         {
             for (int index = 0; index < Talons.size(); index++)
             {
@@ -87,7 +87,7 @@ public class MotorSystem {
      */
     public void SetScale(double[] motorScaling)
     {
-        if(Constants.ROBOT_VERSION == 0)
+        if(Application.ROBOT_VERSION == 0)
         {
             for (int index = 0; index < Talons.size(); index++)
             {

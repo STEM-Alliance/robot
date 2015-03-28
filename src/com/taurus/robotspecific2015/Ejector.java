@@ -6,7 +6,7 @@ public class Ejector {
 
     public Ejector()
     {
-        CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP[Constants.ROBOT_VERSION],
+        CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP[Application.ROBOT_VERSION],
                 Constants.PCM_STOP, Constants.TIME_EXTEND_STOP,
                 Constants.TIME_CONTRACT_STOP, Constants.CYLINDER_ACTION.EXTEND);
     }

@@ -1,7 +1,6 @@
 package com.taurus.robotspecific2015;
 
 public abstract class Constants {
-    public static int ROBOT_VERSION = 0; // 0 is competition, 1 is backup
     
     // Pneumatics
     private static final int MODULE_ID_PCM = 9;

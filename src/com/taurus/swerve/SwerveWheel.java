@@ -106,7 +106,7 @@ public class SwerveWheel {
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new CANTalon(DriveAddress);
         
-        if(Constants.ROBOT_VERSION == 0)
+        if(Application.ROBOT_VERSION == 0)
         {
             MotorAngle = new Talon(AnglePin);
         }
@@ -293,7 +293,7 @@ public class SwerveWheel {
         // Control the wheel angle.
         if (speed > MinSpeed)
         {
-            if(Constants.ROBOT_VERSION == 0)
+            if(Application.ROBOT_VERSION == 0)
             {
                 MotorAngle.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
             }
@@ -306,7 +306,7 @@ public class SwerveWheel {
         {
             // Too slow, do nothing
             AngleController.resetIntegral();
-            if(Constants.ROBOT_VERSION == 0)
+            if(Application.ROBOT_VERSION == 0)
             {
                 MotorAngle.set(0);
             }
