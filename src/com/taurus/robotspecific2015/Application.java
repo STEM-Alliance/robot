@@ -81,8 +81,6 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
         
         SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
-        SmartDashboard.putString("CylindersPusher.State", lift.GetEjector().GetCylindersPusher().GetState().toString());
-
         SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
         
         SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
@@ -157,10 +155,6 @@ public class Application extends com.taurus.Application {
             {
                 CurrentLiftAction = STATE_LIFT_ACTION.ADD_CONTAINER;
             }
-            else if (controller.getEjectStack())
-            {
-                CurrentLiftAction = STATE_LIFT_ACTION.EJECT_STACK;
-            }
             else if (controller.getCarryStack())
             {
                 lift.SetToteOnRails(true);
@@ -194,13 +188,6 @@ public class Application extends com.taurus.Application {
 
                 case ADD_CONTAINER:
                     if (lift.AddContainerToStack())
-                    {
-                        CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
-                    }
-                    break;
-
-                case EJECT_STACK:
-                    if (lift.EjectStack())
                     {
                         CurrentLiftAction = STATE_LIFT_ACTION.NO_ACTION;
                     }
@@ -318,10 +305,6 @@ public class Application extends com.taurus.Application {
                 else if (button5)
                 {
                     testCylinders = lift.GetEjector().GetCylindersStop();
-                }
-                else if (button6)
-                {
-                    testCylinders = lift.GetEjector().GetCylindersPusher();
                 }
                 else
                 {
