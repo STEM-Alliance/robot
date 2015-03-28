@@ -268,14 +268,6 @@ public class ControllerXbox implements Controller {
         return xbox.getYButton();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getEjectStack()
-    {
-        return false;
-    }
-
     @Override
     public boolean getStopAction()
     {
@@ -372,6 +364,13 @@ public class ControllerXbox implements Controller {
 
     @Override
     public boolean getLiftShake()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean getUltrasonicLineup()
     {
         // TODO Auto-generated method stub
         return false;
