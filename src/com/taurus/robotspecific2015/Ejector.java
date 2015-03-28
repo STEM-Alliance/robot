@@ -1,77 +1,14 @@
 package com.taurus.robotspecific2015;
 
-import com.taurus.robotspecific2015.Constants.*;
-
 public class Ejector {
-    private STATE_EJECT StateEject = STATE_EJECT.PUSHER_EXTEND;
 
     private PneumaticSubsystem CylindersStop;
-    private PneumaticSubsystem CylindersPusher;
 
     public Ejector()
     {
-        CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP,
+        CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP[Constants.ROBOT_VERSION],
                 Constants.PCM_STOP, Constants.TIME_EXTEND_STOP,
                 Constants.TIME_CONTRACT_STOP, Constants.CYLINDER_ACTION.EXTEND);
-        CylindersPusher = new PneumaticSubsystem(Constants.CHANNEL_PUSHER,
-                Constants.PCM_PUSHER, Constants.TIME_EXTEND_PUSHER,
-                Constants.TIME_CONTRACT_PUSHER, Constants.CYLINDER_ACTION.CONTRACT);
-
-    }
-
-    /**
-     * Eject the stack
-     * 
-     * @return true when finished
-     */
-    public boolean EjectStack()
-    {
-        switch (StateEject)
-        {
-            case PUSHER_EXTEND:
-                if (CylindersPusher.Extend())
-                {
-                    StateEject = STATE_EJECT.MOVE_OUT;
-                }
-                break;
-            case MOVE_OUT:
-                //if (MoveOut())
-                {
-                    StateEject = STATE_EJECT.RESET;
-                }
-                break;
-            // IMPORTANT: Resetting the Ejector needs to happen, but with a
-            // seperate method call
-            // This allows robot to asynchronous drive and reset the Ejector
-            default:
-                // TODO: Put error condition here
-                break;
-        }
-
-        // Did we just finish ejecting the stack?
-        return StateEject == STATE_EJECT.RESET;
-    }
-
-    /**
-     * Asynchronously finish EjectStack(), which can be called while driving
-     * 
-     * @return true when finished
-     */
-    public boolean ResetEjectStack()
-    {
-        boolean finishedReset = false;
-
-        if (StateEject == STATE_EJECT.RESET)
-        {
-            // IMPORTANT: Use single '&' to execute all cleanup routines
-            // asynchronously
-            if (/*MoveIn() & */CylindersPusher.Contract())
-            {
-                finishedReset = true;
-                StateEject = STATE_EJECT.PUSHER_EXTEND;
-            }
-        }
-        return finishedReset;
     }
 
     /**
@@ -109,10 +46,5 @@ public class Ejector {
     public PneumaticSubsystem GetCylindersStop()
     {
         return CylindersStop;
-    }
-    
-    public PneumaticSubsystem GetCylindersPusher()
-    {
-        return CylindersPusher;
     }
 }

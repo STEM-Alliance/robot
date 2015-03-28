@@ -1,6 +1,8 @@
 package com.taurus.robotspecific2015;
 
 public abstract class Constants {
+    public static int ROBOT_VERSION = 0; // 0 is competition, 1 is backup
+    
     // Pneumatics
     private static final int MODULE_ID_PCM = 9;
     private static final int MODULE_ID_PCM_2 = 10;
@@ -11,16 +13,15 @@ public abstract class Constants {
     public static final int PCM_CONTAINER_FIXED = MODULE_ID_PCM;
     public static final int PCM_STOP = MODULE_ID_PCM;
     public static final int PCM_STACK_HOLDER = MODULE_ID_PCM_2;
-    public static final int PCM_PUSHER = MODULE_ID_PCM_2;
+    
+    // first set is competition, second is backup robot
+    public static final int[][] CHANNEL_RAIL                = { { 3, 2 }, { 1, 0 } };
+    public static final int[][] CHANNEL_CONTAINER_CAR       = { { 5, 4 }, { 7, 6 } };
+    public static final int[][] CHANNEL_CONTAINER_FIXED     = { { 7, 6 }, { 5, 4 } };
+    public static final int[][] CHANNEL_STOP                = { { 1, 0 }, { 3, 2 } };
+    public static final int[][] CHANNEL_STACK_HOLDER        = { { 1, 0 }, { 5, 4 } };
 
-    public static final int[] CHANNEL_RAIL = { 3, 2 };
-    public static final int[] CHANNEL_CONTAINER_CAR = { 5, 4 };
-    public static final int[] CHANNEL_CONTAINER_FIXED = { 7, 6 };
-    public static final int[] CHANNEL_STOP = { 1, 0 };
-    public static final int[] CHANNEL_PUSHER = { 3, 2 };
-    public static final int[] CHANNEL_STACK_HOLDER = { 1, 0 };
-
-    // TODO - what is the amount of time required to extend?
+    // what is the amount of time required to extend?
     public static final double TIME_EXTEND_RAILS = .3;
     public static final double TIME_EXTEND_CONTAINER_CAR = .3;
     public static final double TIME_EXTEND_CONTAINER_FIXED = .3;
@@ -28,7 +29,7 @@ public abstract class Constants {
     public static final double TIME_EXTEND_STOP = .1;
     public static final double TIME_EXTEND_PUSHER = 1.5;
 
-    // TODO - what is the amount of time required to contract?
+    // what is the amount of time required to contract?
     public static final double TIME_CONTRACT_RAILS = .3;
     public static final double TIME_CONTRACT_CONTAINER_CAR = .3;
     public static final double TIME_CONTRACT_CONTAINER_FIXED = .3;
@@ -45,6 +46,12 @@ public abstract class Constants {
     public static final int CHANNEL_DIGITAL_CAR_ZERO_LEFT = 6;
     public static final int CHANNEL_DIGITAL_CAR_ZERO_RIGHT = 7;
     public static final int CHANNEL_DIGITAL_CAR_CHUTE = 9;
+    
+    // Ultrasonic
+    public static final int[] ULTRASONIC_SENSOR_BACK_LEFT = {10, 5};
+    public static final int[] ULTRASONIC_SENSOR_BACK_RIGHT = {11, 6};
+//    public static final int[] ULTRASONIC_SENSOR_ANGLE_LEFT = {1, 2};
+//    public static final int[] ULTRASONIC_SENSOR_ANGLE_RIGHT = {3, 8};
 
     // Lift setup
     public static final int[] LIFT_MOTOR_PINS = { 8 };
@@ -52,8 +59,7 @@ public abstract class Constants {
     public static final int LIFT_POT_PIN = 4;
     public static final double LIFT_POT_DISTANCE = 3.14;
     public static final double LIFT_THRESHOLD = .4;
-    public static final double[] LIFT_POSTITIONS = { 0, .6, 1, 10.25, 18, 20,
-            20.75 };
+    public static final double[] LIFT_POSTITIONS = { 0, .6, 1, 10.25, 18, 20, 20.75 };
     public static final double LIFT_CHUTE_READY_HEIGHT = 15;
 
     public static final double LIFT_CAR_SPEED_UP = 1.0;

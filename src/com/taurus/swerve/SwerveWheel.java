@@ -9,10 +9,12 @@ package com.taurus.swerve;
 import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 import com.taurus.controller.Controller;
+import com.taurus.robotspecific2015.Constants;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Victor;
 
 /**
  * Handle motor outputs and feedback for an individual wheel
@@ -44,6 +46,7 @@ public class SwerveWheel {
     // motor
     private CANTalon MotorDrive;
     public Talon MotorAngle;
+    public Victor MotorAngleBackup;
 
     // sensor
     public MagnetoPot AnglePot;
@@ -102,7 +105,15 @@ public class SwerveWheel {
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new CANTalon(DriveAddress);
-        MotorAngle = new Talon(AnglePin);
+        
+        if(Constants.ROBOT_VERSION == 0)
+        {
+            MotorAngle = new Talon(AnglePin);
+        }
+        else
+        {
+            MotorAngleBackup = new Victor(AnglePin);
+        }
 
 //        HighGear = true;
 //        Shifter = new Servo(ShiftPin);
@@ -282,13 +293,27 @@ public class SwerveWheel {
         // Control the wheel angle.
         if (speed > MinSpeed)
         {
-            MotorAngle.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
+            if(Constants.ROBOT_VERSION == 0)
+            {
+                MotorAngle.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
+            }
+            else
+            {
+                MotorAngleBackup.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
+            }
         }
         else
         {
             // Too slow, do nothing
             AngleController.resetIntegral();
-            MotorAngle.set(0);
+            if(Constants.ROBOT_VERSION == 0)
+            {
+                MotorAngle.set(0);
+            }
+            else
+            {
+                MotorAngleBackup.set(0);
+            }
         }
 
         return AngleController.isReverseMotor();

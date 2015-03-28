@@ -58,24 +58,24 @@ public class Lift extends Subsystem {
         LiftCar = new Car(this.controller);
         StackEjector = new Ejector();
         CylindersRails =
-                new PneumaticSubsystem(Constants.CHANNEL_RAIL,
+                new PneumaticSubsystem(Constants.CHANNEL_RAIL[Constants.ROBOT_VERSION],
                         Constants.PCM_RAIL, Constants.TIME_EXTEND_RAILS,
                         Constants.TIME_CONTRACT_RAILS,
                         Constants.CYLINDER_ACTION.EXTEND);
         CylindersContainerCar =
-                new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_CAR,
+                new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_CAR[Constants.ROBOT_VERSION],
                         Constants.PCM_CONTAINER_CAR,
                         Constants.TIME_EXTEND_CONTAINER_CAR,
                         Constants.TIME_CONTRACT_CONTAINER_CAR,
                         Constants.CYLINDER_ACTION.CONTRACT);
         CylindersContainerFixed =
-                new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_FIXED,
+                new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_FIXED[Constants.ROBOT_VERSION],
                         Constants.PCM_CONTAINER_FIXED,
                         Constants.TIME_EXTEND_CONTAINER_FIXED,
                         Constants.TIME_CONTRACT_CONTAINER_FIXED,
                         Constants.CYLINDER_ACTION.CONTRACT);
         CylindersStackHolder =
-                new PneumaticSubsystem(Constants.CHANNEL_STACK_HOLDER,
+                new PneumaticSubsystem(Constants.CHANNEL_STACK_HOLDER[Constants.ROBOT_VERSION],
                         Constants.PCM_STACK_HOLDER,
                         Constants.TIME_EXTEND_STACK_HOLDER,
                         Constants.TIME_CONTRACT_STACK_HOLDER,
@@ -673,8 +673,7 @@ public class Lift extends Subsystem {
                     & CylindersContainerCar.Contract())
                 {
                     if (LiftCar.GoToEject()
-                        & StackEjector.StopIn()
-                        & StackEjector.EjectStack())
+                        & StackEjector.StopIn())
                     {
                         RailContents = RAIL_CONTENTS.EMPTY;
                         TotesInStack = 0;
@@ -682,9 +681,6 @@ public class Lift extends Subsystem {
 
                         if (controller.getEjectStack())
                         {
-                            // Wait for the driver to press eject again to
-                            // retract
-                            // the piston (yes, I know, ewww...).
                             StateEjectStack = STATE_EJECT_STACK.RESET;
                         }
                     }
@@ -692,9 +688,6 @@ public class Lift extends Subsystem {
                 break;
 
             case RESET:
-                StackEjector.ResetEjectStack();
-
-                // Rely on other state machines to set the state back to init.
                 break;
         }
 
