@@ -18,7 +18,7 @@ public class UltraSonicDrive extends SwerveChassis {
     private MaxBotixAnalog ultraBR;
     
     private PIDController distancePID;
-    private double distanceP = .4;
+    private double distanceP = .25;
     private double distanceI = .3;
     private double distanceD = 0.0;
     
@@ -164,9 +164,17 @@ public class UltraSonicDrive extends SwerveChassis {
 
         heading = super.getGyro().getYaw() + AngleError;
         
+        SmartDashboard.putNumber("Lineup Heading", heading);
+        
         this.setFieldRelative(false);
+        
+        //this.CrawlMode = 1.0;
+        this.RotationRateAdjust = 2.5;
+        
         this.UpdateDrive(vec, rotation, heading);
         this.setFieldRelative(true);
+        
+        this.RotationRateAdjust = 1;
     }
 
     public double getAngleToWall()

@@ -71,6 +71,8 @@ public class Autonomous {
     
     public void Run()
     {
+        SmartDashboard.putString("autoMode", autoMode.toString());
+        SmartDashboard.putString("autoState", autoState.toString());
         switch (autoState)
         {
             case GRAB_CONTAINER:
@@ -84,8 +86,8 @@ public class Autonomous {
                 break;
                 
             case GRAB_CONTAINER_WAIT:
-                if (lift.GetContainerInStack() &&
-                        lift.GetCar().GetActuator().GetPositionRaw() > LIFT_POSITIONS_E.DESTACK.ordinal())
+                if (lift.GetContainerInStack() /*&&
+                        lift.GetCar().GetActuator().GetPositionRaw() > LIFT_POSITIONS_E.DESTACK.ordinal()*/)
                 {
                     // wait until the container is 'in the stack' (ie in the top holders)
                     // then move on to the next step
