@@ -178,27 +178,24 @@ public abstract class Constants {
     // Autonomous mode
     public static enum AUTO_MODE {
         DO_NOTHING,
+        MOVE_CONTAINER_OUT,
         GO_TO_ZONE,
-        GRAB_CONTAINER,
+        GRAB_CONTAINER_GO_TO_ZONE,
         GRAB_CONTAINER_NO_MOVE,
         GRAB_CONTAINER_RIGHT_CHUTE,
         GRAB_CONTAINER_LEFT_CHUTE,
     }
 
     public static enum AUTO_STATE {
-        GRAB_CONTAINER,
-
-        GRAB_CONTAINER_WAIT,
+        GRAB_CONTAINER, GRAB_CONTAINER_WAIT,
         
-        DRIVE_RIGHT_TO_GRAB_TOTE, GRAB_RIGHT_SIDE_TOTE,
-
-        DRIVE_LEFT_TO_GRAB_TOTE, GRAB_LEFT_SIDE_TOTE,
-
         DRIVE_TO_AUTO_ZONE,
-
-        LOWER_TOTES, DROP_TOTES, BACK_UP,
-
-        STOP, LINE_UP,
+        
+        MOVE_CONTAINER_OUT,
+        
+        LINE_UP, LINE_UP_ULTRA,
+        
+        STOP, 
     }
 
     public static enum AUTO_STATE_MACHINE_L {
