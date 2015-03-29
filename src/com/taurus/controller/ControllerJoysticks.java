@@ -358,12 +358,6 @@ public class ControllerJoysticks implements Controller {
         return false;
     }
 
-    @Override
-    public boolean getInitialize()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     @Override
     public boolean getCarryStackNoTote()

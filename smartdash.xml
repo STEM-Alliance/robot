@@ -1,19 +1,46 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Lineup Back Right Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1084" y="48"/>
+	</widget>
+	<widget field="Lineup Back Left Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1089" y="143"/>
+	</widget>
+	<widget field="Lineup Rotation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1096" y="292"/>
+	</widget>
+	<widget field="Lineup X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1122" y="241"/>
+	</widget>
+	<widget field="Lineup Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1126" y="262"/>
+	</widget>
+	<widget field="Lineup" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1118" y="218"/>
+	</widget>
+	<widget field="Lineup Back Left" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1109" y="119"/>
+	</widget>
+	<widget field="Lineup Back Right" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1108" y="76"/>
+	</widget>
+	<widget field="Lineup Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1101" y="192"/>
+	</widget>
 	<widget field="Vision error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="238" y="135"/>
 	</widget>
 	<widget field="LEDs" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="242" y="114"/>
+		<location x="272" y="113"/>
 	</widget>
 	<widget field="RailContents" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="242" y="93"/>
+		<location x="255" y="94"/>
 	</widget>
 	<widget field="StateDropStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="242" y="72"/>
+		<location x="250" y="71"/>
 	</widget>
 	<widget field="StateCarryStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="236"/>
+		<location x="56" y="243"/>
 	</widget>
 	<widget field="pot read" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1357" y="404"/>
@@ -22,7 +49,7 @@
 		<location x="1402" y="318"/>
 	</widget>
 	<widget field="Swerve Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1229" y="58"/>
+		<location x="1158" y="11"/>
 	</widget>
 	<widget field="CylindersRails.State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="626" y="434"/>
