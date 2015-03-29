@@ -193,8 +193,6 @@ public interface Controller {
 
     public boolean getWheelCal();
     
-    public boolean getInitialize();
-    
     public boolean getLiftShake();
     
     /**

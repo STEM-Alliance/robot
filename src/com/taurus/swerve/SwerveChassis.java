@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Swerve chassis implementation
@@ -334,6 +335,9 @@ public class SwerveChassis extends Subsystem {
 
         RobotVelocity = restrictVelocity(RobotVelocity);
 
+        SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
+        SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
+        SmartDashboard.putNumber("Drive R", RobotRotation);
 
         // calculate vectors for each wheel
         for (int i = 0; i < SwerveConstants.WheelCount; i++)

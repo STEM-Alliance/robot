@@ -349,13 +349,6 @@ public class ControllerXbox implements Controller {
     }
 
     @Override
-    public boolean getInitialize()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
     public boolean getCarryStackNoTote()
     {
         // TODO Auto-generated method stub

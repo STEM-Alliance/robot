@@ -103,7 +103,7 @@ public class ControllerXboxPanel implements Controller, Runnable {
         double value = 0;
 
         value = xbox.getAxis(Xbox.AxisType.kRightX);
-
+ 
         if (Math.abs(value) < DEADBAND)
         {
             value = 0;
@@ -136,14 +136,14 @@ public class ControllerXboxPanel implements Controller, Runnable {
     {
         double val = -1;
         
-        if(xbox.getBack())
-        {
-            val = 45;
-        }
-        else if(xbox.getStart())
-        {
-            val = -45;
-        }
+//        if(xbox.getBack())
+//        {
+//            val = 45;
+//        }
+//        else if(xbox.getStart())
+//        {
+//            val = -45;
+//        }
         return val;
     }
     
@@ -400,15 +400,9 @@ public class ControllerXboxPanel implements Controller, Runnable {
     }
 
     @Override
-    public boolean getInitialize()
-    {
-        return xbox.getButton(ButtonType.kLeftStick) && xbox.getButton(ButtonType.kRightStick);
-    }
-
-    @Override
     public boolean getCarryStackNoTote()
     {
-        return xbox.getTrigger(Hand.kLeft);
+        return xbox.getStart();
     }
 
     @Override
@@ -421,6 +415,6 @@ public class ControllerXboxPanel implements Controller, Runnable {
     @Override
     public boolean getUltrasonicLineup()
     {
-        return panel.getGreenRButton();
+        return xbox.getTrigger(Hand.kLeft);
     }
 }

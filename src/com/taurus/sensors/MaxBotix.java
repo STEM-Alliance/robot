@@ -137,7 +137,13 @@ public abstract class MaxBotix extends SensorBase implements PIDSource,
                 }
 
                 // using m_distanceBuffer as a circular buffer here
-                u.m_distanceBufferInches[u.m_distanceBufferIndex++] = u.getRangeInches();
+                double newRangeReading = u.getRangeInches();
+                
+                // try to filter out any huge jumps
+                //if(Math.abs(newRangeReading - u.getRangeInchesAverage()) <= 5)
+                {
+                    u.m_distanceBufferInches[u.m_distanceBufferIndex++] = newRangeReading;
+                }
                 
                 // move to next sensor
                 u = u.m_nextSensor;
