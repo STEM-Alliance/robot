@@ -14,11 +14,11 @@ public abstract class Constants {
     public static final int PCM_STACK_HOLDER = MODULE_ID_PCM_2;
     
     // first set is competition, second is backup robot
-    public static final int[][] CHANNEL_RAIL                = { { 3, 2 }, { 1, 0 } };
-    public static final int[][] CHANNEL_CONTAINER_CAR       = { { 5, 4 }, { 7, 6 } };
-    public static final int[][] CHANNEL_CONTAINER_FIXED     = { { 7, 6 }, { 5, 4 } };
-    public static final int[][] CHANNEL_STOP                = { { 1, 0 }, { 3, 2 } };
-    public static final int[][] CHANNEL_STACK_HOLDER        = { { 1, 0 }, { 5, 4 } };
+    public static final int[][] CHANNEL_RAIL                = { { 3, 2 }, { 3, 2 } };
+    public static final int[][] CHANNEL_CONTAINER_CAR       = { { 5, 4 }, { 5, 4 } };
+    public static final int[][] CHANNEL_CONTAINER_FIXED     = { { 7, 6 }, { 7, 6 } };
+    public static final int[][] CHANNEL_STOP                = { { 1, 0 }, { 1, 0 } };
+    public static final int[][] CHANNEL_STACK_HOLDER        = { { 1, 0 }, { 1, 0 } };
 
     // what is the amount of time required to extend?
     public static final double TIME_EXTEND_RAILS = .3;

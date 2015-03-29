@@ -43,6 +43,8 @@ public class SwerveChassis extends Subsystem {
     private double MinRotationAdjust = .3;
     private double MaxAcceleration = 2; // Smaller is slower acceleration
     private double MaxAvailableVelocity = 1;
+    
+    protected double RotationRateAdjust = 1;
 
     private SwerveVector LastVelocity;
 
@@ -50,7 +52,7 @@ public class SwerveChassis extends Subsystem {
 
     private DriveScheme driveScheme;
 
-    private double CrawlMode = 0.0;
+    protected double CrawlMode = 0.0;
     private SwerveVector AutoVector;
     private double AutoTimeLength;
     private boolean AutoRunEnable;
@@ -307,11 +309,16 @@ public class SwerveChassis extends Subsystem {
         // limit before slowing speed so it runs using the original values
         // set limitations on rotation,
         // so if driving full speed it doesn't take priority
+        MinRotationAdjust = Application.prefs.getDouble("MinRotationAdjust", MinRotationAdjust);
         double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + MinRotationAdjust, 1);
         RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
+
+        SmartDashboard.putNumber("Drive R pre", RobotRotation);
         
         RobotRotation *= (SwerveConstants.DriveSpeedCrawl + (1 - SwerveConstants.DriveSpeedCrawl) * CrawlMode * .9);
         
+
+        SmartDashboard.putNumber("Drive R pre 2", RobotRotation);
         // scale the speed down unless we're in high speed mode
         
         double crawlSpeed = Application.prefs.getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
@@ -327,10 +334,15 @@ public class SwerveChassis extends Subsystem {
         }
         else
         {
-            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + 
-                    (1 - crawlSpeed) * CrawlMode));
-            
+            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * CrawlMode));
         }
+        
+        if(Application.ROBOT_VERSION == 1)
+        {
+            RobotRotation *= 1.25;
+        }
+        
+        RobotRotation *= RotationRateAdjust;
         
 
         RobotVelocity = restrictVelocity(RobotVelocity);
@@ -448,7 +460,7 @@ public class SwerveChassis extends Subsystem {
         Gyro.setZero(yaw);
         LastHeading = yaw;
     }
-
+    
     /**
      * Set the chassis's brake
      * 

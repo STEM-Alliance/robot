@@ -827,7 +827,7 @@ public class Lift extends Subsystem {
 
     public void SetContainerInStack(boolean b)
     {
-        ContainerInStack = b;
+        ContainerInStack = b; 
     }
 
     public void SetToteOnRails(boolean b)

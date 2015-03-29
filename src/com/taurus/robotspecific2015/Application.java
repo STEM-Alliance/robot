@@ -2,6 +2,7 @@ package com.taurus.robotspecific2015;
 
 import com.taurus.robotspecific2015.Constants.*;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,6 +23,8 @@ public class Application extends com.taurus.Application {
     private boolean StartTeleInChute = false;
     private boolean StartTeleGyroCal = true;
     public double StartMatchTime = 0;
+    
+    private AnalogInput distanceToteSensor;
 
 
     public Application()
@@ -48,6 +51,8 @@ public class Application extends com.taurus.Application {
         testChooser.addDefault("Pneumatics/Motors", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
         testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
+        
+        distanceToteSensor = new AnalogInput(7);
     }
 
     public void TeleopInitRobotSpecific()
@@ -98,6 +103,7 @@ public class Application extends com.taurus.Application {
 
     public void TeleopPeriodicRobotSpecific()
     {
+        SmartDashboard.putBoolean("Tote Sensor", distanceToteSensor.getValue() > 400);
         UpdateDashboard();
         
         if(StartMatchTime > 105.0 && StartMatchTime < 110.0)
