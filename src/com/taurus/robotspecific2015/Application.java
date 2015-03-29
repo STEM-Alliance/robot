@@ -28,15 +28,18 @@ public class Application extends com.taurus.Application {
     {
         super();
 
-        drive = new UltraSonicDrive(controller);
         lift = new Lift(drive, controller);
         
         vision.Start();
 
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Do nothing", AUTO_MODE.DO_NOTHING);
-        autoChooser.addObject("Container To Zone", AUTO_MODE.GRAB_CONTAINER);
+        autoChooser.addObject("Go To Zone", AUTO_MODE.GO_TO_ZONE);
+        autoChooser.addObject("Move Container Out", AUTO_MODE.MOVE_CONTAINER_OUT);
+        autoChooser.addObject("Container To Zone", AUTO_MODE.GRAB_CONTAINER_GO_TO_ZONE);
         autoChooser.addObject("Container No Move", AUTO_MODE.GRAB_CONTAINER_NO_MOVE);
+        autoChooser.addObject("Container Right Chute", AUTO_MODE.GRAB_CONTAINER_RIGHT_CHUTE);
+        autoChooser.addObject("Container Left Chute", AUTO_MODE.GRAB_CONTAINER_LEFT_CHUTE);
 
 
         SmartDashboard.putData("Autonomous mode", autoChooser);

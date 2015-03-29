@@ -2,6 +2,7 @@ package com.taurus;
 
 import com.taurus.controller.Controller;
 import com.taurus.controller.ControllerChooser;
+import com.taurus.robotspecific2015.UltraSonicDrive;
 import com.taurus.swerve.SwerveChassis;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -64,7 +65,7 @@ public abstract class Application {
         controllerChooser = new ControllerChooser();
         controller = controllerChooser.GetController();
         
-        drive = new SwerveChassis(controller);
+        drive = new UltraSonicDrive(controller);
     }
     
     public void TeleopInit()
@@ -179,40 +180,7 @@ public abstract class Application {
      */
     private void UpdateDashboard()
     {
-//        for (int i = 0; i < 16; i++)
-//        {
-//            SmartDashboard.putNumber("PDP " + i, PDP.getCurrent(i));
-//        }
-//
-//        SmartDashboard.putNumber("PDP Total Current", PDP.getTotalCurrent());
-//        SmartDashboard.putNumber("PDP Total Power", PDP.getTotalPower());
-//        SmartDashboard.putNumber("PDP Total Energy", PDP.getTotalEnergy());
         SmartDashboard.putNumber("Voltage", PDP.getVoltage());
-
-        // display the joysticks on smart dashboard
-//        SmartDashboard.putNumber("Left Mag",
-//                controller.getMagnitude(Hand.kLeft));
-//        SmartDashboard.putNumber("Left Angle",
-//                controller.getDirectionDegrees(Hand.kLeft));
-//        SmartDashboard.putNumber("Right Mag",
-//                controller.getMagnitude(Hand.kRight));
-//        SmartDashboard.putNumber("Right Angle",
-//                controller.getDirectionDegrees(Hand.kRight));
-
-//        if (driveScheme.get() == DriveScheme.ANGLE_DRIVE)
-//        {
-//            SmartDashboard.putNumber("Angle heading",
-//                    controller.getAngleDrive_Heading());
-//        }
-//
-//        // display each wheel's mag and angle in SmartDashboard
-//        for (int i = 0; i < SwerveConstants.WheelCount; i++)
-//        {
-//            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Mag",
-//                    drive.getWheelActual(i).getMag());
-//            SmartDashboard.putNumber("Wheel " + Integer.toString(i) + " Angle",
-//                    drive.getWheelActual(i).getAngle());
-//        }
 
         SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getYaw());
         SmartDashboard.putNumber("Last Heading", drive.getLastHeading());
