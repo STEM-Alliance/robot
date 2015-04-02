@@ -23,8 +23,7 @@ public class Application extends com.taurus.Application {
     private boolean StartTeleInChute = false;
     private boolean StartTeleGyroCal = true;
     public double StartMatchTime = 0;
-    
-    private AnalogInput distanceToteSensor;
+
 
 
     public Application()
@@ -52,7 +51,6 @@ public class Application extends com.taurus.Application {
         testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
         
-        distanceToteSensor = new AnalogInput(7);
     }
 
     public void TeleopInitRobotSpecific()
@@ -103,7 +101,6 @@ public class Application extends com.taurus.Application {
 
     public void TeleopPeriodicRobotSpecific()
     {
-        SmartDashboard.putBoolean("Tote Sensor", distanceToteSensor.getValue() > 400);
         UpdateDashboard();
         
         if(StartMatchTime > 105.0 && StartMatchTime < 110.0)
@@ -133,7 +130,7 @@ public class Application extends com.taurus.Application {
             lift.GetEjector().StopIn();
             
         }
-        else if(controller.getLiftShake())
+        else if(controller.getLiftShake() && !lift.IsToteInPlace())
         {
             lift.ShakeCar();
         }

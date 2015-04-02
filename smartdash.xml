@@ -1,5 +1,32 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Tote Sensor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="236"/>
+	</widget>
+	<widget field="Zero Right" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="254" y="150"/>
+	</widget>
+	<widget field="Zero Left" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="296" y="479"/>
+	</widget>
+	<widget field="Zero Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="843" y="392"/>
+	</widget>
+	<widget field="ToteOnRails" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="697" y="411"/>
+	</widget>
+	<widget field="ContainerInStack" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="672" y="388"/>
+	</widget>
+	<widget field="Lineup" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="254" y="135"/>
+	</widget>
+	<widget field="Brake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="603" y="25"/>
+	</widget>
+	<widget field="Field Relative" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="565" y="3"/>
+	</widget>
 	<widget field="autoState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="207" y="207"/>
 		<width>220</width>
@@ -19,9 +46,6 @@
 	</widget>
 	<widget field="Drive Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1136" y="54"/>
-	</widget>
-	<widget field="Lineup" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="254" y="135"/>
 	</widget>
 	<widget field="RailContents" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="254" y="114"/>
@@ -110,11 +134,6 @@
 		<width>263</width>
 		<property name="Editable" value="false"/>
 	</widget>
-	<widget field="ContainerInStack" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="672" y="388"/>
-		<width>135</width>
-		<property name="Editable" value="false"/>
-	</widget>
 	<widget field="CurrentLiftAction_" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="362" y="366"/>
 		<width>223</width>
@@ -123,11 +142,6 @@
 	<widget field="StateAddChuteToteToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="317" y="390"/>
 		<width>268</width>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="ToteOnRails" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="697" y="411"/>
-		<width>110</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="TotesInStack" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -143,11 +157,6 @@
 	<widget field="Actuator Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="985" y="416"/>
 		<width>117</width>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="Zero Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="843" y="392"/>
-		<width>111</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="ToteIntakeSensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -217,18 +226,6 @@
 	<widget field="Last Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="695" y="25"/>
 		<width>127</width>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="Field Relative" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="565" y="3"/>
-		<width>119</width>
-		<height>20</height>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="Brake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="603" y="25"/>
-		<width>81</width>
-		<height>23</height>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Gyro Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
