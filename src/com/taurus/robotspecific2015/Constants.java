@@ -18,7 +18,7 @@ public abstract class Constants {
     public static final int[][] CHANNEL_CONTAINER_CAR       = { { 5, 4 }, { 5, 4 } };
     public static final int[][] CHANNEL_CONTAINER_FIXED     = { { 7, 6 }, { 7, 6 } };
     public static final int[][] CHANNEL_STOP                = { { 1, 0 }, { 1, 0 } };
-    public static final int[][] CHANNEL_STACK_HOLDER        = { { 1, 0 }, { 1, 0 } };
+    public static final int[][] CHANNEL_STACK_HOLDER        = { { 1, 0 }, { 1, 0} };
 
     // what is the amount of time required to extend?
     public static final double TIME_EXTEND_RAILS = .3;
@@ -45,6 +45,12 @@ public abstract class Constants {
     public static final int CHANNEL_DIGITAL_CAR_ZERO_LEFT = 6;
     public static final int CHANNEL_DIGITAL_CAR_ZERO_RIGHT = 7;
     public static final int CHANNEL_DIGITAL_CAR_CHUTE = 9;
+    
+    public static final int CHANNEL_ANALOG_TOTE_SENSOR = 7;
+    public static final int TOTE_SENSOR_TRIGGER_VALUE = 500;
+    public static enum TOTE_SENSOR_STATES {
+        NO_TOTE, TOTE_DETECTED, TOTE_IN
+    };
     
     // Ultrasonic
     public static final int[] ULTRASONIC_SENSOR_BACK_LEFT = {10, 5};
@@ -74,8 +80,6 @@ public abstract class Constants {
     public static final double LIFT_CAR_TIME_DOWN_INCREASING = 0.7;
     public static final double LIFT_CAR_TIME_DOWN_FINAL = 1;
 
-    public static final int DISTANCE_SENSOR_LEFT_PIN = 5;
-    public static final int DISTANCE_SENSOR_RIGHT_PIN = 6;
 
     // Car
     public static enum LIFT_POSITIONS_E {

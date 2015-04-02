@@ -4,11 +4,13 @@ import com.taurus.controller.Controller;
 import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // Manages manipulators and supporting systems
 public class Lift extends Subsystem {
@@ -38,10 +40,14 @@ public class Lift extends Subsystem {
     private boolean AutonomousToteTriggered;
 
     private double StopperWaitTime = 0;
-    
+
     private final Controller controller;
 
     public final Relay LED = new Relay(2);
+
+    private AnalogInput distanceToteSensor;
+    private int  distanceToteWait;
+    private TOTE_SENSOR_STATES distanceToteState;
 
     /**
      * Initialize lift and all objects owned by the lift
@@ -58,24 +64,28 @@ public class Lift extends Subsystem {
         LiftCar = new Car(this.controller);
         StackEjector = new Ejector();
         CylindersRails =
-                new PneumaticSubsystem(Constants.CHANNEL_RAIL[Application.ROBOT_VERSION],
+                new PneumaticSubsystem(
+                        Constants.CHANNEL_RAIL[Application.ROBOT_VERSION],
                         Constants.PCM_RAIL, Constants.TIME_EXTEND_RAILS,
                         Constants.TIME_CONTRACT_RAILS,
                         Constants.CYLINDER_ACTION.EXTEND);
         CylindersContainerCar =
-                new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_CAR[Application.ROBOT_VERSION],
+                new PneumaticSubsystem(
+                        Constants.CHANNEL_CONTAINER_CAR[Application.ROBOT_VERSION],
                         Constants.PCM_CONTAINER_CAR,
                         Constants.TIME_EXTEND_CONTAINER_CAR,
                         Constants.TIME_CONTRACT_CONTAINER_CAR,
                         Constants.CYLINDER_ACTION.CONTRACT);
         CylindersContainerFixed =
-                new PneumaticSubsystem(Constants.CHANNEL_CONTAINER_FIXED[Application.ROBOT_VERSION],
+                new PneumaticSubsystem(
+                        Constants.CHANNEL_CONTAINER_FIXED[Application.ROBOT_VERSION],
                         Constants.PCM_CONTAINER_FIXED,
                         Constants.TIME_EXTEND_CONTAINER_FIXED,
                         Constants.TIME_CONTRACT_CONTAINER_FIXED,
                         Constants.CYLINDER_ACTION.CONTRACT);
         CylindersStackHolder =
-                new PneumaticSubsystem(Constants.CHANNEL_STACK_HOLDER[Application.ROBOT_VERSION],
+                new PneumaticSubsystem(
+                        Constants.CHANNEL_STACK_HOLDER[Application.ROBOT_VERSION],
                         Constants.PCM_STACK_HOLDER,
                         Constants.TIME_EXTEND_STACK_HOLDER,
                         Constants.TIME_CONTRACT_STACK_HOLDER,
@@ -84,6 +94,9 @@ public class Lift extends Subsystem {
         LED.setDirection(Direction.kForward);
         LED.set(Value.kForward);
 
+        distanceToteSensor =
+                new AnalogInput(Constants.CHANNEL_ANALOG_TOTE_SENSOR);
+        distanceToteWait = 0;
         init();
     }
 
@@ -110,12 +123,46 @@ public class Lift extends Subsystem {
         // this.ContainerInStack = false;
         this.RailContents = RAIL_CONTENTS.EMPTY;
         this.AutonomousToteTriggered = false;
+        distanceToteState = TOTE_SENSOR_STATES.NO_TOTE;
+        distanceToteWait = 0;
     }
 
     public boolean IsToteInPlace()
     {
+        switch (distanceToteState)
+        {
+            case NO_TOTE:
+                if (distanceToteSensor.getValue() > Constants.TOTE_SENSOR_TRIGGER_VALUE)
+                {
+                    if(distanceToteWait >= 2)
+                    {
+                        distanceToteState = TOTE_SENSOR_STATES.TOTE_DETECTED;
+                        distanceToteWait = 0;
+                    }
+                    else
+                        distanceToteWait++;
+                        
+                }
+                break;
+            case TOTE_DETECTED:
+                if (distanceToteSensor.getValue() < Constants.TOTE_SENSOR_TRIGGER_VALUE)
+                {
+                    if(distanceToteWait >= 2)
+                    {
+                        distanceToteState = TOTE_SENSOR_STATES.TOTE_IN;
+                        distanceToteWait = 0;
+                    }
+                    else
+                        distanceToteWait++;
+                }
+                break;
+            default:
+                break;
+
+        }
+
         return AutonomousToteTriggered
-        // || ToteIntakeSensor.IsOn()
+               || distanceToteState == TOTE_SENSOR_STATES.TOTE_IN
                || controller.getFakeToteAdd();
     }
 
@@ -136,7 +183,7 @@ public class Lift extends Subsystem {
      */
     public boolean AddChuteToteToStack(int MaxTotesInStack)
     {
-
+        SmartDashboard.putNumber("Tote Sensor", distanceToteSensor.getValue());
         // LED.set(Value.kOn);
         switch (StateAddChuteToteToStack)
         {
@@ -224,6 +271,8 @@ public class Lift extends Subsystem {
                         TotesInStack = TotesInStack + 1;
                     }
 
+                    distanceToteState = TOTE_SENSOR_STATES.NO_TOTE;
+                    distanceToteWait = 0;
                     RailContents = RAIL_CONTENTS.EMPTY;
                     StateAddChuteToteToStack =
                             STATE_ADD_CHUTE_TOTE_TO_STACK.RESET;
@@ -234,15 +283,15 @@ public class Lift extends Subsystem {
                 // wait 2 seconds before putting in the stopper
                 if (Timer.getFPGATimestamp() - StopperWaitTime < .25)
                 {
-                    StackEjector.StopIn();
+                    //StackEjector.StopIn();
                 }
                 else if (Timer.getFPGATimestamp() - StopperWaitTime < .5)
                 {
-                    //StackEjector.StopOut();
+                    // StackEjector.StopOut();
                 }
-                else 
+                else
                 {
-                    StackEjector.StopIn();
+                    //StackEjector.StopIn();
                 }
                 break;
 
@@ -286,14 +335,14 @@ public class Lift extends Subsystem {
                 else if (Timer.getFPGATimestamp() - StopperWaitTime > 1)
                 {
 
-                    StackEjector.StopOut();
+                    //StackEjector.StopOut();
                     if (LiftCar.GetHeight() < 4)
                     {
                         CylindersRails.Extend();
                     }
                     else
                     {
-                        CylindersRails.Contract();
+                        //CylindersRails.Contract();
                     }
                 }
                 break;
@@ -577,8 +626,7 @@ public class Lift extends Subsystem {
                         if (LiftCar.GoToDestack(ContainerInStack)
                             & CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
-                            & CylindersContainerCar.Contract()
-                            & StackEjector.StopIn())
+                            & CylindersContainerCar.Contract())
                         {
                             StateCarry = STATE_CARRY.STACK_HOLDER_RELEASE;
                         }
@@ -593,8 +641,7 @@ public class Lift extends Subsystem {
                         if (LiftCar.GoToStack(TotesInStack, ContainerInStack)
                             & CylindersRails.Extend()
                             & CylindersStackHolder.Contract()
-                            & CylindersContainerCar.Contract()
-                            & StackEjector.StopIn())
+                            & CylindersContainerCar.Contract())
                         {
                             StateCarry = STATE_CARRY.STACK_HOLDER_RELEASE;
                         }
@@ -620,8 +667,7 @@ public class Lift extends Subsystem {
                 if (CylindersStackHolder.Extend()
                     & CylindersContainerFixed.Contract()
                     & CylindersRails.Extend()
-                    & CylindersContainerCar.Contract()
-                    & StackEjector.StopIn())
+                    & CylindersContainerCar.Contract())
                 {
                     if (RailContents == RAIL_CONTENTS.TOTE)
                     {
@@ -639,11 +685,12 @@ public class Lift extends Subsystem {
                     & CylindersStackHolder.Extend()
                     & CylindersContainerFixed.Contract()
                     & CylindersRails.Extend()
-                    & CylindersContainerCar.Contract()
-                    & StackEjector.StopIn())
+                    & CylindersContainerCar.Contract())
                 {
                     // Application.leds.AddEffect(effectsInTransit, true);
                     StateCarry = STATE_CARRY.INIT;
+                    distanceToteState = TOTE_SENSOR_STATES.NO_TOTE;
+                    distanceToteWait = 0;
                 }
                 break;
 
@@ -705,6 +752,8 @@ public class Lift extends Subsystem {
 
                     StateDropStack = STATE_DROP_STACK.INIT;
                     Finish = true;
+                    distanceToteState = TOTE_SENSOR_STATES.NO_TOTE;
+                    distanceToteWait = 0;
                 }
                 break;
 
@@ -827,7 +876,7 @@ public class Lift extends Subsystem {
 
     public void SetContainerInStack(boolean b)
     {
-        ContainerInStack = b; 
+        ContainerInStack = b;
     }
 
     public void SetToteOnRails(boolean b)
