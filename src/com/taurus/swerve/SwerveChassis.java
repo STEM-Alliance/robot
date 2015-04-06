@@ -313,12 +313,12 @@ public class SwerveChassis extends Subsystem {
         double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + MinRotationAdjust, 1);
         RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
 
-        SmartDashboard.putNumber("Drive R pre", RobotRotation);
+//        SmartDashboard.putNumber("Drive R pre", RobotRotation);
         
         RobotRotation *= (SwerveConstants.DriveSpeedCrawl + (1 - SwerveConstants.DriveSpeedCrawl) * CrawlMode * .9);
         
 
-        SmartDashboard.putNumber("Drive R pre 2", RobotRotation);
+//        SmartDashboard.putNumber("Drive R pre 2", RobotRotation);
         // scale the speed down unless we're in high speed mode
         
         double crawlSpeed = Application.prefs.getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
@@ -347,9 +347,9 @@ public class SwerveChassis extends Subsystem {
 
         RobotVelocity = restrictVelocity(RobotVelocity);
 
-        SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
-        SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
-        SmartDashboard.putNumber("Drive R", RobotRotation);
+//        SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
+//        SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
+//        SmartDashboard.putNumber("Drive R", RobotRotation);
 
         // calculate vectors for each wheel
         for (int i = 0; i < SwerveConstants.WheelCount; i++)

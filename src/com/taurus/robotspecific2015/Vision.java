@@ -46,7 +46,7 @@ public class Vision implements Runnable {
 
     //                                   back    front
     private final String CAMS[][] = { { "cam0", "cam1" },   // competition bot
-                                      { "cam0", "cam1" } }; // backup bot
+                                      { "cam2", "cam1" } }; // backup bot
     
     public double getResultX()
     {
@@ -148,9 +148,9 @@ public class Vision implements Runnable {
                     
                     GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
                     
-                    SmartDashboard.putString("FrameSize", size.width
-                                                          + ","
-                                                          + size.height);
+//                    SmartDashboard.putString("FrameSize", size.width
+//                                                          + ","
+//                                                          + size.height);
 
                     if (imageToSend == 0 || imageToSend == 1)
                     {
@@ -204,7 +204,7 @@ public class Vision implements Runnable {
                         int particleCount =
                                 NIVision.imaqCountParticles(frameTH, /* connectivity8 */
                                         1);
-                        SmartDashboard.putNumber("Particles", particleCount);
+//                        SmartDashboard.putNumber("Particles", particleCount);
 
                         // find the bounding rectangle, then send
                         double biggestArea = -1;
@@ -235,13 +235,13 @@ public class Vision implements Runnable {
                             }
                         }
 
-                        SmartDashboard.putNumber("Area", biggestArea);
-                        SmartDashboard
-                                .putString("Center", df.format(biggestX)
-                                                     + ","
-                                                     + df.format(biggestY));
-                        SmartDashboard.putNumber("Orientation",
-                                biggestOrientation);
+//                        SmartDashboard.putNumber("Area", biggestArea);
+//                        SmartDashboard
+//                                .putString("Center", df.format(biggestX)
+//                                                     + ","
+//                                                     + df.format(biggestY));
+//                        SmartDashboard.putNumber("Orientation",
+//                                biggestOrientation);
 
                         synchronized (visionThread)
                         {

@@ -77,9 +77,9 @@ public class TestApplication extends Application {
         }
         
         SmartDashboard.putBoolean("Zero Sensor", ZeroSensor.IsOn());
-        SmartDashboard.putNumber("Actuator Raw", Actuator.GetRaw());
+//        SmartDashboard.putNumber("Actuator Raw", Actuator.GetRaw());
         SmartDashboard.putNumber("Actuator Distance", Actuator.GetDistance());
-        SmartDashboard.putNumber("Actuator Position", Actuator.GetPositionRaw());
+//        SmartDashboard.putNumber("Actuator Position", Actuator.GetPositionRaw());
     }
 
     @Override

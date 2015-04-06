@@ -82,12 +82,12 @@ public class UltraSonicDrive extends SwerveChassis {
         
         double AverageDistanceFromWall = (ultraBR.getRangeInchesAverage() + ultraBL.getRangeInchesAverage()) / 2;
         
-        SmartDashboard.putNumber("Lineup Angle", AngleError);
-
-        SmartDashboard.putNumber("Lineup Back Left", ultraBL.getRangeInchesAverage());
-        SmartDashboard.putNumber("Lineup Back Right", ultraBR.getRangeInchesAverage());
-        SmartDashboard.putNumber("Lineup Back Left Raw", ultraBL.getRangeInches());
-        SmartDashboard.putNumber("Lineup Back Right Raw", ultraBR.getRangeInches());
+//        SmartDashboard.putNumber("Lineup Angle", AngleError);
+//
+//        SmartDashboard.putNumber("Lineup Back Left", ultraBL.getRangeInchesAverage());
+//        SmartDashboard.putNumber("Lineup Back Right", ultraBR.getRangeInchesAverage());
+//        SmartDashboard.putNumber("Lineup Back Left Raw", ultraBL.getRangeInches());
+//        SmartDashboard.putNumber("Lineup Back Right Raw", ultraBR.getRangeInches());
         
 //        SmartDashboard.putNumber("UltraSonicSensor Angle Left", ultraAL.getRangeInches());
 //        SmartDashboard.putNumber("UltraSonicSensor Angle Right", ultraAR.getRangeInches());
@@ -154,9 +154,9 @@ public class UltraSonicDrive extends SwerveChassis {
 
         yvel *= driveRate;
         
-        SmartDashboard.putNumber("Lineup Y", yvel);
-        SmartDashboard.putNumber("Lineup X", xvel);
-        SmartDashboard.putNumber("Lineup Rotation", rotation);
+//        SmartDashboard.putNumber("Lineup Y", yvel);
+//        SmartDashboard.putNumber("Lineup X", xvel);
+//        SmartDashboard.putNumber("Lineup Rotation", rotation);
 
         SwerveVector vec = new SwerveVector(xvel, yvel);
         
@@ -164,7 +164,7 @@ public class UltraSonicDrive extends SwerveChassis {
 
         heading = super.getGyro().getYaw() + AngleError;
         
-        SmartDashboard.putNumber("Lineup Heading", heading);
+//        SmartDashboard.putNumber("Lineup Heading", heading);
         
         this.setFieldRelative(false);
         
