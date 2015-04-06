@@ -44,6 +44,10 @@ public class Vision implements Runnable {
     private double resultOrientation = 0;
     private boolean particleSeen = false;
 
+    //                                   back    front
+    private final String CAMS[][] = { { "cam0", "cam1" },   // competition bot
+                                      { "cam0", "cam1" } }; // backup bot
+    
     public double getResultX()
     {
         synchronized (visionThread)
@@ -128,7 +132,9 @@ public class Vision implements Runnable {
                     SmartDashboard.putString("Vision error", e.getMessage());
                 }
                 
-                session = OpenCamera(imageToSend == 1 ? "cam0" : "cam1");
+                session = OpenCamera(imageToSend == 1 ?
+                            CAMS[Application.ROBOT_VERSION][0] :
+                            CAMS[Application.ROBOT_VERSION][1]);
             }
 
 
