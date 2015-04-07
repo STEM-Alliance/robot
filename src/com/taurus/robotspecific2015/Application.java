@@ -19,7 +19,8 @@ public class Application extends com.taurus.Application {
     private SendableChooser autoChooser;
     private SendableChooser testChooser;
     private Autonomous autonomous;
-
+    private SendableChooser startingAngleChooser;
+    
     private boolean StartTeleInChute = false;
     private boolean StartTeleGyroCal = true;
     public double StartMatchTime = 0;
@@ -50,7 +51,14 @@ public class Application extends com.taurus.Application {
         testChooser.addDefault("Pneumatics/Motors", Integer.valueOf(Constants.TEST_MODE_PNEUMATIC));
         testChooser.addObject("Actuator", Integer.valueOf(Constants.TEST_MODE_ACTUATOR));
         SmartDashboard.putData("Test", testChooser);
-        
+    
+        startingAngleChooser = new SendableChooser();
+        startingAngleChooser.addDefault("45Left", -45);
+        startingAngleChooser.addObject("45Right", 45);
+        startingAngleChooser.addObject("0Forward", 0);
+        startingAngleChooser.addObject("90Left", -90);
+        startingAngleChooser.addObject("90Right", 90);
+        SmartDashboard.putData("StartingAngle", startingAngleChooser);
     }
 
     public void TeleopInitRobotSpecific()
@@ -248,10 +256,13 @@ public class Application extends com.taurus.Application {
 
     public void AutonomousInitRobotSpecific()
     {
+        
+        
         lift.init();
         lift.SetContainerInStack(false);
         
         drive.ZeroGyro();
+        drive.SetGyroZero(((Integer) startingAngleChooser.getSelected()).intValue());
         AUTO_MODE automode = (AUTO_MODE) autoChooser.getSelected();
         autonomous = new Autonomous(drive, lift, vision, automode);
     }

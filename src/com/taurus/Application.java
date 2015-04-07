@@ -40,6 +40,7 @@ public abstract class Application {
     
     private double TimeLastDash = 0;
     private double TimeLastSwerve = 0;
+    private double TimeLastApp = 0;
 
     // Motor Objects
     protected SwerveChassis drive;
@@ -92,10 +93,14 @@ public abstract class Application {
             
             drive.run();
             
-            SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
+            //SmartDashboard.putNumber("Swerve Task Length", Timer.getFPGATimestamp() - TimeLastSwerve);
         }
 
+        TimeLastApp = Timer.getFPGATimestamp();
+        
         TeleopPeriodicRobotSpecific();
+
+        SmartDashboard.putNumber("App Task Length", Timer.getFPGATimestamp() - TimeLastApp);
     }
 
     public void TeleopDeInit()

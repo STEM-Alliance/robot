@@ -25,7 +25,6 @@ public class Autonomous {
 
     boolean dropSmallStack = true;
     private double autoStateChangeTime;
-    private float startingAngle;
     
     boolean grabContainerDone = false;
 
@@ -37,11 +36,6 @@ public class Autonomous {
         this.vision = vision;
         this.autoMode = automode;
 
-        drive.ZeroGyro();
-        
-        this.startingAngle = Application.prefs.getFloat("StartingAngle", -45);
-
-        drive.SetGyroZero(startingAngle);
         
         grabContainerDone = false;
         
@@ -132,12 +126,16 @@ public class Autonomous {
                 {
                     // stop moving after 4 seconds
                     drive.UpdateDrive(new SwerveVector(), 0, -1);
-
-                    if (lift.AddContainerToStack() && grabContainerDone)
+                    
+                    if (grabContainerDone)
                     {
                         // wait until the container is fully done (ie lift at the bottom) before we
                         // stop, collaborate and listen
                         autoState = AUTO_STATE.STOP;
+                    }
+                    else
+                    {
+                        grabContainerDone = lift.AddContainerToStack();
                     }
                 }
                 else

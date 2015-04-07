@@ -121,9 +121,9 @@ public class Car {
         
         
         if(ContainerInStack){
-            SetPosition(LIFT_POSITIONS_E.STACK, (Constants.LIFT_CAR_SPEED_UP + speedAdjust) * containerLiftSpeed);
+            Actuator.SetSpeedRaw((Constants.LIFT_CAR_SPEED_UP + speedAdjust) * containerLiftSpeed);
         } else{
-            SetPosition(LIFT_POSITIONS_E.STACK, Constants.LIFT_CAR_SPEED_UP + speedAdjust );
+            Actuator.SetSpeedRaw(Constants.LIFT_CAR_SPEED_UP + speedAdjust );
         }
         switch (ZeroState)
         {
@@ -386,12 +386,12 @@ public class Car {
                     - Constants.LIFT_CAR_TIME_DOWN_INITIAL < Constants.LIFT_CAR_TIME_DOWN_FINAL)
             {                   
                 // at full speed
-                Actuator.SetSpeedRaw(-1.0);
+                Actuator.SetSpeedRaw(-Constants.LIFT_CAR_SPEED_DOWN);
             }
             else
             {
                 // slow down so we don't ram the bottom 
-                Actuator.SetSpeedRaw(-0.5);
+                Actuator.SetSpeedRaw(-Constants.LIFT_CAR_SPEED_DOWN_FINAL);
             }
             
             

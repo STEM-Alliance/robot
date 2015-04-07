@@ -1,47 +1,78 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="StartingAngle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="151" y="161"/>
+	</widget>
+	<widget field="Vision Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="377" y="138"/>
+		<width>133</width>
+		<height>20</height>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="Actuator Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="380" y="46"/>
+		<width>134</width>
+		<property name="Editable" value="false"/>
+	</widget>
 	<widget field="ToteOnRails" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1119" y="395"/>
+		<location x="267" y="113"/>
 		<width>106</width>
+		<height>20</height>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Tote Sensor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1232" y="399"/>
+		<location x="265" y="91"/>
 		<width>112</width>
+		<height>20</height>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Zero Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="1122" y="361"/>
+		<location x="120" y="66"/>
+		<width>87</width>
 	</widget>
 	<widget field="ContainerInStack" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="1123" y="378"/>
+		<location x="233" y="65"/>
+		<width>131</width>
+		<height>14</height>
 	</widget>
 	<widget field="Lineup" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="254" y="135"/>
+		<location x="232" y="47"/>
+		<width>80</width>
 	</widget>
 	<widget field="Brake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="355" y="-1"/>
+		<location x="119" y="45"/>
+		<width>57</width>
 	</widget>
 	<widget field="Field Relative" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="367" y="38"/>
+		<location x="119" y="27"/>
+		<width>93</width>
 	</widget>
 	<widget field="autoState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="109" y="178"/>
-		<width>220</width>
+		<location x="3" y="388"/>
+		<width>244</width>
 	</widget>
 	<widget field="autoMode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="110" y="200"/>
+		<location x="4" y="414"/>
 		<width>245</width>
+		<height>20</height>
 	</widget>
 	<widget field="RailContents" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="254" y="114"/>
+		<location x="396" y="89"/>
+		<width>117</width>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="StateCarryStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="257" y="68"/>
+		<location x="306" y="215"/>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="StateDropStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="356" y="286"/>
+		<location x="310" y="193"/>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Vision error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1206" y="450"/>
+		<location x="174" y="437"/>
+		<width>262</width>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="pot read" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1357" y="404"/>
@@ -50,135 +81,102 @@
 		<location x="1402" y="318"/>
 	</widget>
 	<widget field="Swerve Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1198" y="421"/>
-		<width>149</width>
+		<location x="379" y="112"/>
+		<width>134</width>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="CylindersRails.State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="336" y="264"/>
+		<location x="291" y="170"/>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Test" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="266" y="5"/>
+		<location x="-7" y="426"/>
 	</widget>
 	<widget field="StateAddFloorToteToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="247" y="473"/>
+		<location x="257" y="305"/>
 		<width>262</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="StateEjectStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="312" y="358"/>
+		<location x="308" y="282"/>
 		<width>210</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="StateAddContainerToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="27" y="239"/>
+		<location x="253" y="237"/>
 		<width>263</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="CurrentLiftAction_" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="314" y="379"/>
+		<location x="295" y="329"/>
 		<width>204</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="StateAddChuteToteToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="23" y="221"/>
+		<location x="249" y="259"/>
 		<width>268</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="TotesInStack" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="368" y="309"/>
+		<location x="139" y="116"/>
 		<width>115</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Actuator Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1226" y="380"/>
+		<location x="397" y="23"/>
 		<width>117</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="ToteIntakeSensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="345" y="332"/>
+		<location x="116" y="92"/>
 		<width>139</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Car Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1242" y="361"/>
+		<location x="413" y="0"/>
 		<width>101</width>
 		<height>20</height>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Autonomous mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="100" y="8"/>
+		<location x="-10" y="212"/>
 	</widget>
 	<widget field="Application" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="408" y="1"/>
+		<location x="99" y="2"/>
 		<width>114</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
-		<location x="12" y="257"/>
-		<height>215</height>
+		<location x="1116" y="5"/>
+		<width>232</width>
+		<height>474</height>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
 		<location x="525" y="0"/>
 		<width>587</width>
 		<height>481</height>
 	</static-widget>
-	<widget field="Vision Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="1101" y="-1"/>
-		<width>250</width>
-		<height>180</height>
-		<property name="Buffer Size (samples)" value="100"/>
-	</widget>
-	<widget field="Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="1101" y="178"/>
-		<width>250</width>
-		<height>180</height>
-		<property name="Buffer Size (samples)" value="500"/>
-	</widget>
 	<widget field="Last Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="310" y="150"/>
+		<location x="216" y="24"/>
 		<width>127</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Gyro Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="405" y="22"/>
+		<location x="224" y="2"/>
 		<width>118</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Drive Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="-10" y="68"/>
+		<location x="-10" y="65"/>
 	</widget>
 	<widget field="Controller" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="-10" y="-9"/>
 	</widget>
 	<widget field="Image to show" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="-9" y="146"/>
+		<location x="-10" y="138"/>
 	</widget>
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="FrameSize"/>
-	<hidden field="Zero Left"/>
-	<hidden field="Lineup Back Right"/>
-	<hidden field="Lineup Rotation"/>
-	<hidden field="Drive R pre"/>
-	<hidden field="Drive X"/>
-	<hidden field="Drive Y"/>
-	<hidden field="Lineup Back Right Raw"/>
-	<hidden field="Lineup Back Left"/>
-	<hidden field="Lineup Angle"/>
-	<hidden field="Lineup Heading"/>
-	<hidden field="Drive R pre 2"/>
-	<hidden field="Zero Right"/>
-	<hidden field="Actuator Position"/>
-	<hidden field="Center"/>
-	<hidden field="Lineup X"/>
-	<hidden field="Lineup Y"/>
-	<hidden field="Lineup Back Left Raw"/>
-	<hidden field="Orientation"/>
-	<hidden field="Particles"/>
-	<hidden field="Drive R"/>
-	<hidden field="Area"/>
-	<hidden field="Distance Left"/>
-	<hidden field="CylindersPusher.State"/>
-	<hidden field="Distance Right"/>
+	<hidden field="Voltage"/>
 </xml>
