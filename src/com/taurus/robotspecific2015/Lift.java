@@ -165,6 +165,14 @@ public class Lift extends Subsystem {
                || distanceToteState == TOTE_SENSOR_STATES.TOTE_IN
                || controller.getFakeToteAdd();
     }
+    
+    public boolean isContainerinPlace()
+    {
+        return AutonomousToteTriggered
+                || controller.getFakeToteAdd();
+        
+        
+    }
 
     public void SetAutonomousToteTriggered(boolean b)
     {
@@ -540,13 +548,13 @@ public class Lift extends Subsystem {
                 {
                     // Sanity check this should even be called.
 
-                    if (LiftCar.GoToBottom(6)
+                    if (LiftCar.GoToBottom(0)
                         & CylindersRails.Contract()
                         & CylindersStackHolder.Extend()
                         & CylindersContainerCar.Contract()
                         & StackEjector.StopIn()
 
-                        & IsToteInPlace())
+                        & isContainerinPlace())
                     {
                         CylindersContainerFixed.Contract();
                         StateAddContainerToStack =
@@ -556,7 +564,7 @@ public class Lift extends Subsystem {
                 break;
 
             case CONTAINER_CAR_EXTEND:
-                if (LiftCar.GoToBottom(6)
+                if (LiftCar.GoToBottom(0)
                     & CylindersRails.Extend()
                     & CylindersContainerCar.Extend())
                 {
@@ -587,7 +595,7 @@ public class Lift extends Subsystem {
                 break;
 
             case RESET:
-                if (LiftCar.GoToBottom(6)
+                if (LiftCar.GoToBottom(0)
                     & CylindersContainerCar.Contract()
                     & CylindersRails.Contract()
                     & CylindersContainerFixed.Extend())

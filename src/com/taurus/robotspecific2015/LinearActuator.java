@@ -4,6 +4,7 @@ import com.taurus.PIDController;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * A Linear actuator subsystem using motor(s) and an encoder
@@ -90,7 +91,7 @@ public abstract class LinearActuator {
         
         speed = Utilities.clampToRange(speed, -MaxSpeed, MaxSpeed);
         
-        Motors.Set(speed);
+        SetSpeedRaw(speed);
         
         LastPosition = i;
     }
@@ -175,6 +176,7 @@ public abstract class LinearActuator {
      */
     public void SetSpeedRaw(double speed)
     {
+        SmartDashboard.putNumber("Actuator Speed", speed);
         Motors.Set(speed);
     }
 
