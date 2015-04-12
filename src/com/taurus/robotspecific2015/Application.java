@@ -85,6 +85,10 @@ public class Application extends com.taurus.Application {
     
     private void UpdateDashboard()
     {
+
+
+        SmartDashboard.putBoolean("TopSensorLeft", lift.GetCar().TopSensorLeft.IsOn());
+        SmartDashboard.putBoolean("TopSensorRight", lift.GetCar().TopSensorRight.IsOn());
         
         SmartDashboard.putNumber("Car Height", lift.GetCar().GetHeight());
         SmartDashboard.putBoolean("Zero Sensor", lift.GetCar().GetZeroSensor().IsOn());
@@ -94,24 +98,43 @@ public class Application extends com.taurus.Application {
         SmartDashboard.putNumber("TotesInStack", lift.GetTotesInStack());
         SmartDashboard.putString("RailContents", lift.GetRailContents().toString());
         SmartDashboard.putBoolean("ContainerInStack", lift.GetContainerInStack());
-        
-        SmartDashboard.putString("CylindersRails.State", lift.GetCylindersRails().GetState().toString());
+
         SmartDashboard.putString("CurrentLiftAction_", CurrentLiftAction.toString());
         
-        SmartDashboard.putString("StateAddChuteToteToStack", lift.GetStateAddChuteToteToStack().toString());
-        SmartDashboard.putString("StateAddContainerToStack", lift.GetStateAddContainerToStack().toString());
-        SmartDashboard.putString("StateAddFloorToteToStack", lift.GetStateAddFloorToteToStack().toString());
-        SmartDashboard.putString("StateCarryStack", lift.GetStateCarryStack().toString());
-        SmartDashboard.putString("StateDropStack", lift.GetStateDropStack().toString());
-        SmartDashboard.putString("StateEjectStack", lift.GetStateEjectStack().toString());
+        switch(CurrentLiftAction)
+        {
+            case ADD_CHUTE_TOTE:
+                SmartDashboard.putString("State", lift.GetStateAddChuteToteToStack().toString());
+                break;
+            case ADD_CONTAINER:
+                SmartDashboard.putString("State", lift.GetStateAddContainerToStack().toString());
+                break;
+            case ADD_FLOOR_TOTE:
+                SmartDashboard.putString("State", lift.GetStateAddFloorToteToStack().toString());
+                break;
+            case CARRY_STACK:
+                SmartDashboard.putString("State", lift.GetStateCarryStack().toString());
+                break;
+            case DROP_STACK:
+                SmartDashboard.putString("State", lift.GetStateDropStack().toString());
+                break;
+            case EJECT_STACK:
+                SmartDashboard.putString("State", lift.GetStateEjectStack().toString());
+                break;
+            case NO_ACTION:
+            case ZERO_LIFT:
+            default:
+                SmartDashboard.putString("State", "");
+                break;
+        }
 
     }
 
     public void TeleopPeriodicRobotSpecific()
     {
         UpdateDashboard();
-        
-        if(StartMatchTime > 105.0 && StartMatchTime < 110.0)
+        double TimeSinceStart = Timer.getFPGATimestamp() - StartMatchTime;
+        if(TimeSinceStart > 105.0 && TimeSinceStart < 107.5)
         {
             controller.setRumble(Hand.kLeft , 1);
         }

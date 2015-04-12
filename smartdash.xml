@@ -1,5 +1,27 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="324" y="287"/>
+	</widget>
+	<widget field="TopSensorRight" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="243" y="260"/>
+	</widget>
+	<widget field="TopSensorLeft" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="243" y="182"/>
+	</widget>
+	<widget field="App Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="382" y="161"/>
+		<width>129</width>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="353" y="208"/>
+		<property name="Editable" value="false"/>
+	</widget>
+	<widget field="Actuator Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="214" y="137"/>
+		<property name="Editable" value="false"/>
+	</widget>
 	<widget field="StartingAngle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="151" y="161"/>
 	</widget>
@@ -50,27 +72,21 @@
 	<widget field="autoState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="3" y="388"/>
 		<width>244</width>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="autoMode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="4" y="414"/>
 		<width>245</width>
 		<height>20</height>
+		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="RailContents" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="396" y="89"/>
 		<width>117</width>
 		<property name="Editable" value="false"/>
 	</widget>
-	<widget field="StateCarryStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="306" y="215"/>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="StateDropStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="310" y="193"/>
-		<property name="Editable" value="false"/>
-	</widget>
 	<widget field="Vision error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="174" y="437"/>
+		<location x="260" y="328"/>
 		<width>262</width>
 		<property name="Editable" value="false"/>
 	</widget>
@@ -85,36 +101,12 @@
 		<width>134</width>
 		<property name="Editable" value="false"/>
 	</widget>
-	<widget field="CylindersRails.State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="291" y="170"/>
-		<property name="Editable" value="false"/>
-	</widget>
 	<widget field="Test" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="-7" y="426"/>
 	</widget>
-	<widget field="StateAddFloorToteToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="257" y="305"/>
-		<width>262</width>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="StateEjectStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="308" y="282"/>
-		<width>210</width>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="StateAddContainerToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="253" y="237"/>
-		<width>263</width>
-		<property name="Editable" value="false"/>
-	</widget>
 	<widget field="CurrentLiftAction_" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="295" y="329"/>
+		<location x="285" y="239"/>
 		<width>204</width>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="StateAddChuteToteToStack" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="249" y="259"/>
-		<width>268</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="TotesInStack" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -178,5 +170,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Voltage"/>
 </xml>

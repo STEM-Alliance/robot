@@ -8,7 +8,7 @@ public class Ejector {
     {
         CylindersStop = new PneumaticSubsystem(Constants.CHANNEL_STOP[Application.ROBOT_VERSION],
                 Constants.PCM_STOP, Constants.TIME_EXTEND_STOP,
-                Constants.TIME_CONTRACT_STOP, Constants.CYLINDER_ACTION.EXTEND);
+                Constants.TIME_CONTRACT_STOP, Constants.CYLINDER_ACTION.CONTRACT);
     }
 
     /**
