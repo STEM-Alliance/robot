@@ -46,7 +46,7 @@ public class Vision implements Runnable {
 
     //                                   back    front
     private final String CAMS[][] = { { "cam0", "cam1" },   // competition bot
-                                      { "cam2", "cam1" } }; // backup bot
+                                      { "cam0", "cam1" } }; // backup bot
     
     public double getResultX()
     {

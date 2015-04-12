@@ -8,6 +8,7 @@ import com.taurus.robotspecific2015.Constants.AUTO_MODE;
 import com.taurus.robotspecific2015.Constants.AUTO_STATE;
 import com.taurus.robotspecific2015.Constants.LIFT_POSITIONS_E;
 import com.taurus.robotspecific2015.Constants.RAIL_CONTENTS;
+import com.taurus.robotspecific2015.Constants.STATE_ADD_CONTAINER_TO_STACK;
 import com.taurus.swerve.SwerveChassis;
 import com.taurus.swerve.SwerveVector;
 
@@ -27,6 +28,8 @@ public class Autonomous {
     private double autoStateChangeTime;
     
     boolean grabContainerDone = false;
+    
+    double ToZoneTime = 5.5;
 
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision,
             AUTO_MODE automode)
@@ -73,14 +76,17 @@ public class Autonomous {
                 drive.UpdateDrive(new SwerveVector(), 0, -1);
                 lift.SetAutonomousToteTriggered(true);
                 
-                if(lift.AddContainerToStack())
+                if(lift.AddContainerToStack() ||
+                        lift.GetStateAddContainerToStack().ordinal() >= STATE_ADD_CONTAINER_TO_STACK.LIFT_CAR.ordinal())
                 {
                     this.autoState = AUTO_STATE.GRAB_CONTAINER_WAIT;
                 }
                 break;
                 
             case GRAB_CONTAINER_WAIT:
-                if (lift.GetContainerInStack() /*&&
+                lift.AddContainerToStack();
+                if (lift.GetContainerInStack() ||
+                        lift.GetStateAddContainerToStack().ordinal() >= STATE_ADD_CONTAINER_TO_STACK.LIFT_CAR.ordinal()/*&&
                         lift.GetCar().GetActuator().GetPositionRaw() > LIFT_POSITIONS_E.DESTACK.ordinal()*/)
                 {
                     // wait until the container is 'in the stack' (ie in the top holders)
@@ -122,7 +128,8 @@ public class Autonomous {
                 break;
                 
             case DRIVE_TO_AUTO_ZONE:
-                if (Timer.getFPGATimestamp() - autoStateChangeTime > 4.0)
+                ToZoneTime = Application.prefs.getDouble("AutoToZoneTime", ToZoneTime);
+                if (Timer.getFPGATimestamp() - autoStateChangeTime > ToZoneTime)
                 {
                     // stop moving after 4 seconds
                     drive.UpdateDrive(new SwerveVector(), 0, -1);
@@ -157,7 +164,9 @@ public class Autonomous {
                             break;
                     }
                     // and driving to danger zone
-                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(1, 270), 0, -1);
+                    drive.setCrawlMode(.5);
+                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(1, 270), 0, -90);
+                    
                 }
                 break;
                 
@@ -197,7 +206,7 @@ public class Autonomous {
                 }
 
                 // try to get close to the 45
-                drive.UpdateDrive(new SwerveVector(), 0, desiredAngle);
+                drive.UpdateDrive(new SwerveVector(0,0), 0, desiredAngle);
                 
                 // check if we're close
                 double gyro = Utilities.wrapToRange(drive.getGyro().getYaw(), -180, 180);

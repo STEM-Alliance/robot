@@ -52,7 +52,7 @@ public class SwerveChassis extends Subsystem {
 
     private DriveScheme driveScheme;
 
-    protected double CrawlMode = 0.0;
+    private double CrawlMode = 0.0;
     private SwerveVector AutoVector;
     private double AutoTimeLength;
     private boolean AutoRunEnable;
@@ -150,7 +150,7 @@ public class SwerveChassis extends Subsystem {
 //        else
         {
 
-            CrawlMode = controller.getLowSpeed();
+            setCrawlMode(controller.getLowSpeed());
 
             // Use the Joystick inputs to update the drive system
             switch (driveScheme.get())
@@ -315,7 +315,7 @@ public class SwerveChassis extends Subsystem {
 
 //        SmartDashboard.putNumber("Drive R pre", RobotRotation);
         
-        RobotRotation *= (SwerveConstants.DriveSpeedCrawl + (1 - SwerveConstants.DriveSpeedCrawl) * CrawlMode * .9);
+        RobotRotation *= (SwerveConstants.DriveSpeedCrawl + (1 - SwerveConstants.DriveSpeedCrawl) * getCrawlMode() * .9);
         
 
 //        SmartDashboard.putNumber("Drive R pre 2", RobotRotation);
@@ -326,7 +326,7 @@ public class SwerveChassis extends Subsystem {
         if (!controller.getHighSpeed())
         {
             RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + 
-                    (1 - crawlSpeed) * CrawlMode));
+                    (1 - crawlSpeed) * getCrawlMode()));
             
             
             RobotRotation *=SwerveConstants.DriveSpeedNormal;
@@ -334,7 +334,7 @@ public class SwerveChassis extends Subsystem {
         }
         else
         {
-            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * CrawlMode));
+            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
         }
         
         if(Application.ROBOT_VERSION == 1)
@@ -589,5 +589,15 @@ public class SwerveChassis extends Subsystem {
     protected void initDefaultCommand()
     {
         // TODO Auto-generated method stub
+    }
+
+    public double getCrawlMode()
+    {
+        return CrawlMode;
+    }
+
+    public void setCrawlMode(double crawlMode)
+    {
+        CrawlMode = crawlMode;
     }
 }

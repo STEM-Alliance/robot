@@ -5,6 +5,7 @@ import com.taurus.controller.Controller;
 import com.taurus.robotspecific2015.Constants.LIFT_POSITIONS_E;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // State machine for lift
 public class Car {
@@ -18,9 +19,9 @@ public class Car {
 
     private LinearActuator Actuator;
     private SensorDigital ZeroSensorLeft;
-    private SensorDigital TopSensorLeft;
+    SensorDigital TopSensorLeft;
     private SensorDigital ZeroSensorRight;
-    private SensorDigital TopSensorRight;
+    SensorDigital TopSensorRight;
     private SensorDigital ChuteHeightSensor;
     
     private ZERO_STATE ZeroState = ZERO_STATE.MOVING;
@@ -119,7 +120,6 @@ public class Car {
         speedAdjust = speedAdjust * (ToteCount / 6.0);
         boolean atTop = (TopSensorLeft.IsOn() && TopSensorRight.IsOn());
         
-        
         if(ContainerInStack){
             Actuator.SetSpeedRaw((Constants.LIFT_CAR_SPEED_UP + speedAdjust) * containerLiftSpeed);
         } else{
@@ -140,7 +140,7 @@ public class Car {
             case WAITING:
                 Actuator.SetSpeedRaw(0);
                 
-                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .4)
+                if (Timer.getFPGATimestamp() - ZeroWaitStartTime > .1)
                 {
                     ZeroState = ZERO_STATE.ZEROED_TOP;
                 }

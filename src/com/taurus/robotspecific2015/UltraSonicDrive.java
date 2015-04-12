@@ -97,6 +97,8 @@ public class UltraSonicDrive extends SwerveChassis {
         {
             SmartDashboard.putBoolean("Lineup", true);
             
+            DISTANCE_FROM_WALL = Application.prefs.getDouble("DISTANCE_FROM_WALL", DISTANCE_FROM_WALL);
+            
             this.UltrasonicLineUp(AngleError, AverageDistanceFromWall - DISTANCE_FROM_WALL);  // Drive based on sensors
         }
         else

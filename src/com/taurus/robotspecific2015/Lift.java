@@ -68,7 +68,7 @@ public class Lift extends Subsystem {
                         Constants.CHANNEL_RAIL[Application.ROBOT_VERSION],
                         Constants.PCM_RAIL, Constants.TIME_EXTEND_RAILS,
                         Constants.TIME_CONTRACT_RAILS,
-                        Constants.CYLINDER_ACTION.EXTEND);
+                        Constants.CYLINDER_ACTION.CONTRACT);
         CylindersContainerCar =
                 new PneumaticSubsystem(
                         Constants.CHANNEL_CONTAINER_CAR[Application.ROBOT_VERSION],
@@ -89,7 +89,7 @@ public class Lift extends Subsystem {
                         Constants.PCM_STACK_HOLDER,
                         Constants.TIME_EXTEND_STACK_HOLDER,
                         Constants.TIME_CONTRACT_STACK_HOLDER,
-                        Constants.CYLINDER_ACTION.CONTRACT);
+                        Constants.CYLINDER_ACTION.EXTEND);
 
         LED.setDirection(Direction.kForward);
         LED.set(Value.kForward);
@@ -537,6 +537,7 @@ public class Lift extends Subsystem {
      */
     public boolean AddContainerToStack()
     {
+        boolean finished = false;
         switch (StateAddContainerToStack)
         {
             case INIT:
@@ -600,6 +601,7 @@ public class Lift extends Subsystem {
                     & CylindersRails.Contract()
                     & CylindersContainerFixed.Extend())
                 {
+                    finished = true;
                     StateAddContainerToStack =
                             STATE_ADD_CONTAINER_TO_STACK.INIT;
                 }
@@ -607,7 +609,7 @@ public class Lift extends Subsystem {
         }
 
         return ContainerInStack
-               && LiftCar.GetPosition() == LIFT_POSITIONS_E.ZERO;
+               && finished;
     }
 
     /**
