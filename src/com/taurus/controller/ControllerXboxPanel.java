@@ -46,6 +46,24 @@ public class ControllerXboxPanel implements Controller, Runnable {
         return xbox.getY(hand);
     }
 
+
+    private double scale(double value)
+    {
+        double abs = Math.abs(value);
+        
+        if (abs < DEADBAND)
+        {
+            value = 0;
+        }
+        else
+        {
+            value = Math.signum(value) * ((abs - DEADBAND) / (1.0 - DEADBAND));
+        }
+        
+        return value;
+    }
+
+    
     /**
      * Get the magnitude of the direction vector formed by the joystick's
      * current position relative to its origin
@@ -56,15 +74,7 @@ public class ControllerXboxPanel implements Controller, Runnable {
      */
     public double getMagnitude(Hand hand)
     {
-        double value = 0;
-
-        value = xbox.getMagnitude(hand);
-
-        if (value < DEADBAND)
-        {
-            value = 0;
-        }
-        return value;
+        return scale(xbox.getMagnitude(hand));
     }
 
     /**
@@ -100,15 +110,8 @@ public class ControllerXboxPanel implements Controller, Runnable {
      */
     public double getHaloDrive_Rotation()
     {
-        double value = 0;
 
-        value = xbox.getAxis(Xbox.AxisType.kRightX);
- 
-        if (Math.abs(value) < DEADBAND)
-        {
-            value = 0;
-        }
-        return value;
+        return scale(xbox.getAxis(Xbox.AxisType.kRightX));
     }
 
     /**
@@ -123,10 +126,7 @@ public class ControllerXboxPanel implements Controller, Runnable {
 
         value = new SwerveVector(xbox.getX(Hand.kLeft), xbox.getY(Hand.kLeft));
 
-        if (value.getMag() < DEADBAND)
-        {
-            value.setMag(0);
-        }
+        value.setMag(scale(value.getMag()));
 
         return value;
     }
@@ -194,10 +194,8 @@ public class ControllerXboxPanel implements Controller, Runnable {
 
         value = new SwerveVector(xbox.getX(Hand.kLeft), xbox.getY(Hand.kLeft));
 
-        if (value.getMag() < DEADBAND)
-        {
-            value.setMag(0);
-        }
+        value.setMag(scale(value.getMag()));
+        
         return value;
     }
 
@@ -409,7 +407,7 @@ public class ControllerXboxPanel implements Controller, Runnable {
     public boolean getLiftShake()
     {
        
-        return panel.getBlackLButton();
+        return panel.getBlackLButton() || xbox.getBack();
     }
 
     @Override
