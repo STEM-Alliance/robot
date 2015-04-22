@@ -368,4 +368,12 @@ public class ControllerXbox implements Controller {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public boolean getManualDropStack()
+    {
+        return false;
+        // TODO Auto-generated method stub
+        
+    }
 }

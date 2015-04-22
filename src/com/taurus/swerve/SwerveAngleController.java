@@ -47,7 +47,15 @@ public final class SwerveAngleController {
         this.name = name;
         this.motorSpeed = 0;
         this.reverseMotor = false;
-        this.controller = new PIDController(P, I, D, MaxOut);
+
+        if(Application.ROBOT_VERSION == 0)
+        {
+            this.controller = new PIDController(P, I, D, MaxOut);
+        }
+        else
+        {
+            this.controller = new PIDController(P*1.3, I, D, MaxOut);
+        }
     }
 
     /**

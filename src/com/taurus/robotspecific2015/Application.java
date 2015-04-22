@@ -142,7 +142,11 @@ public class Application extends com.taurus.Application {
         {
             controller.setRumble(Hand.kLeft , 0);    
         }
-        
+
+        if(controller.getManualDropStack())
+        {
+            lift.GetCylindersStackHolder().Extend();
+        }
         
         if (controller.getCarHome())
         {
@@ -161,7 +165,7 @@ public class Application extends com.taurus.Application {
             lift.GetEjector().StopIn();
             
         }
-        else if(controller.getLiftShake() && !lift.IsToteInPlace())
+        else if(controller.getLiftShake())// && !lift.IsToteInPlace())
         {
             lift.ShakeCar();
         }

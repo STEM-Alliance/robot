@@ -289,6 +289,8 @@ public class SwerveWheel {
     {
         // Update the angle controller.
         AngleController.update(angle, AdjustAngle(getAnglePotValue()));
+        
+        maxRotationSpeed = Application.prefs.getDouble("maxRotationSpeed", maxRotationSpeed);
 
         // Control the wheel angle.
         if (speed > MinSpeed)

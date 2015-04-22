@@ -407,12 +407,19 @@ public class ControllerXboxPanel implements Controller, Runnable {
     public boolean getLiftShake()
     {
        
-        return panel.getBlackLButton() || xbox.getBack();
+        return xbox.getBack();
     }
 
     @Override
     public boolean getUltrasonicLineup()
     {
         return xbox.getTrigger(Hand.kLeft);
+    }
+
+    @Override
+    public boolean getManualDropStack()
+    {
+        // TODO Auto-generated method stub
+        return panel.getBlackLButton();
     }
 }

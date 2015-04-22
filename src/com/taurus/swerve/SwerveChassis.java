@@ -305,6 +305,8 @@ public class SwerveChassis extends Subsystem {
         {
             RobotVelocity.setMag(1.0);
         }
+        
+        RobotVelocity.setMag(RobotVelocity.getMag() * RobotVelocity.getMag());
 
         // limit before slowing speed so it runs using the original values
         // set limitations on rotation,
