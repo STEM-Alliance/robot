@@ -122,7 +122,7 @@ public class SwerveConstants {
             * DriveGearRatio;
 
     public static final double DriveSpeedCrawl = .4;
-    public static final double DriveSpeedNormal = .75;
+    public static final double DriveSpeedNormal = .85;
     
     
     /**
