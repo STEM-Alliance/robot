@@ -70,7 +70,7 @@ public abstract class Constants {
     public static final double LIFT_CAR_SPEED_UP = 1.0;
     public static final double LIFT_CAR_SPEED_DOWN = 1.0;
     public static final double LIFT_CAR_SPEED_DOWN_INITIAL = 0.75;
-    public static final double LIFT_CAR_SPEED_DOWN_FINAL = 0.75;
+    public static final double LIFT_CAR_SPEED_DOWN_FINAL = 1.0;
     public static final double LIFT_CAR_SPEED_SHAKE_UP = 1;
     public static final double LIFT_CAR_SPEED_SHAKE_DOWN = -1;
     public static final double LIFT_CAR_TIME_SHAKE_UP = .3;

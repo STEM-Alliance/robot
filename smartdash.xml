@@ -1,13 +1,14 @@
 <xml version="1.0">
 <dashboard>
 	<widget field="Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="324" y="287"/>
+		<location x="347" y="284"/>
 	</widget>
 	<widget field="TopSensorRight" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="243" y="260"/>
+		<location x="308" y="393"/>
+		<height>20</height>
 	</widget>
 	<widget field="TopSensorLeft" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="243" y="182"/>
+		<location x="316" y="372"/>
 	</widget>
 	<widget field="App Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="382" y="161"/>
@@ -19,7 +20,8 @@
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="Actuator Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="214" y="137"/>
+		<location x="388" y="65"/>
+		<width>129</width>
 		<property name="Editable" value="false"/>
 	</widget>
 	<widget field="StartingAngle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
@@ -105,7 +107,7 @@
 		<location x="-7" y="426"/>
 	</widget>
 	<widget field="CurrentLiftAction_" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="285" y="239"/>
+		<location x="289" y="237"/>
 		<width>204</width>
 		<property name="Editable" value="false"/>
 	</widget>
