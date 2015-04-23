@@ -317,13 +317,13 @@ public class SwerveChassis extends Subsystem {
 
 //        SmartDashboard.putNumber("Drive R pre", RobotRotation);
         
-        RobotRotation *= (SwerveConstants.DriveSpeedCrawl + (1 - SwerveConstants.DriveSpeedCrawl) * getCrawlMode() * .9);
+        double crawlSpeed = Application.prefs.getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
+        
+        RobotRotation *= (crawlSpeed + (1 - crawlSpeed) * getCrawlMode() * .9);
         
 
 //        SmartDashboard.putNumber("Drive R pre 2", RobotRotation);
         // scale the speed down unless we're in high speed mode
-        
-        double crawlSpeed = Application.prefs.getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
         
         if (!controller.getHighSpeed())
         {
