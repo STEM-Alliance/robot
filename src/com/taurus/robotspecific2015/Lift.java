@@ -53,6 +53,8 @@ public class Lift extends Subsystem {
     private int  distanceToteWait;
     private TOTE_SENSOR_STATES distanceToteState;
 
+    private boolean ToteSensorLast;
+    
     /**
      * Initialize lift and all objects owned by the lift
      * 
@@ -135,6 +137,7 @@ public class Lift extends Subsystem {
 
     public boolean IsToteInPlace()
     {
+        boolean toteTrigger = false;
         switch (distanceToteState)
         {
             case NO_TOTE:
@@ -166,9 +169,16 @@ public class Lift extends Subsystem {
                 break;
 
         }
+        
+        if( !ToteSensor.get() && ToteSensorLast)// && TotesInStack > 0)
+        {
+            toteTrigger = true;
+        }
 
+        ToteSensorLast = !ToteSensor.get();
+        
         return AutonomousToteTriggered
-               || !ToteSensor.get()
+               || toteTrigger
                //|| distanceToteState == TOTE_SENSOR_STATES.TOTE_IN
                || controller.getFakeToteAdd();
     }

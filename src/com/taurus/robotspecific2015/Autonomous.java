@@ -28,6 +28,7 @@ public class Autonomous {
     private double autoStateChangeTime;
     
     boolean grabContainerDone = false;
+    boolean addContainerFinishedOnce = false;
     
     double ToZoneTime = 5.5;
     double ToLineupTime = .5;
@@ -88,11 +89,16 @@ public class Autonomous {
                 break;
                 
             case GRAB_CONTAINER_WAIT:
-                lift.AddContainerToStack();
-                if (lift.GetContainerInStack() ||
+                if(addContainerFinishedOnce == false)
+                {
+                    addContainerFinishedOnce = lift.AddContainerToStack();
+                }
+                
+                if (addContainerFinishedOnce || lift.GetContainerInStack() ||
                         lift.GetStateAddContainerToStack().ordinal() >= STATE_ADD_CONTAINER_TO_STACK.LIFT_CAR.ordinal()/*&&
                         lift.GetCar().GetActuator().GetPositionRaw() > LIFT_POSITIONS_E.DESTACK.ordinal()*/)
                 {
+                    lift.SetAutonomousToteTriggered(false);
                     // wait until the container is 'in the stack' (ie in the top holders)
                     // then move on to the next step
                     switch (autoMode)
@@ -110,13 +116,12 @@ public class Autonomous {
                             // go ahead and start lining up
                             autoState = AUTO_STATE.LINE_UP;
                             LineupTaskTimer = Timer.getFPGATimestamp();
-                            lift.SetAutonomousToteTriggered(false);
                             break;
                             
                         case GRAB_CONTAINER_NO_MOVE:
                             // since we're stopping after this,
                             // we need to wait for the container to be finished
-                            if (lift.AddContainerToStack())
+                            if (addContainerFinishedOnce)
                             {
                                 autoState = AUTO_STATE.STOP;
                                 lift.SetAutonomousToteTriggered(false);
