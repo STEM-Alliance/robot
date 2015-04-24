@@ -46,6 +46,8 @@ public abstract class Constants {
     public static final int CHANNEL_DIGITAL_CAR_ZERO_RIGHT = 7;
     public static final int CHANNEL_DIGITAL_CAR_CHUTE = 9;
     
+    public static final int CHANNEL_TOTE_SENSOR = 12;
+    
     public static final int CHANNEL_ANALOG_TOTE_SENSOR = 7;
     public static final int TOTE_SENSOR_TRIGGER_VALUE = 500;
     public static enum TOTE_SENSOR_STATES {
