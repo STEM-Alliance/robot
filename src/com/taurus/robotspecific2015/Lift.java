@@ -5,6 +5,7 @@ import com.taurus.robotspecific2015.Constants.*;
 import com.taurus.swerve.SwerveChassis;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.Relay.Value;
@@ -41,10 +42,13 @@ public class Lift extends Subsystem {
 
     private double StopperWaitTime = 0;
 
+    private double DestackWaitTime = 0;
+
     private final Controller controller;
 
     public final Relay LED = new Relay(2);
 
+    private DigitalInput ToteSensor;
     private AnalogInput distanceToteSensor;
     private int  distanceToteWait;
     private TOTE_SENSOR_STATES distanceToteState;
@@ -94,6 +98,8 @@ public class Lift extends Subsystem {
         LED.setDirection(Direction.kForward);
         LED.set(Value.kForward);
 
+        ToteSensor = new DigitalInput(Constants.CHANNEL_TOTE_SENSOR);
+        
         distanceToteSensor =
                 new AnalogInput(Constants.CHANNEL_ANALOG_TOTE_SENSOR);
         distanceToteWait = 0;
@@ -162,7 +168,8 @@ public class Lift extends Subsystem {
         }
 
         return AutonomousToteTriggered
-               || distanceToteState == TOTE_SENSOR_STATES.TOTE_IN
+               || !ToteSensor.get()
+               //|| distanceToteState == TOTE_SENSOR_STATES.TOTE_IN
                || controller.getFakeToteAdd();
     }
     
@@ -620,6 +627,7 @@ public class Lift extends Subsystem {
      */
     public boolean LowerStackToCarryHeight()
     {
+        boolean finished = false;
         switch (StateCarry)
         {
             case INIT:
@@ -664,6 +672,7 @@ public class Lift extends Subsystem {
                         CylindersStackHolder.Extend();
                         CylindersContainerCar.Contract();
                         CylindersContainerFixed.Contract();
+                        finished = true;
                         // StackEjector.StopOut();
                         break;
                 }
@@ -672,8 +681,9 @@ public class Lift extends Subsystem {
             case STACK_HOLDER_RELEASE:
                 // Note: may be stack OR destack height depending on whether
                 // there is a tote on the rails to push up with.
-                LiftCar.UpdateLastPosition();
+                //LiftCar.UpdateLastPosition();
 
+                
                 if (CylindersStackHolder.Extend()
                     & CylindersContainerFixed.Contract()
                     & CylindersRails.Extend()
@@ -683,6 +693,11 @@ public class Lift extends Subsystem {
                     {
                         // The tote is now in the stack.
                         TotesInStack = TotesInStack + 1;
+                        DestackWaitTime = Timer.getFPGATimestamp() - .2;
+                    }
+                    else
+                    {
+                        DestackWaitTime = Timer.getFPGATimestamp();
                     }
 
                     RailContents = RAIL_CONTENTS.STACK;
@@ -691,24 +706,29 @@ public class Lift extends Subsystem {
                 break;
 
             case LOWER_CAR:
-                if (LiftCar.GoToChute(true)
-                    & CylindersStackHolder.Extend()
-                    & CylindersContainerFixed.Contract()
-                    & CylindersRails.Extend()
-                    & CylindersContainerCar.Contract())
+                if((Timer.getFPGATimestamp() - DestackWaitTime) > .25)
                 {
-                    // Application.leds.AddEffect(effectsInTransit, true);
-                    StateCarry = STATE_CARRY.INIT;
-                    distanceToteState = TOTE_SENSOR_STATES.NO_TOTE;
-                    distanceToteWait = 0;
+                    if (LiftCar.GoToChute(true)
+                        & CylindersStackHolder.Extend()
+                        & CylindersContainerFixed.Contract()
+                        & CylindersRails.Extend()
+                        & CylindersContainerCar.Contract())
+                    {
+                        // Application.leds.AddEffect(effectsInTransit, true);
+                        StateCarry = STATE_CARRY.INIT;
+                        distanceToteState = TOTE_SENSOR_STATES.NO_TOTE;
+                        distanceToteWait = 0;
+                        finished = true;
+                    }
                 }
                 break;
 
         }
 
-        return (LiftCar.GetPosition() == LIFT_POSITIONS_E.EJECT || (controller
-                .getFakePostion() && controller.getManualLift()))
-               && RailContents == RAIL_CONTENTS.STACK;
+        return finished;
+//                (LiftCar.GetPosition() == LIFT_POSITIONS_E.EJECT || (controller
+//                .getFakePostion() && controller.getManualLift()))
+//               && RailContents == RAIL_CONTENTS.STACK;
     }
 
     /**
@@ -894,6 +914,10 @@ public class Lift extends Subsystem {
         if (b)
         {
             RailContents = RAIL_CONTENTS.TOTE;
+        }
+        else
+        {
+            RailContents = RAIL_CONTENTS.EMPTY;
         }
     }
 

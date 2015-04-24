@@ -30,6 +30,8 @@ public class Autonomous {
     boolean grabContainerDone = false;
     
     double ToZoneTime = 5.5;
+    double ToLineupTime = .5;
+    double LineupTaskTimer = 0;
 
     public Autonomous(SwerveChassis drive, Lift lift, Vision vision,
             AUTO_MODE automode)
@@ -70,6 +72,8 @@ public class Autonomous {
     {
         SmartDashboard.putString("autoMode", autoMode.toString());
         SmartDashboard.putString("autoState", autoState.toString());
+        ToLineupTime = Application.prefs.getDouble("ToLineupTime", ToLineupTime);
+        
         switch (autoState)
         {
             case GRAB_CONTAINER:
@@ -105,6 +109,7 @@ public class Autonomous {
                         case GRAB_CONTAINER_LEFT_CHUTE:
                             // go ahead and start lining up
                             autoState = AUTO_STATE.LINE_UP;
+                            LineupTaskTimer = Timer.getFPGATimestamp();
                             lift.SetAutonomousToteTriggered(false);
                             break;
                             
@@ -165,7 +170,7 @@ public class Autonomous {
                     }
                     // and driving to danger zone
                     drive.setCrawlMode(.5);
-                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(1, 270), 0, -90);
+                    drive.UpdateDrive(SwerveVector.NewFromMagAngle(1, 280), 0, -85);
                     
                 }
                 break;
@@ -190,30 +195,40 @@ public class Autonomous {
                 }
 
                 double desiredAngle = 0;
+                double move = 0;
+                boolean moveDone = false;
                 
                 switch (autoMode)
                 {
                     case GRAB_CONTAINER_RIGHT_CHUTE:
                         desiredAngle = -45;
+                        move = 1;
                         break;
                         
                     case GRAB_CONTAINER_LEFT_CHUTE:
                         desiredAngle = 45;
+                        move = -1;
                         break;
                         
                     default:
                         break;
                 }
+                
+                if(Timer.getFPGATimestamp() - LineupTaskTimer > ToLineupTime)
+                {
+                    move = 0;
+                    moveDone = true;
+                }
 
                 // try to get close to the 45
-                drive.UpdateDrive(new SwerveVector(0,0), 0, desiredAngle);
+                drive.UpdateDrive(new SwerveVector(move,0), 0, desiredAngle);
                 
                 // check if we're close
                 double gyro = Utilities.wrapToRange(drive.getGyro().getYaw(), -180, 180);
                 
                 if(Math.abs(gyro - desiredAngle) < 10)
                 {
-                    if(grabContainerDone)
+                    if(grabContainerDone && moveDone)
                     {
                         // k, go finish line up now
                         autoState = AUTO_STATE.LINE_UP_ULTRA;

@@ -206,14 +206,12 @@ public class Car {
             if(lowSpeed)
             {
                 return SetPosition(LIFT_POSITIONS_E.CHUTE,
-                            Constants.LIFT_CAR_SPEED_DOWN) 
-                        || this.ChuteHeightSensor.IsOn();
+                            Constants.LIFT_CAR_SPEED_DOWN);
             }
             else
             {
                 return SetPosition(LIFT_POSITIONS_E.CHUTE,
-                            Constants.LIFT_CAR_SPEED_DOWN * .75) 
-                        || this.ChuteHeightSensor.IsOn();
+                            Constants.LIFT_CAR_SPEED_DOWN * .75);
             }
         }
     }
