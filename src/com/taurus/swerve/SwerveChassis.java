@@ -93,7 +93,7 @@ public class SwerveChassis extends Subsystem {
         {
             Wheels[i] = new SwerveWheel(i,
                     SwerveConstants.WheelPositions[i],
-                    Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
+                    com.taurus.Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
 //                    SwerveConstants.WheelEncoderPins[i],
                     SwerveConstants.WheelPotPins[i],
                     SwerveConstants.WheelDriveMotorAddress[i],
@@ -341,7 +341,7 @@ public class SwerveChassis extends Subsystem {
         }
 
         // grab max velocity from the dash
-        MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY",
+        MaxAvailableVelocity = com.taurus.Application.prefs.getDouble("MAX_ROBOT_VELOCITY",
                         MaxAvailableVelocity);
 
         // determine ratio to scale all wheel velocities by
@@ -381,7 +381,7 @@ public class SwerveChassis extends Subsystem {
         SwerveVector delta = robotVelocity.subtract(LastVelocity);
 
         // grab the max acceleration value from the dash
-        MaxAcceleration = Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration);
+        MaxAcceleration = com.taurus.Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration);
 
         // determine if we are accelerating/decelerating too slow
         if (delta.getMag() > MaxAcceleration * TimeDelta)

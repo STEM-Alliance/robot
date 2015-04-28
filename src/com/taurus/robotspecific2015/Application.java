@@ -29,7 +29,7 @@ public class Application implements com.taurus.Application {
     protected ControllerXboxPanel controller;
     private ControllerChooser controllerChooser;
     private PowerDistributionPanel PDP;
-    public static Preferences prefs;
+    //public static Preferences prefs;
     
     // App specific
     private boolean endOfMatchEffectSent;
@@ -55,7 +55,7 @@ public class Application implements com.taurus.Application {
     public Application()
     {
         // App generic
-        prefs = Preferences.getInstance();        
+        //prefs = Preferences.getInstance();        
         PDP = new PowerDistributionPanel();
         controllerChooser = new ControllerChooser();
         controller = new ControllerXboxPanel();        
@@ -89,8 +89,8 @@ public class Application implements com.taurus.Application {
         SmartDashboard.putData("Test", testChooser);
         
         // LEDs
-        LEDController ledHardware = new LEDController();
-        leds = new LEDs(ledHardware, ledHardware.NumOfColors, Thread.NORM_PRIORITY - 2);  // Below normal priority
+        //LEDController ledHardware = new LEDController();
+        //leds = new LEDs(ledHardware, ledHardware.NumOfColors, Thread.NORM_PRIORITY - 2);  // Below normal priority
 //        leds.start();  // Comment this line to disable LEDs
         endOfMatchEffectSent = false;
         ArrayList<Color[]> colors = new ArrayList<Color[]>();

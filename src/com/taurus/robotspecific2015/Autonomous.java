@@ -37,7 +37,7 @@ public class Autonomous {
 
         drive.ZeroGyro();
         
-        this.startingAngle = Application.prefs.getFloat("StartingAngle", -45);
+        this.startingAngle = com.taurus.Application.prefs.getFloat("StartingAngle", -45);
         
         switch (autoMode)
         {
