@@ -218,7 +218,7 @@ public class SwerveWheel {
      */
     private double AdjustAngle(double angle)
     {
-        this.AngleOrientation = Application.prefs.getDouble("Wheel_Orientation_" + Number, AngleOrientation);
+        this.AngleOrientation = com.taurus.Application.prefs.getDouble("Wheel_Orientation_" + Number, AngleOrientation);
 
         double AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
         
@@ -234,7 +234,7 @@ public class SwerveWheel {
                     // we need to then update the angle
                     this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0, 360);
                     
-                    Application.prefs.putDouble("Wheel_Orientation_" + Number, AngleOrientation);
+                    com.taurus.Application.prefs.putDouble("Wheel_Orientation_" + Number, AngleOrientation);
                     
                     AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
                 }

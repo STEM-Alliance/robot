@@ -161,13 +161,13 @@ public class Vision implements Runnable {
 
                         NIVision.imaqColorThreshold(frameTH, frame, 255,
                                 ColorMode.HSL,
-                                new Range(Application.prefs.getInt("Hmin", 30),
-                                        Application.prefs.getInt("Hmax", 60)),
-                                new Range(Application.prefs.getInt("Smin", 60),
-                                        Application.prefs.getInt("Smax", 255)),
+                                new Range(com.taurus.Application.prefs.getInt("Hmin", 30),
+                                        com.taurus.Application.prefs.getInt("Hmax", 60)),
+                                new Range(com.taurus.Application.prefs.getInt("Smin", 60),
+                                        com.taurus.Application.prefs.getInt("Smax", 255)),
                                 new Range(
-                                        Application.prefs.getInt("Lmin", 100),
-                                        Application.prefs.getInt("Lmax", 255)));
+                                        com.taurus.Application.prefs.getInt("Lmin", 100),
+                                        com.taurus.Application.prefs.getInt("Lmax", 255)));
 
                         if (imageToSend == 2)
                         {
@@ -180,9 +180,9 @@ public class Vision implements Runnable {
                         ParticleFilterCriteria2[] criteria =
                                 new ParticleFilterCriteria2[] { new ParticleFilterCriteria2(
                                         MeasurementType.MT_AREA_BY_IMAGE_AREA,
-                                        /* lower */Application.prefs.getInt(
+                                        /* lower */com.taurus.Application.prefs.getInt(
                                                 "AreaMin", 1),
-                                        /* upper */Application.prefs.getInt(
+                                        /* upper */com.taurus.Application.prefs.getInt(
                                                 "AreaMax", 76800),
                                         /* calibrated */0, /* exclude */0), };
                         ParticleFilterOptions2 options =
@@ -293,7 +293,7 @@ public class Vision implements Runnable {
             // }
             // SmartDashboard.putString("Modes", Modes);
 
-            int videoMode = Application.prefs.getInt("VIDEO_MODE", 93);
+            int videoMode = com.taurus.Application.prefs.getInt("VIDEO_MODE", 93);
             NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, videoMode);
 
             // int whiteBalance = Application.prefs.getInt("WhiteBalance",
@@ -310,7 +310,7 @@ public class Vision implements Runnable {
 
             {
                 double brightness =
-                        Application.prefs.getDouble("Brightness", .25);
+                        com.taurus.Application.prefs.getDouble("Brightness", .25);
 
                 NIVision.IMAQdxSetAttributeString(session, ATTR_BR_MODE,
                         "Manual");

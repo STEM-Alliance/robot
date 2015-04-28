@@ -1,6 +1,10 @@
 package com.taurus;
 
-public interface Application {
+import edu.wpi.first.wpilibj.Preferences;
+
+public interface Application {    
+    public static Preferences prefs = Preferences.getInstance();     
+    
     public abstract void TeleopInit();
 
     public abstract void TeleopPeriodic();

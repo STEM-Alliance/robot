@@ -29,7 +29,7 @@ public abstract class LinearActuator {
     {
         Motors = new MotorSystem(MotorPins);
         Motors.SetScale(MotorScaling);
-        Motors.SetSafety(true, .5);
+        Motors.SetSafety(true, 2);
 
         this.Positions = Positions;
         this.PositionThreshold = PositionThreshold;
@@ -79,7 +79,7 @@ public abstract class LinearActuator {
     {
         double time = Timer.getFPGATimestamp();
         
-        Positions[i] = Application.prefs.getDouble("Positions_" + i + "", Positions[i]);
+        Positions[i] = com.taurus.Application.prefs.getDouble("Positions_" + i + "", Positions[i]);
 
         // use the PI to get the desired speed based on distance from current
         // position
