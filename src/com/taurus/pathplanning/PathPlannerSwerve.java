@@ -71,7 +71,7 @@ public class PathPlannerSwerve {
         origPath = originalPath.clone();
 
         // default values DO NOT MODIFY;
-        setPathAlpha(0.7);
+        setPathAlpha(.7);
         setPathBeta(0.3);
         setPathTolerance(0.0000001);
 
@@ -152,9 +152,9 @@ public class PathPlannerSwerve {
         expandedPath[index] = Path.Init(orig[orig.length-1].x, orig[orig.length-1].y, orig[orig.length-1].heading);
         index++;
         
-        for (Path path : expandedPath) {
-            System.out.println(path.x + "," + path.y + "," + path.heading);
-        }
+//        for (Path path : expandedPath) {
+//            System.out.println(path.x + "," + path.y + "," + path.heading);
+//        }
         
         return expandedPath;
     }
@@ -175,7 +175,7 @@ public class PathPlannerSwerve {
             {
                 double x = newPath[i].x;
                 double y = newPath[i].y;
-                double h = newPath[i].heading;
+                //double h = newPath[i].heading;
                 
                 newPath[i].x += weight_data * (path[i].x - newPath[i].x)
                                 + weight_smooth
@@ -223,6 +223,11 @@ public class PathPlannerSwerve {
         // copy array
         Path[] newPath = Path.Copy(path);
 
+//        for (Path path2 : newPath) {
+//            path2.velocityHeading = Utilities.wrapToRange(path2.velocityHeading, -180, 180);
+//            System.out.println(path2.x + "," + path2.y + "," + path2.velocityHeading);
+//        }
+        
         double change = tolerance;
         while (change >= tolerance)
         {
@@ -231,22 +236,24 @@ public class PathPlannerSwerve {
             for (int i = 1; i < (path.length - 1); i++)
             {
                 double x = newPath[i].velocity;
-                double h = newPath[i].velocityHeading;
+                //double h = newPath[i].velocityHeading;
                 
                 newPath[i].velocity += weight_data * (path[i].velocity - newPath[i].velocity)
                                 + weight_smooth
                                 * (newPath[i - 1].velocity + newPath[i + 1].velocity - (2.0 * newPath[i].velocity));
                 change += Math.abs(x - newPath[i].velocity);
                 
-                newPath[i].velocityHeading += weight_data * (path[i].velocityHeading - newPath[i].velocityHeading)
-                                + weight_smooth
-                                * (newPath[i - 1].velocityHeading + newPath[i + 1].velocityHeading - (2.0 * newPath[i].velocityHeading));
-                change += Math.abs(h - newPath[i].velocityHeading);
+                // Don't smooth velocity heading here, it will cause issues
+//                newPath[i].velocityHeading += weight_data * (path[i].velocityHeading - newPath[i].velocityHeading)
+//                                + weight_smooth
+//                                * (newPath[i - 1].velocityHeading + newPath[i + 1].velocityHeading - (2.0 * newPath[i].velocityHeading));
+//                change += Math.abs(h - newPath[i].velocityHeading);
             }
         }
 
 //        for (Path path2 : newPath) {
-//            System.out.println(path2.x + "," + path2.y + "," + path2.heading);
+//            //path2.velocityHeading = Utilities.wrapToRange(path2.velocityHeading, -180, 180);
+//            System.out.println(path2.x + "," + path2.y + "," + path2.velocityHeading);
 //        }
         
         return newPath;
@@ -286,7 +293,7 @@ public class PathPlannerSwerve {
             smoothPath[i].time = smoothPath[i-1].time + timeStep;
 
             smoothPath[i].velocity = Math.sqrt(Math.pow(dxdt[i],2) + Math.pow(dydt[i],2)); 
-            smoothPath[i].velocityHeading = Math.toDegrees(Math.atan2(dydt[i], dxdt[i])); 
+            smoothPath[i].velocityHeading = Utilities.wrapToRange(Math.toDegrees(Math.atan2(dydt[i], dxdt[i])),-180,180); 
         }
         
 
@@ -652,7 +659,7 @@ public class PathPlannerSwerve {
             else
             {
                 smoothPathOrig = inject(smoothPathOrig, inject[i]);
-                smoothPathOrig = smoother(smoothPathOrig, 0.1, 0.3, 0.0000001);
+                smoothPathOrig = smoother(smoothPathOrig, getPathAlpha(), getPathBeta(), getPathTolerance());
             }
         }
         
@@ -685,6 +692,7 @@ public class PathPlannerSwerve {
     }
 
     /**
+     * High alpha == close to original path, low alpha == smoother path
      * @param pathAlpha the pathAlpha to set
      */
     public void setPathAlpha(double pathAlpha) {
@@ -699,6 +707,7 @@ public class PathPlannerSwerve {
     }
 
     /**
+     * Low beta == close to original path, high beta == smoother path
      * @param pathBeta the pathBeta to set
      */
     public void setPathBeta(double pathBeta) {
