@@ -1,4 +1,4 @@
-package com.taurus.robotspecific2015;
+package com.taurus.hardware;
 
 import com.taurus.MagnetoPot;
 import com.taurus.Utilities;

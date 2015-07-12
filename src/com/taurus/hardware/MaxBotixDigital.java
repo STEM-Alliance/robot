@@ -1,4 +1,4 @@
-package com.taurus.sensors;
+package com.taurus.hardware;
 
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;

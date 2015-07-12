@@ -1,12 +1,7 @@
-package com.taurus.robotspecific2015;
-
-
-
-import com.taurus.robotspecific2015.Constants.CYLINDER_STATE;
+package com.taurus.hardware;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
-
 
 // Wraps FIRST code to control a group of pneumatic cylinders
 public class PneumaticSubsystem {
@@ -22,6 +17,14 @@ public class PneumaticSubsystem {
     private double TimeStart;
 
     private final DoubleSolenoid solenoid;
+    
+    public static enum CYLINDER_ACTION {
+        NONE, EXTEND, CONTRACT
+    }
+    
+    public static enum CYLINDER_STATE {
+        NONE, EXTENDED, EXTENDING, CONTRACTED, CONTRACTING
+    }
 
     /**
      * Initialize PCU (pneumatic control unit) for this pneumatic subsytem
@@ -33,7 +36,7 @@ public class PneumaticSubsystem {
      */
     public PneumaticSubsystem(int[] channels,
             int module, double timeExtend, double timeContract,
-            Constants.CYLINDER_ACTION startAction)
+            CYLINDER_ACTION startAction)
     {
         // Save any constants
         Module = module;
@@ -53,13 +56,13 @@ public class PneumaticSubsystem {
      * @param Action extend/contract/no action
      * @return true if finished
      */
-    public boolean Run(Constants.CYLINDER_ACTION Action)
+    public boolean Run(CYLINDER_ACTION Action)
     {
-        if (Action == Constants.CYLINDER_ACTION.EXTEND)
+        if (Action == CYLINDER_ACTION.EXTEND)
         {
             return Extend();
         }
-        else if (Action == Constants.CYLINDER_ACTION.CONTRACT)
+        else if (Action == CYLINDER_ACTION.CONTRACT)
         {
             return Contract();
         }
