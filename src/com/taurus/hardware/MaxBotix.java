@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.taurus.sensors;
+package com.taurus.hardware;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.PIDSource;
