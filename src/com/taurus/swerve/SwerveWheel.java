@@ -8,8 +8,7 @@ package com.taurus.swerve;
 
 import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
-import com.taurus.controller.Controller;
-import com.taurus.robotspecific2015.Constants;
+import com.taurus.controller.SwerveController;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -73,7 +72,7 @@ public class SwerveWheel {
     // deadband
     private static final double MinSpeed = 0.08;
 
-    private final Controller controller;
+    private final SwerveController controller;
     
     /**
      * Set up the wheel with the specific IO and orientation on the robot
@@ -96,7 +95,7 @@ public class SwerveWheel {
     public SwerveWheel(int Number, double[] Position, double Orientation,
             /*int[] EncoderPins, */int PotPin, int DriveAddress, int AnglePin,
             /*int ShiftPin, int[] ShiftVals*/
-            int AngleCalibrationPin, Controller controller)
+            int AngleCalibrationPin, SwerveController controller)
     {
         Name = "Wheel" + this.Number;
         this.Number = Number;
@@ -106,14 +105,14 @@ public class SwerveWheel {
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new CANTalon(DriveAddress);
         
-        if(Application.ROBOT_VERSION == 0)
-        {
+//        if(Application.ROBOT_VERSION == 0)
+//        {
             MotorAngle = new Talon(AnglePin);
-        }
-        else
-        {
-            MotorAngleBackup = new Victor(AnglePin);
-        }
+//        }
+//        else
+//        {
+//            MotorAngleBackup = new Victor(AnglePin);
+//        }
 
 //        HighGear = true;
 //        Shifter = new Servo(ShiftPin);
@@ -295,27 +294,27 @@ public class SwerveWheel {
         // Control the wheel angle.
         if (speed > MinSpeed)
         {
-            if(Application.ROBOT_VERSION == 0)
-            {
+//            if(Application.ROBOT_VERSION == 0)
+//            {
                 MotorAngle.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
-            }
-            else
-            {
-                MotorAngleBackup.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
-            }
+//            }
+//            else
+//            {
+//                MotorAngleBackup.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
+//            }
         }
         else
         {
             // Too slow, do nothing
             AngleController.resetIntegral();
-            if(Application.ROBOT_VERSION == 0)
-            {
+//            if(Application.ROBOT_VERSION == 0)
+//            {
                 MotorAngle.set(0);
-            }
-            else
-            {
-                MotorAngleBackup.set(0);
-            }
+//            }
+//            else
+//            {
+//                MotorAngleBackup.set(0);
+//            }
         }
 
         return AngleController.isReverseMotor();
