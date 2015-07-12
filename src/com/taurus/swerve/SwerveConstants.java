@@ -64,7 +64,7 @@ public class SwerveConstants {
     /**
      * Pins (PWM) for wheel angle motor controller outputs
      */
-    public static final int[] WheelAngleMotorPins = { 0, 1, 2, 3 };
+    public static final int[] WheelAngleMotorPins = { 0, 1, 4, 3 };
 
     /**
      * Pins (PWM) for wheel shifting servos
@@ -121,8 +121,8 @@ public class SwerveConstants {
     public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity
             * DriveGearRatio;
 
-    public static final double DriveSpeedCrawl = .533;
-    public static final double DriveSpeedNormal = .75;
+    public static final double DriveSpeedCrawl = .4;
+    public static final double DriveSpeedNormal = .85;
     
     
     /**

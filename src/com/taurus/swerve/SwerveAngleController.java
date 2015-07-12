@@ -15,8 +15,8 @@ public final class SwerveAngleController {
     private static final double HalfCircle = 180, QuarterCircle = 90;
     private static final double MaxOut = 1;
 
-    private static final double P = MaxOut / QuarterCircle * 3.0;
-    private static final double T_I = .1; // seconds needed to equal a P term
+    private static final double P = MaxOut / QuarterCircle * 2.75;
+    private static final double T_I = .9; // seconds needed to equal a P term
                                           // contribution
     private static final double I = 0 / T_I;
     private static final double D = 0;
@@ -47,7 +47,15 @@ public final class SwerveAngleController {
         this.name = name;
         this.motorSpeed = 0;
         this.reverseMotor = false;
-        this.controller = new PIDController(P, I, D, MaxOut);
+
+        if(Application.ROBOT_VERSION == 0)
+        {
+            this.controller = new PIDController(P, I, D, MaxOut);
+        }
+        else
+        {
+            this.controller = new PIDController(P, I, D, MaxOut);
+        }
     }
 
     /**

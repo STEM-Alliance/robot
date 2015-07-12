@@ -8,12 +8,13 @@ package com.taurus.swerve;
 
 import com.taurus.PIDController;
 import com.taurus.Utilities;
-import com.taurus.controller.SwerveController;
+import com.taurus.controller.Controller;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Swerve chassis implementation
@@ -42,6 +43,8 @@ public class SwerveChassis extends Subsystem {
     private double MinRotationAdjust = .3;
     private double MaxAcceleration = 2; // Smaller is slower acceleration
     private double MaxAvailableVelocity = 1;
+    
+    protected double RotationRateAdjust = 1;
 
     private SwerveVector LastVelocity;
 
@@ -55,12 +58,12 @@ public class SwerveChassis extends Subsystem {
     private boolean AutoRunEnable;
     private double AutoTimeStart;
     
-    private final SwerveController controller;
+    private final Controller controller;
 
     /**
      * sets up individual wheels and their positions relative to robot center
      */
-    public SwerveChassis(SwerveController controller)
+    public SwerveChassis(Controller controller)
     {
         this.controller = controller;
         
@@ -93,7 +96,7 @@ public class SwerveChassis extends Subsystem {
         {
             Wheels[i] = new SwerveWheel(i,
                     SwerveConstants.WheelPositions[i],
-                    com.taurus.Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
+                    Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
 //                    SwerveConstants.WheelEncoderPins[i],
                     SwerveConstants.WheelPotPins[i],
                     SwerveConstants.WheelDriveMotorAddress[i],
@@ -128,26 +131,26 @@ public class SwerveChassis extends Subsystem {
      */
     public void run()
     {
-        if (AutoRunEnable)
+//        if (AutoRunEnable)
+//        {
+//            if((Timer.getFPGATimestamp() - AutoTimeStart) < AutoTimeLength)
+//            {
+//                setFieldRelative(false);
+//
+//                CrawlMode = 1;
+//
+//                UpdateDrive(AutoVector, 0, -1);
+//                
+//            }
+//            else 
+//            {
+//                AutoRunEnable = false;
+//            }
+//        }
+//        else
         {
-            if((Timer.getFPGATimestamp() - AutoTimeStart) < AutoTimeLength)
-            {
-                setFieldRelative(false);
 
-                CrawlMode = 1;
-
-                UpdateDrive(AutoVector, 0, -1);
-                
-            }
-            else 
-            {
-                AutoRunEnable = false;
-            }
-        }
-        else
-        {
-
-            CrawlMode = controller.getLowSpeed();
+            setCrawlMode(controller.getLowSpeed());
 
             // Use the Joystick inputs to update the drive system
             switch (driveScheme.get())
@@ -175,7 +178,7 @@ public class SwerveChassis extends Subsystem {
                         // use non field relative
                         setFieldRelative(false);
 
-                        CrawlMode = 1;
+                        //CrawlMode = 0;
 
                         SwerveVector drive = new SwerveVector();
                         drive.setMagAngle(1, dpad - 90);
@@ -302,25 +305,53 @@ public class SwerveChassis extends Subsystem {
         {
             RobotVelocity.setMag(1.0);
         }
+        
+        RobotVelocity.setMag(RobotVelocity.getMag() * RobotVelocity.getMag());
 
         // limit before slowing speed so it runs using the original values
         // set limitations on rotation,
         // so if driving full speed it doesn't take priority
+        MinRotationAdjust = Application.prefs.getDouble("MinRotationAdjust", MinRotationAdjust);
         double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + MinRotationAdjust, 1);
         RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
-        
-        // scale the speed down unless we're in high speed mode
 
-        RobotVelocity.setMag(RobotVelocity.getMag() * (SwerveConstants.DriveSpeedCrawl + 
-                (1 - SwerveConstants.DriveSpeedCrawl) * controller.getLowSpeed()));
+//        SmartDashboard.putNumber("Drive R pre", RobotRotation);
+        
+        double crawlSpeed = Application.prefs.getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
+        
+        RobotRotation *= (crawlSpeed + (1 - crawlSpeed) * getCrawlMode() * .9);
+        
+
+//        SmartDashboard.putNumber("Drive R pre 2", RobotRotation);
+        // scale the speed down unless we're in high speed mode
         
         if (!controller.getHighSpeed())
         {
+            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + 
+                    (1 - crawlSpeed) * getCrawlMode()));
+            
+            
+            RobotRotation *=SwerveConstants.DriveSpeedNormal;
             RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DriveSpeedNormal);
         }
+        else
+        {
+            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
+        }
+        
+        if(Application.ROBOT_VERSION == 1)
+        {
+            RobotRotation *= 1.25;
+        }
+        
+        RobotRotation *= RotationRateAdjust;
+        
 
         RobotVelocity = restrictVelocity(RobotVelocity);
 
+//        SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
+//        SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
+//        SmartDashboard.putNumber("Drive R", RobotRotation);
 
         // calculate vectors for each wheel
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
@@ -341,7 +372,7 @@ public class SwerveChassis extends Subsystem {
         }
 
         // grab max velocity from the dash
-        MaxAvailableVelocity = com.taurus.Application.prefs.getDouble("MAX_ROBOT_VELOCITY",
+        MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY",
                         MaxAvailableVelocity);
 
         // determine ratio to scale all wheel velocities by
@@ -381,7 +412,7 @@ public class SwerveChassis extends Subsystem {
         SwerveVector delta = robotVelocity.subtract(LastVelocity);
 
         // grab the max acceleration value from the dash
-        MaxAcceleration = com.taurus.Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration);
+        MaxAcceleration = Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration);
 
         // determine if we are accelerating/decelerating too slow
         if (delta.getMag() > MaxAcceleration * TimeDelta)
@@ -431,7 +462,7 @@ public class SwerveChassis extends Subsystem {
         Gyro.setZero(yaw);
         LastHeading = yaw;
     }
-
+    
     /**
      * Set the chassis's brake
      * 
@@ -560,5 +591,15 @@ public class SwerveChassis extends Subsystem {
     protected void initDefaultCommand()
     {
         // TODO Auto-generated method stub
+    }
+
+    public double getCrawlMode()
+    {
+        return CrawlMode;
+    }
+
+    public void setCrawlMode(double crawlMode)
+    {
+        CrawlMode = crawlMode;
     }
 }
