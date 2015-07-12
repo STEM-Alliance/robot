@@ -1,10 +1,12 @@
 package com.taurus.swerve;
 
+import com.taurus.controller.*;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Application extends com.taurus.Application {
+public class Application implements com.taurus.Application {
 
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
@@ -14,6 +16,9 @@ public class Application extends com.taurus.Application {
 
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
+    
+    private SwerveChassis drive;
+    private SwerveController controller;
     
     public Application()
     {
@@ -36,14 +41,18 @@ public class Application extends com.taurus.Application {
         testWheelChooser.addObject("Back Right", Integer.valueOf(2));
         testWheelChooser.addObject("Back Left", Integer.valueOf(3));
         SmartDashboard.putData("Test Wheel", testWheelChooser);
+        
+        controller = new SwerveXbox();
+        
+        drive = new SwerveChassis(controller);
     }
     
-    public void TeleopInitRobotSpecific()
+    public void TeleopInit()
     {
 
     }
 
-    public void TeleopPeriodicRobotSpecific()
+    public void TeleopPeriodic()
     {
         int i = ((Integer) testWheelChooser.getSelected()).intValue();
 
@@ -98,51 +107,51 @@ public class Application extends com.taurus.Application {
         }
     }
 
-    public void TeleopDeInitRobotSpecific()
+    public void TeleopDeInit()
     {
 
     }
 
-    public void AutonomousInitRobotSpecific()
+    public void AutonomousInit()
     {
 
     }
 
-    public void AutonomousPeriodicRobotSpecific()
+    public void AutonomousPeriodic()
     {
 
     }
 
-    public void AutonomousDeInitRobotSpecific()
+    public void AutonomousDeInit()
     {
 
     }
 
-    public void TestModeInitRobotSpecific()
+    public void TestModeInit()
     {
 
     }
 
-    public void TestModePeriodicRobotSpecific()
+    public void TestModePeriodic()
     {
     }
 
-    public void TestModeDeInitRobotSpecific()
-    {
-
-    }
-
-    public void DisabledInitRobotSpecific()
+    public void TestModeDeInit()
     {
 
     }
 
-    public void DisabledPeriodicRobotSpecific()
+    public void DisabledInit()
     {
 
     }
 
-    public void DisabledDeInitRobotSpecific()
+    public void DisabledPeriodic()
+    {
+
+    }
+
+    public void DisabledDeInit()
     {
 
     }
