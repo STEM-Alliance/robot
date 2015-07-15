@@ -62,7 +62,7 @@ public class Application implements com.taurus.Application {
              // use the left joystick to control the wheel module
                 SwerveVector WheelActual = drive.getWheel(i).setDesired(
                         controller.getHaloDrive_Velocity(),
-                      /*  controller.getHighGearEnable(),*/ controller.getSwerveBrake());
+                        controller.getHighGearEnable(), controller.getSwerveBrake());
 
                 // display in SmartDashboard
                 SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());

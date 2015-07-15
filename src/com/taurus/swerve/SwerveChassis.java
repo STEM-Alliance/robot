@@ -101,8 +101,8 @@ public class SwerveChassis extends Subsystem {
                     SwerveConstants.WheelPotPins[i],
                     SwerveConstants.WheelDriveMotorAddress[i],
                     SwerveConstants.WheelAngleMotorPins[i],
-//                    SwerveConstants.WheelShiftServoPins[i],
-//                    SwerveConstants.WheelShiftServoVals[i],
+                    SwerveConstants.WheelShiftServoPins[i],
+                    SwerveConstants.WheelShiftServoVals[i],
                     SwerveConstants.WheelAngleCalibrationPins[i],
                     controller);
         }
@@ -391,7 +391,7 @@ public class SwerveChassis extends Subsystem {
                             WheelsUnscaled[i].getAngle());
 
             // Set the wheel speed
-            WheelsActual[i] = Wheels[i].setDesired(WheelScaled,/* GearHigh, */Brake);
+            WheelsActual[i] = Wheels[i].setDesired(WheelScaled,false, Brake);
         }
 
         return WheelsActual;

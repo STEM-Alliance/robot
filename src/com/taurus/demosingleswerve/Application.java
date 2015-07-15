@@ -11,7 +11,7 @@ public class Application implements com.taurus.Application {
     public Application()
     {
         Controller = new SwerveXbox();
-        Wheel = new SwerveWheel(0, new double[2], 0, 0, 12, 0, 0, Controller);
+        Wheel = new SwerveWheel(0, new double[2], 0, 0, 12, 0, 1, new int[] {20, 75}, 0, Controller);
     }
     
     @Override
@@ -26,7 +26,7 @@ public class Application implements com.taurus.Application {
     {
         // TODO Auto-generated method stub
         // Set the wheel speed
-        Wheel.setDesired(Controller.getHaloDrive_Velocity(),/* GearHigh, */false);
+        Wheel.setDesired(Controller.getHaloDrive_Velocity(), Controller.getHighGearEnable(), false);
     }
 
     @Override
