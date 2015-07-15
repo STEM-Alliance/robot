@@ -12,6 +12,7 @@ import com.taurus.controller.SwerveController;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Victor;
 
@@ -31,10 +32,10 @@ public class SwerveWheel {
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
 
-//    private Servo Shifter;
-//    private int ShifterValueHigh;
-//    private int ShifterValueLow;
-//    private boolean HighGear;
+    private Servo Shifter;
+    private int ShifterValueHigh;
+    private int ShifterValueLow;
+    private boolean HighGear;
 
     private boolean Brake;
 
@@ -94,7 +95,7 @@ public class SwerveWheel {
      */
     public SwerveWheel(int Number, double[] Position, double Orientation,
             /*int[] EncoderPins, */int PotPin, int DriveAddress, int AnglePin,
-            /*int ShiftPin, int[] ShiftVals*/
+            int ShiftPin, int[] ShiftVals,
             int AngleCalibrationPin, SwerveController controller)
     {
         Name = "Wheel" + this.Number;
@@ -114,10 +115,10 @@ public class SwerveWheel {
 //            MotorAngleBackup = new Victor(AnglePin);
 //        }
 
-//        HighGear = true;
-//        Shifter = new Servo(ShiftPin);
-//        ShifterValueHigh = ShiftVals[0];
-//        ShifterValueLow = ShiftVals[1];
+        HighGear = true;
+        Shifter = new Servo(ShiftPin);
+        ShifterValueHigh = ShiftVals[0];
+        ShifterValueLow = ShiftVals[1];
 
         //DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
         //DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
@@ -145,10 +146,10 @@ public class SwerveWheel {
      * @return Actual vector reading of wheel
      */
     public SwerveVector setDesired(SwerveVector NewDesired,
-           /* boolean NewHighGear,*/ boolean NewBrake)
+            boolean NewHighGear, boolean NewBrake)
     {
         WheelDesired = NewDesired;
-//        HighGear = NewHighGear;
+        HighGear = NewHighGear;
         Brake = NewBrake;
 
         return updateTask();
@@ -191,23 +192,23 @@ public class SwerveWheel {
      * 
      * @return Whether the wheel is in high gear
      */
-//    public boolean getIsHighGear()
-//    {
-//        return HighGear;
-//    }
+    public boolean getIsHighGear()
+    {
+        return HighGear;
+    }
 
-//    private void updateShifter()
-//    {
-//        if (HighGear)
-//        {
-//            Shifter.setAngle(ShifterValueHigh);
-//
-//        }
-//        else
-//        {
-//            Shifter.setAngle(ShifterValueLow);
-//        }
-//    }
+    private void updateShifter()
+    {
+        if (HighGear)
+        {
+            Shifter.setAngle(ShifterValueHigh);
+
+        }
+        else
+        {
+            Shifter.setAngle(ShifterValueLow);
+        }
+    }
 
     /**
      * Get the angle of the potentiometer
@@ -266,7 +267,7 @@ public class SwerveWheel {
         boolean reverse = updateAngleMotor(WheelDesired.getAngle(),
                 WheelDesired.getMag());
 
-//        updateShifter();
+        updateShifter();
 
         updateDriveMotor(reverse);
 
