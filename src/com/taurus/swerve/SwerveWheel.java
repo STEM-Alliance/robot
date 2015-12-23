@@ -11,7 +11,10 @@ import com.taurus.Utilities;
 import com.taurus.controller.SwerveController;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.ControlMode;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Victor;
 
@@ -31,10 +34,10 @@ public class SwerveWheel {
     private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
                                       // val, angle
 
-//    private Servo Shifter;
-//    private int ShifterValueHigh;
-//    private int ShifterValueLow;
-//    private boolean HighGear;
+    private Servo Shifter;
+    private int ShifterValueHigh;
+    private int ShifterValueLow;
+    private boolean HighGear;
 
     private boolean Brake;
 
@@ -44,12 +47,12 @@ public class SwerveWheel {
 
     // motor
     private CANTalon MotorDrive;
-    public Talon MotorAngle;
-    public Victor MotorAngleBackup;
+    public CANTalon MotorAngle;
+ 
 
     // sensor
     public MagnetoPot AnglePot;
-    //private Encoder DriveEncoder;
+
     
     public DigitalInput CalibrationSensor;
     
@@ -61,13 +64,14 @@ public class SwerveWheel {
 
     // controller
     private SwerveAngleController AngleController;
-//    private VelocityCalculator DriveEncoderFilter;
-//    private PIController DriveEncoderController;
 
-//    private static final double DriveP = 0.3;
-//    private static final double DriveTI = 0.5; // seconds needed to equal a P
-//                                               // term contribution
-//    private static final double DriveI = 0;// 2 / DriveTI;
+
+    private static final double DriveP = 0.3;
+    private static final double DriveD= 0.5; // seconds needed to equal a P
+                                               // term contribution
+    private static final double DriveI = 0;// 2 / DriveTI;
+    private static double DriveRampRate = 12; // volt/sec change
+    private static double DriveIzone = 123; 
 
     // deadband
     private static final double MinSpeed = 0.08;
@@ -89,12 +93,12 @@ public class SwerveWheel {
      *            Pin for Angle Potentiometer
      * @param DriveAddress
      *            Address for drive motor controller
-     * @param AnglePin
+     * @param AngleAddress
      *            Pin for angle motor controller
      */
     public SwerveWheel(int Number, double[] Position, double Orientation,
-            /*int[] EncoderPins, */int PotPin, int DriveAddress, int AnglePin,
-            /*int ShiftPin, int[] ShiftVals*/
+            int PotPin, int DriveAddress, int AngleAddress,
+            int ShiftPin, int[] ShiftVals,
             int AngleCalibrationPin, SwerveController controller)
     {
         Name = "Wheel" + this.Number;
@@ -104,26 +108,23 @@ public class SwerveWheel {
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new CANTalon(DriveAddress);
-        
+//        MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone, closeLoopRampRate, 0);
+        MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        MotorDrive.changeControlMode(ControlMode.Disabled);
 //        if(Application.ROBOT_VERSION == 0)
 //        {
-            MotorAngle = new Talon(AnglePin);
+            MotorAngle = new CANTalon(AngleAddress);
 //        }
 //        else
 //        {
 //            MotorAngleBackup = new Victor(AnglePin);
 //        }
 
-//        HighGear = true;
-//        Shifter = new Servo(ShiftPin);
-//        ShifterValueHigh = ShiftVals[0];
-//        ShifterValueLow = ShiftVals[1];
+        HighGear = true;
+        Shifter = new Servo(ShiftPin);
+        ShifterValueHigh = ShiftVals[0];
+        ShifterValueLow = ShiftVals[1];
 
-        //DriveEncoder = new Encoder(EncoderPins[0], EncoderPins[1]);
-        //DriveEncoder.setDistancePerPulse(SwerveConstants.DriveEncoderRate);
-
-//        DriveEncoderFilter = new VelocityCalculator();
-//        DriveEncoderController = new PIController(DriveP, DriveI, 1.0);
 
         // AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) +
         // Math.abs(SpinMax), -SpinMin);
@@ -145,10 +146,10 @@ public class SwerveWheel {
      * @return Actual vector reading of wheel
      */
     public SwerveVector setDesired(SwerveVector NewDesired,
-           /* boolean NewHighGear,*/ boolean NewBrake)
+            boolean NewHighGear, boolean NewBrake)
     {
         WheelDesired = NewDesired;
-//        HighGear = NewHighGear;
+        HighGear = NewHighGear;
         Brake = NewBrake;
 
         return updateTask();
@@ -191,23 +192,23 @@ public class SwerveWheel {
      * 
      * @return Whether the wheel is in high gear
      */
-//    public boolean getIsHighGear()
-//    {
-//        return HighGear;
-//    }
+    public boolean getIsHighGear()
+    {
+        return HighGear;
+    }
 
-//    private void updateShifter()
-//    {
-//        if (HighGear)
-//        {
-//            Shifter.setAngle(ShifterValueHigh);
-//
-//        }
-//        else
-//        {
-//            Shifter.setAngle(ShifterValueLow);
-//        }
-//    }
+    private void updateShifter()
+    {
+        if (HighGear)
+        {
+            Shifter.setAngle(ShifterValueHigh);
+
+        }
+        else
+        {
+            Shifter.setAngle(ShifterValueLow);
+        }
+    }
 
     /**
      * Get the angle of the potentiometer
@@ -266,7 +267,7 @@ public class SwerveWheel {
         boolean reverse = updateAngleMotor(WheelDesired.getAngle(),
                 WheelDesired.getMag());
 
-//        updateShifter();
+        updateShifter();
 
         updateDriveMotor(reverse);
 
@@ -298,6 +299,7 @@ public class SwerveWheel {
 //            {
                 MotorAngle.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
 //            }
+             
 //            else
 //            {
 //                MotorAngleBackup.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
