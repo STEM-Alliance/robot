@@ -62,7 +62,7 @@ public class Application implements com.taurus.Application {
              // use the left joystick to control the wheel module
                 SwerveVector WheelActual = drive.getWheel(i).setDesired(
                         controller.getHaloDrive_Velocity(),
-                      /*  controller.getHighGearEnable(),*/ controller.getSwerveBrake());
+                        controller.getHighGearEnable(), controller.getSwerveBrake());
 
                 // display in SmartDashboard
                 SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
@@ -70,8 +70,8 @@ public class Application implements com.taurus.Application {
                         WheelActual.getAngle());
 
                 // if the button is not held down, we're in high gear
-//                drive.setGearHigh(controller.getHighGearEnable());
-//                drive.UpdateShifter();
+                drive.setGearHigh(controller.getHighGearEnable());
+                drive.UpdateShifter();
                 break;
 
             case TEST_MODE_CALIBRATION_1:
