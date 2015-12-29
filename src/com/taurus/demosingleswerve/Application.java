@@ -1,17 +1,22 @@
 package com.taurus.demosingleswerve;
 
 import com.taurus.controller.SwerveXbox;
+import com.taurus.swerve.SwerveVector;
 import com.taurus.swerve.SwerveWheel;
+
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Application implements com.taurus.Application {
 
     SwerveXbox Controller;
     SwerveWheel Wheel;
+    double StartTime;
     
     public Application()
     {
         Controller = new SwerveXbox();
-        Wheel = new SwerveWheel(0, new double[2], 0, 0, 12, 0, 1, new int[] {20, 75}, 0, Controller);
+        Wheel = new SwerveWheel(0, new double[2], 0, 0, 12, 0, 1, new int[] {10, 85}, 0, Controller);
     }
     
     @Override
@@ -27,6 +32,7 @@ public class Application implements com.taurus.Application {
         // TODO Auto-generated method stub
         // Set the wheel speed
         Wheel.setDesired(Controller.getHaloDrive_Velocity(), Controller.getHighGearEnable(), false);
+
     }
 
     @Override
@@ -38,13 +44,33 @@ public class Application implements com.taurus.Application {
     @Override
     public void AutonomousInit()
     {
-        // Do nothing
+        StartTime = Timer.getFPGATimestamp(); // Set initial time
     }
 
     @Override
     public void AutonomousPeriodic()
     {
-       // Do nothing   
+        // Has enough time elapsed to change direction?
+        if(Timer.getFPGATimestamp() - StartTime > 5)
+        {
+            // Change direction
+            SwerveVector value;
+            Random randomGenerator = new Random();
+            double x;
+            double y;
+            
+            x = randomGenerator.nextDouble();
+            y = randomGenerator.nextDouble();
+            value = new SwerveVector(x, y);
+            value = SwerveVector.NewFromMagAngle(x, y*360);
+            
+            Wheel.setDesired(value, false, false);
+            
+            // Reset our timer
+            StartTime = Timer.getFPGATimestamp();
+        }
+        
+        Wheel.updateTask();
     }
 
     @Override

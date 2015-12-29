@@ -262,7 +262,7 @@ public class SwerveWheel {
      * 
      * @return Actual vector reading of wheel
      */
-    private SwerveVector updateTask()
+    public SwerveVector updateTask()
     {
         boolean reverse = updateAngleMotor(WheelDesired.getAngle(),
                 WheelDesired.getMag());
