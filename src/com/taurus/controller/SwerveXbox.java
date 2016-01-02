@@ -8,7 +8,7 @@ public class SwerveXbox implements SwerveController {
 
     private Xbox xbox;
 
-    public static final double DEADBAND = 0.2;
+    public static final double DEADBAND = 0.25;
 
     private boolean fieldRelative;
     private boolean fieldRelativeLast;
@@ -95,7 +95,7 @@ public class SwerveXbox implements SwerveController {
     {
         SwerveVector value;
 
-        value = new SwerveVector(xbox.getX(Hand.kLeft), xbox.getY(Hand.kLeft));
+        value = new SwerveVector(xbox.getX(Hand.kLeft), -xbox.getY(Hand.kLeft));
 
         if (value.getMag() < DEADBAND)
         {
@@ -256,6 +256,6 @@ public class SwerveXbox implements SwerveController {
     @Override
     public double getHaloDrive_Heading45()
     {
-        return 0;
+        return -1;
     }
 }
