@@ -159,6 +159,7 @@ public class SwerveVector {
      */
     public double getAngle()
     {
+        // *-1 to help math
         return Math.toDegrees(Math.atan2(y, x));
     }
     

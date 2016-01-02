@@ -172,7 +172,7 @@ public class SwerveChassis extends Subsystem {
                 default:
                 case DriveScheme.COMBO_DRIVE:
                     double dpad = controller.getDPad();
-
+                    
                     if (dpad != -1)
                     {
                         // use non field relative
@@ -276,7 +276,7 @@ public class SwerveChassis extends Subsystem {
             Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
         }
 
-        // UpdateShifter();
+         UpdateShifter();
 
         return setWheelVectors(Velocity, Rotation);
     }
