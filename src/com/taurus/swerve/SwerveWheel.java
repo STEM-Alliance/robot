@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.Victor;
 
 /**
  * Handle motor outputs and feedback for an individual wheel
@@ -41,12 +39,12 @@ public class SwerveWheel {
 
     private boolean Brake;
 
-    private double maxRotationSpeed = .75;
+    private double maxRotationSpeed = .7;
 
     private double AngleOrientation = 0;
 
     // motor
-    private CANTalon MotorDrive;
+    public CANTalon MotorDrive;
     public CANTalon MotorAngle;
  
 
@@ -66,15 +64,15 @@ public class SwerveWheel {
     private SwerveAngleController AngleController;
 
 
-    private static final double DriveP = 0.3;
-    private static final double DriveD= 0.5; // seconds needed to equal a P
-                                               // term contribution
-    private static final double DriveI = 0;// 2 / DriveTI;
-    private static double DriveRampRate = 12; // volt/sec change
-    private static double DriveIzone = 123; 
+//    private static final double DriveP = 0.3;
+//    private static final double DriveD= 0.5; // seconds needed to equal a P
+//                                               // term contribution
+//    private static final double DriveI = 0;// 2 / DriveTI;
+//    private static double DriveRampRate = 12; // volt/sec change
+//    private static double DriveIzone = 123; 
 
     // deadband
-    private static final double MinSpeed = 0.08;
+    private static final double MinSpeed = 0.1;
 
     private final SwerveController controller;
     
@@ -109,8 +107,8 @@ public class SwerveWheel {
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new CANTalon(DriveAddress);
 //        MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone, closeLoopRampRate, 0);
-        MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        MotorDrive.changeControlMode(ControlMode.Disabled);
+//        MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+//        MotorDrive.changeControlMode(ControlMode.Disabled);
 //        if(Application.ROBOT_VERSION == 0)
 //        {
             MotorAngle = new CANTalon(AngleAddress);
@@ -277,7 +275,7 @@ public class SwerveWheel {
         // WheelDesired.getAngle());
 
         return getActual();
-    }
+    }   
 
     /**
      * Update the angle motor based on the desired angle Called from
@@ -297,7 +295,7 @@ public class SwerveWheel {
         {
 //            if(Application.ROBOT_VERSION == 0)
 //            {
-                MotorAngle.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
+                MotorAngle.set(AngleController.getMotorSpeed() * maxRotationSpeed);
 //            }
              
 //            else
