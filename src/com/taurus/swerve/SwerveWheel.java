@@ -109,14 +109,23 @@ public class SwerveWheel {
 //        MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone, closeLoopRampRate, 0);
 //        MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 //        MotorDrive.changeControlMode(ControlMode.Disabled);
-        
-        MotorAngle = new CANTalon(AngleAddress);
+//        if(Application.ROBOT_VERSION == 0)
+//        {
+            MotorAngle = new CANTalon(AngleAddress);
+//        }
+//        else
+//        {
+//            MotorAngleBackup = new Victor(AnglePin);
+//        }
 
         HighGear = true;
         Shifter = new Servo(ShiftPin);
         ShifterValueHigh = ShiftVals[0];
         ShifterValueLow = ShiftVals[1];
 
+
+        // AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) +
+        // Math.abs(SpinMax), -SpinMin);
         AnglePot = new MagnetoPot(PotPin, 360);
         AngleController = new SwerveAngleController(Name + ".ctl");
 
@@ -277,21 +286,35 @@ public class SwerveWheel {
     public boolean updateAngleMotor(double angle, double speed)
     {
         // Update the angle controller.
-        AngleController.update(angle, AdjustAngle(-getAnglePotValue()));
+        AngleController.update(angle, AdjustAngle(getAnglePotValue()));
         
-//        maxRotationSpeed = Application.prefs.getDouble("maxRotationSpeed", maxRotationSpeed);
+        maxRotationSpeed = Application.prefs.getDouble("maxRotationSpeed", maxRotationSpeed);
 
         // Control the wheel angle.
         if (speed > MinSpeed)
         {
-            MotorAngle.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
+//            if(Application.ROBOT_VERSION == 0)
+//            {
+                MotorAngle.set(AngleController.getMotorSpeed() * maxRotationSpeed);
+//            }
              
+//            else
+//            {
+//                MotorAngleBackup.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
+//            }
         }
         else
         {
             // Too slow, do nothing
             AngleController.resetIntegral();
-            MotorAngle.set(0);
+//            if(Application.ROBOT_VERSION == 0)
+//            {
+                MotorAngle.set(0);
+//            }
+//            else
+//            {
+//                MotorAngleBackup.set(0);
+//            }
         }
 
         return AngleController.isReverseMotor();
