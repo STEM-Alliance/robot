@@ -108,6 +108,8 @@ public class Application implements com.taurus.Application {
                 break;
             case TEST_MODE_NORMAL:
             default:
+                SmartDashboard.putNumber("Gyro Angle", drive.getGyro().getYaw());
+                SmartDashboard.putNumber("Last Heading", drive.getLastHeading());
                 drive.run();
                 break;
         }

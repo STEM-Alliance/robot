@@ -17,8 +17,8 @@ public class SwerveConstants {
 
     public static final int WheelCount = 4;
 
-    public static final double ChassisWidth = 37.5;
-    public static final double ChassisDepth = 23;
+    public static final double ChassisWidth = 32;
+    public static final double ChassisDepth = 22.5;
     public static final double ChassisScale = ChassisWidth;
 
     /**
