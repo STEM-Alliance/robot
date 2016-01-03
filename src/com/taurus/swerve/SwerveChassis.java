@@ -185,7 +185,7 @@ public class SwerveChassis extends Subsystem {
                         // CrawlMode = 0;
 
                         SwerveVector drive = new SwerveVector();
-                        drive.setMagAngle(1, dpad - 90);
+                        drive.setMagAngle(1, -(dpad - 90));
 
                         UpdateDrive(drive, controller.getHaloDrive_Rotation(),
                                 controller.getHaloDrive_Heading45());
@@ -400,6 +400,11 @@ public class SwerveChassis extends Subsystem {
             Ratio = 1;
         }
 
+        boolean ActiveGear = GearHigh;
+        
+        if(SwerveConstants.WheelShiftDefaultHigh) 
+            GearHigh = !GearHigh;
+        
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             // Scale values for each wheel
@@ -410,7 +415,7 @@ public class SwerveChassis extends Subsystem {
 
             // Set the wheel speed
             WheelsActual[i] =
-                    Wheels[i].setDesired(WheelScaled, GearHigh, Brake);
+                    Wheels[i].setDesired(WheelScaled, ActiveGear, Brake);
         }
 
         return WheelsActual;

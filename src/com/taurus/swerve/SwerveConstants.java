@@ -59,24 +59,26 @@ public class SwerveConstants {
     /**
      * CAN Address for wheel drive motor controller outputs
      */
-    public static final int[] WheelDriveMotorAddress = { 11, 12, 13, 14 };
+    public static final int[] WheelDriveMotorAddress = { 14, 12, 13, 11 };
 
     /**
      * CAN Address for wheel angle motor controller outputs
      */
-    public static final int[] WheelAngleMotorPins = { 15, 16, 17, 18 };
+    public static final int[] WheelAngleMotorPins = { 18, 16, 17, 15 };
 
     /**
      * Pins (PWM) for wheel shifting servos
      */
-    public static final int[] WheelShiftServoPins = { 4, 5, 6, 7 };
+    public static final int[] WheelShiftServoPins = { 0, 1, 2, 3 };
 
     /**
-     * Array of values for shifting gears, high then low values
+     * Array of values for shifting gears, low then high values
      */
-    public static final int[] WheelShiftServoVals[] = { { 45, 120 },
-            { 120, 45 }, { 45, 120 }, { 120, 45 } };
+    public static final int[] WheelShiftServoVals[] = { { 120, 45 }, { 45, 120 },
+         { 120, 45 }, { 45, 120 } };
 
+    public static final boolean WheelShiftDefaultHigh = false;
+    
     /**
      * Wheel diameter
      */
