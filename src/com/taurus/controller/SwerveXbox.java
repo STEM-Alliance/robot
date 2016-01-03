@@ -197,7 +197,7 @@ public class SwerveXbox implements SwerveController {
      */
     public boolean getSwerveBrake()
     {
-        return xbox.getBumper(Hand.kLeft);
+        return false;// xbox.getBumper(Hand.kLeft);
     }
 
     /**
@@ -256,6 +256,6 @@ public class SwerveXbox implements SwerveController {
     @Override
     public double getHaloDrive_Heading45()
     {
-        return 0;
+        return -1;
     }
 }

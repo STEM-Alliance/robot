@@ -181,7 +181,7 @@ public class SwerveChassis extends Subsystem {
                         //CrawlMode = 0;
 
                         SwerveVector drive = new SwerveVector();
-                        drive.setMagAngle(1, -(dpad - 90));
+                        drive.setMagAngle(1, (dpad - 90));
 
                         UpdateDrive(drive, controller.getHaloDrive_Rotation(),
                                 controller.getHaloDrive_Heading45());
@@ -222,12 +222,15 @@ public class SwerveChassis extends Subsystem {
     public SwerveVector[] UpdateDrive(SwerveVector Velocity, double Rotation,
             double Heading)
     {
+        
+        
         double Error = 0;
-        if (Math.abs(Rotation) < .1)
+        if (Math.abs(Rotation) < .25)
         {
             // if we're not spinning
             if (Heading != -1)
             {
+                SmartDashboard.putString("Drive Mode", "Rotate To Heading");
                 // pressing on the dpad
                 // set the rotation using a PI controller based on current robot
                 // heading and new desired heading
@@ -239,23 +242,29 @@ public class SwerveChassis extends Subsystem {
             }
             else
             {
+                SmartDashboard.putString("Drive Mode", "Stay At Angle");
                 // not pressing on dpad
                 // set the rotation using a PI controller based on current robot
                 // heading and new desired heading
-                Error = Utilities.wrapToRange(LastHeading - Gyro.getYaw(),
+                Error = -Utilities.wrapToRange(LastHeading - Gyro.getYaw(),
                                 -180, 180);
+                
+                SmartDashboard.putNumber("Rotation Error", Error);
+                
                 Rotation = ChassisAngleController.update(Error,
                                 Timer.getFPGATimestamp());
             }
         }
         else
         {
+            SmartDashboard.putString("Drive Mode", "Spinning");
             // spinning
             LastHeading = Gyro.getYaw();
         }
 
-        // SmartDashboard.putNumber("AngleDrive.error", Error);
-        // SmartDashboard.putNumber("AngleDrive.rotation", Rotation);
+        SmartDashboard.putNumber("Velocity X", Velocity.getX());
+        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
+        SmartDashboard.putNumber("Rotation", Rotation);
 
         return UpdateHaloDrive(Velocity, Rotation);
     }
