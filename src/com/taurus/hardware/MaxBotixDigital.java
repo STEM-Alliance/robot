@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DigitalSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class MaxBotixDigital extends MaxBotix {
@@ -211,5 +212,19 @@ public class MaxBotixDigital extends MaxBotix {
     public void reset()
     {
         m_counter.reset();
+    }
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public PIDSourceType getPIDSourceType()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
