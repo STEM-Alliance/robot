@@ -29,7 +29,15 @@ public class Robot extends SampleRobot {
                     // Run Swerve
                     app = new com.taurus.swerve.Application();
                     SmartDashboard.putString("Application", "Swerve");
-                    break;                    
+                    break;
+                    
+                case 1:
+                    // Run RockerApplication
+                    app = new com.taurus.rocker.RockerApplication();
+                    SmartDashboard.putString("Application", "RockerApplication");
+                    break;
+                    
+                    
                 default:
                     // Run Swerve
                     app = new com.taurus.swerve.Application();
