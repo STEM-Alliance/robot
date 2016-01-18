@@ -1,7 +1,11 @@
 package com.taurus.shooter;
 
+import com.taurus.MagnetoPot;
+import com.taurus.PIDController;
+
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Shooter {
 
@@ -10,7 +14,9 @@ public class Shooter {
     CANTalon shooterBT = new CANTalon(22);
     CANTalon shooterBB = new CANTalon(23);
     DigitalInput stopSwitch = new DigitalInput(0);
-    
+    CANTalon aimer = new CANTalon(24);
+    PIDController aimerPID = new PIDController(1, 0, 0, 1);
+    MagnetoPot aimAngle = new MagnetoPot(0,360);
     /**
      * grabs the boulder - top and bottom opposite directions
      * @param speed between 0 and 1
@@ -40,6 +46,25 @@ public class Shooter {
     public void shoot (double speed){
         setSpeed(-speed, speed);
     
+    }
+    /**
+     * aims the shooter
+     * @param angle 0 to 360
+     * @return true if angle reached, false if not
+     */
+    
+    public boolean aim(double angle){
+        
+       double motorOutput = aimerPID.update(angle, aimAngle.get(), Timer.getFPGATimestamp());
+       
+       if(Math.abs(aimAngle.get()-angle) <= 5){
+           aimer.set(0);
+           return true;
+       } else {
+           aimer.set(motorOutput);
+           return false;
+       }
+       
     }
     
     /**
