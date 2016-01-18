@@ -2,6 +2,7 @@ package com.taurus.rocker;
 
 import com.taurus.Application;
 import com.taurus.controller.Xbox;
+import com.taurus.shooter.Shooter;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -10,6 +11,7 @@ public class RockerApplication implements Application {
 
     RockerChassis chassis1 = new RockerChassis();
     Xbox controller = new Xbox(0);
+    Shooter shooter1 = new Shooter();
 
     @Override
     public void TeleopInit()
@@ -21,8 +23,17 @@ public class RockerApplication implements Application {
     @Override
     public void TeleopPeriodic()
     {
-        // TODO Auto-generated method stub
         chassis1.drive(controller.getY(Hand.kRight),controller.getY(Hand.kLeft));
+        if (controller.getAButton()){
+            shooter1.grab(.75);
+        }
+        else if(controller.getBButton()) { 
+            shooter1.shoot(.75);
+            
+        }
+         else {
+            shooter1.stop();
+        }
         
     }
 
