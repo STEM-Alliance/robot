@@ -14,24 +14,32 @@ public class Lift {
     PIDController heightPID = new PIDController(1, 0, 0, 1);
     
     
-    
+    /**
+     * set lift height
+     * @param height we want to be at
+     * @return whether at desired height or not: will be a true/false and move accordingly
+     */
     public boolean setHeight(double height) {
         double currentHeight = (Math.sin(potLeft.get())*711)*2;
         double motorOutput = heightPID.update(height, currentHeight, Timer.getFPGATimestamp());
         
         if(Math.abs(currentHeight-height) <= 20){
-            motorLeft.set(0);
-            motorRight.set(0);
+           setMotorSpeed(0);
             return true;
         } else {
-            motorLeft.set(motorOutput);
-            motorRight.set(motorOutput);
+            setMotorSpeed(motorOutput);
             return false;
         }
     }
     
-    private void set(double speed){
-        motorRight.set()
+    /**
+     * sets the motor speeds for the lift to the same value
+     * @param speed between 0 to 1
+     */
+    private void setMotorSpeed(double speed){
+        motorRight.set(speed);
+        motorLeft.set(speed);
+        
     }
  
 }
