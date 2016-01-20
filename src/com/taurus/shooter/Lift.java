@@ -7,12 +7,21 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Lift {
-    CANTalon motorLeft = new CANTalon(30);
-    CANTalon motorRight = new CANTalon(31);
-    MagnetoPot potLeft = new MagnetoPot(0,360);
-    MagnetoPot potRight = new MagnetoPot(0,360);
-    PIDController heightPID = new PIDController(1, 0, 0, 1);
-    
+    CANTalon motorLeft;
+    CANTalon motorRight;
+    MagnetoPot potLeft;
+    MagnetoPot potRight;
+    PIDController heightPID;
+    /**
+     * Constructor
+     */
+    public Lift(){
+        motorLeft = new CANTalon(30);
+        motorRight = new CANTalon(31);
+        potLeft = new MagnetoPot(0,360);
+        potRight = new MagnetoPot(0,360);
+        heightPID = new PIDController(1, 0, 0, 1);
+    }
     
     /**
      * set lift height
@@ -33,7 +42,7 @@ public class Lift {
     }
     
     /**
-     * sets the motor speeds for the lift to the same value
+     * helper function: sets the motor speeds for the lift to the same value
      * @param speed between 0 to 1
      */
     private void setMotorSpeed(double speed){
