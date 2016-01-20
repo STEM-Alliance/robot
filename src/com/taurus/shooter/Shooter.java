@@ -9,14 +9,28 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Shooter {
 
-    CANTalon shooterFT = new CANTalon(20);
-    CANTalon shooterFB = new CANTalon(21);
-    CANTalon shooterBT = new CANTalon(22);
-    CANTalon shooterBB = new CANTalon(23);
-    DigitalInput stopSwitch = new DigitalInput(0);
-    CANTalon aimer = new CANTalon(24);
-    PIDController aimerPID = new PIDController(1, 0, 0, 1);
-    MagnetoPot aimAngle = new MagnetoPot(0,360);
+    CANTalon shooterFT;
+    CANTalon shooterFB;
+    CANTalon shooterBT;
+    CANTalon shooterBB;
+    DigitalInput stopSwitch;
+    CANTalon aimer;
+    PIDController aimerPID;
+    MagnetoPot aimAngle;
+  /**
+   * Constructor
+   */
+    public Shooter(){
+         shooterFT = new CANTalon(20);
+         shooterFB = new CANTalon(21);
+         shooterBT = new CANTalon(22);
+         shooterBB = new CANTalon(23);
+         stopSwitch = new DigitalInput(0);
+         aimer = new CANTalon(24);
+         aimerPID = new PIDController(1, 0, 0, 1);
+         aimAngle = new MagnetoPot(0,360);
+    }
+    
     /**
      * grabs the boulder - top and bottom opposite directions
      * @param speed between 0 and 1
@@ -44,8 +58,16 @@ public class Shooter {
      * @param speed between 0 to 1
      */
     public void shoot (double speed){
-        setSpeed(-speed, speed);
-    
+        // Front wheels spin 
+        shooterFT.set(-speed);
+        shooterFB.set(speed);
+        // TODO Wait
+        
+        // Push the boulder forward into the front wheels
+        shooterBT.set(-Constants.SHOOTER_SPEED_RELEASE);
+        shooterBB.set(Constants.SHOOTER_SPEED_RELEASE);
+        // Stop front wheels
+        // Wait
     }
     /**
      * aims the shooter
