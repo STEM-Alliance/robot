@@ -25,10 +25,11 @@ public class RockerApplication implements Application {
     {
         chassis1.drive(controller.getY(Hand.kRight),controller.getY(Hand.kLeft));
         if (controller.getAButton()){
-            shooter1.grab(.75);
+            shooter1.grab(.5 + .5 * controller.getTriggerVal(Hand.kRight));
         }
         else if(controller.getBButton()) { 
-            shooter1.shoot(.75);
+            shooter1.shoot(.5 + .5 * controller.getTriggerVal(Hand.kRight),
+                           .3 + .5 * controller.getTriggerVal(Hand.kRight));
             
         }
          else {

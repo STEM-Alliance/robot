@@ -38,7 +38,7 @@ public class Shooter {
     public void grab (double speed){
       
       if (stopSwitch.get() == false){
-          setSpeed(speed, -speed);
+          setSpeed(-speed, -speed);
       }
       else {
           stop();
@@ -52,22 +52,30 @@ public class Shooter {
         setSpeed(0,0);
         
     }
-    
+
+    /**
+     * shoots the ball 
+     * @param topSpeed between 0 to 1
+     * @param bottomSpeed between 0 to 1
+     */
+    public void shoot (double topSpeed, double bottomSpeed){
+
+        // Front wheels spin 
+        setSpeed(topSpeed, bottomSpeed);
+        // TODO Wait
+        
+        // Push the boulder forward into the front wheels
+        //shooterBT.set(Constants.SHOOTER_SPEED_RELEASE);
+        //shooterBB.set(Constants.SHOOTER_SPEED_RELEASE);
+        // Stop front wheels
+        // Wait
+    }
     /**
      * shoots the ball 
      * @param speed between 0 to 1
      */
     public void shoot (double speed){
-        // Front wheels spin 
-        shooterFT.set(-speed);
-        shooterFB.set(speed);
-        // TODO Wait
-        
-        // Push the boulder forward into the front wheels
-        shooterBT.set(-Constants.SHOOTER_SPEED_RELEASE);
-        shooterBB.set(Constants.SHOOTER_SPEED_RELEASE);
-        // Stop front wheels
-        // Wait
+        shoot(speed,speed);
     }
     /**
      * aims the shooter
@@ -96,8 +104,8 @@ public class Shooter {
      */
     private void setSpeed (double topSpeed, double bottomSpeed){
         shooterFT.set(topSpeed);
-        shooterFB.set(bottomSpeed);
-        shooterBT.set(topSpeed);
-        shooterBB.set(bottomSpeed);
+        shooterFB.set(-bottomSpeed);
+        //shooterBT.set(topSpeed);
+        //shooterBB.set(-bottomSpeed);
     }
 }
