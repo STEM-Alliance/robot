@@ -6,9 +6,9 @@
 
 package com.taurus.swerve;
 
-import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 import com.taurus.controller.SwerveController;
+import com.taurus.hardware.MagnetoPot;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;

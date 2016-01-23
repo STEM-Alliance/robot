@@ -1,6 +1,5 @@
 package com.taurus.hardware;
 
-import com.taurus.MagnetoPot;
 import com.taurus.Utilities;
 
 public class LinearActuatorPot extends LinearActuator {

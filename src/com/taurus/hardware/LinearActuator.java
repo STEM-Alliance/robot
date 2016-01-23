@@ -76,15 +76,12 @@ public abstract class LinearActuator {
      * @param Position index to the positions array to move to
      */
     public void SetPosition(int i, double MaxSpeed)
-    {
-        double time = Timer.getFPGATimestamp();
-        
+    {        
         Positions[i] = com.taurus.Application.prefs.getDouble("Positions_" + i + "", Positions[i]);
 
         // use the PI to get the desired speed based on distance from current
         // position
-        double speed = ActuatorPIController.update(Positions[i], GetDistance(),
-                time);
+        double speed = ActuatorPIController.update(Positions[i], GetDistance());
         
         MaxSpeed = Utilities.clampToRange(MaxSpeed, -1, 1);
         

@@ -1,9 +1,6 @@
 package com.taurus;
 
-import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
-import edu.wpi.first.wpilibj.tables.ITable;
-import edu.wpi.first.wpilibj.tables.ITableListener;
-
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * A basic PID controller for use with the Swerve drive
@@ -11,7 +8,7 @@ import edu.wpi.first.wpilibj.tables.ITableListener;
  * @author Team 4818 Taurus Robotics
  *
  */
-public final class PIDController implements LiveWindowSendable {
+public final class PIDController {
     // Heuristic to clear out the integral after being disabled.
     private static final double MaxTimestampDiff = 1.0;
 
@@ -30,12 +27,10 @@ public final class PIDController implements LiveWindowSendable {
     /**
      * Create a new instance of the PIController
      * 
-     * @param p
-     *            proportional component
-     * @param i
-     *            integral component, 0 to disable
-     * @param maxOutput
-     *            maximum output of the controller (typically 1.0)
+     * @param p proportional component
+     * @param i integral component, 0 to disable
+     * @param d derivative component, 0 to disable
+     * @param maxOutput maximum output of the controller (typically 1.0)
      */
     public PIDController(double p, double i, double d, double maxOutput)
     {
@@ -47,7 +42,7 @@ public final class PIDController implements LiveWindowSendable {
         this.integral = 0;
         this.lastTimestamp = Double.NEGATIVE_INFINITY;
     }
-
+    
     /**
      * Update the PIController using the setpoint and the sensor reading
      * 
@@ -56,22 +51,21 @@ public final class PIDController implements LiveWindowSendable {
      * @param timestamp current time
      * @return new calculated output, clamped to max output range
      */
-    public double update(double setpoint, double sensor, double timestamp)
+    public double update(double setpoint, double sensor)
     {
-        return this.update(setpoint - sensor, timestamp);
+        return this.update(setpoint - sensor);
     }
     
     /**
      * Update the PIController using the new error
      * 
-     * @param error
-     *            new error to use for calculations
-     * @param timestamp
-     *            current time
+     * @param error new error to use for calculations
      * @return new calculated output, clamped to max output range
      */
-    public double update(double error, double timestamp)
+    public double update(double error)
     {
+        double timestamp = Timer.getFPGATimestamp();
+        
         // Proportional term.
         double proportional = Utilities.clampToRange(error * P,
                 -this.maxOutput, this.maxOutput);
@@ -132,100 +126,5 @@ public final class PIDController implements LiveWindowSendable {
     public void setD(double D)
     {
         this.D = D;
-    }
-
-    @Override
-    public String getSmartDashboardType()
-    {
-        return "PIDController";
-    }
-
-    private final ITableListener listener = new ITableListener()
-    {
-        @Override
-        public void valueChanged(ITable table, String key, Object value,
-                boolean isNew)
-        {
-            if (key.equals("p") || key.equals("i"))
-            {
-                if (getP() != table.getNumber("p", 0.0) ||
-                        getI() != table.getNumber("i", 0.0) || 
-                        getD() != table.getNumber("d", 0.0))
-                {
-                    setP(table.getNumber("p", 0.0));
-                    setI(table.getNumber("i", 0.0));
-                    setD(table.getNumber("d", 0.0));
-                }
-            }
-//            else if (key.equals("setpoint"))
-//            {
-//                if (getSetpoint() != ((Double) value).doubleValue())
-//                    setSetpoint(((Double) value).doubleValue());
-//            }
-//            else if (key.equals("enabled"))
-//            {
-//                if (isEnable() != ((Boolean) value).booleanValue())
-//                {
-//                    if (((Boolean) value).booleanValue())
-//                    {
-//                        enable();
-//                    }
-//                    else
-//                    {
-//                        disable();
-//                    }
-//                }
-//            }
-        }
-    };
-    private ITable table;
-
-    @Override
-    public void initTable(ITable table)
-    {
-        if (this.table != null)
-            this.table.removeTableListener(listener);
-        this.table = table;
-        if (table != null)
-        {
-            table.putNumber("p", getP());
-            table.putNumber("i", getI());
-            table.putNumber("d", getD());
-            table.addTableListener(listener, false);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ITable getTable()
-    {
-        return table;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updateTable()
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void startLiveWindowMode()
-    {
-        // disable();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void stopLiveWindowMode()
-    {
     }
 }
