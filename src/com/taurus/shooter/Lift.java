@@ -1,10 +1,9 @@
 package com.taurus.shooter;
 
-import com.taurus.MagnetoPot;
 import com.taurus.PIDController;
+import com.taurus.hardware.MagnetoPot;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.Timer;
 
 public class Lift {
     CANTalon motorLeft;
@@ -30,7 +29,7 @@ public class Lift {
      */
     public boolean setHeight(double height) {
         double currentHeight = (Math.sin(potLeft.get())*711)*2;
-        double motorOutput = heightPID.update(height, currentHeight, Timer.getFPGATimestamp());
+        double motorOutput = heightPID.update(height, currentHeight);
         
         if(Math.abs(currentHeight-height) <= 20){
            setMotorSpeed(0);

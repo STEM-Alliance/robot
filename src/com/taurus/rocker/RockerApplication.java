@@ -4,7 +4,6 @@ import com.taurus.Application;
 import com.taurus.controller.Xbox;
 import com.taurus.shooter.Shooter;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class RockerApplication implements Application {
@@ -24,18 +23,23 @@ public class RockerApplication implements Application {
     public void TeleopPeriodic()
     {
         chassis1.drive(controller.getY(Hand.kRight),controller.getY(Hand.kLeft));
-        if (controller.getAButton()){
+        
+        if (controller.getAButton())
+        {
             shooter1.grab(.5 + .5 * controller.getTriggerVal(Hand.kRight));
         }
-        else if(controller.getBButton()) { 
-            shooter1.shoot(.5 + .5 * controller.getTriggerVal(Hand.kRight),
-                           .3 + .5 * controller.getTriggerVal(Hand.kRight));
-            
+        else if(controller.getBButton())
+        { 
+            shooter1.shoot(
+                    .5 + .3 * controller.getTriggerVal(Hand.kRight),
+                    .7 + .3 * controller.getTriggerVal(Hand.kRight));
+
         }
-         else {
+        else
+        {
             shooter1.stop();
         }
-        
+
     }
 
     @Override
