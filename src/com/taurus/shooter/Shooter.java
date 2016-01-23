@@ -5,6 +5,7 @@ import com.taurus.hardware.MagnetoPot;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Shooter {
 
@@ -16,6 +17,13 @@ public class Shooter {
     CANTalon aimer;
     PIDController aimerPID;
     MagnetoPot aimAngle;
+    enum Shooter_States{
+        Start, Spin, Push, Reset
+    }
+    Shooter_States currentShooterState;
+    double shooterStartTime;
+    
+    
     
     /**
      * Constructor
@@ -29,6 +37,7 @@ public class Shooter {
         aimer = new CANTalon(24);
         aimerPID = new PIDController(1, 0, 0, 1);
         aimAngle = new MagnetoPot(0,360);
+        currentShooterState = Shooter_States.Start;
     }
 
     /**
@@ -50,18 +59,46 @@ public class Shooter {
      */
     public void stop (){
         setSpeed(0,0);
+        currentShooterState = Shooter_States.Start;
+        
 
     }
 
     /**
-     * shoots the ball 
+     * shoots the ball using a switch statement
      * @param topSpeed between 0 to 1
      * @param bottomSpeed between 0 to 1
      */
     public void shoot (double topSpeed, double bottomSpeed){
-
+        switch(currentShooterState){
+            case Start:
+                shooterStartTime = Timer.getFPGATimestamp();
+                currentShooterState = Shooter_States.Spin;
+                
+                break;
+            case Spin:
+                setSpeed(topSpeed, bottomSpeed);
+                if (Timer.getFPGATimestamp() - shooterStartTime >= 1){
+                    currentShooterState = Shooter_States.Push;
+                }
+                    
+                break;
+            case Push:
+                setSpeed(topSpeed, bottomSpeed);
+                //set the actual pushing motion 
+                
+                if (Timer.getFPGATimestamp() - shooterStartTime >= 2){
+                    currentShooterState = Shooter_States.Reset;
+                    
+                }
+                break;
+            case Reset:
+                break;
+            default:
+                break;
+            
+        }
         // Front wheels spin 
-        setSpeed(topSpeed, bottomSpeed);
         // TODO Wait
 
         // Push the boulder forward into the front wheels

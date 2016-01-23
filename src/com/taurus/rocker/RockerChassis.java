@@ -17,13 +17,27 @@ public class RockerChassis {
      * @param left
      */
     public void drive (double right, double left){
-        motorBL.set(left);
+        motorBL.set(-left);
         motorBR.set(right);
-        motorML.set(left);
+        motorML.set(-left);
         motorMR.set(right);
-        motorFL.set(left);
+        motorFL.set(-left);
         motorFR.set(right);
         
     }
-    
+
+    /**
+     * This is test code - drives the motors
+     * @param right
+     * @param left
+     */
+    public void drive (double rightFront, double rightMid, double rightBack, double leftFront, double leftMid, double leftBack){
+        motorBL.set(-leftBack);
+        motorBR.set(rightBack);
+        motorML.set(-leftMid);
+        motorMR.set(rightMid);
+        motorFL.set(-leftFront);
+        motorFR.set(rightFront);
+        
+    }
 }
