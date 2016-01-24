@@ -1,4 +1,4 @@
-package com.taurus.shooter;
+package com.taurus.subsystems;
 
 public final class Constants {
 

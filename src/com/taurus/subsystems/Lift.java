@@ -1,4 +1,4 @@
-package com.taurus.shooter;
+package com.taurus.subsystems;
 
 import com.taurus.PIDController;
 import com.taurus.hardware.MagnetoPot;
@@ -48,6 +48,5 @@ public class Lift {
         motorRight.set(speed);
         motorLeft.set(speed);
         
-    }
- 
+    } 
 }

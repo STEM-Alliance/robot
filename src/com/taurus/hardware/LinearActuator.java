@@ -3,8 +3,6 @@ package com.taurus.hardware;
 import com.taurus.PIDController;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.Timer;
-
 /**
  * A Linear actuator subsystem using motor(s) and an encoder
  *

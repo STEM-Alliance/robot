@@ -1,18 +1,22 @@
 package com.taurus.controller;
 
 import edu.wpi.first.wpilibj.buttons.Button;
-
+/**
+ * Xbox button for use with Command based robot
+ * @author drlindne
+ *
+ */
 public class XboxButton extends Button
 {
     Xbox hardware;
-    int index;  // TODO Make generic
+    Xbox.ButtonType button;
     
-    public XboxButton(Xbox hardware) {
+    public XboxButton(Xbox hardware, Xbox.ButtonType button) {
         hardware = this.hardware;
     }
 
     public boolean get()
     {
-        return hardware.getAButton();  // TODO Make generic
+        return hardware.getButton(button);
     }
 }
