@@ -1,7 +1,5 @@
 package com.taurus.controller;
 
-import com.taurus.swerve.SwerveVector;
-
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class RockerController {

@@ -5,8 +5,9 @@ import edu.wpi.first.wpilibj.buttons.Button;
 
 import com.taurus.controller.Xbox;
 import com.taurus.controller.XboxButton;
-import com.taurus.commands.DriveStop;
+import com.taurus.commands.ShooterFire;
 //import com.taurus.commands.ExampleCommand;
+import com.taurus.commands.ShooterGrab;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -20,7 +21,8 @@ public class OI {
     // Joystick stick = new Joystick(port);
     // Button button = new JoystickButton(stick, buttonNumber);
     static Xbox xbox = new Xbox(0);
-    Button buttonA = new XboxButton(xbox);
+    Button buttonA = new XboxButton(xbox, Xbox.ButtonType.kA);
+    Button buttonB = new XboxButton(xbox, Xbox.ButtonType.kB);
     
     // There are a few additional built in buttons you can use. Additionally,
     // by subclassing Button you can create custom triggers and bind those to
@@ -43,7 +45,8 @@ public class OI {
     // button.whenReleased(new ExampleCommand());
     
     public OI() {
-        buttonA.whileHeld(new DriveStop());
+        buttonA.whileHeld(new ShooterGrab());
+        buttonB.whileHeld(new ShooterFire());
     }
     
     public static double getSpeedLeft()
@@ -54,6 +57,11 @@ public class OI {
     public static double getSpeedRight()
     {
         return xbox.getY(Hand.kRight);        
+    }
+    
+    public static double getTriggerRight()
+    {
+        return xbox.getTriggerVal(Hand.kRight);
     }
 }
 

@@ -1,10 +1,8 @@
 package com.taurus.hardware;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class MaxBotixAnalog extends MaxBotix {
     
