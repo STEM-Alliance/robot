@@ -24,7 +24,7 @@ public class RockerApplication implements Application {
     @Override
     public void TeleopPeriodic()
     {
-        chassis1.drive(controller.getY(Hand.kRight) * (.21 + .21 * Math.abs(controller.getTriggerVal(Hand.kLeft))),
+        chassis1.tankDrive(controller.getY(Hand.kRight) * (.21 + .21 * Math.abs(controller.getTriggerVal(Hand.kLeft))),
                 
                 controller.getY(Hand.kLeft) * (.21 + .21 * Math.abs(controller.getTriggerVal(Hand.kLeft))));
         
