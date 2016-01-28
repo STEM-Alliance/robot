@@ -27,7 +27,7 @@ public class RockerApplication implements Application {
         double right = controller.getY(Hand.kRight) * (.21 + .21 * Math.abs(controller.getTriggerVal(Hand.kLeft)));
         double left =  controller.getY(Hand.kLeft) * (.21 + .21 * Math.abs(controller.getTriggerVal(Hand.kLeft)));
         
-        chassis1.tankDrive(0.5, 0.5);
+        chassis1.tankDrive(right, left);
         //chassis1.arcadeDrive(controller., controller.getX(Hand.kLeft));
         
         if (controller.getAButton())
