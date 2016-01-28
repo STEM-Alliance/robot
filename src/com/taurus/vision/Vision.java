@@ -1,5 +1,7 @@
 package com.taurus.vision;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -7,13 +9,61 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Vision {
 
-    NetworkTable table;
+    private final static String[] GRIP_ARGS = new String[] {
+            "/usr/local/frc/JRE/bin/java",
+            "-jar",
+            "/home/lvuser/grip.jar",
+            "/home/lvuser/project.grip" };
+
+    private final NetworkTable table;
 
     ArrayList<Target> targets;
 
     public Vision()
     {
         table = NetworkTable.getTable("GRIP/TargetContours");
+        RestartGRIP();
+    }
+    
+    /**
+     * Stop and restart GRIP
+     * @return true if started
+     */
+    public boolean RestartGRIP()
+    {
+        StopGRIP();
+        return StartGRIP();
+    }
+    
+    /**
+     * Start a new GRIP Process
+     * @return true if started
+     */
+    public boolean StartGRIP()
+    {
+        /* Run GRIP in a new process */
+        try {
+            Runtime.getRuntime().exec(GRIP_ARGS);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Kill any running GRIP processes
+     */
+    public void StopGRIP()
+    {
+        try {
+            Process p1 = Runtime.getRuntime().exec(new String[] { "pkill", "-f \"java.*grip\""});
+            OutputStream output = p1.getOutputStream();
+            
+            output.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
