@@ -19,18 +19,18 @@ public class RockerChassis {
         motorML = new CANTalon(13);
         motorBR = new CANTalon(14);
         motorBL = new CANTalon(15);
-        motorFR.changeControlMode(TalonControlMode.Speed);
-        motorFR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        motorFL.changeControlMode(TalonControlMode.Speed);
-        motorFL.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        motorMR.changeControlMode(TalonControlMode.Speed);
-        motorMR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        motorML.changeControlMode(TalonControlMode.Speed);
-        motorML.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        motorBR.changeControlMode(TalonControlMode.Speed);
-        motorBR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        motorBL.changeControlMode(TalonControlMode.Speed);
-        motorBL.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//        motorFR.changeControlMode(TalonControlMode.Speed);
+//        motorFR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//        motorFL.changeControlMode(TalonControlMode.Speed);
+//        motorFL.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//        motorMR.changeControlMode(TalonControlMode.Speed);
+//        motorMR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//        motorML.changeControlMode(TalonControlMode.Speed);
+//        motorML.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//        motorBR.changeControlMode(TalonControlMode.Speed);
+//        motorBR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//        motorBL.changeControlMode(TalonControlMode.Speed);
+//        motorBL.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 
 }
     /**
