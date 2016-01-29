@@ -74,7 +74,7 @@ public class RockerChassis {
        right = throttle - turn;
        right = limit(right);
        left = limit(left);
-       tankDrive(right, left);
+       tankDrive(left, right);
    }
    /**
     * Limits value between 1 and -1
