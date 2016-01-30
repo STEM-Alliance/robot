@@ -38,50 +38,27 @@ public class VisionOld implements Runnable {
 
     Thread visionThread;
 
-    private boolean toteDetectionOn = true;
+    private boolean targetDetectionOn = true;
 
-    private double resultX = 0, resultY = 0;
-    private double resultOrientation = 0;
-    private boolean particleSeen = false;
-
-    public double getResultX()
-    {
-        synchronized (visionThread)
-        {
-            return resultX;
+    private Target largestTarget;
+    
+    public void setTargetDetectionOn(boolean enable){
+        synchronized(visionThread){
+            targetDetectionOn = enable;
         }
     }
 
-    public double getResultY()
-    {
-        synchronized (visionThread)
-        {
-            return resultY;
+    public Target getTarget(){
+        synchronized (visionThread){
+            return largestTarget;
         }
     }
-
-    public double getResultOrientation()
-    {
-        synchronized (visionThread)
-        {
-            return resultOrientation;
-        }
-    }
-
-    public boolean getToteSeen()
-    {
-        synchronized (visionThread)
-        {
-            return particleSeen;
-        }
-    }
-
+    
     public VisionOld()
     {
         imageChooser = new SendableChooser();
         imageChooser.addDefault("Input", Integer.valueOf(0));
         imageChooser.addObject("Threshold", Integer.valueOf(1));
-        imageChooser.addObject("Particle", Integer.valueOf(2));
         SmartDashboard.putData("Image to show", imageChooser);
 
         CameraServer.getInstance().setQuality(30);
@@ -170,7 +147,7 @@ public class VisionOld implements Runnable {
                         CameraServer.getInstance().setImage(frameDownsampled);
                     }
 
-                    if (toteDetectionOn)
+                    if (targetDetectionOn)
                     {
                         // tote detection is on, so adjust the image to filter
                         // out all the nonsense
@@ -204,37 +181,7 @@ public class VisionOld implements Runnable {
                         int particleCount = NIVision.imaqCountParticles(frameTH, 1);
                         SmartDashboard.putNumber("Thresh Particles", particleCount);
                         
-//
-//                        if(particleCount > 0)
-//                        {
-//                            //Measure particles and sort by particle size
-//                            Vector<ParticleReport> particles = new Vector<ParticleReport>();
-//                            for(int particleIndex = 0; particleIndex < particleCount; particleIndex++)
-//                            {
-//                                ParticleReport par = new ParticleReport();
-//                                par.PercentAreaToImageArea = NIVision.imaqMeasureParticle(frameTH, particleIndex, 0, NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA);
-//                                par.Area = NIVision.imaqMeasureParticle(frameTH, particleIndex, 0, NIVision.MeasurementType.MT_AREA);
-//                                par.BoundingRectTop = NIVision.imaqMeasureParticle(frameTH, particleIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_TOP);
-//                                par.BoundingRectLeft = NIVision.imaqMeasureParticle(frameTH, particleIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_LEFT);
-//                                par.BoundingRectBottom = NIVision.imaqMeasureParticle(frameTH, particleIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_BOTTOM);
-//                                par.BoundingRectRight = NIVision.imaqMeasureParticle(frameTH, particleIndex, 0, NIVision.MeasurementType.MT_BOUNDING_RECT_RIGHT);
-//                                particles.add(par);
-//                            }
-//                            particles.sort(null);
-//                        }
-                        
-                        
 
-//                        // filter out any missed particles that aren't the tote
-//                        criteria[0].lower = Preferences.getInstance().getInt(
-//                                "AreaMin", 1);
-//                        criteria[0].upper = Preferences.getInstance().getInt(
-//                                "AreaMax", 5000);
-//                        
-//                        ROI roi = NIVision.imaqCreateROI();
-//                        particleCount = NIVision.imaqParticleFilter4(frameTH, frameTH,
-//                                criteria, filterOptions, null);
-                        
                         SmartDashboard.putNumber("Particles", particleCount);
 
                         // find the bounding rectangle, then send
@@ -276,8 +223,7 @@ public class VisionOld implements Runnable {
                         }
 
                         SmartDashboard.putNumber("Area", biggestArea);
-                        SmartDashboard
-                                .putString("Center", df.format(biggestX)
+                        SmartDashboard.putString("Center", df.format(biggestX)
                                                      + ","
                                                      + df.format(biggestY));
                         SmartDashboard.putNumber("Width", biggestW);
@@ -287,10 +233,8 @@ public class VisionOld implements Runnable {
 
                         synchronized (visionThread)
                         {
-                            particleSeen = particleCount > 0;
-                            resultX = biggestX / size.width;
-                            resultY = biggestY / size.height;
-                            resultOrientation = biggestOrientation;
+                            largestTarget = new Target(biggestX, biggestY, biggestArea, biggestH, biggestW,biggestOrientation);
+                            
                         }
                     }                    
 
@@ -343,16 +287,16 @@ public class VisionOld implements Runnable {
 
             int videoMode = Preferences.getInstance().getInt("VIDEO_MODE", 93);
             NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, videoMode);
-
+/*
 //             int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4500);
 //             NIVision.IMAQdxSetAttributeString(session, ATTR_WB_MODE, "Manual");
 //             NIVision.IMAQdxSetAttributeI64(session, ATTR_WB_VALUE,
-//             whiteBalance);
+//             whiteBalance,0.0);
 //
 //             int exposure = Preferences.getInstance().getInt("Exposure", 1);
 //             NIVision.IMAQdxSetAttributeString(session, ATTR_EX_MODE, "Manual");
 //             NIVision.IMAQdxSetAttributeI64(session, ATTR_EX_VALUE, exposure);
-
+*/
             {
                 double brightness =
                         Preferences.getInstance().getDouble("Brightness", .25);
@@ -384,22 +328,4 @@ public class VisionOld implements Runnable {
         return session;
     }
     
-    public class ParticleReport implements Comparator<ParticleReport>, Comparable<ParticleReport>{
-        double PercentAreaToImageArea;
-        double Area;
-        double BoundingRectLeft;
-        double BoundingRectTop;
-        double BoundingRectRight;
-        double BoundingRectBottom;
-        
-        public int compareTo(ParticleReport r)
-        {
-            return (int)(r.Area - this.Area);
-        }
-        
-        public int compare(ParticleReport r1, ParticleReport r2)
-        {
-            return (int)(r1.Area - r2.Area);
-        }
-    }
 }
