@@ -4,6 +4,7 @@ import com.taurus.Application;
 import com.taurus.controller.RockerController;
 import com.taurus.controller.Xbox;
 import com.taurus.shooter.Shooter;
+import com.taurus.vision.VisionOld;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
@@ -13,12 +14,18 @@ public class RockerApplication implements Application {
     RockerController controller = new RockerController();
     Shooter shooter1 = new Shooter();
 
+    VisionOld camera1 = new VisionOld();
+    
+    public RockerApplication()
+    {
+
+        camera1.Start();
+    }
     
     @Override
     public void TeleopInit()
     {
         // TODO Auto-generated method stub
-
     }
 
     @Override
