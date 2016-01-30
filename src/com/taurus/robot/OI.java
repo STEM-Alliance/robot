@@ -63,5 +63,13 @@ public class OI {
     {
         return xbox.getTriggerVal(Hand.kRight);
     }
+    public static double getThrottle()
+    {
+      return xbox.getY(Hand.kLeft);
+    }
+    public static double getTurn()
+    {
+        return xbox.getX(Hand.kLeft);
+    }
 }
 
