@@ -1,12 +1,13 @@
 package com.taurus.controller;
 
+import com.taurus.controller.Xbox.RumbleType;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class RockerController {
 
     private Xbox xbox;
 
-    public static final double DEADBAND = 0.35;
+    public static final double DEADBAND = 0.2;
 
     
     /**
@@ -17,13 +18,29 @@ public class RockerController {
         xbox = new Xbox(0);
 
     }
-
+    
+    private double scale(double value)
+    {
+        double abs = Math.abs(value);
+        
+        if (abs < DEADBAND)
+        {
+            value = 0;
+        }
+        else
+        {
+            value = Math.signum(value) * ((abs - DEADBAND) / (1.0 - DEADBAND));
+        }
+        
+        return value;
+    }
+    
     /**
      * {@inheritDoc}
      */
     public double getX(Hand hand)
     {
-        return xbox.getX(hand);
+        return scale(xbox.getX(hand));
     }
 
     /**
@@ -31,7 +48,7 @@ public class RockerController {
      */
     public double getY(Hand hand)
     {
-        return xbox.getY(hand);
+        return scale(xbox.getY(hand));
     }
 
     /**
@@ -39,15 +56,7 @@ public class RockerController {
      */
     public double getMagnitude(Hand hand)
     {
-        double value = 0;
-
-        value = xbox.getMagnitude(hand);
-
-        if (value < DEADBAND)
-        {
-            value = 0;
-        }
-        return value;
+        return scale(xbox.getMagnitude(hand));
     }
 
     /**
@@ -77,17 +86,24 @@ public class RockerController {
     /**
      * {@inheritDoc}
      */
-    public boolean getHighGearEnable()
-    {
-        return xbox.getBumper(Hand.kRight);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public boolean getTrigger(Hand hand)
     {
         return xbox.getTrigger(hand);
+    }
+    
+    public double getTriggerVal(Hand hand)
+    {
+        return xbox.getTriggerVal(hand);
+    }
+    
+    public boolean getBumper(Hand hand)
+    {
+        return xbox.getBumper(hand);
+    }
+    
+    public boolean getAButton()
+    {
+        return xbox.getAButton();
     }
     
     public boolean getBButton()
@@ -95,15 +111,17 @@ public class RockerController {
         return xbox.getBButton();
     }
     
-    public boolean getAButton()
+    public boolean getXButton()
     {
-        return xbox.getAButton();
+        return xbox.getXButton();
     }
 
-    public double getTriggerVal(Hand hand)
+    public boolean getYButton()
     {
-        return xbox.getTriggerVal(hand);
+        return xbox.getYButton();
     }
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -112,9 +130,9 @@ public class RockerController {
         return xbox.getPOV();
     }
 
-    public boolean getWheelCal()
+    public void setRumble(Hand hand, float value)
     {
-        return false;
+        xbox.setRumble(hand == Hand.kLeft ? RumbleType.kLeftRumble : RumbleType.kRightRumble, value);
     }
 
 }
