@@ -1,15 +1,14 @@
 package com.taurus.commands;
 
-import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ShooterGrab extends Command {
-    
-    public ShooterGrab() {
+public class LiftStop extends Command
+{
+    public LiftStop() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.shooterSubsystem);
+        requires(Robot.liftSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -18,23 +17,21 @@ public class ShooterGrab extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speed = .38 + .5 * OI.getTriggerRight();
-        Robot.shooterSubsystem.setSpeed(-speed, -speed);
+        Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getCurrentHeight());//the height we go to is the current height (no change)
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.shooterSubsystem.stopSwitch.get();
+        return true;
+        // Always run this command because it will be default command of the subsystem.
     }
 
     // Called once after isFinished returns true
     protected void end() {
-        Robot.shooterSubsystem.setSpeed(0,0);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-        end();
     }
 }
