@@ -3,6 +3,7 @@ package com.taurus.rocker;
 import com.taurus.Application;
 import com.taurus.controller.RockerController;
 import com.taurus.controller.Xbox;
+import com.taurus.shooter.Lift;
 import com.taurus.shooter.Shooter;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -12,6 +13,7 @@ public class RockerApplication implements Application {
     RockerChassis chassis1 = new RockerChassis();
     RockerController controller = new RockerController();
     Shooter shooter1 = new Shooter();
+    Lift lift = new Lift();
 
     
     @Override
@@ -45,7 +47,14 @@ public class RockerApplication implements Application {
         {
             shooter1.stop();
         }
-
+        double heightIncrement = 25.4;
+        if (controller.getBumper(Hand.kRight)) {
+            lift.setHeight(lift.getCurrentHeight() + heightIncrement);
+        } else if (controller.getBumper(Hand.kLeft)) {
+            lift.setHeight(lift.getCurrentHeight() - heightIncrement);
+        } else {
+            lift.stopLift();
+        }
     }
 
     @Override
