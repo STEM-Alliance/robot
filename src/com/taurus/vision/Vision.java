@@ -90,7 +90,7 @@ public class Vision {
             // add all found targets
             for (int i = 0; i < area.length; i++)
             {
-                targets.add(new Target(x[i], y[i], area[i], h[i], w[i]));
+                //targets.add(new Target(x[i], y[i], area[i], h[i], w[i]));
             }
         }
 

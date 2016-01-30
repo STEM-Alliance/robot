@@ -9,14 +9,16 @@ public class Target implements Comparable<Target> {
     private double area;
     private double h;
     private double w;
+    private double orientation;
     
-    public Target(double x, double y, double area, double h, double w)
+    public Target(double x, double y, double area, double h, double w, double orientation)
     {
         this.x = x;
         this.y = y;
         this.area = area;
         this.h = h;
         this.w = w;
+        this.orientation = orientation;
     }
 
     public double X()
@@ -43,6 +45,11 @@ public class Target implements Comparable<Target> {
     {
         return w;
     }
+    
+    public double Orientation()
+    {
+        return orientation;
+    }
 
     /**
      * Get the distance to the target, based on the known dimensions of the target
@@ -51,7 +58,9 @@ public class Target implements Comparable<Target> {
     public double DistanceToTarget()
     {
         //TODO see http://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
-        return 0;
+        double distanceToTarget = (Constants.TargetWidthIn * Constants.FocalLengthIn) / Constants.TestTargetWidthPixel;
+        return distanceToTarget;
+        
     }
     
     /**
@@ -61,7 +70,12 @@ public class Target implements Comparable<Target> {
     public double Pitch()
     {
         //TODO see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
-        return 0;
+        double pixelsAlongDiagonal = Math.sqrt(Math.pow(Constants.Width, 2) + Math.pow(Constants.Height, 2));
+        double degrees = Constants.DiagonalFOV / pixelsAlongDiagonal; 
+        double angleFromCenter = DistanceToTarget() * degrees;
+        
+        
+        return angleFromCenter;
     }
 
     /**
@@ -71,6 +85,7 @@ public class Target implements Comparable<Target> {
     public double Yaw()
     {
         //TODO see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
+        
         return 0;
     }
 
