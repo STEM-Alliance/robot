@@ -11,6 +11,9 @@ public class Lift {
     MagnetoPot potLeft;
     MagnetoPot potRight;
     PIDController heightPID;
+    private double upperLimit = 1200;
+    private double lowerLimit = 325;
+    private double currentHeight = (Math.sin(potLeft.get())*711)*2;
     /**
      * Constructor
      */
@@ -21,16 +24,25 @@ public class Lift {
         potRight = new MagnetoPot(0,360);
         heightPID = new PIDController(1, 0, 0, 1);
     }
+    public double getCurrentHeight(){
+        return currentHeight;
+    }
     
     /**
      * set lift height
-     * @param height we want to be at
+     * @param height we want to be at in millimeters
      * @return whether at desired height or not: will be a true/false and move accordingly
      */
     public boolean setHeight(double height) {
-        double currentHeight = (Math.sin(potLeft.get())*711)*2;
+       
         double motorOutput = heightPID.update(height, currentHeight);
-        
+        if(height >= upperLimit){
+            height = upperLimit;
+        } else if(height <= lowerLimit){
+            height = lowerLimit;
+        } else {
+            //within limits
+        }
         if(Math.abs(currentHeight-height) <= 20){
            setMotorSpeed(0);
             return true;
@@ -48,6 +60,9 @@ public class Lift {
         motorRight.set(speed);
         motorLeft.set(speed);
         
+    }
+    public void stopLift(){
+        setMotorSpeed(0);
     }
  
 }
