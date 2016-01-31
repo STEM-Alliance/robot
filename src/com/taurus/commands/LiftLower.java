@@ -16,7 +16,7 @@ private double endHeight;
     protected void initialize() {
         done = false;
         double heightIncrement = 25.4;//mm = 1 in
-        endHeight = (Robot.liftSubsystem.getCurrentHeight() - heightIncrement);
+        endHeight = (Robot.liftSubsystem.getHeight() - heightIncrement);
     }
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {

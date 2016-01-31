@@ -1,4 +1,5 @@
 package com.taurus.robot;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -6,13 +7,14 @@ package com.taurus.robot;
  * floating around.
  */
 public class RobotMap {
-    // For example to map the left and right motors, you could define the
-    // following variables to use with your drivetrain subsystem.
-    // public static int leftMotor = 1;
-    // public static int rightMotor = 2;
-    
-    // If you are using multiple modules, make sure to define both the port
-    // number and the module. For example you with a rangefinder:
-    // public static int rangefinderPort = 1;
-    // public static int rangefinderModule = 1;
+    // Robot Input and Output pins. Insert in order.
+    public static int PIN_SHOOTER_TALON_FT = 20;
+    public static int PIN_SHOOTER_TALON_FB = 21;
+    public static int PIN_SHOOTER_TALON_BT = 22;
+    public static int PIN_SHOOTER_TALON_BB = 23;
+    public static int PIN_SHOOTER_TALON_AIMER = 24;
+    public static int PIN_LIFT_TALON_L = 30;
+    public static int PIN_LIFT_TALON_R = 31;
+    public static int PIN_SHOOTER_SENSOR_STOP = 0;  // TODO - DRL is this the correct pin?
+    public static int PIN_SHOOTER_SERVO_BALLRELEASE = 0;  // TODO - DRL change to correct pin
 }

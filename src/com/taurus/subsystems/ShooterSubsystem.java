@@ -2,6 +2,7 @@ package com.taurus.subsystems;
 
 import com.taurus.PIDController;
 import com.taurus.hardware.MagnetoPot;
+import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -13,33 +14,30 @@ public class ShooterSubsystem extends Subsystem {
     private final double BALL_RELEASE_ANGLE_EXTENDED = 0;  // TODO - determine angle to go to extended position
     private final double BALL_RELEASE_ANGLE_CONTRACTED = 0;  // TODO - determine angle to go to contracted position
     
-    public enum BALL_RELEASE_STATE {EXTENDED, CONTRACTED, MOVING};
-    
     public DigitalInput stopSwitch;
     
-    CANTalon shooterFT;
-    CANTalon shooterFB;
-    CANTalon shooterBT;
-    CANTalon shooterBB;
-    CANTalon aimer;
-    PIDController aimerPID;
-    MagnetoPot aimAngle;
-    Servo ballRelease;
-    double shooterStartTime;
+    private CANTalon shooterFT;
+    private CANTalon shooterFB;
+    private CANTalon shooterBT;  // TODO - DRL remove if design changes and is unused
+    private CANTalon shooterBB;  // TODO - DRL remove if design changes and is unused
+    private CANTalon aimer;
+    private PIDController aimerPID;
+    private MagnetoPot aimAngle;
+    private Servo ballRelease;
     
     /**
      * Constructor
      */
     public ShooterSubsystem() {
-        shooterFT = new CANTalon(20);
-        shooterFB = new CANTalon(21);
-        shooterBT = new CANTalon(22);
-        shooterBB = new CANTalon(23);
-        stopSwitch = new DigitalInput(0);
-        aimer = new CANTalon(24);
+        shooterFT = new CANTalon(RobotMap.PIN_SHOOTER_TALON_FT);
+        shooterFB = new CANTalon(RobotMap.PIN_SHOOTER_TALON_FB);
+        shooterBT = new CANTalon(RobotMap.PIN_SHOOTER_TALON_BT);
+        shooterBB = new CANTalon(RobotMap.PIN_SHOOTER_TALON_BB);
+        stopSwitch = new DigitalInput(RobotMap.PIN_SHOOTER_SENSOR_STOP);
+        aimer = new CANTalon(RobotMap.PIN_SHOOTER_TALON_AIMER);
         aimerPID = new PIDController(1, 0, 0, 1);
         aimAngle = new MagnetoPot(0,360);
-        ballRelease = new Servo(0);  // TODO - change to correct pin
+        ballRelease = new Servo(RobotMap.PIN_SHOOTER_SERVO_BALLRELEASE);
     }
     
     public void initDefaultCommand() {
@@ -56,7 +54,7 @@ public class ShooterSubsystem extends Subsystem {
         shooterFB.set(-bottomSpeed);
     }
   
-    /**]
+    /**
      * Set the position of the ball releasing servo
      * @param extend If true out, otherwise in
      */
@@ -71,24 +69,18 @@ public class ShooterSubsystem extends Subsystem {
         }
     }
     
-    public BALL_RELEASE_STATE getBallRelease() {
-        // TODO - Create deadband, cannot ensure we don't overshoot
-        BALL_RELEASE_STATE result;
-        
-        if (ballRelease.getAngle() == BALL_RELEASE_ANGLE_CONTRACTED)
-        {
-            result = BALL_RELEASE_STATE.CONTRACTED;
-        }
-        else if (ballRelease.getAngle() == BALL_RELEASE_ANGLE_EXTENDED)
-        {
-            result = BALL_RELEASE_STATE.EXTENDED;
-        }
-        else
-        {
-            result = BALL_RELEASE_STATE.MOVING;
-        }
-        
-        return result;
+    public boolean isBallReleaseExtended() {
+        // TODO - DRL Create deadband, cannot ensure we don't overshoot
+        return ballRelease.getAngle() == BALL_RELEASE_ANGLE_EXTENDED;
+    }
+    
+    public boolean isBallReleaseContracted() {
+        // TODO - DRL Create deadband, cannot ensure we don't overshoot
+        return ballRelease.getAngle() == BALL_RELEASE_ANGLE_CONTRACTED;
+    }
+    
+    public boolean isBallReleaseMoving() {
+        return !isBallReleaseExtended() && !isBallReleaseContracted();
     }
     
     /**
@@ -97,7 +89,7 @@ public class ShooterSubsystem extends Subsystem {
      * @param angle 0 to 360
      * @return true if angle reached, false if not
      */
-    public boolean aim(double angle){
+    public boolean aim(double angle) {
 
         double motorOutput = aimerPID.update(angle, aimAngle.get());
 

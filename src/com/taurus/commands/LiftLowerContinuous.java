@@ -15,7 +15,7 @@ private double endHeight;
     // Called just before this Command runs the first time
     protected void initialize() {
         done = false;
-        endHeight = (Robot.liftSubsystem.lowerLimit);
+        endHeight = (Robot.liftSubsystem.LIMIT_LOWER);
     }
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
