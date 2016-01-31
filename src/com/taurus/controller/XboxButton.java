@@ -12,7 +12,8 @@ public class XboxButton extends Button
     Xbox.ButtonType button;
     
     public XboxButton(Xbox hardware, Xbox.ButtonType button) {
-        hardware = this.hardware;
+        this.hardware = hardware;
+        this.button = button;
     }
 
     public boolean get()

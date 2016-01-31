@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.CANTalon;
  * full range of 0 to 1.
  * Created for using the 6127V1A360L.5FS (987-1393-ND on DigiKey)
  */
-public class MagnetoPotSRX {
+public class MagnetoPotSRX  {
 
     private double InMin = 0.041; // measured from raw sensor input
     private double InMax = 0.961; // measured from raw sensor input
