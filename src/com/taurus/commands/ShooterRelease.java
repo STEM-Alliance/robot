@@ -1,7 +1,6 @@
 package com.taurus.commands;
 
 import com.taurus.robot.Robot;
-import com.taurus.subsystems.ShooterSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -30,7 +29,7 @@ public class ShooterRelease extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return isTimedOut() && Robot.shooterSubsystem.getBallRelease() == ShooterSubsystem.BALL_RELEASE_STATE.CONTRACTED;
+        return Robot.shooterSubsystem.isBallReleaseContracted();
     }
                 
     // Called once after isFinished returns true
@@ -41,5 +40,6 @@ public class ShooterRelease extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+        // Do not interrupt
     }
 }

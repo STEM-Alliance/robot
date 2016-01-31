@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import com.taurus.commands.ExampleCommand;
 import com.taurus.subsystems.ExampleSubsystem;
-import com.taurus.subsystems.Lift;
+import com.taurus.subsystems.LiftSubsystem;
 import com.taurus.subsystems.RockerDriveSubsystem;
 import com.taurus.subsystems.ShooterSubsystem;
 
@@ -27,7 +27,7 @@ public class Robot extends IterativeRobot {
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static final RockerDriveSubsystem rockerDriveSubsystem = new RockerDriveSubsystem();
 	public static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-	public static final Lift liftSubsystem = new Lift();
+	public static final LiftSubsystem liftSubsystem = new LiftSubsystem();
 	public static OI oi;
 
     Command autonomousCommand;

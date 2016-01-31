@@ -17,7 +17,7 @@ public class LiftStop extends Command
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getCurrentHeight());//the height we go to is the current height (no change)
+        Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getHeight());//the height we go to is the current height (no change)
     }
 
     // Make this return true when this Command no longer needs to run execute()
