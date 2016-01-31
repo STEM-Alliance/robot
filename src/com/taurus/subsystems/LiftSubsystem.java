@@ -1,7 +1,9 @@
 package com.taurus.subsystems;
 
 import com.taurus.PIDController;
+import com.taurus.commands.LiftStop;
 import com.taurus.hardware.MagnetoPot;
+import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -14,8 +16,8 @@ public class LiftSubsystem extends Subsystem{
     
     private CANTalon motorLeft;
     private CANTalon motorRight;
-    private MagnetoPot potLeft;
-    private MagnetoPot potRight;  // TODO - DRL remove if design changes and is unused
+    private MagnetoPotSRX potLeft;
+    private MagnetoPotSRX potRight;  // TODO - DRL remove if design changes and is unused
     private PIDController heightPID;
         
     /**
@@ -24,14 +26,16 @@ public class LiftSubsystem extends Subsystem{
     public LiftSubsystem() {
         motorLeft = new CANTalon(RobotMap.PIN_LIFT_TALON_L);
         motorRight = new CANTalon(RobotMap.PIN_LIFT_TALON_R);
-        potLeft = new MagnetoPot(0,360);
-        potRight = new MagnetoPot(0,360);
+        
+        potLeft = new MagnetoPotSRX(motorLeft, 360);
+        potRight = new MagnetoPotSRX(motorRight, 360);
+        
         heightPID = new PIDController(1, 0, 0, 1);
     }
     
     protected void initDefaultCommand()
     {
-        // No default command
+        setDefaultCommand(new LiftStop());
     }
     
     public double getHeight() {

@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import com.taurus.commands.ExampleCommand;
-import com.taurus.subsystems.ExampleSubsystem;
 import com.taurus.subsystems.LiftSubsystem;
 import com.taurus.subsystems.RockerDriveSubsystem;
 import com.taurus.subsystems.ShooterSubsystem;
@@ -24,7 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static final RockerDriveSubsystem rockerDriveSubsystem = new RockerDriveSubsystem();
 	public static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 	public static final LiftSubsystem liftSubsystem = new LiftSubsystem();
@@ -40,7 +37,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
 		oi = new OI();
         chooser = new SendableChooser();
-        chooser.addDefault("Default Auto", new ExampleCommand());
+//        chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
     }
