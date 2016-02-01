@@ -16,8 +16,8 @@ public class LiftSubsystem extends Subsystem{
     
     private CANTalon motorLeft;
     private CANTalon motorRight;
-    private MagnetoPotSRX potLeft;
-    private MagnetoPotSRX potRight;  // TODO - DRL remove if design changes and is unused
+    private MagnetoPot potLeft;
+    private MagnetoPot potRight;  // TODO - DRL remove if design changes and is unused
     private PIDController heightPID;
         
     /**
@@ -27,8 +27,8 @@ public class LiftSubsystem extends Subsystem{
         motorLeft = new CANTalon(RobotMap.PIN_LIFT_TALON_L);
         motorRight = new CANTalon(RobotMap.PIN_LIFT_TALON_R);
         
-        potLeft = new MagnetoPotSRX(motorLeft, 360);
-        potRight = new MagnetoPotSRX(motorRight, 360);
+        potLeft = new MagnetoPot(2, 360);
+        potRight = new MagnetoPot(3, 360);
         
         heightPID = new PIDController(1, 0, 0, 1);
     }

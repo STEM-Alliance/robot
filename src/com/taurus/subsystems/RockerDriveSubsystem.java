@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class RockerDriveSubsystem extends Subsystem 
 {
+    private final double DEADBAND = .2;
 
     CANTalon motorFR;
     CANTalon motorMR;
@@ -55,10 +56,14 @@ public class RockerDriveSubsystem extends Subsystem
     
     /**
      * Basic tank drive
-     * @param right
-     * @param left
+     * 
+     * Will apply deadband to input values
+     * @param right -1 to 1
+     * @param left -1 to 1
      */
     public void tankDrive(double right, double left){
+        right = scaleForDeadband(right);
+        left = scaleForDeadband(left);
         driveRaw(right,right,right,left,left,left);
     }
 
@@ -118,4 +123,27 @@ public class RockerDriveSubsystem extends Subsystem
         return output;
     }
 
+    /**
+     * Apply a deadband.
+     * 
+     * The value returned is zero or scaled relative to the deadband 
+     * to retain sensitivity.
+     * @param value -1 to 1
+     * @return value with deadband applied or scaled
+     */
+    private double scaleForDeadband(double value)
+    {
+        double abs = Math.abs(value);
+        
+        if (abs < DEADBAND)
+        {
+            value = 0;
+        }
+        else
+        {
+            value = Math.signum(value) * ((abs - DEADBAND) / (1 - DEADBAND));
+        }
+        
+        return value;
+    }
 }
