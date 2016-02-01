@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
-public class DriveWithXbox extends Command {
-    public DriveWithXbox() {
+public class DriveTankWithXbox extends Command {
+    public DriveTankWithXbox() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.rockerDriveSubsystem);
     }
