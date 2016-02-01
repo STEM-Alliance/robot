@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj.buttons.Button;
 
 import com.taurus.controller.Xbox;
 import com.taurus.controller.XboxButton;
+import com.taurus.commands.DriveArcadeWithXbox;
 import com.taurus.commands.ShooterFire;
-//import com.taurus.commands.ExampleCommand;
 import com.taurus.commands.ShooterGrab;
 
 /**
@@ -23,6 +23,7 @@ public class OI {
     static Xbox xbox = new Xbox(0);
     Button buttonA = new XboxButton(xbox, Xbox.ButtonType.kA);
     Button buttonB = new XboxButton(xbox, Xbox.ButtonType.kB);
+    Button buttonBack = new XboxButton(xbox, Xbox.ButtonType.kBack);
     
     // There are a few additional built in buttons you can use. Additionally,
     // by subclassing Button you can create custom triggers and bind those to
@@ -47,6 +48,7 @@ public class OI {
     public OI() {
         buttonA.whileHeld(new ShooterGrab());
         buttonB.whileHeld(new ShooterFire());
+        buttonBack.toggleWhenPressed(new DriveArcadeWithXbox());
     }
     
     public static double getSpeedLeft()
