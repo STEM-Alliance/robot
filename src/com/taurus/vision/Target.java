@@ -51,6 +51,18 @@ public class Target implements Comparable<Target> {
         return orientation;
     }
 
+    public double Left()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public double Top()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+    
     /**
      * Get the distance to the target, based on the known dimensions of the target
      * @return distance in inches
@@ -175,5 +187,6 @@ public class Target implements Comparable<Target> {
     {
         return AreaCompare.compare(this, o);
     }
+
     
 }
