@@ -4,11 +4,11 @@ import java.util.Comparator;
 
 public class Target implements Comparable<Target> {
 
-    private double x;
-    private double y;
+    private double x; //center pixels (all)
+    private double y;//center
     private double area;
-    private double h;
-    private double w;
+    private double h;//target
+    private double w;//target
     private double orientation;
     
     public Target(double x, double y, double area, double h, double w, double orientation)
@@ -58,7 +58,7 @@ public class Target implements Comparable<Target> {
     public double DistanceToTarget()
     {
         //TODO see http://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
-        double distanceToTarget = (Constants.TargetWidthIn * Constants.FocalLengthIn) / Constants.TestTargetWidthPixel;
+        double distanceToTarget = (Constants.TargetWidthIn * Constants.FocalLengthIn) / w;
         return distanceToTarget;
         
     }
@@ -69,24 +69,31 @@ public class Target implements Comparable<Target> {
      */
     public double Pitch()
     {
-        //TODO see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
-        double pixelsAlongDiagonal = Math.sqrt(Math.pow(Constants.Width, 2) + Math.pow(Constants.Height, 2));
-        double degrees = Constants.DiagonalFOV / pixelsAlongDiagonal; 
-        double angleFromCenter = DistanceToTarget() * degrees;
+        double degrees = helperDegrees(Constants.Height,y);//helper function example
         
-        
-        return angleFromCenter;
+        return degrees;
     }
 
     /**
      * Get the yaw (horizontal angle) from the camera to the target
      * @return angle in degrees
      */
-    public double Yaw()
+    public double Yaw()//add helper after fixing math
     {
         //TODO see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
+        double inPerPx = Constants.TargetHeightIn / h;
+        double xChange = inPerPx * ((Constants.Width/2) - x); //Difference between center of image and center of target in pixels
+        double degrees = Math.asin(xChange / DistanceToTarget()); 
+        return Math.toDegrees(degrees);
+       
+    }
+    
+    public double helperDegrees (double dimension, double centerPoint){
+        double inPerPx = Constants.TargetHeightIn / h; 
+        double Change = inPerPx * ((dimension/2)- centerPoint); //Difference between center of image and center of target in pixels
+        double degrees = Math.asin(Change / DistanceToTarget()); 
+        return Math.toDegrees(degrees);
         
-        return 0;
     }
 
     /**
