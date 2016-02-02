@@ -5,7 +5,7 @@ import com.taurus.controller.RockerController;
 import com.taurus.controller.Xbox;
 import com.taurus.shooter.Shooter;
 import com.taurus.vision.Target;
-import com.taurus.vision.VisionOld;
+import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,7 +16,7 @@ public class RockerApplication implements Application {
     RockerController controller = new RockerController();
     Shooter shooter1 = new Shooter();
 
-    VisionOld camera1 = new VisionOld();
+    Vision camera1 = new Vision();
     
     public RockerApplication()
     {
