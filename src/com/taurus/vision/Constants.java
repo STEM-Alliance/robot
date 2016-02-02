@@ -15,5 +15,6 @@ public class Constants {
     private static final double TestTargetDistanceIn = 130; 
     private static final double TestTargetWidthPixel = 56; 
     public static final double FocalLengthIn = TestTargetWidthPixel * TestTargetDistanceIn / TargetWidthIn;
+    
 
 }

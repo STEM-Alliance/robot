@@ -4,9 +4,11 @@ import com.taurus.Application;
 import com.taurus.controller.RockerController;
 import com.taurus.controller.Xbox;
 import com.taurus.shooter.Shooter;
+import com.taurus.vision.Target;
 import com.taurus.vision.VisionOld;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RockerApplication implements Application {
 
@@ -113,7 +115,11 @@ public class RockerApplication implements Application {
     public void DisabledPeriodic()
     {
         // TODO Auto-generated method stub
-
+        Target target = camera1.getTarget();
+        if(target != null)
+        {
+            SmartDashboard.putNumber("test Pitch", target.Pitch());
+        }
     }
 
     @Override
