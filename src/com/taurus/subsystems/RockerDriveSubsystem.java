@@ -102,6 +102,11 @@ public class RockerDriveSubsystem extends Subsystem
         left = limit(left);
         tankDrive(left, right);
     }
+   
+    public double getEncoderRotations()
+    {
+        return 0;  // TODO Get from the Talon SRX's, potentially average all four?
+    }
     
     /**
      * Limits value between 1 and -1
