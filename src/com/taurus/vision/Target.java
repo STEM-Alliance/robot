@@ -81,9 +81,25 @@ public class Target implements Comparable<Target> {
      */
     public double Pitch()
     {
-        double degrees = helperDegrees(Constants.Height,y);//helper function example
+        //double degrees = helperDegrees(Constants.Height,y);//helper function example 
         
-        return degrees;
+        double inPerPx = Constants.TargetHeightIn / h;//changed to width
+        double yChange = inPerPx * ((Constants.Height/2) - y); //Difference between center of image and center of target in pixels
+        double currentAngle = 45; //TODO pass in variable
+        double distance = DistanceToTarget();
+        double X0 = Math.cos(currentAngle) * distance;
+        double Y0 = (Math.sin(currentAngle) * distance) + yChange;
+        double newDistanceToTarget = Math.sqrt((X0*X0) + (Y0*X0));
+        
+        double X2 = Math.pow(newDistanceToTarget, 2);
+        double X1 = Math.pow(distance, 2);
+        double Y2 =  Math.pow(yChange, 2);
+        
+        double deltaAngle = (Math.acos(X2 + X1 - Y2))
+                / (2 * newDistanceToTarget * distance);
+        
+        return Math.toDegrees(deltaAngle);
+
     }
 
     /**
@@ -93,18 +109,20 @@ public class Target implements Comparable<Target> {
     public double Yaw()//add helper after fixing math
     {
         //TODO see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
-        double inPerPx = Constants.TargetHeightIn / h;
+        double inPerPx = Constants.TargetWidthIn / h;//changed to width
         double xChange = inPerPx * ((Constants.Width/2) - x); //Difference between center of image and center of target in pixels
-        double degrees = Math.asin(xChange / DistanceToTarget()); 
-        return Math.toDegrees(degrees);
+        double angle = Math.asin(xChange / DistanceToTarget()); 
+        return Math.toDegrees(angle);
+        
+     
        
     }
     
     public double helperDegrees (double dimension, double centerPoint){
         double inPerPx = Constants.TargetHeightIn / h; 
         double Change = inPerPx * ((dimension/2)- centerPoint); //Difference between center of image and center of target in pixels
-        double degrees = Math.asin(Change / DistanceToTarget()); 
-        return Math.toDegrees(degrees);
+        double angle = Math.asin(Change / DistanceToTarget()); 
+        return Math.toDegrees(angle);
         
     }
 
