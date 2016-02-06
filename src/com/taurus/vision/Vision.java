@@ -1,12 +1,9 @@
 package com.taurus.vision;
 
 import java.text.DecimalFormat;
-import java.util.Comparator;
-import java.util.Vector;
 
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.*;
-import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
@@ -16,14 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision implements Runnable
 {
-    private final String ATTR_VIDEO_MODE = "AcquisitionAttributes::VideoMode";
-    private final String ATTR_WB_MODE = "CameraAttributes::WhiteBalance::Mode";
-    private final String ATTR_WB_VALUE = "CameraAttributes::WhiteBalance::Value";
-    private final String ATTR_EX_MODE = "CameraAttributes::Exposure::Mode";
-    private final String ATTR_EX_VALUE = "CameraAttributes::Exposure::Value";
-    private final String ATTR_BR_MODE = "CameraAttributes::Brightness::Mode";
-    private final String ATTR_BR_VALUE = "CameraAttributes::Brightness::Value";
-
     enum ImageChoices
     {
         Input,
@@ -32,20 +21,24 @@ public class Vision implements Runnable
         INVALID
     };
 
-    private final float COLOR_BLACK   = 0x000000;
-    private final float COLOR_WHITE   = 0xffffff;
-    private final float COLOR_RED     = 0xff0000;
-    private final float COLOR_ORANGE  = 0xff8000;
-    private final float COLOR_YELLOW  = 0xffff00;
-    private final float COLOR_LIME    = 0x80ff00;
-    private final float COLOR_GREEN   = 0x00ff00;
-    private final float COLOR_TEAL    = 0x00ff80;
-    private final float COLOR_CYAN    = 0x00ffff;
-    private final float COLOR_VIOLET  = 0x0080ff;
-    private final float COLOR_BLUE    = 0x0000ff;
-    private final float COLOR_PINK    = 0x8000ff;
-    private final float COLOR_MAGENTA = 0xff00ff;
-
+    @SuppressWarnings("unused")
+    private static final class COLORS
+    {
+        private static final float BLACK   = 0x000000;
+        private static final float WHITE   = 0xffffff;
+        private static final float RED     = 0xff0000;
+        private static final float ORANGE  = 0xff8000;
+        private static final float YELLOW  = 0xffff00;
+        private static final float LIME    = 0x80ff00;
+        private static final float GREEN   = 0x00ff00;
+        private static final float TEAL    = 0x00ff80;
+        private static final float CYAN    = 0x00ffff;
+        private static final float VIOLET  = 0x0080ff;
+        private static final float BLUE    = 0x0000ff;
+        private static final float PINK    = 0x8000ff;
+        private static final float MAGENTA = 0xff00ff;
+    }
+    
     private int RescaleSize = 1; // large size == smaller image; 2 == 1/2 image size
     
     private final double TIME_RATE_VISION = .05;// .033;
@@ -54,8 +47,11 @@ public class Vision implements Runnable
     private SendableChooser imageChooser = new SendableChooser();
 
     Thread visionThread;
+    
+    Camera camera;
 
     private boolean targetDetectionOn = true;
+    
     private Target largestTarget;
 
     public void setTargetDetectionOn(boolean enable){
@@ -92,15 +88,13 @@ public class Vision implements Runnable
     @Override
     public void run()
     {
-        int session = -1;
+        camera = new Camera("cam0");
         Image frame, frameTH, frameDownsampled, frameTHDownsampled;
         
-        NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
-        NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
-        criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_CONVEX_HULL_AREA, 0, 100.0, 0, 0);
+//        NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
+//        NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
+//        criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_CONVEX_HULL_AREA, 0, 100.0, 0, 0);
         
-        ImageChoices prevImageToSend = ImageChoices.INVALID;
-
         double TimeLastVision = 0;
 
         frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
@@ -113,34 +107,23 @@ public class Vision implements Runnable
             // grab from the chooser which image to use
             ImageChoices imageToSend = ((ImageChoices) imageChooser.getSelected());
 
-            // if we haven't opened the camera session, OR
-            // if the dashboard image choose changed (we might have changed cameras)
-            if (session == -1 || prevImageToSend != imageToSend)    
+            // if we haven't opened the camera session
+            if(!camera.isOpen())
             {
-                prevImageToSend = imageToSend;
-
-                try
-                {
-                    if (session != -1)
-                    {
-                        // a session is running so stop it
-                        NIVision.IMAQdxStopAcquisition(session);
-                        NIVision.IMAQdxUnconfigureAcquisition(session);
-                        NIVision.IMAQdxCloseCamera(session);
-                        session = -1;
-                    }
-                }
-                catch (Exception e)
-                {
-                    SmartDashboard.putString("Vision error 131", e.getMessage());
-                }
-
-                // open a new camera session
-                session = OpenCamera("cam0");
+                camera.openCamera();
             }
 
+            // if we haven't started capturing
+            if (!camera.isCapturing())    
+            {
+                camera.startCapture();
+            }
+            
+            updateSettings();
+            
+
             // we have an open camera session 
-            if (session != -1)
+            if (camera.isCapturing())
             {
                 // save off the start time so we can see how long 
                 // it takes to process a frame
@@ -149,7 +132,7 @@ public class Vision implements Runnable
                 try
                 {
                     // grab a new frame
-                    NIVision.IMAQdxGrab(session, frame, 1);
+                    camera.getImage(frame);
 
                     // print input image size
                     GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
@@ -243,11 +226,11 @@ public class Vision implements Runnable
                             //TODO add Target Drawing here
                             //Rect targetRect = new Rect(top, left, height, width);
                             // draw an outline of a rectangle in RED around the target
-                            //NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, COLOR_RED);
+                            //NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, COLORS.RED);
                             
                             //Rect centerRect = new Rect(top, left, height, width);
                             // draw a circle in the center of the image/where the ball shoots
-                            //NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, COLOR_RED);
+                            //NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, COLORS.RED);
                             
                             NIVision.imaqScale(frameDownsampled, frame, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
 
@@ -267,74 +250,37 @@ public class Vision implements Runnable
                 SmartDashboard.putNumber("Vision Task Length",
                         Timer.getFPGATimestamp() - TimeLastVision);
             }
-            Timer.delay(Math.max(0,
-                    TIME_RATE_VISION
-                    - (Timer.getFPGATimestamp() - TimeLastVision)));
+            Timer.delay(Math.max(0, TIME_RATE_VISION - (Timer.getFPGATimestamp() - TimeLastVision)));
         }
-
-        // NIVision.IMAQdxStopAcquisition(session);
     }
-    
-    private int OpenCamera(String CamName)
+
+    /**
+     * If any of the Preferences change, send the latest to the camera object
+     */
+    private synchronized void updateSettings()
     {
-        int session = -1;
-        try
+        int videoMode = Preferences.getInstance().getInt("VIDEO_MODE", 93);
+        if(camera.getVideoMode() != videoMode)
         {
-            // the camera name (ex "cam0") can be found through the roborio web
-            // interface
-            session = NIVision.IMAQdxOpenCamera( CamName, NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+            camera.setVideoMode(videoMode);
         }
-        catch (Exception e)
+        
+        int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4500);
+        if(camera.getWhiteBalanceManual() != whiteBalance)
         {
-            SmartDashboard.putString("Vision error", "Open:" + e.getMessage());
-            return -1;
+            camera.setWhiteBalanceManual(whiteBalance);
         }
-
-        try
+        
+        int exposure = Preferences.getInstance().getInt("Exposure", 1);
+        if(camera.getExposureManual() != exposure)
         {
-            // print to dashboard a list of all available video modes
-            // NIVision.dxEnumerateVideoModesResult enumerated =
-            // NIVision.IMAQdxEnumerateVideoModes(session);
-            // String Modes = "";
-            // for (NIVision.IMAQdxEnumItem mode : enumerated.videoModeArray)
-            // {
-            // Modes += mode.Name + " " + mode.Value + ", ";
-            // }
-            // SmartDashboard.putString("Modes", Modes);
-
-            int videoMode = Preferences.getInstance().getInt("VIDEO_MODE", 93);
-            NIVision.IMAQdxSetAttributeU32(session, ATTR_VIDEO_MODE, videoMode);
-            
-//             int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4500);
-//             NIVision.IMAQdxSetAttributeString(session, ATTR_WB_MODE, "Manual");
-//             NIVision.IMAQdxSetAttributeI64(session, ATTR_WB_VALUE,
-//             whiteBalance,0.0);
-//
-//             int exposure = Preferences.getInstance().getInt("Exposure", 1);
-//             NIVision.IMAQdxSetAttributeString(session, ATTR_EX_MODE, "Manual");
-//             NIVision.IMAQdxSetAttributeI64(session, ATTR_EX_VALUE, exposure);
-             
-            {
-                double brightness = Preferences.getInstance().getDouble("Brightness", .25);
-
-                NIVision.IMAQdxSetAttributeString(session, ATTR_BR_MODE, "Manual");
-                long minv = NIVision.IMAQdxGetAttributeMinimumI64(session, ATTR_BR_VALUE);
-                long maxv = NIVision.IMAQdxGetAttributeMaximumI64(session, ATTR_BR_VALUE);
-
-                long val = (long) Utilities.scaleToRange(brightness, 0, 1, minv, maxv);
-                NIVision.IMAQdxSetAttributeI64(session, ATTR_BR_VALUE, val);
-            }
-
-            NIVision.IMAQdxConfigureGrab(session);
-
-            NIVision.IMAQdxStartAcquisition(session);
-
+            camera.setExposureManual(exposure);
         }
-        catch (Exception e)
+        
+        double brightness = Preferences.getInstance().getDouble("Brightness", .25);
+        if(camera.getBrightness() != brightness)
         {
-            SmartDashboard.putString("Vision error 353: ", e.getMessage());
+            camera.setBrightness(brightness);
         }
-        return session;
     }
-
 }
