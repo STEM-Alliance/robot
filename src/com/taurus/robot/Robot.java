@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import com.taurus.subsystems.LiftSubsystem;
 import com.taurus.subsystems.RockerDriveSubsystem;
 import com.taurus.subsystems.ShooterSubsystem;
+import com.taurus.vision.Target;
+import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,6 +32,7 @@ public class Robot extends IterativeRobot {
     Command autonomousCommand;
     SendableChooser chooser;
 
+    Vision camera = new Vision();
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -40,6 +43,7 @@ public class Robot extends IterativeRobot {
 //        chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
+        camera.Start();
     }
 	
 	/**
@@ -53,6 +57,12 @@ public class Robot extends IterativeRobot {
 	
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
+		Target whatever = camera.getTarget();
+		
+		if(whatever!= null){
+		    double pitch =  whatever.Pitch();
+		    SmartDashboard.putNumber("Test Pitch",pitch);
+		}
 	}
 
 	/**

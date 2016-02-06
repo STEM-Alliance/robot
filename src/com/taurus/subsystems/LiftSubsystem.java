@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class LiftSubsystem extends Subsystem{
-    public final double LIMIT_UPPER = 1200;  // millimeters
-    public final double LIMIT_LOWER = 325;  //millimeters
-    public final double LIMIT_TOLERANCE = 20;  // millimeters
+    public final double LIMIT_UPPER = 47.24; 
+    public final double LIMIT_LOWER = 27.79;  
+    public final double LIMIT_TOLERANCE = 1; 
     
     private CANTalon motorLeft;
     private CANTalon motorRight;
@@ -38,8 +38,12 @@ public class LiftSubsystem extends Subsystem{
         setDefaultCommand(new LiftStop());
     }
     
+    public double getTotalHeight(){
+        return getHeight() + LIMIT_LOWER;
+    }
+    
     public double getHeight() {
-        return (Math.sin(potLeft.get())*711)*2;
+        return (Math.sin(potLeft.get())*27.99)*2;
     }
     
     /**
