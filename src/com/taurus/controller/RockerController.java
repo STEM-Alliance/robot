@@ -1,7 +1,6 @@
 package com.taurus.controller;
 
 import com.taurus.controller.Xbox.RumbleType;
-
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class RockerController {
