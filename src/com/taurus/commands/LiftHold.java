@@ -6,9 +6,9 @@ import com.taurus.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class LiftStop extends Command
+public class LiftHold extends Command
 {
-    public LiftStop() {
+    public LiftHold() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.liftSubsystem);
     }
@@ -20,7 +20,7 @@ public class LiftStop extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
-        Robot.liftSubsystem.setSpeed(0,0);
+        Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getHeight());//the height we go to is the current height (no change)
     }
 
     // Make this return true when this Command no longer needs to run execute()

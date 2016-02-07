@@ -6,11 +6,9 @@ import com.taurus.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class LiftRaiseContinuous extends Command {
-    private boolean done;
-    private double endHeight;
+public class LiftRaiseContinuousRaw extends Command {
 
-    public LiftRaiseContinuous() {
+    public LiftRaiseContinuousRaw() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.liftSubsystem);
@@ -18,24 +16,22 @@ public class LiftRaiseContinuous extends Command {
     
     // Called just before this Command runs the first time
     protected void initialize() {
-        done = false;
-        endHeight = 40;//(Robot.liftSubsystem.LIMIT_UPPER);
     }
     
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
-        done = Robot.liftSubsystem.setHeight(endHeight);//store result of setHeight function into the done variable
+        Robot.liftSubsystem.setSpeed(.5, .5);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return done;
+        return false;
     }
     
     // Called once after isFinished returns true
     protected void end() {
-        done = Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getTotalHeight());
+        Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getTotalHeight());
     }
     
     // Called when another command which requires one or more of the same
