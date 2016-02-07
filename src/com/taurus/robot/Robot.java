@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import com.taurus.subsystems.LiftSubsystem;
 import com.taurus.subsystems.RockerDriveSubsystem;
 import com.taurus.subsystems.ShooterSubsystem;
+import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,6 +30,7 @@ public class Robot extends IterativeRobot {
 
     Command autonomousCommand;
     SendableChooser chooser;
+    public static Vision camera;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -40,6 +42,8 @@ public class Robot extends IterativeRobot {
 //        chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
+        camera = new Vision();
+        camera.Start();
     }
 	
 	/**

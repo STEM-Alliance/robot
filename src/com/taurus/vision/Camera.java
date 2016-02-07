@@ -34,8 +34,8 @@ public class Camera
     private String m_whiteBalance = "auto";
     private int m_whiteBalanceValue = -1;
     private String m_exposure = "auto";
-    private int m_exposureValue = -1;
-    private int m_brightness = 50;
+    private double m_exposureValue = 100;
+    private double m_brightness = 50;
     private boolean m_needSettingsUpdate = true;
     private int m_mode = 93;
 
@@ -95,7 +95,8 @@ public class Camera
         {
             return;
         }
-
+        NIVision.IMAQdxSetAttributeU32(m_sessionId, ATTR_VIDEO_MODE, m_mode);
+        
         NIVision.IMAQdxConfigureGrab(m_sessionId);
         NIVision.IMAQdxStartAcquisition(m_sessionId);
         m_active = true;
@@ -140,7 +141,6 @@ public class Camera
         openCamera();
 
         // Video Mode
-        NIVision.IMAQdxSetAttributeU32(m_sessionId, ATTR_VIDEO_MODE, m_mode);
 
         // White Balance
         if (m_whiteBalance == "auto")
@@ -164,11 +164,11 @@ public class Camera
         else
         {
             NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_EX_MODE, "Manual");
-            if (m_exposureValue != -1)
+            if (m_exposureValue > -1)
             {
                 long minv = NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_EX_VALUE);
                 long maxv = NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_EX_VALUE);
-                long val = minv + (long) (((double) (maxv - minv)) * (((double) m_exposureValue) / 100.0));
+                long val = minv + (long) (((double) (maxv - minv)) * m_exposureValue);
                 NIVision.IMAQdxSetAttributeI64(m_sessionId, ATTR_EX_VALUE, val);
             }
         }
@@ -177,7 +177,7 @@ public class Camera
         NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_BR_MODE, "Manual");
         long minv = NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_BR_VALUE);
         long maxv = NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_BR_VALUE);
-        long val = minv + (long) (((double) (maxv - minv)) * (((double) m_brightness) / 100.0));
+        long val = minv + (long) (((double) (maxv - minv)) * m_brightness);
         NIVision.IMAQdxSetAttributeI64(m_sessionId, ATTR_BR_VALUE, val);
 
         // Restart acquisition
@@ -201,15 +201,9 @@ public class Camera
     /** Set the brightness, as a percentage (0-1). */
     public synchronized void setBrightness(double brightness)
     {
-        setBrightness((int)(brightness * 100));
-    }
-
-    /** Set the brightness, as a percentage (0-100). */
-    public synchronized void setBrightness(int brightness)
-    {
-        if (brightness > 100)
+        if (brightness > 1)
         {
-            m_brightness = 100;
+            m_brightness = 1;
         }
         else if (brightness < 0)
         {
@@ -222,8 +216,8 @@ public class Camera
         m_needSettingsUpdate = true;
     }
 
-    /** Get the brightness, as a percentage (0-100). */
-    public synchronized int getBrightness()
+    /** Get the brightness, as a percentage (0-1). */
+    public synchronized double getBrightness()
     {
         return m_brightness;
     }
@@ -273,13 +267,13 @@ public class Camera
         m_needSettingsUpdate = true;
     }
 
-    /** Set the exposure to manual, as a percentage (0-100). */
-    public synchronized void setExposureManual(int value)
+    /** Set the exposure to manual, as a percentage (0-1). */
+    public synchronized void setExposureManual(double value)
     {
         m_exposure = "manual";
-        if (value > 100)
+        if (value > 1)
         {
-            m_exposureValue = 100;
+            m_exposureValue = 1;
         }
         else if (value < 0)
         {
@@ -292,7 +286,7 @@ public class Camera
         m_needSettingsUpdate = true;
     }
     
-    public synchronized int getExposureManual()
+    public synchronized double getExposureManual()
     {
         return m_exposureValue; 
     }
