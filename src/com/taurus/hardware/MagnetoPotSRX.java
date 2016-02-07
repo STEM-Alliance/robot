@@ -100,4 +100,13 @@ public class MagnetoPotSRX  {
         // scale it based on the calibration values
         return Utilities.scaleToRange(val, InMin, InMax, 0, 1);
     }
+
+    public void setFullRange(double fullRange)
+    {
+        this.fullRange = fullRange;
+    }
+    public void setOffset(double offset)
+    {
+        this.offset = offset;
+    }
 }

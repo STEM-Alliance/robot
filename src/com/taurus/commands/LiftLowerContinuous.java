@@ -1,8 +1,10 @@
 package com.taurus.commands;
 
+import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftLowerContinuous extends Command {
     private boolean done;
@@ -22,6 +24,7 @@ public class LiftLowerContinuous extends Command {
     
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+        Utilities.PrintCommand("Lift", this);
         done = Robot.liftSubsystem.setHeight(endHeight);//store result of setHeight function into the done variable
     }
 
@@ -32,7 +35,7 @@ public class LiftLowerContinuous extends Command {
     
     // Called once after isFinished returns true
     protected void end() {
-        done = Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getHeight());
+        done = Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getTotalHeight());
     }
     
     // Called when another command which requires one or more of the same

@@ -85,8 +85,8 @@ public class Xbox extends GenericHID {
         private static final int kB_val = 2;
         private static final int kX_val = 3;
         private static final int kY_val = 4;
-        private static final int kL_val = 5;
-        private static final int kR_val = 6;
+        private static final int kLB_val = 5;
+        private static final int kRB_val = 6;
         private static final int kBack_val = 7;
         private static final int kStart_val = 8;
         private static final int kLeftStick_val = 9;
@@ -136,12 +136,12 @@ public class Xbox extends GenericHID {
         /**
          * Button: R1
          */
-        public static final ButtonType kR = new ButtonType(kR_val);
+        public static final ButtonType kRB = new ButtonType(kRB_val);
 
         /**
          * Button: L1
          */
-        public static final ButtonType kL = new ButtonType(kL_val);
+        public static final ButtonType kLB = new ButtonType(kLB_val);
 
         /**
          * Button: Select
@@ -444,11 +444,11 @@ public class Xbox extends GenericHID {
     {
         if (hand == Hand.kRight)
         {
-            return getButton(ButtonType.kR);
+            return getButton(ButtonType.kRB);
         }
         else if (hand == Hand.kLeft)
         {
-            return getButton(ButtonType.kL);
+            return getButton(ButtonType.kLB);
         }
         else
         {

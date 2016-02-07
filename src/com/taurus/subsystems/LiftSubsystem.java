@@ -1,23 +1,28 @@
 package com.taurus.subsystems;
 
 import com.taurus.PIDController;
+import com.taurus.Utilities;
+import com.taurus.commands.LiftHold;
 import com.taurus.commands.LiftStop;
 import com.taurus.hardware.MagnetoPot;
 import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftSubsystem extends Subsystem{
-    public final double LIMIT_UPPER = 1200;  // millimeters
-    public final double LIMIT_LOWER = 325;  //millimeters
-    public final double LIMIT_TOLERANCE = 20;  // millimeters
+    public final double LIMIT_UPPER = 50;
+    public final double LIMIT_LOWER = 9.6;
+    public final double LIMIT_TOLERANCE = 1;
+    public final double LENGTH_SCISSOR_STEP = 26;
     
     private CANTalon motorLeft;
     private CANTalon motorRight;
-    private MagnetoPot potLeft;
-    private MagnetoPot potRight;  // TODO - DRL remove if design changes and is unused
+    private MagnetoPotSRX potLeft;
+    private MagnetoPotSRX potRight;  // TODO - DRL remove if design changes and is unused
     private PIDController heightPID;
         
     /**
@@ -27,10 +32,10 @@ public class LiftSubsystem extends Subsystem{
         motorLeft = new CANTalon(RobotMap.PIN_LIFT_TALON_L);
         motorRight = new CANTalon(RobotMap.PIN_LIFT_TALON_R);
         
-        potLeft = new MagnetoPot(2, 360);
-        potRight = new MagnetoPot(3, 360);
+        potLeft = new MagnetoPotSRX(motorLeft, -360);
+        potRight = new MagnetoPotSRX(motorRight, -360);
         
-        heightPID = new PIDController(1, 0, 0, 1);
+        heightPID = new PIDController(.5, 0, 0, 1);
     }
     
     protected void initDefaultCommand()
@@ -38,19 +43,16 @@ public class LiftSubsystem extends Subsystem{
         setDefaultCommand(new LiftStop());
     }
     
-    public double getHeight() {
-        return (getHeightL() + getHeightR()) / 2;
-    }
-    
     /**
      * set lift height
-     * @param height we want to be at in millimeters
+     * @param height we want to be at in inches from the floor
      * @return whether at desired height or not: will be a true/false and move accordingly
      */
     public boolean setHeight(double height) {
        
         double[] motorOutput;
-        boolean arrived;
+        boolean arrivedL;
+        boolean arrivedR;
         
         // Error check height, set to within bounds if needed
         if(height >= LIMIT_UPPER)
@@ -60,20 +62,27 @@ public class LiftSubsystem extends Subsystem{
         else if(height <= LIMIT_LOWER)
         {
             height = LIMIT_LOWER;
-        }        
-        motorOutput = getPIDSpeed(height);
+        }
         
-        arrived = Math.abs(getHeight()-height) <= LIMIT_TOLERANCE;        
-        if(arrived)
+        height -= LIMIT_LOWER;
+        
+        SmartDashboard.putNumber("Lift Desired Height", height);
+        
+        motorOutput = getPIDSpeed(height);
+
+        arrivedL = Math.abs(getHeightL()-height) <= LIMIT_TOLERANCE;   
+        arrivedR = Math.abs(getHeightR()-height) <= LIMIT_TOLERANCE;        
+        if(arrivedL && arrivedR)
         {
             stopLift();
         }
         else
         {
-            setSpeed(motorOutput[0], motorOutput[1]);
+            setSpeed(motorOutput[0]* Preferences.getInstance().getDouble("LiftSpeedLimit", .5),
+                    motorOutput[1]* Preferences.getInstance().getDouble("LiftSpeedLimit", .5));
         }
         
-        return arrived;
+        return arrivedL && arrivedR;
     }
     
     /**
@@ -81,13 +90,32 @@ public class LiftSubsystem extends Subsystem{
      * @param right speed between -1 to 1
      * @param right speed between -1 to 1
      */
-    private void setSpeed(double right, double left) {
+    public void setSpeed(double right, double left) {
+        SmartDashboard.putNumber("Lift Total Height", getTotalHeight());
+        SmartDashboard.putNumber("Lift Height", getHeight());
+        SmartDashboard.putNumber("Lift Height L", getHeightL());
+        SmartDashboard.putNumber("Lift Height R", getHeightR());
+        SmartDashboard.putNumber("Lift Pot L", getAngleL());
+        SmartDashboard.putNumber("Lift Pot R", getAngleR());
+        
+        updatedPotOffsets();
+
+        SmartDashboard.putNumber("Lift Speed L", left);
+        SmartDashboard.putNumber("Lift Speed R", right);
+        
         motorRight.set(right);
         motorLeft.set(left);        
     }
     
     private void stopLift() {
         setSpeed(0, 0);
+    }
+    
+    private void updatePIDConstants()
+    {
+        heightPID.setP(Preferences.getInstance().getDouble("LiftPID_P", .5));
+        heightPID.setI(Preferences.getInstance().getDouble("LiftPID_I", 0));
+        heightPID.setD(Preferences.getInstance().getDouble("LiftPID_D", 0));
     }
     
     /**
@@ -99,6 +127,8 @@ public class LiftSubsystem extends Subsystem{
      */
     private double[] getPIDSpeed(double height)
     {
+        updatePIDConstants();
+        
         // Array convention -> (right side, left side)
         double[] heightActual = {getHeightR(), getHeightL()};
         double heightActualAverage = (heightActual[0] + heightActual[1]) / 2;
@@ -136,11 +166,34 @@ public class LiftSubsystem extends Subsystem{
         return speedCompensated;
     }
     
+    private void updatedPotOffsets()
+    {
+        potRight.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetR", 0));
+        potLeft.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetL", 0));
+        potRight.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleR", 0));
+        potLeft.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleL", 0));
+    }
+
+    private double getAngleR() {
+        return Utilities.wrapToRange(potRight.get(), 0, 360);
+    }
+    private double getAngleL() {
+        return Utilities.wrapToRange(potLeft.get(), 0, 360);
+    }
+
+    public double getHeight() {
+        return (getHeightL() + getHeightR()) / 2;
+    }
+    
+    public double getTotalHeight(){
+        return getHeight() + LIMIT_LOWER;
+    }
+    
     private double getHeightR() {
-        return (Math.sin(potRight.get())*711)*2;
+        return (Math.sin(Math.toRadians(getAngleR()))*LENGTH_SCISSOR_STEP)*2;
     }
     
     private double getHeightL() {
-        return (Math.sin(potLeft.get())*711)*2;
+        return (Math.sin(Math.toRadians(getAngleL()))*LENGTH_SCISSOR_STEP)*2;
     }
 }

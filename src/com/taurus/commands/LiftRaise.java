@@ -1,8 +1,10 @@
 package com.taurus.commands;
 
+import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftRaise extends Command {
     private boolean done;
@@ -23,6 +25,7 @@ public class LiftRaise extends Command {
     
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+        Utilities.PrintCommand("Lift", this);
         done = Robot.liftSubsystem.setHeight(endHeight);//store result of setHeight function into the done variable
     }
 
