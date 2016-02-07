@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import com.taurus.subsystems.LiftSubsystem;
 import com.taurus.subsystems.RockerDriveSubsystem;
 import com.taurus.subsystems.ShooterSubsystem;
+import com.taurus.vision.Target;
 import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -57,6 +58,12 @@ public class Robot extends IterativeRobot {
 	
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
+		Target whatever = camera.getTarget();
+		
+		if(whatever!= null){
+		    double pitch =  whatever.Pitch();
+		    SmartDashboard.putNumber("Test Pitch",pitch);
+		}
 	}
 
 	/**
