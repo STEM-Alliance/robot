@@ -271,13 +271,13 @@ public class Vision implements Runnable
             camera.setWhiteBalanceManual(whiteBalance);
         }
         
-        int exposure = Preferences.getInstance().getInt("Exposure", 1);
+        double exposure = Preferences.getInstance().getDouble("Exposure", 1);
         if(camera.getExposureManual() != exposure)
         {
             camera.setExposureManual(exposure);
         }
         
-        double brightness = Preferences.getInstance().getDouble("Brightness", .25);
+        double brightness = Preferences.getInstance().getDouble("Brightness", 1);
         if(camera.getBrightness() != brightness)
         {
             camera.setBrightness(brightness);
