@@ -101,4 +101,9 @@ public class ShooterSubsystem extends Subsystem {
             return false;
         }
     }
+    
+    public double getCurrentAngle(){
+        return aimAngle.get();
+        
+    }
 }

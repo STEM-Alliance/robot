@@ -2,6 +2,8 @@ package com.taurus.vision;
 
 import java.util.Comparator;
 
+import com.taurus.robot.Robot;
+
 public class Target implements Comparable<Target> {
 
     private double x; //center pixels (all)
@@ -81,24 +83,26 @@ public class Target implements Comparable<Target> {
      */
     public double Pitch()
     {
-        //double degrees = helperDegrees(Constants.Height,y);//helper function example 
         
         double inPerPx = Constants.TargetHeightIn / h;//changed to width
         double yChange = inPerPx * ((Constants.Height/2) - y); //Difference between center of image and center of target in pixels
-        double currentAngle = 45; //TODO pass in variable
+        double currentAngle = Robot.shooterSubsystem.getCurrentAngle(); //current angle of the shooter
         double distance = DistanceToTarget();
-        double X0 = Math.cos(currentAngle) * distance;
-        double Y0 = (Math.sin(currentAngle) * distance) + yChange;
-        double newDistanceToTarget = Math.sqrt((X0*X0) + (Y0*X0));
+        double deltaAngle;//angle displaced
+        double Y0 = Constants.TowerHeightIn - Robot.liftSubsystem.getTotalHeight();//Tower height - lift height
         
-        double X2 = Math.pow(newDistanceToTarget, 2);
-        double X1 = Math.pow(distance, 2);
-        double Y2 =  Math.pow(yChange, 2);
-        
-        double deltaAngle = (Math.acos(X2 + X1 - Y2))
-                / (2 * newDistanceToTarget * distance);
-        
-        return Math.toDegrees(deltaAngle);
+        if (y > Constants.Height / 2){
+            //target below
+            double Y1 = Constants.TowerHeightIn - Robot.liftSubsystem.getTotalHeight();           
+            double angle1 = Math.toDegrees(Math.asin(Y1 / distance));
+            deltaAngle = currentAngle - angle1;
+        } else {
+            //target above
+            double totalAngle = Math.toDegrees(Math.asin(Y0/distance));
+            deltaAngle = totalAngle - currentAngle;
+        }
+     
+        return deltaAngle;//angle displaced
 
     }
 
