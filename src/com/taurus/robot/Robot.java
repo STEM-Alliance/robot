@@ -31,7 +31,7 @@ public class Robot extends IterativeRobot {
 
     Command autonomousCommand;
     SendableChooser chooser;
-    public static Vision camera;
+    
 
     /**
      * This function is run when the robot is first started up and should be
@@ -43,8 +43,7 @@ public class Robot extends IterativeRobot {
 //        chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
-        camera = new Vision();
-        camera.Start();
+       
     }
 	
 	/**
@@ -58,12 +57,6 @@ public class Robot extends IterativeRobot {
 	
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		Target whatever = camera.getTarget();
-		
-		if(whatever!= null){
-		    double pitch =  whatever.Pitch();
-		    SmartDashboard.putNumber("Test Pitch",pitch);
-		}
 	}
 
 	/**
