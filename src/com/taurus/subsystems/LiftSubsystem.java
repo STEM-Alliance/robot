@@ -64,14 +64,18 @@ public class LiftSubsystem extends Subsystem{
             height = LIMIT_LOWER;
         }
         
+        // subtract the distance from the floor to the bottom of the lift
+        // this lets the rest of the calculations all be relative to the same point
         height -= LIMIT_LOWER;
         
         SmartDashboard.putNumber("Lift Desired Height", height);
         
         motorOutput = getPIDSpeed(height);
 
-        arrivedL = Math.abs(getHeightL()-height) <= LIMIT_TOLERANCE;   
-        arrivedR = Math.abs(getHeightR()-height) <= LIMIT_TOLERANCE;        
+        // determine if each side is at the desired height
+        arrivedL = Math.abs(getHeightL()-height) <= LIMIT_TOLERANCE;
+        arrivedR = Math.abs(getHeightR()-height) <= LIMIT_TOLERANCE;
+        
         if(arrivedL && arrivedR)
         {
             stopLift();
@@ -122,7 +126,7 @@ public class LiftSubsystem extends Subsystem{
      * Calculate the desirable speeds to keep the two lift motors in sync.
      * This is advantageous because it corrects position drift due to one motor being faster than the other.
      * Author: David Lindner
-     * @param height desired, millimeters
+     * @param height desired, inches from bottom of lift
      * @return speed calculated (right, left)
      */
     private double[] getPIDSpeed(double height)
@@ -153,7 +157,12 @@ public class LiftSubsystem extends Subsystem{
             {                
                 // This is the side with positive error, and after compensation, happens to be above max magnitude of 1.
                 // Scale back both speeds proportionally to how far the faster side is above max magnitude of 1.
-                double percentAbove = speedCompensatedAbs[index] - 1;
+                //double percentAbove = speedCompensatedAbs[index] - 1;
+                
+                // we can't subtract 1 from this, as when the sides become close,
+                // the values will be much larger than 1. By dividing by the largest,
+                // we will scale everything to a max of 1.
+                double percentAbove = speedCompensatedAbs[index]; 
 
                 for (int side = 0; side < 2; side++)
                 {
