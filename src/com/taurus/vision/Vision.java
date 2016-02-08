@@ -41,6 +41,8 @@ public class Vision implements Runnable
     
     private int RescaleSize = 1; // large size == smaller image; 2 == 1/2 image size
     
+    private static Vision instance = null;
+    
     private final double TIME_RATE_VISION = .05;// .033;
     private DecimalFormat df = new DecimalFormat("#.##");
     
@@ -54,6 +56,14 @@ public class Vision implements Runnable
     
     private Target largestTarget;
 
+    public static Vision getInstance(){
+        if (instance == null){
+            instance = new Vision();
+         
+        }
+        return instance;
+        
+    }
     public void setTargetDetectionOn(boolean enable){
         synchronized(visionThread){
             targetDetectionOn = enable;
@@ -66,7 +76,7 @@ public class Vision implements Runnable
         }
     }
 
-    public Vision()
+    private Vision()
     {
         imageChooser = new SendableChooser();
         imageChooser.addDefault("Input", ImageChoices.Input);

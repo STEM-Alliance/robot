@@ -79,7 +79,7 @@ public class Target implements Comparable<Target> {
     
     /**
      * Get the pitch (vertical angle) from the camera to the target
-     * @return angle in degrees
+     * @return angle displaced in degrees
      */
     public double Pitch()
     {
@@ -110,10 +110,10 @@ public class Target implements Comparable<Target> {
      * Get the yaw (horizontal angle) from the camera to the target
      * @return angle in degrees
      */
-    public double Yaw()//add helper after fixing math
+    public double Yaw()
     {
         //TODO see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
-        double inPerPx = Constants.TargetWidthIn / h;//changed to width
+        double inPerPx = Constants.TargetWidthIn / w;//changed to width
         double xChange = inPerPx * ((Constants.Width/2) - x); //Difference between center of image and center of target in pixels
         double angle = Math.asin(xChange / DistanceToTarget()); 
         return Math.toDegrees(angle);
@@ -122,13 +122,7 @@ public class Target implements Comparable<Target> {
        
     }
     
-    public double helperDegrees (double dimension, double centerPoint){
-        double inPerPx = Constants.TargetHeightIn / h; 
-        double Change = inPerPx * ((dimension/2)- centerPoint); //Difference between center of image and center of target in pixels
-        double angle = Math.asin(Change / DistanceToTarget()); 
-        return Math.toDegrees(angle);
-        
-    }
+   
 
     /**
      * Compare the area of a {@link Target} to another {@link Target}

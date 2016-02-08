@@ -3,6 +3,7 @@ package com.taurus.subsystems;
 import com.taurus.PIDController;
 import com.taurus.hardware.MagnetoPot;
 import com.taurus.robot.RobotMap;
+import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -24,6 +25,8 @@ public class ShooterSubsystem extends Subsystem {
     private PIDController aimerPID;
     private MagnetoPot aimAngle;
     private Servo ballRelease;
+    private Vision vision;
+    
     
     /**
      * Constructor
@@ -38,6 +41,7 @@ public class ShooterSubsystem extends Subsystem {
         aimerPID = new PIDController(1, 0, 0, 1);
         aimAngle = new MagnetoPot(0,360);
         ballRelease = new Servo(RobotMap.PIN_SHOOTER_SERVO_BALLRELEASE);
+        vision = Vision.getInstance();
     }
     
     public void initDefaultCommand() {
@@ -86,14 +90,14 @@ public class ShooterSubsystem extends Subsystem {
     /**
      * aims the shooter
      * TODO - DRL We may want to create a Turret PIDSubsystem and Aim Command
-     * @param angle 0 to 360
+     * @param changeInAngle 0 to 360
      * @return true if angle reached, false if not
      */
-    public boolean aim(double angle) {
+    public boolean aim(double changeInAngle) {
 
-        double motorOutput = aimerPID.update(angle, aimAngle.get());
+        double motorOutput = aimerPID.update(changeInAngle);//TODO add limits for angle
 
-        if(Math.abs(aimAngle.get()-angle) <= 5){
+        if(Math.abs(changeInAngle) <= 5){
             aimer.set(0);
             return true;
         } else {
@@ -102,8 +106,16 @@ public class ShooterSubsystem extends Subsystem {
         }
     }
     
+    /**
+     * aims the shooter at the detected target 
+     * @return true when aimer is at desired angle
+     */
+    public boolean aim(){
+        return aim(vision.getTarget().Pitch());
+    }
     public double getCurrentAngle(){
         return aimAngle.get();
+        
         
     }
 }
