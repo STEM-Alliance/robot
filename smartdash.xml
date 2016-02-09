@@ -1,5 +1,69 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Lift Desired Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="33"/>
+	</widget>
+	<widget field="Test Yaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="411"/>
+	</widget>
+	<widget field="Width" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="390"/>
+	</widget>
+	<widget field="Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="369"/>
+	</widget>
+	<widget field="Area" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="348"/>
+	</widget>
+	<widget field="Center" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="327"/>
+	</widget>
+	<widget field="Vision Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="306"/>
+	</widget>
+	<widget field="Orientation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="285"/>
+	</widget>
+	<widget field="Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="264"/>
+	</widget>
+	<widget field="FrameSize" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="243"/>
+	</widget>
+	<widget field="FrameSizeDownsampled" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="222"/>
+	</widget>
+	<widget field="Lift Speed R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="222" y="390"/>
+		<height>20</height>
+	</widget>
+	<widget field="Lift Speed L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="225" y="421"/>
+	</widget>
+	<widget field="Lift Pot R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="370" y="391"/>
+	</widget>
+	<widget field="Lift Pot L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="375" y="415"/>
+	</widget>
+	<widget field="Lift Height R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="512" y="392"/>
+	</widget>
+	<widget field="Lift Height L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="513" y="414"/>
+	</widget>
+	<widget field="Lift Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="687" y="386"/>
+	</widget>
+	<widget field="Lift Total Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="677" y="410"/>
+	</widget>
+	<widget field="Lift Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="727" y="428"/>
+	</widget>
+	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="0" y="12"/>
+	</widget>
 	<widget field="Rotation Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="669" y="163"/>
 	</widget>
@@ -43,12 +107,6 @@
 		<width>285</width>
 		<height>466</height>
 	</static-widget>
-	<widget field="Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="563" y="216"/>
-		<width>250</width>
-		<height>180</height>
-		<property name="Buffer Size (samples)" value="500"/>
-	</widget>
 	<widget field="Last Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="695" y="25"/>
 		<width>127</width>
@@ -83,45 +141,5 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Actuator Speed"/>
-	<hidden field="TopSensorRight"/>
-	<hidden field="FrameSize"/>
-	<hidden field="Wheel0.ctl.Reverse"/>
-	<hidden field="Lineup"/>
-	<hidden field="Wheel0.ctl.SensorValue"/>
-	<hidden field="Vision error"/>
-	<hidden field="StateAddFloorToteToStack"/>
-	<hidden field="StateAddContainerToStack"/>
-	<hidden field="TopSensorLeft"/>
-	<hidden field="ContainerInStack"/>
-	<hidden field="CurrentLiftAction_"/>
-	<hidden field="ToteIntakeSensor"/>
-	<hidden field="Vision Task Length"/>
-	<hidden field="CylindersRails.State"/>
-	<hidden field="Zero Sensor"/>
-	<hidden field="Test Mode"/>
-	<hidden field="Actuator Position"/>
-	<hidden field="Center"/>
-	<hidden field="Car Height"/>
-	<hidden field="Test Wheel"/>
-	<hidden field="Orientation"/>
-	<hidden field="Test Wheel Angle Actual"/>
-	<hidden field="Particles"/>
-	<hidden field="Wheel0.ctl.Error"/>
-	<hidden field="Area"/>
-	<hidden field="Wheel0.ctl.SetPoint"/>
-	<hidden field="StateAddChuteToteToStack"/>
-	<hidden field="Distance Left"/>
-	<hidden field="StateEjectStack"/>
-	<hidden field="Wheel0.ctl.Output"/>
-	<hidden field="State"/>
-	<hidden field="App Task Length"/>
-	<hidden field="ToteOnRails"/>
-	<hidden field="TotesInStack"/>
-	<hidden field="CylindersPusher.State"/>
-	<hidden field="RailContents"/>
-	<hidden field="Test Wheel Mag Actual"/>
-	<hidden field="Swerve Task Length"/>
-	<hidden field="Distance Right"/>
-	<hidden field="Actuator Raw"/>
+	<hidden field="Voltage"/>
 </xml>
