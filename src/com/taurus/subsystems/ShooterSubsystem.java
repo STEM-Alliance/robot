@@ -38,7 +38,7 @@ public class ShooterSubsystem extends Subsystem {
         shooterBB = new CANTalon(RobotMap.PIN_SHOOTER_TALON_BB);
         stopSwitch = new DigitalInput(RobotMap.PIN_SHOOTER_SENSOR_STOP);
         aimer = new CANTalon(RobotMap.PIN_SHOOTER_TALON_AIMER);
-        aimerPID = new PIDController(1, 0, 0, 1);
+        aimerPID = new PIDController(1, 0, 0, 1);//TODO update these values 
         aimAngle = new MagnetoPot(0,360);
         ballRelease = new Servo(RobotMap.PIN_SHOOTER_SERVO_BALLRELEASE);
         vision = Vision.getInstance();

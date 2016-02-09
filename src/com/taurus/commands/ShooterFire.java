@@ -6,7 +6,7 @@ public class ShooterFire extends CommandGroup {
 
     public ShooterFire() {
         addParallel(new ShooterRev());
-        addSequential(new ShooterAim());
+        addSequential(new Targeting());
         addSequential(new ShooterRelease());
     }
 }
