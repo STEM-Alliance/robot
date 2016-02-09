@@ -1,9 +1,13 @@
 package com.taurus.subsystems;
 
+import com.taurus.PIDController;
 import com.taurus.commands.DriveTankWithXbox;
 import com.taurus.robot.RobotMap;
+import com.taurus.swerve.SwerveIMU;
+import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class RockerDriveSubsystem extends Subsystem 
@@ -17,6 +21,12 @@ public class RockerDriveSubsystem extends Subsystem
     CANTalon motorFL;
     CANTalon motorML;
     CANTalon motorBL;
+    
+    RockerIMU gyro;
+    SerialPort serial_port;
+    Vision vision;
+    
+    private PIDController drivePID;
 
     public void initDefaultCommand() 
     {
@@ -33,7 +43,14 @@ public class RockerDriveSubsystem extends Subsystem
         motorFL = new CANTalon(RobotMap.PIN_ROCKER_TALON_FL);
         motorML = new CANTalon(RobotMap.PIN_ROCKER_TALON_ML);
         motorBL = new CANTalon(RobotMap.PIN_ROCKER_TALON_BL);
-
+        
+        serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
+        byte update_rate_hz = 100;
+        gyro = new RockerIMU(serial_port, update_rate_hz);
+        vision = Vision.getInstance();
+        
+        drivePID = new PIDController(1, 0, 0, 1); //TODO change max output 
+        
         // TODO: set up speed control with encoders
         //        motorFR.changeControlMode(TalonControlMode.Speed);
         //        motorFR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
@@ -52,6 +69,7 @@ public class RockerDriveSubsystem extends Subsystem
         motorFL.setInverted(true);
         motorML.setInverted(true);
         motorBL.setInverted(true);
+        
     }
     
     /**
@@ -103,6 +121,27 @@ public class RockerDriveSubsystem extends Subsystem
         tankDrive(left, right);
     }
    
+    public boolean aim(double changeInAngle) {
+
+        double motorOutput = drivePID.update(changeInAngle);//TODO add limits for angle
+
+        if(Math.abs(changeInAngle) <= 5){
+            driveRaw(0, 0, 0, 0, 0, 0);
+            return true;
+        } else {
+            driveRaw(-motorOutput, -motorOutput, -motorOutput, motorOutput, motorOutput, motorOutput);
+            return false;
+        }
+    }
+    
+    /**
+     * aims the shooter at the detected target 
+     * @return true when aimer is at desired angle
+     */
+    public boolean aim(){
+        return aim(vision.getTarget().Yaw());
+    }
+    
     public double getEncoderRotations()
     {
         return 0;  // TODO Get from the Talon SRX's, potentially average all four?
