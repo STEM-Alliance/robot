@@ -23,7 +23,8 @@ public class LiftSubsystem extends Subsystem{
     private CANTalon motorRight;
     private MagnetoPotSRX potLeft;
     private MagnetoPotSRX potRight;  // TODO - DRL remove if design changes and is unused
-    private PIDController heightPID;
+    private PIDController heightRightPID;
+    private PIDController heightLeftPID;
         
     /**
      * Constructor
@@ -34,8 +35,8 @@ public class LiftSubsystem extends Subsystem{
         
         potLeft = new MagnetoPotSRX(motorLeft, -360);
         potRight = new MagnetoPotSRX(motorRight, -360);
-        
-        heightPID = new PIDController(.5, 0, 0, 1);
+        heightRightPID = new PIDController(.5, 0, 0, 1);
+        heightLeftPID = new PIDController(.5, 0, 0, 1);
     }
     
     protected void initDefaultCommand()
@@ -117,9 +118,12 @@ public class LiftSubsystem extends Subsystem{
     
     private void updatePIDConstants()
     {
-        heightPID.setP(Preferences.getInstance().getDouble("LiftPID_P", .5));
-        heightPID.setI(Preferences.getInstance().getDouble("LiftPID_I", 0));
-        heightPID.setD(Preferences.getInstance().getDouble("LiftPID_D", 0));
+        heightRightPID.setP(Preferences.getInstance().getDouble("LiftPID_P", .5));
+        heightRightPID.setI(Preferences.getInstance().getDouble("LiftPID_I", 0));
+        heightRightPID.setD(Preferences.getInstance().getDouble("LiftPID_D", 0));
+        heightLeftPID.setP(Preferences.getInstance().getDouble("LiftPID_P", .5));
+        heightLeftPID.setI(Preferences.getInstance().getDouble("LiftPID_I", 0));
+        heightLeftPID.setD(Preferences.getInstance().getDouble("LiftPID_D", 0));
     }
     
     /**
@@ -135,16 +139,17 @@ public class LiftSubsystem extends Subsystem{
         
         // Array convention -> (right side, left side)
         double[] heightActual = {getHeightR(), getHeightL()};
+        
         double heightActualAverage = (heightActual[0] + heightActual[1]) / 2;
-        double speedPidAverage = heightPID.update(height, heightActualAverage);
+        double[] speedPidAverage = {heightRightPID.update(height, getHeightR()), heightLeftPID.update(height, getHeightL()) };
         double[] heightError = {heightActual[0] - heightActualAverage, heightActual[1] - heightActualAverage};  // Ex: 2 - 1.5 = .5 error
-        double direction = Math.signum(speedPidAverage);  // Up: 1, Down: -1
+        double[] direction = {Math.signum(speedPidAverage[0]), Math.signum(speedPidAverage[1]) };  // Up: 1, Down: -1
         
         // If we are doing down, have error percentage be based on how far we are ahead/behind in that desired direction.
         // Ex: 10% ahead -> 10% behind, .1 error * -1 / 1 average + 1 = .91 rather than 1.1
-        double[] heightErrorPercent = {(direction * heightError[0] / heightActualAverage + 1), 
-                                       (direction * heightError[1] / heightActualAverage + 1)};  // Ex: 2 vs 1.5 -> 1.33 
-        double[] speedCompensated = {speedPidAverage / heightErrorPercent[0], speedPidAverage / heightErrorPercent[1]};  // Ex: 1 / 1.33 = .75 speed
+        double[] heightErrorPercent = {(direction[0] * heightError[0] / (heightActualAverage + LIMIT_LOWER) + 1), 
+                                       (direction[1] * heightError[1] / (heightActualAverage + LIMIT_LOWER) + 1) };  // Ex: 2 vs 1.5 -> 1.33 
+        double[] speedCompensated = {speedPidAverage [0] / heightErrorPercent[0], speedPidAverage [1] / heightErrorPercent[1]};  // Ex: 1 / 1.33 = .75 speed
         
         // At this point, speed may be greater than one because we corrected for error.
         // Ex: Told one motor to go 110% of speed desired, the other to go 91% of speed desired. But speed desired is 1.
