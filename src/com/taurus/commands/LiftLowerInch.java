@@ -4,13 +4,12 @@ import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class LiftLower extends Command {
+public class LiftLowerInch extends Command {
     private boolean done;
     private double endHeight;
     
-    public LiftLower() {
+    public LiftLowerInch() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.liftSubsystem);
@@ -19,8 +18,8 @@ public class LiftLower extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
         done = false;
-        double heightIncrement = 25.4;//mm = 1 in
-        endHeight = (Robot.liftSubsystem.getHeight() - heightIncrement);
+        double heightIncrement = 1;
+        endHeight = (Robot.liftSubsystem.getHeightAverageTotal() - heightIncrement);
     }
     
     // Called repeatedly when this Command is scheduled to run

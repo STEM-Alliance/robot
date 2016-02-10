@@ -3,6 +3,8 @@ package com.taurus.vision;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.ni.vision.NIVision;
+
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public class Vision {

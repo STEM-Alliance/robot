@@ -3,6 +3,7 @@ package com.taurus.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+import com.taurus.Utilities;
 import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
@@ -18,6 +19,7 @@ public class DriveTankWithXbox extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+        Utilities.PrintCommand("Drive", this);
         Robot.rockerDriveSubsystem.tankDrive(OI.getSpeedRight(), OI.getSpeedLeft());
     }
 

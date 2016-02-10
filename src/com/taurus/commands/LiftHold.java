@@ -4,10 +4,11 @@ import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftHold extends Command
 {
+    double height;
+    
     public LiftHold() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.liftSubsystem);
@@ -15,18 +16,19 @@ public class LiftHold extends Command
 
     // Called just before this Command runs the first time
     protected void initialize() {
+        height = Robot.liftSubsystem.getHeightAverage();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
-        Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getHeight());//the height we go to is the current height (no change)
+        
+        Robot.liftSubsystem.setHeight(height);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
-        // Always run this command because it will be default command of the subsystem.
+        return false;
     }
 
     // Called once after isFinished returns true
