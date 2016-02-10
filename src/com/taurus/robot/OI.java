@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import com.taurus.controller.Xbox;
 import com.taurus.controller.XboxButton;
 import com.taurus.commands.DriveArcadeWithXbox;
+import com.taurus.commands.LiftToBottom;
 import com.taurus.commands.LiftLowerContinuous;
-import com.taurus.commands.LiftLowerContinuousRaw;
+import com.taurus.commands.LiftToTop;
 import com.taurus.commands.LiftRaiseContinuous;
-import com.taurus.commands.LiftRaiseContinuousRaw;
 import com.taurus.commands.ShooterFire;
 import com.taurus.commands.ShooterGrab;
 
@@ -35,11 +35,11 @@ public class OI {
         buttonA.whileHeld(new ShooterGrab());
         buttonB.whileHeld(new ShooterFire());
 
-        buttonRB.whileHeld(new LiftRaiseContinuous());
-        buttonLB.whileHeld(new LiftLowerContinuous());
+        buttonRB.whileHeld(new LiftToTop());
+        buttonLB.whileHeld(new LiftToBottom());
         
-        buttonY.whileHeld(new LiftRaiseContinuousRaw());
-        buttonX.whileHeld(new LiftLowerContinuousRaw());
+        buttonY.whileHeld(new LiftRaiseContinuous());
+        buttonX.whileHeld(new LiftLowerContinuous());
         
         buttonBack.toggleWhenPressed(new DriveArcadeWithXbox());
     }

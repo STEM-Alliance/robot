@@ -3,6 +3,7 @@ package com.taurus.hardware;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 
 /**
  * Class to use a Magnetic Potentiometer through a Talon SRX
@@ -39,6 +40,8 @@ public class MagnetoPotSRX  {
     public MagnetoPotSRX(CANTalon talon, double fullRange)
     {
         m_Talon = talon;
+        m_Talon.setFeedbackDevice(FeedbackDevice.AnalogPot);
+        
         this.fullRange = fullRange;
         this.offset = 0;
     }
@@ -105,6 +108,7 @@ public class MagnetoPotSRX  {
     {
         this.fullRange = fullRange;
     }
+    
     public void setOffset(double offset)
     {
         this.offset = offset;
