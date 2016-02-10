@@ -25,6 +25,7 @@ public class LiftSubsystem extends Subsystem{
     private MagnetoPotSRX potRight;  // TODO - DRL remove if design changes and is unused
     private PIDController heightRightPID;
     private PIDController heightLeftPID;
+    
         
     /**
      * Constructor
@@ -105,11 +106,64 @@ public class LiftSubsystem extends Subsystem{
         
         updatedPotOffsets();
 
+        //Once height is 20 inches begin decelerating
+            //If height is = 20 set motor speeds to 40% of current speed
+        
+        //Based on height set the motor speed to a percentage of current speed
+            //At 15 inches set motor speeds to 50% of current speed
+            //At 10 inches set motor speeds to 80% of current speed
+            //At 5 inches set motor speeds to 40% of current speed
+        
+        //When height reaches 0, turn motors off/set their speed to 0
+            //At 0 inches set motor speeds to 0
+        
+        left = speedDamper(left, getHeightL());
+        right = speedDamper(right, getHeightR());
+        
         SmartDashboard.putNumber("Lift Speed L", left);
         SmartDashboard.putNumber("Lift Speed R", right);
         
         motorRight.set(right);
         motorLeft.set(left);        
+    }
+
+    private double speedDamper(double speed, double height){
+        //Once height is 20 inches begin decelerating
+        //If height is = 20 set motor speeds to 40% of current speed
+    
+    //Based on height set the motor speed to a percentage of current speed
+        //At 15 inches set motor speeds to 50% of current speed
+        //At 10 inches set motor speeds to 80% of current speed
+        //At 5 inches set motor speeds to 40% of current speed
+    
+    //When height reaches 0, turn motors off/set their speed to 0
+        //At 0 inches set motor speeds to 0
+        
+        if (speed < 0){            
+                 
+
+            if (height == 0){
+                speed = 0;
+            }
+            
+            else if (height <= 5){
+                speed = speed * .4;
+            }
+            
+            else if (height <= 10){
+                speed = speed * .8;
+            }
+            
+            else if (height <= 15){
+                speed = speed * .5;
+            }
+            
+            else if (height <= 20){
+                speed = speed * .4;
+            }    
+
+        }
+        return speed;
     }
     
     private void stopLift() {
