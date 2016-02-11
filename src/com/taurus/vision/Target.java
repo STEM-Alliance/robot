@@ -89,11 +89,11 @@ public class Target implements Comparable<Target> {
         double currentAngle = Robot.shooterSubsystem.getCurrentAngle(); //current angle of the shooter
         double distance = DistanceToTarget();
         double deltaAngle;//angle displaced
-        double Y0 = Constants.TowerHeightIn - Robot.liftSubsystem.getTotalHeight();//Tower height - lift height
+        double Y0 = Constants.TowerHeightIn - Robot.liftSubsystem.getHeightFromFloorAverage();//Tower height - lift height
         
         if (y > Constants.Height / 2){
             //target below
-            double Y1 = Constants.TowerHeightIn - Robot.liftSubsystem.getTotalHeight();           
+            double Y1 = Constants.TowerHeightIn - Robot.liftSubsystem.getHeightFromFloorAverage();           
             double angle1 = Math.toDegrees(Math.asin(Y1 / distance));
             deltaAngle = currentAngle - angle1;
         } else {
