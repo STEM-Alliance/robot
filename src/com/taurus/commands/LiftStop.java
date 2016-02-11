@@ -1,5 +1,6 @@
 package com.taurus.commands;
 
+import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -17,13 +18,13 @@ public class LiftStop extends Command
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getHeight());//the height we go to is the current height (no change)
+        Utilities.PrintCommand("Lift", this);
+        Robot.liftSubsystem.setSpeed(0,0);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
-        // Always run this command because it will be default command of the subsystem.
+        return false;
     }
 
     // Called once after isFinished returns true

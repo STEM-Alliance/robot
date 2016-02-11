@@ -1,5 +1,6 @@
 package com.taurus.commands;
 
+import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -17,6 +18,7 @@ public class DriveStop extends Command
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+        Utilities.PrintCommand("Drive", this);
         Robot.rockerDriveSubsystem.tankDrive(0, 0);
     }
 
