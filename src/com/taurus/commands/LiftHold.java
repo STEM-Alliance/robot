@@ -16,14 +16,14 @@ public class LiftHold extends Command
 
     // Called just before this Command runs the first time
     protected void initialize() {
-        height = Robot.liftSubsystem.getHeightAverage();
+        height = Robot.liftSubsystem.getHeightFromLiftBottomAverage();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
         
-        Robot.liftSubsystem.setHeight(height);
+        Robot.liftSubsystem.setHeightFromLiftBottom(height);
     }
 
     // Make this return true when this Command no longer needs to run execute()

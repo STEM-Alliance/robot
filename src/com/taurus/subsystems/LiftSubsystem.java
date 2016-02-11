@@ -36,6 +36,9 @@ public class LiftSubsystem extends Subsystem{
         potLeft = new MagnetoPotSRX(motorLeft, -360);
         potRight = new MagnetoPotSRX(motorRight, -360);
 
+        potLeft.setAverage(true,6);
+        potRight.setAverage(true,6);
+
         heightPIDs = new PIDController[]
                         {new PIDController(.5, 0, 0, 1),
                          new PIDController(.5, 0, 0, 1)};
@@ -51,10 +54,19 @@ public class LiftSubsystem extends Subsystem{
 
     /**
      * Set lift height and send the values to the motors
+     * @param height we want to be at in inches from the bottom of the lift
+     * @return whether at desired height or not: will be a true/false and move accordingly
+     */
+    public boolean setHeightFromLiftBottom(double height) {
+        return setHeightFromFloor(height+LIMIT_LOWER);
+    }
+
+    /**
+     * Set lift height and send the values to the motors
      * @param height we want to be at in inches from the floor
      * @return whether at desired height or not: will be a true/false and move accordingly
      */
-    public boolean setHeight(double height) {
+    public boolean setHeightFromFloor(double height) {
 
         double[] motorOutput;
         boolean arrivedL;
@@ -79,8 +91,8 @@ public class LiftSubsystem extends Subsystem{
         motorOutput = getPIDSpeed(height);
 
         // determine if each side is at the desired height
-        arrivedL = Math.abs(getHeightL()-height) <= LIMIT_TOLERANCE;
-        arrivedR = Math.abs(getHeightR()-height) <= LIMIT_TOLERANCE;
+        arrivedL = Math.abs(getHeightFromLiftBottomL()-height) <= LIMIT_TOLERANCE;
+        arrivedR = Math.abs(getHeightFromLiftBottomR()-height) <= LIMIT_TOLERANCE;
 
         if(arrivedL && arrivedR)
         {
@@ -101,17 +113,17 @@ public class LiftSubsystem extends Subsystem{
      * @param right speed between -1 to 1
      */
     public void setSpeed(double right, double left) {
-        SmartDashboard.putNumber("Lift Total Height", getHeightAverageTotal());
-        SmartDashboard.putNumber("Lift Height", getHeightAverage());
-        SmartDashboard.putNumber("Lift Height L", getHeightL());
-        SmartDashboard.putNumber("Lift Height R", getHeightR());
+        SmartDashboard.putNumber("Lift Total Height", getHeightFromFloorAverage());
+        SmartDashboard.putNumber("Lift Height", getHeightFromLiftBottomAverage());
+        SmartDashboard.putNumber("Lift Height L", getHeightFromLiftBottomL());
+        SmartDashboard.putNumber("Lift Height R", getHeightFromLiftBottomR());
         SmartDashboard.putNumber("Lift Pot L", getAngleL());
         SmartDashboard.putNumber("Lift Pot R", getAngleR());
 
         updatePotOffsets();
 
-        left = speedDamper(left, getHeightL());
-        right = speedDamper(right, getHeightR());
+        left = speedDamper(left, getHeightFromLiftBottomL());
+        right = speedDamper(right, getHeightFromLiftBottomR());
 
         SmartDashboard.putNumber("Lift Speed L", left);
         SmartDashboard.putNumber("Lift Speed R", right);
@@ -195,7 +207,7 @@ public class LiftSubsystem extends Subsystem{
         updatePIDConstants();
 
         // Array convention -> (right side, left side)
-        double[] heightActual = {getHeightR(), getHeightL()};
+        double[] heightActual = {getHeightFromLiftBottomR(), getHeightFromLiftBottomL()};
         double[] speedCompensated = {0,0};
         double[] speedCompensatedAbs = {0,0};
         
@@ -282,7 +294,7 @@ public class LiftSubsystem extends Subsystem{
      * get the height of the right side from the bottom of the lift
      * @return height in inches
      */
-    private double getHeightR() {
+    private double getHeightFromLiftBottomR() {
         return (Math.sin(Math.toRadians(getAngleR()))*LENGTH_SCISSOR_STEP)*2;
     }
 
@@ -290,7 +302,7 @@ public class LiftSubsystem extends Subsystem{
      * get the height of the left side from the bottom of the lift
      * @return height in inches
      */
-    private double getHeightL() {
+    private double getHeightFromLiftBottomL() {
         return (Math.sin(Math.toRadians(getAngleL()))*LENGTH_SCISSOR_STEP)*2;
     }
 
@@ -298,15 +310,15 @@ public class LiftSubsystem extends Subsystem{
      * get the average height of the two sides from the bottom of the lift
      * @return height, in inches
      */
-    public double getHeightAverage() {
-        return (getHeightL() + getHeightR()) / 2;
+    public double getHeightFromLiftBottomAverage() {
+        return (getHeightFromLiftBottomL() + getHeightFromLiftBottomR()) / 2;
     }
 
     /**
      * get the average height of the two sides from the floor
      * @return height, in inches
      */
-    public double getHeightAverageTotal(){
-        return getHeightAverage() + LIMIT_LOWER;
+    public double getHeightFromFloorAverage(){
+        return getHeightFromLiftBottomAverage() + LIMIT_LOWER;
     }
 }
