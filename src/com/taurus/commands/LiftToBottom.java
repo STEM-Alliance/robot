@@ -18,13 +18,13 @@ public class LiftToBottom extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
         done = false;
-        endHeight = (Robot.liftSubsystem.LIMIT_LOWER);
+        endHeight = (Robot.liftSubsystem.LIMIT_LOWER + 3.5);
     }
     
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
-        done = Robot.liftSubsystem.setHeight(endHeight);//store result of setHeight function into the done variable
+        done = Robot.liftSubsystem.setHeightFromFloor(endHeight);//store result of setHeight function into the done variable
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -34,7 +34,7 @@ public class LiftToBottom extends Command {
     
     // Called once after isFinished returns true
     protected void end() {
-        done = Robot.liftSubsystem.setHeight(Robot.liftSubsystem.getHeightAverageTotal());
+        done = Robot.liftSubsystem.setHeightFromFloor(Robot.liftSubsystem.getHeightFromFloorAverage());
     }
     
     // Called when another command which requires one or more of the same

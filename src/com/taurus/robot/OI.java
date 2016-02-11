@@ -5,13 +5,7 @@ import edu.wpi.first.wpilibj.buttons.Button;
 
 import com.taurus.controller.Xbox;
 import com.taurus.controller.XboxButton;
-import com.taurus.commands.DriveArcadeWithXbox;
-import com.taurus.commands.LiftToBottom;
-import com.taurus.commands.LiftLowerContinuous;
-import com.taurus.commands.LiftToTop;
-import com.taurus.commands.LiftRaiseContinuous;
-import com.taurus.commands.ShooterFire;
-import com.taurus.commands.ShooterGrab;
+import com.taurus.commands.*;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -28,20 +22,22 @@ public class OI {
     
     Button buttonY = new XboxButton(xbox, Xbox.ButtonType.kY);
     Button buttonX = new XboxButton(xbox, Xbox.ButtonType.kX);
-    
+
     Button buttonBack = new XboxButton(xbox, Xbox.ButtonType.kBack);
+    Button buttonStart = new XboxButton(xbox, Xbox.ButtonType.kStart);
     
     public OI() {
         buttonA.whileHeld(new ShooterGrab());
         buttonB.whileHeld(new ShooterFire());
 
-        buttonRB.whileHeld(new LiftToTop());
-        buttonLB.whileHeld(new LiftToBottom());
+        buttonRB.whenPressed(new LiftToTop());
+        buttonLB.whenPressed(new LiftToBottom());
         
         buttonY.whileHeld(new LiftRaiseContinuous());
         buttonX.whileHeld(new LiftLowerContinuous());
-        
+
         buttonBack.toggleWhenPressed(new DriveArcadeWithXbox());
+        buttonStart.toggleWhenPressed(new LiftStop());
     }
     
     public static double getSpeedLeft()

@@ -19,13 +19,13 @@ public class LiftRaiseInch extends Command {
     protected void initialize() {
         done = false;
         double heightIncrement = 1;
-        endHeight = (Robot.liftSubsystem.getHeightAverageTotal() + heightIncrement);
+        endHeight = (Robot.liftSubsystem.getHeightFromFloorAverage() + heightIncrement);
     }
     
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
-        done = Robot.liftSubsystem.setHeight(endHeight);//store result of setHeight function into the done variable
+        done = Robot.liftSubsystem.setHeightFromFloor(endHeight);//store result of setHeight function into the done variable
     }
 
     // Make this return true when this Command no longer needs to run execute()
