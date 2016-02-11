@@ -8,12 +8,9 @@ package com.taurus.robot;
  */
 public class RobotMap {
     // Robot Input and Output pins. Insert in order.
-    public static int PIN_ROCKER_TALON_FR = 10;
-    public static int PIN_ROCKER_TALON_FL = 11;
-    public static int PIN_ROCKER_TALON_MR = 12;
-    public static int PIN_ROCKER_TALON_ML = 13;
-    public static int PIN_ROCKER_TALON_BR = 14;
-    public static int PIN_ROCKER_TALON_BL = 15;
+
+    public static int PIN_ROCKER_TALONS_RIGHT[] = {10,12,14};
+    public static int PIN_ROCKER_TALONS_LEFT[] = {11,13,15};
     
     public static int PIN_SHOOTER_TALON_FT = 20;
     public static int PIN_SHOOTER_TALON_FB = 21;

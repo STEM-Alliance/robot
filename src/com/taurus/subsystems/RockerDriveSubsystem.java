@@ -7,69 +7,97 @@ import com.taurus.swerve.SwerveIMU;
 import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDeviceStatus;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class RockerDriveSubsystem extends Subsystem 
 {
     private final double DEADBAND = .2;
 
-    CANTalon motorFR;
-    CANTalon motorMR;
-    CANTalon motorBR;
-
-    CANTalon motorFL;
-    CANTalon motorML;
-    CANTalon motorBL;
+    // order is {Front, Middle, Back}
+    //          {bogie, bogie, fixed}
+    private CANTalon motorsL[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_LEFT.length];
+    private CANTalon motorsR[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_RIGHT.length];
     
-    RockerIMU gyro;
-    SerialPort serial_port;
-    Vision vision;
+    private double motorsPID_P, motorsPID_I, motorsPID_D;
     
-    private PIDController drivePID;
+    /**
+     * Constructor
+     */
+    public RockerDriveSubsystem()
+    {
+        // set up left side motors
+        for (int i = 0; i < motorsL.length; i++)
+        {
+            motorsL[i] = new CANTalon(RobotMap.PIN_ROCKER_TALONS_LEFT[i]);
 
+            
+            if(motorsL[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
+                    == FeedbackDeviceStatus.FeedbackStatusPresent)
+            {
+                // we have a sensor connected, so use it and setup speed control
+                motorsL[i].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+                motorsL[i].changeControlMode(TalonControlMode.Speed);
+            }
+        }
+        
+        // setup right side motors
+        for (int i = 0; i < motorsR.length; i++)
+        {
+            motorsR[i] = new CANTalon(RobotMap.PIN_ROCKER_TALONS_RIGHT[i]);
+
+            // since the right side rotation is inverted from the right, set that in the controller
+            motorsR[i].setInverted(true);
+            
+            if(motorsR[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
+                    == FeedbackDeviceStatus.FeedbackStatusPresent)
+            {
+                // we have a sensor connected, so use it and setup speed control
+                motorsR[i].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+                motorsR[i].changeControlMode(TalonControlMode.Speed);
+            }
+        }
+    }
+    
+    /**
+     * set the default command
+     */
     public void initDefaultCommand() 
     {
         // Set the default command for a subsystem here.
         setDefaultCommand(new DriveTankWithXbox());
     }
-
-    public RockerDriveSubsystem()
+    
+    /**
+     * Update the PID values if they changed from Preferences
+     */
+    private void updatePID()
     {
-        motorFR = new CANTalon(RobotMap.PIN_ROCKER_TALON_FR);
-        motorMR = new CANTalon(RobotMap.PIN_ROCKER_TALON_MR);
-        motorBR = new CANTalon(RobotMap.PIN_ROCKER_TALON_BR);
-
-        motorFL = new CANTalon(RobotMap.PIN_ROCKER_TALON_FL);
-        motorML = new CANTalon(RobotMap.PIN_ROCKER_TALON_ML);
-        motorBL = new CANTalon(RobotMap.PIN_ROCKER_TALON_BL);
+        double p = Preferences.getInstance().getDouble("RockerPID_P", .5);
+        double i = Preferences.getInstance().getDouble("RockerPID_I", 0);
+        double d = Preferences.getInstance().getDouble("RockerPID_D", 0);
         
-        serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
-        byte update_rate_hz = 100;
-        gyro = new RockerIMU(serial_port, update_rate_hz);
-        vision = Vision.getInstance();
+        // since we use the Talon for PID, we only want to send it if 
+        // the values have changed
+        if(p != motorsPID_P || i != motorsPID_I || d != motorsPID_D)
+        {
+            motorsPID_P = p;
+            motorsPID_I = i;
+            motorsPID_D = d;
+            
+            for (int index = 0; index < motorsL.length; index++)
+            {
+                motorsL[index].setPID(p, i, d);
+            }
         
-        drivePID = new PIDController(1, 0, 0, 1); //TODO change max output 
-        
-        // TODO: set up speed control with encoders
-        //        motorFR.changeControlMode(TalonControlMode.Speed);
-        //        motorFR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        //        motorFL.changeControlMode(TalonControlMode.Speed);
-        //        motorFL.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        //        motorMR.changeControlMode(TalonControlMode.Speed);
-        //        motorMR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        //        motorML.changeControlMode(TalonControlMode.Speed);
-        //        motorML.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        //        motorBR.changeControlMode(TalonControlMode.Speed);
-        //        motorBR.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        //        motorBL.changeControlMode(TalonControlMode.Speed);
-        //        motorBL.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-
-        // since the left side rotation is inverted from the right, set that in the controller
-        motorFL.setInverted(true);
-        motorML.setInverted(true);
-        motorBL.setInverted(true);
-        
+            for (int index = 0; index < motorsR.length; index++)
+            {
+                motorsR[index].setPID(p, i, d);
+            }
+        }
     }
     
     /**
@@ -79,30 +107,40 @@ public class RockerDriveSubsystem extends Subsystem
      * @param right -1 to 1
      * @param left -1 to 1
      */
-    public void tankDrive(double right, double left){
+    public void tankDrive(double right, double left)
+    {
         right = scaleForDeadband(right);
         left = scaleForDeadband(left);
-        driveRaw(right,right,right,left,left,left);
+        
+        driveRaw(new double[]{right,right,right}, new double[]{left,left,left});
     }
 
     /**
      * Raw drive, controlling each wheel separately
-     * @param rightFront
-     * @param rightMid
-     * @param rightBack
-     * @param leftFront
-     * @param leftMid
-     * @param leftBack
+     * @param right array of values, -1 to 1
+     * @param left array of values, -1 to 1
      */
-    public void driveRaw(double rightFront, double rightMid, double rightBack, double leftFront, double leftMid, double leftBack)
+    public void driveRaw(double[] right, double[] left)
     {
-        motorBR.set(rightBack);
-        motorMR.set(rightMid);
-        motorFR.set(rightFront);
+        updatePID();
         
-        motorBL.set(leftBack);
-        motorML.set(leftMid);
-        motorFL.set(leftFront);
+        //TODO convert values to RPM, and adjust for wheel to sensor ratio
+        
+        if(right.length == motorsR.length)
+        {
+            for (int i = 0; i < motorsR.length; i++)
+            {
+                motorsR[i].set(right[i]);;   
+            }
+        }
+
+        if(left.length == motorsL.length)
+        {
+            for (int i = 0; i < motorsL.length; i++)
+            {
+                motorsL[i].set(left[i]);;   
+            }
+        }
     }
     
     /**
@@ -112,13 +150,19 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public void arcadeDrive(double throttle, double turn)
     {
-        double left = -1;
-        double right = 1;
+        double left = 0;
+        double right = 0;
+
+        throttle = scaleForDeadband(throttle);
+        turn = scaleForDeadband(turn);
+        
         left = throttle + turn;
         right = throttle - turn;
-        right = limit(right);
+        
         left = limit(left);
-        tankDrive(left, right);
+        right = limit(right);
+        
+        tankDrive(right, left);
     }
    
     public boolean aim(double changeInAngle) {
