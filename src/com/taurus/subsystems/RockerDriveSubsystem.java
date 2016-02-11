@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDeviceStatus;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class RockerDriveSubsystem extends Subsystem 
@@ -23,6 +24,16 @@ public class RockerDriveSubsystem extends Subsystem
     private CANTalon motorsR[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_RIGHT.length];
     
     private double motorsPID_P, motorsPID_I, motorsPID_D;
+
+    private SerialPort serial_port;
+
+    private RockerIMU gyro;
+
+    private Vision vision;
+
+    private PIDController drivePID;
+    
+    
     
     /**
      * Constructor
@@ -60,6 +71,14 @@ public class RockerDriveSubsystem extends Subsystem
                 motorsR[i].changeControlMode(TalonControlMode.Speed);
             }
         }
+        
+
+        serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
+        byte update_rate_hz = 100;
+        gyro = new RockerIMU(serial_port, update_rate_hz);
+        vision = Vision.getInstance();
+        
+        drivePID = new PIDController(1, 0, 0, 1); //TODO change max output 
     }
     
     /**
@@ -170,10 +189,11 @@ public class RockerDriveSubsystem extends Subsystem
         double motorOutput = drivePID.update(changeInAngle);//TODO add limits for angle
 
         if(Math.abs(changeInAngle) <= 5){
-            driveRaw(0, 0, 0, 0, 0, 0);
+            driveRaw(new double[]{0.0, 0.0, 0.0},new double[]{0.0, 0.0, 0.0});
             return true;
         } else {
-            driveRaw(-motorOutput, -motorOutput, -motorOutput, motorOutput, motorOutput, motorOutput);
+            driveRaw(new double[]{-motorOutput, -motorOutput, -motorOutput},
+                     new double[]{ motorOutput, motorOutput, motorOutput});
             return false;
         }
     }
