@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
+import com.taurus.subsystems.AimerSubsystem;
 import com.taurus.subsystems.LiftSubsystem;
 import com.taurus.subsystems.RockerDriveSubsystem;
 import com.taurus.subsystems.ShooterSubsystem;
@@ -27,6 +28,7 @@ public class Robot extends IterativeRobot {
 	public static final RockerDriveSubsystem rockerDriveSubsystem = new RockerDriveSubsystem();
 	public static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 	public static final LiftSubsystem liftSubsystem = new LiftSubsystem();
+	public static final AimerSubsystem aimerSubsystem = new AimerSubsystem();
 	public static OI oi;
 
     Command autonomousCommand;

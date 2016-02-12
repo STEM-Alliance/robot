@@ -86,7 +86,7 @@ public class Target implements Comparable<Target> {
         
         double inPerPx = Constants.TargetHeightIn / h;//changed to width
         double yChange = inPerPx * ((Constants.Height/2) - y); //Difference between center of image and center of target in pixels
-        double currentAngle = Robot.shooterSubsystem.getCurrentAngle(); //current angle of the shooter
+        double currentAngle = Robot.aimerSubsystem.getCurrentAngle(); //current angle of the shooter
         double distance = DistanceToTarget();
         double deltaAngle;//angle displaced
         double Y0 = Constants.TowerHeightIn - Robot.liftSubsystem.getHeightFromFloorAverage();//Tower height - lift height
