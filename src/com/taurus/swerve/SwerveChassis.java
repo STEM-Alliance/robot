@@ -9,7 +9,9 @@ package com.taurus.swerve;
 import com.taurus.PIDController;
 import com.taurus.Utilities;
 import com.taurus.controller.SwerveController;
+import com.taurus.hardware.Gyro;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -37,7 +39,7 @@ public class SwerveChassis extends Subsystem {
     private double ChassisI = 0;
     private double ChassisD = 0;
 
-    private SwerveIMU Gyro;
+    private Gyro Gyro;
     SerialPort serial_port;
 
     private double MinRotationAdjust = .3;
@@ -78,9 +80,7 @@ public class SwerveChassis extends Subsystem {
 
         try
         {
-            serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
-            byte update_rate_hz = 100;
-            Gyro = new SwerveIMU(serial_port, update_rate_hz);
+            Gyro = new Gyro(SPI.Port.kMXP);
         }
         catch (Exception ex)
         {
@@ -585,7 +585,7 @@ public class SwerveChassis extends Subsystem {
      * 
      * @return Gyro object
      */
-    public SwerveIMU getGyro()
+    public Gyro getGyro()
     {
         return Gyro;
     }

@@ -1,29 +1,18 @@
-package com.taurus.swerve;
+package com.taurus.hardware;
 
-import com.kauailabs.nav6.frc.IMUAdvanced;
+import com.kauailabs.navx.frc.AHRS;
 import com.taurus.Utilities;
 
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.SerialPort;
 
-public class SwerveIMU extends IMUAdvanced{
+public class Gyro extends AHRS{
     
     private float customYaw;
     
-    public SwerveIMU(SerialPort serial_port, byte update_rate_hz, int yaw)
+    public Gyro(Port port)
     {
-        super(serial_port, update_rate_hz);
-        customYaw = yaw;
-    }
-
-    public SwerveIMU(SerialPort serial_port, byte update_rate_hz)
-    {
-        super(serial_port, update_rate_hz);
-        customYaw = 0.0f;
-    }
-    
-    public SwerveIMU(SerialPort serial_port)
-    {
-        super(serial_port);
+        super(port);
         customYaw = 0.0f;
     }
 
