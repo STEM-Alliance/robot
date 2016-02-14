@@ -2,12 +2,13 @@ package com.taurus.subsystems;
 
 import com.taurus.PIDController;
 import com.taurus.commands.DriveTankWithXbox;
+import com.taurus.hardware.Gyro;
 import com.taurus.robot.RobotMap;
-import com.taurus.swerve.SwerveIMU;
 import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDeviceStatus;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
@@ -25,7 +26,7 @@ public class RockerDriveSubsystem extends Subsystem
     private CANTalon motorsL[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_LEFT.length];
     private CANTalon motorsR[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_RIGHT.length];
     private SerialPort serial_port;
-    private RockerIMU gyro;
+    private Gyro gyro;
     
     /**
      * Constructor
@@ -67,7 +68,7 @@ public class RockerDriveSubsystem extends Subsystem
 
         serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
         byte update_rate_hz = 100;
-        gyro = new RockerIMU(serial_port, update_rate_hz);
+        gyro = new Gyro(SPI.Port.kMXP);
     }
     
     /**
