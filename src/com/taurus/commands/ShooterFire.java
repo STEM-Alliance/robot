@@ -8,5 +8,6 @@ public class ShooterFire extends CommandGroup {
         addParallel(new ShooterRev());
         addSequential(new Targeting());
         addSequential(new ShooterRelease());
+        // sequential stop
     }
-}
+}                           

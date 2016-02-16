@@ -1,11 +1,14 @@
 package com.taurus.commands;
 
+import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ShooterRelease extends Command {
     
+    double startTime = 0;
     public ShooterRelease() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.shooterSubsystem);
@@ -13,15 +16,19 @@ public class ShooterRelease extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-        // Assume Shooter speed is set by prior command
         Robot.shooterSubsystem.setBallRelease(true);
-        setTimeout(2);
+        //setTimeout(2);
+        startTime = Timer.getFPGATimestamp();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        // Once the ball is released (based on timeout), we should retract the servo to end in a safe state
-        if (isTimedOut())
+        double speedTop = .5 + .5 * OI.getTriggerRight();
+        double speedBottom = .7 + .3 * OI.getTriggerRight();
+        Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
+        
+        // Once the ball is released, we should retract the servo to end in a safe state
+        if (Timer.getFPGATimestamp() - startTime > 1.25)
         {
             Robot.shooterSubsystem.setBallRelease(false);
         }
@@ -29,12 +36,13 @@ public class ShooterRelease extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.shooterSubsystem.isBallReleaseContracted();
+        return Robot.shooterSubsystem.isBallReleaseContracted() && (Timer.getFPGATimestamp() - startTime > 1.25);
     }
                 
     // Called once after isFinished returns true
     protected void end() {
-        Robot.shooterSubsystem.setSpeed(0,0);
+        //Robot.shooterSubsystem.setSpeed(0,0);
+        Robot.shooterSubsystem.setSpeed(0, 0);
     }
 
     // Called when another command which requires one or more of the same
