@@ -1,6 +1,7 @@
 package com.taurus.subsystems;
 
 import com.taurus.PIDController;
+import com.taurus.commands.AimerStop;
 import com.taurus.hardware.MagnetoPot;
 import com.taurus.robot.RobotMap;
 import com.taurus.vision.Vision;
@@ -25,7 +26,9 @@ public class AimerSubsystem extends Subsystem
 
     protected void initDefaultCommand()
     {
-        // TODO Auto-generated method stub        
+        // TODO Auto-generated method stub 
+
+        setDefaultCommand(new AimerStop());
     }
     
     /**
@@ -41,10 +44,19 @@ public class AimerSubsystem extends Subsystem
             aimer.set(0);
             return true;
         } else {
-            aimer.set(motorOutput);
+            //aimer.set(motorOutput);
             return false;
         }
     }
+    /***
+     * basic speed function 
+     * @param speed
+     */
+    public void setSpeed(double speed){
+        aimer.set(speed);
+    }
+    
+    
     
     /**
      * aims the shooter at the detected target 

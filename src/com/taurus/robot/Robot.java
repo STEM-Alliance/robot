@@ -25,10 +25,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	public static final RockerDriveSubsystem rockerDriveSubsystem = new RockerDriveSubsystem();
-	public static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-	public static final LiftSubsystem liftSubsystem = new LiftSubsystem();
-	public static final AimerSubsystem aimerSubsystem = new AimerSubsystem();
+	public static RockerDriveSubsystem rockerDriveSubsystem ;
+	public static  ShooterSubsystem shooterSubsystem;
+	public static  LiftSubsystem liftSubsystem ;
+	public static  AimerSubsystem aimerSubsystem ;
 	public static OI oi;
 
     Command autonomousCommand;
@@ -40,7 +40,11 @@ public class Robot extends IterativeRobot {
      * used for any initialization code.
      */
     public void robotInit() {
-		oi = new OI();
+        liftSubsystem = new LiftSubsystem();
+        shooterSubsystem = new ShooterSubsystem();
+        rockerDriveSubsystem = new RockerDriveSubsystem();
+        aimerSubsystem = new AimerSubsystem();
+        oi = new OI();
         chooser = new SendableChooser();
 //        chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());

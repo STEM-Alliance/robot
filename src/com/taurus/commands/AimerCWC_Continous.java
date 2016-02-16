@@ -5,12 +5,12 @@ import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LiftRaiseContinuous extends Command {
+public class AimerCWC_Continous extends Command {
 
-    public LiftRaiseContinuous() {
+    public AimerCWC_Continous() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-        requires(Robot.liftSubsystem);
+        requires(Robot.aimerSubsystem);
     }
     
     // Called just before this Command runs the first time
@@ -19,8 +19,8 @@ public class LiftRaiseContinuous extends Command {
     
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        Utilities.PrintCommand("Lift", this);
-        Robot.liftSubsystem.setSpeed(.5, .5);
+        Utilities.PrintCommand("Aimer", this);
+        Robot.aimerSubsystem.setSpeed(1);
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -30,9 +30,8 @@ public class LiftRaiseContinuous extends Command {
     
     // Called once after isFinished returns true
     protected void end() {
-       Robot.liftSubsystem.setSpeed(0, 0);
-       
-        //Robot.liftSubsystem.setHeightFromFloor(Robot.liftSubsystem.getHeightFromFloorAverage());
+      Robot.aimerSubsystem.setSpeed(0);
+      
     }
     
     // Called when another command which requires one or more of the same
