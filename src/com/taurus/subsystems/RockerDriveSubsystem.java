@@ -132,6 +132,17 @@ public class RockerDriveSubsystem extends Subsystem
     public void driveRaw(double[] right, double[] left)
     {
         updatePID();
+        double [] leftScale = leftMotorSlipScale();
+        double [] rightScale = rightMotorSlipScale();
+        
+        //set motors to new scaled values
+        for(int index = 0; index < right.length; index++){
+            right[index] = right[index] * rightScale[index];
+        }
+        
+        for(int index = 0; index < left.length; index++){
+            left[index] = left[index] * leftScale[index];
+        }
         
         //TODO convert values to RPM, and adjust for wheel to sensor ratio
         
@@ -222,4 +233,59 @@ public class RockerDriveSubsystem extends Subsystem
         
         return value;
     }
+    
+    public double[] rightMotorSlipScale()
+    {
+      
+        //find out motor speeds
+        int rpm1 = motorsR[0].getAnalogInVelocity();  
+        int rpm2 = motorsR[1].getAnalogInVelocity();
+        int rpm3 = motorsR[2].getAnalogInVelocity();
+        
+        //set slowest variable to max double
+        double slowest = Double.MAX_VALUE;
+        
+        
+        //check which one is the slowest
+        for(int index = 0; index < motorsR.length; index++){
+            if(motorsR[index].getAnalogInVelocity() < slowest)
+            {
+                slowest = motorsR[index].getAnalogInVelocity();
+            }
+        }
+        
+        //create scaling factor--find ratio between the slowest and other motor speeds
+        double[] scalingFactors = {(slowest / rpm1), (slowest / rpm2), (slowest / rpm3)};
+        
+        return scalingFactors;
+    }
+    public double[] leftMotorSlipScale()
+    {
+      
+        //find out motor speeds
+        int rpm1 = motorsL[0].getAnalogInVelocity();  
+        int rpm2 = motorsL[1].getAnalogInVelocity();
+        int rpm3 = motorsL[2].getAnalogInVelocity();
+        
+        //set slowest variable to max double
+        double slowest = Double.MAX_VALUE;
+        
+        
+        //check which one is the slowest
+        for(int index = 0; index < motorsL.length; index++){
+            if(motorsL[index].getAnalogInVelocity() < slowest)
+            {
+                slowest = motorsL[index].getAnalogInVelocity();
+            }
+        }
+        
+        //create scaling factor--find ratio between the slowest and other motor speeds
+        double[] scalingFactors = {(slowest / rpm1), (slowest / rpm2), (slowest / rpm3)};
+        
+        return scalingFactors;
+    }
 }
+            
+            
+    
+
