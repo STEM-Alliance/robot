@@ -29,7 +29,8 @@ public class LiftLowerContinuous extends Command {
     
     // Called once after isFinished returns true
     protected void end() {
-        Robot.liftSubsystem.setHeightFromFloor(Robot.liftSubsystem.getHeightFromFloorAverage());
+        Robot.liftSubsystem.setSpeed(0, 0);
+        // Robot.liftSubsystem.setHeightFromFloor(Robot.liftSubsystem.getHeightFromFloorAverage());
     }
     
     // Called when another command which requires one or more of the same
