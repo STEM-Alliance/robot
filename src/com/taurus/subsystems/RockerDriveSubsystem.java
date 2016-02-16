@@ -26,7 +26,7 @@ public class RockerDriveSubsystem extends Subsystem
     private CANTalon motorsL[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_LEFT.length];
     private CANTalon motorsR[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_RIGHT.length];
     private SerialPort serial_port;
-    private Gyro gyro;
+    //private RockerIMU gyro;
     
     /**
      * Constructor
@@ -66,9 +66,9 @@ public class RockerDriveSubsystem extends Subsystem
         }
         
 
-        serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
-        byte update_rate_hz = 100;
-        gyro = new Gyro(SPI.Port.kMXP);
+        //serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
+        //byte update_rate_hz = 100;
+//        gyro = new RockerIMU(serial_port, update_rate_hz);
     }
     
     /**

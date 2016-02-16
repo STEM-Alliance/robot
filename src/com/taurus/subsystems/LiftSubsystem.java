@@ -3,7 +3,9 @@ package com.taurus.subsystems;
 import com.taurus.PIDController;
 import com.taurus.Utilities;
 import com.taurus.commands.LiftHold;
+import com.taurus.commands.LiftStop;
 import com.taurus.hardware.MagnetoPotSRX;
+import com.taurus.robot.Robot;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -49,7 +51,8 @@ public class LiftSubsystem extends Subsystem{
      */
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new LiftHold());
+      setDefaultCommand(new LiftStop());
+//        setDefaultCommand(new LiftHold());
     }
 
     /**
