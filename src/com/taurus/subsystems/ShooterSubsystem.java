@@ -9,10 +9,11 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterSubsystem extends Subsystem {
     
-    private final double BALL_RELEASE_ANGLE_EXTENDED = 0;  // TODO - determine angle to go to extended position
+    private final double BALL_RELEASE_ANGLE_EXTENDED = 120;  // TODO - determine angle to go to extended position
     private final double BALL_RELEASE_ANGLE_CONTRACTED = 0;  // TODO - determine angle to go to contracted position
     
     public DigitalInput stopSwitch;
@@ -48,7 +49,7 @@ public class ShooterSubsystem extends Subsystem {
      */
     public void setSpeed(double topSpeed, double bottomSpeed) {
         shooterFT.set(topSpeed);
-        shooterFB.set(-bottomSpeed);
+        shooterFB.set(bottomSpeed);
     }
   
     /**
@@ -73,6 +74,7 @@ public class ShooterSubsystem extends Subsystem {
     
     public boolean isBallReleaseContracted() {
         // TODO - DRL Create deadband, cannot ensure we don't overshoot
+        SmartDashboard.putNumber("ball release angle", ballRelease.getAngle());
         return ballRelease.getAngle() == BALL_RELEASE_ANGLE_CONTRACTED;
     }
     
