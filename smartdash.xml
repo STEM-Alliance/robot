@@ -1,5 +1,14 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="ball release angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="676" y="359"/>
+	</widget>
+	<widget field="Aimer Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="11" y="75"/>
+	</widget>
+	<widget field="Drive Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="11" y="54"/>
+	</widget>
 	<widget field="Lift Desired Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="33"/>
 	</widget>
@@ -141,5 +150,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Voltage"/>
 </xml>

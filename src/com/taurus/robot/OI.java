@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import com.taurus.controller.Xbox;
 import com.taurus.controller.XboxButton;
 import com.taurus.commands.*;
+import com.taurus.commands.ShooterRelease;
+import com.taurus.commands.ShooterRev;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -28,13 +30,15 @@ public class OI {
     
     public OI() {
         buttonA.whileHeld(new ShooterGrab());
-        buttonB.whileHeld(new ShooterFire());
+        //buttonB.whenPressed(new ShooterRev());
 
         buttonRB.whenPressed(new LiftToTop());
         buttonLB.whenPressed(new LiftToBottom());
         
         buttonY.whileHeld(new LiftRaiseContinuous());
         buttonX.whileHeld(new LiftLowerContinuous());
+        
+        buttonY.whenPressed(new ShooterFire());
 
         buttonBack.toggleWhenPressed(new DriveArcadeWithXbox());
         buttonStart.toggleWhenPressed(new LiftStop());
