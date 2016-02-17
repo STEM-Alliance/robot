@@ -131,35 +131,38 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public void driveRaw(double[] right, double[] left)
     {
+        // Error check parameters
+        if (right.length != motorsR.length || left.length != motorsL.length)
+        {
+            return;
+        }
+        
         updatePID();
-        double [] leftScale = leftMotorSlipScale();
-        double [] rightScale = rightMotorSlipScale();
         
-        //set motors to new scaled values
-        for(int index = 0; index < right.length; index++){
-            right[index] = right[index] * rightScale[index];
-        }
-        
-        for(int index = 0; index < left.length; index++){
-            left[index] = left[index] * leftScale[index];
-        }
-        
-        //TODO convert values to RPM, and adjust for wheel to sensor ratio
-        
-        if(right.length == motorsR.length)
+        if (true)  // TODO - DRL Pass in bool and do scaling if a button is being held
         {
-            for (int i = 0; i < motorsR.length; i++)
-            {
-                motorsR[i].set(right[i]);;   
+            double [] leftScale = motorSlipScale(motorsL);
+            double [] rightScale = motorSlipScale(motorsR);
+            
+            //set motors to new scaled values
+            for(int index = 0; index < right.length; index++){
+                right[index] = right[index] * rightScale[index];
             }
+            
+            for(int index = 0; index < left.length; index++){
+                left[index] = left[index] * leftScale[index];
+            }
+            
+            //TODO convert values to RPM, and adjust for wheel to sensor ratio
         }
-
-        if(left.length == motorsL.length)
+        
+        for (int i = 0; i < motorsR.length; i++)
         {
-            for (int i = 0; i < motorsL.length; i++)
-            {
-                motorsL[i].set(left[i]);;   
-            }
+            motorsR[i].set(right[i]);;   
+        }
+        for (int i = 0; i < motorsL.length; i++)
+        {
+            motorsL[i].set(left[i]);;   
         }
     }
     
@@ -234,53 +237,30 @@ public class RockerDriveSubsystem extends Subsystem
         return value;
     }
     
-    public double[] rightMotorSlipScale()
+    /**
+     * Traction control. Looks are the motors of this side and determines an appropriate scaling 
+     * factor to apply to each motor.
+     * @return array of scaling factors to be multiplied with the speed to apply traction control
+     */
+    public double[] motorSlipScale(CANTalon[] motors)
     {
-      
-        //find out motor speeds
-        int rpm1 = motorsR[0].getAnalogInVelocity();  
-        int rpm2 = motorsR[1].getAnalogInVelocity();
-        int rpm3 = motorsR[2].getAnalogInVelocity();
+        int[] motorRpms = {0, 0, 0};  // Initially set to dummy values       
+        double slowestSpeed = Double.MAX_VALUE;  // Large value will be overridden by at least one motor
         
-        //set slowest variable to max double
-        double slowest = Double.MAX_VALUE;
-        
-        
-        //check which one is the slowest
-        for(int index = 0; index < motorsR.length; index++){
-            if(motorsR[index].getAnalogInVelocity() < slowest)
+        for(int index = 0; index < motors.length; index++)
+        {
+            // Get motor speed
+            motorRpms[index] = Math.abs(motors[index].getAnalogInVelocity());  // Absolute value works with negative velocity
+            
+            // Is this one slowest?
+            if(motorRpms[index] < slowestSpeed)
             {
-                slowest = motorsR[index].getAnalogInVelocity();
+                slowestSpeed = motorRpms[index];
             }
         }
         
         //create scaling factor--find ratio between the slowest and other motor speeds
-        double[] scalingFactors = {(slowest / rpm1), (slowest / rpm2), (slowest / rpm3)};
-        
-        return scalingFactors;
-    }
-    public double[] leftMotorSlipScale()
-    {
-      
-        //find out motor speeds
-        int rpm1 = motorsL[0].getAnalogInVelocity();  
-        int rpm2 = motorsL[1].getAnalogInVelocity();
-        int rpm3 = motorsL[2].getAnalogInVelocity();
-        
-        //set slowest variable to max double
-        double slowest = Double.MAX_VALUE;
-        
-        
-        //check which one is the slowest
-        for(int index = 0; index < motorsL.length; index++){
-            if(motorsL[index].getAnalogInVelocity() < slowest)
-            {
-                slowest = motorsL[index].getAnalogInVelocity();
-            }
-        }
-        
-        //create scaling factor--find ratio between the slowest and other motor speeds
-        double[] scalingFactors = {(slowest / rpm1), (slowest / rpm2), (slowest / rpm3)};
+        double[] scalingFactors = {(slowestSpeed / motorRpms[0]), (slowestSpeed / motorRpms[1]), (slowestSpeed / motorRpms[2])};
         
         return scalingFactors;
     }
