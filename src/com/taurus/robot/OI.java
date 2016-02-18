@@ -44,6 +44,10 @@ public class OI {
         buttonStart.toggleWhenPressed(new LiftStop());
     }
     
+    public static boolean getTractionControl()
+    {
+        return false; //TODO assign a button 
+    }
     public static double getSpeedLeft()
     {
         return xbox.getY(Hand.kLeft);
