@@ -3,6 +3,7 @@ package com.taurus.subsystems;
 import com.taurus.PIDController;
 import com.taurus.commands.DriveTankWithXbox;
 import com.taurus.hardware.Gyro;
+import com.taurus.robot.OI;
 import com.taurus.robot.RobotMap;
 import com.taurus.vision.Vision;
 
@@ -139,7 +140,7 @@ public class RockerDriveSubsystem extends Subsystem
         
         updatePID();
         
-        if (true)  // TODO - DRL Pass in bool and do scaling if a button is being held
+        if (OI.getTractionControl())
         {
             double [] leftScale = motorSlipScale(motorsL);
             double [] rightScale = motorSlipScale(motorsR);
