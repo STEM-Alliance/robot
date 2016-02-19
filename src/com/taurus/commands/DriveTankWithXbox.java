@@ -20,7 +20,7 @@ public class DriveTankWithXbox extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Drive", this);
-        Robot.rockerDriveSubsystem.tankDrive(OI.getSpeedRight(), OI.getSpeedLeft());
+        Robot.rockerDriveSubsystem.tankDrive(OI.getSpeedRight(), OI.getSpeedLeft(), OI.getTractionControl());
     }
 
     // Make this return true when this Command no longer needs to run execute()

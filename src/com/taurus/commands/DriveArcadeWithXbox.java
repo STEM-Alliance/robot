@@ -20,7 +20,7 @@ public class DriveArcadeWithXbox extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Drive", this);
-        Robot.rockerDriveSubsystem.arcadeDrive(OI.getThrottle(), OI.getTurn());
+        Robot.rockerDriveSubsystem.arcadeDrive(OI.getThrottle(), OI.getTurn(), OI.getTractionControl());
     }
 
     // Make this return true when this Command no longer needs to run execute()

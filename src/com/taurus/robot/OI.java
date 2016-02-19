@@ -46,7 +46,7 @@ public class OI {
     
     public static boolean getTractionControl()
     {
-        return false; //TODO assign a button 
+        return xbox.getTrigger(Hand.kRight);
     }
     public static double getSpeedLeft()
     {
