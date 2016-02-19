@@ -2,6 +2,7 @@ package com.taurus.commands;
 
 import com.taurus.PIDController;
 import com.taurus.robot.Robot;
+import com.taurus.vision.Target;
 import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -36,7 +37,16 @@ public class Targeting extends Command {
     protected void execute() {
         
         shooterAimed = Robot.aimerSubsystem.aim();
-        driveAimed = aim(vision.getTarget().Yaw());
+        
+        Target target = vision.getTarget();
+        if(target != null)
+        {
+            driveAimed = aim(target.Yaw());
+        }
+        else
+        {
+            driveAimed = aim(0);
+        }
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -59,11 +69,10 @@ public class Targeting extends Command {
         double motorOutput = drivePID.update(changeInAngle);  //TODO add limits for angle
 
         if(Math.abs(changeInAngle) <= 5){
-            Robot.rockerDriveSubsystem.driveRaw(new double[]{0.0, 0.0, 0.0},new double[]{0.0, 0.0, 0.0}, false);
+            Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0, false);
             return true;
         } else {
-            Robot.rockerDriveSubsystem.driveRaw(new double[]{-motorOutput, -motorOutput, -motorOutput},
-                     new double[]{ motorOutput, motorOutput, motorOutput}, false);
+            Robot.rockerDriveSubsystem.driveRaw(-motorOutput, motorOutput, false);
             return false;
         }
     }
