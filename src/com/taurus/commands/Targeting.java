@@ -59,11 +59,11 @@ public class Targeting extends Command {
         double motorOutput = drivePID.update(changeInAngle);  //TODO add limits for angle
 
         if(Math.abs(changeInAngle) <= 5){
-            Robot.rockerDriveSubsystem.driveRaw(new double[]{0.0, 0.0, 0.0},new double[]{0.0, 0.0, 0.0});
+            Robot.rockerDriveSubsystem.driveRaw(new double[]{0.0, 0.0, 0.0},new double[]{0.0, 0.0, 0.0}, false);
             return true;
         } else {
             Robot.rockerDriveSubsystem.driveRaw(new double[]{-motorOutput, -motorOutput, -motorOutput},
-                     new double[]{ motorOutput, motorOutput, motorOutput});
+                     new double[]{ motorOutput, motorOutput, motorOutput}, false);
             return false;
         }
     }

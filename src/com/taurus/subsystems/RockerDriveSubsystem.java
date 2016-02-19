@@ -3,7 +3,6 @@ package com.taurus.subsystems;
 import com.taurus.PIDController;
 import com.taurus.commands.DriveTankWithXbox;
 import com.taurus.hardware.Gyro;
-import com.taurus.robot.OI;
 import com.taurus.robot.RobotMap;
 import com.taurus.vision.Vision;
 
@@ -116,21 +115,23 @@ public class RockerDriveSubsystem extends Subsystem
      * Will apply deadband to input values
      * @param right -1 to 1
      * @param left -1 to 1
+     * @param enables traction control
      */
-    public void tankDrive(double right, double left)
+    public void tankDrive(double right, double left, boolean tractionControlEnabled)
     {
         right = scaleForDeadband(right);
         left = scaleForDeadband(left);
         
-        driveRaw(new double[]{right,right,right}, new double[]{left,left,left});
+        driveRaw(new double[]{right,right,right}, new double[]{left,left,left}, tractionControlEnabled);
     }
 
     /**
      * Raw drive, controlling each wheel separately
      * @param right array of values, -1 to 1
      * @param left array of values, -1 to 1
+     * @param enables traction control
      */
-    public void driveRaw(double[] right, double[] left)
+    public void driveRaw(double[] right, double[] left, boolean tractionControlEnabled)
     {
         // Error check parameters
         if (right.length != motorsR.length || left.length != motorsL.length)
@@ -140,7 +141,7 @@ public class RockerDriveSubsystem extends Subsystem
         
         updatePID();
         
-        if (OI.getTractionControl())
+        if (tractionControlEnabled)
         {
             double [] leftScale = motorSlipScale(motorsL);
             double [] rightScale = motorSlipScale(motorsR);
@@ -159,11 +160,11 @@ public class RockerDriveSubsystem extends Subsystem
         
         for (int i = 0; i < motorsR.length; i++)
         {
-            motorsR[i].set(right[i]);;   
+            motorsR[i].set(right[i]);
         }
         for (int i = 0; i < motorsL.length; i++)
         {
-            motorsL[i].set(left[i]);;   
+            motorsL[i].set(left[i]);   
         }
     }
     
@@ -171,8 +172,9 @@ public class RockerDriveSubsystem extends Subsystem
      * Driving through arcade style drive
      * @param throttle
      * @param turn
+     * @param enables traction control
      */
-    public void arcadeDrive(double throttle, double turn)
+    public void arcadeDrive(double throttle, double turn, boolean tractionControlEnabled)
     {
         double left = 0;
         double right = 0;
@@ -186,7 +188,7 @@ public class RockerDriveSubsystem extends Subsystem
         left = limit(left);
         right = limit(right);
         
-        tankDrive(right, left);
+        tankDrive(right, left, tractionControlEnabled);
     }
     
     public double getEncoderRotations()
@@ -245,6 +247,7 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public double[] motorSlipScale(CANTalon[] motors)
     {
+        double[] scalingFactors = {0, 0, 0}; // Initially set to dummy values
         int[] motorRpms = {0, 0, 0};  // Initially set to dummy values       
         double slowestSpeed = Double.MAX_VALUE;  // Large value will be overridden by at least one motor
         
@@ -260,8 +263,14 @@ public class RockerDriveSubsystem extends Subsystem
             }
         }
         
-        //create scaling factor--find ratio between the slowest and other motor speeds
-        double[] scalingFactors = {(slowestSpeed / motorRpms[0]), (slowestSpeed / motorRpms[1]), (slowestSpeed / motorRpms[2])};
+        // Apply traction control if we are slipping and above the deadband by a safe margin.
+        for(int index = 0; index < motors.length; index++)
+        {
+            if (motorRpms[index] / slowestSpeed > 1.3 && motorRpms[index] > 1.5 * DEADBAND)
+            {
+               scalingFactors[index] = 1.5 * DEADBAND;  // Set it to some slower speed, but above the deadband
+            }
+        }
         
         return scalingFactors;
     }

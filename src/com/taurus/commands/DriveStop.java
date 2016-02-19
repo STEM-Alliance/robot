@@ -19,7 +19,7 @@ public class DriveStop extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Drive", this);
-        Robot.rockerDriveSubsystem.tankDrive(0, 0);
+        Robot.rockerDriveSubsystem.tankDrive(0, 0, false);
     }
 
     // Make this return true when this Command no longer needs to run execute()
