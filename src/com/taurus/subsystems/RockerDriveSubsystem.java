@@ -122,9 +122,19 @@ public class RockerDriveSubsystem extends Subsystem
         right = scaleForDeadband(right);
         left = scaleForDeadband(left);
         
-        driveRaw(new double[]{right,right,right}, new double[]{left,left,left}, tractionControlEnabled);
+        driveRaw(right,left, tractionControlEnabled);
     }
 
+    /**
+     * Raw drive, controlling each wheel separately
+     * @param right value, -1 to 1
+     * @param left value, -1 to 1
+     * @param enables traction control
+     */
+    public void driveRaw(double right, double left, boolean tractionControlEnabled)
+    {
+        driveRaw(new double[]{right,right,right}, new double[]{left,left,left}, tractionControlEnabled);
+    }
     /**
      * Raw drive, controlling each wheel separately
      * @param right array of values, -1 to 1

@@ -53,6 +53,7 @@ public class Vision implements Runnable
     Camera camera;
 
     private boolean targetDetectionOn = true;
+    private boolean imageRotation = false;
     
     private Target largestTarget;
 
@@ -64,9 +65,16 @@ public class Vision implements Runnable
         return instance;
         
     }
+    
     public void setTargetDetectionOn(boolean enable){
         synchronized(visionThread){
             targetDetectionOn = enable;
+        }
+    }
+
+    public void setImageRotation(boolean enable){
+        synchronized(visionThread){
+            imageRotation = enable;
         }
     }
 
@@ -144,6 +152,12 @@ public class Vision implements Runnable
                     // grab a new frame
                     camera.getImage(frame);
 
+                    if(imageRotation)
+                    {
+                        NIVision.imaqFlip(frame, frame, FlipAxis.HORIZONTAL_AXIS);
+                        NIVision.imaqFlip(frame, frame, FlipAxis.VERTICAL_AXIS);
+                    }
+                    
                     // print input image size
                     GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
                     SmartDashboard.putString("FrameSize", size.width + "," + size.height);
