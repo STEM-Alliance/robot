@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import com.taurus.commands.autonomousGroup;
+import com.taurus.commands.AutoLowBar;
 import com.taurus.subsystems.AimerSubsystem;
 import com.taurus.subsystems.LiftSubsystem;
 import com.taurus.subsystems.RockerDriveSubsystem;
@@ -77,7 +77,7 @@ public class Robot extends IterativeRobot {
 	 */
     public void autonomousInit() {
         //autonomousCommand = (Command) chooser.getSelected();
-        autonomousCommand =  new autonomousGroup();
+        autonomousCommand =  new AutoLowBar();
 		/* String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
 		switch(autoSelected) {
 		case "My Auto":
