@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import com.taurus.commands.AutoLowBar;
+import com.taurus.commands.AutoTerrain;
 import com.taurus.subsystems.AimerSubsystem;
 import com.taurus.subsystems.LiftSubsystem;
 import com.taurus.subsystems.RockerDriveSubsystem;
@@ -47,10 +48,9 @@ public class Robot extends IterativeRobot {
         aimerSubsystem = new AimerSubsystem();
         oi = new OI();
         chooser = new SendableChooser();
-//        chooser.addDefault("Default Auto", new ExampleCommand());
-//        chooser.addObject("My Auto", new MyAutoCommand());
-        SmartDashboard.putData("Auto mode", chooser);
-       
+        chooser.addDefault("Auto Terrain", new AutoTerrain());
+        chooser.addObject("Auto Low Bar", new AutoLowBar());
+        SmartDashboard.putData("Auto mode", chooser);       
     }
 	
 	/**
@@ -76,18 +76,21 @@ public class Robot extends IterativeRobot {
 	 * or additional comparisons to the switch structure below with additional strings & commands.
 	 */
     public void autonomousInit() {
-        //autonomousCommand = (Command) chooser.getSelected();
-        autonomousCommand =  new AutoLowBar();
-		/* String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+        autonomousCommand = (Command) chooser.getSelected();
+        //autonomousCommand =  new AutoLowBar();
+        
+		String autoSelected = SmartDashboard.getString("Auto Mode", "Auto Terrain");
 		switch(autoSelected) {
-		case "My Auto":
-			autonomousCommand = new MyAutoCommand();
+		case "Auto Low Bar":
+			autonomousCommand = new AutoLowBar();
 			break;
-		case "Default Auto":
+		case "Auto Terrain":
+		    autonomousCommand = new AutoTerrain();
+		    break;
 		default:
-			autonomousCommand = new ExampleCommand();
+			autonomousCommand = new AutoTerrain();
 			break;
-		} */
+		}
     	
     	// schedule the autonomous command (example)
         if (autonomousCommand != null) autonomousCommand.start();
