@@ -14,18 +14,18 @@ public class AimerSubsystem extends Subsystem
 {
     private final double ANGLE_MAX = 100;  // TODO - Determine upper safe limit through testing
     private final double ANGLE_MIN = 0;  // TODO - Determine lower safe limit through testing
-    private final double DEADBAND = 5;
+    private final double TOLERANCE = 5;  // Degrees from desired angle that counts as that angle
     
     private Vision vision;
-    private MagnetoPotSRX aimAngle;
-    private CANTalon aimer;
-    private PIDController aimerPID;
+    private MagnetoPotSRX angle;
+    private CANTalon motor;
+    private PIDController pid;
 
     public AimerSubsystem()
     {
-        aimer = new CANTalon(RobotMap.PIN_SHOOTER_TALON_AIMER);
-        aimerPID = new PIDController(1, 0, 0, 1);  //TODO update these values 
-        aimAngle = new MagnetoPotSRX(aimer,360);
+        motor = new CANTalon(RobotMap.PIN_SHOOTER_TALON_AIMER);
+        pid = new PIDController(1, 0, 0, 1);  //TODO update these values 
+        angle = new MagnetoPotSRX(motor,360);
         vision = Vision.getInstance();
     }
 
@@ -37,7 +37,7 @@ public class AimerSubsystem extends Subsystem
     /**
      * aims the shooter
      * @param changeInAngle 0 to 360
-     * @return true if angle reached, false if not
+     * @return true if desired angle reached
      */
     public boolean aim(double changeInAngle)
     {
@@ -47,34 +47,24 @@ public class AimerSubsystem extends Subsystem
         // Update pot offsets if we change them in smart dashboard
         updatePotOffsets();
         
-        // Check that we are being commanded to a safe angle
-        if (aimAngle.get() + changeInAngle < ANGLE_MAX || aimAngle.get() - changeInAngle > ANGLE_MIN)
-            // TODO - DRL make sure this code works regardless of if the sensor is returning positive or
-            //        negative values however it is currently hooked up
+        if (angle.get() + changeInAngle > ANGLE_MAX || angle.get() - changeInAngle < ANGLE_MIN)
         {
-            // Get the PID speed
-            motorOutput = aimerPID.update(changeInAngle);  //TODO add limits for angle
-
-            // Determine if we are at the desired angle, set the motor speed accordingly
-            if (Math.abs(changeInAngle) < DEADBAND)
-            {
-                aimer.set(0);
-                done = true;
-            }
-            else
-            {
-                aimer.set(motorOutput);
-            }
+            // Being commanded to an unsafe angle
+            motor.set(0);
+        }
+        else if (Math.abs(changeInAngle) < TOLERANCE)
+        {
+            // At the desired angle
+            motor.set(0);
+            done = true;
+        }
+        else
+        {
+            motorOutput = pid.update(changeInAngle);
+            motor.set(motorOutput);
         }
         
         return done;
-    }
-    /***
-     * basic speed function 
-     * @param speed
-     */
-    public void setSpeed(double speed){
-        aimer.set(speed);
     }
     
     /**
@@ -86,9 +76,18 @@ public class AimerSubsystem extends Subsystem
         return aim(vision.getTarget().Pitch());
     }
     
+    /***
+     * basic speed function 
+     * @param speed
+     */
+    public void setSpeed(double speed)
+    {   
+        motor.set(speed);
+    }
+    
     public double getCurrentAngle()
     {
-        return aimAngle.get();
+        return angle.get();
     }
     
     /**
@@ -97,7 +96,7 @@ public class AimerSubsystem extends Subsystem
      */
     private void updatePotOffsets()
     {
-        aimAngle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
-        aimAngle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 0));
+        angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
+        angle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 0));
     }
 }
