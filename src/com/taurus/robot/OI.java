@@ -35,10 +35,10 @@ public class OI
         buttonRB.whenPressed(new LiftToTop());
         buttonLB.whenPressed(new LiftToBottom());
         
-        buttonY.whileHeld(new LiftRaiseContinuous());
-        buttonX.whileHeld(new LiftLowerContinuous());
+        buttonY.whileHeld(new AimerCW_Continous());
+        buttonX.whileHeld(new AimerCWC_Continous());
         
-        buttonY.whenPressed(new ShooterFire());
+        buttonB.whenPressed(new ShooterFire());
 
         buttonBack.toggleWhenPressed(new DriveArcadeWithXbox());
         buttonStart.toggleWhenPressed(new LiftStop());

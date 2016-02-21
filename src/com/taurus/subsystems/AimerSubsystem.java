@@ -3,12 +3,14 @@ package com.taurus.subsystems;
 import com.taurus.PIDController;
 import com.taurus.commands.AimerStop;
 import com.taurus.hardware.MagnetoPotSRX;
+import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.robot.RobotMap;
 import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AimerSubsystem extends Subsystem
 {
@@ -96,6 +98,8 @@ public class AimerSubsystem extends Subsystem
      */
     private void updatePotOffsets()
     {
+        SmartDashboard.putNumber("Aimer Angle", angle.get());
+
         angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
         angle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 0));
     }
