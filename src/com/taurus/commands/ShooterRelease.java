@@ -23,8 +23,8 @@ public class ShooterRelease extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speedTop = .5 + .5 * OI.getTriggerRight();
-        double speedBottom = .7 + .3 * OI.getTriggerRight();
+        double speedTop = .8 + .2 * OI.getTriggerRight();
+        double speedBottom = .6 + .2 * OI.getTriggerRight();
         Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
         
         // Once the ball is released, we should retract the servo to end in a safe state

@@ -26,8 +26,8 @@ public class ShooterRev extends Command {
     protected void execute() {
         // We want a constant fire speed, thus set the speed only once
         // If we have a vision, move this to execute and do calculation based on vision
-        double speedTop = .5 + .5 * OI.getTriggerRight();
-        double speedBottom = .7 + .3 * OI.getTriggerRight();
+        double speedTop = .8 + .2 * OI.getTriggerRight();
+        double speedBottom = .6 + .2 * OI.getTriggerRight();
         Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
     }
 

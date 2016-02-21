@@ -218,7 +218,11 @@ public class Xbox extends GenericHID {
      */
     public double getAxis(AxisType axis)
     {
-        return getRawAxis(axis.value);
+        // we need forward Y to be positive instead of negative
+        if(axis == AxisType.kLeftY || axis == AxisType.kRightY)
+            return -getRawAxis(axis.value);
+        else
+            return getRawAxis(axis.value);
     }
 
     /**

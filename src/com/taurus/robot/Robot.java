@@ -58,6 +58,7 @@ public class Robot extends IterativeRobot {
     }
 	
 	public void disabledPeriodic() {
+	    liftSubsystem.printSensors();
 		Scheduler.getInstance().run();
 	}
 

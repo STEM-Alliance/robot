@@ -88,7 +88,7 @@ public class SwerveChassis extends Subsystem {
 
         if (Gyro != null)
         {
-            LiveWindow.addSensor("IMU", "Gyro", Gyro);
+            //LiveWindow.addSensor("IMU", "Gyro", Gyro);
         }
 
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle
