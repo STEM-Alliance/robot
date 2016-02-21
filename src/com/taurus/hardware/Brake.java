@@ -1,21 +1,28 @@
 package com.taurus.hardware;
 
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Brake 
 {
     public enum BRAKE_STATE
     {
-        NONE,
-        ONE,
-        BOTH,
-        MOVING,
+        NONE,   // No pawns engaged
+        ONE,    // First pawn engaged
+        BOTH,   // Both pawns engaged
+        MOVING, // Changing states
     }
     
-    private final int TOLERANCE = 1;  // Degrees within angle to count as at that angle
+    private final double TIME_PER_DEGREE = .19/60;  // Seconds
+    // TODO - DRL create a better value by trying this on actual hardware
     
     private Servo[] servos;
+    
     private double[] anglePawnEngaged;
+    private BRAKE_STATE stateCurrent;
+    private BRAKE_STATE taskCurrent;
+    private double taskTimeStart;
+    private double taskDuration;
     
     /**
      * Represents a system of pawn-ratchet brakes controlled by servos.
@@ -24,11 +31,16 @@ public class Brake
      */
     public Brake(int[] servoPin, double[] engagedAngles)
     {
+        // Configuration
+        servos = new Servo[servoPin.length];        
         for(int index = 0; index < servoPin.length; index++)
         {
             servos[index] = new Servo(servoPin[index]);
         }
         anglePawnEngaged = engagedAngles;
+        
+        //Initial state
+        stateCurrent = BRAKE_STATE.BOTH;  // When the robot is not powered, all pawns are engaged
     }
     
     /**
@@ -38,18 +50,7 @@ public class Brake
      */
     public boolean isSafeToMove()
     {
-        boolean isSafe = true;
-        
-        for (int index = 0; index < servos.length; index++)
-        {
-            if(getPawnState(servos[index].getAngle()) != BRAKE_STATE.NONE)
-            {
-                isSafe = false;
-                break;
-            }
-        }
-        
-        return isSafe;
+        return getState() == BRAKE_STATE.NONE;
     }
     
     /**
@@ -58,35 +59,59 @@ public class Brake
      */
     public BRAKE_STATE getState()
     {
-        BRAKE_STATE[] states = new BRAKE_STATE[servos.length];
-        BRAKE_STATE result;
-        
-        // Get all of the servo states, which are based on the angle
-        for (int index = 0; index < servos.length; index++)
+        // Update current state
+        if (stateCurrent == BRAKE_STATE.MOVING)
         {
-            states[index] = getPawnState(servos[index].getAngle());
-        }
-
-        // All of the servos have to be in a state to say the brake is in that state
-        result = states[0];
-        for (int index = 0; index < servos.length; index++)
-        {            
-            if(states[index] != states[0])
+            if (Timer.getFPGATimestamp() - taskTimeStart > taskDuration)
             {
-                result = BRAKE_STATE.MOVING;
-                break;
+                stateCurrent = taskCurrent;
             }
         }
         
-        return result;
+        return stateCurrent;
     }
     
-    public void setState(BRAKE_STATE desiredState)
+    /**
+     * Sets the brake to a new state. The brake will not accept new desired states until 
+     * the current state commanded is run to completion.
+     * @param desiredState new position to set the brake to
+     * @return If the command was accepted.
+     */
+    public boolean setState(BRAKE_STATE desiredState)
+    {
+        boolean taskAccepted = false;
+        
+        if(getState() != desiredState)
+        {
+            double stateAngle = getAngle(desiredState);
+                        
+            // Set all of the servos to the angle that gets us to that state        
+            for (int index = 0; index < servos.length; index++)
+            {
+                servos[index].setAngle(stateAngle);
+            }
+            
+            // Update state
+            taskCurrent = desiredState;
+            taskTimeStart = Timer.getFPGATimestamp();
+            taskDuration = TIME_PER_DEGREE * Math.abs(stateAngle - getAngle(stateCurrent));
+            stateCurrent = BRAKE_STATE.MOVING;
+            taskAccepted = true;
+        }
+        
+        return taskAccepted;
+    }
+    
+    /**
+     * Translates brake state to angle of that state
+     * @param state
+     * @return angle of the state
+     */
+    private double getAngle(BRAKE_STATE state)
     {
         double stateAngle = 0;
         
-        // Determine the angle of the state desired
-        switch (desiredState)
+        switch (state)
         {
             case NONE:
                 stateAngle = 0;
@@ -102,35 +127,6 @@ public class Brake
                 break;
         }
         
-        // Set all of the servos to the angle that gets us to that state        
-        for (int index = 0; index < servos.length; index++)
-        {
-            servos[index].setAngle(stateAngle);
-        }
-    }
-    
-    /**
-     * Determine which brake state this servo is at
-     * @param angle of the servo (0 to 360)
-     * @return state of this servo
-     */
-    private BRAKE_STATE getPawnState(double angle)
-    {
-        BRAKE_STATE result = BRAKE_STATE.MOVING;
-        
-        if (angle < TOLERANCE)
-        {
-            result = BRAKE_STATE.NONE;
-        }
-        else if (Math.abs(angle - anglePawnEngaged[1]) < TOLERANCE)
-        {
-            result = BRAKE_STATE.ONE;
-        }
-        else if (Math.abs(angle - anglePawnEngaged[2]) < TOLERANCE)
-        {
-            result = BRAKE_STATE.BOTH;
-        }
-        
-        return result;
+        return stateAngle;
     }
 }
