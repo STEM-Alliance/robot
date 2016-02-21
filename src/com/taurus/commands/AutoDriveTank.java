@@ -1,10 +1,8 @@
 
 package com.taurus.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
-import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
 public class AutoDriveTank extends Command {

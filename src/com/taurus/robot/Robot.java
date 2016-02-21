@@ -8,12 +8,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import com.taurus.commands.AutoLowBar;
 import com.taurus.commands.AutoTerrain;
-import com.taurus.subsystems.AimerSubsystem;
-import com.taurus.subsystems.LiftSubsystem;
-import com.taurus.subsystems.RockerDriveSubsystem;
-import com.taurus.subsystems.ShooterSubsystem;
-import com.taurus.vision.Target;
-import com.taurus.vision.Vision;
+import com.taurus.subsystems.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

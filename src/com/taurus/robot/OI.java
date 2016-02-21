@@ -6,14 +6,13 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import com.taurus.controller.Xbox;
 import com.taurus.controller.XboxButton;
 import com.taurus.commands.*;
-import com.taurus.commands.ShooterRelease;
-import com.taurus.commands.ShooterRev;
 
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
-public class OI {
+public class OI 
+{
     static Xbox xbox = new Xbox(0);
     
     Button buttonA = new XboxButton(xbox, Xbox.ButtonType.kA);
@@ -28,7 +27,8 @@ public class OI {
     Button buttonBack = new XboxButton(xbox, Xbox.ButtonType.kBack);
     Button buttonStart = new XboxButton(xbox, Xbox.ButtonType.kStart);
     
-    public OI() {
+    public OI() 
+    {
         buttonA.whileHeld(new ShooterGrab());
         //buttonB.whenPressed(new ShooterRev());
 
