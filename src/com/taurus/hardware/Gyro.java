@@ -1,18 +1,18 @@
 package com.taurus.hardware;
 
-import com.kauailabs.navx.frc.AHRS;
+
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.SerialPort;
 
-public class Gyro extends AHRS{
+public class Gyro {
     
     private float customYaw;
     
     public Gyro(Port port)
     {
-        super(port);
+        //super(port);
         customYaw = 0.0f;
     }
 
@@ -43,9 +43,10 @@ public class Gyro extends AHRS{
      */
     public float getYaw()
     {
-        float yaw = Utilities.wrapToRange(super.getYaw() + customYaw,
-                -180, 180);
-        return yaw;
+//        float yaw = Utilities.wrapToRange(super.getYaw() + customYaw,
+//                -180, 180);
+        //return yaw;
+        return 0;
     }
 
     /**
@@ -58,6 +59,6 @@ public class Gyro extends AHRS{
     public void zeroYaw()
     {
         customYaw = 0.0f;
-        super.zeroYaw();
+        //super.zeroYaw();
     }
 }

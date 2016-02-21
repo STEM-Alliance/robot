@@ -51,8 +51,8 @@ public class LiftSubsystem extends Subsystem{
      */
     protected void initDefaultCommand()
     {
-      setDefaultCommand(new LiftStop());
-//        setDefaultCommand(new LiftHold());
+//      setDefaultCommand(new LiftStop());
+        setDefaultCommand(new LiftHold());
     }
 
     /**
@@ -109,13 +109,10 @@ public class LiftSubsystem extends Subsystem{
 
         return arrivedL && arrivedR;
     }
+    
+    public void printSensors()
+    {
 
-    /**
-     * helper function: sets the motor speeds for the lift to the same value
-     * @param right speed between -1 to 1
-     * @param right speed between -1 to 1
-     */
-    public void setSpeed(double right, double left) {
         SmartDashboard.putNumber("Lift Total Height", getHeightFromFloorAverage());
         SmartDashboard.putNumber("Lift Height", getHeightFromLiftBottomAverage());
         SmartDashboard.putNumber("Lift Height L", getHeightFromLiftBottomL());
@@ -124,7 +121,17 @@ public class LiftSubsystem extends Subsystem{
         SmartDashboard.putNumber("Lift Pot R", getAngleR());
 
         updatePotOffsets();
+    }
 
+    /**
+     * helper function: sets the motor speeds for the lift to the same value
+     * @param right speed between -1 to 1
+     * @param right speed between -1 to 1
+     */
+    public void setSpeed(double right, double left) {
+
+        printSensors();
+        
         left = speedDamper(left, getHeightFromLiftBottomL());
         right = speedDamper(right, getHeightFromLiftBottomR());
 
@@ -174,6 +181,14 @@ public class LiftSubsystem extends Subsystem{
                 speed = speed * .7;
             }
         }
+        else
+        {
+            if (height <= 20)
+            {
+                speed = speed * .7;
+            }
+        }
+        
         return speed;
     }
 

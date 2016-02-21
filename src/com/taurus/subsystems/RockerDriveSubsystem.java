@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.CANTalon.FeedbackDeviceStatus;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RockerDriveSubsystem extends Subsystem 
 {
@@ -33,13 +34,15 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public RockerDriveSubsystem()
     {
+        boolean Encoder = Preferences.getInstance().getBoolean("DriveEncoders", false);
+        
         // set up left side motors
         for (int i = 0; i < motorsL.length; i++)
         {
             motorsL[i] = new CANTalon(RobotMap.PIN_ROCKER_TALONS_LEFT[i]);
 
             
-            if(motorsL[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
+            if(Encoder && motorsL[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
                     == FeedbackDeviceStatus.FeedbackStatusPresent)
             {
                 // we have a sensor connected, so use it and setup speed control
@@ -53,10 +56,10 @@ public class RockerDriveSubsystem extends Subsystem
         {
             motorsR[i] = new CANTalon(RobotMap.PIN_ROCKER_TALONS_RIGHT[i]);
 
-            // since the right side rotation is inverted from the right, set that in the controller
+            // since the right side rotation is inverted from the left, set that in the controller
             motorsR[i].setInverted(true);
             
-            if(motorsR[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
+            if(Encoder && motorsR[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
                     == FeedbackDeviceStatus.FeedbackStatusPresent)
             {
                 // we have a sensor connected, so use it and setup speed control
@@ -151,7 +154,9 @@ public class RockerDriveSubsystem extends Subsystem
         
         updatePID();
         
-        if (tractionControlEnabled)
+        SmartDashboard.putBoolean("Traction", tractionControlEnabled);
+        
+        if (false)
         {
             double [] leftScale = motorSlipScale(motorsL);
             double [] rightScale = motorSlipScale(motorsR);

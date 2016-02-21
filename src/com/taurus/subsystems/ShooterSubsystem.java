@@ -32,8 +32,9 @@ public class ShooterSubsystem extends Subsystem {
     public ShooterSubsystem() {
         shooterFT = new CANTalon(RobotMap.PIN_SHOOTER_TALON_FT);
         shooterFB = new CANTalon(RobotMap.PIN_SHOOTER_TALON_FB);
-        shooterBT = new CANTalon(RobotMap.PIN_SHOOTER_TALON_BT);
-        shooterBB = new CANTalon(RobotMap.PIN_SHOOTER_TALON_BB);
+        
+        shooterFT.setInverted(true);
+        
         stopSwitch = new DigitalInput(RobotMap.PIN_SHOOTER_SENSOR_STOP);
         ballRelease = new Servo(RobotMap.PIN_SHOOTER_SERVO_BALLRELEASE);
     }
