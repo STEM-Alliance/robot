@@ -4,8 +4,9 @@ import com.taurus.PIDController;
 import com.taurus.Utilities;
 import com.taurus.commands.LiftHold;
 import com.taurus.commands.LiftStop;
+import com.taurus.hardware.Brake;
 import com.taurus.hardware.MagnetoPotSRX;
-import com.taurus.robot.Robot;
+import com.taurus.hardware.Brake.BRAKE_STATE;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -18,16 +19,18 @@ public class LiftSubsystem extends Subsystem{
     public final double LIMIT_LOWER = 9.6;
     public final double LIMIT_TOLERANCE = .5;
     public final double LENGTH_SCISSOR_STEP = 26;
+    public final double BRAKE_ANGLE_PAWN_DOWNWARD = 10;  // TODO - DRL determine angle first pawn is engaged thru testing
+    public final double BRAKE_ANGLE_PAWN_UPWARD = 20;  // TODO - DRL determine angle second pawn is engaged thru testing
 
     private CANTalon motorLeft;
     private CANTalon motorRight;
     private MagnetoPotSRX potLeft;
     private MagnetoPotSRX potRight;
+    private Brake brakes;
     
     /** array of size 2, {right side, left side} */
     private PIDController[] heightPIDs;
-
-
+    
     /**
      * Constructor
      */
@@ -44,6 +47,9 @@ public class LiftSubsystem extends Subsystem{
         heightPIDs = new PIDController[]
                         {new PIDController(.5, 0, 0, 1),
                          new PIDController(.5, 0, 0, 1)};
+        
+        brakes = new Brake(new int[]{RobotMap.PIN_LIFT_BRAKE_SERVO_L, RobotMap.PIN_LIFT_BRAKE_SERVO_R},
+                           new double[]{BRAKE_ANGLE_PAWN_DOWNWARD, BRAKE_ANGLE_PAWN_UPWARD});
     }
 
     /**
@@ -99,12 +105,21 @@ public class LiftSubsystem extends Subsystem{
 
         if(arrivedL && arrivedR)
         {
-            stopLift();
+            // Set the brake so that the lift cannot move
+            setSpeed(0, 0);
+            brakes.setState(BRAKE_STATE.ONE);
+        }
+        else if (!brakes.isSafeToMove())
+        {
+            // We don't want to brake, but the brake is not in a state that we can set the motor yet
+            // TODO - DRL do we instead want to try to hold our position? Might be dangerous.
+            setSpeed(0, 0);
+            brakes.setState(BRAKE_STATE.NONE);
         }
         else
         {
             setSpeed(motorOutput[0]* Preferences.getInstance().getDouble("LiftSpeedLimit", .5),
-                    motorOutput[1]* Preferences.getInstance().getDouble("LiftSpeedLimit", .5));
+                    motorOutput[1]* Preferences.getInstance().getDouble("LiftSpeedLimit", .5));            
         }
 
         return arrivedL && arrivedR;
@@ -124,15 +139,24 @@ public class LiftSubsystem extends Subsystem{
         SmartDashboard.putNumber("Lift Pot R", getAngleR());
 
         updatePotOffsets();
-
+        
         left = speedDamper(left, getHeightFromLiftBottomL());
         right = speedDamper(right, getHeightFromLiftBottomR());
 
         SmartDashboard.putNumber("Lift Speed L", left);
         SmartDashboard.putNumber("Lift Speed R", right);
 
-        motorRight.set(right);
-        motorLeft.set(left);        
+        if (!brakes.isSafeToMove())
+        {
+            motorRight.set(0);
+            motorLeft.set(0);
+            brakes.setState(BRAKE_STATE.NONE);
+        }
+        else
+        {
+            motorRight.set(right);
+            motorLeft.set(left);
+        }
     }
 
     /**
@@ -175,14 +199,6 @@ public class LiftSubsystem extends Subsystem{
             }
         }
         return speed;
-    }
-
-    /**
-     * Stop the lift from moving
-     */
-    private void stopLift()
-    {
-        setSpeed(0, 0);
     }
 
     /**

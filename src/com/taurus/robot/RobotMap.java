@@ -20,6 +20,8 @@ public class RobotMap {
     
     public static int PIN_LIFT_TALON_L = 30;
     public static int PIN_LIFT_TALON_R = 31;
+    public static int PIN_LIFT_BRAKE_SERVO_L = 1;  // TODO - is this the correct pin?
+    public static int PIN_LIFT_BRAKE_SERVO_R = 2;  // TODO - is this the correct pin?
     
     public static int PIN_SHOOTER_SENSOR_STOP = 0;  // TODO - DRL is this the correct pin?
     public static int PIN_SHOOTER_SERVO_BALLRELEASE = 0;  // TODO - DRL change to correct pin
