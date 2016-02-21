@@ -79,6 +79,7 @@ public class MagnetoPotSRX  {
             if((Timer.getFPGATimestamp() - averageLastTime) > .01)
             {
                 averageBuff.pushFront(val);
+                averageLastTime = Timer.getFPGATimestamp();
             }
             val = averageBuff.getAverage();
         }

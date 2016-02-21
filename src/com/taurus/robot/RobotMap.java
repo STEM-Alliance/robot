@@ -14,9 +14,11 @@ public class RobotMap {
     
     public static int PIN_SHOOTER_TALON_FT = 20;
     public static int PIN_SHOOTER_TALON_FB = 21;
-    public static int PIN_SHOOTER_TALON_BT = 22;
-    public static int PIN_SHOOTER_TALON_BB = 23;
+//    public static int PIN_SHOOTER_TALON_BT = 22;
+//    public static int PIN_SHOOTER_TALON_BB = 23;
     public static int PIN_SHOOTER_TALON_AIMER = 24;
+    
+    public static int PIN_MANIPULATOR = 25;
     
     public static int PIN_LIFT_TALON_L = 30;
     public static int PIN_LIFT_TALON_R = 31;

@@ -3,16 +3,19 @@ package com.taurus.subsystems;
 import com.taurus.PIDController;
 import com.taurus.commands.AimerStop;
 import com.taurus.hardware.MagnetoPot;
+import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.robot.RobotMap;
 import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AimerSubsystem extends Subsystem
 {
     private Vision vision;
-    private MagnetoPot aimAngle;
+    private MagnetoPotSRX aimAngle;
     private CANTalon aimer;
     private PIDController aimerPID;
 
@@ -20,7 +23,7 @@ public class AimerSubsystem extends Subsystem
     {
         aimer = new CANTalon(RobotMap.PIN_SHOOTER_TALON_AIMER);
         aimerPID = new PIDController(1, 0, 0, 1);//TODO update these values 
-        aimAngle = new MagnetoPot(0,360);
+        aimAngle = new MagnetoPotSRX(aimer,360);
         vision = Vision.getInstance();
     }
 
@@ -53,6 +56,8 @@ public class AimerSubsystem extends Subsystem
      * @param speed
      */
     public void setSpeed(double speed){
+        aimAngle.setOffset(Preferences.getInstance().getDouble("AimerOffset", 0));
+        SmartDashboard.putNumber("Aimer Angle", aimAngle.get());
         aimer.set(speed);
     }
     
