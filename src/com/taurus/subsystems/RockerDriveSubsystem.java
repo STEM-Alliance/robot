@@ -4,7 +4,6 @@ import com.taurus.PIDController;
 import com.taurus.commands.DriveTankWithXbox;
 import com.taurus.hardware.Gyro;
 import com.taurus.robot.RobotMap;
-import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Preferences;

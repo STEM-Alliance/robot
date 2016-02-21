@@ -3,7 +3,6 @@ package com.taurus.commands;
 import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ShooterRev extends Command {
