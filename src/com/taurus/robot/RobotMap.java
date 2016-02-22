@@ -8,23 +8,24 @@ package com.taurus.robot;
  */
 public class RobotMap {
     // Robot Input and Output pins. Insert in order.
+    
+    public static final int CAN_ROCKER_TALONS_RIGHT[] = {10,12,14};
+    public static final int CAN_ROCKER_TALONS_LEFT[] = {11,13,15};
+    
+    public static final int CAN_SHOOTER_TALON_TOP = 20;
+    public static final int CAN_SHOOTER_TALON_BOTTOM = 21;
+    public static final int CAN_SHOOTER_TALON_AIMER = 24;
+    public static final int CAN_MANIPULATOR_TALON = 25;
+    
+    public static final int CAN_LIFT_TALON_L = 30;
+    public static final int CAN_LIFT_TALON_R = 31;
 
-    public static final int PIN_LEDS = 0;
+    public static final int PIN_DIO_SHOOTER_BALL_SENSOR = 0;
     
-    public static int PIN_ROCKER_TALONS_RIGHT[] = {10,12,14};
-    public static int PIN_ROCKER_TALONS_LEFT[] = {11,13,15};
+    public static final int PIN_SERVO_SHOOTER_BALL_RELEASE = 0;
     
-    public static int PIN_SHOOTER_TALON_FT = 20;
-    public static int PIN_SHOOTER_TALON_FB = 21;
-    public static int PIN_SHOOTER_TALON_AIMER = 24;
+    public static final int PIN_SERVO_LIFT_BRAKE_L = 1;
+    public static final int PIN_SERVO_LIFT_BRAKE_R = 2;
     
-    public static int PIN_MANIPULATOR = 25;
-    
-    public static int PIN_LIFT_TALON_L = 30;
-    public static int PIN_LIFT_TALON_R = 31;
-    public static int PIN_LIFT_BRAKE_SERVO_L = 1;  // TODO - is this the correct pin?
-    public static int PIN_LIFT_BRAKE_SERVO_R = 2;  // TODO - is this the correct pin?
-    
-    public static int PIN_SHOOTER_SENSOR_STOP = 0;  // TODO - DRL is this the correct pin?
-    public static int PIN_SHOOTER_SERVO_BALLRELEASE = 0;  // TODO - DRL change to correct pin
+    public static final int PIN_RELAY_LEDS = 0;
 }

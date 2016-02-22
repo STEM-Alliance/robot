@@ -25,7 +25,7 @@ public class AimerSubsystem extends Subsystem
 
     public AimerSubsystem()
     {
-        motor = new CANTalon(RobotMap.PIN_SHOOTER_TALON_AIMER);
+        motor = new CANTalon(RobotMap.CAN_SHOOTER_TALON_AIMER);
         pid = new PIDController(1, 0, 0, 1);  //TODO update these values 
         angle = new MagnetoPotSRX(motor,360);
         vision = Vision.getInstance();

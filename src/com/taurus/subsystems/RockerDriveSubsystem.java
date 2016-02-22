@@ -23,8 +23,8 @@ public class RockerDriveSubsystem extends Subsystem
 
     // order is {Front, Middle, Back}
     //          {bogie, bogie, fixed}
-    private CANTalon motorsL[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_LEFT.length];
-    private CANTalon motorsR[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_RIGHT.length];
+    private CANTalon motorsL[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_LEFT.length];
+    private CANTalon motorsR[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_RIGHT.length];
     private AHRS navxMXP;  // Expander board, contains gyro
     
     private boolean applyGyro;
@@ -39,7 +39,7 @@ public class RockerDriveSubsystem extends Subsystem
         // set up left side motors
         for (int i = 0; i < motorsL.length; i++)
         {
-            motorsL[i] = new CANTalon(RobotMap.PIN_ROCKER_TALONS_LEFT[i]);
+            motorsL[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_LEFT[i]);
 
             
             if(Encoder && motorsL[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
@@ -54,7 +54,7 @@ public class RockerDriveSubsystem extends Subsystem
         // setup right side motors
         for (int i = 0; i < motorsR.length; i++)
         {
-            motorsR[i] = new CANTalon(RobotMap.PIN_ROCKER_TALONS_RIGHT[i]);
+            motorsR[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_RIGHT[i]);
 
             // since the right side rotation is inverted from the left, set that in the controller
             motorsR[i].setInverted(true);
@@ -146,8 +146,7 @@ public class RockerDriveSubsystem extends Subsystem
         updatePID();
         
         SmartDashboard.putBoolean("Traction", tractionControlEnabled);        
-        if (false)
-        //if (tractionControlEnabled)
+        if (tractionControlEnabled)
         {
             double [] leftScale = scaleForTractionControl(motorsL);
             double [] rightScale = scaleForTractionControl(motorsR);
