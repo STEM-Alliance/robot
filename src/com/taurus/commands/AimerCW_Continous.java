@@ -20,7 +20,7 @@ public class AimerCW_Continous extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Aimer", this);
-        Robot.aimerSubsystem.setSpeed(1);
+        Robot.aimerSubsystem.setSpeed(.6);
     }
 
     // Make this return true when this Command no longer needs to run execute()

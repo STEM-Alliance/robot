@@ -16,19 +16,23 @@ public class ShooterRev extends Command {
     protected void initialize() {
         // We want a constant fire speed, thus set the speed only once
         // If we have a vision, move this to execute and do calculation based on vision
-        double speedTop = .2 + .1 * OI.getTriggerRight();
-        double speedBottom = .2 + .1 * OI.getTriggerRight();
+        double speedTop = .7 + .2 * OI.getTriggerRight();
+        double speedBottom = .8 + .2 * OI.getTriggerRight();
         Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
-        setTimeout(1);
+        
+        Robot.shooterSubsystem.enableLEDs(true);
+        
+        setTimeout(4);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         // We want a constant fire speed, thus set the speed only once
         // If we have a vision, move this to execute and do calculation based on vision
-        double speedTop = .8 + .2 * OI.getTriggerRight();
-        double speedBottom = .6 + .2 * OI.getTriggerRight();
+        double speedTop = .7 + .2 * OI.getTriggerRight();
+        double speedBottom = .8 + .2 * OI.getTriggerRight();
         Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
+        Robot.shooterSubsystem.setBallRelease(false);
     }
 
     // Make this return true when this Command no longer needs to run execute()
