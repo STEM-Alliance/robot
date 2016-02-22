@@ -27,6 +27,8 @@ public class RockerDriveSubsystem extends Subsystem
     private CANTalon motorsR[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_RIGHT.length];
     private AHRS navxMXP;  // Expander board, contains gyro
     
+    private boolean applyGyro;
+    
     /**
      * Constructor
      */
@@ -75,7 +77,7 @@ public class RockerDriveSubsystem extends Subsystem
         } catch (RuntimeException ex ) {
             DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
         }
-        navxMXP.zeroYaw();
+        applyGyro = false;
     }
     
     /**
@@ -115,22 +117,6 @@ public class RockerDriveSubsystem extends Subsystem
             }
         }
     }
-    
-    /**
-     * Basic tank drive
-     * 
-     * Will apply deadband to input values
-     * @param right -1 to 1
-     * @param left -1 to 1
-     * @param enables traction control
-     */
-    public void tankDrive(double right, double left, boolean tractionControlEnabled)
-    {
-        right = scaleForDeadband(right);
-        left = scaleForDeadband(left);
-        
-        driveRaw(right,left, tractionControlEnabled);
-    }
 
     /**
      * Raw drive, controlling each wheel separately
@@ -142,6 +128,7 @@ public class RockerDriveSubsystem extends Subsystem
     {
         driveRaw(new double[]{right,right,right}, new double[]{left,left,left}, tractionControlEnabled);
     }
+    
     /**
      * Raw drive, controlling each wheel separately
      * @param right array of values, -1 to 1
@@ -158,12 +145,12 @@ public class RockerDriveSubsystem extends Subsystem
         
         updatePID();
         
-        SmartDashboard.putBoolean("Traction", tractionControlEnabled);
-        
+        SmartDashboard.putBoolean("Traction", tractionControlEnabled);        
         if (false)
+        //if (tractionControlEnabled)
         {
-            double [] leftScale = getTractionControlScalingFactors(motorsL);
-            double [] rightScale = getTractionControlScalingFactors(motorsR);
+            double [] leftScale = scaleForTractionControl(motorsL);
+            double [] rightScale = scaleForTractionControl(motorsR);
             
             //set motors to new scaled values
             for(int index = 0; index < right.length; index++){
@@ -177,37 +164,23 @@ public class RockerDriveSubsystem extends Subsystem
             //TODO convert values to RPM, and adjust for wheel to sensor ratio
         }
         
+        if (applyGyro)
+        {
+            // TODO - DRL apply the gyro, compensate for how much yaw/error from our heading
+        }
+        
         for (int i = 0; i < motorsR.length; i++)
         {
+            right[i] = scaleForDeadband(right[i]);
+            right[i] = Math.min(Math.max(right[i], -1), 1);  // ensure value between -1 and 1
             motorsR[i].set(right[i]);
         }
         for (int i = 0; i < motorsL.length; i++)
         {
+            left[i] = scaleForDeadband(left[i]);
+            left[i] = Math.min(Math.max(left[i], -1), 1);  // ensure value between -1 and 1
             motorsL[i].set(left[i]);   
         }
-    }
-    
-    /**
-     * Driving through arcade style drive
-     * @param throttle
-     * @param turn
-     * @param enables traction control
-     */
-    public void arcadeDrive(double throttle, double turn, boolean tractionControlEnabled)
-    {
-        double left = 0;
-        double right = 0;
-
-        throttle = scaleForDeadband(throttle);
-        turn = scaleForDeadband(turn);
-        
-        left = throttle + turn;
-        right = throttle - turn;
-        
-        left = limit(left);
-        right = limit(right);
-        
-        tankDrive(right, left, tractionControlEnabled);
     }
     
     public double getEncoderRotations()
@@ -215,24 +188,13 @@ public class RockerDriveSubsystem extends Subsystem
         return 0;  // TODO Get from the Talon SRX's, potentially average all four?
     }
     
-    /**
-     * Limits value between 1 and -1
-     * @param value
-     * @return
-     */
-    private double limit(double value)
+    public void setGyroMode(boolean enabled, boolean zero)
     {
-        double output = value;
-        
-        if(value > 1)
+        applyGyro = enabled;
+        if (zero)
         {
-            output = 1;
+            navxMXP.zeroYaw();
         }
-        else if(value < -1 )
-        {
-            output = -1;
-        }
-        return output;
     }
 
     /**
@@ -264,7 +226,7 @@ public class RockerDriveSubsystem extends Subsystem
      * factor to apply to each motor.
      * @return array of scaling factors to be multiplied with the speed to apply traction control
      */
-    private double[] getTractionControlScalingFactors(CANTalon[] motors)
+    private double[] scaleForTractionControl(CANTalon[] motors)
     {
         double[] scalingFactors = new double[motors.length];
         int[] motorRpms = new int[motors.length];
