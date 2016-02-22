@@ -30,15 +30,15 @@ public class ShooterSubsystem extends Subsystem
      */
     public ShooterSubsystem() 
     {
-        shooterFT = new CANTalon(RobotMap.PIN_SHOOTER_TALON_FT);
-        shooterFB = new CANTalon(RobotMap.PIN_SHOOTER_TALON_FB);
+        shooterFT = new CANTalon(RobotMap.CAN_SHOOTER_TALON_TOP);
+        shooterFB = new CANTalon(RobotMap.CAN_SHOOTER_TALON_BOTTOM);
         
         shooterFT.setInverted(true);
         
-        stopSwitch = new DigitalInput(RobotMap.PIN_SHOOTER_SENSOR_STOP);
-        ballRelease = new Servo(RobotMap.PIN_SHOOTER_SERVO_BALLRELEASE);
+        stopSwitch = new DigitalInput(RobotMap.PIN_DIO_SHOOTER_BALL_SENSOR);
+        ballRelease = new Servo(RobotMap.PIN_SERVO_SHOOTER_BALL_RELEASE);
         
-        leds = new Relay(RobotMap.PIN_LEDS,Direction.kForward);
+        leds = new Relay(RobotMap.PIN_RELAY_LEDS, Direction.kForward);
     }
     
     public void initDefaultCommand() 
@@ -93,7 +93,7 @@ public class ShooterSubsystem extends Subsystem
     {
         if(enable)
         {
-            leds.set(Value.kOn);
+            leds.set(Value.kForward);
         }
         else
         {

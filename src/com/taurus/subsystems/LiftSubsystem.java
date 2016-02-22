@@ -36,8 +36,8 @@ public class LiftSubsystem extends Subsystem{
      * Constructor
      */
     public LiftSubsystem() {
-        motorLeft = new CANTalon(RobotMap.PIN_LIFT_TALON_L);
-        motorRight = new CANTalon(RobotMap.PIN_LIFT_TALON_R);
+        motorLeft = new CANTalon(RobotMap.CAN_LIFT_TALON_L);
+        motorRight = new CANTalon(RobotMap.CAN_LIFT_TALON_R);
 
         motorLeft.ConfigFwdLimitSwitchNormallyOpen(true);
         motorLeft.ConfigRevLimitSwitchNormallyOpen(false);
@@ -54,7 +54,7 @@ public class LiftSubsystem extends Subsystem{
                         {new PIDController(.5, 0, 0, 1),
                          new PIDController(.5, 0, 0, 1)};
         
-        brakes = new Brake(new int[]{RobotMap.PIN_LIFT_BRAKE_SERVO_L, RobotMap.PIN_LIFT_BRAKE_SERVO_R},
+        brakes = new Brake(new int[]{RobotMap.PIN_SERVO_LIFT_BRAKE_L, RobotMap.PIN_SERVO_LIFT_BRAKE_R},
                            new double[]{BRAKE_ANGLE_PAWN_DOWNWARD, BRAKE_ANGLE_PAWN_UPWARD});
     }
 
