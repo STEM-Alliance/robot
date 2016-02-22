@@ -36,8 +36,13 @@ public class LiftSubsystem extends Subsystem{
      * Constructor
      */
     public LiftSubsystem() {
-        motorLeft = new CANTalon(RobotMap.PIN_LIFT_TALON_L);
-        motorRight = new CANTalon(RobotMap.PIN_LIFT_TALON_R);
+        motorLeft = new CANTalon(RobotMap.CAN_LIFT_TALON_L);
+        motorRight = new CANTalon(RobotMap.CAN_LIFT_TALON_R);
+
+        motorLeft.ConfigFwdLimitSwitchNormallyOpen(true);
+        motorLeft.ConfigRevLimitSwitchNormallyOpen(false);
+        motorRight.ConfigFwdLimitSwitchNormallyOpen(true);
+        motorRight.ConfigRevLimitSwitchNormallyOpen(false);
 
         potLeft = new MagnetoPotSRX(motorLeft, -360);
         potRight = new MagnetoPotSRX(motorRight, -360);
@@ -49,7 +54,7 @@ public class LiftSubsystem extends Subsystem{
                         {new PIDController(.5, 0, 0, 1),
                          new PIDController(.5, 0, 0, 1)};
         
-        brakes = new Brake(new int[]{RobotMap.PIN_LIFT_BRAKE_SERVO_L, RobotMap.PIN_LIFT_BRAKE_SERVO_R},
+        brakes = new Brake(new int[]{RobotMap.PIN_SERVO_LIFT_BRAKE_L, RobotMap.PIN_SERVO_LIFT_BRAKE_R},
                            new double[]{BRAKE_ANGLE_PAWN_DOWNWARD, BRAKE_ANGLE_PAWN_UPWARD});
     }
 
@@ -138,6 +143,11 @@ public class LiftSubsystem extends Subsystem{
         SmartDashboard.putNumber("Lift Pot L", getAngleL());
         SmartDashboard.putNumber("Lift Pot R", getAngleR());
 
+        SmartDashboard.putBoolean("Lift Limit L Fwd", motorLeft.isFwdLimitSwitchClosed());
+        SmartDashboard.putBoolean("Lift Limit R Fwd", motorRight.isFwdLimitSwitchClosed());
+        SmartDashboard.putBoolean("Lift Limit L Rev", motorLeft.isRevLimitSwitchClosed());
+        SmartDashboard.putBoolean("Lift Limit R Rev", motorRight.isRevLimitSwitchClosed());
+        
         updatePotOffsets();
     }
 
@@ -301,8 +311,30 @@ public class LiftSubsystem extends Subsystem{
      */
     private void updatePotOffsets()
     {
-        potRight.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetR", 0));
-        potLeft.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetL", 0));
+        double angleBottom = Preferences.getInstance().getDouble("LiftPotMinimum", 5.5);
+        
+        if(false && !motorLeft.isRevLimitSwitchClosed())
+        {
+            double offset = angleBottom - potLeft.getWithoutOffset();
+            potLeft.setOffset(offset);
+            Preferences.getInstance().putDouble("LiftPotOffsetL", offset);
+        }
+        else
+        {
+            potLeft.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetL", 0));
+        }
+        
+        if(false && !motorRight.isRevLimitSwitchClosed())
+        {
+            double offset = angleBottom - potRight.getWithoutOffset();
+            potRight.setOffset(offset);
+            Preferences.getInstance().putDouble("LiftPotOffsetR", offset);
+        }
+        else
+        {
+            potRight.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetR", 0));
+        } 
+        
         potRight.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleR", 0));
         potLeft.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleL", 0));
     }

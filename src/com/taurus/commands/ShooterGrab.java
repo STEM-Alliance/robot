@@ -18,8 +18,9 @@ public class ShooterGrab extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speed = .38 + .5 * OI.getTriggerRight();
+        double speed = .5 + .5 * OI.getTriggerRight();
         Robot.shooterSubsystem.setSpeed(-speed, -speed);
+        Robot.shooterSubsystem.setBallRelease(false);
     }
 
     // Make this return true when this Command no longer needs to run execute()
