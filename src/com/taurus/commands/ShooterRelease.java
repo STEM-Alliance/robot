@@ -23,12 +23,12 @@ public class ShooterRelease extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speedTop = .8 + .2 * OI.getTriggerRight();
-        double speedBottom = .6 + .2 * OI.getTriggerRight();
+        double speedTop = .7 + .2 * OI.getTriggerRight();
+        double speedBottom = .8 + .2 * OI.getTriggerRight();
         Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
         
         // Once the ball is released, we should retract the servo to end in a safe state
-        if (Timer.getFPGATimestamp() - startTime > 1.25)
+        if (Timer.getFPGATimestamp() - startTime > 1.75)
         {
             Robot.shooterSubsystem.setBallRelease(false);
         }
@@ -36,13 +36,15 @@ public class ShooterRelease extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.shooterSubsystem.isBallReleaseContracted() && (Timer.getFPGATimestamp() - startTime > 1.25);
+        return Robot.shooterSubsystem.isBallReleaseContracted() && (Timer.getFPGATimestamp() - startTime > 1.75);
     }
                 
     // Called once after isFinished returns true
     protected void end() {
         //Robot.shooterSubsystem.setSpeed(0,0);
         Robot.shooterSubsystem.setSpeed(0, 0);
+
+        Robot.shooterSubsystem.enableLEDs(false);
     }
 
     // Called when another command which requires one or more of the same

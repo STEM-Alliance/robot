@@ -4,13 +4,16 @@ import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterSubsystem extends Subsystem 
 {    
-    private final double BALL_RELEASE_ANGLE_EXTENDED = 120;
+    private final double BALL_RELEASE_ANGLE_EXTENDED = 150;
     private final double BALL_RELEASE_ANGLE_CONTRACTED = 0;
     private final double TOLERANCE = 1;
     
@@ -19,6 +22,8 @@ public class ShooterSubsystem extends Subsystem
     private CANTalon shooterFT;
     private CANTalon shooterFB;
     private Servo ballRelease;
+    
+    private Relay leds;
 
     /**
      * Constructor
@@ -32,6 +37,8 @@ public class ShooterSubsystem extends Subsystem
         
         stopSwitch = new DigitalInput(RobotMap.PIN_SHOOTER_SENSOR_STOP);
         ballRelease = new Servo(RobotMap.PIN_SHOOTER_SERVO_BALLRELEASE);
+        
+        leds = new Relay(RobotMap.PIN_LEDS,Direction.kForward);
     }
     
     public void initDefaultCommand() 
@@ -80,5 +87,17 @@ public class ShooterSubsystem extends Subsystem
     public boolean isBallReleaseMoving() 
     {
         return !isBallReleaseExtended() && !isBallReleaseContracted();
+    }
+    
+    public void enableLEDs(boolean enable)
+    {
+        if(enable)
+        {
+            leds.set(Value.kOn);
+        }
+        else
+        {
+            leds.set(Value.kOff);
+        }
     }
 }

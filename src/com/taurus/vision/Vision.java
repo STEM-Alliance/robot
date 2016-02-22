@@ -96,16 +96,20 @@ public class Vision implements Runnable
 
         visionThread = new Thread(this);
         visionThread.setPriority(Thread.MIN_PRIORITY);
+        Start();
     }
 
     public void Start()
     {
-        visionThread.start();
+        if(!visionThread.isAlive())
+            visionThread.start();
     }
 
     @Override
     public void run()
     {
+
+        SmartDashboard.putString("CameraState", "Running");
         camera = new Camera("cam0");
         Image frame, frameTH, frameDownsampled, frameTHDownsampled;
         
@@ -128,12 +132,14 @@ public class Vision implements Runnable
             // if we haven't opened the camera session
             if(!camera.isOpen())
             {
+                SmartDashboard.putString("CameraState", "Opening");
                 camera.openCamera();
             }
 
             // if we haven't started capturing
             if (!camera.isCapturing())    
             {
+                SmartDashboard.putString("CameraState", "Start Capture");
                 camera.startCapture();
             }
             
@@ -143,6 +149,7 @@ public class Vision implements Runnable
             // we have an open camera session 
             if (camera.isCapturing())
             {
+                SmartDashboard.putString("CameraState", "Capturing");
                 // save off the start time so we can see how long 
                 // it takes to process a frame
                 TimeLastVision = Timer.getFPGATimestamp();

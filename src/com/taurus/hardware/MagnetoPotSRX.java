@@ -91,7 +91,7 @@ public class MagnetoPotSRX  {
      * Get the scaled value of the sensor 
      * @return value from offset to fullRange
      */
-    public double get()
+    public double getWithoutOffset()
     {
         // convert to 0-1 scale
         double val = getValue();
@@ -107,7 +107,16 @@ public class MagnetoPotSRX  {
         }
 
         // scale it based on the calibration values
-        return Utilities.scaleToRange(val, InMin, InMax, 0, fullRange) + offset;
+        return Utilities.scaleToRange(val, InMin, InMax, 0, fullRange);
+    }
+    
+    /**
+     * Get the scaled value of the sensor 
+     * @return value from offset to fullRange
+     */
+    public double get()
+    {
+        return getWithoutOffset() + offset;
     }
 
     /**
