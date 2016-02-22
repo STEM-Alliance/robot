@@ -1,17 +1,17 @@
 package com.taurus.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.taurus.PIDController;
 import com.taurus.commands.DriveTankWithXbox;
-import com.taurus.hardware.Gyro;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDeviceStatus;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -25,8 +25,9 @@ public class RockerDriveSubsystem extends Subsystem
     //          {bogie, bogie, fixed}
     private CANTalon motorsL[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_LEFT.length];
     private CANTalon motorsR[] = new CANTalon[RobotMap.PIN_ROCKER_TALONS_RIGHT.length];
-    private SerialPort serial_port;
-    //private RockerIMU gyro;
+    private AHRS navxMXP;  // Expander board, contains gyro
+    
+    private boolean applyGyro;
     
     /**
      * Constructor
@@ -67,10 +68,16 @@ public class RockerDriveSubsystem extends Subsystem
             }
         }
         
-
-        //serial_port = new SerialPort(57600, SerialPort.Port.kMXP);
-        //byte update_rate_hz = 100;
-//        gyro = new RockerIMU(serial_port, update_rate_hz);
+        // Setup gyro
+        try {
+            /* Communicate w/navX MXP via the MXP SPI Bus.                                     */
+            /* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
+            /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
+            navxMXP = new AHRS(SPI.Port.kMXP);
+        } catch (RuntimeException ex ) {
+            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+        }
+        applyGyro = false;
     }
     
     /**
@@ -110,22 +117,6 @@ public class RockerDriveSubsystem extends Subsystem
             }
         }
     }
-    
-    /**
-     * Basic tank drive
-     * 
-     * Will apply deadband to input values
-     * @param right -1 to 1
-     * @param left -1 to 1
-     * @param enables traction control
-     */
-    public void tankDrive(double right, double left, boolean tractionControlEnabled)
-    {
-        right = scaleForDeadband(right);
-        left = scaleForDeadband(left);
-        
-        driveRaw(right,left, tractionControlEnabled);
-    }
 
     /**
      * Raw drive, controlling each wheel separately
@@ -137,6 +128,7 @@ public class RockerDriveSubsystem extends Subsystem
     {
         driveRaw(new double[]{right,right,right}, new double[]{left,left,left}, tractionControlEnabled);
     }
+    
     /**
      * Raw drive, controlling each wheel separately
      * @param right array of values, -1 to 1
@@ -153,12 +145,12 @@ public class RockerDriveSubsystem extends Subsystem
         
         updatePID();
         
-        SmartDashboard.putBoolean("Traction", tractionControlEnabled);
-        
+        SmartDashboard.putBoolean("Traction", tractionControlEnabled);        
         if (false)
+        //if (tractionControlEnabled)
         {
-            double [] leftScale = motorSlipScale(motorsL);
-            double [] rightScale = motorSlipScale(motorsR);
+            double [] leftScale = scaleForTractionControl(motorsL);
+            double [] rightScale = scaleForTractionControl(motorsR);
             
             //set motors to new scaled values
             for(int index = 0; index < right.length; index++){
@@ -172,37 +164,23 @@ public class RockerDriveSubsystem extends Subsystem
             //TODO convert values to RPM, and adjust for wheel to sensor ratio
         }
         
+        if (applyGyro)
+        {
+            // TODO - DRL apply the gyro, compensate for how much yaw/error from our heading
+        }
+        
         for (int i = 0; i < motorsR.length; i++)
         {
+            right[i] = scaleForDeadband(right[i]);
+            right[i] = Math.min(Math.max(right[i], -1), 1);  // ensure value between -1 and 1
             motorsR[i].set(right[i]);
         }
         for (int i = 0; i < motorsL.length; i++)
         {
+            left[i] = scaleForDeadband(left[i]);
+            left[i] = Math.min(Math.max(left[i], -1), 1);  // ensure value between -1 and 1
             motorsL[i].set(left[i]);   
         }
-    }
-    
-    /**
-     * Driving through arcade style drive
-     * @param throttle
-     * @param turn
-     * @param enables traction control
-     */
-    public void arcadeDrive(double throttle, double turn, boolean tractionControlEnabled)
-    {
-        double left = 0;
-        double right = 0;
-
-        throttle = scaleForDeadband(throttle);
-        turn = scaleForDeadband(turn);
-        
-        left = throttle + turn;
-        right = throttle - turn;
-        
-        left = limit(left);
-        right = limit(right);
-        
-        tankDrive(right, left, tractionControlEnabled);
     }
     
     public double getEncoderRotations()
@@ -210,24 +188,13 @@ public class RockerDriveSubsystem extends Subsystem
         return 0;  // TODO Get from the Talon SRX's, potentially average all four?
     }
     
-    /**
-     * Limits value between 1 and -1
-     * @param value
-     * @return
-     */
-    private double limit(double value)
+    public void setGyroMode(boolean enabled, boolean zero)
     {
-        double output = value;
-        
-        if(value > 1)
+        applyGyro = enabled;
+        if (zero)
         {
-            output = 1;
+            navxMXP.zeroYaw();
         }
-        else if(value < -1 )
-        {
-            output = -1;
-        }
-        return output;
     }
 
     /**
@@ -259,10 +226,10 @@ public class RockerDriveSubsystem extends Subsystem
      * factor to apply to each motor.
      * @return array of scaling factors to be multiplied with the speed to apply traction control
      */
-    public double[] motorSlipScale(CANTalon[] motors)
+    private double[] scaleForTractionControl(CANTalon[] motors)
     {
-        double[] scalingFactors = {0, 0, 0}; // Initially set to dummy values
-        int[] motorRpms = {0, 0, 0};  // Initially set to dummy values       
+        double[] scalingFactors = new double[motors.length];
+        int[] motorRpms = new int[motors.length];
         double slowestSpeed = Double.MAX_VALUE;  // Large value will be overridden by at least one motor
         
         for(int index = 0; index < motors.length; index++)
@@ -287,6 +254,93 @@ public class RockerDriveSubsystem extends Subsystem
         }
         
         return scalingFactors;
+    }
+    
+    /**
+     * Barf all of the possible expander card values to smartdashboard. Intended for debugging only.
+     */
+    public void displayNavxMXPValues()
+    {
+        /* Display 6-axis Processed Angle Data                                      */
+        SmartDashboard.putBoolean(  "IMU_Connected",        navxMXP.isConnected());
+        SmartDashboard.putBoolean(  "IMU_IsCalibrating",    navxMXP.isCalibrating());
+        SmartDashboard.putNumber(   "IMU_Yaw",              navxMXP.getYaw());
+        SmartDashboard.putNumber(   "IMU_Pitch",            navxMXP.getPitch());
+        SmartDashboard.putNumber(   "IMU_Roll",             navxMXP.getRoll());
+        
+        /* Display tilt-corrected, Magnetometer-based heading (requires             */
+        /* magnetometer calibration to be useful)                                   */
+        
+        SmartDashboard.putNumber(   "IMU_CompassHeading",   navxMXP.getCompassHeading());
+        
+        /* Display 9-axis Heading (requires magnetometer calibration to be useful)  */
+        SmartDashboard.putNumber(   "IMU_FusedHeading",     navxMXP.getFusedHeading());
+
+        /* These functions are compatible w/the WPI Gyro Class, providing a simple  */
+        /* path for upgrading from the Kit-of-Parts gyro to the navx MXP            */
+        
+        SmartDashboard.putNumber(   "IMU_TotalYaw",         navxMXP.getAngle());
+        SmartDashboard.putNumber(   "IMU_YawRateDPS",       navxMXP.getRate());
+
+        /* Display Processed Acceleration Data (Linear Acceleration, Motion Detect) */
+        
+        SmartDashboard.putNumber(   "IMU_Accel_X",          navxMXP.getWorldLinearAccelX());
+        SmartDashboard.putNumber(   "IMU_Accel_Y",          navxMXP.getWorldLinearAccelY());
+        SmartDashboard.putBoolean(  "IMU_IsMoving",         navxMXP.isMoving());
+        SmartDashboard.putBoolean(  "IMU_IsRotating",       navxMXP.isRotating());
+
+        /* Display estimates of velocity/displacement.  Note that these values are  */
+        /* not expected to be accurate enough for estimating robot position on a    */
+        /* FIRST FRC Robotics Field, due to accelerometer noise and the compounding */
+        /* of these errors due to single (velocity) integration and especially      */
+        /* double (displacement) integration.                                       */
+        
+        SmartDashboard.putNumber(   "Velocity_X",           navxMXP.getVelocityX());
+        SmartDashboard.putNumber(   "Velocity_Y",           navxMXP.getVelocityY());
+        SmartDashboard.putNumber(   "Displacement_X",       navxMXP.getDisplacementX());
+        SmartDashboard.putNumber(   "Displacement_Y",       navxMXP.getDisplacementY());
+        
+        /* Display Raw Gyro/Accelerometer/Magnetometer Values                       */
+        /* NOTE:  These values are not normally necessary, but are made available   */
+        /* for advanced users.  Before using this data, please consider whether     */
+        /* the processed data (see above) will suit your needs.                     */
+        
+        SmartDashboard.putNumber(   "RawGyro_X",            navxMXP.getRawGyroX());
+        SmartDashboard.putNumber(   "RawGyro_Y",            navxMXP.getRawGyroY());
+        SmartDashboard.putNumber(   "RawGyro_Z",            navxMXP.getRawGyroZ());
+        SmartDashboard.putNumber(   "RawAccel_X",           navxMXP.getRawAccelX());
+        SmartDashboard.putNumber(   "RawAccel_Y",           navxMXP.getRawAccelY());
+        SmartDashboard.putNumber(   "RawAccel_Z",           navxMXP.getRawAccelZ());
+        SmartDashboard.putNumber(   "RawMag_X",             navxMXP.getRawMagX());
+        SmartDashboard.putNumber(   "RawMag_Y",             navxMXP.getRawMagY());
+        SmartDashboard.putNumber(   "RawMag_Z",             navxMXP.getRawMagZ());
+        SmartDashboard.putNumber(   "IMU_Temp_C",           navxMXP.getTempC());
+        
+        /* Omnimount Yaw Axis Information                                           */
+        /* For more info, see http://navx-mxp.kauailabs.com/installation/omnimount  */
+        AHRS.BoardYawAxis yaw_axis = navxMXP.getBoardYawAxis();
+        SmartDashboard.putString(   "YawAxisDirection",     yaw_axis.up ? "Up" : "Down" );
+        SmartDashboard.putNumber(   "YawAxis",              yaw_axis.board_axis.getValue() );
+        
+        /* Sensor Board Information                                                 */
+        SmartDashboard.putString(   "FirmwareVersion",      navxMXP.getFirmwareVersion());
+        
+        /* Quaternion Data                                                          */
+        /* Quaternions are fascinating, and are the most compact representation of  */
+        /* orientation data.  All of the Yaw, Pitch and Roll Values can be derived  */
+        /* from the Quaternions.  If interested in motion processing, knowledge of  */
+        /* Quaternions is highly recommended.                                       */
+        SmartDashboard.putNumber(   "QuaternionW",          navxMXP.getQuaternionW());
+        SmartDashboard.putNumber(   "QuaternionX",          navxMXP.getQuaternionX());
+        SmartDashboard.putNumber(   "QuaternionY",          navxMXP.getQuaternionY());
+        SmartDashboard.putNumber(   "QuaternionZ",          navxMXP.getQuaternionZ());
+        
+        /* Sensor Data Timestamp */
+        //SmartDashboard.putNumber(   "SensorTimestamp",      navxMXP.getLastSensorTimestamp());
+        
+        /* Connectivity Debugging Support                                           */
+        SmartDashboard.putNumber(   "IMU_Byte_Count",       navxMXP.getByteCount());
+        SmartDashboard.putNumber(   "IMU_Update_Count",     navxMXP.getUpdateCount());
     }
 }
             
