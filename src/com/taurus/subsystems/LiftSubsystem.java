@@ -21,6 +21,7 @@ public class LiftSubsystem extends Subsystem{
     public final double LENGTH_SCISSOR_STEP = 26;
     public final double BRAKE_ANGLE_PAWN_DOWNWARD = 10;  // TODO - DRL determine angle first pawn is engaged thru testing
     public final double BRAKE_ANGLE_PAWN_UPWARD = 20;  // TODO - DRL determine angle second pawn is engaged thru testing
+    public final double BRAKE_DISENGAGE_MOTOR_SPEED = .1;  // TODO - DRL determine safe small speed to help release brake pawns
 
     private CANTalon motorLeft;
     private CANTalon motorRight;
@@ -112,8 +113,10 @@ public class LiftSubsystem extends Subsystem{
         else if (!brakes.isSafeToMove())
         {
             // We don't want to brake, but the brake is not in a state that we can set the motor yet
-            // TODO - DRL do we instead want to try to hold our position? Might be dangerous.
-            setSpeed(0, 0);
+            // We need to run the motors up slightly to take pressure off of the brake pawns so the
+            // servos can move the pawns off of the ratchets.
+            // TODO - DRL do we instead want to try to hold our position? Might be dangerous.            
+            setSpeed(BRAKE_DISENGAGE_MOTOR_SPEED, BRAKE_DISENGAGE_MOTOR_SPEED);
             brakes.setState(BRAKE_STATE.NONE);
         }
         else

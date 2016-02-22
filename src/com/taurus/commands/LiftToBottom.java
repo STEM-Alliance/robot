@@ -2,8 +2,6 @@ package com.taurus.commands;
 
 import com.taurus.Utilities;
 import com.taurus.robot.Robot;
-import com.taurus.subsystems.LiftSubsystem;
-
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 
