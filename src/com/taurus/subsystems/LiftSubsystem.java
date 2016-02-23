@@ -159,9 +159,11 @@ public class LiftSubsystem extends Subsystem{
     public void setSpeed(double right, double left) {
 
         printSensors();
+        double leftHeight= getHeightFromLiftBottomL();
+        double rightHeight= getHeightFromLiftBottomR();
         
-        left = speedDamper(left, getHeightFromLiftBottomL());
-        right = speedDamper(right, getHeightFromLiftBottomR());
+        left = speedDamper(left, leftHeight);
+        right = speedDamper(right, rightHeight);
 
         SmartDashboard.putNumber("Lift Speed L", left);
         SmartDashboard.putNumber("Lift Speed R", right);
@@ -174,6 +176,54 @@ public class LiftSubsystem extends Subsystem{
         }
         else
         {
+            double dir = (double) Math.signum((right + left)/2.0);
+            
+            double heightDif = rightHeight - leftHeight;
+            if (heightDif >= 2)
+            {
+                if (dir > 0.0)
+                {
+                    right = 0;
+                }
+                else
+                {
+                    left = 0;
+                }
+            }
+            else if (heightDif <= -2)
+            {
+                if (dir > 0.0)
+                {
+                    left = 0;
+                }
+                else
+                {
+                    right = 0;
+                }
+            }
+            else if (heightDif >= 1)
+            {
+                if (dir > 0.0)
+                {
+                    right *= .5;
+                }
+                else
+                {
+                    left *= .5; 
+                }
+            }
+            else if (heightDif <= -1)
+            {
+                if (dir > 0.0)
+                {
+                    left *= .5;
+                }
+                else
+                {
+                    right *= .5; 
+                }
+            }
+            
             motorRight.set(right);
             motorLeft.set(left);
         }
