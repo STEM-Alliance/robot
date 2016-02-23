@@ -110,7 +110,7 @@ public class Vision implements Runnable
 
         SmartDashboard.putString("CameraState", "Running");
         camera = new Camera("cam0");
-        Image frame, frameTH, frameDownsampled;
+        final Image frame, frameTH, frameDownsampled, frameDownsampledTH;
         
 //        NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
 //        NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
@@ -121,6 +121,7 @@ public class Vision implements Runnable
         frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
         frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
         frameDownsampled = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
+        frameDownsampledTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
 
         while (true)
         {
@@ -143,7 +144,7 @@ public class Vision implements Runnable
             
             camera.printRanges();
             
-            updateSettings();
+            updateSettings(true);
             
 
             // we have an open camera session 
@@ -168,22 +169,6 @@ public class Vision implements Runnable
                     // print input image size
                     GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
                     SmartDashboard.putString("FrameSize", size.width + "," + size.height);
-
-                    // get the latest rescale size from the prefs
-                    RescaleSize = Preferences.getInstance().getInt("ImageRescaleSize", 1);
-                    
-                    // send image if requested
-                    if (imageToSend == ImageChoices.Input)
-                    {
-                        // scale size
-                        NIVision.imaqScale(frameDownsampled, frame, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
-
-                        GetImageSizeResult sizeDownsampled = NIVision.imaqGetImageSize(frameDownsampled);
-                        SmartDashboard.putString("FrameSizeDownsampled", sizeDownsampled.width + "," + sizeDownsampled.height);
-                        
-                        // just send the raw image
-                        CameraServer.getInstance().setImage(frameDownsampled);
-                    }
 
                     // only run if enabled
                     if (targetDetectionOn)
@@ -246,17 +231,36 @@ public class Vision implements Runnable
                                 largestTarget = null;
                             }
                         }
-                    }
-                    
-                    if(imageToSend == ImageChoices.Input)
-                    {
-                        sendImage(frame, frameDownsampled);
-                    }
-                    else if(imageToSend == ImageChoices.Threshold)
-                    {
-                        sendImage(frameTH, frameDownsampled);
-                    }
 
+                        // get the latest rescale size from the prefs
+                        RescaleSize = Preferences.getInstance().getInt("ImageRescaleSize", 1);
+                        
+                        
+                        if(imageToSend == ImageChoices.Input)
+                        {
+                            addTargets(frame, COLORS.RED);
+
+                            // scale if needed
+                            NIVision.imaqScale(frameDownsampled, frame, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+
+                            GetImageSizeResult sizeDownsampled = NIVision.imaqGetImageSize(frameDownsampled);
+                            SmartDashboard.putString("FrameSizeDownsampled", sizeDownsampled.width + "," + sizeDownsampled.height);
+
+                            CameraServer.getInstance().setImage(frameDownsampled);
+                        }
+                        else if(imageToSend == ImageChoices.Threshold)
+                        {
+                            addTargets(frameTH, COLORS.WHITE);
+                            
+                            // scale if needed
+                            NIVision.imaqScale(frameDownsampledTH, frameTH, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+
+                            GetImageSizeResult sizeDownsampled = NIVision.imaqGetImageSize(frameDownsampledTH);
+                            SmartDashboard.putString("FrameSizeDownsampled", sizeDownsampled.width + "," + sizeDownsampled.height);
+
+                            CameraServer.getInstance().setImage(frameDownsampledTH);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -275,37 +279,38 @@ public class Vision implements Runnable
      * @param frame input image
      * @param frameDownsampled downscaled image to save it to
      */
-    private synchronized void sendImage(Image frame, Image frameDownsampled)
+    private synchronized void addTargets(Image frame, float color)
     {
-//        Rect centerRect = new Rect((int)(Constants.Width-10)/2, (int)(Constants.Height-10)/2, 10, 10);
-//        // draw a circle in the center of the image/where the ball shoots
-//        NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, COLORS.RED);
-//
-//        if(largestTarget != null)
-//        {
-//            int top = (int)(largestTarget.Y() - largestTarget.H()/2);
-//            int left = (int)(largestTarget.X() - largestTarget.W()/2);
-//            
-//            // add Target Drawing
-//            Rect targetRect = new Rect(top, left, (int)largestTarget.H(), (int)largestTarget.W());
-//            // draw an outline of a rectangle in RED around the target
-//            NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, COLORS.RED);
-//        }
+        GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
         
-        // scale if needed
-        NIVision.imaqScale(frameDownsampled, frame, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+        Rect centerRect = new Rect((int)(size.width-10)/2,  // left
+                                   (int)(size.height-10)/2, // top
+                                   10,                      // width
+                                   10);                     // height
+        // draw a circle in the center of the image/where the ball shoots
+        NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, color);
 
-        GetImageSizeResult sizeDownsampled = NIVision.imaqGetImageSize(frameDownsampled);
-        SmartDashboard.putString("FrameSizeDownsampled", sizeDownsampled.width + "," + sizeDownsampled.height);
-
-        CameraServer.getInstance().setImage(frameDownsampled);
+        if(largestTarget != null)
+        {
+            int top = (int)(largestTarget.Y() - largestTarget.H()/2);
+            int left = (int)(largestTarget.X() - largestTarget.W()/2);
+            
+            // add Target Drawing
+            Rect targetRect = new Rect(top, left, (int)largestTarget.H(), (int)largestTarget.W());
+            // draw an outline of a rectangle in RED around the target
+            NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, color);
+        }
     }
-    
+
+    private synchronized void updateSettings()
+    {
+        updateSettings(false);
+    }
 
     /**
      * If any of the Preferences change, send the latest to the camera object
      */
-    private synchronized void updateSettings()
+    private synchronized void updateSettings(boolean forceUpdate)
     {
         int videoMode = Preferences.getInstance().getInt("VIDEO_MODE", 93);
         if(camera.getVideoMode() != videoMode)
