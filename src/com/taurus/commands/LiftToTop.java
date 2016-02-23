@@ -3,6 +3,7 @@ package com.taurus.commands;
 import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class LiftToTop extends Command {
@@ -18,7 +19,7 @@ public class LiftToTop extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
         done = false;
-        endHeight = 40;//(Robot.liftSubsystem.LIMIT_UPPER);
+        endHeight = Preferences.getInstance().getDouble("LiftHighOffset", 40);//(Robot.liftSubsystem.LIMIT_UPPER);
     }
     
     // Called repeatedly when this Command is scheduled to run
