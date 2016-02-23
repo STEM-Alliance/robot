@@ -1,13 +1,17 @@
 package com.taurus.commands;
 
 import com.taurus.Utilities;
+import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class LiftHold extends Command
 {
     double height;
+    
+    int dpadLast = -1;
     
     public LiftHold() {
         // Use requires() here to declare subsystem dependencies
@@ -22,6 +26,26 @@ public class LiftHold extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
+        
+        int dpad = OI.getDpad2();
+        
+        if(dpadLast != dpad)
+        {
+            if(dpad == 0)
+            {
+                height = Preferences.getInstance().getDouble("LiftHighOffset", 40);
+            }
+            else if(dpad == 180)
+            {
+                height = Preferences.getInstance().getDouble("LiftLowOffset", 5);
+            }
+            else
+            {
+                height = Robot.liftSubsystem.getHeightFromLiftBottomAverage();
+            }
+            
+            dpadLast = dpad;
+        }
         
         Robot.liftSubsystem.setHeightFromLiftBottom(height);
     }
