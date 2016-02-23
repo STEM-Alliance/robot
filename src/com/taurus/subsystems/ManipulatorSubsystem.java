@@ -11,7 +11,7 @@ public class ManipulatorSubsystem extends Subsystem {
 
     public ManipulatorSubsystem()
     {
-        motorArm = new CANTalon(RobotMap.PIN_MANIPULATOR);
+        motorArm = new CANTalon(RobotMap.CAN_MANIPULATOR_TALON);
         
     }
 
