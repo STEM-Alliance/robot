@@ -26,16 +26,16 @@ public class Vision implements Runnable
     {
         private static final float BLACK   = 0x000000;
         private static final float WHITE   = 0xffffff;
-        private static final float RED     = 0xff0000;
-        private static final float ORANGE  = 0xff8000;
-        private static final float YELLOW  = 0xffff00;
-        private static final float LIME    = 0x80ff00;
+        private static final float RED     = 0x0000ff;
+        private static final float ORANGE  = 0x0080ff;
+        private static final float YELLOW  = 0x00ffff;
+        private static final float LIME    = 0x00ff80;
         private static final float GREEN   = 0x00ff00;
-        private static final float TEAL    = 0x00ff80;
-        private static final float CYAN    = 0x00ffff;
-        private static final float VIOLET  = 0x0080ff;
-        private static final float BLUE    = 0x0000ff;
-        private static final float PINK    = 0x8000ff;
+        private static final float TEAL    = 0x80ff00;
+        private static final float CYAN    = 0xffff00;
+        private static final float VIOLET  = 0xff8000;
+        private static final float BLUE    = 0xff0000;
+        private static final float PINK    = 0xff0080;
         private static final float MAGENTA = 0xff00ff;
     }
     
@@ -53,7 +53,7 @@ public class Vision implements Runnable
     Camera camera;
 
     private boolean targetDetectionOn = true;
-    private boolean imageRotation = false;
+    private boolean imageRotation = true;
     
     private Target largestTarget;
 
@@ -140,6 +140,8 @@ public class Vision implements Runnable
                 SmartDashboard.putString("CameraState", "Start Capture");
                 camera.startCapture();
             }
+            
+            camera.printRanges();
             
             updateSettings();
             
@@ -275,20 +277,20 @@ public class Vision implements Runnable
      */
     private synchronized void sendImage(Image frame, Image frameDownsampled)
     {
-        Rect centerRect = new Rect((int)(Constants.Width-10)/2, (int)(Constants.Height-10)/2, 10, 10);
-        // draw a circle in the center of the image/where the ball shoots
-        NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, COLORS.RED);
-
-        if(largestTarget != null)
-        {
-            int top = (int)(largestTarget.Y() - largestTarget.H()/2);
-            int left = (int)(largestTarget.X() - largestTarget.W()/2);
-            
-            // add Target Drawing
-            Rect targetRect = new Rect(top, left, (int)largestTarget.H(), (int)largestTarget.W());
-            // draw an outline of a rectangle in RED around the target
-            NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, COLORS.RED);
-        }
+//        Rect centerRect = new Rect((int)(Constants.Width-10)/2, (int)(Constants.Height-10)/2, 10, 10);
+//        // draw a circle in the center of the image/where the ball shoots
+//        NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, COLORS.RED);
+//
+//        if(largestTarget != null)
+//        {
+//            int top = (int)(largestTarget.Y() - largestTarget.H()/2);
+//            int left = (int)(largestTarget.X() - largestTarget.W()/2);
+//            
+//            // add Target Drawing
+//            Rect targetRect = new Rect(top, left, (int)largestTarget.H(), (int)largestTarget.W());
+//            // draw an outline of a rectangle in RED around the target
+//            NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, COLORS.RED);
+//        }
         
         // scale if needed
         NIVision.imaqScale(frameDownsampled, frame, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
@@ -327,6 +329,12 @@ public class Vision implements Runnable
         if(camera.getBrightness() != brightness)
         {
             camera.setBrightness(brightness);
+        }
+        
+        double sat = Preferences.getInstance().getDouble("Saturation", .5);
+        if(camera.getSaturation() != sat)
+        {
+            camera.setSaturation(sat);
         }
     }
 }

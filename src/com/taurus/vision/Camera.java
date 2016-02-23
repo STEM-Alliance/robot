@@ -18,6 +18,8 @@ public class Camera
     private static String ATTR_EX_VALUE = "CameraAttributes::Exposure::Value";
     private static String ATTR_BR_MODE = "CameraAttributes::Brightness::Mode";
     private static String ATTR_BR_VALUE = "CameraAttributes::Brightness::Value";
+    private static String ATTR_ST_MODE = "CameraAttributes::Saturation::Mode";
+    private static String ATTR_ST_VALUE = "CameraAttributes::Saturation::Value";
 
     public class WhiteBalance
     {
@@ -36,6 +38,7 @@ public class Camera
     private String m_exposure = "auto";
     private double m_exposureValue = 100;
     private double m_brightness = 50;
+    private double m_saturation = 50;
     private boolean m_needSettingsUpdate = true;
     private int m_mode = 93;
 
@@ -143,42 +146,45 @@ public class Camera
         // Video Mode
 
         // White Balance
-        if (m_whiteBalance == "auto")
-        {
-            NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_WB_MODE, "Auto");
-        }
-        else
-        {
+//        if (m_whiteBalance == "auto")
+//        {
+//            NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_WB_MODE, "Auto");
+//        }
+//        else
+//        {
             NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_WB_MODE, "Manual");
             if (m_whiteBalanceValue != -1)
             {
                 NIVision.IMAQdxSetAttributeI64(m_sessionId, ATTR_WB_VALUE, m_whiteBalanceValue);
             }
-        }
+//        }
 
         // Exposure
-        if (m_exposure == "auto")
-        {
-            NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_EX_MODE, "AutoAperaturePriority");
-        }
-        else
-        {
+//        if (m_exposure == "auto")
+//        {
+//            NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_EX_MODE, "AutoAperaturePriority");
+//        }
+//        else
+//        {
             NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_EX_MODE, "Manual");
             if (m_exposureValue > -1)
             {
-                long minv = NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_EX_VALUE);
-                long maxv = NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_EX_VALUE);
-                long val = minv + (long) (((double) (maxv - minv)) * m_exposureValue);
-                NIVision.IMAQdxSetAttributeI64(m_sessionId, ATTR_EX_VALUE, val);
+//                long minv = NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_EX_VALUE);
+//                long maxv = NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_EX_VALUE);
+//                long val = minv + (long) (((double) (maxv - minv)) * m_exposureValue);
+                NIVision.IMAQdxSetAttributeF64(m_sessionId, ATTR_EX_VALUE, m_exposureValue);
             }
-        }
+//        }
 
         // Brightness
-        NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_BR_MODE, "Manual");
-        long minv = NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_BR_VALUE);
-        long maxv = NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_BR_VALUE);
-        long val = minv + (long) (((double) (maxv - minv)) * m_brightness);
-        NIVision.IMAQdxSetAttributeI64(m_sessionId, ATTR_BR_VALUE, val);
+//        NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_BR_MODE, "Manual");
+//        long minv = NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_BR_VALUE);
+//        long maxv = NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_BR_VALUE);
+//        long val = minv + (long) (((double) (maxv - minv)) * m_brightness);
+        NIVision.IMAQdxSetAttributeF64(m_sessionId, ATTR_BR_VALUE, m_brightness);
+
+        NIVision.IMAQdxSetAttributeString(m_sessionId, ATTR_ST_MODE, "Manual");
+        NIVision.IMAQdxSetAttributeI64(m_sessionId, ATTR_ST_VALUE, (long)m_saturation);
 
         // Restart acquisition
         if (wasActive)
@@ -201,18 +207,18 @@ public class Camera
     /** Set the brightness, as a percentage (0-1). */
     public synchronized void setBrightness(double brightness)
     {
-        if (brightness > 1)
-        {
-            m_brightness = 1;
-        }
-        else if (brightness < 0)
-        {
-            m_brightness = 0;
-        }
-        else
-        {
+//        if (brightness > 1)
+//        {
+//            m_brightness = 1;
+//        }
+//        else if (brightness < 0)
+//        {
+//            m_brightness = 0;
+//        }
+//        else
+//        {
             m_brightness = brightness;
-        }
+        //}
         m_needSettingsUpdate = true;
     }
 
@@ -271,18 +277,18 @@ public class Camera
     public synchronized void setExposureManual(double value)
     {
         m_exposure = "manual";
-        if (value > 1)
-        {
-            m_exposureValue = 1;
-        }
-        else if (value < 0)
-        {
-            m_exposureValue = 0;
-        }
-        else
-        {
+//        if (value > 1)
+//        {
+//            m_exposureValue = 1;
+//        }
+//        else if (value < 0)
+//        {
+//            m_exposureValue = 0;
+//        }
+//        else
+//        {
             m_exposureValue = value;
-        }
+        //}
         m_needSettingsUpdate = true;
     }
     
@@ -291,6 +297,16 @@ public class Camera
         return m_exposureValue; 
     }
 
+    public synchronized void setSaturation(double sat)
+    {
+        m_saturation = sat;
+    }
+    
+    public synchronized double getSaturation()
+    {
+        return m_saturation;
+    }
+    
     public synchronized void getImage(Image image)
     {
         if (m_needSettingsUpdate)
@@ -300,5 +316,15 @@ public class Camera
         }
 
         NIVision.IMAQdxGrab(m_sessionId, image, 1);
+    }
+    
+    public synchronized void printRanges()
+    {
+        SmartDashboard.putNumber("ExpMin",NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_EX_VALUE));
+        SmartDashboard.putNumber("ExpMax",NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_EX_VALUE));
+        SmartDashboard.putNumber("BriMin",NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_BR_VALUE));
+        SmartDashboard.putNumber("BriMax",NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_BR_VALUE));
+        SmartDashboard.putNumber("SatMin",NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_ST_VALUE));
+        SmartDashboard.putNumber("SatMax",NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_ST_VALUE));
     }
 }
