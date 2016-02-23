@@ -53,8 +53,8 @@ public class OI
         buttonLB2.whenPressed(new LiftToBottom());
         buttonStart2.toggleWhenPressed(new LiftStop());
         
-        buttonY2.whileHeld(new AimerCW_Continous());
-        buttonX2.whileHeld(new AimerCWC_Continous());
+        buttonX2.whileHeld(new AimerCW_Continous());
+        buttonY2.whileHeld(new AimerCWC_Continous());
        
     }
     
