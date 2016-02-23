@@ -320,11 +320,21 @@ public class Camera
     
     public synchronized void printRanges()
     {
-        SmartDashboard.putNumber("ExpMin",NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_EX_VALUE));
-        SmartDashboard.putNumber("ExpMax",NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_EX_VALUE));
-        SmartDashboard.putNumber("BriMin",NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_BR_VALUE));
-        SmartDashboard.putNumber("BriMax",NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_BR_VALUE));
-        SmartDashboard.putNumber("SatMin",NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_ST_VALUE));
-        SmartDashboard.putNumber("SatMax",NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_ST_VALUE));
+        SmartDashboard.putString("Exp", NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_EX_VALUE) + " " +
+                                        NIVision.IMAQdxGetAttributeI64(       m_sessionId, ATTR_EX_VALUE) + " " +
+                                        NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_EX_VALUE));
+        
+        SmartDashboard.putString("Bri", NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_BR_VALUE) + " " +
+                                        NIVision.IMAQdxGetAttributeI64(       m_sessionId, ATTR_BR_VALUE) + " " +
+                                        NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_BR_VALUE));
+        
+        SmartDashboard.putString("Sat", NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_ST_VALUE) + " " +
+                                        NIVision.IMAQdxGetAttributeI64(       m_sessionId, ATTR_ST_VALUE) + " " +
+                                        NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_ST_VALUE));
+        
+        SmartDashboard.putString("WhB", NIVision.IMAQdxGetAttributeMinimumI64(m_sessionId, ATTR_WB_VALUE) + " " +
+                                        NIVision.IMAQdxGetAttributeI64(       m_sessionId, ATTR_WB_VALUE) + " " +
+                                        NIVision.IMAQdxGetAttributeMaximumI64(m_sessionId, ATTR_WB_VALUE));
+
     }
 }
