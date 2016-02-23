@@ -126,7 +126,18 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public void driveRaw(double right, double left, boolean tractionControlEnabled)
     {
-        driveRaw(new double[]{right,right,right}, new double[]{left,left,left}, tractionControlEnabled);
+        int rThing;
+        int lThing; 
+        if (right< 0)
+            rThing =-1;
+        else 
+            rThing = 1;
+        if(left>0)     
+            lThing = -1;
+        else 
+            lThing = 1; 
+                
+        driveRaw(new double[]{right,(Math.abs(right)-.1)*rThing,right}, new double[]{left,(Math.abs(left)-.1)*lThing,left}, tractionControlEnabled);
     }
     
     /**

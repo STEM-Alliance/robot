@@ -23,7 +23,7 @@ public class ShooterRelease extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speedTop = .7 + .2 * OI.getShooterSpeedAdjust();
+        double speedTop = .65 + .2 * OI.getShooterSpeedAdjust();
         double speedBottom = .8 + .2 * OI.getShooterSpeedAdjust();
         Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
         

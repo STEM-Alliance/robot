@@ -21,9 +21,9 @@ public class DriveTankWithXbox extends Command {
     protected void execute() {
         Utilities.PrintCommand("Drive", this);
        
-        double adjust = .5 * OI.getThrottleHighSpeed();
-        double left = OI.getSpeedLeft() * .5 + adjust;
-        double right = OI.getSpeedRight() * .5 + adjust;
+        double adjust = .5 + .5 * OI.getThrottleHighSpeed();
+        double left = OI.getSpeedLeft() * adjust;
+        double right = OI.getSpeedRight() * adjust;
         
         Robot.rockerDriveSubsystem.driveRaw(right, left, OI.getTractionControl());
     }
