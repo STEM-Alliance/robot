@@ -26,6 +26,7 @@ public class Robot extends IterativeRobot {
 	public static  ShooterSubsystem shooterSubsystem;
 	public static  LiftSubsystem liftSubsystem ;
 	public static  AimerSubsystem aimerSubsystem ;
+	public static ManipulatorSubsystem manipulatorSubsystem;
 	public static OI oi;
 
     Command autonomousCommand;
