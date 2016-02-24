@@ -1,25 +1,25 @@
 <xml version="1.0">
 <dashboard>
 	<widget field="Aimer Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="557" y="100"/>
+		<location x="546" y="36"/>
 	</widget>
 	<widget field="Sat" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="564" y="17"/>
+		<location x="220" y="63"/>
 	</widget>
 	<widget field="Exp" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="212" y="75"/>
+		<location x="218" y="13"/>
 	</widget>
 	<widget field="Bri" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="455" y="20"/>
+		<location x="223" y="38"/>
 	</widget>
 	<widget field="WhB" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="527" y="54"/>
+		<location x="214" y="88"/>
 	</widget>
 	<widget field="CameraState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="410"/>
+		<location x="26" y="430"/>
 	</widget>
 	<widget field="Lift Pot L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="720" y="217"/>
+		<location x="721" y="227"/>
 	</widget>
 	<widget field="Lift Limit R Rev" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="690" y="465"/>
@@ -37,7 +37,7 @@
 		<location x="710" y="87"/>
 	</widget>
 	<widget field="ball release angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="172" y="420"/>
+		<location x="15" y="409"/>
 	</widget>
 	<widget field="Aimer Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="686" y="34"/>
@@ -52,37 +52,37 @@
 		<location x="702" y="65"/>
 	</widget>
 	<widget field="Lift Speed R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="706" y="357"/>
+		<location x="705" y="367"/>
 	</widget>
 	<widget field="Lift Speed L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="706" y="338"/>
+		<location x="706" y="344"/>
 	</widget>
 	<widget field="Lift Pot R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="718" y="237"/>
+		<location x="718" y="249"/>
 	</widget>
 	<widget field="Lift Height R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="706" y="297"/>
+		<location x="706" y="308"/>
 	</widget>
 	<widget field="Lift Height L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="707" y="276"/>
+		<location x="707" y="285"/>
 	</widget>
 	<widget field="Lift Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="710" y="174"/>
 	</widget>
 	<widget field="Lift Total Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="544" y="133"/>
+		<location x="683" y="196"/>
 	</widget>
 	<widget field="Lift Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="723" y="133"/>
 	</widget>
 	<widget field="Test Pitch" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="21" y="96"/>
+		<location x="70" y="104"/>
 	</widget>
 	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="0" y="96"/>
+		<location x="349" y="9"/>
 	</widget>
 	<widget field="test Pitch" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="11" y="75"/>
+		<location x="71" y="80"/>
 	</widget>
 	<widget field="Width" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="39" y="315"/>
@@ -92,20 +92,22 @@
 		<height>20</height>
 	</widget>
 	<widget field="Dimensions" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="30" y="180"/>
+		<location x="31" y="186"/>
 	</widget>
 	<widget field="imaq error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="12" y="159"/>
+		<location x="34" y="161"/>
 	</widget>
 	<widget field="Thresh Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="12" y="138"/>
+		<location x="7" y="135"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="285" y="162"/>
+		<location x="209" y="110"/>
+		<width>449</width>
+		<height>330</height>
 	</static-widget>
 	<widget field="Vision error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="138" y="54"/>
-		<width>388</width>
+		<location x="179" y="454"/>
+		<width>458</width>
 	</widget>
 	<widget field="Vision Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="454"/>
@@ -121,13 +123,13 @@
 		<height>21</height>
 	</widget>
 	<widget field="Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="11" y="54"/>
+		<location x="75" y="56"/>
 	</widget>
 	<widget field="FrameSizeDownsampled" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="33"/>
 	</widget>
 	<widget field="FrameSize" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="12"/>
+		<location x="67" y="11"/>
 	</widget>
 	<widget field="StartingAngle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="413" y="60"/>
@@ -156,15 +158,9 @@
 		<location x="-10" y="-9"/>
 	</widget>
 	<widget field="Image to show" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="23" y="202"/>
+		<location x="56" y="216"/>
 	</widget>
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="SatMax"/>
-	<hidden field="SatMin"/>
-	<hidden field="ExpMin"/>
-	<hidden field="ExpMax"/>
-	<hidden field="BriMax"/>
-	<hidden field="BriMin"/>
 </xml>

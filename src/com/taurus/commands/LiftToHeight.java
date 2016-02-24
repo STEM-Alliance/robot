@@ -1,42 +1,47 @@
 package com.taurus.commands;
 
-import com.taurus.robot.OI;
+import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ShooterGrab extends Command {
+public class LiftToHeight extends Command
+{
+    private boolean done;
+    private double endHeight;
     
-    public ShooterGrab() {
+    /**
+     * Move the lift to this height from the floor
+     * @param height (signed inches)
+     */
+    public LiftToHeight(double height) {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.shooterSubsystem);
-        requires(Robot.ballReleaseSubsystem);
+        requires(Robot.liftSubsystem);
+        this.endHeight = height;
     }
-
+    
     // Called just before this Command runs the first time
     protected void initialize() {
+        done = false;
     }
-
+    
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speed = .6;
-        Robot.shooterSubsystem.setSpeed(-speed, -speed);
-        Robot.ballReleaseSubsystem.setBallRelease(false);
+        Utilities.PrintCommand("Lift", this);
+        done = Robot.liftSubsystem.setHeightFromFloor(endHeight);//store result of setHeight function into the done variable
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.shooterSubsystem.stopSwitch.get();
+        return done;
     }
-
+    
     // Called once after isFinished returns true
     protected void end() {
-        Robot.shooterSubsystem.setSpeed(0,0);
     }
-
+    
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-        end();
     }
 }
