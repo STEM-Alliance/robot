@@ -25,7 +25,15 @@ public class DriveTankWithXbox extends Command {
         double left = OI.getSpeedLeft() * adjust;
         double right = OI.getSpeedRight() * adjust;
         
-        Robot.rockerDriveSubsystem.driveRaw(right, left, OI.getTractionControl());
+        double[] rights = {right,right,right};
+        rights[1] = rights[1] * ( 1 + OI.getTractionMiddleIncrease() );
+        rights[2] = rights[2] * ( 1 + OI.getTractionMiddleIncrease() );
+        
+        double[] lefts = {left,left,left};
+        lefts[1] = lefts[1] * ( 1 + OI.getTractionMiddleIncrease() );
+        lefts[2] = lefts[2] * ( 1 + OI.getTractionMiddleIncrease() );
+        
+        Robot.rockerDriveSubsystem.driveRaw(rights, lefts, OI.getTractionControl());
     }
 
     // Make this return true when this Command no longer needs to run execute()

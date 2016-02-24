@@ -283,8 +283,8 @@ public class Vision implements Runnable
     {
         GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
         
-        Rect centerRect = new Rect((int)(size.width-10)/2,  // left
-                                   (int)(size.height-10)/2, // top
+        Rect centerRect = new Rect((int)(size.height-10+40)/2, // top
+                                   (int)(size.width-10)/2,  // left
                                    10,                      // width
                                    10);                     // height
         // draw a circle in the center of the image/where the ball shoots

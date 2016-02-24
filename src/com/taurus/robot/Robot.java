@@ -28,6 +28,7 @@ public class Robot extends IterativeRobot {
 	public static  AimerSubsystem aimerSubsystem ;
 	public static ManipulatorSubsystem manipulatorSubsystem;
 	public static OI oi;
+	public static BallReleaseSubsystem ballReleaseSubsystem;
 
     Command autonomousCommand;
     SendableChooser chooser;
@@ -42,6 +43,7 @@ public class Robot extends IterativeRobot {
         shooterSubsystem = new ShooterSubsystem();
         rockerDriveSubsystem = new RockerDriveSubsystem();
         aimerSubsystem = new AimerSubsystem();
+        ballReleaseSubsystem = new BallReleaseSubsystem();
         oi = new OI();
         chooser = new SendableChooser();
         chooser.addDefault("Auto Terrain", new AutoTerrain());
@@ -60,6 +62,7 @@ public class Robot extends IterativeRobot {
 	
 	public void disabledPeriodic() {
 	    liftSubsystem.printSensors();
+	    aimerSubsystem.updatePotOffsets();
 		Scheduler.getInstance().run();
 	}
 

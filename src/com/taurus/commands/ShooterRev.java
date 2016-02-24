@@ -32,7 +32,6 @@ public class ShooterRev extends Command {
         double speedTop = .7 + .2 * OI.getShooterSpeedAdjust();
         double speedBottom = .8 + .2 * OI.getShooterSpeedAdjust();
         Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
-        Robot.shooterSubsystem.setBallRelease(false);
     }
 
     // Make this return true when this Command no longer needs to run execute()

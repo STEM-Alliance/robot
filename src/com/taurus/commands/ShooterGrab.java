@@ -10,6 +10,7 @@ public class ShooterGrab extends Command {
     public ShooterGrab() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.shooterSubsystem);
+        requires(Robot.ballReleaseSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -20,7 +21,7 @@ public class ShooterGrab extends Command {
     protected void execute() {
         double speed = .5 + .5 * OI.getShooterSpeedAdjust();
         Robot.shooterSubsystem.setSpeed(-speed, -speed);
-        Robot.shooterSubsystem.setBallRelease(false);
+        Robot.ballReleaseSubsystem.setBallRelease(false);
     }
 
     // Make this return true when this Command no longer needs to run execute()
