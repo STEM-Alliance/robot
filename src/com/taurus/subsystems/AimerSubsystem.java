@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AimerSubsystem extends Subsystem
 {
-    private final double ANGLE_MAX = 100;  // TODO - Determine upper safe limit through testing
-    private final double ANGLE_MIN = 0;  // TODO - Determine lower safe limit through testing
+    private final double ANGLE_MAX = 136 - 5;  // TODO - Determine upper safe limit through testing
+    private final double ANGLE_MIN = -49 + 5;  // TODO - Determine lower safe limit through testing
     private final double TOLERANCE = 5;  // Degrees from desired angle that counts as that angle
     
     private Vision vision;
@@ -106,6 +106,6 @@ public class AimerSubsystem extends Subsystem
         SmartDashboard.putNumber("Aimer Raw", motor.getAnalogInRaw()/1023);
 
         angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
-        angle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 0));
+        angle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 360));
     }
 }
