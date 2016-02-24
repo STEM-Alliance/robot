@@ -1,95 +1,133 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="ball release angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="676" y="359"/>
+	<widget field="Aimer Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="557" y="100"/>
 	</widget>
-	<widget field="Aimer Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="11" y="75"/>
+	<widget field="Sat" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="564" y="17"/>
 	</widget>
-	<widget field="Drive Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="11" y="54"/>
+	<widget field="Exp" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="212" y="75"/>
 	</widget>
-	<widget field="Lift Desired Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="33"/>
+	<widget field="Bri" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="455" y="20"/>
 	</widget>
-	<widget field="Test Yaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="411"/>
+	<widget field="WhB" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="527" y="54"/>
 	</widget>
-	<widget field="Width" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="390"/>
-	</widget>
-	<widget field="Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="369"/>
-	</widget>
-	<widget field="Area" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="348"/>
-	</widget>
-	<widget field="Center" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="327"/>
-	</widget>
-	<widget field="Vision Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="306"/>
-	</widget>
-	<widget field="Orientation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="285"/>
-	</widget>
-	<widget field="Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="264"/>
-	</widget>
-	<widget field="FrameSize" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="243"/>
-	</widget>
-	<widget field="FrameSizeDownsampled" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="222"/>
-	</widget>
-	<widget field="Lift Speed R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="222" y="390"/>
-		<height>20</height>
-	</widget>
-	<widget field="Lift Speed L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="225" y="421"/>
-	</widget>
-	<widget field="Lift Pot R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="370" y="391"/>
+	<widget field="CameraState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="410"/>
 	</widget>
 	<widget field="Lift Pot L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="375" y="415"/>
+		<location x="720" y="217"/>
+	</widget>
+	<widget field="Lift Limit R Rev" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="690" y="465"/>
+	</widget>
+	<widget field="Lift Limit L Rev" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="693" y="443"/>
+	</widget>
+	<widget field="Lift Limit R Fwd" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="687" y="422"/>
+	</widget>
+	<widget field="Lift Limit L Fwd" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="687" y="400"/>
+	</widget>
+	<widget field="Traction" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="710" y="87"/>
+	</widget>
+	<widget field="ball release angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="172" y="420"/>
+	</widget>
+	<widget field="Aimer Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="686" y="34"/>
+	</widget>
+	<widget field="Lift Desired Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="671" y="153"/>
+	</widget>
+	<widget field="Aimer Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="694" y="12"/>
+	</widget>
+	<widget field="Drive Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="702" y="65"/>
+	</widget>
+	<widget field="Lift Speed R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="706" y="357"/>
+	</widget>
+	<widget field="Lift Speed L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="706" y="338"/>
+	</widget>
+	<widget field="Lift Pot R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="718" y="237"/>
 	</widget>
 	<widget field="Lift Height R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="512" y="392"/>
+		<location x="706" y="297"/>
 	</widget>
 	<widget field="Lift Height L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="513" y="414"/>
+		<location x="707" y="276"/>
 	</widget>
 	<widget field="Lift Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="687" y="386"/>
+		<location x="710" y="174"/>
 	</widget>
 	<widget field="Lift Total Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="677" y="410"/>
+		<location x="544" y="133"/>
 	</widget>
 	<widget field="Lift Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="727" y="428"/>
+		<location x="723" y="133"/>
+	</widget>
+	<widget field="Test Pitch" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="21" y="96"/>
 	</widget>
 	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="0" y="96"/>
+	</widget>
+	<widget field="test Pitch" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="11" y="75"/>
+	</widget>
+	<widget field="Width" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="39" y="315"/>
+	</widget>
+	<widget field="Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="36" y="292"/>
+		<height>20</height>
+	</widget>
+	<widget field="Dimensions" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="30" y="180"/>
+	</widget>
+	<widget field="imaq error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="12" y="159"/>
+	</widget>
+	<widget field="Thresh Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="12" y="138"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="285" y="162"/>
+	</static-widget>
+	<widget field="Vision error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="138" y="54"/>
+		<width>388</width>
+	</widget>
+	<widget field="Vision Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="454"/>
+	</widget>
+	<widget field="Orientation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="13" y="389"/>
+	</widget>
+	<widget field="Center" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="34" y="365"/>
+	</widget>
+	<widget field="Area" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="44" y="339"/>
+		<height>21</height>
+	</widget>
+	<widget field="Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="11" y="54"/>
+	</widget>
+	<widget field="FrameSizeDownsampled" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="33"/>
+	</widget>
+	<widget field="FrameSize" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="12"/>
-	</widget>
-	<widget field="Rotation Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="669" y="163"/>
-	</widget>
-	<widget field="Drive Mode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="680" y="126"/>
-	</widget>
-	<widget field="Rotation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="695" y="47"/>
-	</widget>
-	<widget field="Velocity Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="691" y="96"/>
-	</widget>
-	<widget field="Velocity X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="689" y="72"/>
-	</widget>
-	<widget field="Gear" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="254" y="26"/>
 	</widget>
 	<widget field="StartingAngle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="413" y="60"/>
@@ -106,38 +144,11 @@
 	<widget field="Autonomous mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="667" y="60"/>
 	</widget>
-	<widget field="Application" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="428" y="2"/>
-		<width>114</width>
-		<property name="Editable" value="false"/>
-	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
 		<location x="850" y="5"/>
 		<width>285</width>
 		<height>466</height>
 	</static-widget>
-	<widget field="Last Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="695" y="25"/>
-		<width>127</width>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="Field Relative" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="565" y="3"/>
-		<width>119</width>
-		<height>20</height>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="Brake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="603" y="25"/>
-		<width>81</width>
-		<height>23</height>
-		<property name="Editable" value="false"/>
-	</widget>
-	<widget field="Gyro Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="703" y="2"/>
-		<width>118</width>
-		<property name="Editable" value="false"/>
-	</widget>
 	<widget field="Drive Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="-10" y="68"/>
 	</widget>
@@ -145,9 +156,15 @@
 		<location x="-10" y="-9"/>
 	</widget>
 	<widget field="Image to show" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="-9" y="146"/>
+		<location x="23" y="202"/>
 	</widget>
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="SatMax"/>
+	<hidden field="SatMin"/>
+	<hidden field="ExpMin"/>
+	<hidden field="ExpMax"/>
+	<hidden field="BriMax"/>
+	<hidden field="BriMin"/>
 </xml>

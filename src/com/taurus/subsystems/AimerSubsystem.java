@@ -26,8 +26,9 @@ public class AimerSubsystem extends Subsystem
     public AimerSubsystem()
     {
         motor = new CANTalon(RobotMap.CAN_SHOOTER_TALON_AIMER);
-        pid = new PIDController(1, 0, 0, 1);  //TODO update these values 
+        pid = new PIDController(.2, 0, 0, 1);  //TODO update these values 
         angle = new MagnetoPotSRX(motor,360);
+        angle.setAverage(true,6);
         vision = Vision.getInstance();
     }
 
@@ -49,7 +50,9 @@ public class AimerSubsystem extends Subsystem
         // Update pot offsets if we change them in smart dashboard
         updatePotOffsets();
         
-        if (angle.get() + changeInAngle > ANGLE_MAX || angle.get() - changeInAngle < ANGLE_MIN)
+        double angleCurrent = angle.get();
+        
+        if (angleCurrent + changeInAngle > ANGLE_MAX || angleCurrent - changeInAngle < ANGLE_MIN)
         {
             // Being commanded to an unsafe angle
             motor.set(0);
@@ -84,6 +87,7 @@ public class AimerSubsystem extends Subsystem
      */
     public void setSpeed(double speed)
     {   
+        updatePotOffsets();
         motor.set(speed);
     }
     
@@ -96,9 +100,10 @@ public class AimerSubsystem extends Subsystem
      * Grab the latest pot offsets from Dashboard
      * TODO: add limit switch checks
      */
-    private void updatePotOffsets()
+    public void updatePotOffsets()
     {
         SmartDashboard.putNumber("Aimer Angle", angle.get());
+        SmartDashboard.putNumber("Aimer Raw", motor.getAnalogInRaw()/1023);
 
         angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
         angle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 0));

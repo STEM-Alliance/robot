@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.Button;
 
 import com.taurus.controller.Xbox;
 import com.taurus.controller.XboxButton;
+import com.taurus.controller.XboxTriggerButton;
 import com.taurus.commands.*;
 
 /**
@@ -41,16 +42,22 @@ public class OI
 
     Button buttonBack2 = new XboxButton(xbox2, Xbox.ButtonType.kBack);
     Button buttonStart2 = new XboxButton(xbox2, Xbox.ButtonType.kStart);
+
+    Button buttonRightTrigger = new XboxTriggerButton(xbox2, Xbox.Hand.kRight);
+    Button buttonLeftTrigger = new XboxTriggerButton(xbox2, Xbox.Hand.kLeft);
     
     public OI() 
     {
         buttonBack1.toggleWhenPressed(new DriveArcadeWithXbox());
         
         buttonA2.whileHeld(new ShooterGrab());
-        buttonB2.whenPressed(new ShooterFire());
+        //buttonB2.whenPressed(new ShooterFire());
+        
+        buttonLeftTrigger.whileHeld(new ShooterRev());
+        buttonRightTrigger.whenPressed(new ShooterRelease());
 
-        buttonRB2.whenPressed(new LiftToTop());
-        buttonLB2.whenPressed(new LiftToBottom());
+        buttonLB2.whenPressed(new LiftToTop());
+        buttonRB2.whenPressed(new LiftToBottom());
         buttonStart2.toggleWhenPressed(new LiftStop());
         
         buttonX2.whileHeld(new AimerCW_Continous());
@@ -60,7 +67,7 @@ public class OI
     
     public static boolean getTractionControl()
     {
-        return xbox1.getTrigger(Hand.kRight);
+        return xbox1.getBumper(Hand.kRight);
     }
     
     public static double getSpeedLeft()
@@ -90,12 +97,18 @@ public class OI
     
     public static double getShooterSpeedAdjust()
     {
-        return xbox2.getTriggerVal(Hand.kRight);
+        //return xbox2.getTriggerVal(Hand.kRight);
+        return 1;
     }
     
     public static int getDpad2()
     {
         return xbox2.getPOV(0);
+    }
+
+    public static double getTractionMiddleIncrease()
+    {
+        return xbox1.getTriggerVal(Hand.kRight);
     }
     
 }

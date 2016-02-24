@@ -21,11 +21,12 @@ public class RobotMap {
     public static final int CAN_LIFT_TALON_R = 31;
 
     public static final int PIN_DIO_SHOOTER_BALL_SENSOR = 0;
+
+    public static final int PIN_SERVO_SHOOTER_BALL_RELEASE_1 = 0;
+    public static final int PIN_SERVO_SHOOTER_BALL_RELEASE_2 = 1;
     
-    public static final int PIN_SERVO_SHOOTER_BALL_RELEASE = 0;
-    
-    public static final int PIN_SERVO_LIFT_BRAKE_L = 1;
-    public static final int PIN_SERVO_LIFT_BRAKE_R = 2;
+    public static final int PIN_SERVO_LIFT_BRAKE_L = 2;
+    public static final int PIN_SERVO_LIFT_BRAKE_R = 3;
     
     public static final int PIN_RELAY_LEDS = 0;
 }
