@@ -224,6 +224,12 @@ public class LiftSubsystem extends Subsystem{
                 }
             }
             
+            if(left < 0.01 && left > -0.01 &&
+                    right < 0.01 && right > -0.01)
+            {
+                enableBrakeMode(false);
+            }
+            
             motorRight.set(right);
             motorLeft.set(left);
         }
@@ -439,5 +445,17 @@ public class LiftSubsystem extends Subsystem{
      */
     public double getHeightFromFloorAverage(){
         return getHeightFromLiftBottomAverage() + LIMIT_LOWER;
+    }
+
+    public void enableBrakeMode(boolean b)
+    {
+        motorLeft.enableBrakeMode(b);
+        motorRight.enableBrakeMode(b);
+        
+    }
+
+    public boolean isLevel()
+    {
+        return Math.abs(getHeightFromLiftBottomL() - getHeightFromLiftBottomR()) < LIMIT_TOLERANCE;
     }
 }

@@ -55,6 +55,8 @@ public class Vision implements Runnable
     private boolean targetDetectionOn = true;
     private boolean imageRotation = true;
     
+    private int cameraQuality = 30;
+    
     private Target largestTarget;
 
     public static Vision getInstance(){
@@ -90,8 +92,6 @@ public class Vision implements Runnable
         imageChooser.addDefault("Input", ImageChoices.Input);
         imageChooser.addObject("Threshold", ImageChoices.Threshold);
         SmartDashboard.putData("Image to show", imageChooser);
-
-        CameraServer.getInstance().setQuality(30);
 
         visionThread = new Thread(this);
         visionThread.setPriority(Thread.MIN_PRIORITY);
@@ -238,7 +238,7 @@ public class Vision implements Runnable
                         
                         if(imageToSend == ImageChoices.Input)
                         {
-                            addTargets(frame, COLORS.RED);
+                            addTargets(frame, COLORS.MAGENTA);
 
                             // scale if needed
                             NIVision.imaqScale(frameDownsampled, frame, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
@@ -280,13 +280,11 @@ public class Vision implements Runnable
      * @param frameDownsampled downscaled image to save it to
      */
     private synchronized void addTargets(Image frame, float color)
-    {
-        GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
-        
-        Rect centerRect = new Rect((int)(size.height-10+40)/2, // top
-                                   (int)(size.width-10)/2,  // left
-                                   10,                      // width
-                                   10);                     // height
+    {        
+        Rect centerRect = new Rect(Constants.BallShotY - Constants.BallShotDiameter/2,  // top
+                                   Constants.BallShotX - Constants.BallShotDiameter/2,  // left
+                                   Constants.BallShotDiameter,                          // width
+                                   Constants.BallShotDiameter);                         // height
         // draw a circle in the center of the image/where the ball shoots
         NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, color);
 
@@ -312,6 +310,13 @@ public class Vision implements Runnable
      */
     private synchronized void updateSettings(boolean forceUpdate)
     {
+        int cameraQual = Preferences.getInstance().getInt("CameraQuality", 30);
+        if(cameraQual != cameraQuality)
+        {
+            CameraServer.getInstance().setQuality(cameraQual);
+            cameraQuality = cameraQual;
+        }
+        
         int videoMode = Preferences.getInstance().getInt("VIDEO_MODE", 93);
         if(camera.getVideoMode() != videoMode)
         {

@@ -6,7 +6,7 @@ public class ShooterFire extends CommandGroup {
 
     public ShooterFire() {
         addSequential(new ShooterRev());
-        //addSequential(new Targeting());
+        // TODO - DRL add once this works //addSequential(new Targeting());
         addSequential(new ShooterRelease());
         // sequential stop
     }

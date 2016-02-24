@@ -51,7 +51,7 @@ public class OI
         buttonBack1.toggleWhenPressed(new DriveArcadeWithXbox());
         
         buttonA2.whileHeld(new ShooterGrab());
-        //buttonB2.whenPressed(new ShooterFire());
+        buttonB2.whileHeld(new LoadBall());
         
         buttonLeftTrigger.whileHeld(new ShooterRev());
         buttonRightTrigger.whenPressed(new ShooterRelease());
@@ -62,7 +62,6 @@ public class OI
         
         buttonX2.whileHeld(new AimerCW_Continous());
         buttonY2.whileHeld(new AimerCWC_Continous());
-       
     }
     
     public static boolean getTractionControl()

@@ -22,7 +22,7 @@ public class ShooterRev extends Command {
         
         Robot.shooterSubsystem.enableLEDs(true);
         
-        setTimeout(4);
+        //setTimeout(4);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -36,12 +36,13 @@ public class ShooterRev extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return isTimedOut();
+        return false;//isTimedOut();
     }
 
     // Called once after isFinished returns true
     protected void end() {
-        //Robot.shooterSubsystem.setSpeed(0,0);
+        Robot.shooterSubsystem.setSpeed(0,0);
+        Robot.shooterSubsystem.enableLEDs(false);
     }
 
     // Called when another command which requires one or more of the same
