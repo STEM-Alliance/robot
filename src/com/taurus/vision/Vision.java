@@ -23,19 +23,20 @@ public class Vision implements Runnable
     @SuppressWarnings("unused")
     private static final class COLORS
     {
-        private static final float BLACK   = 0x000000;
-        private static final float WHITE   = 0xffffff;
-        private static final float RED     = 0x0000ff;
-        private static final float ORANGE  = 0x0080ff;
-        private static final float YELLOW  = 0x00ffff;
-        private static final float LIME    = 0x00ff80;
-        private static final float GREEN   = 0x00ff00;
-        private static final float TEAL    = 0x80ff00;
-        private static final float CYAN    = 0xffff00;
-        private static final float VIOLET  = 0xff8000;
-        private static final float BLUE    = 0xff0000;
-        private static final float PINK    = 0xff0080;
-        private static final float MAGENTA = 0xff00ff;
+        // order is bgr
+        private static final int BLACK   = 0x000000;
+        private static final int WHITE   = 0xffffff;
+        private static final int RED     = 0x0000ff;
+        private static final int ORANGE  = 0x0080ff;
+        private static final int YELLOW  = 0x00ffff;
+        private static final int LIME    = 0x00ff80;
+        private static final int GREEN   = 0x00ff00;
+        private static final int TEAL    = 0x80ff00;
+        private static final int CYAN    = 0xffff00;
+        private static final int VIOLET  = 0xff8000;
+        private static final int BLUE    = 0xff0000;
+        private static final int PINK    = 0xff0080;
+        private static final int MAGENTA = 0xff00ff;
     }
     
     private int RescaleSize = 1; // large size == smaller image; 2 == 1/2 image size
@@ -116,6 +117,7 @@ public class Vision implements Runnable
 //        criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_CONVEX_HULL_AREA, 0, 100.0, 0, 0);
         
         double TimeLastVision = 0;
+        double TimeStart = Timer.getFPGATimestamp();
 
         frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
         frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
@@ -143,8 +145,16 @@ public class Vision implements Runnable
             
             camera.printRanges();
             
-            updateSettings(true);
-            
+            if(Timer.getFPGATimestamp() - TimeStart < 2)
+            {
+                // force it for 2 seconds to handle the weird settings bug
+                updateSettings(true);
+            }
+            else
+            {
+                // otherwise only update if it changes
+                updateSettings();
+            }
 
             // we have an open camera session 
             if (camera.isCapturing())
@@ -278,7 +288,7 @@ public class Vision implements Runnable
      * @param frame input image
      * @param frameDownsampled downscaled image to save it to
      */
-    private synchronized void addTargets(Image frame, float color)
+    private synchronized void addTargets(Image frame, int color)
     {        
         Rect centerRect = new Rect(Constants.BallShotY - Constants.BallShotDiameter/2,  // top
                                    Constants.BallShotX - Constants.BallShotDiameter/2,  // left
@@ -289,13 +299,52 @@ public class Vision implements Runnable
 
         if(largestTarget != null)
         {
-            int top = (int)(largestTarget.Y() - largestTarget.H()/2);
-            int left = (int)(largestTarget.X() - largestTarget.W()/2);
-            
             // add Target Drawing
-            Rect targetRect = new Rect(top, left, (int)largestTarget.H(), (int)largestTarget.W());
+            Rect targetRect = new Rect((int)largestTarget.Top(), (int)largestTarget.Left(), (int)Math.ceil(largestTarget.H()), (int)Math.ceil(largestTarget.W()));
             // draw an outline of a rectangle in RED around the target
             NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, color);
+            
+            // Write Text of Target Location
+            String descXY = "(" + (int)largestTarget.X() + "," + (int)largestTarget.Y()+")";
+            String descWH = "(" + (int)largestTarget.W() + "," + (int)largestTarget.H()+")";
+            String descPitch = "P: " + (int)largestTarget.Pitch() + "\u00b0";
+            String descYaw = "Y: " + (int)largestTarget.Yaw() + "\u00b0";
+            
+            OverlayTextOptions opts = new OverlayTextOptions("Litt", 
+                                                             20,
+                                                             1,
+                                                             0,
+                                                             0,
+                                                             0, 
+                                                             TextAlignment.CENTER,
+                                                             VerticalTextAlignment.TOP, 
+                                                             new RGBValue(0,0,0,0),
+                                                             0);
+            int xPos = 0;
+            int yPos = (int)largestTarget.Top();
+            
+            if(largestTarget.X() > Constants.Width * 2 / 3)
+            {
+                // write on left side
+                opts.horizontalTextAlignment = TextAlignment.RIGHT;
+                xPos = (int)(largestTarget.Left() - 5);
+            }
+            else
+            {
+                // write on right side
+                opts.horizontalTextAlignment = TextAlignment.RIGHT;
+                xPos = (int)(largestTarget.Left() + largestTarget.W() + 5);
+            }
+
+            int R = color & 0x0000ff;
+            int G = color & 0x00ff00 >> 8;
+            int B = color & 0xff0000 >> 16;
+            RGBValue val = new RGBValue(B, G, R, 1);
+
+            NIVision.imaqOverlayText(frame, new Point(xPos, yPos), descXY, val, opts, "target");
+            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+20), descWH, val, opts, "target");
+            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+40), descPitch, val, opts, "target");
+            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+60), descYaw, val, opts, "target");
         }
     }
 
@@ -310,38 +359,38 @@ public class Vision implements Runnable
     private synchronized void updateSettings(boolean forceUpdate)
     {
         int cameraQual = Preferences.getInstance().getInt("CameraQuality", 30);
-        if(cameraQual != cameraQuality)
+        if(cameraQual != cameraQuality || forceUpdate)
         {
             CameraServer.getInstance().setQuality(cameraQual);
             cameraQuality = cameraQual;
         }
         
         int videoMode = Preferences.getInstance().getInt("VIDEO_MODE", 93);
-        if(camera.getVideoMode() != videoMode)
+        if(camera.getVideoMode() != videoMode || forceUpdate)
         {
             camera.setVideoMode(videoMode);
         }
         
         int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4500);
-        if(camera.getWhiteBalanceManual() != whiteBalance)
+        if(camera.getWhiteBalanceManual() != whiteBalance || forceUpdate)
         {
             camera.setWhiteBalanceManual(whiteBalance);
         }
         
         double exposure = Preferences.getInstance().getDouble("Exposure", 1);
-        if(camera.getExposureManual() != exposure)
+        if(camera.getExposureManual() != exposure || forceUpdate)
         {
             camera.setExposureManual(exposure);
         }
         
         double brightness = Preferences.getInstance().getDouble("Brightness", 1);
-        if(camera.getBrightness() != brightness)
+        if(camera.getBrightness() != brightness || forceUpdate)
         {
             camera.setBrightness(brightness);
         }
         
         double sat = Preferences.getInstance().getDouble("Saturation", .5);
-        if(camera.getSaturation() != sat)
+        if(camera.getSaturation() != sat || forceUpdate)
         {
             camera.setSaturation(sat);
         }
