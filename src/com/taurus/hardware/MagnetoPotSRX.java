@@ -24,6 +24,7 @@ public class MagnetoPotSRX  {
     private boolean average = false;
     private CircularBuffer averageBuff;
     private double averageLastTime = 0;
+    private double lastAverage = 0;
     
     public CANTalon m_Talon;
     
@@ -80,8 +81,14 @@ public class MagnetoPotSRX  {
             {
                 averageBuff.pushFront(val);
                 averageLastTime = Timer.getFPGATimestamp();
+                
+                val = averageBuff.getAverage();
+                lastAverage = val;
             }
-            val = averageBuff.getAverage();
+            else
+            {
+                val = lastAverage;
+            }
         }
         
         return val;
@@ -162,6 +169,7 @@ public class MagnetoPotSRX  {
         {
             this.averageBuff.pushFront(val);
         }
+        lastAverage = val;
         
     }
 }
