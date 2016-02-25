@@ -16,7 +16,7 @@ public class AimerToAngle extends Command
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.aimerSubsystem);
-        AIMER_LOAD_BALL = 60;  // TODO - DRL determine ideal angle to load ball from floor though testing
+        AIMER_LOAD_BALL = Robot.aimerSubsystem.ANGLE_GRAB_FROM_BOTTOM_FRONT;
     }
     
     /**
@@ -25,6 +25,9 @@ public class AimerToAngle extends Command
      */
     public AimerToAngle(double desiredAngle)
     {
+        // Use requires() here to declare subsystem dependencies
+        // eg. requires(chassis);
+        requires(Robot.aimerSubsystem);
         AIMER_LOAD_BALL = desiredAngle;
     }
     
@@ -36,7 +39,7 @@ public class AimerToAngle extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Aimer", this);
-        Robot.aimerSubsystem.aim(AIMER_LOAD_BALL - Robot.aimerSubsystem.getCurrentAngle());       
+        Robot.aimerSubsystem.aimTo(AIMER_LOAD_BALL);       
     }
 
     // Make this return true when this Command no longer needs to run execute()

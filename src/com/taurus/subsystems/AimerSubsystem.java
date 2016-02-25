@@ -14,9 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AimerSubsystem extends Subsystem
 {
-    private final double ANGLE_MAX = 136 - 5;  // TODO - Determine upper safe limit through testing
-    private final double ANGLE_MIN = -49 + 5;  // TODO - Determine lower safe limit through testing
+    private final double ANGLE_MAX = 140 - 5;
+    private final double ANGLE_MIN = -50 + 5;
     private final double TOLERANCE = 5;  // Degrees from desired angle that counts as that angle
+
+    public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
     
     private Vision vision;
     private MagnetoPotSRX angle;
@@ -41,7 +43,7 @@ public class AimerSubsystem extends Subsystem
     
     /**
      * aims the shooter
-     * @param changeInAngle 0 to 360
+     * @param changeInAngle -360 to 360
      * @return true if desired angle reached
      */
     public boolean aim(double changeInAngle)
@@ -52,26 +54,39 @@ public class AimerSubsystem extends Subsystem
         // Update pot offsets if we change them in smart dashboard
         updatePotOffsets();
         
-        double angleCurrent = angle.get();
+        double angleCurrent = getCurrentAngle();
+        double desiredAngle = angleCurrent + changeInAngle;
         
-        if (angleCurrent + changeInAngle > ANGLE_MAX || angleCurrent - changeInAngle < ANGLE_MIN)
+        
+        if (desiredAngle > ANGLE_MAX ||
+                desiredAngle < ANGLE_MIN)
         {
             // Being commanded to an unsafe angle
-            motor.set(0);
+            setSpeed(0);
         }
         else if (Math.abs(changeInAngle) < TOLERANCE)
         {
             // At the desired angle
-            motor.set(0);
+            setSpeed(0);
             done = true;
         }
         else
         {
             motorOutput = pid.update(changeInAngle);
-            motor.set(motorOutput);
+            setSpeed(motorOutput);
         }
         
         return done;
+    }
+
+    /**
+     * aims the shooter
+     * @param desiredAngle -360 to 360
+     * @return true if desired angle reached
+     */
+    public boolean aimTo(double desiredAngle)
+    {
+        return aim(desiredAngle - getCurrentAngle());
     }
     
     /**
@@ -90,7 +105,18 @@ public class AimerSubsystem extends Subsystem
     public void setSpeed(double speed)
     {   
         updatePotOffsets();
-        motor.set(speed);
+        
+        // protect our limit ranges
+        double curAngle = getCurrentAngle();
+        if(curAngle <= ANGLE_MAX && curAngle >= ANGLE_MIN)
+        {
+            motor.set(speed);
+        }
+        else
+        {
+            motor.set(0);
+        }
+    
     }
     
     public double getCurrentAngle()
