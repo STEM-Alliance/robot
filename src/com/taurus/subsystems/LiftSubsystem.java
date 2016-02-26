@@ -7,6 +7,7 @@ import com.taurus.commands.LiftStop;
 import com.taurus.hardware.Brake;
 import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.hardware.Brake.BRAKE_STATE;
+import com.taurus.hardware.MagnetoPot;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -25,8 +26,8 @@ public class LiftSubsystem extends Subsystem{
 
     private CANTalon motorLeft;
     private CANTalon motorRight;
-    private MagnetoPotSRX potLeft;
-    private MagnetoPotSRX potRight;
+    private MagnetoPot potLeft;
+    private MagnetoPot potRight;
     private Brake brakes;
     
     /** array of size 2, {right side, left side} */
@@ -44,11 +45,8 @@ public class LiftSubsystem extends Subsystem{
         motorRight.ConfigFwdLimitSwitchNormallyOpen(true);
         motorRight.ConfigRevLimitSwitchNormallyOpen(false);
 
-        potLeft = new MagnetoPotSRX(motorLeft, -360);
-        potRight = new MagnetoPotSRX(motorRight, -360);
-
-        potLeft.setAverage(true,6);
-        potRight.setAverage(true,6);
+        potLeft = new MagnetoPotSRX(motorLeft, -360, Preferences.getInstance().getDouble("LiftPotOffsetL", 0), true, 6);
+        potRight = new MagnetoPotSRX(motorRight, -360, Preferences.getInstance().getDouble("LiftPotOffsetR", 0),true, 6);
 
         heightPIDs = new PIDController[]
                         {new PIDController(.5, 0, 0, 1),

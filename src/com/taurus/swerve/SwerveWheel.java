@@ -8,7 +8,7 @@ package com.taurus.swerve;
 
 import com.taurus.Utilities;
 import com.taurus.controller.SwerveController;
-import com.taurus.hardware.MagnetoPot;
+import com.taurus.hardware.MagnetoPotAnalog;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -47,7 +47,7 @@ public class SwerveWheel {
  
 
     // sensor
-    public MagnetoPot AnglePot;
+    public MagnetoPotAnalog AnglePot;
 
     
     public DigitalInput CalibrationSensor;
@@ -124,7 +124,7 @@ public class SwerveWheel {
 
         // AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) +
         // Math.abs(SpinMax), -SpinMin);
-        AnglePot = new MagnetoPot(PotPin, 360);
+        AnglePot = new MagnetoPotAnalog(PotPin, 360);
         AngleController = new SwerveAngleController(Name + ".ctl");
 
         AngleOrientation = Orientation;

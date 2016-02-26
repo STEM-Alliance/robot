@@ -13,12 +13,22 @@ public class LiftHold extends Command
     double height;
     
     double startTime = 0;
+    double initialBrakeWait = 1;
+    double finalBrakeWait = 3;
     
     int dpadLast = -1;
-    
+
     public LiftHold() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.liftSubsystem);
+    }
+    
+    public LiftHold(double initialBrakeWait, double finalBrakeWait) {
+        // Use requires() here to declare subsystem dependencies
+        requires(Robot.liftSubsystem);
+        
+        this.initialBrakeWait = initialBrakeWait;
+        this.finalBrakeWait = finalBrakeWait;
     }
 
     // Called just before this Command runs the first time
@@ -52,9 +62,9 @@ public class LiftHold extends Command
 //        }
         
         
-        if((Timer.getFPGATimestamp() - startTime) > 1)
+        if((Timer.getFPGATimestamp() - startTime) > initialBrakeWait)
         {
-            if(Robot.liftSubsystem.isLevel() || ((Timer.getFPGATimestamp() - startTime) > 3))
+            if(Robot.liftSubsystem.isLevel() || ((Timer.getFPGATimestamp() - startTime) > finalBrakeWait))
             {
                 Robot.liftSubsystem.enableBrakeMode(true);
                 Robot.liftSubsystem.setSpeed(0, 0);

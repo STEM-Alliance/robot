@@ -10,6 +10,11 @@ public class CircularBuffer extends edu.wpi.first.wpilibj.CircularBuffer
         this.size = size;
     }
     
+    public int getSize()
+    {
+        return size;
+    }
+    
     public double getAverage()
     {
         double sum = 0;
