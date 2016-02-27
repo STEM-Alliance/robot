@@ -394,6 +394,23 @@ public class LiftSubsystem extends Subsystem{
         potRight.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleR", 0));
         potLeft.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleL", 0));
     }
+    
+    /**
+     * Grabs the latest offsets from Dashboard
+     */
+    public void setCalibration() {
+        
+        double angleBottom = Preferences.getInstance().getDouble("LiftPotMinimum", 5.5);
+        
+        double offset = angleBottom - potLeft.getWithoutOffset();
+        potLeft.setOffset(offset);
+        Preferences.getInstance().putDouble("LiftPotOffsetL", offset);
+        
+        offset = angleBottom - potRight.getWithoutOffset();
+        potRight.setOffset(offset);
+        Preferences.getInstance().putDouble("LiftPotOffsetR", offset);
+        
+    }
 
     /**
      * get the angle of the left sensor
