@@ -141,9 +141,19 @@ public class Vision implements Runnable
             {
                 SmartDashboard.putString("CameraState", "Start Capture");
                 camera.startCapture();
+
+                camera.setBrightness(86);
             }
             
             camera.printRanges();
+            
+            try
+            {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e1)
+            {
+            }
             
             if(Timer.getFPGATimestamp() - TimeStart < 2)
             {
