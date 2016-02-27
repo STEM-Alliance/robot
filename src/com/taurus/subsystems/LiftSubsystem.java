@@ -395,6 +395,9 @@ public class LiftSubsystem extends Subsystem{
         potLeft.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleL", 0));
     }
     
+    /**
+     * Grabs the latest offsets from Dashboard
+     */
     public void setCalibration() {
         
         double angleBottom = Preferences.getInstance().getDouble("LiftPotMinimum", 5.5);

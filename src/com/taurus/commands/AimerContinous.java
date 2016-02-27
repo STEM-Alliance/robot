@@ -38,10 +38,10 @@ public class AimerContinous extends Command {
         
         Utilities.PrintCommand("Aimer", this);
         
-        // percent = ((current time - start time) / total time)
+        // increase speed over a set amount of time to reach max speed while button is held
         double percent = ((Timer.getFPGATimestamp() - startTime) / totalTime);
-        // speed = percent * (max - min) + min
         speed = percent * (speedMax - speedMin) + speedMin;
+        
         
         if(clockwise)
             Robot.aimerSubsystem.setSpeed(speed);
