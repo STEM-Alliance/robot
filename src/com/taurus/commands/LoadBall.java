@@ -8,9 +8,9 @@ public class LoadBall extends CommandGroup
     
     public LoadBall()
     {
-        addSequential(new LiftToHeight(HEIGHT_GRAB));
-        addParallel(new LiftHold());
-        addSequential(new AimerToAngle());
+        addSequential(new LiftToHeightFromFloor(HEIGHT_GRAB));
+        addParallel(new LiftHold(.3, 1));
+        addSequential(new AimerToAngle(45));
         addSequential(new ShooterGrab());
     }
 }
