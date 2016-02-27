@@ -1,157 +1,137 @@
 package com.taurus.hardware;
 
-import com.taurus.CircularBuffer;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
 /**
  * Class to use a Magnetic Potentiometer like an analog
  * potentiometer, when it doesn't have the full range of 0 to 1.
  * Created for using the 6127V1A360L.5FS (987-1393-ND on DigiKey)
- * Scaling operates using the following equation:
- * scaleToRange(val, InMin, InMax, 0, fullRange) + offset
  */
-public abstract class MagnetoPot {
+public class MagnetoPot extends AnalogPotentiometer {
 
-    protected double m_inMin = 0.041; // measured from raw sensor input
-    protected double m_inMax = 0.961; // measured from raw sensor input
+    private double InMin = 0.041; // measured from raw sensor input
+    private double InMax = 0.961; // measured from raw sensor input
 
-    protected double m_fullRange;
-    protected double m_offset;
-
-    protected boolean m_average = false;
-    protected CircularBuffer m_averageBuff;
-    protected double m_averageLastTime = 0;
-    protected double m_lastAverage = 0;
-
-    protected MagnetoPot()
-    {
-        this(0,1);
-    }
-    
-    protected MagnetoPot(double offset, double fullRange) 
-    {
-        this(offset, fullRange, false, 0);
-    }
-
-    protected MagnetoPot(double offset, double fullRange, boolean average, int averageSize)
-    {
-        this.m_offset = offset;
-        this.m_fullRange = fullRange;
-        setAverage(average, averageSize);
-    }
+    private double fullRange;
+    private double offset;
     
     /**
-     * Get the raw value from the sensor
-     * @return value scaled between sensor min and sensor max
+     * Initialize a new Magnetic Potentiometer
+     * @param channel Analog input channel
      */
-    protected abstract double getRaw();
-    
-    /**
-     * Get the averaged value from the circular buffer, if used
-     * @return averaged value scaled between sensor min and sensor max
-     */
-    public double getValueAverage()
+    public MagnetoPot(int channel)
     {
-        double val = getRaw();
+        super(channel);
+        this.fullRange = 1;
+        this.offset = 0;
+    }
+
+    /**
+     * Initialize a new Magnetic Potentiometer
+     * @param input Analog input object
+     */
+    public MagnetoPot(AnalogInput input)
+    {
+        super(input);
+        this.fullRange = 1;
+        this.offset = 0;
+    }
+
+    /**
+     * Initialize a new Magnetic Potentiometer
+     * @param channel Analog input channel
+     * @param fullRange full range to scale output to (360 would give output of 0-360)
+     */
+    public MagnetoPot(int channel, double fullRange)
+    {
+        super(channel);
+        this.fullRange = fullRange;
+        this.offset = 0;
+    }
+
+    /**
+     * Initialize a new Magnetic Potentiometer
+     * @param input Analog input object
+     * @param fullRange full range to scale output to (360 would give output of 0-360)
+     */
+    public MagnetoPot(AnalogInput input, double fullRange)
+    {
+        super(input);
+        this.fullRange = fullRange;
+        this.offset = 0;
+    }
+
+    /**
+     * Initialize a new Magnetic Potentiometer
+     * @param channel Analog input channel
+     * @param fullRange full range to scale output to (360 would give output of 0-360)
+     * @param offset offset to scale output to (180 would give output of 180-360)
+     */
+    public MagnetoPot(int channel, double fullRange, double offset)
+    {
+        super(channel);
+        this.fullRange = fullRange;
+        this.offset = offset;
+    }
+
+    /**
+     * Initialize a new Magnetic Potentiometer
+     * @param input Analog input object
+     * @param fullRange full range to scale output to (360 would give output of 0-360)
+     * @param offset offset to scale output to (180 would give output of 180-360)
+     */
+    public MagnetoPot(AnalogInput input, double fullRange, double offset)
+    {
+        super(input);
+        this.fullRange = fullRange;
+        this.offset = offset;
+    }
+
+    /**
+     * Get the scaled value of the sensor 
+     * @return value from offset to fullRange
+     */
+    public double get()
+    {
+        double val = super.get();
         
-        if(m_average)
+        // update the values if needed
+        if (val > InMax)
         {
-            if((Timer.getFPGATimestamp() - m_averageLastTime) > .01)
-            {
-                m_averageBuff.pushFront(val);
-                m_averageLastTime = Timer.getFPGATimestamp();
-                
-                val = m_averageBuff.getAverage();
-                m_lastAverage = val;
-            }
-            else
-            {
-                val = m_lastAverage;
-            }
+            InMax = val;
         }
-        
-        return val;
+        if (val < InMin)
+        {
+            InMin = val;
+        }
+
+        // scale it based on the calibration values
+        return Utilities.scaleToRange(val, InMin, InMax, 0, fullRange) + offset;
     }
     
     /**
-     * Get the normalized value of the sensor
+     * Get the raw value of the sensor
      * @return value from 0 to 1
      */
     public double getNormal()
     {
-        double val = getValueAverage();
+        double val = super.get();
         
         // update the values if needed
-        if (val > m_inMax)
+        if (val > InMax)
         {
-            m_inMax = val;
+            InMax = val;
         }
-        if (val < m_inMin)
+        if (val < InMin)
         {
-            m_inMin = val;
+            InMin = val;
         }
 
         // scale it based on the calibration values
-        return Utilities.scaleToRange(val, m_inMin, m_inMax, 0, 1);
+        return Utilities.scaleToRange(val, InMin, InMax, 0, 1);
     }
-    
-    /**
-     * Get the value between 0 and fullRange without the offset
-     * @return value between 0 and fullRange
-     */
-    public double getWithoutOffset()
-    {
-        return Utilities.scaleToRange(getNormal(), 0, 1, 0, m_fullRange);
-    }
-    
-    /**
-     * Get the value between between (0 and fullRange) + offset
-     * @return
-     */
-    public double get()
-    {
-        return Utilities.wrapToRange(getWithoutOffset() + m_offset, 0, m_fullRange);
-    }
-    
-    /**
-     * set the full range
-     * @param fullRange
-     */
-    public void setFullRange(double fullRange)
-    {
-        this.m_fullRange = fullRange;
-    }
-    
-    /**
-     * set the offset
-     * @param offset
-     */
-    public void setOffset(double offset)
-    {
-        this.m_offset = offset;
-    }
-    
-    /**
-     * set the average
-     * @param average true if average, false if only one sample
-     * @param size size of circular buffer
-     */
-    public void setAverage(boolean average, int size)
-    {
-        this.m_average = average;
-        this.m_averageBuff = new CircularBuffer(size);
-    }
-    
-    public void fillAverage()
-    {
-        double val = (double)getRaw();
-        
-        for (int i = 0; i < m_averageBuff.getSize(); i++)
-        {
-            this.m_averageBuff.pushFront(val);
-        }
-        m_lastAverage = val;
-    }
+
 }

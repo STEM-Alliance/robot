@@ -4,7 +4,7 @@ import com.taurus.Utilities;
 
 public class LinearActuatorPot extends LinearActuator {
 
-    private MagnetoPotAnalog Pot;
+    private MagnetoPot Pot;
     private double DistanceFullTurn;
     private double ZeroVal;
     private double LastVal;
@@ -28,7 +28,7 @@ public class LinearActuatorPot extends LinearActuator {
     {
         super(MotorPins, MotorScaling, Positions, PositionThreshold);
         
-        Pot = new MagnetoPotAnalog(PotPin);
+        Pot = new MagnetoPot(PotPin);
         this.DistanceFullTurn = DistanceFullTurn;
 
         ZeroVal = 0;
@@ -51,7 +51,7 @@ public class LinearActuatorPot extends LinearActuator {
     {
         super(MotorPins, MotorScaling, Positions );
         
-        Pot = new MagnetoPotAnalog(PotPin);
+        Pot = new MagnetoPot(PotPin);
         this.DistanceFullTurn = DistanceFullTurn;
 
         ZeroVal = 0;

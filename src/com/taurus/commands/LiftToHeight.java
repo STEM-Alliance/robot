@@ -5,7 +5,7 @@ import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LiftToHeightFromFloor extends Command
+public class LiftToHeight extends Command
 {
     private boolean done;
     private double endHeight;
@@ -14,7 +14,7 @@ public class LiftToHeightFromFloor extends Command
      * Move the lift to this height from the floor
      * @param height (signed inches)
      */
-    public LiftToHeightFromFloor(double height) {
+    public LiftToHeight(double height) {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.liftSubsystem);
         this.endHeight = height;
