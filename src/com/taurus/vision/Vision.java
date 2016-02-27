@@ -155,7 +155,7 @@ public class Vision implements Runnable
                 // otherwise only update if it changes
                 updateSettings();
             }
-
+            
             // we have an open camera session 
             if (camera.isCapturing())
             {
@@ -222,11 +222,11 @@ public class Vision implements Runnable
                         }
 
                         // print some info to dashboard
-                        SmartDashboard.putNumber("Area", biggestArea);
-                        SmartDashboard.putString("Center", df.format(biggestX) + "," + df.format(biggestY));
-                        SmartDashboard.putNumber("Width", biggestW);
-                        SmartDashboard.putNumber("Height", biggestH);
-                        SmartDashboard.putNumber("Orientation", biggestOrientation);
+//                        SmartDashboard.putNumber("Area", biggestArea);
+//                        SmartDashboard.putString("Center", df.format(biggestX) + "," + df.format(biggestY));
+//                        SmartDashboard.putNumber("Width", biggestW);
+//                        SmartDashboard.putNumber("Height", biggestH);
+//                        SmartDashboard.putNumber("Orientation", biggestOrientation);
 
                         // store largest target
                         synchronized (visionThread)
@@ -305,46 +305,52 @@ public class Vision implements Runnable
             NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, color);
             
             // Write Text of Target Location
-            String descXY = "(" + (int)largestTarget.X() + "," + (int)largestTarget.Y()+")";
-            String descWH = "(" + (int)largestTarget.W() + "," + (int)largestTarget.H()+")";
-            String descPitch = "P: " + (int)largestTarget.Pitch() + "\u00b0";
-            String descYaw = "Y: " + (int)largestTarget.Yaw() + "\u00b0";
-            
-            OverlayTextOptions opts = new OverlayTextOptions("Litt", 
-                                                             20,
-                                                             1,
-                                                             0,
-                                                             0,
-                                                             0, 
-                                                             TextAlignment.CENTER,
-                                                             VerticalTextAlignment.TOP, 
-                                                             new RGBValue(0,0,0,0),
-                                                             0);
-            int xPos = 0;
-            int yPos = (int)largestTarget.Top();
-            
-            if(largestTarget.X() > Constants.Width * 2 / 3)
-            {
-                // write on left side
-                opts.horizontalTextAlignment = TextAlignment.RIGHT;
-                xPos = (int)(largestTarget.Left() - 5);
-            }
-            else
-            {
-                // write on right side
-                opts.horizontalTextAlignment = TextAlignment.RIGHT;
-                xPos = (int)(largestTarget.Left() + largestTarget.W() + 5);
-            }
+            String descXY = (int)largestTarget.X() + ", " + (int)largestTarget.Y();
+            String descWH = (int)largestTarget.W() + ", " + (int)largestTarget.H();
+            String descPitch = (int)largestTarget.Pitch() + "\u00b0";
+            String descYaw = (int)largestTarget.Yaw() + "\u00b0";
 
-            int R = color & 0x0000ff;
-            int G = color & 0x00ff00 >> 8;
-            int B = color & 0xff0000 >> 16;
-            RGBValue val = new RGBValue(B, G, R, 1);
-
-            NIVision.imaqOverlayText(frame, new Point(xPos, yPos), descXY, val, opts, "target");
-            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+20), descWH, val, opts, "target");
-            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+40), descPitch, val, opts, "target");
-            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+60), descYaw, val, opts, "target");
+            SmartDashboard.putString("TargetXY", descXY);
+            SmartDashboard.putString("TargetWH", descWH);
+            SmartDashboard.putString("TargetPitch", descPitch);
+            SmartDashboard.putString("TargetYaw", descYaw);
+            
+//            OverlayTextOptions opts = new OverlayTextOptions("Arial", 
+//                                                             20,
+//                                                             1,
+//                                                             0,
+//                                                             0,
+//                                                             0, 
+//                                                             TextAlignment.CENTER,
+//                                                             VerticalTextAlignment.TOP, 
+//                                                             new RGBValue(0,0,0,0),
+//                                                             0);
+//            int xPos = 0;
+//            int yPos = (int)largestTarget.Top();
+//            
+//            if(largestTarget.X() > Constants.Width * 2 / 3)
+//            {
+//                // write on left side
+//                opts.horizontalTextAlignment = TextAlignment.RIGHT;
+//                xPos = (int)(largestTarget.Left() - 5);
+//            }
+//            else
+//            {
+//                // write on right side
+//                opts.horizontalTextAlignment = TextAlignment.RIGHT;
+//                xPos = (int)(largestTarget.Left() + largestTarget.W() + 5);
+//            }
+//
+//            int R = color & 0x0000ff;
+//            int G = color & 0x00ff00 >> 8;
+//            int B = color & 0xff0000 >> 16;
+//            RGBValue val = new RGBValue(B, G, R, 1);
+//
+//            NIVision.imaqOverlayText(frame, new Point(xPos, yPos), descXY, val, opts, "");
+//            NIVision.imaqMergeOverlay(frame, frame, null, "");
+//            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+20), descWH, val, opts, "target");
+//            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+40), descPitch, val, opts, "target");
+//            NIVision.imaqOverlayText(frame, new Point(xPos, yPos+60), descYaw, val, opts, "target");
         }
     }
 

@@ -1,5 +1,6 @@
 package com.taurus.commands;
 
+import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -22,6 +23,7 @@ public class AimerAim extends Command
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
+        Utilities.PrintCommand("Aimer", this);
         done = Robot.aimerSubsystem.aim();
     }
 

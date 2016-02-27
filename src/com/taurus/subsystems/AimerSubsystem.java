@@ -5,6 +5,7 @@ import com.taurus.commands.AimerStop;
 import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.robot.RobotMap;
+import com.taurus.vision.Target;
 import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -16,7 +17,7 @@ public class AimerSubsystem extends Subsystem
 {
     private final double ANGLE_MAX = 140 - 5;
     private final double ANGLE_MIN = -50 + 5;
-    private final double TOLERANCE = 5;  // Degrees from desired angle that counts as that angle
+    private final double TOLERANCE = 1;  // Degrees from desired angle that counts as that angle
 
     public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
     
@@ -72,6 +73,7 @@ public class AimerSubsystem extends Subsystem
         }
         else
         {
+            updatedPIDConstants();
             motorOutput = pid.update(changeInAngle);
             setSpeed(motorOutput);
         }
@@ -89,13 +91,32 @@ public class AimerSubsystem extends Subsystem
         return aim(desiredAngle - getCurrentAngle());
     }
     
+    private void updatedPIDConstants()
+    {
+
+        pid.setP(Preferences.getInstance().getDouble("AimerPID_P", .3));
+        pid.setI(Preferences.getInstance().getDouble("AimerPID_I", 0));
+        pid.setD(Preferences.getInstance().getDouble("AimerPID_D", 0));
+    }
+    
     /**
      * aims the shooter at the detected target 
      * @return true when aimer is at desired angle
      */
     public boolean aim()
     {
-        return aim(vision.getTarget().Pitch());
+        Target target = vision.getTarget();
+        boolean done = false;
+        
+        if(target != null)
+        {
+            done = aim(vision.getTarget().Pitch());
+        }
+        else
+        {
+            done = aim(0);
+        }
+        return done;
     }
     
     /***
@@ -111,10 +132,12 @@ public class AimerSubsystem extends Subsystem
         if(curAngle <= ANGLE_MAX && curAngle >= ANGLE_MIN)
         {
             motor.set(speed);
+            SmartDashboard.putNumber("AimerSpeed", speed);
         }
         else
         {
             motor.set(0);
+            SmartDashboard.putNumber("AimerSpeed", 0);
         }
     
     }
