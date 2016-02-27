@@ -72,7 +72,7 @@ public class Target implements Comparable<Target> {
      */
     public double DistanceToTarget()
     {
-        if(distance == Double.NaN)
+        if(Double.isNaN(distance))
         {
             // see http://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
             distance = (Constants.TargetWidthIn * Constants.FocalLengthIn) / w;
@@ -87,24 +87,31 @@ public class Target implements Comparable<Target> {
      */
     public double Pitch()
     {
-        if(pitch == Double.NaN)
+        if(Double.isNaN(pitch))
         {
+            // see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
             double inPerPx = Constants.TargetHeightIn / h;//changed to width
             double yChange = inPerPx * (Constants.BallShotY - y); //Difference between center of image and center of target in pixels
-            double currentAngle = Robot.aimerSubsystem.getCurrentAngle(); //current angle of the shooter
-            double distance = DistanceToTarget();
-            double Y0 = Constants.TowerHeightIn - Robot.liftSubsystem.getHeightFromFloorAverage();//Tower height - lift height
+            double angle = Math.asin(yChange / DistanceToTarget());
             
-            if (y > Constants.BallShotY){
-                //target below
-                double Y1 = Constants.TowerHeightIn - Robot.liftSubsystem.getHeightFromFloorAverage();           
-                double angle1 = Math.toDegrees(Math.asin(Y1 / distance));
-                pitch = currentAngle - angle1;
-            } else {
-                //target above
-                double totalAngle = Math.toDegrees(Math.asin(Y0/distance));
-                pitch = totalAngle - currentAngle;
-            }
+            pitch = Math.toDegrees(angle);
+            
+//            double inPerPx = Constants.TargetHeightIn / h;//changed to width
+//            double yChange = inPerPx * (Constants.BallShotY - y); //Difference between center of image and center of target in pixels
+//            double currentAngle = 20;//Robot.aimerSubsystem.getCurrentAngle(); //current angle of the shooter
+//            double distance = DistanceToTarget();
+//            double Y0 = 45;//Constants.TowerHeightIn - Robot.liftSubsystem.getHeightFromFloorAverage();//Tower height - lift height
+//            
+//            if (y > Constants.BallShotY){
+//                //target below
+//                double Y1 = Constants.TowerHeightIn - Robot.liftSubsystem.getHeightFromFloorAverage();           
+//                double angle1 = Math.toDegrees(Math.asin(Y1 / distance));
+//                pitch = currentAngle - angle1;
+//            } else {
+//                //target above
+//                double totalAngle = Math.toDegrees(Math.asin(Y0/distance));
+//                pitch = totalAngle - currentAngle;
+//            }
         }
         
         return pitch;//angle displaced
@@ -116,7 +123,7 @@ public class Target implements Comparable<Target> {
      */
     public double Yaw()
     {
-        if(yaw == Double.NaN)
+        if(Double.isNaN(yaw))
         {
             // see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
             double inPerPx = Constants.TargetWidthIn / w;//changed to width

@@ -1,5 +1,20 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="AimerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="544" y="13"/>
+	</widget>
+	<widget field="TargetYaw" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="42" y="389"/>
+	</widget>
+	<widget field="TargetPitch" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="40" y="364"/>
+	</widget>
+	<widget field="TargetWH" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="45" y="339"/>
+	</widget>
+	<widget field="TargetXY" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="49" y="314"/>
+	</widget>
 	<widget field="Aimer Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="546" y="36"/>
 	</widget>
@@ -35,9 +50,6 @@
 	</widget>
 	<widget field="Traction" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="710" y="87"/>
-	</widget>
-	<widget field="ball release angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="15" y="409"/>
 	</widget>
 	<widget field="Aimer Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="686" y="34"/>
@@ -75,21 +87,8 @@
 	<widget field="Lift Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="723" y="133"/>
 	</widget>
-	<widget field="Test Pitch" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="70" y="104"/>
-	</widget>
 	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="349" y="9"/>
-	</widget>
-	<widget field="test Pitch" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="71" y="80"/>
-	</widget>
-	<widget field="Width" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="39" y="315"/>
-	</widget>
-	<widget field="Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="36" y="292"/>
-		<height>20</height>
 	</widget>
 	<widget field="Dimensions" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="31" y="186"/>
@@ -111,16 +110,6 @@
 	</widget>
 	<widget field="Vision Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="454"/>
-	</widget>
-	<widget field="Orientation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="13" y="389"/>
-	</widget>
-	<widget field="Center" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="34" y="365"/>
-	</widget>
-	<widget field="Area" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="44" y="339"/>
-		<height>21</height>
 	</widget>
 	<widget field="Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="75" y="56"/>
@@ -163,4 +152,12 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="Area"/>
+	<hidden field="Center"/>
+	<hidden field="Test Pitch"/>
+	<hidden field="ball release angle"/>
+	<hidden field="test Pitch"/>
+	<hidden field="Height"/>
+	<hidden field="Orientation"/>
+	<hidden field="Width"/>
 </xml>
