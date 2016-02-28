@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="ball release angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="98"/>
+	</widget>
+	<widget field="AimerAim" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="11" y="77"/>
+	</widget>
 	<widget field="AimerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="544" y="13"/>
 	</widget>
@@ -152,12 +158,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Area"/>
-	<hidden field="Center"/>
-	<hidden field="Test Pitch"/>
-	<hidden field="ball release angle"/>
-	<hidden field="test Pitch"/>
-	<hidden field="Height"/>
-	<hidden field="Orientation"/>
-	<hidden field="Width"/>
 </xml>
