@@ -2,6 +2,7 @@ package com.taurus.vision;
 
 import java.util.Comparator;
 
+
 import com.taurus.robot.Robot;
 
 public class Target implements Comparable<Target> {
@@ -91,7 +92,7 @@ public class Target implements Comparable<Target> {
         {
             // see http://stackoverflow.com/questions/17499409/opencv-calculate-angle-between-camera-and-pixel
             double inPerPx = Constants.TargetHeightIn / h;//changed to width
-            double yChange = inPerPx * (Constants.BallShotY - y); //Difference between center of image and center of target in pixels
+            double yChange = inPerPx * (Constants.BallShotY + 20 - y); //Difference between center of image and center of target in pixels
             double angle = Math.asin(yChange / DistanceToTarget());
             
             pitch = Math.toDegrees(angle);

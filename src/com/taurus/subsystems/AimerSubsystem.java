@@ -3,7 +3,6 @@ package com.taurus.subsystems;
 import com.taurus.PIDController;
 import com.taurus.commands.AimerStop;
 import com.taurus.hardware.MagnetoPotSRX;
-import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.robot.RobotMap;
 import com.taurus.vision.Target;
 import com.taurus.vision.Vision;
@@ -17,7 +16,7 @@ public class AimerSubsystem extends Subsystem
 {
     private final double ANGLE_MAX = 140 - 5;
     private final double ANGLE_MIN = -50 + 5;
-    private final double TOLERANCE = 1;  // Degrees from desired angle that counts as that angle
+    private final double TOLERANCE = .5;  // Degrees from desired angle that counts as that angle
 
     public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
     
@@ -30,8 +29,9 @@ public class AimerSubsystem extends Subsystem
     {
         motor = new CANTalon(RobotMap.CAN_SHOOTER_TALON_AIMER);
         motor.enableBrakeMode(true);
+        motor.setInverted(true);
         
-        pid = new PIDController(.2, 0, 0, 1);  //TODO update these values 
+        pid = new PIDController(.1, 0, 0, .25);  //TODO update these values 
         angle = new MagnetoPotSRX(motor,360);
         angle.setAverage(true,6);
         vision = Vision.getInstance();
@@ -57,17 +57,18 @@ public class AimerSubsystem extends Subsystem
         
         double angleCurrent = getCurrentAngle();
         double desiredAngle = angleCurrent + changeInAngle;
-        
-        
-        if (desiredAngle > ANGLE_MAX ||
+       
+        if (desiredAngle > ANGLE_MAX  ||
                 desiredAngle < ANGLE_MIN)
         {
             // Being commanded to an unsafe angle
+            SmartDashboard.putString("AimerAim", "Unsafe");
             setSpeed(0);
         }
         else if (Math.abs(changeInAngle) < TOLERANCE)
         {
             // At the desired angle
+            SmartDashboard.putString("AimerAim", "At Angle");
             setSpeed(0);
             done = true;
         }
@@ -75,6 +76,7 @@ public class AimerSubsystem extends Subsystem
         {
             updatedPIDConstants();
             motorOutput = pid.update(changeInAngle);
+            SmartDashboard.putString("AimerAim", "Moving " + motorOutput);
             setSpeed(motorOutput);
         }
         
@@ -129,7 +131,25 @@ public class AimerSubsystem extends Subsystem
         
         // protect our limit ranges
         double curAngle = getCurrentAngle();
-        if(curAngle <= ANGLE_MAX && curAngle >= ANGLE_MIN)
+        boolean direction = Math.signum(speed) > 0 ? true : false;
+        boolean valid = true;
+        
+        if(curAngle > ANGLE_MAX)
+        {
+            if(!direction)
+                valid = true;
+            else
+                valid = false;
+        }
+        else if(curAngle < ANGLE_MIN)
+        {
+            if(direction)
+                valid = true;
+            else
+                valid = false;   
+        }
+        
+        if(valid)
         {
             motor.set(speed);
             SmartDashboard.putNumber("AimerSpeed", speed);

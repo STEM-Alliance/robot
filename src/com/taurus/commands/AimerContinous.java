@@ -44,9 +44,9 @@ public class AimerContinous extends Command {
         
         
         if(clockwise)
-            Robot.aimerSubsystem.setSpeed(speed);
-        else
             Robot.aimerSubsystem.setSpeed(-speed);
+        else
+            Robot.aimerSubsystem.setSpeed(speed);
             
     }
 

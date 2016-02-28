@@ -7,7 +7,9 @@ import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Targeting extends Command {
+public class TargettingDriveAim extends Command {
+    
+    public final double DRIVE_ANGLE_TOLERANCE = 2;
     
     private boolean shooterAimed;
     private boolean driveAimed;
@@ -15,21 +17,21 @@ public class Targeting extends Command {
     private Vision vision;
     private PIDController drivePID;
     
-    public Targeting() {
+    public TargettingDriveAim() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.aimerSubsystem);
         requires(Robot.rockerDriveSubsystem);
         
         vision = Vision.getInstance();        
-        drivePID = new PIDController(1, 0, 0, 1); //TODO change max output 
+        drivePID = new PIDController(.2, 0, 0, 1); //TODO change max output 
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
         shooterAimed = false;
         driveAimed = false;
-        
-        //setTimeout(1);
+
+        Robot.shooterSubsystem.enableLEDs(true);
         
     }
 
@@ -56,6 +58,7 @@ public class Targeting extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+        Robot.shooterSubsystem.enableLEDs(false);
     }
 
     // Called when another command which requires one or more of the same
@@ -68,7 +71,7 @@ public class Targeting extends Command {
 
         double motorOutput = drivePID.update(changeInAngle);  //TODO add limits for angle
 
-        if(Math.abs(changeInAngle) <= 5){
+        if(Math.abs(changeInAngle) <= DRIVE_ANGLE_TOLERANCE){
             Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0, false);
             return true;
         } else {

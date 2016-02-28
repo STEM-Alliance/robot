@@ -18,6 +18,8 @@ public class AimerAim extends Command
     protected void initialize() 
     {
         done = false;
+
+        Robot.shooterSubsystem.enableLEDs(true);
     }
     
     // Called repeatedly when this Command is scheduled to run
@@ -36,6 +38,7 @@ public class AimerAim extends Command
     // Called once after isFinished returns true
     protected void end() 
     {
+        Robot.shooterSubsystem.enableLEDs(false);
         
     }
     
