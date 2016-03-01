@@ -57,7 +57,7 @@ public class OI
         buttonBack1.toggleWhenPressed(new DriveArcadeWithXbox());
         
         buttonA2.whileHeld(new ShooterGrab());
-        buttonB2.whileHeld(new TargettingDriveAim());
+        buttonB2.whileHeld(new ShooterFire());
         
         buttonLeftTrigger.whileHeld(new ShooterRev());
         buttonRightTrigger.whenPressed(new ShooterRelease());

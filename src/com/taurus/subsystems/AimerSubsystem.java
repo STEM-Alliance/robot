@@ -9,14 +9,18 @@ import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AimerSubsystem extends Subsystem
 {
+    private final double MOTOR_TOLERANCE = 0.05;
     private final double ANGLE_MAX = 140 - 5;
     private final double ANGLE_MIN = -50 + 5;
-    private final double TOLERANCE = .5;  // Degrees from desired angle that counts as that angle
+    private final double TOLERANCE = .75;  // Degrees from desired angle that counts as that angle
 
     public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
     
@@ -24,6 +28,9 @@ public class AimerSubsystem extends Subsystem
     private MagnetoPotSRX angle;
     private CANTalon motor;
     private PIDController pid;
+    
+    
+    private Relay leds;
 
     public AimerSubsystem()
     {
@@ -35,6 +42,9 @@ public class AimerSubsystem extends Subsystem
         angle = new MagnetoPotSRX(motor,360);
         angle.setAverage(true,6);
         vision = Vision.getInstance();
+
+        
+        leds = new Relay(RobotMap.PIN_RELAY_LEDS, Direction.kForward);
     }
 
     protected void initDefaultCommand()
@@ -57,6 +67,10 @@ public class AimerSubsystem extends Subsystem
         
         double angleCurrent = getCurrentAngle();
         double desiredAngle = angleCurrent + changeInAngle;
+        
+
+        updatedPIDConstants();
+        motorOutput = pid.update(changeInAngle);
        
         if (desiredAngle > ANGLE_MAX  ||
                 desiredAngle < ANGLE_MIN)
@@ -74,8 +88,6 @@ public class AimerSubsystem extends Subsystem
         }
         else
         {
-            updatedPIDConstants();
-            motorOutput = pid.update(changeInAngle);
             SmartDashboard.putString("AimerAim", "Moving " + motorOutput);
             setSpeed(motorOutput);
         }
@@ -178,5 +190,19 @@ public class AimerSubsystem extends Subsystem
 
         angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
         angle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 360));
+    }
+    
+
+    
+    public void enableLEDs(boolean enable)
+    {
+        if(enable)
+        {
+            leds.set(Value.kForward);
+        }
+        else
+        {
+            leds.set(Value.kOff);
+        }
     }
 }

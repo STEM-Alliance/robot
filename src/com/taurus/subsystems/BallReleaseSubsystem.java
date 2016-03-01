@@ -28,8 +28,6 @@ public class BallReleaseSubsystem extends Subsystem
       
         ballRelease1 = new Servo(RobotMap.PIN_SERVO_SHOOTER_BALL_RELEASE_1);
         ballRelease2 = new Servo(RobotMap.PIN_SERVO_SHOOTER_BALL_RELEASE_2);
-        
-       
     }
     
     public void initDefaultCommand() 
@@ -37,7 +35,6 @@ public class BallReleaseSubsystem extends Subsystem
         // Set the default command for a subsystem here.
     }    
 
-   
     /**
      * Set the position of the ball releasing servo
      * @param extend If true out, otherwise in
@@ -54,6 +51,12 @@ public class BallReleaseSubsystem extends Subsystem
             ballRelease1.setAngle(BALL_RELEASE_ANGLE_CONTRACTED);
             ballRelease2.setAngle(BALL_RELEASE_ANGLE_EXTENDED);
         }
+    }
+    
+    public void setAngle(double angle)
+    {
+        ballRelease1.setAngle(angle);
+        ballRelease2.setAngle(angle);
     }
     
     public boolean isBallReleaseExtended() 

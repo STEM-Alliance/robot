@@ -1,13 +1,16 @@
 package com.taurus.commands;
 
 import com.taurus.PIDController;
+import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 import com.taurus.vision.Target;
 import com.taurus.vision.Vision;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class TargettingDriveAim extends Command {
+public class TargetingDriveAim extends Command {
     
     public final double DRIVE_ANGLE_TOLERANCE = 2;
     
@@ -16,8 +19,10 @@ public class TargettingDriveAim extends Command {
 
     private Vision vision;
     private PIDController drivePID;
+
+    private double startTime;
     
-    public TargettingDriveAim() {
+    public TargetingDriveAim() {
         // Use requires() here to declare subsystem dependencies
         requires(Robot.aimerSubsystem);
         requires(Robot.rockerDriveSubsystem);
@@ -31,23 +36,30 @@ public class TargettingDriveAim extends Command {
         shooterAimed = false;
         driveAimed = false;
 
-        Robot.shooterSubsystem.enableLEDs(true);
+        startTime = Timer.getFPGATimestamp();
         
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+        Utilities.PrintCommand("Aimer", this);
+        Utilities.PrintCommand("Drive", this);
         
-        shooterAimed = Robot.aimerSubsystem.aim();
-        
-        Target target = vision.getTarget();
-        if(target != null)
+        if(Timer.getFPGATimestamp() - startTime > .25)
         {
-            driveAimed = aim(target.Yaw());
-        }
-        else
-        {
-            driveAimed = aim(0);
+            shooterAimed = Robot.aimerSubsystem.aim();
+            
+            Target target = vision.getTarget();
+            if(target != null)
+            {
+                driveAimed = aim(target.Yaw());
+            }
+            else
+            {
+                driveAimed = aim(0);
+            }
+            
+            SmartDashboard.putString("Targeting", "" + (target != null) + driveAimed + shooterAimed);
         }
     }
 
@@ -58,7 +70,6 @@ public class TargettingDriveAim extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-        Robot.shooterSubsystem.enableLEDs(false);
     }
 
     // Called when another command which requires one or more of the same

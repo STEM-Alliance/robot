@@ -1,5 +1,7 @@
 package com.taurus.subsystems;
 
+import com.taurus.commands.AimerStop;
+import com.taurus.commands.ShooterStop;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -23,8 +25,6 @@ public class ShooterSubsystem extends Subsystem
     private CANTalon shooterFB;
    
     
-    private Relay leds;
-
     /**
      * Constructor
      */
@@ -39,13 +39,13 @@ public class ShooterSubsystem extends Subsystem
         shooterFT.setInverted(true);
         
         stopSwitch = new DigitalInput(RobotMap.PIN_DIO_SHOOTER_BALL_SENSOR);
-       
-        leds = new Relay(RobotMap.PIN_RELAY_LEDS, Direction.kForward);
     }
     
     public void initDefaultCommand() 
     {
         // Set the default command for a subsystem here.
+        setDefaultCommand(new ShooterStop());
+        
     }    
 
     /**
@@ -60,16 +60,4 @@ public class ShooterSubsystem extends Subsystem
     }
   
    
-    
-    public void enableLEDs(boolean enable)
-    {
-        if(enable)
-        {
-            leds.set(Value.kForward);
-        }
-        else
-        {
-            leds.set(Value.kOff);
-        }
-    }
 }
