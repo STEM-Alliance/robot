@@ -22,8 +22,8 @@ public class RockerDriveSubsystem extends Subsystem
 
     // order is {Front, Middle, Back}
     //          {bogie, bogie, fixed}
-    private CANTalon motorsL[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_LEFT.length];
-    private CANTalon motorsR[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_RIGHT.length];
+//    private CANTalon motorsL[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_LEFT.length];
+//    private CANTalon motorsR[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_RIGHT.length];
     private AHRS navxMXP;  // Expander board, contains gyro
     
     private boolean applyGyro;
@@ -36,36 +36,36 @@ public class RockerDriveSubsystem extends Subsystem
         boolean Encoder = Preferences.getInstance().getBoolean("DriveEncoders", false);
         
         // set up left side motors
-        for (int i = 0; i < motorsL.length; i++)
-        {
-            motorsL[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_LEFT[i]);
-
-            
-            if(Encoder && motorsL[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
-                    == FeedbackDeviceStatus.FeedbackStatusPresent)
-            {
-                // we have a sensor connected, so use it and setup speed control
-                motorsL[i].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-                motorsL[i].changeControlMode(TalonControlMode.Speed);
-            }
-        }
-        
-        // setup right side motors
-        for (int i = 0; i < motorsR.length; i++)
-        {
-            motorsR[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_RIGHT[i]);
-
-            // since the right side rotation is inverted from the left, set that in the controller
-            motorsR[i].setInverted(true);
-            
-            if(Encoder && motorsR[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
-                    == FeedbackDeviceStatus.FeedbackStatusPresent)
-            {
-                // we have a sensor connected, so use it and setup speed control
-                motorsR[i].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-                motorsR[i].changeControlMode(TalonControlMode.Speed);
-            }
-        }
+//        for (int i = 0; i < motorsL.length; i++)
+//        {
+//            motorsL[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_LEFT[i]);
+//
+//            
+//            if(Encoder && motorsL[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
+//                    == FeedbackDeviceStatus.FeedbackStatusPresent)
+//            {
+//                // we have a sensor connected, so use it and setup speed control
+//                motorsL[i].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//                motorsL[i].changeControlMode(TalonControlMode.Speed);
+//            }
+//        }
+//        
+//        // setup right side motors
+//        for (int i = 0; i < motorsR.length; i++)
+//        {
+//            motorsR[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_RIGHT[i]);
+//
+//            // since the right side rotation is inverted from the left, set that in the controller
+//            motorsR[i].setInverted(true);
+//            
+//            if(Encoder && motorsR[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
+//                    == FeedbackDeviceStatus.FeedbackStatusPresent)
+//            {
+//                // we have a sensor connected, so use it and setup speed control
+//                motorsR[i].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+//                motorsR[i].changeControlMode(TalonControlMode.Speed);
+//            }
+//        }
         
         // Setup gyro
         try {
@@ -105,15 +105,15 @@ public class RockerDriveSubsystem extends Subsystem
             motorsPID_I = i;
             motorsPID_D = d;
             
-            for (int index = 0; index < motorsL.length; index++)
-            {
-                motorsL[index].setPID(p, i, d);
-            }
-        
-            for (int index = 0; index < motorsR.length; index++)
-            {
-                motorsR[index].setPID(p, i, d);
-            }
+//            for (int index = 0; index < motorsL.length; index++)
+//            {
+//                motorsL[index].setPID(p, i, d);
+//            }
+//        
+//            for (int index = 0; index < motorsR.length; index++)
+//            {
+//                motorsR[index].setPID(p, i, d);
+//            }
         }
     }
 
@@ -140,49 +140,49 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public void driveRaw(double[] right, double[] left, boolean tractionControlEnabled)
     {
-        // Error check parameters
-        if (right.length != motorsR.length || left.length != motorsL.length)
-        {
-            return;
-        }
-        
-        updatePID();
-        
-        SmartDashboard.putBoolean("Traction", tractionControlEnabled);        
-        if (tractionControlEnabled)
-        {
-            double [] leftScale = scaleForTractionControl(motorsL);
-            double [] rightScale = scaleForTractionControl(motorsR);
-            
-            //set motors to new scaled values
-            for(int index = 0; index < right.length; index++){
-                right[index] = right[index] * rightScale[index];
-            }
-            
-            for(int index = 0; index < left.length; index++){
-                left[index] = left[index] * leftScale[index];
-            }
-            
-            //TODO convert values to RPM, and adjust for wheel to sensor ratio
-        }
-        
-        if (applyGyro)
-        {
-            // TODO - DRL apply the gyro, compensate for how much yaw/error from our heading
-        }
-        
-        for (int i = 0; i < motorsR.length; i++)
-        {
-            right[i] = scaleForDeadband(right[i]);
-            right[i] = Math.min(Math.max(right[i], -1), 1);  // ensure value between -1 and 1
-            motorsR[i].set(right[i]);
-        }
-        for (int i = 0; i < motorsL.length; i++)
-        {
-            left[i] = scaleForDeadband(left[i]);
-            left[i] = Math.min(Math.max(left[i], -1), 1);  // ensure value between -1 and 1
-            motorsL[i].set(left[i]);   
-        }
+//        // Error check parameters
+//        if (right.length != motorsR.length || left.length != motorsL.length)
+//        {
+//            return;
+//        }
+//        
+//        updatePID();
+//        
+//        SmartDashboard.putBoolean("Traction", tractionControlEnabled);        
+//        if (tractionControlEnabled)
+//        {
+//            double [] leftScale = scaleForTractionControl(motorsL);
+//            double [] rightScale = scaleForTractionControl(motorsR);
+//            
+//            //set motors to new scaled values
+//            for(int index = 0; index < right.length; index++){
+//                right[index] = right[index] * rightScale[index];
+//            }
+//            
+//            for(int index = 0; index < left.length; index++){
+//                left[index] = left[index] * leftScale[index];
+//            }
+//            
+//            //TODO convert values to RPM, and adjust for wheel to sensor ratio
+//        }
+//        
+//        if (applyGyro)
+//        {
+//            // TODO - DRL apply the gyro, compensate for how much yaw/error from our heading
+//        }
+//        
+//        for (int i = 0; i < motorsR.length; i++)
+//        {
+//            right[i] = scaleForDeadband(right[i]);
+//            right[i] = Math.min(Math.max(right[i], -1), 1);  // ensure value between -1 and 1
+//            motorsR[i].set(right[i]);
+//        }
+//        for (int i = 0; i < motorsL.length; i++)
+//        {
+//            left[i] = scaleForDeadband(left[i]);
+//            left[i] = Math.min(Math.max(left[i], -1), 1);  // ensure value between -1 and 1
+//            motorsL[i].set(left[i]);   
+//        }
     }
     
     public double getEncoderRotations()

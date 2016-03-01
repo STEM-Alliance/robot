@@ -1,5 +1,6 @@
 package com.taurus.commands;
 
+import com.taurus.Utilities;
 import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
@@ -23,7 +24,7 @@ public class ShooterRelease extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        
+        Utilities.PrintCommand("Shooter", this);
         // Once the ball is released, we should retract the servo to end in a safe state
         if (Timer.getFPGATimestamp() - startTime > 1.75)
         {
@@ -33,7 +34,7 @@ public class ShooterRelease extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.ballReleaseSubsystem.isBallReleaseContracted() && (Timer.getFPGATimestamp() - startTime > 1.75);
+        return Robot.ballReleaseSubsystem.isBallReleaseContracted() && (Timer.getFPGATimestamp() - startTime > 2.25);
     }
                 
     // Called once after isFinished returns true

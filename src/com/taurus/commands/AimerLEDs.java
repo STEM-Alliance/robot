@@ -5,41 +5,37 @@ import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class AimerAim extends Command
+public class AimerLEDs extends Command
 {
-    private boolean done;
+    private boolean ledsOn;
     
-    public AimerAim() 
+    public AimerLEDs(boolean ledsOn) 
     {
         requires(Robot.aimerSubsystem);
+        this.ledsOn = ledsOn;
     }
     
     // Called just before this Command runs the first time
     protected void initialize() 
     {
-        done = false;
-
-        Robot.aimerSubsystem.enableLEDs(true);
     }
     
     // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
         Utilities.PrintCommand("Aimer", this);
-        done = Robot.aimerSubsystem.aim();
+        Robot.aimerSubsystem.enableLEDs(ledsOn);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() 
     {
-        return done;
+        return true;
     }
     
     // Called once after isFinished returns true
     protected void end() 
-    {
-        Robot.aimerSubsystem.enableLEDs(false);
-        
+    {   
     }
     
     // Called when another command which requires one or more of the same
