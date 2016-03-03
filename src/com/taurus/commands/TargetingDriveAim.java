@@ -47,19 +47,23 @@ public class TargetingDriveAim extends Command {
         
         if(Timer.getFPGATimestamp() - startTime > .25)
         {
-            shooterAimed = Robot.aimerSubsystem.aim();
-            
             Target target = vision.getTarget();
+
             if(target != null)
-            {
+            {   
+                shooterAimed = Robot.aimerSubsystem.aim(target);
                 driveAimed = aim(target.Yaw());
             }
             else
             {
-                driveAimed = aim(0);
+                shooterAimed = false;
+                driveAimed = false;//aim(0);
             }
-            
-            SmartDashboard.putString("Targeting", "" + (target != null) + driveAimed + shooterAimed);
+
+            SmartDashboard.putBoolean("TargetFound", target != null);
+            SmartDashboard.putBoolean("TargetAimPitch", shooterAimed);
+            SmartDashboard.putBoolean("TargetAimYaw", driveAimed);
+            //SmartDashboard.putString("Targeting", "" + (target != null) + driveAimed + shooterAimed);
         }
     }
 

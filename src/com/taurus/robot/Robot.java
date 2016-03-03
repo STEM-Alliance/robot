@@ -4,6 +4,7 @@ package com.taurus.robot;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import com.taurus.commands.AutoLowBar;
@@ -29,6 +30,7 @@ public class Robot extends SampleRobot {
 	public static ManipulatorSubsystem manipulatorSubsystem;
 	public static OI oi;
 	public static BallReleaseSubsystem ballReleaseSubsystem;
+    public static CameraSubsystem cameraSubsystem;
 
     Command autonomousCommand;
     SendableChooser chooser;
@@ -44,6 +46,8 @@ public class Robot extends SampleRobot {
         rockerDriveSubsystem = new RockerDriveSubsystem();
         aimerSubsystem = new AimerSubsystem();
         ballReleaseSubsystem = new BallReleaseSubsystem();
+        cameraSubsystem = new CameraSubsystem();
+        
         oi = new OI();
         chooser = new SendableChooser();
         chooser.addDefault("Auto Terrain", new AutoTerrain());
