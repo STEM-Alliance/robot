@@ -76,8 +76,8 @@ public class OI
         buttonRB2.whenPressed(new LiftToBottom());
         buttonStart2.toggleWhenPressed(new LiftStop());
         
-        buttonX2.whileHeld(new AimerContinous(true));
-        buttonY2.whileHeld(new AimerContinous(false));
+        buttonX2.whileHeld(new AimerContinuous(true));
+        buttonY2.whileHeld(new AimerContinuous(false));
         
         //////////////////////////
         
