@@ -23,11 +23,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends SampleRobot {
 
-	public static RockerDriveSubsystem rockerDriveSubsystem ;
-	public static  ShooterSubsystem shooterSubsystem;
-	public static  LiftSubsystem liftSubsystem ;
-	public static  AimerSubsystem aimerSubsystem ;
+	public static RockerDriveSubsystem rockerDriveSubsystem;
+	public static ShooterSubsystem shooterSubsystem;
+	public static LiftSubsystem liftSubsystem;
+	public static AimerSubsystem aimerSubsystem;
 	public static ManipulatorSubsystem manipulatorSubsystem;
+    public static KickerSubsystem kickerSubsystem ;
 	public static OI oi;
 	public static BallReleaseSubsystem ballReleaseSubsystem;
     public static CameraSubsystem cameraSubsystem;
@@ -47,6 +48,7 @@ public class Robot extends SampleRobot {
         aimerSubsystem = new AimerSubsystem();
         ballReleaseSubsystem = new BallReleaseSubsystem();
         cameraSubsystem = new CameraSubsystem();
+        kickerSubsystem = new KickerSubsystem();
         
         oi = new OI();
         chooser = new SendableChooser();

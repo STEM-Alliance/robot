@@ -1,9 +1,11 @@
 package com.taurus.hardware;
 
+import com.taurus.CircularBuffer;
 import com.taurus.Utilities;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Class to use a Magnetic Potentiometer like an analog
@@ -17,6 +19,11 @@ public class MagnetoPot extends AnalogPotentiometer {
 
     private double fullRange;
     private double offset;
+
+    private boolean average = false;
+    private CircularBuffer averageBuff;
+    private double averageLastTime = 0;
+    private double lastAverage = 0;
     
     /**
      * Initialize a new Magnetic Potentiometer
@@ -90,13 +97,37 @@ public class MagnetoPot extends AnalogPotentiometer {
         this.offset = offset;
     }
 
+    private double getValue()
+    {
+        double val = super.get();
+        
+        if(average)
+        {
+            if((Timer.getFPGATimestamp() - averageLastTime) > .01)
+            {
+                averageBuff.pushFront(val);
+                averageLastTime = Timer.getFPGATimestamp();
+                
+                val = averageBuff.getAverage();
+                lastAverage = val;
+            }
+            else
+            {
+                val = lastAverage;
+            }
+        }
+        
+        return val;
+    }
+    
     /**
      * Get the scaled value of the sensor 
      * @return value from offset to fullRange
      */
-    public double get()
+    public double getWithoutOffset()
     {
-        double val = super.get();
+        // convert to 0-1 scale
+        double val = getValue();
         
         // update the values if needed
         if (val > InMax)
@@ -109,7 +140,16 @@ public class MagnetoPot extends AnalogPotentiometer {
         }
 
         // scale it based on the calibration values
-        return Utilities.scaleToRange(val, InMin, InMax, 0, fullRange) + offset;
+        return Utilities.scaleToRange(val, InMin, InMax, 0, fullRange);
+    }
+    
+    /**
+     * Get the scaled value of the sensor 
+     * @return value from offset to fullRange
+     */
+    public double get()
+    {
+        return getWithoutOffset() + offset;
     }
     
     /**
@@ -118,7 +158,7 @@ public class MagnetoPot extends AnalogPotentiometer {
      */
     public double getNormal()
     {
-        double val = super.get();
+        double val = getValue();
         
         // update the values if needed
         if (val > InMax)
@@ -134,4 +174,28 @@ public class MagnetoPot extends AnalogPotentiometer {
         return Utilities.scaleToRange(val, InMin, InMax, 0, 1);
     }
 
+    public void setFullRange(double fullRange)
+    {
+        this.fullRange = fullRange;
+    }
+    
+    public void setOffset(double offset)
+    {
+        this.offset = offset;
+    }
+    
+    public void setAverage(boolean average, int size)
+    {
+        this.average = average;
+        this.averageBuff = new CircularBuffer(size);
+        
+        double val = super.get();
+        
+        for (int i = 0; i < size; i++)
+        {
+            this.averageBuff.pushFront(val);
+        }
+        lastAverage = val;
+        
+    }
 }
