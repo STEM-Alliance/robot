@@ -9,51 +9,41 @@ public class AimerToAngle extends Command
 {
     private final double AIMER_LOAD_BALL;
     
-    /**
-     * Go to angle to load ball
-     */
-    public AimerToAngle() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
+    public AimerToAngle() 
+    {
         requires(Robot.aimerSubsystem);
         AIMER_LOAD_BALL = Robot.aimerSubsystem.ANGLE_GRAB_FROM_BOTTOM_FRONT;
     }
     
-    /**
-     * Go to desiredAngle
-     * @param desiredAngle
-     */
     public AimerToAngle(double desiredAngle)
     {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
         requires(Robot.aimerSubsystem);
         AIMER_LOAD_BALL = desiredAngle;
     }
     
-    // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize() 
+    {
         
     }
     
-    // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
         Utilities.PrintCommand("Aimer", this);
         Robot.aimerSubsystem.aimTo(AIMER_LOAD_BALL);       
     }
 
-    // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    protected boolean isFinished() 
+    {
         return Math.abs(Robot.aimerSubsystem.getCurrentAngle() - AIMER_LOAD_BALL) < 3;
     }
     
-    // Called once after isFinished returns true
-    protected void end() {
+    protected void end() 
+    {
               
     }
     
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    protected void interrupted() {
+    protected void interrupted() 
+    {
+        
     }
 }

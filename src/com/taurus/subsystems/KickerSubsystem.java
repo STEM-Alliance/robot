@@ -4,14 +4,9 @@ import com.taurus.PIDController;
 import com.taurus.commands.KickerStop;
 import com.taurus.hardware.MagnetoPot;
 import com.taurus.robot.RobotMap;
-import com.taurus.vision.Target;
-import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Relay.Direction;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,7 +19,6 @@ public class KickerSubsystem extends Subsystem
     private MagnetoPot angle;
     private CANTalon motor;
     private PIDController pid;
-    
 
     public KickerSubsystem()
     {
@@ -34,8 +28,7 @@ public class KickerSubsystem extends Subsystem
         
         pid = new PIDController(.1, 0, 0, .25);  //TODO update these values 
         angle = new MagnetoPot(RobotMap.PIN_ANG_KICKER,360);
-        angle.setAverage(true,2);
-        
+        angle.setAverage(true , 2);        
     }
 
     protected void initDefaultCommand()
@@ -64,7 +57,7 @@ public class KickerSubsystem extends Subsystem
         motorOutput = pid.update(changeInAngle);
        
         if (desiredAngle > ANGLE_MAX  ||
-                desiredAngle < ANGLE_MIN)
+            desiredAngle < ANGLE_MIN)
         {
             // Being commanded to an unsafe angle
             SmartDashboard.putString("KickerAngle", "Unsafe");
@@ -96,15 +89,13 @@ public class KickerSubsystem extends Subsystem
         return aim(desiredAngle - getCurrentAngle());
     }
 
-    
     private void updatedPIDConstants()
     {
 
         pid.setP(Preferences.getInstance().getDouble("KickerPID_P", .3));
         pid.setI(Preferences.getInstance().getDouble("KickerPID_I", 0));
         pid.setD(Preferences.getInstance().getDouble("KickerPID_D", 0));
-    }
-    
+    }    
     
     /***
      * basic speed function 
@@ -164,6 +155,4 @@ public class KickerSubsystem extends Subsystem
         angle.setOffset(Preferences.getInstance().getDouble("KickerPotOffset", 0));
         angle.setFullRange(Preferences.getInstance().getDouble("KickerPotScale", 360));
     }
-    
-
 }

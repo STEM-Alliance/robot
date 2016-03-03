@@ -5,30 +5,36 @@ import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class KickerStop extends Command {
-
-    public KickerStop() {
+public class KickerStop extends Command 
+{
+    public KickerStop() 
+    {
         requires(Robot.kickerSubsystem);
     }
     
-    protected void initialize() {
+    protected void initialize() 
+    {
+        
     }
     
-    protected void execute() {
+    protected void execute()
+    {
         Utilities.PrintCommand("Kicker", this);
         Robot.kickerSubsystem.setSpeed(0);
     }
 
-    protected boolean isFinished() {
+    protected boolean isFinished() 
+    {
         return false;
     }
     
-    protected void end() {
-      Robot.kickerSubsystem.setSpeed(0);
-      
+    protected void end() 
+    {
+        Robot.kickerSubsystem.setSpeed(0);      
     }
     
-    protected void interrupted() {
+    protected void interrupted() 
+    {
         end();
     }
 }

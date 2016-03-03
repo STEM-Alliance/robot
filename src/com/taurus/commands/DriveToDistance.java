@@ -6,20 +6,20 @@ import com.taurus.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveToDistance extends Command{
-    public final double WHEEL_CIRCUMFERENCE = 20;  // inches
+    final double WHEEL_CIRCUMFERENCE = 20;  // inches    
+    final double distanceDesired;
     
-    double distanceDesired;
     double revsStarting;
     
-    public DriveToDistance(double distance) {  
-        // Use requires() here to declare subsystem dependencies
+    public DriveToDistance(double distance) 
+    {
         requires(Robot.rockerDriveSubsystem);
         distanceDesired = distance;
         revsStarting = Robot.rockerDriveSubsystem.getEncoderRotations();
     }
 
-    // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize()
+    {
         if (distanceDesired > 0)
         {
             Robot.rockerDriveSubsystem.driveRaw(1, 1, true);
@@ -30,13 +30,13 @@ public class DriveToDistance extends Command{
         }    
     }
     
-    // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute() 
+    {
         Utilities.PrintCommand("Drive", this);
     }
     
-    // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    protected boolean isFinished() 
+    {
         double distanceTraveled = 0;
         double rotations = Robot.rockerDriveSubsystem.getEncoderRotations();
         
@@ -45,13 +45,13 @@ public class DriveToDistance extends Command{
         return Math.abs(distanceTraveled) >= Math.abs(distanceDesired);
     }
     
-    // Called once after isFinished returns true
-    protected void end() {
+    protected void end() 
+    {
         Robot.rockerDriveSubsystem.driveRaw(0, 0, false);
     }
     
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    protected void interrupted() {
+    protected void interrupted()
+    {
+        
     }
 }

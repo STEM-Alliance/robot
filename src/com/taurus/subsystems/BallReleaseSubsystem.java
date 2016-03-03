@@ -2,11 +2,6 @@ package com.taurus.subsystems;
 
 import com.taurus.robot.RobotMap;
 
-import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Relay.Direction;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -73,6 +68,5 @@ public class BallReleaseSubsystem extends Subsystem
     public boolean isBallReleaseMoving() 
     {
         return !isBallReleaseExtended() && !isBallReleaseContracted();
-    }
- 
+    } 
 }
