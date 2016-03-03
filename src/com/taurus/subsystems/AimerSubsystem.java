@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class AimerSubsystem extends Subsystem
 {
     private final double MOTOR_TOLERANCE = 0.05;
-    private final double ANGLE_MAX = 140 - 5;
-    private final double ANGLE_MIN = -50 + 5;
+    private static final double ANGLE_MAX = 140 - 5;
+    private static final double ANGLE_MIN = -50 + 5;
     private final double TOLERANCE = .75;  // Degrees from desired angle that counts as that angle
 
     public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
@@ -104,6 +104,46 @@ public class AimerSubsystem extends Subsystem
     {
         return aim(desiredAngle - getCurrentAngle());
     }
+
+    /**
+     * aims the shooter between two angles
+     * @param minAngle -360 to 360
+     * @param maxAngle -360 to 360
+     * @return true if desired angle reached
+     */
+    public boolean aimBetween(double minAngle, double maxAngle)
+    {
+        double curr = getCurrentAngle();
+        
+        if(maxAngle < minAngle)
+        {
+            double temp = maxAngle;
+            maxAngle = minAngle;
+            minAngle = temp;
+        }
+        
+        if(maxAngle > ANGLE_MAX)
+        {
+            maxAngle = ANGLE_MAX;
+        }
+        if(minAngle < ANGLE_MIN)
+        {
+            minAngle = ANGLE_MIN;
+        }
+        
+        if(curr > maxAngle)
+        {
+            return aim(maxAngle - curr);
+        }
+        else if (curr < minAngle)
+        {
+            return aim(minAngle - curr);
+        }
+        else
+        {
+            return true;
+        }
+    }
     
     private void updatedPIDConstants()
     {
@@ -117,19 +157,18 @@ public class AimerSubsystem extends Subsystem
      * aims the shooter at the detected target 
      * @return true when aimer is at desired angle
      */
-    public boolean aim()
+    public boolean aim(Target target)
     {
-        Target target = vision.getTarget();
         boolean done = false;
         
         if(target != null)
         {
             done = aim(vision.getTarget().Pitch());
         }
-        else
-        {
-            done = aim(0);
-        }
+//        else
+//        {
+//            done = aim(0);
+//        }
         return done;
     }
     

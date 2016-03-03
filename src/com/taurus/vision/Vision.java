@@ -361,13 +361,13 @@ public class Vision implements Runnable
 
             cameraMain.setBrightness(86);
             
-            try
-            {
-                Thread.sleep(2000);
-            }
-            catch (InterruptedException e1)
-            {
-            }
+//            try
+//            {
+//                Thread.sleep(2000);
+//            }
+//            catch (InterruptedException e1)
+//            {
+//            }
             
             TimeStart = Timer.getFPGATimestamp();
         }
@@ -457,6 +457,18 @@ public class Vision implements Runnable
         if(cameraMain.getSaturation() != sat || forceUpdate)
         {
             cameraMain.setSaturation(sat);
+        }
+    }
+    
+    public synchronized void fixCamera(boolean set)
+    {
+        if(set)
+        {
+            cameraMain.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) + 1);
+        }
+        else
+        {
+            cameraMain.setBrightness(Preferences.getInstance().getDouble("Brightness", 1));
         }
     }
 }

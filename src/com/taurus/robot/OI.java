@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import com.taurus.controller.Panel;
 import com.taurus.controller.PanelButton;
 import com.taurus.controller.Xbox;
+import com.taurus.controller.Xbox.RumbleType;
 import com.taurus.controller.XboxButton;
 import com.taurus.controller.XboxTriggerButton;
 import com.taurus.commands.*;
@@ -117,6 +118,17 @@ public class OI
     public static double getTractionMiddleIncrease()
     {
         return xbox1.getTriggerVal(Hand.kRight);
+    }
+    
+    public static void setRumble1(RumbleType type, float value)
+    {
+        xbox1.setRumble(type, value);
+    }
+
+    
+    public static void setRumble2(RumbleType type, float value)
+    {
+        xbox2.setRumble(type, value);
     }
     
 }
