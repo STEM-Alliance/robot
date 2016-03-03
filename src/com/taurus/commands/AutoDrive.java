@@ -5,14 +5,42 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import com.taurus.robot.Robot;
 
-public class AutoDrive extends Command {
-    
-    double speed;
+public class AutoDrive extends Command 
+{
+    final double speedR;
+    final double speedL;
     boolean tractionEnabled;
     boolean gyroEnabled;
     
     /**
-     * 
+     * Default to not driving (speed equals zero)
+     */
+    public AutoDrive()
+    {
+        requires(Robot.rockerDriveSubsystem);
+        speedR = 0;
+        speedL = 0;
+    }
+
+    /**
+     * Drive. Go any direction including turning.
+     * @param endTime
+     * @param speedL
+     * @param speedR
+     * @param tractionEnabled
+     * @param gryoEnabled
+     */
+    public AutoDrive(double endTime, double speedL, double speedR, boolean tractionEnabled, boolean gryoEnabled)
+    {
+        this.speedR = speedR;
+        this.speedL = speedL;
+        this.tractionEnabled = tractionEnabled;
+        this.gyroEnabled = gyroEnabled;
+        setTimeout(endTime);
+        requires(Robot.rockerDriveSubsystem);
+    }
+    
+    /** Drive. Goes straight forwards or backwards.
      * @param endTime seconds
      * @param speed -1 to 1
      * @param tractionEnabled 
@@ -20,15 +48,9 @@ public class AutoDrive extends Command {
      */
     public AutoDrive(double endTime, double speed, boolean tractionEnabled, boolean gyroEnabled)
     {
-        // Use requires() here to declare subsystem dependencies
-        this.speed = speed;
-        this.tractionEnabled = tractionEnabled;
-        this.gyroEnabled = gyroEnabled;
-        setTimeout(endTime);
-        requires(Robot.rockerDriveSubsystem);
-    }    
+        this(endTime, speed, speed, tractionEnabled, gyroEnabled);
+    }
 
-    // Called just before this Command runs the first time
     protected void initialize()
     {
         if(gyroEnabled)
@@ -38,25 +60,21 @@ public class AutoDrive extends Command {
         }
     }
 
-    // Called repeatedly when this Command is scheduled to run
     protected void execute() 
     {
-        Robot.rockerDriveSubsystem.driveRaw(speed, speed, tractionEnabled);
+        Robot.rockerDriveSubsystem.driveRaw(speedR, speedL, tractionEnabled);
     }
 
-    // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished()
     {
         return isTimedOut();
     }
 
-    // Called once after isFinished returns true
     protected void end() 
     {
         
     }
 
-    // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted()
     {
