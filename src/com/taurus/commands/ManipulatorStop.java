@@ -20,7 +20,7 @@ public class ManipulatorStop extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Manipulator", this);
-        Robot.manipulatorSubsystem.rotate(0);
+        Robot.manipulatorSubsystem.setSpeed(0);
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -30,7 +30,7 @@ public class ManipulatorStop extends Command {
     
     // Called once after isFinished returns true
     protected void end() {
-      Robot.manipulatorSubsystem.rotate(0);
+      Robot.manipulatorSubsystem.setSpeed(0);
       
     }
     
