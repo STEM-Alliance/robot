@@ -7,36 +7,38 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class KickerToAngle extends Command
 {
-    private final double KickerAngle;
-    private boolean done;
+    final double KickerAngle;
+    boolean done;
     
-    /**
-     * Go to desiredAngle
-     * @param desiredAngle
-     */
     public KickerToAngle(double desiredAngle)
     {
         requires(Robot.kickerSubsystem);
         KickerAngle = desiredAngle;
     }
     
-    protected void initialize() {
+    protected void initialize() 
+    {
         done = false;
     }
     
-    protected void execute() {
+    protected void execute() 
+    {
         Utilities.PrintCommand("Kicker", this);
         done = Robot.kickerSubsystem.aimTo(KickerAngle);       
     }
     
-    protected boolean isFinished() {
+    protected boolean isFinished() 
+    {
         return done;
     }
     
-    protected void end() {
+    protected void end() 
+    {
+        
     }
     
-    protected void interrupted() {
+    protected void interrupted() 
+    {
         end();
     }
 }

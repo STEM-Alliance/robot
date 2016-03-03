@@ -27,8 +27,7 @@ public class AimerSubsystem extends Subsystem
     private Vision vision;
     private MagnetoPotSRX angle;
     private CANTalon motor;
-    private PIDController pid;
-    
+    private PIDController pid;    
     
     private Relay leds;
 
@@ -42,7 +41,6 @@ public class AimerSubsystem extends Subsystem
         angle = new MagnetoPotSRX(motor,360);
         angle.setAverage(true,6);
         vision = Vision.getInstance();
-
         
         leds = new Relay(RobotMap.PIN_RELAY_LEDS, Direction.kForward);
     }
@@ -72,8 +70,7 @@ public class AimerSubsystem extends Subsystem
         updatedPIDConstants();
         motorOutput = pid.update(changeInAngle);
        
-        if (desiredAngle > ANGLE_MAX  ||
-                desiredAngle < ANGLE_MIN)
+        if (desiredAngle > ANGLE_MAX || desiredAngle < ANGLE_MIN)
         {
             // Being commanded to an unsafe angle
             SmartDashboard.putString("AimerAim", "Unsafe");
@@ -230,8 +227,6 @@ public class AimerSubsystem extends Subsystem
         angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
         angle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 360));
     }
-    
-
     
     public void enableLEDs(boolean enable)
     {
