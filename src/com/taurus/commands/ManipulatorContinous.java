@@ -5,12 +5,14 @@ import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ManipulatorCWC_Continous extends Command {
+public class ManipulatorContinous extends Command {
+    boolean clockwise;
 
-    public ManipulatorCWC_Continous() {
+    public ManipulatorContinous(boolean clockwise) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.manipulatorSubsystem);
+        this.clockwise = clockwise;
     }
     
     // Called just before this Command runs the first time
@@ -20,7 +22,15 @@ public class ManipulatorCWC_Continous extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         Utilities.PrintCommand("Manipulator", this);
-        Robot.manipulatorSubsystem.rotate(-1);
+        
+        if(clockwise)
+        {
+            Robot.manipulatorSubsystem.setSpeed(.75);
+        }
+        else
+        {
+            Robot.manipulatorSubsystem.setSpeed(-.75);
+        }
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -30,7 +40,7 @@ public class ManipulatorCWC_Continous extends Command {
     
     // Called once after isFinished returns true
     protected void end() {
-      Robot.manipulatorSubsystem.rotate(0);
+      Robot.manipulatorSubsystem.setSpeed(0);
       
     }
     

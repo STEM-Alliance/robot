@@ -1,5 +1,7 @@
 package com.taurus.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -16,6 +18,7 @@ public class RobotMap {
     public static final int CAN_SHOOTER_TALON_BOTTOM = 21;
     public static final int CAN_SHOOTER_TALON_AIMER = 24;
     public static final int CAN_MANIPULATOR_TALON = 25;
+    public static final int CAN_KICKER_TALON = 26;
     
     public static final int CAN_LIFT_TALON_L = 30;
     public static final int CAN_LIFT_TALON_R = 31;
@@ -29,4 +32,6 @@ public class RobotMap {
     public static final int PIN_SERVO_LIFT_BRAKE_R = 3;
     
     public static final int PIN_RELAY_LEDS = 0;
+    
+    public static final int PIN_ANG_KICKER = 0;
 }
