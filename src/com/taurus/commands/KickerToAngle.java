@@ -5,18 +5,19 @@ import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LiftToHeightFromFloor extends Command
+public class KickerToAngle extends Command
 {
+    private final double KickerAngle;
     private boolean done;
-    private double endHeight;
     
     /**
-     * Move the lift to this height from the floor
-     * @param height (signed inches)
+     * Go to desiredAngle
+     * @param desiredAngle
      */
-    public LiftToHeightFromFloor(double height) {
-        requires(Robot.liftSubsystem);
-        this.endHeight = height;
+    public KickerToAngle(double desiredAngle)
+    {
+        requires(Robot.kickerSubsystem);
+        KickerAngle = desiredAngle;
     }
     
     protected void initialize() {
@@ -24,10 +25,10 @@ public class LiftToHeightFromFloor extends Command
     }
     
     protected void execute() {
-        Utilities.PrintCommand("Lift", this);
-        done = Robot.liftSubsystem.setHeightFromFloor(endHeight);//store result of setHeight function into the done variable
+        Utilities.PrintCommand("Kicker", this);
+        done = Robot.kickerSubsystem.aimTo(KickerAngle);       
     }
-
+    
     protected boolean isFinished() {
         return done;
     }

@@ -24,12 +24,12 @@ public class OI
     //first controller
     Button buttonA1 = new XboxButton(xbox1, Xbox.ButtonType.kA);
     Button buttonB1 = new XboxButton(xbox1, Xbox.ButtonType.kB);
-
-    Button buttonRB1 = new XboxButton(xbox1, Xbox.ButtonType.kRB);
-    Button buttonLB1 = new XboxButton(xbox1, Xbox.ButtonType.kLB);
     
     Button buttonY1 = new XboxButton(xbox1, Xbox.ButtonType.kY);
     Button buttonX1 = new XboxButton(xbox1, Xbox.ButtonType.kX);
+
+    Button buttonRB1 = new XboxButton(xbox1, Xbox.ButtonType.kRB);
+    Button buttonLB1 = new XboxButton(xbox1, Xbox.ButtonType.kLB);
 
     Button buttonBack1 = new XboxButton(xbox1, Xbox.ButtonType.kBack);
     Button buttonStart1 = new XboxButton(xbox1, Xbox.ButtonType.kStart);
@@ -37,12 +37,12 @@ public class OI
     //second controller
     Button buttonA2 = new XboxButton(xbox2, Xbox.ButtonType.kA);
     Button buttonB2 = new XboxButton(xbox2, Xbox.ButtonType.kB);
-
-    Button buttonRB2 = new XboxButton(xbox2, Xbox.ButtonType.kRB);
-    Button buttonLB2 = new XboxButton(xbox2, Xbox.ButtonType.kLB);
     
     Button buttonY2 = new XboxButton(xbox2, Xbox.ButtonType.kY);
     Button buttonX2 = new XboxButton(xbox2, Xbox.ButtonType.kX);
+
+    Button buttonRB2 = new XboxButton(xbox2, Xbox.ButtonType.kRB);
+    Button buttonLB2 = new XboxButton(xbox2, Xbox.ButtonType.kLB);
 
     Button buttonBack2 = new XboxButton(xbox2, Xbox.ButtonType.kBack);
     Button buttonStart2 = new XboxButton(xbox2, Xbox.ButtonType.kStart);
@@ -50,12 +50,21 @@ public class OI
     Button buttonRightTrigger = new XboxTriggerButton(xbox2, Xbox.Hand.kRight);
     Button buttonLeftTrigger = new XboxTriggerButton(xbox2, Xbox.Hand.kLeft);
     
-    Button buttonLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
-    Button buttonLeftBlack = new PanelButton(panel, Panel.ButtonType.kBlackL);
+    Button panelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
+    Button panelLeftBlack = new PanelButton(panel, Panel.ButtonType.kBlackL);
     
     public OI() 
     {
         buttonBack1.toggleWhenPressed(new DriveArcadeWithXbox());
+        
+        buttonRB1.whileHeld(new ManipulatorContinous(true));
+        buttonLB1.whileHeld(new ManipulatorContinous(false));
+        
+        buttonA1.whileHeld(new KickerToAngle(0));
+        buttonB1.whileHeld(new KickerToAngle(90));
+        buttonY1.whileHeld(new KickerToAngle(180));
+        
+        ////////////////////////
         
         buttonA2.whileHeld(new ShooterGrab());
         buttonB2.whileHeld(new ShooterFire());
@@ -70,13 +79,15 @@ public class OI
         buttonX2.whileHeld(new AimerContinous(true));
         buttonY2.whileHeld(new AimerContinous(false));
         
-        buttonLeftWhite.whileHeld(new LiftCal());
-        buttonLeftBlack.whenPressed(new AimerToAngle());
+        //////////////////////////
+        
+        panelLeftWhite.whileHeld(new LiftCal());
+        panelLeftBlack.whenPressed(new AimerToAngle());
     }
     
     public static boolean getTractionControl()
     {
-        return xbox1.getBumper(Hand.kRight);
+        return false;//xbox1.getBumper(Hand.kRight);
     }
     
     public static double getSpeedLeft()
