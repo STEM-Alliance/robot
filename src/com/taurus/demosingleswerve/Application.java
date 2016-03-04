@@ -1,22 +1,26 @@
 package com.taurus.demosingleswerve;
 
+import com.taurus.controller.SwerveJoysticks;
 import com.taurus.controller.SwerveXbox;
 import com.taurus.swerve.SwerveVector;
 import com.taurus.swerve.SwerveWheel;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Application implements com.taurus.Application {
 
     SwerveXbox Controller;
+    //SwerveJoysticks Controller;
     SwerveWheel Wheel;
     double StartTime;
     
     public Application()
     {
         Controller = new SwerveXbox();
-        Wheel = new SwerveWheel(0, new double[2], 0, 0, 12, 0, 1, new int[] {10, 85}, 0, Controller);
+        //Controller = new SwerveJoysticks();
+        Wheel = new SwerveWheel(0, new double[2], 0, 0, 0, 1, 2, new int[] {10, 85}, 0, Controller);
     }
     
     @Override
@@ -31,6 +35,7 @@ public class Application implements com.taurus.Application {
     {
         // TODO Auto-generated method stub
         // Set the wheel speed
+        SmartDashboard.putString("HaloDrive", Controller.getHaloDrive_Velocity().getMag() + " " +Controller.getHaloDrive_Velocity().getAngle() );
         Wheel.setDesired(Controller.getHaloDrive_Velocity(), Controller.getHighGearEnable(), false);
 
     }
@@ -54,17 +59,17 @@ public class Application implements com.taurus.Application {
         if(Timer.getFPGATimestamp() - StartTime > 5)
         {
             // Change direction
-            SwerveVector value;
-            Random randomGenerator = new Random();
-            double x;
-            double y;
-            
-            x = randomGenerator.nextDouble();
-            y = randomGenerator.nextDouble();
-            value = new SwerveVector(x, y);
-            value = SwerveVector.NewFromMagAngle(x, y*360);
-            
-            Wheel.setDesired(value, false, false);
+//            SwerveVector value;
+//            Random randomGenerator = new Random();
+//            double x;
+//            double y;
+//            
+//            x = randomGenerator.nextDouble();
+//            y = randomGenerator.nextDouble();
+//            value = new SwerveVector(x, y);
+//            value = SwerveVector.NewFromMagAngle(x, y*360);
+//            
+//            Wheel.setDesired(value, false, false);
             
             // Reset our timer
             StartTime = Timer.getFPGATimestamp();

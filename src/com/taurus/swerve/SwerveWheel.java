@@ -13,6 +13,8 @@ import com.taurus.controller.SwerveController;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Handle motor outputs and feedback for an individual wheel
@@ -42,9 +44,10 @@ public class SwerveWheel {
     private double AngleOrientation = 0;
 
     // motor
-    public CANTalon MotorDrive;
-    public CANTalon MotorAngle;
- 
+    //public CANTalon MotorDrive;
+    //public CANTalon MotorAngle;
+    public Talon MotorDrive;
+    public Talon MotorAngle;
 
     // sensor
     public MagnetoPot AnglePot;
@@ -103,13 +106,13 @@ public class SwerveWheel {
         WheelPosition = new SwerveVector(Position);
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
-        MotorDrive = new CANTalon(DriveAddress);
+        MotorDrive = new Talon(DriveAddress);
 //        MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone, closeLoopRampRate, 0);
 //        MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 //        MotorDrive.changeControlMode(ControlMode.Disabled);
 //        if(Application.ROBOT_VERSION == 0)
 //        {
-            MotorAngle = new CANTalon(AngleAddress);
+            MotorAngle = new Talon(AngleAddress);
 //        }
 //        else
 //        {
@@ -286,6 +289,8 @@ public class SwerveWheel {
         // Update the angle controller.
         AngleController.update(angle, AdjustAngle(getAnglePotValue()));
         
+        SmartDashboard.putNumber("getAnglePotValue", getAnglePotValue());
+        
         maxRotationSpeed = Application.prefs.getDouble("maxRotationSpeed", maxRotationSpeed);
 
         // Control the wheel angle.
@@ -363,11 +368,11 @@ public class SwerveWheel {
         if (Brake)
         {
             MotorDrive.set(0);
-            MotorDrive.enableBrakeMode(true);
+            //MotorDrive.enableBrakeMode(true);
         }
         else
         {
-            MotorDrive.enableBrakeMode(false);
+            //MotorDrive.enableBrakeMode(false);
             MotorDrive.set(driveMotorOutput);
         }
 

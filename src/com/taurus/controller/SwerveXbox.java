@@ -95,7 +95,7 @@ public class SwerveXbox implements SwerveController {
     {
         SwerveVector value;
 
-        value = new SwerveVector(xbox.getX(Hand.kLeft), xbox.getY(Hand.kLeft));
+        value = new SwerveVector(xbox.getX(Hand.kLeft)/3, xbox.getY(Hand.kLeft)/3);
 
         if (value.getMag() < DEADBAND)
         {
