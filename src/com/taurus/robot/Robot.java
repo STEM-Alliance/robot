@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import com.taurus.commands.AutoDrive;
+import com.taurus.commands.AutoLowBar;
+import com.taurus.commands.AutoLowBarCross;
 import com.taurus.subsystems.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -50,10 +52,11 @@ public class Robot extends SampleRobot {
         kickerSubsystem = new KickerSubsystem();
         
         oi = new OI();
-//        chooser = new SendableChooser();
-//        chooser.addDefault("Auto Terrain", new AutoTerrain());
-//        chooser.addObject("Auto Low Bar", new AutoLowBar());
-//        SmartDashboard.putData("Auto mode", chooser);       
+        chooser = new SendableChooser();
+        chooser.addDefault("Auto None", new AutoDrive());
+        chooser.addObject("Auto Low Bar Cross", new AutoLowBarCross());
+        chooser.addObject("Auto Low Bar Shoot", new AutoLowBar());
+        SmartDashboard.putData("Auto mode", chooser);       
     }
 
     public void operatorControl()
@@ -69,8 +72,8 @@ public class Robot extends SampleRobot {
     
     public void autonomous()
     {
-//        autonomousCommand = (Command) chooser.getSelected();
-        autonomousCommand =  new AutoDrive();
+        autonomousCommand = (Command) chooser.getSelected();
+        //autonomousCommand =  new AutoDrive();
         
 //        String autoSelected = SmartDashboard.getString("Auto Mode", "Auto Terrain");
 //        switch(autoSelected) {

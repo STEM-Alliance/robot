@@ -28,6 +28,7 @@ public class LiftSubsystem extends Subsystem{
     private MagnetoPotSRX potLeft;
     private MagnetoPotSRX potRight;
     private Brake brakes;
+    private boolean disableAutoLift;
     
     /** array of size 2, {right side, left side} */
     private PIDController[] heightPIDs;
@@ -56,6 +57,8 @@ public class LiftSubsystem extends Subsystem{
         
         brakes = new Brake(new int[]{RobotMap.PIN_SERVO_LIFT_BRAKE_L, RobotMap.PIN_SERVO_LIFT_BRAKE_R},
                            new double[]{BRAKE_ANGLE_PAWN_DOWNWARD, BRAKE_ANGLE_PAWN_UPWARD});
+        
+        disableAutoLift = false;
     }
 
     /**
@@ -106,6 +109,8 @@ public class LiftSubsystem extends Subsystem{
         motorOutput = getPIDSpeed(height);
 
         // determine if each side is at the desired height
+        
+        
         arrivedL = Math.abs(getHeightFromLiftBottomL()-height) <= LIMIT_TOLERANCE;
         arrivedR = Math.abs(getHeightFromLiftBottomR()-height) <= LIMIT_TOLERANCE;
 
@@ -173,6 +178,11 @@ public class LiftSubsystem extends Subsystem{
             motorRight.set(0);
             motorLeft.set(0);
             brakes.setState(BRAKE_STATE.NONE);
+        }
+        else if (Math.abs(leftHeight - rightHeight) > 6)
+        {
+            motorRight.set(0);
+            motorLeft.set(0);
         }
         else
         {

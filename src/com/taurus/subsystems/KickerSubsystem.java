@@ -1,6 +1,7 @@
 package com.taurus.subsystems;
 
 import com.taurus.PIDController;
+import com.taurus.Utilities;
 import com.taurus.commands.KickerStop;
 import com.taurus.hardware.MagnetoPot;
 import com.taurus.robot.RobotMap;
@@ -22,13 +23,13 @@ public class KickerSubsystem extends Subsystem
 
     public KickerSubsystem()
     {
-//        motor = new CANTalon(RobotMap.CAN_KICKER_TALON);
-//        motor.enableBrakeMode(true);
-//        motor.setInverted(true);
-//        
-        pid = new PIDController(.1, 0, 0, .25);  //TODO update these values 
-//        angle = new MagnetoPot(RobotMap.PIN_ANG_KICKER,360);
-//        angle.setAverage(true , 2);        
+        motor = new CANTalon(RobotMap.CAN_KICKER_TALON);
+        motor.enableBrakeMode(true);
+        motor.setInverted(false);
+        
+        pid = new PIDController(.1, 0, 0, .5);  //TODO update these values 
+        angle = new MagnetoPot(RobotMap.PIN_ANG_KICKER,360);
+        angle.setAverage(true , 2);        
     }
 
     protected void initDefaultCommand()
@@ -127,12 +128,12 @@ public class KickerSubsystem extends Subsystem
         
         if(valid)
         {
-            //motor.set(speed);
+            motor.set(speed);
             SmartDashboard.putNumber("KickerSpeed", speed);
         }
         else
         {
-            //motor.set(0);
+            motor.set(0);
             SmartDashboard.putNumber("KickerSpeed", 0);
         }
     
@@ -140,7 +141,7 @@ public class KickerSubsystem extends Subsystem
     
     public double getCurrentAngle()
     {
-        return 0;//angle.get();
+        return Utilities.wrapToRange(angle.get(), -90, 270);
     }
     
     /**
@@ -149,10 +150,10 @@ public class KickerSubsystem extends Subsystem
      */
     public void updatePotOffsets()
     {
-//        SmartDashboard.putNumber("Kicker Angle", angle.get());
-//        SmartDashboard.putNumber("Kicker Raw", motor.getAnalogInRaw()/1023);
+        SmartDashboard.putNumber("Kicker Angle", angle.get());
+        SmartDashboard.putNumber("Kicker Raw", motor.getAnalogInRaw()/1023.0);
 
-//        angle.setOffset(Preferences.getInstance().getDouble("KickerPotOffset", 0));
-//        angle.setFullRange(Preferences.getInstance().getDouble("KickerPotScale", 360));
+        angle.setOffset(Preferences.getInstance().getDouble("KickerPotOffset", 0));
+        angle.setFullRange(Preferences.getInstance().getDouble("KickerPotScale", 360));
     }
 }

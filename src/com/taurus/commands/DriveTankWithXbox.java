@@ -9,9 +9,12 @@ import com.taurus.robot.Robot;
 
 public class DriveTankWithXbox extends Command 
 {
-    public DriveTankWithXbox() 
+    boolean backward;
+    
+    public DriveTankWithXbox(boolean backward) 
     {
         requires(Robot.rockerDriveSubsystem);
+        this.backward = backward;
     }
 
     protected void initialize() 
@@ -26,6 +29,15 @@ public class DriveTankWithXbox extends Command
         double adjust = .8 + .2 * OI.getThrottleHighSpeed();
         double left = OI.getSpeedLeft() * adjust;
         double right = OI.getSpeedRight() * adjust;
+
+        if(backward)
+        {
+            double temp;
+            temp = left * -1.0;
+            left = right * -1.0;
+            right = temp;
+        }
+        
         
         double[] rights = {right,right,right};
         rights[1] = rights[1] * ( 1 + OI.getTractionMiddleIncrease() );

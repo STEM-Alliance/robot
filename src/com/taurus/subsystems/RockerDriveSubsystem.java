@@ -85,7 +85,7 @@ public class RockerDriveSubsystem extends Subsystem
     public void initDefaultCommand() 
     {
         // Set the default command for a subsystem here.
-        setDefaultCommand(new DriveTankWithXbox());
+        setDefaultCommand(new DriveTankWithXbox(false));
     }
     
     /**

@@ -6,16 +6,17 @@ import com.taurus.robot.Robot;
 import com.taurus.vision.Target;
 import com.taurus.vision.Vision;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TargetingDriveAim extends Command
 {    
-    public final double DRIVE_ANGLE_TOLERANCE = 1;
-    
-    private boolean shooterAimed;
-    private boolean driveAimed;
+    public final double DRIVE_ANGLE_TOLERANCE = .8;
+
+    private int shooterAimed;
+    private int driveAimed;
 
     private Vision vision;
     private PIDController drivePID;
@@ -28,13 +29,13 @@ public class TargetingDriveAim extends Command
         requires(Robot.rockerDriveSubsystem);
         
         vision = Vision.getInstance();        
-        drivePID = new PIDController(.2, 0, 0, .4); //TODO change max output 
+        drivePID = new PIDController(.2, 0.1, 0.1, .75); //TODO change max output 
     }
 
     protected void initialize() 
     {
-        shooterAimed = false;
-        driveAimed = false;
+        shooterAimed = 0;
+        driveAimed = 0;
 
         startTime = Timer.getFPGATimestamp();        
     }
@@ -50,25 +51,32 @@ public class TargetingDriveAim extends Command
 
             if(target != null)
             {   
-                shooterAimed = Robot.aimerSubsystem.aim(target);
-                driveAimed = aim(target.Yaw());
+                if(Robot.aimerSubsystem.aim(target))
+                    shooterAimed++;
+                else
+                    shooterAimed = 0;
+                
+                if(aim(target.Yaw()))
+                    driveAimed++;
+                else
+                    driveAimed = 0; 
             }
             else
             {
-                shooterAimed = false;
-                driveAimed = false;//aim(0);
+                shooterAimed = 0;
+                driveAimed = 0;//aim(0);
             }
 
             SmartDashboard.putBoolean("TargetFound", target != null);
-            SmartDashboard.putBoolean("TargetAimPitch", shooterAimed);
-            SmartDashboard.putBoolean("TargetAimYaw", driveAimed);
+            SmartDashboard.putBoolean("TargetAimPitch", shooterAimed > 2);
+            SmartDashboard.putBoolean("TargetAimYaw", driveAimed > 2);
             //SmartDashboard.putString("Targeting", "" + (target != null) + driveAimed + shooterAimed);
         }
     }
 
     protected boolean isFinished() 
     {
-        return shooterAimed && driveAimed;
+        return shooterAimed > 2 && driveAimed > 2;
     }
 
     protected void end()
@@ -83,6 +91,7 @@ public class TargetingDriveAim extends Command
     
     private boolean aim(double changeInAngle) 
     {
+        updatedPIDConstants();
         double motorOutput = -drivePID.update(changeInAngle);  //TODO add limits for angle
 
         if(Math.abs(changeInAngle) <= DRIVE_ANGLE_TOLERANCE)
@@ -95,5 +104,14 @@ public class TargetingDriveAim extends Command
             Robot.rockerDriveSubsystem.driveRaw(-motorOutput, motorOutput, false);
             return false;
         }
+    }
+
+    private void updatedPIDConstants()
+    {
+
+        drivePID.setP(Preferences.getInstance().getDouble("DrivePID_P", .2));
+        drivePID.setI(Preferences.getInstance().getDouble("DrivePID_I", 0));
+        drivePID.setD(Preferences.getInstance().getDouble("DrivePID_D", 0));
+        drivePID.setMax(Preferences.getInstance().getDouble("DrivePID_Max", 0.7));
     }
 }
