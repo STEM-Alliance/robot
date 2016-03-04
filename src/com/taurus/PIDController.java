@@ -17,7 +17,7 @@ public final class PIDController {
     private double I;
     private double D;
 
-    private final double maxOutput;
+    private double  maxOutput;
 
     // State.
     public double integral;
@@ -126,5 +126,11 @@ public final class PIDController {
     public void setD(double D)
     {
         this.D = D;
+    }
+
+    public void setMax(double max)
+    {
+        this.maxOutput = max;
+        
     }
 }

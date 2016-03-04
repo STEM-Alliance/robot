@@ -12,7 +12,6 @@ public class ShooterFire extends CommandGroup
         {
 //            addParallel(new TargetingDriveAim());
 //            addSequential(new ShooterRevTimeout());
-            addParallel(new ShooterRevTimeout(2));
             addSequential(new TargetingDriveAim());
             
         }
@@ -24,8 +23,9 @@ public class ShooterFire extends CommandGroup
         {
 //            addParallel(new TargetingDriveAim());
 //            addSequential(new ShooterRelease());
-            addParallel(new ShooterRelease());
-            addSequential(new TargetingDriveAim());
+            addSequential(new ShooterRevTimeout(2));
+            addSequential(new ShooterRelease());
+            //addSequential(new TargetingDriveAim());
         }
     }
     
