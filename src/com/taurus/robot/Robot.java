@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import com.taurus.commands.AutoDrive;
+import com.taurus.commands.AutoDropArms;
 import com.taurus.commands.AutoLowBar;
 import com.taurus.commands.AutoLowBarCross;
 import com.taurus.subsystems.*;
@@ -54,6 +55,7 @@ public class Robot extends SampleRobot {
         oi = new OI();
         chooser = new SendableChooser();
         chooser.addDefault("Auto None", new AutoDrive());
+        chooser.addObject("Auto Drop Arms", new AutoDropArms());
         chooser.addObject("Auto Low Bar Cross", new AutoLowBarCross());
         chooser.addObject("Auto Low Bar Shoot", new AutoLowBar());
         SmartDashboard.putData("Auto mode", chooser);       

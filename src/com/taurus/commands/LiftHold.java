@@ -14,20 +14,9 @@ public class LiftHold extends Command
     double startTime = 0;
     double initialBrakeWait = .251;
     double finalBrakeWait = 2;
-    double holdBrakeWait = 5;
-    enum LiftHoldState
-    {
-        start,
-        getTime,
-        adjust,
-        hold,
-    }
-    
-    LiftHoldState currentState;
     
     public LiftHold() {
         requires(Robot.liftSubsystem);
-        currentState = LiftHoldState.start;
     }
     
     public LiftHold(double initialBrakeWait, double finalBrakeWait) {
@@ -35,7 +24,6 @@ public class LiftHold extends Command
         
         this.initialBrakeWait = initialBrakeWait;
         this.finalBrakeWait = finalBrakeWait;
-        currentState = LiftHoldState.start;
     }
 
     protected void initialize() {
@@ -45,64 +33,7 @@ public class LiftHold extends Command
 
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
-        
-        switch (currentState)
-        {
-            case start:
-            {
-                Robot.liftSubsystem.setHeightFromLiftBottom(height);
-                currentState = LiftHoldState.getTime;
-                break;
-            }
-            case getTime:
-            {
-                Robot.liftSubsystem.setHeightFromLiftBottom(height);
-                startTime = Timer.getFPGATimestamp();
-                currentState = LiftHoldState.adjust;
-                break;
-            }
-            case adjust:
-            {
-                if((Timer.getFPGATimestamp() - startTime) > initialBrakeWait)
-                {
-                    if(Robot.liftSubsystem.isLevel() || ((Timer.getFPGATimestamp() - startTime) > finalBrakeWait))
-                    {
-                        SmartDashboard.putString("LiftSWBrake1", "true");
-                        Robot.liftSubsystem.enableBrakeMode(true);
-                        currentState = LiftHoldState.hold;
-                        //Robot.liftSubsystem.setSpeed(0, 0);
-                    }
-                    else
-                    {
-                        SmartDashboard.putString("LiftSWBrake1", "false");
-                        //Robot.liftSubsystem.setHeightFromLiftBottom(height);
-                    }
-                }
-                else
-                {
-                    SmartDashboard.putString("LiftSWBrake1", "false");
-                    //Robot.liftSubsystem.setHeightFromLiftBottom(height);
-                }
-                Robot.liftSubsystem.setHeightFromLiftBottom(height);
-                break;
-            }
-            case hold:
-            {
-                if((Timer.getFPGATimestamp() - startTime) > holdBrakeWait)
-                {
-                    currentState = LiftHoldState.getTime;
-                }
-
-                Robot.liftSubsystem.setHeightFromLiftBottom(height);
-            }
-            default:
-            {
-                currentState = LiftHoldState.start;
-                break;
-            }
-        }
-        
-        /*Utilities.PrintCommand("Lift", this);
+                
         
         SmartDashboard.putString("Lift Times", Timer.getFPGATimestamp() +" " + startTime +" " + initialBrakeWait +" " + finalBrakeWait);
         if((Timer.getFPGATimestamp() - startTime) > initialBrakeWait)
@@ -126,7 +57,7 @@ public class LiftHold extends Command
         }
         Robot.liftSubsystem.setHeightFromLiftBottom(height);
 
-        SmartDashboard.putString("LiftIsLevel1", Robot.liftSubsystem.isLevel() + "");*/
+        SmartDashboard.putString("LiftIsLevel1", Robot.liftSubsystem.isLevel() + "");
     }
 
     protected boolean isFinished() {
