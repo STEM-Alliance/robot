@@ -26,11 +26,11 @@ public class ManipulatorContinous extends Command
         
         if(clockwise)
         {
-            Robot.manipulatorSubsystem.setSpeed(.75);
+            Robot.manipulatorSubsystem.setSpeed(.5);
         }
         else
         {
-            Robot.manipulatorSubsystem.setSpeed(-.75);
+            Robot.manipulatorSubsystem.setSpeed(-.5);
         }
     }
 

@@ -45,6 +45,7 @@ public class Robot extends SampleRobot {
         rockerDriveSubsystem = new RockerDriveSubsystem();
         aimerSubsystem = new AimerSubsystem();
         ballReleaseSubsystem = new BallReleaseSubsystem();
+        manipulatorSubsystem = new ManipulatorSubsystem();
         cameraSubsystem = new CameraSubsystem();
         kickerSubsystem = new KickerSubsystem();
         

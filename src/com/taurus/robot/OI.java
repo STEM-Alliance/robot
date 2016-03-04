@@ -49,8 +49,9 @@ public class OI
 
     Button buttonRightTrigger = new XboxTriggerButton(xbox2, Xbox.Hand.kRight);
     Button buttonLeftTrigger = new XboxTriggerButton(xbox2, Xbox.Hand.kLeft);
-    
+
     Button panelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
+    Button panelRightWhite = new PanelButton(panel, Panel.ButtonType.kWhiteR);
     Button panelLeftBlack = new PanelButton(panel, Panel.ButtonType.kBlackL);
     
     public OI() 
@@ -82,7 +83,8 @@ public class OI
         //////////////////////////
         
         panelLeftWhite.whileHeld(new LiftCal());
-        panelLeftBlack.whenPressed(new AimerToAngle());
+        panelLeftBlack.whileHeld(new LoadBallFromFloor());
+        panelRightWhite.whileHeld(new LoadBall());
     }
     
     public static boolean getTractionControl()

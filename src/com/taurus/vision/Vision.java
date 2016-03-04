@@ -465,10 +465,12 @@ public class Vision implements Runnable
         if(set)
         {
             cameraMain.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) + 1);
+            Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) + 1);
         }
         else
         {
-            cameraMain.setBrightness(Preferences.getInstance().getDouble("Brightness", 1));
+            cameraMain.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) - 1);
+            Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) - 1);
         }
     }
 }

@@ -13,7 +13,7 @@ public class Constants {
     public static final int BallShotX = (int) ((Width)/2);
     
     public static final double TargetWidthIn = 20; 
-    public static final double TargetHeightIn = 14;
+    public static final double TargetHeightIn = 12;
     public static final double TowerHeightIn = 90;
     
     // see http://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
