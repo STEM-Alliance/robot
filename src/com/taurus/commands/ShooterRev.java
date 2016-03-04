@@ -3,6 +3,7 @@ package com.taurus.commands;
 import com.taurus.Utilities;
 import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
+import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -21,6 +22,7 @@ public class ShooterRev extends Command {
         double speedBottom = .8 + .2 * OI.getShooterSpeedAdjust();
         Robot.shooterSubsystem.setSpeed(speedTop, speedBottom);
         
+        //Vision.getInstance().enableBackCamera(false);
         //setTimeout(4);
     }
 
@@ -42,6 +44,7 @@ public class ShooterRev extends Command {
     // Called once after isFinished returns true
     protected void end() {
         Robot.shooterSubsystem.setSpeed(0,0);
+        //Vision.getInstance().enableBackCamera(true);
     }
 
     // Called when another command which requires one or more of the same

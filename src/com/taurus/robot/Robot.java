@@ -6,10 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import com.taurus.commands.AutoDrive;
-import com.taurus.commands.AutoDropArms;
-import com.taurus.commands.AutoLowBar;
-import com.taurus.commands.AutoLowBarCross;
+import com.taurus.commands.*;
 import com.taurus.subsystems.*;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -33,6 +30,7 @@ public class Robot extends SampleRobot {
 	public static OI oi;
 	public static BallReleaseSubsystem ballReleaseSubsystem;
     public static CameraSubsystem cameraSubsystem;
+    public static BackCameraSubsystem backCameraSubsystem;
 
     Command autonomousCommand;
     SendableChooser chooser;
@@ -50,14 +48,18 @@ public class Robot extends SampleRobot {
         ballReleaseSubsystem = new BallReleaseSubsystem();
         manipulatorSubsystem = new ManipulatorSubsystem();
         cameraSubsystem = new CameraSubsystem();
+        backCameraSubsystem = new BackCameraSubsystem();
         kickerSubsystem = new KickerSubsystem();
         
         oi = new OI();
         chooser = new SendableChooser();
         chooser.addDefault("Auto None", new AutoDrive());
-        chooser.addObject("Auto Drop Arms", new AutoDropArms());
+        chooser.addObject("Auto Drop Arms Fwd", new AutoReachDropArms());
+        chooser.addObject("Auto Drop Arms Back", new AutoReachDropArmsBack());
         chooser.addObject("Auto Low Bar Cross", new AutoLowBarCross());
-        chooser.addObject("Auto Low Bar Shoot", new AutoLowBar());
+        chooser.addObject("Auto Low Bar Shoot", new AutoLowBarShoot());
+        chooser.addObject("Auto Port Cullis Cross", new AutoPortCullisCross());
+        chooser.addObject("Auto Port Cullis Shoot", new AutoPortCullisShoot());
         SmartDashboard.putData("Auto mode", chooser);       
     }
 

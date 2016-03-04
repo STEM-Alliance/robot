@@ -56,6 +56,7 @@ public class Vision implements Runnable
 
     private boolean targetDetectionOn = true;
     private boolean imageRotation = true;
+    private boolean BackCameraEnabled = false;
     
     private int cameraQuality = 50;
     
@@ -68,6 +69,14 @@ public class Vision implements Runnable
         }
         return instance;
         
+    }
+    
+    public void enableBackCamera(boolean BackCamera)
+    {
+        synchronized (visionThread)
+        {
+            this.BackCameraEnabled = BackCamera;
+        }
     }
     
     public void setTargetDetectionOn(boolean enable){
@@ -130,9 +139,40 @@ public class Vision implements Runnable
             // grab from the chooser which image to use
             ImageChoices imageToSend = ((ImageChoices) imageChooser.getSelected());
 
-            TimeStart = setupMain(TimeStart);
-            
-            setupBack(imageToSend);
+            if(!BackCameraEnabled)
+            {
+
+                if (cameraBack.isCapturing())    
+                {
+                    SmartDashboard.putString("CameraBackState", "Stop Capture");
+                    cameraBack.stopCapture();
+                }
+                
+                if(cameraBack.isOpen())
+                {
+                    SmartDashboard.putString("CameraBackState", "Closing");
+                    cameraBack.closeCamera();
+                }
+                
+                TimeStart = setupMain(TimeStart);
+            }
+            else
+            {
+
+                if (cameraMain.isCapturing())    
+                {
+                    SmartDashboard.putString("CameraMainState", "Stop Capture");
+                    cameraMain.stopCapture();
+                }
+                
+                if(cameraMain.isOpen())
+                {
+                    SmartDashboard.putString("CameraMainState", "Closing");
+                    cameraMain.closeCamera();
+                }
+                
+                setupBack(imageToSend);
+            }
             
             try
             {
@@ -169,7 +209,7 @@ public class Vision implements Runnable
                     }
                 }
                 
-                if (cameraBack.isCapturing() && imageToSend == ImageChoices.DriveBack)
+                if (cameraBack.isCapturing() && (imageToSend == ImageChoices.DriveBack || BackCameraEnabled))
                 {
                     SmartDashboard.putString("CameraStateBack", "Capturing");
                     cameraBack.getImage(frameBack);
@@ -178,7 +218,7 @@ public class Vision implements Runnable
                 // get the latest rescale size from the prefs
                 RescaleSize = Preferences.getInstance().getInt("ImageRescaleSize", 1);
                 
-                if(imageToSend == ImageChoices.Input)
+                if(imageToSend == ImageChoices.Input && !BackCameraEnabled)
                 {
                     addTargets(frame, COLORS.MAGENTA);
 
@@ -202,7 +242,7 @@ public class Vision implements Runnable
 
                     CameraServer.getInstance().setImage(frameDownsampledTH);
                 }
-                else if(imageToSend == ImageChoices.DriveBack)
+                else if (cameraBack.isCapturing() && (imageToSend == ImageChoices.DriveBack || BackCameraEnabled))
                 {
                     // scale if needed
                     NIVision.imaqScale(frameDownsampled, frameBack, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
@@ -226,7 +266,7 @@ public class Vision implements Runnable
     
     private void setupBack(ImageChoices imageToSend)
     {
-        if(imageToSend == ImageChoices.DriveBack)
+        if(imageToSend == ImageChoices.DriveBack || BackCameraEnabled)
         {
             // if we haven't opened the camera session
             if(!cameraBack.isOpen())
@@ -236,20 +276,14 @@ public class Vision implements Runnable
             }
     
             // if we haven't started capturing
-            if (!cameraMain.isCapturing())    
+            if (!cameraBack.isCapturing())    
             {
                 SmartDashboard.putString("CameraBackState", "Start Capture");
                 cameraBack.startCapture();
     
-                cameraBack.setBrightness(86);
+                //cameraBack.setBrightness(86);
                 
-                try
-                {
-                    Thread.sleep(2000);
-                }
-                catch (InterruptedException e1)
-                {
-                }
+                
             }
         }
         else

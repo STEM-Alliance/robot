@@ -27,6 +27,8 @@ public class OI
     
     Button buttonY1 = new XboxButton(xbox1, Xbox.ButtonType.kY);
     Button buttonX1 = new XboxButton(xbox1, Xbox.ButtonType.kX);
+    
+    Button buttonLeftTrigger1 = new XboxTriggerButton(xbox1, Xbox.Hand.kLeft);
 
     Button buttonRB1 = new XboxButton(xbox1, Xbox.ButtonType.kRB);
     Button buttonLB1 = new XboxButton(xbox1, Xbox.ButtonType.kLB);
@@ -47,8 +49,8 @@ public class OI
     Button buttonBack2 = new XboxButton(xbox2, Xbox.ButtonType.kBack);
     Button buttonStart2 = new XboxButton(xbox2, Xbox.ButtonType.kStart);
 
-    Button buttonRightTrigger = new XboxTriggerButton(xbox2, Xbox.Hand.kRight);
-    Button buttonLeftTrigger = new XboxTriggerButton(xbox2, Xbox.Hand.kLeft);
+    Button buttonRightTrigger2 = new XboxTriggerButton(xbox2, Xbox.Hand.kRight);
+    Button buttonLeftTrigger2 = new XboxTriggerButton(xbox2, Xbox.Hand.kLeft);
 
     Button panelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
     Button panelRightWhite = new PanelButton(panel, Panel.ButtonType.kWhiteR);
@@ -62,6 +64,8 @@ public class OI
         buttonRB1.whileHeld(new ManipulatorContinous(true));
         buttonLB1.whileHeld(new ManipulatorContinous(false));
         
+        buttonLeftTrigger1.whileHeld(new CameraChange(true));
+        
 //        buttonA1.whileHeld(new KickerToAngle(0));
 //        buttonB1.whileHeld(new KickerToAngle(90));
 //        buttonY1.whileHeld(new KickerToAngle(180));
@@ -74,8 +78,8 @@ public class OI
         buttonA2.whileHeld(new ShooterGrab());
         buttonB2.whileHeld(new ShooterFire());
         
-        buttonLeftTrigger.whileHeld(new ShooterRev());
-        buttonRightTrigger.whenPressed(new ShooterRelease());
+        buttonLeftTrigger2.whileHeld(new ShooterRev());
+        buttonRightTrigger2.whenPressed(new ShooterRelease());
 
         buttonLB2.whenPressed(new LiftToTop());
         buttonRB2.whenPressed(new LiftToBottom());
