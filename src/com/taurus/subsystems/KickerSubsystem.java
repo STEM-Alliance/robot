@@ -111,20 +111,20 @@ public class KickerSubsystem extends Subsystem
         boolean direction = Math.signum(speed) > 0 ? true : false;
         boolean valid = true;
         
-        if(curAngle > ANGLE_MAX)
-        {
-            if(!direction)
-                valid = true;
-            else
-                valid = false;
-        }
-        else if(curAngle < ANGLE_MIN)
-        {
-            if(direction)
-                valid = true;
-            else
-                valid = false;   
-        }
+//        if(curAngle > ANGLE_MAX)
+//        {
+//            if(!direction)
+//                valid = true;
+//            else
+//                valid = false;
+//        }
+//        else if(curAngle < ANGLE_MIN)
+//        {
+//            if(direction)
+//                valid = true;
+//            else
+//                valid = false;   
+//        }
         
         if(valid)
         {

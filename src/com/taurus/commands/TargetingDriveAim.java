@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class TargetingDriveAim extends Command
 {    
     public final double DRIVE_ANGLE_TOLERANCE = .8;
+    public final int HOLD_COUNT = 3;
 
     private int shooterAimed;
     private int driveAimed;
@@ -68,15 +69,15 @@ public class TargetingDriveAim extends Command
             }
 
             SmartDashboard.putBoolean("TargetFound", target != null);
-            SmartDashboard.putBoolean("TargetAimPitch", shooterAimed > 2);
-            SmartDashboard.putBoolean("TargetAimYaw", driveAimed > 2);
+            SmartDashboard.putBoolean("TargetAimPitch", shooterAimed > HOLD_COUNT);
+            SmartDashboard.putBoolean("TargetAimYaw", driveAimed > HOLD_COUNT);
             //SmartDashboard.putString("Targeting", "" + (target != null) + driveAimed + shooterAimed);
         }
     }
 
     protected boolean isFinished() 
     {
-        return shooterAimed > 2 && driveAimed > 2;
+        return shooterAimed > HOLD_COUNT && driveAimed > HOLD_COUNT;
     }
 
     protected void end()

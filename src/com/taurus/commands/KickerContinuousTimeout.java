@@ -6,18 +6,18 @@ import com.taurus.robot.Robot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ManipulatorContinousTimeout extends Command 
+public class KickerContinuousTimeout extends Command 
 {
     boolean clockwise;
-
     double time;
     double startTime;
     
-    public ManipulatorContinousTimeout(boolean clockwise, double time) 
+    public KickerContinuousTimeout(boolean clockwise, double time) 
     {
-        requires(Robot.manipulatorSubsystem);
-        this.clockwise = clockwise;
+        requires(Robot.kickerSubsystem);
+        
         this.time = time;
+        this.clockwise = clockwise;
     }
     
     protected void initialize() 
@@ -25,17 +25,17 @@ public class ManipulatorContinousTimeout extends Command
         startTime = Timer.getFPGATimestamp();
     }
     
-    protected void execute()
+    protected void execute() 
     {
-        Utilities.PrintCommand("Manipulator", this);
+        Utilities.PrintCommand("Kicker", this);
         
         if(clockwise)
         {
-            Robot.manipulatorSubsystem.setSpeed(.5);
+            Robot.kickerSubsystem.setSpeed(-.5);
         }
         else
         {
-            Robot.manipulatorSubsystem.setSpeed(-.5);
+            Robot.kickerSubsystem.setSpeed(.5);
         }
     }
 
@@ -46,11 +46,11 @@ public class ManipulatorContinousTimeout extends Command
     
     protected void end() 
     {
-        Robot.manipulatorSubsystem.setSpeed(0);     
+        Robot.kickerSubsystem.setSpeed(0);
     }
     
     protected void interrupted() 
     {
-        
+        end();
     }
 }

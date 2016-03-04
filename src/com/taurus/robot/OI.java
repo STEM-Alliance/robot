@@ -62,9 +62,12 @@ public class OI
         buttonRB1.whileHeld(new ManipulatorContinous(true));
         buttonLB1.whileHeld(new ManipulatorContinous(false));
         
-        buttonA1.whileHeld(new KickerToAngle(0));
-        buttonB1.whileHeld(new KickerToAngle(90));
-        buttonY1.whileHeld(new KickerToAngle(180));
+//        buttonA1.whileHeld(new KickerToAngle(0));
+//        buttonB1.whileHeld(new KickerToAngle(90));
+//        buttonY1.whileHeld(new KickerToAngle(180));
+
+        buttonA1.whileHeld(new KickerContinuous(true));
+        buttonB1.whileHeld(new KickerContinuous(false));
         
         ////////////////////////
         
