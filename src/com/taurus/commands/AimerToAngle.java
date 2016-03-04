@@ -34,12 +34,12 @@ public class AimerToAngle extends Command
 
     protected boolean isFinished() 
     {
-        return Math.abs(Robot.aimerSubsystem.getCurrentAngle() - AIMER_LOAD_BALL) < 3;
+        return Math.abs(Robot.aimerSubsystem.getCurrentAngle() - AIMER_LOAD_BALL) < 1;
     }
     
     protected void end() 
     {
-              
+       Robot.aimerSubsystem.setSpeed(0);
     }
     
     protected void interrupted() 

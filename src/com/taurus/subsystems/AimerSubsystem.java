@@ -23,7 +23,7 @@ public class AimerSubsystem extends Subsystem
     private static final double ANGLE_MIN = -50 + 5;
     private final double TOLERANCE = .75;  // Degrees from desired angle that counts as that angle
 
-    public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 78;
+    public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
     
     private Vision vision;
     private MagnetoPotSRX angle;

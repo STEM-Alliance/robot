@@ -35,6 +35,7 @@ public class LiftHold extends Command
         
         this.initialBrakeWait = initialBrakeWait;
         this.finalBrakeWait = finalBrakeWait;
+        currentState = LiftHoldState.start;
     }
 
     protected void initialize() {
@@ -43,6 +44,7 @@ public class LiftHold extends Command
     }
 
     protected void execute() {
+        Utilities.PrintCommand("Lift", this);
         
         switch (currentState)
         {
@@ -54,6 +56,7 @@ public class LiftHold extends Command
             }
             case getTime:
             {
+                Robot.liftSubsystem.setHeightFromLiftBottom(height);
                 startTime = Timer.getFPGATimestamp();
                 currentState = LiftHoldState.adjust;
                 break;
@@ -80,6 +83,7 @@ public class LiftHold extends Command
                     SmartDashboard.putString("LiftSWBrake1", "false");
                     //Robot.liftSubsystem.setHeightFromLiftBottom(height);
                 }
+                Robot.liftSubsystem.setHeightFromLiftBottom(height);
                 break;
             }
             case hold:
@@ -88,6 +92,8 @@ public class LiftHold extends Command
                 {
                     currentState = LiftHoldState.getTime;
                 }
+
+                Robot.liftSubsystem.setHeightFromLiftBottom(height);
             }
             default:
             {
