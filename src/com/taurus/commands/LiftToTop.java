@@ -17,6 +17,7 @@ public class LiftToTop extends Command {
     protected void initialize() {
         done = false;
         endHeight = Preferences.getInstance().getDouble("LiftHighOffset", 40);
+        Robot.liftSubsystem.enableBrakeMode(false);
     }
     
     protected void execute() {
@@ -29,6 +30,8 @@ public class LiftToTop extends Command {
     }
     
     protected void end() {
+        Robot.liftSubsystem.enableBrakeMode(true);
+        Robot.liftSubsystem.setSpeed(0, 0);
         done = Robot.liftSubsystem.setHeightFromFloor(Robot.liftSubsystem.getHeightFromFloorAverage());
     }
     

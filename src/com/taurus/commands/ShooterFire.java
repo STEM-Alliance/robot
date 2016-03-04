@@ -1,6 +1,7 @@
 package com.taurus.commands;
 
 import com.taurus.robot.Robot;
+import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -29,19 +30,25 @@ public class ShooterFire extends CommandGroup
         }
     }
     
+    public void initialize()
+    {
+        //Vision.getInstance().enableBackCamera(false);
+    }
+    
     public ShooterFire() 
     {
         addSequential(new AimerBetweenAngles(90,120));
         addSequential(new AimerLEDs(true));
         addSequential(new ShooterFireRev());
         addSequential(new ShooterFireRelease());
-        addSequential(new AimerLEDs(false));        
+        addSequential(new AimerLEDs(false));       
     }
     
     public void end()
     {
         Robot.aimerSubsystem.enableLEDs(false);        
-        Robot.ballReleaseSubsystem.setBallRelease(false);        
+        Robot.ballReleaseSubsystem.setBallRelease(false);   
+        //Vision.getInstance().enableBackCamera(true);     
     }
     
     public void interrupted()

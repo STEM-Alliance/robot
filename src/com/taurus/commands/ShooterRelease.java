@@ -39,7 +39,7 @@ public class ShooterRelease extends Command
     
     protected void end() 
     {
-        //Robot.shooterSubsystem.setSpeed(0,0);
+        Robot.shooterSubsystem.setSpeed(0,0);
     }
 
     protected void interrupted() 

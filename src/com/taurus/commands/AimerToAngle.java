@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class AimerToAngle extends Command
 {
-    private final double AIMER_LOAD_BALL;
+    private double AIMER_LOAD_BALL;
     
     public AimerToAngle() 
     {
