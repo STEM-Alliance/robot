@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class LiftSubsystem extends Subsystem{
     public final double LIMIT_UPPER = 50;
     public final double LIMIT_LOWER = 9.6;
-    public final double LIMIT_TOLERANCE = .5;
+    public final double LIMIT_TOLERANCE = .75;
     public final double LENGTH_SCISSOR_STEP = 26;
     public final double BRAKE_ANGLE_PAWN_DOWNWARD = 10;  // TODO - DRL determine angle first pawn is engaged thru testing
     public final double BRAKE_ANGLE_PAWN_UPWARD = 20;  // TODO - DRL determine angle second pawn is engaged thru testing
@@ -474,5 +474,11 @@ public class LiftSubsystem extends Subsystem{
     public boolean isLevel()
     {
         return Math.abs(getHeightFromLiftBottomL() - getHeightFromLiftBottomR()) < LIMIT_TOLERANCE;
+    }
+
+    public boolean getSWBrake()
+    {
+        // TODO Auto-generated method stub
+        return motorLeft.getBrakeEnableDuringNeutral() && motorRight.getBrakeEnableDuringNeutral();
     }
 }

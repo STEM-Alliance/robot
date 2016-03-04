@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TargetingDriveAim extends Command
 {    
-    public final double DRIVE_ANGLE_TOLERANCE = 2;
+    public final double DRIVE_ANGLE_TOLERANCE = 1;
     
     private boolean shooterAimed;
     private boolean driveAimed;
@@ -28,7 +28,7 @@ public class TargetingDriveAim extends Command
         requires(Robot.rockerDriveSubsystem);
         
         vision = Vision.getInstance();        
-        drivePID = new PIDController(.2, 0, 0, 1); //TODO change max output 
+        drivePID = new PIDController(.2, 0, 0, .4); //TODO change max output 
     }
 
     protected void initialize() 
@@ -83,7 +83,7 @@ public class TargetingDriveAim extends Command
     
     private boolean aim(double changeInAngle) 
     {
-        double motorOutput = drivePID.update(changeInAngle);  //TODO add limits for angle
+        double motorOutput = -drivePID.update(changeInAngle);  //TODO add limits for angle
 
         if(Math.abs(changeInAngle) <= DRIVE_ANGLE_TOLERANCE)
         {

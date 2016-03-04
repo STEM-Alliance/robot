@@ -36,7 +36,11 @@ public class AimerBetweenAngles extends Command
 
     protected boolean isFinished() 
     {
-        return done;
+        double angle = Robot.aimerSubsystem.getCurrentAngle();
+        if(angle + 3 > minAngle && angle - 3 < maxAngle)
+            return true;
+        else 
+            return false;
     }
     
     protected void end() 

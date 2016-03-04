@@ -1,6 +1,7 @@
 package com.taurus.subsystems;
 
 import com.taurus.PIDController;
+import com.taurus.Utilities;
 import com.taurus.commands.AimerStop;
 import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.robot.RobotMap;
@@ -22,7 +23,7 @@ public class AimerSubsystem extends Subsystem
     private static final double ANGLE_MIN = -50 + 5;
     private final double TOLERANCE = .75;  // Degrees from desired angle that counts as that angle
 
-    public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
+    public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 78;
     
     private Vision vision;
     private MagnetoPotSRX angle;
@@ -212,7 +213,7 @@ public class AimerSubsystem extends Subsystem
     
     public double getCurrentAngle()
     {
-        return angle.get();
+        return Utilities.wrapToRange(angle.get(),-180,180);
     }
     
     /**

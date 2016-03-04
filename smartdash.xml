@@ -1,10 +1,74 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="TargetAimYaw" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1136" y="21"/>
+	</widget>
+	<widget field="TargetAimPitch" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1136" y="0"/>
+	</widget>
+	<widget field="TargetFound" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="852" y="493"/>
+	</widget>
+	<widget field="KickerAngle" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="852" y="472"/>
+	</widget>
+	<widget field="LiftIsLevel1" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1175" y="284"/>
+	</widget>
+	<widget field="LiftSWBrake1" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1180" y="242"/>
+	</widget>
+	<widget field="Lift Times" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1138" y="184"/>
+		<width>515</width>
+	</widget>
+	<widget field="LiftIsLevel" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1168" y="120"/>
+	</widget>
+	<widget field="LiftSWBrake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1161" y="84"/>
+	</widget>
+	<widget field="Manipulator Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="688" y="486"/>
+	</widget>
+	<widget field="Shooter Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="688" y="108"/>
+	</widget>
+	<widget field="KickerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="462" y="80"/>
+	</widget>
+	<widget field="Kicker Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="323" y="81"/>
+	</widget>
+	<widget field="Kicker Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="203" y="498"/>
+	</widget>
+	<widget field="Kicker Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="283"/>
+	</widget>
+	<widget field="CameraBackState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="110"/>
+	</widget>
+	<widget field="Width" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="496"/>
+	</widget>
+	<widget field="Area" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="475"/>
+	</widget>
+	<widget field="Orientation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="393" y="491"/>
+	</widget>
+	<widget field="Center" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="263" y="475"/>
+	</widget>
+	<widget field="Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="133" y="477"/>
+	</widget>
 	<widget field="ball release angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="98"/>
+		<location x="21" y="89"/>
 	</widget>
 	<widget field="AimerAim" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="11" y="77"/>
+		<location x="557" y="59"/>
 	</widget>
 	<widget field="AimerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="544" y="13"/>

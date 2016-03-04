@@ -12,6 +12,7 @@ public class ManipulatorSubsystem extends Subsystem {
     public ManipulatorSubsystem()
     {
         motorArm = new CANTalon(RobotMap.CAN_MANIPULATOR_TALON);
+        motorArm.enableBrakeMode(true);
     }
 
     protected void initDefaultCommand()
