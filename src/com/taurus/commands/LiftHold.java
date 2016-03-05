@@ -35,29 +35,29 @@ public class LiftHold extends Command
         Utilities.PrintCommand("Lift", this);
                 
         
-        SmartDashboard.putString("Lift Times", Timer.getFPGATimestamp() +" " + startTime +" " + initialBrakeWait +" " + finalBrakeWait);
+        //SmartDashboard.putString("Lift Times", Timer.getFPGATimestamp() +" " + startTime +" " + initialBrakeWait +" " + finalBrakeWait);
         if((Timer.getFPGATimestamp() - startTime) > initialBrakeWait)
         {
             if(Robot.liftSubsystem.isLevel() || ((Timer.getFPGATimestamp() - startTime) > finalBrakeWait))
             {
-                SmartDashboard.putString("LiftSWBrake1", "true");
+                //SmartDashboard.putString("LiftSWBrake1", "true");
                 Robot.liftSubsystem.enableBrakeMode(true);
                 //Robot.liftSubsystem.setSpeed(0, 0);
             }
             else
             {
-                SmartDashboard.putString("LiftSWBrake1", "false");
+                //SmartDashboard.putString("LiftSWBrake1", "false");
                 //Robot.liftSubsystem.setHeightFromLiftBottom(height);
             }
         }
         else
         {
-            SmartDashboard.putString("LiftSWBrake1", "false");
+            //SmartDashboard.putString("LiftSWBrake1", "false");
             //Robot.liftSubsystem.setHeightFromLiftBottom(height);
         }
         Robot.liftSubsystem.setHeightFromLiftBottom(height);
 
-        SmartDashboard.putString("LiftIsLevel1", Robot.liftSubsystem.isLevel() + "");
+        //SmartDashboard.putString("LiftIsLevel1", Robot.liftSubsystem.isLevel() + "");
     }
 
     protected boolean isFinished() {

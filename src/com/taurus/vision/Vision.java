@@ -119,7 +119,7 @@ public class Vision implements Runnable
     public void run()
     {
 
-        SmartDashboard.putString("CameraState", "Running");
+        SmartDashboard.putString("CameraMainState", "Running");
         cameraMain = new Camera("cam0");
         cameraBack = new Camera("cam1");
         
@@ -158,7 +158,7 @@ public class Vision implements Runnable
             }
             else
             {
-
+                
                 if (cameraMain.isCapturing())    
                 {
                     SmartDashboard.putString("CameraMainState", "Stop Capture");
@@ -181,9 +181,9 @@ public class Vision implements Runnable
                 TimeLastVision = Timer.getFPGATimestamp();
                 
                 // we have an open camera session 
-                if (cameraMain.isCapturing())
+                if (cameraMain.isCapturing() && !BackCameraEnabled)
                 {
-                    SmartDashboard.putString("CameraState", "Capturing");
+                    SmartDashboard.putString("CameraMainState", "Capturing");
 
                     // grab a new frame
                     cameraMain.getImage(frame);
@@ -211,7 +211,7 @@ public class Vision implements Runnable
                 
                 if (cameraBack.isCapturing() && (imageToSend == ImageChoices.DriveBack || BackCameraEnabled))
                 {
-                    SmartDashboard.putString("CameraStateBack", "Capturing");
+                    SmartDashboard.putString("CameraBackState", "Capturing");
                     cameraBack.getImage(frameBack);
                 }
                 
@@ -223,35 +223,36 @@ public class Vision implements Runnable
                     addTargets(frame, COLORS.MAGENTA);
 
                     // scale if needed
-                    NIVision.imaqScale(frameDownsampled, frame, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+                    //NIVision.imaqScale(frameDownsampled, frame, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
 
                     //GetImageSizeResult sizeDownsampled = NIVision.imaqGetImageSize(frameDownsampled);
                     //SmartDashboard.putString("FrameSizeDownsampled", sizeDownsampled.width + "," + sizeDownsampled.height);
 
-                    CameraServer.getInstance().setImage(frameDownsampled);
+                    CameraServer.getInstance().setImage(frame);
                 }
-                else if(imageToSend == ImageChoices.Threshold)
+                else if(imageToSend == ImageChoices.Threshold && !BackCameraEnabled)
                 {
                     addTargets(frameTH, COLORS.WHITE);
                     
                     // scale if needed
-                    NIVision.imaqScale(frameDownsampledTH, frameTH, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+                    //NIVision.imaqScale(frameDownsampledTH, frameTH, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
 
                     //GetImageSizeResult sizeDownsampled = NIVision.imaqGetImageSize(frameDownsampledTH);
                     //SmartDashboard.putString("FrameSizeDownsampled", sizeDownsampled.width + "," + sizeDownsampled.height);
 
-                    CameraServer.getInstance().setImage(frameDownsampledTH);
+                    CameraServer.getInstance().setImage(frameTH);
                 }
                 else if (cameraBack.isCapturing() && (imageToSend == ImageChoices.DriveBack || BackCameraEnabled))
                 {
                     // scale if needed
-                    NIVision.imaqScale(frameDownsampled, frameBack, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+                    //NIVision.imaqScale(frameDownsampled, frameBack, RescaleSize, RescaleSize, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
 
                     //GetImageSizeResult sizeDownsampled = NIVision.imaqGetImageSize(frameDownsampled);
                     //SmartDashboard.putString("FrameSizeDownsampled", sizeDownsampled.width + "," + sizeDownsampled.height);
 
-                    CameraServer.getInstance().setImage(frameDownsampled);
+                    CameraServer.getInstance().setImage(frameBack);
                 }
+                SmartDashboard.putString("Vision error", "");
                 
                 SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
             }
@@ -260,7 +261,7 @@ public class Vision implements Runnable
                 SmartDashboard.putString("Vision error", "Processing: " + e.getMessage());
             }
 
-            Timer.delay(Math.max(0, TIME_RATE_VISION - (Timer.getFPGATimestamp() - TimeLastVision)));
+            //Timer.delay(Math.max(0, TIME_RATE_VISION - (Timer.getFPGATimestamp() - TimeLastVision)));
         }
     }
     
@@ -281,7 +282,7 @@ public class Vision implements Runnable
                 SmartDashboard.putString("CameraBackState", "Start Capture");
                 cameraBack.startCapture();
     
-                //cameraBack.setBrightness(86);
+                cameraBack.setBrightness(130);
                 
                 
             }
@@ -320,7 +321,7 @@ public class Vision implements Runnable
         SmartDashboard.putNumber("Particles", particleCount);
 
         // find the bounding rectangle, then send
-        double biggestArea = -1;
+        double biggestArea = Preferences.getInstance().getInt("MinArea", 0) - 1;
         double biggestX = 0, biggestY = 0;
         double biggestW = 0, biggestH = 0;
         double biggestOrientation = 0;
@@ -383,14 +384,14 @@ public class Vision implements Runnable
         // if we haven't opened the camera session
         if(!cameraMain.isOpen())
         {
-            SmartDashboard.putString("CameraState", "Opening");
+            SmartDashboard.putString("CameraMainState", "Opening");
             cameraMain.openCamera();
         }
 
         // if we haven't started capturing
         if (!cameraMain.isCapturing())    
         {
-            SmartDashboard.putString("CameraState", "Start Capture");
+            SmartDashboard.putString("CameraMainState", "Start Capture");
             cameraMain.startCapture();
 
             cameraMain.setBrightness(86);
@@ -429,13 +430,21 @@ public class Vision implements Runnable
      */
     private synchronized void addTargets(Image frame, int color)
     {        
-        Rect centerRect = new Rect(Constants.BallShotY - Constants.BallShotDiameter/2,  // top
-                                   Constants.BallShotX - Constants.BallShotDiameter/2,  // left
-                                   Constants.BallShotDiameter,                          // width
-                                   Constants.BallShotDiameter);                         // height
+        //Rect centerRect = new Rect(Constants.BallShotY - Constants.BallShotDiameter/2,  // top
+//                                   Constants.BallShotX - Constants.BallShotDiameter/2,  // left
+//                                   Constants.BallShotDiameter,                          // width
+//                                   Constants.BallShotDiameter);                         // height
         // draw a circle in the center of the image/where the ball shoots
-        NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, color);
+        //NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, color);
 
+        NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
+                new Point(0,Constants.BallShotY),
+                new Point((int) Constants.Width,Constants.BallShotY), color);
+        NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
+                new Point(Constants.BallShotX,0),
+                new Point(Constants.BallShotX,(int) Constants.Height), color);
+                                   
+                                   
         if(largestTarget != null)
         {
             // add Target Drawing

@@ -53,14 +53,18 @@ public class Robot extends SampleRobot {
         
         oi = new OI();
         chooser = new SendableChooser();
-        chooser.addDefault("Auto None", new AutoDrive());
+        chooser.addDefault("Auto None", new AutoNone());
         chooser.addObject("Auto Drop Arms Fwd", new AutoReachDropArms());
         chooser.addObject("Auto Drop Arms Back", new AutoReachDropArmsBack());
         chooser.addObject("Auto Low Bar Cross", new AutoLowBarCross());
         chooser.addObject("Auto Low Bar Shoot", new AutoLowBarShoot());
         chooser.addObject("Auto Port Cullis Cross", new AutoPortCullisCross());
         chooser.addObject("Auto Port Cullis Shoot", new AutoPortCullisShoot());
-        SmartDashboard.putData("Auto mode", chooser);       
+        SmartDashboard.putData("Auto mode", chooser);
+
+        SmartDashboard.putBoolean("TargetFound", false);
+        SmartDashboard.putBoolean("TargetAimPitch", false);
+        SmartDashboard.putBoolean("TargetAimYaw", false);
     }
 
     public void operatorControl()
@@ -103,6 +107,10 @@ public class Robot extends SampleRobot {
     
     public void disabled()
     {
+        Command auto = (Command) chooser.getSelected();
+        SmartDashboard.putString("Current Auto", auto.getName());
+        
+        
         while (isDisabled())
         {
             liftSubsystem.printSensors();

@@ -26,7 +26,7 @@ public class DriveTankWithXbox extends Command
     {
         Utilities.PrintCommand("Drive", this);
        
-        double adjust = .7 + .3 * OI.getThrottleHighSpeed();
+        double adjust = 1.0 - .3 * OI.getThrottleHighSpeed();
         double left = OI.getSpeedLeft() * adjust;
         double right = OI.getSpeedRight() * adjust;
 

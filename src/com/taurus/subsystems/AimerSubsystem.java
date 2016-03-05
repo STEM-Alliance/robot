@@ -201,12 +201,10 @@ public class AimerSubsystem extends Subsystem
         if(valid)
         {
             motor.set(speed);
-            SmartDashboard.putNumber("AimerSpeed", speed);
         }
         else
         {
             motor.set(0);
-            SmartDashboard.putNumber("AimerSpeed", 0);
         }
     
     }
@@ -223,10 +221,9 @@ public class AimerSubsystem extends Subsystem
     public void updatePotOffsets()
     {
         SmartDashboard.putNumber("Aimer Angle", angle.get());
-        SmartDashboard.putNumber("Aimer Raw", motor.getAnalogInRaw()/1023.0);
+        //SmartDashboard.putNumber("Aimer Raw", motor.getAnalogInRaw()/1023.0);
 
         angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
-        angle.setFullRange(Preferences.getInstance().getDouble("AimerPotScale", 360));
     }
     
     public void enableLEDs(boolean enable)
