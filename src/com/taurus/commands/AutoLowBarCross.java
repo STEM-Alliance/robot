@@ -9,7 +9,7 @@ public class AutoLowBarCross extends CommandGroup
         addSequential(new AutoDrive(.5, 0.5, false, false));
         addParallel(new KickerContinuousTimeout(true,1));
         addParallel(new ManipulatorContinousTimeout(false, 1.5));
-        addSequential(new AutoDrive(4.5, 0.5, false, false));
+        addSequential(new AutoDrive(4.5, 0.6, false, false));
        // addSequential(new AutoDrive(0.5, 0.5, -0.5, false, false));  // Turn right slightly
 //        addSequential(new LiftToTop());
 //        addSequential(new LiftHold());

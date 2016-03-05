@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class TargetingDriveAim extends Command
 {    
     public final double DRIVE_ANGLE_TOLERANCE = .8;
-    public final int HOLD_COUNT = 3;
+    public final int HOLD_COUNT = 6;
 
     private int shooterAimed;
     private int driveAimed;
@@ -38,7 +38,10 @@ public class TargetingDriveAim extends Command
         shooterAimed = 0;
         driveAimed = 0;
 
-        startTime = Timer.getFPGATimestamp();        
+        startTime = Timer.getFPGATimestamp();
+        SmartDashboard.putBoolean("TargetFound", false);
+        SmartDashboard.putBoolean("TargetAimPitch", false);
+        SmartDashboard.putBoolean("TargetAimYaw", false);     
     }
 
     protected void execute()
