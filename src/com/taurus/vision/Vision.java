@@ -121,7 +121,7 @@ public class Vision implements Runnable
 
         SmartDashboard.putString("CameraMainState", "Running");
         cameraMain = new Camera("cam0");
-        cameraBack = new Camera("cam1");
+        //cameraBack = new Camera("cam1");
         
         final Image frame, frameBack, frameTH, frameDownsampled, frameDownsampledTH;
         
