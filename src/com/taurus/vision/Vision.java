@@ -167,6 +167,10 @@ public class Vision implements Runnable
                         
                         printTargetInfo();
                     }
+                    else
+                    {
+                        largestTarget = null;
+                    }
                 }
                 
                 RescaleSize = Preferences.getInstance().getInt("ImageRescaleSize", 1);
@@ -289,11 +293,13 @@ public class Vision implements Runnable
             SmartDashboard.putString("TargetPitch", descPitch);
             SmartDashboard.putString("TargetYaw", descYaw);
         }
-        
-        SmartDashboard.putString("TargetXY", "");
-        SmartDashboard.putString("TargetWH", "");
-        SmartDashboard.putString("TargetPitch", "");
-        SmartDashboard.putString("TargetYaw", "");
+        else
+        {
+            SmartDashboard.putString("TargetXY", "");
+            SmartDashboard.putString("TargetWH", "");
+            SmartDashboard.putString("TargetPitch", "");
+            SmartDashboard.putString("TargetYaw", "");
+        }
     }
     
     private void processSmartDashboardImage(Image frame, int color)
@@ -357,5 +363,20 @@ public class Vision implements Runnable
 
             CameraServer.getInstance().setImage(frameBack);
         }
+    }
+
+    public boolean fixCamera(boolean set)
+    {
+        boolean done = false;
+        
+        if(cameraCurrent == CAMERAS.MAIN)
+        {
+            if(frameGrabber.fixCamera(set))
+            {
+                done = true;
+            }
+        }
+        
+        return done;
     }
 }

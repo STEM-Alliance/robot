@@ -146,18 +146,24 @@ public class FrameGrabber implements Runnable
         }
     }
     
-// TODO - DRL Do we need this? It wasn't being called in the Vision class   
-//    public synchronized void fixCamera(boolean set)
-//    {
-//        if(set)
-//        {
-//            cameraMain.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) + 1);
-//            Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) + 1);
-//        }
-//        else
-//        {
-//            cameraMain.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) - 1);
-//            Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) - 1);
-//        }
-//    }
+    public boolean fixCamera(boolean set)
+    {
+        boolean done = false;
+        
+        if(camera != null && camera.isCapturing())
+        {
+            if(set)
+            {
+                camera.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) + 1);
+                Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) + 1);
+            }
+            else
+            {
+                camera.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) - 1);
+                Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) - 1);
+            }
+            done = true;
+        }
+        return done;
+    }
 }

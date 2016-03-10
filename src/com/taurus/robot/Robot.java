@@ -2,12 +2,14 @@
 package com.taurus.robot;
 
 import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import com.taurus.commands.*;
 import com.taurus.subsystems.*;
+import com.taurus.vision.Vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -110,11 +112,42 @@ public class Robot extends SampleRobot {
         Command auto = (Command) chooser.getSelected();
         SmartDashboard.putString("Current Auto", auto.getName());
         
+        double startTime = Timer.getFPGATimestamp();
+        boolean cameraFixNeeded = true;
+        boolean cameraFixed = false;
         
         while (isDisabled())
         {
             liftSubsystem.printSensors();
             aimerSubsystem.updatePotOffsets();
+            
+            // this is some convoluted stuff
+            // basically, wait until the camera has been initialized
+            // then change the brightness value to make it take affect
+            // then wait a few seconds
+            // and set it back to the original value
+            if(cameraFixed)
+            {
+                if(cameraFixNeeded)
+                {
+                    if(Vision.getInstance().fixCamera(true))
+                    {
+                        cameraFixNeeded = false;
+                        startTime = Timer.getFPGATimestamp();
+                    }
+                }
+                else
+                {
+                    if(Timer.getFPGATimestamp() - startTime > 1.5)
+                    {
+                        if(Vision.getInstance().fixCamera(false))
+                        {
+                            cameraFixed = true;
+                        }
+                    }
+                }
+            }
+            
             Scheduler.getInstance().run();
         }
     }
