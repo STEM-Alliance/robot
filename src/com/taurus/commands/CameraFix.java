@@ -21,7 +21,7 @@ public class CameraFix extends Command {
     {
         if(ranOnce == false)
         {
-            Vision.getInstance().fixCamera(true);
+            //Vision.getInstance().cameraFix(true);
             startTime = Timer.getFPGATimestamp();
         }
     }
@@ -32,7 +32,7 @@ public class CameraFix extends Command {
         {
             if(Timer.getFPGATimestamp() - startTime > 2)
             {
-                Vision.getInstance().fixCamera(false);
+                //Vision.getInstance().cameraFix(false);
                 ranOnce = true;
             }
         }
