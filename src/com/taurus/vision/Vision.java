@@ -50,7 +50,6 @@ public class Vision implements Runnable
     private final double TIME_RATE_VISION = 1.0/30.0; // frame time at 30fps
     private int RescaleSize = 1; // large size == smaller image; 2 == 1/2 image size
     private boolean targetDetectionOn = true;
-    private boolean imageRotation = true;    // TODO - DRL make sure main camera is physically oriented upright, then remove this code.
     private CAMERAS cameraRequested = CAMERAS.MAIN;
     private CAMERAS cameraCurrent = CAMERAS.NONE;
     
@@ -81,12 +80,6 @@ public class Vision implements Runnable
     {
         targetDetectionOn = enable;
     }
-
-    public synchronized void setImageRotation(boolean enable)
-    {
-        imageRotation = enable;
-    }
-
     public Target getTarget()
     {
         return largestTarget;
@@ -100,7 +93,7 @@ public class Vision implements Runnable
         SmartDashboard.putData("Image to show", imageChooser);
 
         visionThread = new Thread(this);
-        visionThread.setPriority(Thread.NORM_PRIORITY);
+        visionThread.setPriority(Thread.MAX_PRIORITY);
         Start();
     }
 
@@ -135,7 +128,7 @@ public class Vision implements Runnable
             {
                 setupFrameGrabber(cameraRequested);
             }
-            
+
             try
             {
                 // save off the start time so we can see how long it takes to process a frame
@@ -150,12 +143,6 @@ public class Vision implements Runnable
                 if (cameraCurrent == CAMERAS.MAIN)
                 {
                     SmartDashboard.putString("Vision", "Main camera");
-
-                    if(imageRotation)
-                    {
-                        NIVision.imaqFlip(frame, frame, FlipAxis.HORIZONTAL_AXIS);
-                        NIVision.imaqFlip(frame, frame, FlipAxis.VERTICAL_AXIS);
-                    }
                     
                     //GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
                     //SmartDashboard.putString("FrameSize", size.width + "," + size.height);
@@ -223,7 +210,7 @@ public class Vision implements Runnable
             frameGrabber = new FrameGrabber(name, brightness);
             frameThread = new Thread(frameGrabber);
             frameThread.setPriority(Thread.NORM_PRIORITY);
-            frameThread.run();
+            frameThread.start();
         }
       
         cameraCurrent = newCamera;
