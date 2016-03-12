@@ -25,6 +25,7 @@ public class ShooterRelease extends Command
     protected void execute() 
     {
         Utilities.PrintCommand("Shooter", this);
+        Robot.ballReleaseSubsystem.setBallRelease(true);
         // Once the ball is released, we should retract the servo to end in a safe state
         if (Timer.getFPGATimestamp() - startTime > 1.75)
         {

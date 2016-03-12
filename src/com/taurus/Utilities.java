@@ -12,8 +12,15 @@ public final class Utilities {
     
     public static final void PrintCommand(String sub, Object command)
     {
-        String name = command.getClass().getName();
-        SmartDashboard.putString(sub + " Sub", name.substring(name.lastIndexOf('.') + 1));
+        if(command != null)
+        {
+            String name = command.getClass().getName();
+            SmartDashboard.putString(sub + " Sub", name.substring(name.lastIndexOf('.') + 1));
+        }
+        else
+        {
+            SmartDashboard.putString(sub + " Sub", "");
+        }
     }
     /**
      * Ensure the value is between min and max, and if it is outside the range,
