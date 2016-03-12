@@ -14,14 +14,53 @@ import com.taurus.vision.Vision;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
-public class Robot extends SampleRobot {
+public class Robot extends SampleRobot 
+{
+    public enum AUTO_COMMAND
+    {
+        NONE,
+        DROP_ARMS_F,
+        DROP_ARMS_B,
+        LOWBAR_CROSS,
+        LOWBAR_SHOOT,
+        PORTCULLIS_CROSS,
+        PORTCULLIS_SHOOT;
+        
+        public Command getCommand(AutoDrive.STATE_TURN position)
+        {
+            Command autonomousCommand;
+            
+            switch(this)
+            {
+            case NONE:
+                autonomousCommand = new AutoNone();
+                break;
+            case DROP_ARMS_F:
+                autonomousCommand = new AutoReachDropArms(true);
+                break;
+            case DROP_ARMS_B:
+                autonomousCommand = new AutoReachDropArms(false);
+                break;
+            case LOWBAR_CROSS:
+                autonomousCommand = new AutoLowBar(false);
+                break;
+            case LOWBAR_SHOOT:
+                autonomousCommand = new AutoLowBar(true);
+                break;
+            case PORTCULLIS_CROSS:
+                autonomousCommand = new AutoPortCullis(position, false);
+                break;
+            case PORTCULLIS_SHOOT:
+                autonomousCommand = new AutoPortCullis(position, true);
+                break;
+            default:
+                autonomousCommand = new AutoNone();
+                break;
+            }
+            
+            return autonomousCommand;
+        }
+    }
 
 	public static RockerDriveSubsystem rockerDriveSubsystem;
 	public static ShooterSubsystem shooterSubsystem;
@@ -35,7 +74,8 @@ public class Robot extends SampleRobot {
     public static BackCameraSubsystem backCameraSubsystem;
 
     Command autonomousCommand;
-    SendableChooser chooser;
+    SendableChooser autoChooser;
+    SendableChooser positionChooser;
     
 
     /**
@@ -54,15 +94,24 @@ public class Robot extends SampleRobot {
         kickerSubsystem = new KickerSubsystem();
         
         oi = new OI();
-        chooser = new SendableChooser();
-        chooser.addDefault("Auto None", new AutoNone());
-        chooser.addObject("Auto Drop Arms Fwd", new AutoReachDropArms());
-        chooser.addObject("Auto Drop Arms Back", new AutoReachDropArmsBack());
-        chooser.addObject("Auto Low Bar Cross", new AutoLowBarCross());
-        chooser.addObject("Auto Low Bar Shoot", new AutoLowBarShoot());
-        chooser.addObject("Auto Port Cullis Cross", new AutoPortCullisCross());
-        chooser.addObject("Auto Port Cullis Shoot", new AutoPortCullisShoot());
-        SmartDashboard.putData("Auto mode", chooser);
+        autoChooser = new SendableChooser();
+        autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
+        autoChooser.addObject("Auto Drop Arms Fwd", AUTO_COMMAND.DROP_ARMS_F);
+        autoChooser.addObject("Auto Drop Arms Back", AUTO_COMMAND.DROP_ARMS_B);
+        autoChooser.addObject("Auto Low Bar Cross", AUTO_COMMAND.LOWBAR_CROSS);
+        autoChooser.addObject("Auto Low Bar Shoot", AUTO_COMMAND.LOWBAR_SHOOT);
+        autoChooser.addObject("Auto Port Cullis Cross", AUTO_COMMAND.PORTCULLIS_CROSS);
+        autoChooser.addObject("Auto Port Cullis Shoot", AUTO_COMMAND.PORTCULLIS_SHOOT);
+        SmartDashboard.putData("Auto mode", autoChooser);
+        
+        positionChooser = new SendableChooser();
+        autoChooser.addDefault("Position One", new AutoNone());
+        autoChooser.addObject("Position One", AutoDrive.STATE_TURN.POSITION_ONE);
+        autoChooser.addObject("Position Two", AutoDrive.STATE_TURN.POSITION_TWO);
+        autoChooser.addObject("Position Three", AutoDrive.STATE_TURN.POSITION_THREE);
+        autoChooser.addObject("Position Four", AutoDrive.STATE_TURN.POSITION_FOUR);
+        autoChooser.addObject("Position Five", AutoDrive.STATE_TURN.POSITION_FIVE);
+        SmartDashboard.putData("Auto mode", autoChooser);
 
         SmartDashboard.putBoolean("TargetFound", false);
         SmartDashboard.putBoolean("TargetAimPitch", false);
@@ -82,21 +131,10 @@ public class Robot extends SampleRobot {
     
     public void autonomous()
     {
-        autonomousCommand = (Command) chooser.getSelected();
-        //autonomousCommand =  new AutoDrive();
-        
-//        String autoSelected = SmartDashboard.getString("Auto Mode", "Auto Terrain");
-//        switch(autoSelected) {
-//        case "Auto Low Bar":
-//            autonomousCommand = new AutoLowBar();
-//            break;
-//        case "Auto Terrain":
-//            autonomousCommand = new AutoTerrain();
-//            break;
-//        default:
-//            autonomousCommand = new AutoTerrain();
-//            break;
-//        }
+        //autonomousCommand = (Command) autoChooser.getSelected();
+        AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
+        AutoDrive.STATE_TURN position = (AutoDrive.STATE_TURN) positionChooser.getSelected();
+        autonomousCommand = command.getCommand(position);
         
         // schedule the autonomous command (example)
         if (autonomousCommand != null) autonomousCommand.start();
@@ -109,7 +147,7 @@ public class Robot extends SampleRobot {
     
     public void disabled()
     {
-        Command auto = (Command) chooser.getSelected();
+        Command auto = (Command) autoChooser.getSelected();
         SmartDashboard.putString("Current Auto", auto.getName());
         
         double startTime = Timer.getFPGATimestamp();
