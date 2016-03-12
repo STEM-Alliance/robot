@@ -27,6 +27,15 @@ public class Target implements Comparable<Target> {
         this.orientation = orientation;
     }
 
+    public Target(double x, double y, double area, double h, double w)
+    {
+        this.x = x;
+        this.y = y;
+        this.area = area;
+        this.h = h;
+        this.w = w;
+    }
+
     public double X()
     {
         return x;
