@@ -62,7 +62,7 @@ public class AutoDrive extends Command
 
     protected void execute() 
     {
-        Robot.rockerDriveSubsystem.driveRaw(speedR, speedL, tractionEnabled);
+        Robot.rockerDriveSubsystem.driveRaw(speedR, speedL);
     }
 
     protected boolean isFinished()
@@ -72,7 +72,7 @@ public class AutoDrive extends Command
 
     protected void end() 
     {
-        Robot.rockerDriveSubsystem.driveRaw(0, 0, tractionEnabled);
+        Robot.rockerDriveSubsystem.driveRaw(0, 0);
     }
 
     // subsystems is scheduled to run

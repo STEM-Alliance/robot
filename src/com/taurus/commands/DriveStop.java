@@ -20,7 +20,7 @@ public class DriveStop extends Command
     protected void execute() 
     {
         Utilities.PrintCommand("Drive", this);
-        Robot.rockerDriveSubsystem.driveRaw(0, 0, false);
+        Robot.rockerDriveSubsystem.driveRaw(0, 0);
     }
 
     protected boolean isFinished() 

@@ -123,65 +123,33 @@ public class RockerDriveSubsystem extends Subsystem
      * @param left value, -1 to 1
      * @param enables traction control
      */
-    public void driveRaw(double right, double left, boolean tractionControlEnabled)
+    public void driveRaw(double right, double left)
     {
-        double rThing = Math.signum(right);
-        double lThing = Math.signum(left);
-        driveRaw(new double[]{right, (Math.abs(right)-.1)*rThing, right}, 
-                 new double[]{left,  (Math.abs(left)-.1)*lThing,  left},
-                 tractionControlEnabled);
-    }
-    
-    /**
-     * Raw drive, controlling each wheel separately
-     * @param right array of values, -1 to 1
-     * @param left array of values, -1 to 1
-     * @param enables traction control
-     */
-    public void driveRaw(double[] right, double[] left, boolean tractionControlEnabled)
-    {
-        // Error check parameters
-        if (right.length != motorsR.length || left.length != motorsL.length)
-        {
-            return;
-        }
+        
         
         updatePID();
         
-        SmartDashboard.putBoolean("Traction", tractionControlEnabled);        
-        if (tractionControlEnabled)
-        {
-            double [] leftScale = scaleForTractionControl(motorsL);
-            double [] rightScale = scaleForTractionControl(motorsR);
-            
-            //set motors to new scaled values
-            for(int index = 0; index < right.length; index++){
-                right[index] = right[index] * rightScale[index];
-            }
-            
-            for(int index = 0; index < left.length; index++){
-                left[index] = left[index] * leftScale[index];
-            }
-            
-            //TODO convert values to RPM, and adjust for wheel to sensor ratio
-        }
-        
-        if (applyGyro)
+                if (applyGyro)
         {
             // TODO - DRL apply the gyro, compensate for how much yaw/error from our heading
         }
+                
+        right = scaleForDeadband(right);
+        right = Math.min(Math.max(right, -1), 1);  // ensure value between -1 and 1
         
         for (int i = 0; i < motorsR.length; i++)
         {
-            right[i] = scaleForDeadband(right[i]);
-            right[i] = Math.min(Math.max(right[i], -1), 1);  // ensure value between -1 and 1
-            motorsR[i].set(right[i]);
+            
+            motorsR[i].set(right);
         }
+        
+        left = scaleForDeadband(left);
+        left = Math.min(Math.max(left, -1), 1);  // ensure value between -1 and 1
+        
         for (int i = 0; i < motorsL.length; i++)
         {
-            left[i] = scaleForDeadband(left[i]);
-            left[i] = Math.min(Math.max(left[i], -1), 1);  // ensure value between -1 and 1
-            motorsL[i].set(left[i]);   
+            
+            motorsL[i].set(left);   
         }
     }
     
@@ -223,40 +191,6 @@ public class RockerDriveSubsystem extends Subsystem
         return value;
     }
     
-    /**
-     * Traction control. Looks are the motors of this side and determines an appropriate scaling 
-     * factor to apply to each motor.
-     * @return array of scaling factors to be multiplied with the speed to apply traction control
-     */
-    private double[] scaleForTractionControl(CANTalon[] motors)
-    {
-        double[] scalingFactors = new double[motors.length];
-        int[] motorRpms = new int[motors.length];
-        double slowestSpeed = Double.MAX_VALUE;  // Large value will be overridden by at least one motor
-        
-        for(int index = 0; index < motors.length; index++)
-        {
-            // Get motor speed
-            motorRpms[index] = Math.abs(motors[index].getAnalogInVelocity());  // Absolute value works with negative velocity
-            
-            // Is this one slowest?
-            if(motorRpms[index] < slowestSpeed)
-            {
-                slowestSpeed = motorRpms[index];
-            }
-        }
-        
-        // Apply traction control if we are slipping and above the deadband by a safe margin.
-        for(int index = 0; index < motors.length; index++)
-        {
-            if (motorRpms[index] / slowestSpeed > 1.3 && motorRpms[index] > 1.5 * DEADBAND)
-            {
-               scalingFactors[index] = 1.5 * DEADBAND;  // Set it to some slower speed, but above the deadband
-            }
-        }
-        
-        return scalingFactors;
-    }
     
     /**
      * Barf all of the possible expander card values to smartdashboard. Intended for debugging only.

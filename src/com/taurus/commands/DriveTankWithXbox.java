@@ -38,16 +38,7 @@ public class DriveTankWithXbox extends Command
             right = temp;
         }
         
-        
-        double[] rights = {right,right,right};
-        rights[1] = rights[1] * ( 1 + OI.getTractionMiddleIncrease() );
-        rights[2] = rights[2] * ( 1 + OI.getTractionMiddleIncrease() );
-        
-        double[] lefts = {left,left,left};
-        lefts[1] = lefts[1] * ( 1 + OI.getTractionMiddleIncrease() );
-        lefts[2] = lefts[2] * ( 1 + OI.getTractionMiddleIncrease() );
-        
-        Robot.rockerDriveSubsystem.driveRaw(rights, lefts, OI.getTractionControl());
+        Robot.rockerDriveSubsystem.driveRaw(right, left);
     }
 
     protected boolean isFinished() 

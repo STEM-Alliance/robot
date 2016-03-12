@@ -100,12 +100,12 @@ public class TargetingDriveAim extends Command
 
         if(Math.abs(changeInAngle) <= DRIVE_ANGLE_TOLERANCE)
         {
-            Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0, false);
+            Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0);
             return true;
         } 
         else
         {
-            Robot.rockerDriveSubsystem.driveRaw(-motorOutput, motorOutput, false);
+            Robot.rockerDriveSubsystem.driveRaw(-motorOutput, motorOutput);
             return false;
         }
     }

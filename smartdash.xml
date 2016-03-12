@@ -1,5 +1,26 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="FrameGetter error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1074" y="492"/>
+	</widget>
+	<widget field="FrameGrabber" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="918" y="0"/>
+	</widget>
+	<widget field="FrameGetter Task Length" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="769" y="492"/>
+	</widget>
+	<widget field="Lift Height R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="769" y="447"/>
+	</widget>
+	<widget field="Lift Height L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="769" y="137"/>
+	</widget>
+	<widget field="Vision" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="504"/>
+	</widget>
+	<widget field="FrameGetter" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="483"/>
+	</widget>
 	<widget field="TargetAimYaw" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="783" y="7"/>
 		<width>134</width>
@@ -184,28 +205,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="CameraStateBack"/>
-	<hidden field="Aimer Raw"/>
-	<hidden field="Lift Limit R Fwd"/>
-	<hidden field="Height"/>
-	<hidden field="Lift Limit L Rev"/>
-	<hidden field="LiftIsLevel"/>
-	<hidden field="Width"/>
-	<hidden field="LiftSWBrake"/>
-	<hidden field="Lift Height L"/>
-	<hidden field="Center"/>
-	<hidden field="Lift Height R"/>
-	<hidden field="Lift Times"/>
-	<hidden field="imaq error"/>
-	<hidden field="Lift Height"/>
-	<hidden field="Dimensions"/>
-	<hidden field="LiftIsLevel1"/>
-	<hidden field="Lift Limit L Fwd"/>
-	<hidden field="Orientation"/>
-	<hidden field="AimerSpeed"/>
-	<hidden field="CameraState"/>
-	<hidden field="Area"/>
-	<hidden field="Thresh Particles"/>
-	<hidden field="LiftSWBrake1"/>
-	<hidden field="Lift Limit R Rev"/>
 </xml>
