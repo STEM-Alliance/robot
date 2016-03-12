@@ -1,0 +1,10 @@
+disable second camera
+change the priority above low
+do we always need vision thread running?, or make it event-based
+refactor really big methods - easier to read
+make disable camera a new method
+do we want a data capture thread and a data process thread - sychronize
+splitting the pushing to the driver station to a separate thread (camera server)
+set the FPS
+slim down try in vision
+do we need to rotate image?
