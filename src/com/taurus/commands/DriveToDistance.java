@@ -22,11 +22,11 @@ public class DriveToDistance extends Command{
     {
         if (distanceDesired > 0)
         {
-            Robot.rockerDriveSubsystem.driveRaw(1, 1, true);
+            Robot.rockerDriveSubsystem.driveRaw(1, 1);
         } 
         else if (distanceDesired < 0)
         {
-            Robot.rockerDriveSubsystem.driveRaw(-1, -1, true);
+            Robot.rockerDriveSubsystem.driveRaw(-1, -1);
         }    
     }
     
@@ -47,7 +47,7 @@ public class DriveToDistance extends Command{
     
     protected void end() 
     {
-        Robot.rockerDriveSubsystem.driveRaw(0, 0, false);
+        Robot.rockerDriveSubsystem.driveRaw(0, 0);
     }
     
     protected void interrupted()

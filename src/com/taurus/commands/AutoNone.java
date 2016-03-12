@@ -28,7 +28,7 @@ public class AutoNone extends Command
 
     protected void execute() 
     {
-        Robot.rockerDriveSubsystem.driveRaw(0, 0, tractionEnabled);
+        Robot.rockerDriveSubsystem.driveRaw(0, 0);
     }
 
     protected boolean isFinished()
@@ -38,7 +38,7 @@ public class AutoNone extends Command
 
     protected void end() 
     {
-        Robot.rockerDriveSubsystem.driveRaw(0, 0, tractionEnabled);
+        Robot.rockerDriveSubsystem.driveRaw(0, 0);
     }
 
     // subsystems is scheduled to run

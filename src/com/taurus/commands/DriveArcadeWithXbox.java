@@ -43,7 +43,7 @@ public class DriveArcadeWithXbox extends Command
         speedL = limit(speedL);
         speedR = limit(speedR);
         
-        Robot.rockerDriveSubsystem.driveRaw(speedR, speedL, OI.getTractionControl());
+        Robot.rockerDriveSubsystem.driveRaw(speedR, speedL);
     }
     
     private double limit(double val)
