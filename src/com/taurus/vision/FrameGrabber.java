@@ -12,21 +12,22 @@ public class FrameGrabber implements Runnable
 {
     private String NAME;
     private volatile boolean running;
-    private int brightness;
     private int cameraQuality = 50;
+    
+    private boolean setupNeeded = false;
     
     private final Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
     private Camera camera;    
     
-    public FrameGrabber(String cameraName, int brightness)
+    public FrameGrabber(String cameraName)
     {
-        Init(cameraName, brightness);
+        Init(cameraName);
     }
     
-    public void Init(String cameraName, int brightness)
+    public void Init(String cameraName)
     {
         NAME = cameraName;
-        this.brightness = brightness;
+        setupNeeded = true;
     }
     
     /**
@@ -37,32 +38,44 @@ public class FrameGrabber implements Runnable
     {
         double TimeStart;
         
-        SmartDashboard.putString("FrameGetter", "Running");
-        
-        setup();        
-        SmartDashboard.putString("FrameGetter", "Capturing");
-        
-        while (running)
-        {            
-            try
+        while(true)
+        {
+            if(setupNeeded)
             {
-                TimeStart = Timer.getFPGATimestamp();
+                SmartDashboard.putString("FrameGetter", "Setting up");
                 
-                if (camera.isCapturing())
+                setup();  
+                setupNeeded = false;
+            }
+            
+            if(running)
+                SmartDashboard.putString("FrameGetter", "Capturing");
+            
+            while (running)
+            {
+                 
+                try
                 {
-                    camera.getImage(frame);
+                    TimeStart = Timer.getFPGATimestamp();
+                    
+                    if (camera.isCapturing())
+                    {
+                        updateSettings(false, Vision.getInstance().getCurrentCamera());
+                        
+                        camera.getImage(frame);
+                    }
+                    
+                    SmartDashboard.putNumber("FrameGetter Task Length", Timer.getFPGATimestamp() - TimeStart);
                 }
-                
-                SmartDashboard.putNumber("FrameGetter Task Length", Timer.getFPGATimestamp() - TimeStart);
+                catch (Exception e)
+                {
+                    SmartDashboard.putString("FrameGetter error", "Processing: " + e.getMessage());
+                }
             }
-            catch (Exception e)
-            {
-                SmartDashboard.putString("FrameGetter error", "Processing: " + e.getMessage());
-            }
+            
+            teardown();
+            SmartDashboard.putString("FrameGetter", "Not capturing");
         }
-        
-        teardown();
-        SmartDashboard.putString("FrameGetter", "Not capturing");
     }
     
     /**
@@ -87,11 +100,8 @@ public class FrameGrabber implements Runnable
         camera = new Camera(NAME);
         camera.openCamera();
         camera.startCapture();
-
-        camera.setBrightness(brightness);        
-        camera.printRanges();
         
-        updateSettings(true);
+        updateSettings(true, Vision.getInstance().getCurrentCamera());
         
         running = true;
     }
@@ -111,7 +121,7 @@ public class FrameGrabber implements Runnable
     /**
      * If any of the Preferences change, send the latest to the camera object
      */
-    private void updateSettings(boolean forceUpdate)
+    private void updateSettings(boolean forceUpdate, Vision.CAMERAS currentCamera)
     {
         int cameraQual = Preferences.getInstance().getInt("CameraQuality", 50);
         if(cameraQual != cameraQuality || forceUpdate)
@@ -126,29 +136,57 @@ public class FrameGrabber implements Runnable
             camera.setVideoMode(videoMode);
         }
         
+        
         int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4500);
         if(camera.getWhiteBalanceManual() != whiteBalance || forceUpdate)
         {
             camera.setWhiteBalanceManual(whiteBalance);
         }
         
-        double exposure = Preferences.getInstance().getDouble("Exposure", 1);
-        if(camera.getExposureManual() != exposure || forceUpdate)
+
+        if(currentCamera == Vision.CAMERAS.MAIN)
         {
-            camera.setExposureManual(exposure);
+            double exposure = Preferences.getInstance().getDouble("Exposure", 5);
+            if(camera.getExposureManual() != exposure || forceUpdate)
+            {
+                camera.setExposureManual(exposure);
+            }
+            
+            double brightness = Preferences.getInstance().getDouble("Brightness", 80);
+            if(camera.getBrightness() != brightness || forceUpdate)
+            {
+                camera.setBrightness(brightness);
+            }
+            
+            double sat = Preferences.getInstance().getDouble("Saturation", 150);
+            if(camera.getSaturation() != sat || forceUpdate)
+            {
+                camera.setSaturation(sat);
+            }
+        }
+        else
+        {
+
+            double exposure = Preferences.getInstance().getDouble("Exposure2", 5);
+            if(camera.getExposureManual() != exposure || forceUpdate)
+            {
+                camera.setExposureManual(exposure);
+            }
+            
+            double brightness = Preferences.getInstance().getDouble("Brightness2", 100);
+            if(camera.getBrightness() != brightness || forceUpdate)
+            {
+                camera.setBrightness(brightness);
+            }
+            
+            double sat = Preferences.getInstance().getDouble("Saturation2", 150);
+            if(camera.getSaturation() != sat || forceUpdate)
+            {
+                camera.setSaturation(sat);
+            }
         }
         
-        double brightness = Preferences.getInstance().getDouble("Brightness", 1);
-        if(camera.getBrightness() != brightness || forceUpdate)
-        {
-            camera.setBrightness(brightness);
-        }
-        
-        double sat = Preferences.getInstance().getDouble("Saturation", .5);
-        if(camera.getSaturation() != sat || forceUpdate)
-        {
-            camera.setSaturation(sat);
-        }
+        camera.printRanges();
     }
     
     public boolean fixCamera(boolean set)
@@ -157,15 +195,31 @@ public class FrameGrabber implements Runnable
         
         if(camera != null && camera.isCapturing())
         {
-            if(set)
+            if(Vision.getInstance().getCurrentCamera() == Vision.CAMERAS.MAIN)
             {
-                camera.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) + 1);
-                Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) + 1);
+                if(set)
+                {
+                    camera.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) + 1);
+                    Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) + 1);
+                }
+                else
+                {
+                    camera.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) - 1);
+                    Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) - 1);
+                }
             }
-            else
+            else if(Vision.getInstance().getCurrentCamera() == Vision.CAMERAS.BACK)
             {
-                camera.setBrightness(Preferences.getInstance().getDouble("Brightness", 1) - 1);
-                Preferences.getInstance().putDouble("Brightness", Preferences.getInstance().getDouble("Brightness", 1) - 1);
+                if(set)
+                {
+                    camera.setBrightness(Preferences.getInstance().getDouble("Brightness2", 1) + 1);
+                    Preferences.getInstance().putDouble("Brightness2", Preferences.getInstance().getDouble("Brightness2", 1) + 1);
+                }
+                else
+                {
+                    camera.setBrightness(Preferences.getInstance().getDouble("Brightness2", 1) - 1);
+                    Preferences.getInstance().putDouble("Brightness2", Preferences.getInstance().getDouble("Brightness2", 1) - 1);
+                }
             }
             done = true;
         }

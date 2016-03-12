@@ -128,24 +128,24 @@ public class Robot extends SampleRobot {
             // and set it back to the original value
             if(cameraFixed)
             {
-                if(cameraFixNeeded)
-                {
-                    if(Vision.getInstance().fixCamera(true))
-                    {
-                        cameraFixNeeded = false;
-                        startTime = Timer.getFPGATimestamp();
-                    }
-                }
-                else
-                {
-                    if(Timer.getFPGATimestamp() - startTime > 1.5)
-                    {
-                        if(Vision.getInstance().fixCamera(false))
-                        {
-                            cameraFixed = true;
-                        }
-                    }
-                }
+//                if(cameraFixNeeded)
+//                {
+//                    if(Vision.getInstance().fixCamera(true))
+//                    {
+//                        cameraFixNeeded = false;
+//                        startTime = Timer.getFPGATimestamp();
+//                    }
+//                }
+//                else
+//                {
+//                    if(Timer.getFPGATimestamp() - startTime > 1.5)
+//                    {
+//                        if(Vision.getInstance().fixCamera(false))
+//                        {
+//                            cameraFixed = true;
+//                        }
+//                    }
+//                }
             }
             
             Scheduler.getInstance().run();
