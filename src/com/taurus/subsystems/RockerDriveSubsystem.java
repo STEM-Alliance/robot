@@ -39,15 +39,6 @@ public class RockerDriveSubsystem extends Subsystem
         for (int i = 0; i < motorsL.length; i++)
         {
             motorsL[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_LEFT[i]);
-
-            
-            if(Encoder && motorsL[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
-                    == FeedbackDeviceStatus.FeedbackStatusPresent)
-            {
-                // we have a sensor connected, so use it and setup speed control
-                motorsL[i].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-                motorsL[i].changeControlMode(TalonControlMode.Speed);
-            }
         }
         
         // setup right side motors
@@ -57,14 +48,6 @@ public class RockerDriveSubsystem extends Subsystem
 
             // since the right side rotation is inverted from the left, set that in the controller
             motorsR[i].setInverted(true);
-            
-            if(Encoder && motorsR[i].isSensorPresent(FeedbackDevice.CtreMagEncoder_Relative)
-                    == FeedbackDeviceStatus.FeedbackStatusPresent)
-            {
-                // we have a sensor connected, so use it and setup speed control
-                motorsR[i].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-                motorsR[i].changeControlMode(TalonControlMode.Speed);
-            }
         }
         
         // Setup gyro
