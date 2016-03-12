@@ -85,7 +85,10 @@ public class TargetingDriveAim extends Command
 
     protected void end()
     {
-        
+        Utilities.PrintCommand("Aimer", null);
+        Utilities.PrintCommand("Drive", null);
+        Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0);
+        Robot.aimerSubsystem.setSpeed(0);
     }
 
     protected void interrupted() 

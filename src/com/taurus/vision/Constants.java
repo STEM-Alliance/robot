@@ -4,7 +4,7 @@ public class Constants {
 
     public static final double DiagonalFOV = 68.5;
     
-    public static final double Width = 320;
+    public static final double Width = 416;
     public static final double Height = 240;
     public static final double Ratio = Width/Height;
 
