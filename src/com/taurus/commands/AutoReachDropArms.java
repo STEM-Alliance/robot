@@ -4,11 +4,13 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoReachDropArms extends CommandGroup 
 {
-    public AutoReachDropArms()
+    public AutoReachDropArms(boolean driveDirectionForwards)
     {
-        addSequential(new AutoDrive(2.0, 0.5, false, false));
+        double speed = (driveDirectionForwards) ? .5 : -.5;
+        
+        addSequential(new AutoDrive(2.0, speed, false, false));
         addParallel(new KickerContinuousTimeout(true,1));
-        addSequential(new ManipulatorContinousTimeout(false, 1.5));
+        addSequential(new ManipulatorContinousTimeout(false, 1.5));        
     }
 }
 
