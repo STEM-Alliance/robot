@@ -10,15 +10,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class FrameGrabber implements Runnable
 {
-    private final String NAME;
+    private String NAME;
     private volatile boolean running;
-    private final int brightness;
+    private int brightness;
     private int cameraQuality = 50;
     
     private final Image frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
     private Camera camera;    
     
     public FrameGrabber(String cameraName, int brightness)
+    {
+        Init(cameraName, brightness);
+    }
+    
+    public void Init(String cameraName, int brightness)
     {
         NAME = cameraName;
         this.brightness = brightness;

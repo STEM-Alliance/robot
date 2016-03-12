@@ -111,10 +111,9 @@ public class Vision implements Runnable
         double TimeLastVision = 0;
 
         Image frame;
-        final Image frameBack, frameTH, frameDownsampled, frameDownsampledTH;
+        final Image frameTH, frameDownsampled, frameDownsampledTH;
         
         frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
-        frameBack = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
         frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
         frameDownsampled = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
         frameDownsampledTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
@@ -138,7 +137,14 @@ public class Vision implements Runnable
                 if (frameThread.isAlive())  // Redundant check
                 {
                     frame = frameGrabber.getFrame();
+                    SmartDashboard.putString("FrameGrabber", "Valid");
+                    
                 }
+                else
+                {
+                    SmartDashboard.putString("FrameGrabber", "Null");
+                }
+                
                 
                 if (cameraCurrent == CAMERAS.MAIN)
                 {
@@ -160,9 +166,19 @@ public class Vision implements Runnable
                     }
                 }
                 
+                else if (cameraCurrent == CAMERAS.BACK)
+                {
+                    SmartDashboard.putString("Vision", "Back camera");
+                    
+                    //GetImageSizeResult size = NIVision.imaqGetImageSize(frame);
+                    //SmartDashboard.putString("FrameSize", size.width + "," + size.height);
+                    largestTarget = null;
+                  
+                }
+                
                 RescaleSize = Preferences.getInstance().getInt("ImageRescaleSize", 1);
                 
-                sendSmartDashboardImage(frame, frameTH, frameBack, imageToSend);
+                sendSmartDashboardImage(frame, frameTH, imageToSend);
                 
                 SmartDashboard.putString("Vision error", "");                
                 SmartDashboard.putNumber("Vision Task Length", Timer.getFPGATimestamp() - TimeLastVision);
@@ -314,7 +330,7 @@ public class Vision implements Runnable
         }
     }
     
-    private void sendSmartDashboardImage(Image frame, Image frameTH, Image frameBack, IMAGE_TYPE imageToSend)
+    private void sendSmartDashboardImage(Image frame, Image frameTH, IMAGE_TYPE imageToSend)
     {        
         if(imageToSend == IMAGE_TYPE.Input && cameraCurrent == CAMERAS.MAIN)
         {
@@ -348,7 +364,7 @@ public class Vision implements Runnable
             //GetImageSizeResult sizeDownsampled = NIVision.imaqGetImageSize(frameDownsampled);
             //SmartDashboard.putString("FrameSizeDownsampled", sizeDownsampled.width + "," + sizeDownsampled.height);
 
-            CameraServer.getInstance().setImage(frameBack);
+            CameraServer.getInstance().setImage(frame);
         }
     }
 
