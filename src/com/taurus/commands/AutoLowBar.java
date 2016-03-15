@@ -13,7 +13,7 @@ public class AutoLowBar extends CommandGroup
         if (shoot)
         {
             addParallel(new AimerContinuousTimeout(false, .5));
-            addSequential(new AutoDrive(1, 0.5, -0.5, false, false));  // Turn right slightly
+            addSequential(new AutoTurn(AutoTurn.STATE_TURN.POSITION_ONE));  // Turn right slightly
             addSequential(new LiftToTop());
             addParallel(new LiftHold());
             addSequential(new ShooterFire());

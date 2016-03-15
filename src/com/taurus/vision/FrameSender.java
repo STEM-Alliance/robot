@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.CameraServer;
 public class FrameSender implements Runnable {
 
     private boolean ready = false;
+    private Target targetInfo = null;
     private boolean addTargetInfo = false;
     private int color;
     private Image frame;
@@ -29,11 +30,10 @@ public class FrameSender implements Runnable {
         {
             if(ready)
             {
-                
                 // add target info
                 if(addTargetInfo)
                 {
-                    processSmartDashboardImage(frame, color);
+                    processSmartDashboardImage(frame, targetInfo, color);
                 }
                 
                 // send frame
@@ -42,20 +42,36 @@ public class FrameSender implements Runnable {
             }
         }
     }
+
+    public void sendFrame(Image frame)
+    {
+        sendFrame(frame,false,null,0);
+    }
     
-    public void sendFrame(Image frame, boolean addTargetInfo, int color)
+    public void sendFrame(Image frame, Target targetInfo, int color)
+    {
+        sendFrame(frame,true,targetInfo,color);
+    }
+    
+    public void sendFrame(Image frame, boolean addTargetInfo, Target targetInfo, int color)
     {
         // copy frame
         NIVision.imaqScale(this.frame, frame, 1, 1, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
         
         // store other fields
+        if(targetInfo != null && addTargetInfo)
+        {
+            this.targetInfo = targetInfo;
+        }
         this.addTargetInfo = addTargetInfo;
+        
         this.color = color;
+        
         ready = true;
     }
     
 
-    private void processSmartDashboardImage(Image frame, int color)
+    private void processSmartDashboardImage(Image frame, Target targetInfo, int color)
     {
         //Rect centerRect = new Rect(Constants.BallShotY - Constants.BallShotDiameter/2,  // top
 //                                   Constants.BallShotX - Constants.BallShotDiameter/2,  // left
@@ -71,12 +87,10 @@ public class FrameSender implements Runnable {
                 new Point(Constants.BallShotX,0),
                 new Point(Constants.BallShotX,(int) Constants.Height), color);
         
-        Target largestTarget = Vision.getInstance().getTarget();
-                                   
-        if(largestTarget != null)
+        if(targetInfo != null)
         {
             // add Target Drawing
-            Rect targetRect = new Rect((int)largestTarget.Top(), (int)largestTarget.Left(), (int)Math.ceil(largestTarget.H()), (int)Math.ceil(largestTarget.W()));
+            Rect targetRect = new Rect((int)targetInfo.Top(), (int)targetInfo.Left(), (int)Math.ceil(targetInfo.H()), (int)Math.ceil(targetInfo.W()));
             // draw an outline of a rectangle around the target
             NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, color);            
         }

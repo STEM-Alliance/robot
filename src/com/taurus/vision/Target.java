@@ -16,6 +16,7 @@ public class Target implements Comparable<Target> {
     private double pitch = Double.NaN;
     private double yaw = Double.NaN;
     private double distance = Double.NaN;
+    private boolean newData = false;
     
     public Target(double x, double y, double area, double h, double w, double orientation)
     {
@@ -25,15 +26,12 @@ public class Target implements Comparable<Target> {
         this.h = h;
         this.w = w;
         this.orientation = orientation;
+        this.newData = true; 
     }
 
     public Target(double x, double y, double area, double h, double w)
     {
-        this.x = x;
-        this.y = y;
-        this.area = area;
-        this.h = h;
-        this.w = w;
+        this(x,y,area,h,w,0);
     }
 
     public double X()
@@ -64,6 +62,16 @@ public class Target implements Comparable<Target> {
     public double Orientation()
     {
         return orientation;
+    }
+
+    public boolean NewData()
+    {
+        return newData;
+    }
+    
+    public void NewDataClear()
+    {
+        newData = false;
     }
 
     public double Left()

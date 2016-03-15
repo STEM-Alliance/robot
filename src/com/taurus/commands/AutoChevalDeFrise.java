@@ -4,12 +4,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoChevalDeFrise extends CommandGroup
 {
-    public AutoChevalDeFrise(AutoDrive.STATE_TURN position, boolean shoot)
+    public AutoChevalDeFrise(AutoTurn.STATE_TURN position, boolean shoot)
     {
         // TODO - DRL get over it
         if (shoot)
         {
-            addSequential(new AutoDrive(position));
+            addSequential(new AutoTurn(position));
             // TODO - DRL shoot or whatever
         }
     }
