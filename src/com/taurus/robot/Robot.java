@@ -26,7 +26,7 @@ public class Robot extends SampleRobot
         PORTCULLIS_CROSS,
         PORTCULLIS_SHOOT;
         
-        public Command getCommand(AutoDrive.STATE_TURN position)
+        public Command getCommand(AutoTurn.STATE_TURN position)
         {
             Command autonomousCommand;
             
@@ -105,12 +105,12 @@ public class Robot extends SampleRobot
         SmartDashboard.putData("Auto mode", autoChooser);
         
         positionChooser = new SendableChooser();
-        autoChooser.addDefault("Position One", new AutoNone());
-        autoChooser.addObject("Position One", AutoDrive.STATE_TURN.POSITION_ONE);
-        autoChooser.addObject("Position Two", AutoDrive.STATE_TURN.POSITION_TWO);
-        autoChooser.addObject("Position Three", AutoDrive.STATE_TURN.POSITION_THREE);
-        autoChooser.addObject("Position Four", AutoDrive.STATE_TURN.POSITION_FOUR);
-        autoChooser.addObject("Position Five", AutoDrive.STATE_TURN.POSITION_FIVE);
+        autoChooser.addDefault("None", new AutoNone());
+        autoChooser.addObject("Position One", AutoTurn.STATE_TURN.POSITION_ONE);
+        autoChooser.addObject("Position Two", AutoTurn.STATE_TURN.POSITION_TWO);
+        autoChooser.addObject("Position Three", AutoTurn.STATE_TURN.POSITION_THREE);
+        autoChooser.addObject("Position Four", AutoTurn.STATE_TURN.POSITION_FOUR);
+        autoChooser.addObject("Position Five", AutoTurn.STATE_TURN.POSITION_FIVE);
         SmartDashboard.putData("Auto mode", autoChooser);
 
         SmartDashboard.putBoolean("TargetFound", false);
@@ -133,7 +133,7 @@ public class Robot extends SampleRobot
     {
         //autonomousCommand = (Command) autoChooser.getSelected();
         AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
-        AutoDrive.STATE_TURN position = (AutoDrive.STATE_TURN) positionChooser.getSelected();
+        AutoTurn.STATE_TURN position = (AutoTurn.STATE_TURN) positionChooser.getSelected();
         autonomousCommand = command.getCommand(position);
         
         // schedule the autonomous command (example)

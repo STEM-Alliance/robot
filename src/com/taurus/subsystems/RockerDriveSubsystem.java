@@ -111,9 +111,15 @@ public class RockerDriveSubsystem extends Subsystem
         }
     }
     
-    public double getEncoderRotations()
+
+    /**
+     * turn to an angle, offset from current heading
+     * @param angle
+     * @return true if done
+     */
+    public boolean turnToAngleOffset(double angle)
     {
-        return 0;  // TODO Get from the Talon SRX's, potentially average all four?
+        return turnToAngle(navxMXP.getYaw() + angle);
     }
     
     /**
@@ -132,7 +138,7 @@ public class RockerDriveSubsystem extends Subsystem
         output = headingPID.update(error);
         
         // tell it to turn
-        driveRaw(output,-output);
+        driveRaw(-output,output);
         
         // save off angle in case you need to use it
         desiredHeading = angle;
@@ -264,7 +270,13 @@ public class RockerDriveSubsystem extends Subsystem
 
     public void printSensors()
     {
-        SmartDashboard.putNumber("Robot Heading", navxMXP.getAngle());
+        SmartDashboard.putNumber("Robot Heading", navxMXP.getYaw());
+        SmartDashboard.putNumber("Desired Heading", desiredHeading);
+    }
+
+    public double getYaw()
+    {
+        return navxMXP.getYaw();
     }
 }
             

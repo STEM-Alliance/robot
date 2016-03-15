@@ -24,13 +24,15 @@ public class TargetingDriveAim extends Command
 
     private double startTime;
     
+    private double desiredYaw = 0;
+    
     public TargetingDriveAim() 
     {
         requires(Robot.aimerSubsystem);
         requires(Robot.rockerDriveSubsystem);
         
         vision = Vision.getInstance();        
-        drivePID = new PIDController(.2, 0.1, 0.1, .75); //TODO change max output 
+        //drivePID = new PIDController(.2, 0.1, 0.1, .75); //TODO change max output 
     }
 
     protected void initialize() 
@@ -54,13 +56,23 @@ public class TargetingDriveAim extends Command
             Target target = vision.getTarget();
 
             if(target != null)
-            {   
+            {
+                // do the up/down aiming
                 if(Robot.aimerSubsystem.aim(target))
                     shooterAimed++;
                 else
                     shooterAimed = 0;
                 
-                if(aim(target.Yaw()))
+                // we only want to change our desired heading/yaw if the target info is new
+                // this should help with using old data from the image
+                if(target.NewData())
+                {
+                    desiredYaw = target.Yaw() + Robot.rockerDriveSubsystem.getYaw();
+                    target.NewDataClear();
+                }
+                
+                // do the left/right aiming
+                if(Robot.rockerDriveSubsystem.turnToAngle(desiredYaw))
                     driveAimed++;
                 else
                     driveAimed = 0; 
@@ -68,7 +80,7 @@ public class TargetingDriveAim extends Command
             else
             {
                 shooterAimed = 0;
-                driveAimed = 0;//aim(0);
+                driveAimed = 0;
             }
 
             SmartDashboard.putBoolean("TargetFound", target != null);

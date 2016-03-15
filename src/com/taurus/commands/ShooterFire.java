@@ -32,7 +32,7 @@ public class ShooterFire extends CommandGroup
     
     public ShooterFire() 
     {
-        addSequential(new AimerBetweenAngles(90,120));
+        addSequential(new AimerBetweenAngles(110,125));
         addSequential(new AimerLEDs(true));
         addSequential(new TargetingDriveAim());
         addSequential(new ShooterFireRev());

@@ -327,15 +327,15 @@ public class Vision implements Runnable
         
         if(imageToSend == IMAGE_TYPE.Input && cameraCurrent == CAMERAS.MAIN)
         {
-            frameSender.sendFrame(frame, true, COLORS.MAGENTA);
+            frameSender.sendFrame(frame, largestTarget, COLORS.MAGENTA);
         }
         else if(imageToSend == IMAGE_TYPE.Threshold && cameraCurrent == CAMERAS.MAIN)
         {
-            frameSender.sendFrame(frame, true, COLORS.WHITE);
+            frameSender.sendFrame(frame, largestTarget, COLORS.WHITE);
         }
         else if ((imageToSend == IMAGE_TYPE.DriveBack || cameraCurrent == CAMERAS.BACK))
         {
-            frameSender.sendFrame(frame, false, 0);
+            frameSender.sendFrame(frame);
         }
     }
 
