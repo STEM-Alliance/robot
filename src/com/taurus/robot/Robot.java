@@ -105,13 +105,13 @@ public class Robot extends SampleRobot
         SmartDashboard.putData("Auto mode", autoChooser);
         
         positionChooser = new SendableChooser();
-        autoChooser.addDefault("None", new AutoNone());
-        autoChooser.addObject("Position One", AutoTurn.STATE_TURN.POSITION_ONE);
-        autoChooser.addObject("Position Two", AutoTurn.STATE_TURN.POSITION_TWO);
-        autoChooser.addObject("Position Three", AutoTurn.STATE_TURN.POSITION_THREE);
-        autoChooser.addObject("Position Four", AutoTurn.STATE_TURN.POSITION_FOUR);
-        autoChooser.addObject("Position Five", AutoTurn.STATE_TURN.POSITION_FIVE);
-        SmartDashboard.putData("Auto mode", autoChooser);
+        positionChooser.addDefault("None", AutoTurn.STATE_TURN.POSITION_FOUR);
+        positionChooser.addObject("Position One", AutoTurn.STATE_TURN.POSITION_ONE);
+        positionChooser.addObject("Position Two", AutoTurn.STATE_TURN.POSITION_TWO);
+        positionChooser.addObject("Position Three", AutoTurn.STATE_TURN.POSITION_THREE);
+        positionChooser.addObject("Position Four", AutoTurn.STATE_TURN.POSITION_FOUR);
+        positionChooser.addObject("Position Five", AutoTurn.STATE_TURN.POSITION_FIVE);
+        SmartDashboard.putData("Position", positionChooser);
 
         SmartDashboard.putBoolean("TargetFound", false);
         SmartDashboard.putBoolean("TargetAimPitch", false);

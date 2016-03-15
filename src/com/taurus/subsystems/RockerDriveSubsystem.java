@@ -278,6 +278,11 @@ public class RockerDriveSubsystem extends Subsystem
     {
         return navxMXP.getYaw();
     }
+    
+    public void zeroYaw(double angle)
+    {
+        navxMXP.setZero(angle);
+    }
 }
             
             
