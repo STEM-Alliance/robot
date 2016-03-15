@@ -1,39 +1,42 @@
 package com.taurus.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.taurus.PIDController;
 import com.taurus.commands.DriveTankWithXbox;
+import com.taurus.hardware.Gyro;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDeviceStatus;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.command.PIDCommand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RockerDriveSubsystem extends Subsystem 
 {
     private final double DEADBAND = .2;
-    
-    private double motorsPID_P, motorsPID_I, motorsPID_D;
 
     // order is {Front, Middle, Back}
     //          {bogie, bogie, fixed}
     private CANTalon motorsL[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_LEFT.length];
     private CANTalon motorsR[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_RIGHT.length];
-    private AHRS navxMXP;  // Expander board, contains gyro
+    private Gyro navxMXP;  // Expander board, contains gyro
     
     private boolean applyGyro;
+    private double desiredHeading;
+    private PIDController headingPID;
     
     /**
      * Constructor
      */
     public RockerDriveSubsystem()
     {
-        boolean Encoder = Preferences.getInstance().getBoolean("DriveEncoders", false);
         
         // set up left side motors
         for (int i = 0; i < motorsL.length; i++)
@@ -55,11 +58,13 @@ public class RockerDriveSubsystem extends Subsystem
             /* Communicate w/navX MXP via the MXP SPI Bus.                                     */
             /* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
             /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
-            navxMXP = new AHRS(SPI.Port.kMXP);
+            navxMXP = new Gyro(SerialPort.Port.kMXP);
         } catch (RuntimeException ex ) {
             DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
         }
         applyGyro = false;
+        
+        headingPID = new PIDController(.2, 0, 0, 1);
     }
     
     /**
@@ -76,28 +81,9 @@ public class RockerDriveSubsystem extends Subsystem
      */
     private void updatePID()
     {
-        double p = Preferences.getInstance().getDouble("RockerPID_P", .5);
-        double i = Preferences.getInstance().getDouble("RockerPID_I", 0);
-        double d = Preferences.getInstance().getDouble("RockerPID_D", 0);
-        
-        // since we use the Talon for PID, we only want to send it if 
-        // the values have changed
-        if(p != motorsPID_P || i != motorsPID_I || d != motorsPID_D)
-        {
-            motorsPID_P = p;
-            motorsPID_I = i;
-            motorsPID_D = d;
-            
-            for (int index = 0; index < motorsL.length; index++)
-            {
-                motorsL[index].setPID(p, i, d);
-            }
-        
-            for (int index = 0; index < motorsR.length; index++)
-            {
-                motorsR[index].setPID(p, i, d);
-            }
-        }
+        headingPID.setP(Preferences.getInstance().getDouble("HeadingPID_P", .2));
+        headingPID.setI(Preferences.getInstance().getDouble("HeadingPID_I", 0));
+        headingPID.setD(Preferences.getInstance().getDouble("HeadingPID_D", 0));
     }
 
     /**
@@ -108,21 +94,11 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public void driveRaw(double right, double left)
     {
-        
-        
-        updatePID();
-        
-                if (applyGyro)
-        {
-            // TODO - DRL apply the gyro, compensate for how much yaw/error from our heading
-        }
-                
         right = scaleForDeadband(right);
         right = Math.min(Math.max(right, -1), 1);  // ensure value between -1 and 1
         
         for (int i = 0; i < motorsR.length; i++)
         {
-            
             motorsR[i].set(right);
         }
         
@@ -131,7 +107,6 @@ public class RockerDriveSubsystem extends Subsystem
         
         for (int i = 0; i < motorsL.length; i++)
         {
-            
             motorsL[i].set(left);   
         }
     }
@@ -141,13 +116,39 @@ public class RockerDriveSubsystem extends Subsystem
         return 0;  // TODO Get from the Talon SRX's, potentially average all four?
     }
     
-    public void setGyroMode(boolean enabled, boolean zero)
+    /**
+     * turn to a desired angle
+     * @param angle
+     * @return true if done
+     */
+    public boolean turnToAngle(double angle)
+    {
+        double output = 0;
+        double error = angle - navxMXP.getYaw();
+        
+        updatePID();
+        
+        // get the suggested motor output
+        output = headingPID.update(error);
+        
+        // tell it to turn
+        driveRaw(output,-output);
+        
+        // save off angle in case you need to use it
+        desiredHeading = angle;
+        
+        // we're done if we're at the angle, and we're no longer turning
+        return error < 1 && output < .1;
+    }
+    
+    public void enableGyro(boolean enabled)
     {
         applyGyro = enabled;
-        if (zero)
-        {
-            //navxMXP.zeroYaw();
-        }
+    }
+    
+    public void zeroGyro(double angle)
+    {
+        navxMXP.setZero(angle);
     }
 
     /**
@@ -173,7 +174,6 @@ public class RockerDriveSubsystem extends Subsystem
         
         return value;
     }
-    
     
     /**
      * Barf all of the possible expander card values to smartdashboard. Intended for debugging only.
@@ -260,6 +260,11 @@ public class RockerDriveSubsystem extends Subsystem
         /* Connectivity Debugging Support                                           */
         SmartDashboard.putNumber(   "IMU_Byte_Count",       navxMXP.getByteCount());
         SmartDashboard.putNumber(   "IMU_Update_Count",     navxMXP.getUpdateCount());
+    }
+
+    public void printSensors()
+    {
+        SmartDashboard.putNumber("Robot Heading", navxMXP.getAngle());
     }
 }
             

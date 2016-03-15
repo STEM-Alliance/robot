@@ -1,18 +1,22 @@
 package com.taurus.hardware;
 
 
+import com.kauailabs.navx.frc.AHRS;
 import com.taurus.Utilities;
 
-import edu.wpi.first.wpilibj.SPI.Port;
-import edu.wpi.first.wpilibj.SerialPort;
+public class Gyro extends AHRS {
+    
+    private double customYaw;
 
-public class Gyro {
-    
-    private float customYaw;
-    
-    public Gyro(Port port)
+    public Gyro(edu.wpi.first.wpilibj.SerialPort.Port kmxp)
     {
-        //super(port);
+        super(kmxp);
+        customYaw = 0.0f;
+    }
+    
+    public Gyro(edu.wpi.first.wpilibj.SPI.Port kmxp)
+    {
+        super(kmxp);
         customYaw = 0.0f;
     }
 
@@ -24,16 +28,17 @@ public class Gyro {
      * This user-specified yaw offset is automatically added to
      * subsequent yaw values reported by the getYaw() method.
      *
-     * @param yaw
+     * @param angle
      */
-    public void setZero(float yaw)
+    public void setZero(double angle)
     {
-        customYaw = yaw;
+        customYaw = angle;
+        super.zeroYaw();
     }
 
     /**
      * Returns the current yaw value (in degrees, from -180 to 180) reported by
-     * the nav6 IMU.
+     * the navX IMU.
      * 
      * Note that the returned yaw value will be offset by a user-specified
      * offset value; this user-specified offset value is set by invoking the
@@ -43,10 +48,9 @@ public class Gyro {
      */
     public float getYaw()
     {
-//        float yaw = Utilities.wrapToRange(super.getYaw() + customYaw,
-//                -180, 180);
-        //return yaw;
-        return 0;
+        float yaw = (float)Utilities.wrapToRange(super.getYaw() + customYaw,
+                -180, 180);
+        return yaw;
     }
 
     /**
@@ -59,6 +63,6 @@ public class Gyro {
     public void zeroYaw()
     {
         customYaw = 0.0f;
-        //super.zeroYaw();
+        super.zeroYaw();
     }
 }

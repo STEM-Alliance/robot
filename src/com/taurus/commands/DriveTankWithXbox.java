@@ -19,7 +19,7 @@ public class DriveTankWithXbox extends Command
 
     protected void initialize() 
     {
-        
+        Robot.rockerDriveSubsystem.enableGyro(false);
     }
 
     protected void execute() 

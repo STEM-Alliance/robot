@@ -147,6 +147,7 @@ public class Robot extends SampleRobot
     
     public void disabled()
     {
+        
         Command auto = (Command) autoChooser.getSelected();
         SmartDashboard.putString("Current Auto", auto.getName());
         
@@ -156,6 +157,7 @@ public class Robot extends SampleRobot
         
         while (isDisabled())
         {
+            rockerDriveSubsystem.printSensors();
             liftSubsystem.printSensors();
             aimerSubsystem.updatePotOffsets();
             
