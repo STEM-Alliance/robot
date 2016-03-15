@@ -7,10 +7,9 @@ import com.taurus.robot.Robot;
 
 public class AutoDrive extends Command 
 {
-    
+    public final static double SPEED_APPROACH = .5;
     final double speedR;
     final double speedL;
-    boolean tractionEnabled;
     boolean gyroEnabled;
     
     /**
@@ -26,19 +25,18 @@ public class AutoDrive extends Command
     /**
      * Drive. Go any direction including turning.
      */
-    public AutoDrive(double endTime, double speedL, double speedR, boolean tractionEnabled, boolean gryoEnabled)
+    public AutoDrive(double endTime, double speedL, double speedR, boolean gyroEnabled)
     {
         requires(Robot.rockerDriveSubsystem);
         this.speedR = speedR;
         this.speedL = speedL;
-        this.tractionEnabled = tractionEnabled;
         this.gyroEnabled = gyroEnabled;
         setTimeout(endTime);
     }
     
-    public AutoDrive(double endTime, double speed, boolean tractionEnabled, boolean gyroEnabled)
+    public AutoDrive(double endTime, double speed, boolean gyroEnabled)
     {
-        this(endTime, speed, speed, tractionEnabled, gyroEnabled);
+        this(endTime, speed, speed, gyroEnabled);
     }
 
     protected void initialize()
