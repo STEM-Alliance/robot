@@ -32,19 +32,19 @@ public class Vision implements Runnable
     public static final class COLORS
     {
         // order is bgr
-        private static final int BLACK   = 0x000000;
-        private static final int WHITE   = 0xffffff;
-        private static final int RED     = 0x0000ff;
-        private static final int ORANGE  = 0x0080ff;
-        private static final int YELLOW  = 0x00ffff;
-        private static final int LIME    = 0x00ff80;
-        private static final int GREEN   = 0x00ff00;
-        private static final int TEAL    = 0x80ff00;
-        private static final int CYAN    = 0xffff00;
-        private static final int VIOLET  = 0xff8000;
-        private static final int BLUE    = 0xff0000;
-        private static final int PINK    = 0xff0080;
-        private static final int MAGENTA = 0xff00ff;
+        public static final int BLACK   = 0x000000;
+        public static final int WHITE   = 0xffffff;
+        public static final int RED     = 0x0000ff;
+        public static final int ORANGE  = 0x0080ff;
+        public static final int YELLOW  = 0x00ffff;
+        public static final int LIME    = 0x00ff80;
+        public static final int GREEN   = 0x00ff00;
+        public static final int TEAL    = 0x80ff00;
+        public static final int CYAN    = 0xffff00;
+        public static final int VIOLET  = 0xff8000;
+        public static final int BLUE    = 0xff0000;
+        public static final int PINK    = 0xff0080;
+        public static final int MAGENTA = 0xff00ff;
     }
     
     private final double TIME_RATE_VISION = 1.0/30.0; // frame time at 30fps
@@ -249,9 +249,9 @@ public class Vision implements Runnable
     {
         NIVision.imaqColorThreshold(frameTH, frame, 255,
                 ColorMode.HSL,
-                new Range(Preferences.getInstance().getInt("Hmin", 98),
-                          Preferences.getInstance().getInt("Hmax", 150)),
-                new Range(Preferences.getInstance().getInt("Smin", 78),
+                new Range(Preferences.getInstance().getInt("Hmin", 100),
+                          Preferences.getInstance().getInt("Hmax", 145)),
+                new Range(Preferences.getInstance().getInt("Smin", 30),
                           Preferences.getInstance().getInt("Smax", 255)),
                 new Range(Preferences.getInstance().getInt("Lmin", 73),
                           Preferences.getInstance().getInt("Lmax", 255)));
@@ -261,8 +261,8 @@ public class Vision implements Runnable
         SmartDashboard.putNumber("Particles", particleCount);
 
         // find the bounding rectangle, then send
-        double minArea = Preferences.getInstance().getInt("MinArea", 0);
-        double biggestArea = minArea - 1;
+        double areaMin = Preferences.getInstance().getInt("AreaMin", 0);
+        double biggestArea = areaMin - 1;
         
         int largestIndex = -1;
         

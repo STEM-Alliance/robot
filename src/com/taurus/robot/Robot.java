@@ -148,8 +148,8 @@ public class Robot extends SampleRobot
     public void disabled()
     {
         
-        Command auto = (Command) autoChooser.getSelected();
-        SmartDashboard.putString("Current Auto", auto.getName());
+//        Command auto = (Command) autoChooser.getSelected();
+//        SmartDashboard.putString("Current Auto", auto.getName());
         
         double startTime = Timer.getFPGATimestamp();
         boolean cameraFixNeeded = true;

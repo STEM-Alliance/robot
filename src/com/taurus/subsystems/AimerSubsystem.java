@@ -21,7 +21,7 @@ public class AimerSubsystem extends Subsystem
     private final double MOTOR_TOLERANCE = 0.05;
     private static final double ANGLE_MAX = 140 - 5;
     private static final double ANGLE_MIN = -50 + 5;
-    private final double TOLERANCE = .75;  // Degrees from desired angle that counts as that angle
+    public final static double TOLERANCE = .75;  // Degrees from desired angle that counts as that angle
 
     public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
     
@@ -146,9 +146,9 @@ public class AimerSubsystem extends Subsystem
     private void updatedPIDConstants()
     {
 
-        pid.setP(Preferences.getInstance().getDouble("AimerPID_P", .3));
-        pid.setI(Preferences.getInstance().getDouble("AimerPID_I", 0));
-        pid.setD(Preferences.getInstance().getDouble("AimerPID_D", 0));
+        pid.setP(Preferences.getInstance().getDouble("AimerPID_P", .03));
+        pid.setI(Preferences.getInstance().getDouble("AimerPID_I", 0.01));
+        pid.setD(Preferences.getInstance().getDouble("AimerPID_D", 0.01));
     }
     
     /**
@@ -223,7 +223,7 @@ public class AimerSubsystem extends Subsystem
         SmartDashboard.putNumber("Aimer Angle", angle.get());
         //SmartDashboard.putNumber("Aimer Raw", motor.getAnalogInRaw()/1023.0);
 
-        angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 0));
+        angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 45));
     }
     
     public void enableLEDs(boolean enable)

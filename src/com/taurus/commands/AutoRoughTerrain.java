@@ -6,7 +6,7 @@ public class AutoRoughTerrain extends CommandGroup
 {
     public AutoRoughTerrain(AutoTurn.STATE_TURN position, boolean shoot)
     {
-        addSequential(new AutoSetYawZero(0));
+        addSequential(new AutoSetStartAngle(0));
         //TODO adjust time parameters
         addSequential(new AutoDrive(2, AutoDrive.SPEED_APPROACH, false));//reach defense
         addSequential(new AutoDrive(3, 1.0, false));//over defense shooter up?

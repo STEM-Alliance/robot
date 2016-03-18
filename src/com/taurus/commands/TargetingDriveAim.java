@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TargetingDriveAim extends Command
 {    
-    public final double DRIVE_ANGLE_TOLERANCE = .8;
+    public final static double DRIVE_ANGLE_TOLERANCE = .8;
     public final int HOLD_COUNT = 6;
 
     private int shooterAimed;

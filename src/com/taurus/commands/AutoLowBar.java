@@ -6,7 +6,7 @@ public class AutoLowBar extends CommandGroup
 {
     public AutoLowBar(boolean shoot)
     {
-        addSequential(new AutoSetYawZero(0));
+        addSequential(new AutoSetStartAngle(0));
         addSequential(new AutoDrive(.5, AutoDrive.SPEED_APPROACH,false));
         addParallel(new KickerContinuousTimeout(true,1));
         addParallel(new ManipulatorContinousTimeout(false, 1.5));
@@ -22,6 +22,8 @@ public class AutoLowBar extends CommandGroup
             addSequential(new LiftToBottom());
             addSequential(new AutoDrive(1.45, 0.75, -0.75, false));  // Turn 180
         }
+        
+        //addSequential(new AutoDrive);
     }
 }
 

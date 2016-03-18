@@ -7,6 +7,9 @@ import com.ni.vision.NIVision.Point;
 import com.ni.vision.NIVision.Rect;
 import com.ni.vision.NIVision.ScalingMode;
 import com.ni.vision.NIVision.ShapeMode;
+import com.taurus.commands.TargetingDriveAim;
+import com.taurus.robot.Robot;
+import com.taurus.subsystems.AimerSubsystem;
 
 import edu.wpi.first.wpilibj.CameraServer;
 
@@ -80,9 +83,26 @@ public class FrameSender implements Runnable {
         // draw a circle in the center of the image/where the ball shoots
         //NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, color);
 
+        if (Math.abs(Vision.getInstance().getTarget().Pitch()) < AimerSubsystem.TOLERANCE)
+        {
+            color = Vision.COLORS.GREEN;
+        }
+        else
+        {
+            color = Vision.COLORS.RED;
+        }
         NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
                 new Point(0,Constants.BallShotY),
                 new Point((int) Constants.Width,Constants.BallShotY), color);
+        
+        if (Math.abs(Vision.getInstance().getTarget().Yaw()) < TargetingDriveAim.DRIVE_ANGLE_TOLERANCE)
+        {
+            color = Vision.COLORS.GREEN;
+        }
+        else
+        {
+            color = Vision.COLORS.RED;
+        }
         NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
                 new Point(Constants.BallShotX,0),
                 new Point(Constants.BallShotX,(int) Constants.Height), color);

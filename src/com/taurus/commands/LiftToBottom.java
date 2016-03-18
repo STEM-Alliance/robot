@@ -18,7 +18,7 @@ public class LiftToBottom extends Command {
     
     protected void execute() {
         Utilities.PrintCommand("Lift", this);
-        double endHeight = Robot.liftSubsystem.LIMIT_LOWER + Preferences.getInstance().getDouble("LiftLowOffset", 5);
+        double endHeight = Robot.liftSubsystem.LIMIT_LOWER + Preferences.getInstance().getDouble("LiftLowOffset", 4.5);
         done = Robot.liftSubsystem.setHeightFromFloor(endHeight);//store result of setHeight function into the done variable
     }
 
