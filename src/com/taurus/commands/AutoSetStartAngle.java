@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class AutoSetYawZero extends Command {
+public class AutoSetStartAngle extends Command {
     
     private double angle;
     
-    public AutoSetYawZero(double angle) { 
+    public AutoSetStartAngle(double angle) { 
         requires(Robot.rockerDriveSubsystem);
         this.angle = angle;
     }

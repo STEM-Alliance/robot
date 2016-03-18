@@ -12,7 +12,7 @@ public class FrameGrabber implements Runnable
 {
     private String NAME;
     private volatile boolean running;
-    private int cameraQuality = 50;
+    private int cameraQuality = 70;
     
     private boolean setupNeeded = false;
     
@@ -137,7 +137,7 @@ public class FrameGrabber implements Runnable
         }
         
         
-        int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4500);
+        int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4400);
         if(camera.getWhiteBalanceManual() != whiteBalance || forceUpdate)
         {
             camera.setWhiteBalanceManual(whiteBalance);
@@ -152,13 +152,13 @@ public class FrameGrabber implements Runnable
                 camera.setExposureManual(exposure);
             }
             
-            double brightness = Preferences.getInstance().getDouble("Brightness", 80);
+            double brightness = Preferences.getInstance().getDouble("Brightness", 60);
             if(camera.getBrightness() != brightness || forceUpdate)
             {
                 camera.setBrightness(brightness);
             }
             
-            double sat = Preferences.getInstance().getDouble("Saturation", 150);
+            double sat = Preferences.getInstance().getDouble("Saturation", 200);
             if(camera.getSaturation() != sat || forceUpdate)
             {
                 camera.setSaturation(sat);
@@ -167,7 +167,7 @@ public class FrameGrabber implements Runnable
         else
         {
 
-            double exposure = Preferences.getInstance().getDouble("Exposure2", 5);
+            double exposure = Preferences.getInstance().getDouble("Exposure2", 5.1);
             if(camera.getExposureManual() != exposure || forceUpdate)
             {
                 camera.setExposureManual(exposure);

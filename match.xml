@@ -1,0 +1,35 @@
+<xml version="1.0">
+<dashboard>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="1278" y="365"/>
+		<property name="Text" value="Options"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="1159" y="362"/>
+		<property name="Text" value="Defense"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="1025" y="363"/>
+		<property name="Text" value="Position"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="1149" y="325"/>
+		<property name="Text" value="Autonomous"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="1153" y="187"/>
+		<property name="Text" value="HasTarget"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="1157" y="2"/>
+		<property name="Text" value="Compass"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.VideoStreamViewerExtension">
+		<location x="0" y="0"/>
+		<width>969</width>
+		<height>682</height>
+	</static-widget>
+</dashboard>
+<live-window>
+</live-window>
+</xml>

@@ -6,7 +6,7 @@ public class AutoPortCullis extends CommandGroup
 {
     public AutoPortCullis(AutoTurn.STATE_TURN position, boolean shoot)
     {
-        addSequential(new AutoSetYawZero(180));
+        addSequential(new AutoSetStartAngle(180));
 
         addParallel(new ManipulatorContinousTimeout(false, 1.5));
         addSequential(new AutoDrive(.5, -AutoDrive.SPEED_APPROACH, false));

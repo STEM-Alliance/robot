@@ -131,8 +131,8 @@ public class LiftSubsystem extends Subsystem{
         }
         else
         {
-            setSpeed(motorOutput[0]* Preferences.getInstance().getDouble("LiftSpeedLimit", .5),
-                    motorOutput[1]* Preferences.getInstance().getDouble("LiftSpeedLimit", .5));            
+            setSpeed(motorOutput[0]* Preferences.getInstance().getDouble("LiftSpeedLimit", .85),
+                    motorOutput[1]* Preferences.getInstance().getDouble("LiftSpeedLimit", .85));            
         }
 
         return arrivedL && arrivedR;
@@ -147,6 +147,7 @@ public class LiftSubsystem extends Subsystem{
         SmartDashboard.putNumber("Lift Height R", getHeightFromLiftBottomR());
         SmartDashboard.putNumber("Lift Pot L", getAngleL());
         SmartDashboard.putNumber("Lift Pot R", getAngleR());
+    
 
         updatePotOffsets();
     }
@@ -298,7 +299,7 @@ public class LiftSubsystem extends Subsystem{
         for (int i = 0; i < heightPIDs.length; i++)
         {
             heightPIDs[i].setP(Preferences.getInstance().getDouble("LiftPID_P", .3));
-            heightPIDs[i].setI(Preferences.getInstance().getDouble("LiftPID_I", 0));
+            heightPIDs[i].setI(Preferences.getInstance().getDouble("LiftPID_I", 0.1));
             heightPIDs[i].setD(Preferences.getInstance().getDouble("LiftPID_D", 0));
         }
     }
@@ -382,7 +383,7 @@ public class LiftSubsystem extends Subsystem{
 //        }
 //        else
 //        {
-            potLeft.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetL", 0));
+            potLeft.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetL", 87.952));
 //        }
         
 //        if(false && !motorRight.isRevLimitSwitchClosed())
@@ -393,7 +394,7 @@ public class LiftSubsystem extends Subsystem{
 //        }
 //        else
 //        {
-            potRight.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetR", 0));
+            potRight.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetR", 148.0));
 //        } 
 //        
 //        potRight.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleR", -360));

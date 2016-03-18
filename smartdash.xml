@@ -19,7 +19,7 @@
 		<location x="0" y="504"/>
 	</widget>
 	<widget field="FrameGetter" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="483"/>
+		<location x="25" y="484"/>
 	</widget>
 	<widget field="TargetAimYaw" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="783" y="7"/>
