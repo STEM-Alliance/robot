@@ -21,12 +21,12 @@ public class Robot extends SampleRobot
         NONE,
         DROP_ARMS_F,
         DROP_ARMS_B,
-        LOWBAR_CROSS,
-        LOWBAR_SHOOT,
-        PORTCULLIS_CROSS,
-        PORTCULLIS_SHOOT;
+        LOWBAR,
+        PORTCULLIS,
+        CHEVAL_DEFRISE,
+        ROUGH_TERRAIN;
         
-        public Command getCommand(AutoTurn.STATE_TURN position)
+        public Command getCommand(AutoTurn.STATE_TURN position, boolean shoot)
         {
             Command autonomousCommand;
             
@@ -36,23 +36,24 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoNone();
                 break;
             case DROP_ARMS_F:
-                autonomousCommand = new AutoReachDropArms(true);
+                autonomousCommand = new AutoReachDropArms(shoot);
                 break;
             case DROP_ARMS_B:
-                autonomousCommand = new AutoReachDropArms(false);
+                autonomousCommand = new AutoReachDropArms(shoot);
                 break;
-            case LOWBAR_CROSS:
-                autonomousCommand = new AutoLowBar(false);
+            case LOWBAR:
+                autonomousCommand = new AutoLowBar(shoot);
                 break;
-            case LOWBAR_SHOOT:
-                autonomousCommand = new AutoLowBar(true);
+            case PORTCULLIS:
+                autonomousCommand = new AutoPortCullis(position, shoot);
                 break;
-            case PORTCULLIS_CROSS:
-                autonomousCommand = new AutoPortCullis(position, false);
+            case CHEVAL_DEFRISE:
+                autonomousCommand = new AutoChevalDeFrise(position, shoot);
                 break;
-            case PORTCULLIS_SHOOT:
-                autonomousCommand = new AutoPortCullis(position, true);
+            case ROUGH_TERRAIN:
+                autonomousCommand = new AutoRoughTerrain(position, shoot);
                 break;
+            
             default:
                 autonomousCommand = new AutoNone();
                 break;
@@ -76,6 +77,8 @@ public class Robot extends SampleRobot
     Command autonomousCommand;
     SendableChooser autoChooser;
     SendableChooser positionChooser;
+    SendableChooser modeChooser;
+
     
 
     /**
@@ -98,10 +101,10 @@ public class Robot extends SampleRobot
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
         autoChooser.addObject("Auto Drop Arms Fwd", AUTO_COMMAND.DROP_ARMS_F);
         autoChooser.addObject("Auto Drop Arms Back", AUTO_COMMAND.DROP_ARMS_B);
-        autoChooser.addObject("Auto Low Bar Cross", AUTO_COMMAND.LOWBAR_CROSS);
-        autoChooser.addObject("Auto Low Bar Shoot", AUTO_COMMAND.LOWBAR_SHOOT);
-        autoChooser.addObject("Auto Port Cullis Cross", AUTO_COMMAND.PORTCULLIS_CROSS);
-        autoChooser.addObject("Auto Port Cullis Shoot", AUTO_COMMAND.PORTCULLIS_SHOOT);
+        autoChooser.addObject("Auto Low Bar", AUTO_COMMAND.LOWBAR);
+        autoChooser.addObject("Auto Port Cullis", AUTO_COMMAND.PORTCULLIS);
+        autoChooser.addObject("Auto Cheval DeFrise", AUTO_COMMAND.CHEVAL_DEFRISE);
+        autoChooser.addObject("Auto Rough Terrain", AUTO_COMMAND.ROUGH_TERRAIN);
         SmartDashboard.putData("Auto mode", autoChooser);
         
         positionChooser = new SendableChooser();
@@ -113,6 +116,8 @@ public class Robot extends SampleRobot
         positionChooser.addObject("Position Five", AutoTurn.STATE_TURN.POSITION_FIVE);
         SmartDashboard.putData("Position", positionChooser);
 
+        //add a new mode chooser
+        
         SmartDashboard.putBoolean("TargetFound", false);
         SmartDashboard.putBoolean("TargetAimPitch", false);
         SmartDashboard.putBoolean("TargetAimYaw", false);
@@ -134,7 +139,8 @@ public class Robot extends SampleRobot
         //autonomousCommand = (Command) autoChooser.getSelected();
         AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
         AutoTurn.STATE_TURN position = (AutoTurn.STATE_TURN) positionChooser.getSelected();
-        autonomousCommand = command.getCommand(position);
+        boolean shoot = (boolean) modeChooser.getSelected();
+        autonomousCommand = command.getCommand(position, shoot);
         
         // schedule the autonomous command (example)
         if (autonomousCommand != null) autonomousCommand.start();

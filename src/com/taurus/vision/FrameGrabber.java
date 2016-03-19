@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
 public class FrameGrabber implements Runnable
 {
     private String NAME;
@@ -42,8 +43,7 @@ public class FrameGrabber implements Runnable
         {
             if(setupNeeded)
             {
-                SmartDashboard.putString("FrameGetter", "Setting up");
-                
+                SmartDashboard.putString("FrameGetter", "Setting up");                
                 setup();  
                 setupNeeded = false;
             }
@@ -53,7 +53,6 @@ public class FrameGrabber implements Runnable
             
             while (running)
             {
-                 
                 try
                 {
                     TimeStart = Timer.getFPGATimestamp();
@@ -166,7 +165,6 @@ public class FrameGrabber implements Runnable
         }
         else
         {
-
             double exposure = Preferences.getInstance().getDouble("Exposure2", 5.1);
             if(camera.getExposureManual() != exposure || forceUpdate)
             {
