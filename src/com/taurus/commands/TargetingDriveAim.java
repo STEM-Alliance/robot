@@ -131,6 +131,7 @@ public class TargetingDriveAim extends Command
         drivePID.setP(Preferences.getInstance().getDouble("DrivePID_P", .2));
         drivePID.setI(Preferences.getInstance().getDouble("DrivePID_I", 0));
         drivePID.setD(Preferences.getInstance().getDouble("DrivePID_D", 0));
+        drivePID.setMin(Preferences.getInstance().getDouble("DrivePID_Min", .1));
         drivePID.setMax(Preferences.getInstance().getDouble("DrivePID_Max", 0.7));
     }
 }

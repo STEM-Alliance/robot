@@ -84,6 +84,7 @@ public class RockerDriveSubsystem extends Subsystem
         headingPID.setP(Preferences.getInstance().getDouble("HeadingPID_P", .2));
         headingPID.setI(Preferences.getInstance().getDouble("HeadingPID_I", 0));
         headingPID.setD(Preferences.getInstance().getDouble("HeadingPID_D", 0));
+        headingPID.setMin(Preferences.getInstance().getDouble("HeadingPID_Min", .1));
     }
 
     /**

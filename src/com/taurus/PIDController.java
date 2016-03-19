@@ -17,12 +17,14 @@ public final class PIDController {
     private double I;
     private double D;
 
-    private double  maxOutput;
+    private double maxOutput;
+    private double minOutput;
 
     // State.
     public double integral;
     public double lastTimestamp;
     public double lastError;
+
 
     /**
      * Create a new instance of the PIController
@@ -30,14 +32,29 @@ public final class PIDController {
      * @param p proportional component
      * @param i integral component, 0 to disable
      * @param d derivative component, 0 to disable
-     * @param maxOutput maximum output of the controller (typically 1.0)
+     * @param maxOutput maximum magnitude of the controller (typically 1.0, always positive)
      */
     public PIDController(double p, double i, double d, double maxOutput)
+    {
+        this(p, i, d, maxOutput, 0);
+    }
+    
+    /**
+     * Create a new instance of the PIController
+     * 
+     * @param p proportional component
+     * @param i integral component, 0 to disable
+     * @param d derivative component, 0 to disable
+     * @param maxOutput maximum magnitude of the controller (typically 1.0, always positive)
+     * @param minOutput minimum magnitude of the controller, used to get over system friction (0-maxOutput)
+     */
+    public PIDController(double p, double i, double d, double maxOutput, double minOutput)
     {
         this.P = p;
         this.I = i;
         this.D = d;
         this.maxOutput = maxOutput;
+        this.minOutput = minOutput;
 
         this.integral = 0;
         this.lastTimestamp = Double.NEGATIVE_INFINITY;
@@ -94,8 +111,16 @@ public final class PIDController {
         this.lastError = error;
 
         // Calculate output with coefficients.
-        return Utilities.clampToRange(proportional + this.integral + derivative,
+        double clampedVal = Utilities.clampToRange(proportional + this.integral + derivative,
                 -this.maxOutput, this.maxOutput);
+        
+        // make sure it's more than the specified minimum
+        if(Math.abs(clampedVal) < this.minOutput)
+        {
+            clampedVal = Math.signum(clampedVal) * this.minOutput;
+        }
+        
+        return clampedVal;
     }
 
     public double getP()
@@ -132,5 +157,10 @@ public final class PIDController {
     {
         this.maxOutput = max;
         
+    }
+    
+    public void setMin(double min)
+    {
+        this.minOutput = min;
     }
 }

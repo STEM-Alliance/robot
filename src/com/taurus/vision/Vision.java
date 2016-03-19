@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.*;
 
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -28,7 +27,6 @@ public class Vision implements Runnable
         NONE
     }
 
-    @SuppressWarnings("unused")
     public static final class COLORS
     {
         // order is bgr
@@ -327,11 +325,11 @@ public class Vision implements Runnable
         
         if(imageToSend == IMAGE_TYPE.Input && cameraCurrent == CAMERAS.MAIN)
         {
-            frameSender.sendFrame(frame, largestTarget, COLORS.MAGENTA);
+            frameSender.sendFrame(frame, largestTarget, true);
         }
         else if(imageToSend == IMAGE_TYPE.Threshold && cameraCurrent == CAMERAS.MAIN)
         {
-            frameSender.sendFrame(frame, largestTarget, COLORS.WHITE);
+            frameSender.sendFrame(frame, largestTarget, false);
         }
         else if ((imageToSend == IMAGE_TYPE.DriveBack || cameraCurrent == CAMERAS.BACK))
         {
