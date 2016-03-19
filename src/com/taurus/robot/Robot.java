@@ -117,6 +117,11 @@ public class Robot extends SampleRobot
         SmartDashboard.putData("Position", positionChooser);
 
         //add a new mode chooser
+        modeChooser = new SendableChooser();
+        modeChooser.addDefault("No Shoot", false);
+        modeChooser.addObject("Shoot", true);
+        SmartDashboard.putData("Shoot Mode", modeChooser);
+        
         
         SmartDashboard.putBoolean("TargetFound", false);
         SmartDashboard.putBoolean("TargetAimPitch", false);
