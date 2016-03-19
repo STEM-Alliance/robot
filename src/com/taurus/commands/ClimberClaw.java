@@ -10,6 +10,7 @@ public class ClimberClaw extends Command {
     
     public ClimberClaw(boolean release)
     {
+        requires(Robot.climberClawSubsystem);
         this.release = release;
     }
     

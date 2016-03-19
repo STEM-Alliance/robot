@@ -397,8 +397,8 @@ public class LiftSubsystem extends Subsystem{
             potRight.setOffset(Preferences.getInstance().getDouble("LiftPotOffsetR", 148.0));
 //        } 
 //        
-//        potRight.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleR", -360));
-//        potLeft.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleL", -360));
+        potRight.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleR", 360));
+        potLeft.setFullRange(Preferences.getInstance().getDouble("LiftPotScaleL", -360));
     }
     
     /**
@@ -443,7 +443,7 @@ public class LiftSubsystem extends Subsystem{
      * @return height in inches
      */
     private double getHeightFromLiftBottomR() {
-        return (Math.sin(Math.toRadians(getAngleR()))*LENGTH_SCISSOR_STEP)*2;
+        return (Math.sin(Math.toRadians(getAngleR()/2))*LENGTH_SCISSOR_STEP)*2;
     }
 
     /**
@@ -451,7 +451,7 @@ public class LiftSubsystem extends Subsystem{
      * @return height in inches
      */
     private double getHeightFromLiftBottomL() {
-        return (Math.sin(Math.toRadians(getAngleL()))*LENGTH_SCISSOR_STEP)*2;
+        return (Math.sin(Math.toRadians(getAngleL()/2))*LENGTH_SCISSOR_STEP)*2;
     }
 
     /**

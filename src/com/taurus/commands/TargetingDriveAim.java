@@ -24,7 +24,8 @@ public class TargetingDriveAim extends Command
 
     private double startTime;
     
-    private double desiredYaw = 0;
+    private double desiredYaw;
+    private boolean YawFound;
     
     public TargetingDriveAim() 
     {
@@ -39,6 +40,8 @@ public class TargetingDriveAim extends Command
     {
         shooterAimed = 0;
         driveAimed = 0;
+        desiredYaw = 0;
+        YawFound = false;
 
         startTime = Timer.getFPGATimestamp();
         SmartDashboard.putBoolean("TargetFound", false);
@@ -52,7 +55,7 @@ public class TargetingDriveAim extends Command
         Utilities.PrintCommand("Drive", this);
         
         if(Timer.getFPGATimestamp() - startTime > .25)
-        {
+        {            
             Target target = vision.getTarget();
 
             if(target != null)
@@ -62,27 +65,37 @@ public class TargetingDriveAim extends Command
                     shooterAimed++;
                 else
                     shooterAimed = 0;
-                
-                // we only want to change our desired heading/yaw if the target info is new
-                // this should help with using old data from the image
-                if(target.NewData())
-                {
-                    desiredYaw = target.Yaw() + Robot.rockerDriveSubsystem.getYaw();
-                    target.NewDataClear();
-                }
-                
+
+                SmartDashboard.putBoolean("YawFound", YawFound);
+                SmartDashboard.putNumber("desiredYaw", desiredYaw);
                 // do the left/right aiming
-                if(Robot.rockerDriveSubsystem.turnToAngle(desiredYaw))
-                    driveAimed++;
+                if (YawFound)
+                {
+                    // Use Gyro fine angle
+                    // Use image for initial angle
+                    if(Robot.rockerDriveSubsystem.turnToAngle(desiredYaw))
+                        driveAimed++;
+                    else
+                        driveAimed = 0;
+                }
                 else
-                    driveAimed = 0; 
+                {
+                    // we only want to change our desired heading/yaw if the target info is new
+                    // this should help with using old data from the image
+                    if(target.NewData())
+                    {
+                        desiredYaw = target.Yaw() + Robot.rockerDriveSubsystem.getYaw();
+                        target.NewDataClear();
+                        YawFound = true;
+                    }
+                }
             }
             else
             {
                 shooterAimed = 0;
                 driveAimed = 0;
             }
-
+            
             SmartDashboard.putBoolean("TargetFound", target != null);
             SmartDashboard.putBoolean("TargetAimPitch", shooterAimed > HOLD_COUNT);
             SmartDashboard.putBoolean("TargetAimYaw", driveAimed > HOLD_COUNT);
@@ -99,8 +112,8 @@ public class TargetingDriveAim extends Command
     {
         Utilities.PrintCommand("Aimer", null);
         Utilities.PrintCommand("Drive", null);
-        Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0);
-        Robot.aimerSubsystem.setSpeed(0);
+//        Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0);
+//        Robot.aimerSubsystem.setSpeed(0);
     }
 
     protected void interrupted() 

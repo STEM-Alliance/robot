@@ -27,7 +27,7 @@ public class ShooterGrab extends Command
 
     protected boolean isFinished()
     {
-        return Robot.shooterSubsystem.stopSwitch.get();
+        return false;//Robot.shooterSubsystem.stopSwitch.get();
     }
 
     protected void end() 

@@ -115,9 +115,12 @@ public final class PIDController {
                 -this.maxOutput, this.maxOutput);
         
         // make sure it's more than the specified minimum
-        if(Math.abs(clampedVal) < this.minOutput)
+        if(Math.abs(clampedVal) < .01)
         {
-            clampedVal = Math.signum(clampedVal) * this.minOutput;
+            if(Math.abs(clampedVal) < this.minOutput)
+            {
+                clampedVal = Math.signum(clampedVal) * this.minOutput;
+            }
         }
         
         return clampedVal;

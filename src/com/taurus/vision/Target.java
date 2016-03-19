@@ -148,7 +148,7 @@ public class Target implements Comparable<Target> {
             double xChange = inPerPx * (Constants.BallShotX - x); //Difference between center of image and center of target in pixels
             double angle = Math.asin(xChange / DistanceToTarget());
             
-            yaw = Math.toDegrees(angle);
+            yaw = -Math.toDegrees(angle);
         }
         return yaw;
     }

@@ -27,7 +27,7 @@ public class RobotMap {
 
     public static final int PIN_SERVO_SHOOTER_BALL_RELEASE_1 = 0;
     public static final int PIN_SERVO_SHOOTER_BALL_RELEASE_2 = 1;
-    public static final int PIN_SERVO_CLAW_RELEASE = 2;
+    public static final int PIN_SERVO_CLAW_RELEASE = 4;
     
     public static final int PIN_SERVO_LIFT_BRAKE_L = 2;
     public static final int PIN_SERVO_LIFT_BRAKE_R = 3;

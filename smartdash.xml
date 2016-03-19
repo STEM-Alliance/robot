@@ -1,5 +1,25 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="MotorR" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1214" y="100"/>
+	</widget>
+	<widget field="MotorL" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1216" y="78"/>
+	</widget>
+	<widget field="EnableBack" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="21" y="609"/>
+	</widget>
+	<widget field="EnableBackCount" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="441" y="490"/>
+	</widget>
+	<static-widget class="team4818.smartdashboard.extension.LayoutSwitcher">
+		<location x="0" y="489"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
+		<location x="926" y="41"/>
+		<width>284</width>
+		<height>322</height>
+	</static-widget>
 	<widget field="Shoot Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="987" y="551"/>
 	</widget>
@@ -9,16 +29,10 @@
 	<widget field="RobotPositionInfo" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="21" y="588"/>
 	</widget>
-	<static-widget class="team4818.smartdashboard.extension.RobotCustomPreferences">
-		<location x="928" y="28"/>
-		<width>286</width>
-		<height>346</height>
-	</static-widget>
 	<static-widget class="team4818.smartdashboard.extension.USBWebcamRotate">
 		<location x="3" y="1"/>
 		<width>760</width>
 		<height>466</height>
-		<property name="Degrees Rotation" value="180"/>
 	</static-widget>
 	<widget field="Position" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="1226" y="511"/>
@@ -46,10 +60,10 @@
 		<location x="769" y="492"/>
 	</widget>
 	<widget field="Lift Height R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="769" y="447"/>
+		<location x="769" y="468"/>
 	</widget>
 	<widget field="Lift Height L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="769" y="137"/>
+		<location x="774" y="446"/>
 	</widget>
 	<widget field="Vision" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="504"/>
@@ -198,7 +212,7 @@
 		<location x="1077" y="499"/>
 	</widget>
 	<widget field="Vision error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="805" y="471"/>
+		<location x="273" y="528"/>
 		<width>540</width>
 	</widget>
 	<widget field="Particles" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -231,4 +245,6 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="YawFound"/>
+	<hidden field="desiredYaw"/>
 </xml>

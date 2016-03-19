@@ -71,13 +71,14 @@ public class AimerSubsystem extends Subsystem
         updatedPIDConstants();
         motorOutput = pid.update(changeInAngle);
        
-        if (desiredAngle > ANGLE_MAX || desiredAngle < ANGLE_MIN)
-        {
-            // Being commanded to an unsafe angle
-            SmartDashboard.putString("AimerAim", "Unsafe");
-            setSpeed(0);
-        }
-        else if (Math.abs(changeInAngle) < TOLERANCE)
+//        if (desiredAngle > ANGLE_MAX || desiredAngle < ANGLE_MIN)
+//        {
+//            // Being commanded to an unsafe angle
+//            SmartDashboard.putString("AimerAim", "Unsafe");
+//            setSpeed(0);
+//        }
+//        else
+            if (Math.abs(changeInAngle) < TOLERANCE)
         {
             // At the desired angle
             SmartDashboard.putString("AimerAim", "At Angle");
