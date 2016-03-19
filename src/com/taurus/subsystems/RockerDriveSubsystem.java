@@ -2,6 +2,7 @@ package com.taurus.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.taurus.PIDController;
+import com.taurus.Utilities;
 import com.taurus.commands.DriveTankWithXbox;
 import com.taurus.hardware.Gyro;
 import com.taurus.robot.RobotMap;
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RockerDriveSubsystem extends Subsystem 
 {
-    private final double DEADBAND = .2;
+    private final double DEADBAND = 0;
 
     // order is {Front, Middle, Back}
     //          {bogie, bogie, fixed}
@@ -64,7 +65,7 @@ public class RockerDriveSubsystem extends Subsystem
         }
         applyGyro = false;
         
-        headingPID = new PIDController(.2, 0, 0, 1);
+        headingPID = new PIDController(.2, 0, 0, .5);
     }
     
     /**
@@ -98,6 +99,7 @@ public class RockerDriveSubsystem extends Subsystem
         right = scaleForDeadband(right);
         right = Math.min(Math.max(right, -1), 1);  // ensure value between -1 and 1
         
+        
         for (int i = 0; i < motorsR.length; i++)
         {
             motorsR[i].set(right);
@@ -110,6 +112,8 @@ public class RockerDriveSubsystem extends Subsystem
         {
             motorsL[i].set(left);   
         }
+        SmartDashboard.putNumber("MotorL", left);
+        SmartDashboard.putNumber("MotorR", right);
         
     }
     
@@ -132,7 +136,7 @@ public class RockerDriveSubsystem extends Subsystem
     public boolean turnToAngle(double angle)
     {
         double output = 0;
-        double error = angle - navxMXP.getYaw();
+        double error = Utilities.wrapToRange(angle - navxMXP.getYaw(), -180, 180);
         
         updatePID();
         
@@ -146,7 +150,7 @@ public class RockerDriveSubsystem extends Subsystem
         desiredHeading = angle;
         
         // we're done if we're at the angle, and we're no longer turning
-        return error < 1 && output < .1;
+        return Math.abs(error) < 1;// && Math.abs(output) < .1;
     }
     
     public void enableGyro(boolean enabled)

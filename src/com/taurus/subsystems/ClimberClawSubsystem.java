@@ -1,6 +1,7 @@
 package com.taurus.subsystems;
 
 import com.taurus.commands.ClimberClaw;
+import com.taurus.robot.Robot;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Servo;

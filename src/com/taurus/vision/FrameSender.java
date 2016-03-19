@@ -7,6 +7,8 @@ import com.ni.vision.NIVision.Point;
 import com.ni.vision.NIVision.Rect;
 import com.ni.vision.NIVision.ScalingMode;
 import com.ni.vision.NIVision.ShapeMode;
+import com.taurus.led.Color;
+import com.taurus.vision.Vision.COLORS;
 
 import edu.wpi.first.wpilibj.CameraServer;
 
@@ -17,10 +19,13 @@ public class FrameSender implements Runnable {
     private boolean addTargetInfo = false;
     private int color;
     private Image frame;
+    private Image frameTH;
+    private boolean threshold;
     
     public FrameSender()
     {
         frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
+        frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
     }
     
     @Override
@@ -33,11 +38,18 @@ public class FrameSender implements Runnable {
                 // add target info
                 if(addTargetInfo)
                 {
-                    processSmartDashboardImage(frame, targetInfo, color);
+                    if(!threshold)
+                        processSmartDashboardImage(frame, targetInfo, color);
+                    else
+                        processSmartDashboardImage(frameTH, targetInfo, color);
                 }
                 
                 // send frame
-                CameraServer.getInstance().setImage(frame);
+                if(!threshold)
+                    CameraServer.getInstance().setImage(frame);
+                else
+                    CameraServer.getInstance().setImage(frameTH);
+                    
                 ready = false;
             }
         }
@@ -45,26 +57,40 @@ public class FrameSender implements Runnable {
 
     public void sendFrame(Image frame)
     {
-        sendFrame(frame,false,null,0);
+        sendFrame(frame,false,null,0, false);
+    }
+
+    public void sendFrame(Image frame, Target targetInfo)
+    {
+        sendFrame(frame,true,targetInfo,COLORS.WHITE, true);
     }
     
     public void sendFrame(Image frame, Target targetInfo, int color)
     {
-        sendFrame(frame,true,targetInfo,color);
+        sendFrame(frame,true,targetInfo,color, false);
     }
     
-    public void sendFrame(Image frame, boolean addTargetInfo, Target targetInfo, int color)
+    public void sendFrame(Image frame, boolean addTargetInfo, Target targetInfo, int color, boolean threshold)
     {
         // copy frame
-        NIVision.imaqScale(this.frame, frame, 1, 1, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+        if(!threshold)
+            NIVision.imaqScale(this.frame, frame, 1, 1, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+        else
+            NIVision.imaqScale(this.frameTH, frame, 1, 1, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
+            
         
         // store other fields
         if(targetInfo != null && addTargetInfo)
         {
             this.targetInfo = targetInfo;
         }
+        else
+        {
+            this.targetInfo = null;
+        }
         this.addTargetInfo = addTargetInfo;
         
+        this.threshold = threshold;
         this.color = color;
         
         ready = true;
@@ -80,9 +106,10 @@ public class FrameSender implements Runnable {
         // draw a circle in the center of the image/where the ball shoots
         //NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, color);
 
+        
         NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
-                new Point(0,(int)Constants.Height - Constants.BallShotY),
-                new Point((int) Constants.Width,(int)Constants.Height - Constants.BallShotY), color);
+                new Point(0,Constants.BallShotY),
+                new Point((int) Constants.Width,Constants.BallShotY), color);
         NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
                 new Point(Constants.BallShotX,0),
                 new Point(Constants.BallShotX,(int) Constants.Height), color);

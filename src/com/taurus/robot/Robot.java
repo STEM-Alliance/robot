@@ -136,6 +136,7 @@ public class Robot extends SampleRobot
         
         while (isOperatorControl() && isEnabled())
         {
+            rockerDriveSubsystem.printSensors();
             Scheduler.getInstance().run();
         }
     }

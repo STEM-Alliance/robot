@@ -151,7 +151,7 @@ public class KickerSubsystem extends Subsystem
     public void updatePotOffsets()
     {
         SmartDashboard.putNumber("Kicker Angle", angle.get());
-        SmartDashboard.putNumber("Kicker Raw", motor.getAnalogInRaw()/1023.0);
+        //SmartDashboard.putNumber("Kicker Raw", motor.getAnalogInRaw()/1023.0);
 
         angle.setOffset(Preferences.getInstance().getDouble("KickerPotOffset", 0));
         angle.setFullRange(Preferences.getInstance().getDouble("KickerPotScale", 360));

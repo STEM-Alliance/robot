@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
  */
 public class Xbox extends GenericHID {
 
+    private static final double DEADBAND = 0.2;
     private DriverStation m_ds;
     private final int m_port;
 
@@ -206,7 +207,7 @@ public class Xbox extends GenericHID {
      */
     public double getRawAxis(int axis)
     {
-        return m_ds.getStickAxis(m_port, axis);
+        return scaleForDeadband(m_ds.getStickAxis(m_port, axis));
     }
 
     /**
@@ -570,5 +571,20 @@ public class Xbox extends GenericHID {
     public void setOutputs(int value) {
         m_outputs = value;
         FRCNetworkCommunicationsLibrary.HALSetJoystickOutputs((byte)m_port, m_outputs, m_leftRumble, m_rightRumble);
+    }
+    private double scaleForDeadband(double value)
+    {
+        double abs = Math.abs(value);
+        
+        if (abs < DEADBAND)
+        {
+            value = 0;
+        }
+        else
+        {
+            value = Math.signum(value) * ((abs - DEADBAND) / (1 - DEADBAND));
+        }
+        
+        return value;
     }
 }

@@ -1,5 +1,50 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="EnableBack" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1034" y="530"/>
+	</widget>
+	<widget field="KickerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1027" y="564"/>
+	</widget>
+	<widget field="Drive Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1192" y="555"/>
+	</widget>
+	<widget field="Shooter Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="845" y="126"/>
+	</widget>
+	<widget field="Aimer Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="845" y="105"/>
+	</widget>
+	<widget field="AimerAim" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="845" y="84"/>
+	</widget>
+	<widget field="Kicker Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="845" y="63"/>
+	</widget>
+	<widget field="Lift Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="845" y="42"/>
+	</widget>
+	<widget field="Manipulator Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1159" y="577"/>
+	</widget>
+	<widget field="Lift Speed R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="845" y="21"/>
+	</widget>
+	<widget field="Lift Speed L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="845" y="0"/>
+	</widget>
+	<widget field="Lift Desired Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1185" y="523"/>
+	</widget>
+	<widget field="Kicker Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="527"/>
+	</widget>
+	<widget field="Kicker Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="506"/>
+	</widget>
+	<widget field="EnableBackCount" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="485"/>
+	</widget>
 	<widget field="TargetAimPitch" type="Boolean" class="team4818.smartdashboard.extension.CoolBool">
 		<location x="1206" y="160"/>
 	</widget>
