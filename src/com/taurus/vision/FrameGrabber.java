@@ -8,12 +8,11 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
 public class FrameGrabber implements Runnable
 {
     private String NAME;
     private volatile boolean running;
-    private int cameraQuality = 70;
+    private int cameraQuality = 50;
     
     private boolean setupNeeded = false;
     
@@ -43,7 +42,8 @@ public class FrameGrabber implements Runnable
         {
             if(setupNeeded)
             {
-                SmartDashboard.putString("FrameGetter", "Setting up");                
+                SmartDashboard.putString("FrameGetter", "Setting up");
+                
                 setup();  
                 setupNeeded = false;
             }
@@ -53,6 +53,7 @@ public class FrameGrabber implements Runnable
             
             while (running)
             {
+                 
                 try
                 {
                     TimeStart = Timer.getFPGATimestamp();
@@ -136,7 +137,7 @@ public class FrameGrabber implements Runnable
         }
         
         
-        int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4400);
+        int whiteBalance = Preferences.getInstance().getInt("WhiteBalance", 4500);
         if(camera.getWhiteBalanceManual() != whiteBalance || forceUpdate)
         {
             camera.setWhiteBalanceManual(whiteBalance);
@@ -151,13 +152,13 @@ public class FrameGrabber implements Runnable
                 camera.setExposureManual(exposure);
             }
             
-            double brightness = Preferences.getInstance().getDouble("Brightness", 60);
+            double brightness = Preferences.getInstance().getDouble("Brightness", 80);
             if(camera.getBrightness() != brightness || forceUpdate)
             {
                 camera.setBrightness(brightness);
             }
             
-            double sat = Preferences.getInstance().getDouble("Saturation", 200);
+            double sat = Preferences.getInstance().getDouble("Saturation", 150);
             if(camera.getSaturation() != sat || forceUpdate)
             {
                 camera.setSaturation(sat);
@@ -165,7 +166,8 @@ public class FrameGrabber implements Runnable
         }
         else
         {
-            double exposure = Preferences.getInstance().getDouble("Exposure2", 5.1);
+
+            double exposure = Preferences.getInstance().getDouble("Exposure2", 5);
             if(camera.getExposureManual() != exposure || forceUpdate)
             {
                 camera.setExposureManual(exposure);

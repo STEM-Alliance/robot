@@ -7,16 +7,15 @@ import com.ni.vision.NIVision.Point;
 import com.ni.vision.NIVision.Rect;
 import com.ni.vision.NIVision.ScalingMode;
 import com.ni.vision.NIVision.ShapeMode;
-import com.taurus.commands.TargetingDriveAim;
 
 import edu.wpi.first.wpilibj.CameraServer;
 
-public class FrameSender implements Runnable
-{
+public class FrameSender implements Runnable {
+
     private boolean ready = false;
     private Target targetInfo = null;
     private boolean addTargetInfo = false;
-    private boolean color;
+    private int color;
     private Image frame;
     
     public FrameSender()
@@ -46,15 +45,15 @@ public class FrameSender implements Runnable
 
     public void sendFrame(Image frame)
     {
-        sendFrame(frame,false,null,false);
+        sendFrame(frame,false,null,0);
     }
     
-    public void sendFrame(Image frame, Target targetInfo, boolean color)
+    public void sendFrame(Image frame, Target targetInfo, int color)
     {
         sendFrame(frame,true,targetInfo,color);
     }
     
-    public void sendFrame(Image frame, boolean addTargetInfo, Target targetInfo, boolean color)
+    public void sendFrame(Image frame, boolean addTargetInfo, Target targetInfo, int color)
     {
         // copy frame
         NIVision.imaqScale(this.frame, frame, 1, 1, ScalingMode.SCALE_SMALLER, NIVision.NO_RECT);
@@ -72,7 +71,7 @@ public class FrameSender implements Runnable
     }
     
 
-    private void processSmartDashboardImage(Image frame, Target targetInfo, boolean color)
+    private void processSmartDashboardImage(Image frame, Target targetInfo, int color)
     {
         //Rect centerRect = new Rect(Constants.BallShotY - Constants.BallShotDiameter/2,  // top
 //                                   Constants.BallShotX - Constants.BallShotDiameter/2,  // left
@@ -81,31 +80,20 @@ public class FrameSender implements Runnable
         // draw a circle in the center of the image/where the ball shoots
         //NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, color);
 
-        int colorX = Vision.COLORS.WHITE;
-        int colorY = Vision.COLORS.WHITE;
-        int colorBox = Vision.COLORS.WHITE;
-        
-        if (color)
-        {
-            colorX = (Math.abs(Vision.getInstance().getTarget().Yaw()) < TargetingDriveAim.DRIVE_ANGLE_TOLERANCE) ? Vision.COLORS.GREEN : Vision.COLORS.RED;
-            colorY = (Math.abs(Vision.getInstance().getTarget().Pitch()) < TargetingDriveAim.DRIVE_ANGLE_TOLERANCE) ? Vision.COLORS.GREEN : Vision.COLORS.RED;
-            colorBox = Vision.COLORS.MAGENTA;
-        }
-        
         NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
                 new Point(0,Constants.BallShotY),
-                new Point((int) Constants.Width,Constants.BallShotY), colorY);
-        
+                new Point((int) Constants.Width,Constants.BallShotY), color);
         NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
                 new Point(Constants.BallShotX,0),
-                new Point(Constants.BallShotX,(int) Constants.Height), colorX);
+                new Point(Constants.BallShotX,(int) Constants.Height), color);
         
         if(targetInfo != null)
         {
             // add Target Drawing
             Rect targetRect = new Rect((int)targetInfo.Top(), (int)targetInfo.Left(), (int)Math.ceil(targetInfo.H()), (int)Math.ceil(targetInfo.W()));
             // draw an outline of a rectangle around the target
-            NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, colorBox);            
+            NIVision.imaqDrawShapeOnImage(frame, frame, targetRect, DrawMode.DRAW_VALUE, ShapeMode.SHAPE_RECT, color);            
         }
     }
+
 }
