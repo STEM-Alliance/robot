@@ -55,6 +55,9 @@ public class OI
     Button panelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
     Button panelRightWhite = new PanelButton(panel, Panel.ButtonType.kWhiteR);
     Button panelLeftBlack = new PanelButton(panel, Panel.ButtonType.kBlackL);
+    Button panelRightYellow = new PanelButton(panel, Panel.ButtonType.kYellowR);
+    Button panelRightGreen = new PanelButton(panel, Panel.ButtonType.kGreenR);
+    Button panelRightBlack = new PanelButton(panel, Panel.ButtonType.kBlackR);
     
     public OI() 
     {
@@ -93,6 +96,10 @@ public class OI
         panelLeftWhite.whileHeld(new LiftCal());
         panelLeftBlack.whileHeld(new LoadBallFromFloor());
         panelRightWhite.whileHeld(new LoadBall());
+
+        panelRightYellow.whileHeld(new LiftContinuous(true));
+        panelRightGreen.whileHeld(new LiftContinuous(false));
+        panelRightBlack.whileHeld(new ClimberClaw(true));
     }
     
     public static boolean getTractionControl()

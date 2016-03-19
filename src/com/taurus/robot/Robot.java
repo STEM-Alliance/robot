@@ -73,6 +73,7 @@ public class Robot extends SampleRobot
 	public static BallReleaseSubsystem ballReleaseSubsystem;
     public static CameraSubsystem cameraSubsystem;
     public static BackCameraSubsystem backCameraSubsystem;
+    public static ClimberClawSubsystem climberClawSubsystem;
 
     Command autonomousCommand;
     SendableChooser autoChooser;
@@ -95,6 +96,7 @@ public class Robot extends SampleRobot
         cameraSubsystem = new CameraSubsystem();
         backCameraSubsystem = new BackCameraSubsystem();
         kickerSubsystem = new KickerSubsystem();
+        climberClawSubsystem = new ClimberClawSubsystem();
         
         oi = new OI();
         autoChooser = new SendableChooser();
