@@ -81,8 +81,8 @@ public class FrameSender implements Runnable {
         //NIVision.imaqDrawShapeOnImage(frame, frame, centerRect, DrawMode.PAINT_VALUE, ShapeMode.SHAPE_OVAL, color);
 
         NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
-                new Point(0,Constants.BallShotY),
-                new Point((int) Constants.Width,Constants.BallShotY), color);
+                new Point(0,(int)Constants.Height - Constants.BallShotY),
+                new Point((int) Constants.Width,(int)Constants.Height - Constants.BallShotY), color);
         NIVision.imaqDrawLineOnImage(frame, frame, DrawMode.DRAW_VALUE,
                 new Point(Constants.BallShotX,0),
                 new Point(Constants.BallShotX,(int) Constants.Height), color);

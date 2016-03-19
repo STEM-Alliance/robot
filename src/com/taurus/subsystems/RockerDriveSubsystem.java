@@ -110,6 +110,7 @@ public class RockerDriveSubsystem extends Subsystem
         {
             motorsL[i].set(left);   
         }
+        
     }
     
 
@@ -273,6 +274,8 @@ public class RockerDriveSubsystem extends Subsystem
     {
         SmartDashboard.putNumber("Robot Heading", navxMXP.getYaw());
         SmartDashboard.putNumber("Desired Heading", desiredHeading);
+
+        SmartDashboard.putString("RobotPositionInfo", navxMXP.getYaw() +"," + motorsL[0].get()  +"," + motorsR[0].get());
     }
 
     public double getYaw()

@@ -1,7 +1,43 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Shoot Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="987" y="551"/>
+	</widget>
+	<widget field="Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="0" y="468"/>
+	</widget>
+	<widget field="RobotPositionInfo" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="21" y="588"/>
+	</widget>
+	<static-widget class="team4818.smartdashboard.extension.RobotCustomPreferences">
+		<location x="928" y="28"/>
+		<width>286</width>
+		<height>346</height>
+	</static-widget>
+	<static-widget class="team4818.smartdashboard.extension.USBWebcamRotate">
+		<location x="3" y="1"/>
+		<width>760</width>
+		<height>466</height>
+		<property name="Degrees Rotation" value="180"/>
+	</static-widget>
+	<widget field="Position" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="1226" y="511"/>
+	</widget>
+	<widget field="CameraCurrent" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="769" y="513"/>
+	</widget>
+	<widget field="CameraRequested" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="567"/>
+	</widget>
+	<widget field="Desired Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="546"/>
+	</widget>
+	<widget field="Robot Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="525"/>
+	</widget>
 	<widget field="FrameGetter error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1074" y="492"/>
+		<location x="987" y="492"/>
+		<width>349</width>
 	</widget>
 	<widget field="FrameGrabber" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="918" y="0"/>
@@ -159,13 +195,8 @@
 		<location x="796" y="289"/>
 	</widget>
 	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="1201" y="31"/>
+		<location x="1077" y="499"/>
 	</widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="13" y="-3"/>
-		<width>755</width>
-		<height>485</height>
-	</static-widget>
 	<widget field="Vision error" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="805" y="471"/>
 		<width>540</width>
@@ -188,11 +219,6 @@
 	<widget field="Autonomous mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="667" y="60"/>
 	</widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
-		<location x="920" y="31"/>
-		<width>284</width>
-		<height>322</height>
-	</static-widget>
 	<widget field="Drive Chooser" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="-10" y="68"/>
 	</widget>

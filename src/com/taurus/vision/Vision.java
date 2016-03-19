@@ -289,7 +289,7 @@ public class Vision implements Runnable
             biggestH = NIVision.imaqMeasureParticle(frameTH, largestIndex, 0, MeasurementType.MT_BOUNDING_RECT_HEIGHT);
             biggestW = NIVision.imaqMeasureParticle(frameTH, largestIndex, 0, MeasurementType.MT_BOUNDING_RECT_WIDTH);
             
-            largestTarget = new Target(biggestX, biggestY, biggestArea, biggestH, biggestW);
+            largestTarget = new Target(Constants.Width - biggestX, Constants.Height - biggestY, biggestArea, biggestH, biggestW);
         }
         else
         {
