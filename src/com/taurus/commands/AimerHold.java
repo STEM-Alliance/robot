@@ -5,36 +5,34 @@ import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class AimerLEDs extends Command
+public class AimerHold extends Command
 {
-    final boolean ledsOn;
+    private double AIMER_LOAD_BALL;
     
-    public AimerLEDs(boolean ledsOn) 
+    public AimerHold() 
     {
         requires(Robot.aimerSubsystem);
-        this.ledsOn = ledsOn;
     }
-
+    
     protected void initialize() 
     {
-        Utilities.PrintCommand("Aimer", this);
-        Robot.aimerSubsystem.enableLEDs(ledsOn);
-        setTimeout(.25);
+        AIMER_LOAD_BALL = Robot.aimerSubsystem.getCurrentAngle();
     }
     
     protected void execute() 
     {
-
+        Utilities.PrintCommand("Aimer", this);
+        Robot.aimerSubsystem.aimTo(AIMER_LOAD_BALL);       
     }
 
     protected boolean isFinished() 
     {
-        return isTimedOut();
+        return false;
     }
     
     protected void end() 
     {
-        
+       Robot.aimerSubsystem.setSpeed(0);
     }
     
     protected void interrupted() 

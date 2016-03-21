@@ -12,8 +12,7 @@ public class ShooterFire extends CommandGroup
         public ShooterFireRev()
         {
             addParallel(new TargetingDriveAim());
-            addSequential(new ShooterRevTimeout(2));
-            
+            addSequential(new ShooterRevTimeout(2));            
         }
     }
     
@@ -32,24 +31,26 @@ public class ShooterFire extends CommandGroup
     
     public ShooterFire() 
     {
-        addSequential(new AimerBetweenAngles(110,125));
+        addParallel(new DriveBrakeMode(true));
         addSequential(new AimerLEDs(true));
+        addSequential(new AimerBetweenAngles(110,125));
         addSequential(new TargetingDriveAim());
         addSequential(new ShooterFireRev());
         addSequential(new ShooterFireRelease());
-        addSequential(new AimerLEDs(false));      
-        
+        addParallel(new AimerLEDs(false));
+        addSequential(new DriveBrakeMode(false));
     }
     
     public void end()
     {
         Robot.aimerSubsystem.enableLEDs(false);        
-        Robot.ballReleaseSubsystem.setBallRelease(false);   
+        Robot.ballReleaseSubsystem.setBallRelease(false);
         //Vision.getInstance().enableBackCamera(true);     
     }
     
     public void interrupted()
     {
+        Robot.rockerDriveSubsystem.setBrakeMode(false);
         end();
     }    
 }                           

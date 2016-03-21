@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="TargetDistance" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="625" y="571"/>
+	</widget>
+	<widget field="desiredYaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="163" y="524"/>
+	</widget>
 	<widget field="MotorR" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1214" y="100"/>
 	</widget>
@@ -246,5 +252,4 @@
 <live-window>
 </live-window>
 	<hidden field="YawFound"/>
-	<hidden field="desiredYaw"/>
 </xml>

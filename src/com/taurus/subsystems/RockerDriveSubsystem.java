@@ -33,6 +33,8 @@ public class RockerDriveSubsystem extends Subsystem
     private double desiredHeading;
     private PIDController headingPID;
     
+    private final double HEADING_TOLERANCE = 1.5;
+    
     /**
      * Constructor
      */
@@ -135,23 +137,71 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public boolean turnToAngle(double angle)
     {
+        return turnToAngle(angle, false, false);
+    }
+
+    
+    /**
+     * turn to a desired angle, with option to use only one side and only forward or backward
+     * @param angle
+     * @return true if done
+     */
+    public boolean turnToAngle(double angle, boolean singleSide, boolean forward)
+    {
         double output = 0;
         double error = Utilities.wrapToRange(angle - navxMXP.getYaw(), -180, 180);
         
         updatePID();
         
-        // get the suggested motor output
-        output = headingPID.update(error);
-        
-        // tell it to turn
-        driveRaw(-output,output);
+        if(Math.abs(error) > HEADING_TOLERANCE)
+        {
+            // get the suggested motor output
+            output = headingPID.update(error);
+            
+            // tell it to turn
+            if(error < 3 && singleSide)
+            {
+                //TODO need brake mode enabled?
+                
+                // small error, so only try and turn one side
+                if(output > 0)
+                {
+                    // spin clockwise
+                    if(forward)
+                        // set left side forward, not right
+                        driveRaw(0,output);
+                    else
+                        // set right side backward, not left
+                        driveRaw(-output,0);
+                }
+                else
+                {
+                    // spin counter clockwise
+                    if(forward)
+                        // set right side forward, not left
+                        driveRaw(-output,0);
+                    else
+                        // set left side backward, not right
+                        driveRaw(0,output);
+                }
+            }
+            else
+            {
+                driveRaw(-output,output);
+            }
+        }
+        else
+        {
+            driveRaw(0,0);
+        }
         
         // save off angle in case you need to use it
         desiredHeading = angle;
         
         // we're done if we're at the angle, and we're no longer turning
-        return Math.abs(error) < 1;// && Math.abs(output) < .1;
+        return Math.abs(error) < HEADING_TOLERANCE;// && Math.abs(output) < .1;
     }
+    
     
     public void enableGyro(boolean enabled)
     {
@@ -290,6 +340,19 @@ public class RockerDriveSubsystem extends Subsystem
     public void zeroYaw(double angle)
     {
         navxMXP.setZero(angle);
+    }
+    
+    public void setBrakeMode(boolean enable)
+    {
+        for (int index = 0; index < motorsL.length; index++)
+        {
+            motorsL[index].enableBrakeMode(enable);
+        }
+        
+        for (int index = 0; index < motorsR.length; index++)
+        {
+            motorsR[index].enableBrakeMode(enable);
+        }
     }
 }
             

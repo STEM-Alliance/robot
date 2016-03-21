@@ -1,5 +1,23 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="desiredYaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="737" y="532"/>
+	</widget>
+	<widget field="YawFound" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="531" y="524"/>
+	</widget>
+	<widget field="MotorL" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="412" y="522"/>
+	</widget>
+	<widget field="MotorR" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="187" y="514"/>
+	</widget>
+	<widget field="ball release angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="244" y="525"/>
+	</widget>
+	<widget field="TargetDistance" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="21" y="151"/>
+	</widget>
 	<widget field="EnableBack" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1034" y="530"/>
 	</widget>
@@ -153,7 +171,6 @@
 		<location x="2" y="6"/>
 		<width>842</width>
 		<height>478</height>
-		<property name="Degrees Rotation" value="180"/>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
 		<location x="1243" y="258"/>

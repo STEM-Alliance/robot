@@ -2,6 +2,7 @@ package com.taurus.subsystems;
 
 import com.taurus.PIDController;
 import com.taurus.Utilities;
+import com.taurus.commands.AimerHold;
 import com.taurus.commands.AimerStop;
 import com.taurus.hardware.MagnetoPotSRX;
 import com.taurus.robot.RobotMap;
@@ -21,7 +22,7 @@ public class AimerSubsystem extends Subsystem
     private final double MOTOR_TOLERANCE = 0.05;
     private static final double ANGLE_MAX = 140 - 5;
     private static final double ANGLE_MIN = -50 + 5;
-    public final static double TOLERANCE = .75;  // Degrees from desired angle that counts as that angle
+    public final static double TOLERANCE = 1;  // Degrees from desired angle that counts as that angle
 
     public final double ANGLE_GRAB_FROM_BOTTOM_FRONT = 82;
     
@@ -48,7 +49,7 @@ public class AimerSubsystem extends Subsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new AimerStop());
+        setDefaultCommand(new AimerHold());
     }
     
     /**
@@ -67,7 +68,6 @@ public class AimerSubsystem extends Subsystem
         double angleCurrent = getCurrentAngle();
         double desiredAngle = angleCurrent + changeInAngle;
         
-
         updatedPIDConstants();
         motorOutput = pid.update(changeInAngle);
        
@@ -78,7 +78,7 @@ public class AimerSubsystem extends Subsystem
 //            setSpeed(0);
 //        }
 //        else
-            if (Math.abs(changeInAngle) < TOLERANCE)
+        if (Math.abs(changeInAngle) < TOLERANCE)
         {
             // At the desired angle
             SmartDashboard.putString("AimerAim", "At Angle");
