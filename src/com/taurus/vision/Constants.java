@@ -9,8 +9,8 @@ public class Constants {
     public static final double Ratio = Width/Height;
 
     public static final int BallShotDiameter = 10;
-    public static final int BallShotY = (int) ((Height+140)/2);
-    public static final int BallShotX = (int) ((Width)/2);
+    public static final int BallShotY = (int) (.75 * Height);
+    public static final int BallShotX = (int) (.5 * Width);
     
     public static final double TargetWidthIn = 20; 
     public static final double TargetHeightIn = 12;

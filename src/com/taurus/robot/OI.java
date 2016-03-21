@@ -90,6 +90,9 @@ public class OI
         
         buttonX2.whileHeld(new AimerContinuous(true));
         buttonY2.whileHeld(new AimerContinuous(false));
+
+        buttonBack2.toggleWhenPressed(new AimerLEDs(true));
+        buttonStart2.toggleWhenPressed(new AimerLEDs(false));
         
         //////////////////////////
         
