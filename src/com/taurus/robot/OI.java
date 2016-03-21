@@ -52,6 +52,9 @@ public class OI
     Button buttonRightTrigger2 = new XboxTriggerButton(xbox2, Xbox.Hand.kRight);
     Button buttonLeftTrigger2 = new XboxTriggerButton(xbox2, Xbox.Hand.kLeft);
 
+    
+    // panel
+    
     Button panelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
     Button panelRightWhite = new PanelButton(panel, Panel.ButtonType.kWhiteR);
     Button panelLeftBlack = new PanelButton(panel, Panel.ButtonType.kBlackL);
@@ -68,13 +71,13 @@ public class OI
         buttonLB1.whileHeld(new ManipulatorContinous(false));
         
         buttonLeftTrigger1.whileHeld(new CameraChange(true));
-        
-//        buttonA1.whileHeld(new KickerToAngle(0));
-//        buttonB1.whileHeld(new KickerToAngle(90));
-//        buttonY1.whileHeld(new KickerToAngle(180));
 
         buttonA1.whileHeld(new KickerContinuous(true));
         buttonB1.whileHeld(new KickerContinuous(false));
+//        buttonY1.whileHeld(new KickerToAngle(180));
+
+//        buttonA1.whileHeld(new KickerContinuous(true));
+//        buttonB1.whileHeld(new KickerContinuous(false));
         
         ////////////////////////
         
@@ -88,8 +91,11 @@ public class OI
         buttonRB2.whenPressed(new LiftToBottom());
         buttonStart2.toggleWhenPressed(new LiftStop());
         
-        buttonX2.whileHeld(new AimerContinuous(true));
-        buttonY2.whileHeld(new AimerContinuous(false));
+//        buttonX2.whileHeld(new AimerContinuous(true));
+//        buttonY2.whileHeld(new AimerContinuous(false));
+
+        buttonX2.whenPressed(new AimerToAngle(90));
+        buttonY2.whenPressed(new AimerToAngle(125));
 
         buttonBack2.toggleWhenPressed(new AimerLEDs(true));
         buttonStart2.toggleWhenPressed(new AimerLEDs(false));
@@ -160,6 +166,11 @@ public class OI
     public static void setRumble2(RumbleType type, float value)
     {
         xbox2.setRumble(type, value);
+    }
+
+    public static double getAimerY()
+    {
+        return xbox2.getY(Hand.kLeft);
     }
     
 }

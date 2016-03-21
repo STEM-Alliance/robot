@@ -16,7 +16,7 @@
 		<location x="244" y="525"/>
 	</widget>
 	<widget field="TargetDistance" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="21" y="151"/>
+		<location x="926" y="508"/>
 	</widget>
 	<widget field="EnableBack" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1034" y="530"/>
@@ -28,28 +28,28 @@
 		<location x="1192" y="555"/>
 	</widget>
 	<widget field="Shooter Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="845" y="126"/>
+		<location x="872" y="531"/>
 	</widget>
 	<widget field="Aimer Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="845" y="105"/>
+		<location x="899" y="548"/>
 	</widget>
 	<widget field="AimerAim" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="845" y="84"/>
+		<location x="905" y="565"/>
 	</widget>
 	<widget field="Kicker Raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="845" y="63"/>
+		<location x="1207" y="610"/>
 	</widget>
 	<widget field="Lift Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="845" y="42"/>
+		<location x="617" y="581"/>
 	</widget>
 	<widget field="Manipulator Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1159" y="577"/>
 	</widget>
 	<widget field="Lift Speed R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="845" y="21"/>
+		<location x="611" y="606"/>
 	</widget>
 	<widget field="Lift Speed L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="845" y="0"/>
+		<location x="613" y="625"/>
 	</widget>
 	<widget field="Lift Desired Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1185" y="523"/>
@@ -90,7 +90,7 @@
 		<location x="1044" y="626"/>
 	</widget>
 	<widget field="Image to show" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="553" y="585"/>
+		<location x="533" y="584"/>
 	</widget>
 	<widget field="Lift Total Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="726" y="575"/>

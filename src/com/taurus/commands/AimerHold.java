@@ -1,13 +1,16 @@
 package com.taurus.commands;
 
 import com.taurus.Utilities;
+import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class AimerHold extends Command
 {
     private double AIMER_LOAD_BALL;
+    private double startTime;
     
     public AimerHold() 
     {
@@ -17,12 +20,20 @@ public class AimerHold extends Command
     protected void initialize() 
     {
         AIMER_LOAD_BALL = Robot.aimerSubsystem.getCurrentAngle();
+        startTime = Timer.getFPGATimestamp();
     }
     
     protected void execute() 
     {
         Utilities.PrintCommand("Aimer", this);
-        Robot.aimerSubsystem.aimTo(AIMER_LOAD_BALL);       
+        if(Timer.getFPGATimestamp() - startTime > 3)
+        {
+            Robot.aimerSubsystem.aimTo(AIMER_LOAD_BALL);
+        }
+        else
+        {
+            Robot.aimerSubsystem.setSpeed(OI.getAimerY()/2);
+        }
     }
 
     protected boolean isFinished() 

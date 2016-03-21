@@ -1,6 +1,7 @@
 package com.taurus.commands;
 
 import com.taurus.Utilities;
+import com.taurus.robot.OI;
 import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -20,7 +21,7 @@ public class AimerStop extends Command
     protected void execute() 
     {
         Utilities.PrintCommand("Aimer", this);
-        Robot.aimerSubsystem.setSpeed(0);
+        Robot.aimerSubsystem.setSpeed(OI.getAimerY()/2);
     }
 
     protected boolean isFinished() 

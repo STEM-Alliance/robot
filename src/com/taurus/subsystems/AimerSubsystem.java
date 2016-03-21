@@ -49,7 +49,7 @@ public class AimerSubsystem extends Subsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new AimerHold());
+        setDefaultCommand(new AimerStop());
     }
     
     /**
