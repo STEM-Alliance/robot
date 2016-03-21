@@ -12,6 +12,7 @@ public class ShooterGrab extends Command
     {
         requires(Robot.shooterSubsystem);
         requires(Robot.ballReleaseSubsystem);
+        requires(Robot.kickerSubsystem);
     }
 
     protected void initialize() 
@@ -22,6 +23,7 @@ public class ShooterGrab extends Command
     protected void execute() 
     {
         Robot.shooterSubsystem.setSpeed(-SHOOTER_SPEED, -SHOOTER_SPEED);
+        Robot.kickerSubsystem.setSpeed(-1);
         Robot.ballReleaseSubsystem.setBallRelease(false);
     }
 

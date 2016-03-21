@@ -104,39 +104,8 @@ public class KickerSubsystem extends Subsystem
      */
     public void setSpeed(double speed)
     {   
-        updatePotOffsets();
-        
-        // protect our limit ranges
-        double curAngle = getCurrentAngle();
-        boolean direction = Math.signum(speed) > 0 ? true : false;
-        boolean valid = true;
-        
-//        if(curAngle > ANGLE_MAX)
-//        {
-//            if(!direction)
-//                valid = true;
-//            else
-//                valid = false;
-//        }
-//        else if(curAngle < ANGLE_MIN)
-//        {
-//            if(direction)
-//                valid = true;
-//            else
-//                valid = false;   
-//        }
-        
-        if(valid)
-        {
-            motor.set(speed);
-            SmartDashboard.putNumber("KickerSpeed", speed);
-        }
-        else
-        {
-            motor.set(0);
-            SmartDashboard.putNumber("KickerSpeed", 0);
-        }
-    
+        motor.set(speed);
+        SmartDashboard.putNumber("KickerSpeed", speed);
     }
     
     public double getCurrentAngle()

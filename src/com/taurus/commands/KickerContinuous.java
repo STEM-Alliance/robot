@@ -7,13 +7,13 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class KickerContinuous extends Command 
 {
-    boolean clockwise;
+    boolean in;
     
-    public KickerContinuous(boolean clockwise) 
+    public KickerContinuous(boolean in) 
     {
         requires(Robot.kickerSubsystem);
         
-        this.clockwise = clockwise;
+        this.in = in;
     }
     
     protected void initialize() 
@@ -25,13 +25,13 @@ public class KickerContinuous extends Command
     {
         Utilities.PrintCommand("Kicker", this);
         
-        if(clockwise)
+        if(in)
         {
-            Robot.kickerSubsystem.setSpeed(-.5);
+            Robot.kickerSubsystem.setSpeed(-1);
         }
         else
         {
-            Robot.kickerSubsystem.setSpeed(.5);
+            Robot.kickerSubsystem.setSpeed(1);
         }
     }
 
