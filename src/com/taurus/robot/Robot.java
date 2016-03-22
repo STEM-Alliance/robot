@@ -68,7 +68,7 @@ public class Robot extends SampleRobot
 	public static LiftSubsystem liftSubsystem;
 	public static AimerSubsystem aimerSubsystem;
 	public static ManipulatorSubsystem manipulatorSubsystem;
-    public static KickerSubsystem kickerSubsystem ;
+    public static IntakeSubsystem kickerSubsystem ;
 	public static OI oi;
 	public static BallReleaseSubsystem ballReleaseSubsystem;
     public static CameraSubsystem cameraSubsystem;
@@ -95,7 +95,7 @@ public class Robot extends SampleRobot
         manipulatorSubsystem = new ManipulatorSubsystem();
         cameraSubsystem = new CameraSubsystem();
         backCameraSubsystem = new BackCameraSubsystem();
-        kickerSubsystem = new KickerSubsystem();
+        kickerSubsystem = new IntakeSubsystem();
         climberClawSubsystem = new ClimberClawSubsystem();
         
         oi = new OI();

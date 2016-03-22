@@ -26,12 +26,17 @@ public class AimerHold extends Command
     protected void execute() 
     {
         Utilities.PrintCommand("Aimer", this);
-        if(Timer.getFPGATimestamp() - startTime > 3)
+        
+        if(OI.getAimerY() < 0.01)
         {
-            Robot.aimerSubsystem.aimTo(AIMER_LOAD_BALL);
+            if(Timer.getFPGATimestamp() - startTime > 3)
+            {
+                Robot.aimerSubsystem.aimTo(AIMER_LOAD_BALL);
+            }
         }
         else
         {
+            startTime = Timer.getFPGATimestamp();
             Robot.aimerSubsystem.setSpeed(OI.getAimerY()/2);
         }
     }
