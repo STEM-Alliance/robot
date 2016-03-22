@@ -40,12 +40,20 @@ public class FrameGrabber implements Runnable
         
         while(true)
         {
-            if(setupNeeded)
+            try
             {
-                SmartDashboard.putString("FrameGetter", "Setting up");
-                
-                setup();  
-                setupNeeded = false;
+                if(setupNeeded)
+                {
+                    SmartDashboard.putString("FrameGetter", "Setting up");
+                    
+                    setup();  
+                    setupNeeded = false;
+                }
+                //SmartDashboard.putString("FrameGetter error", "");
+            }
+            catch (Exception e)
+            {
+                SmartDashboard.putString("FrameGetter error", "Processing: " + e.getMessage());
             }
             
             if(running)
@@ -66,6 +74,7 @@ public class FrameGrabber implements Runnable
                     }
                     
                     SmartDashboard.putNumber("FrameGetter Task Length", Timer.getFPGATimestamp() - TimeStart);
+                    //SmartDashboard.putString("FrameGetter error", "");
                 }
                 catch (Exception e)
                 {
@@ -97,6 +106,11 @@ public class FrameGrabber implements Runnable
     
     private void setup()
     {
+        if(camera != null)
+        {
+            teardown();
+        }
+        
         camera = new Camera(NAME);
         camera.openCamera();
         camera.startCapture();
@@ -173,7 +187,7 @@ public class FrameGrabber implements Runnable
                 camera.setExposureManual(exposure);
             }
             
-            double brightness = Preferences.getInstance().getDouble("Brightness2", 100);
+            double brightness = Preferences.getInstance().getDouble("Brightness2", 140);
             if(camera.getBrightness() != brightness || forceUpdate)
             {
                 camera.setBrightness(brightness);
