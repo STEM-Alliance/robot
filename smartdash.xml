@@ -18,9 +18,6 @@
 	<widget field="EnableBackCount" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="441" y="490"/>
 	</widget>
-	<static-widget class="team4818.smartdashboard.extension.LayoutSwitcher">
-		<location x="0" y="489"/>
-	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
 		<location x="926" y="41"/>
 		<width>284</width>
@@ -251,5 +248,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="YawFound"/>
 </xml>
