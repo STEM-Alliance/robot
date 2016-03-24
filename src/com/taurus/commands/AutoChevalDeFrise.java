@@ -15,7 +15,7 @@ public class AutoChevalDeFrise extends CommandGroup
         {
             addSequential(new AutoDrive(1, -AutoDrive.SPEED_APPROACH, false));
         }
-        addSequential(new KickerContinuousTimeout(true,1));
+        //addSequential(new KickerContinuousTimeout(true,1));
         addParallel(new AimerContinuousTimeout(false, .5));//move aimer to detect target
         addSequential(new AutoTurn(position));
         if (shoot)

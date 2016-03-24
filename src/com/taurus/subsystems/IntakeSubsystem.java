@@ -1,6 +1,6 @@
 package com.taurus.subsystems;
 
-import com.taurus.commands.KickerStop;
+import com.taurus.commands.BallIntakeStop;
 import com.taurus.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -20,7 +20,7 @@ public class IntakeSubsystem extends Subsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new KickerStop());
+        setDefaultCommand(new BallIntakeStop());
     }
     
     /***
@@ -30,7 +30,7 @@ public class IntakeSubsystem extends Subsystem
     public void setSpeed(double speed)
     {   
         motor.set(speed);
-        SmartDashboard.putNumber("KickerSpeed", speed);
+        SmartDashboard.putNumber("IntakeSpeed", speed);
     }
     
 }

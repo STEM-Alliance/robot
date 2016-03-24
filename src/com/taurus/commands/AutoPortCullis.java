@@ -10,7 +10,7 @@ public class AutoPortCullis extends CommandGroup
 
         addParallel(new ManipulatorContinousTimeout(false, 1.5));
         addSequential(new AutoDrive(.5, -AutoDrive.SPEED_APPROACH, false));
-        addParallel(new KickerContinuousTimeout(true,1));
+        //addParallel(new BallIntakeTimeout(true,1));
         addSequential(new AutoDrive(4, -AutoDrive.SPEED_APPROACH, false));
         if (position == AutoTurn.STATE_TURN.POSITION_TWO)
         {

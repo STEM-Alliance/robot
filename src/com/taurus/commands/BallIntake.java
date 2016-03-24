@@ -3,45 +3,41 @@ package com.taurus.commands;
 import com.taurus.Utilities;
 import com.taurus.robot.Robot;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class KickerContinuousTimeout extends Command 
+public class BallIntake extends Command 
 {
-    boolean clockwise;
-    double time;
-    double startTime;
+    boolean in;
     
-    public KickerContinuousTimeout(boolean clockwise, double time) 
+    public BallIntake(boolean in) 
     {
         requires(Robot.kickerSubsystem);
         
-        this.time = time;
-        this.clockwise = clockwise;
+        this.in = in;
     }
     
     protected void initialize() 
     {
-        startTime = Timer.getFPGATimestamp();
+        
     }
     
     protected void execute() 
     {
         Utilities.PrintCommand("Kicker", this);
         
-        if(clockwise)
+        if(in)
         {
-            Robot.kickerSubsystem.setSpeed(-.5);
+            Robot.kickerSubsystem.setSpeed(-1);
         }
         else
         {
-            Robot.kickerSubsystem.setSpeed(.5);
+            Robot.kickerSubsystem.setSpeed(1);
         }
     }
 
     protected boolean isFinished() 
     {
-        return Timer.getFPGATimestamp() - startTime > time;
+        return false;
     }
     
     protected void end() 

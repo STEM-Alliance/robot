@@ -38,14 +38,17 @@ public class DriveTankWithXbox extends Command
             right = temp;
         }
         
-        // Assume we want to go straight if at high speed and of similar value
-        if (Math.abs(left - right) < .15)
+        // make sure both are non-zero before we try to lock straight
+        if(Math.abs(left) > .01 && Math.abs(right) > .01)
         {
-            double magnitudeAverage = Math.abs((left + right) / 2);
-            left = Math.signum(left) * magnitudeAverage;
-            right = Math.signum(right) * magnitudeAverage;
+            // Assume we want to go straight if similar value
+            if (Math.abs(left - right) < .15)
+            {
+                double magnitudeAverage = Math.abs((left + right) / 2);
+                left = Math.signum(left) * magnitudeAverage;
+                right = Math.signum(right) * magnitudeAverage;
+            }
         }
-        
         Robot.rockerDriveSubsystem.driveRaw(right, left);
     }
 
