@@ -78,7 +78,7 @@ public class Robot extends SampleRobot
     Command autonomousCommand;
     SendableChooser autoChooser;
     SendableChooser positionChooser;
-    SendableChooser modeChooser;
+//    SendableChooser modeChooser;
 
     
 
@@ -101,12 +101,12 @@ public class Robot extends SampleRobot
         oi = new OI();
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
-        autoChooser.addObject("Auto Drop Arms Fwd", AUTO_COMMAND.DROP_ARMS_F);
-        autoChooser.addObject("Auto Drop Arms Back", AUTO_COMMAND.DROP_ARMS_B);
-        autoChooser.addObject("Auto Low Bar", AUTO_COMMAND.LOWBAR);
-        autoChooser.addObject("Auto Port Cullis", AUTO_COMMAND.PORTCULLIS);
-        autoChooser.addObject("Auto Cheval DeFrise", AUTO_COMMAND.CHEVAL_DEFRISE);
-        autoChooser.addObject("Auto Rough Terrain", AUTO_COMMAND.ROUGH_TERRAIN);
+        autoChooser.addObject("Auto Drop Arms (Fwd)", AUTO_COMMAND.DROP_ARMS_F);
+        autoChooser.addObject("Auto Drop Arms (Back)", AUTO_COMMAND.DROP_ARMS_B);
+        autoChooser.addObject("Auto Low Bar (Fwd)", AUTO_COMMAND.LOWBAR);
+        autoChooser.addObject("Auto Port Cullis (Back)", AUTO_COMMAND.PORTCULLIS);
+        autoChooser.addObject("Auto Cheval DeFrise (Back)", AUTO_COMMAND.CHEVAL_DEFRISE);
+        autoChooser.addObject("Auto Rough Terrain (Back)", AUTO_COMMAND.ROUGH_TERRAIN);
         SmartDashboard.putData("Auto mode", autoChooser);
         
         positionChooser = new SendableChooser();
@@ -119,10 +119,10 @@ public class Robot extends SampleRobot
         SmartDashboard.putData("Position", positionChooser);
 
         //add a new mode chooser
-        modeChooser = new SendableChooser();
-        modeChooser.addDefault("No Shoot", false);
-        modeChooser.addObject("Shoot", true);
-        SmartDashboard.putData("Shoot Mode", modeChooser);
+//        modeChooser = new SendableChooser();
+//        modeChooser.addDefault("No Shoot", false);
+//        modeChooser.addObject("Shoot", true);
+//        SmartDashboard.putData("Shoot Mode", modeChooser);
         
         
         SmartDashboard.putBoolean("TargetFound", false);
@@ -147,8 +147,8 @@ public class Robot extends SampleRobot
         //autonomousCommand = (Command) autoChooser.getSelected();
         AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
         AutoTurn.STATE_TURN position = (AutoTurn.STATE_TURN) positionChooser.getSelected();
-        boolean shoot = (boolean) modeChooser.getSelected();
-        autonomousCommand = command.getCommand(position, shoot);
+//        boolean shoot = (boolean) modeChooser.getSelected();
+        autonomousCommand = command.getCommand(position, false);
         
         // schedule the autonomous command (example)
         if (autonomousCommand != null) autonomousCommand.start();
