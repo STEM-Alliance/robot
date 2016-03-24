@@ -33,7 +33,7 @@ public class RockerDriveSubsystem extends Subsystem
     private double desiredHeading;
     private PIDController headingPID;
     
-    private final double HEADING_TOLERANCE = 1.5;
+    private final double HEADING_TOLERANCE = 2;
     
     /**
      * Constructor

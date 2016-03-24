@@ -54,7 +54,6 @@ public class OI
 
     
     // panel
-    
     Button panelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
     Button panelRightWhite = new PanelButton(panel, Panel.ButtonType.kWhiteR);
     Button panelLeftBlack = new PanelButton(panel, Panel.ButtonType.kBlackL);
@@ -72,8 +71,8 @@ public class OI
         
         buttonLeftTrigger1.whileHeld(new CameraChange(true));
 
-        buttonA1.whileHeld(new KickerContinuous(true));
-        buttonB1.whileHeld(new KickerContinuous(false));
+        buttonA1.whileHeld(new BallIntake(true));
+        buttonB1.whileHeld(new BallIntake(false));
 //        buttonY1.whileHeld(new KickerToAngle(180));
 
 //        buttonA1.whileHeld(new KickerContinuous(true));
@@ -84,7 +83,7 @@ public class OI
         buttonA2.whileHeld(new ShooterGrab());
         buttonB2.whileHeld(new ShooterFire());
         
-        buttonLeftTrigger2.whileHeld(new ShooterRev());
+        buttonLeftTrigger2.whileHeld(new ShooterRevLEDs());
         buttonRightTrigger2.whenPressed(new ShooterRelease());
 
         buttonLB2.whenPressed(new LiftToTop());
@@ -146,7 +145,12 @@ public class OI
         //return xbox2.getTriggerVal(Hand.kRight);
         return 1;
     }
-    
+
+    public static int getDpad1()
+    {
+        return xbox1.getPOV(0);
+    }
+
     public static int getDpad2()
     {
         return xbox2.getPOV(0);

@@ -5,9 +5,9 @@ import com.taurus.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class KickerStop extends Command 
+public class BallIntakeStop extends Command 
 {
-    public KickerStop() 
+    public BallIntakeStop() 
     {
         requires(Robot.kickerSubsystem);
     }

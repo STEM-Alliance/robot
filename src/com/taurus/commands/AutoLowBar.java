@@ -8,7 +8,7 @@ public class AutoLowBar extends CommandGroup
     {
         addSequential(new AutoSetStartAngle(0));
         addSequential(new AutoDrive(.5, AutoDrive.SPEED_APPROACH,false));
-        addParallel(new KickerContinuousTimeout(true,1));
+        //addParallel(new BallIntakeTimeout(true,1));
         addParallel(new ManipulatorContinousTimeout(false, 1.5));
         addSequential(new AutoDrive(4.25, AutoDrive.SPEED_APPROACH, false));
         addParallel(new AimerContinuousTimeout(false, .5));
