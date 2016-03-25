@@ -8,16 +8,16 @@ public class AutoChevalDeFrise extends CommandGroup
     {
         addSequential(new AutoSetStartAngle(180));
 
-        addSequential(new AutoDrive(.5, -AutoDrive.SPEED_APPROACH, false));
+        addSequential(new AutoDrive(1, -AutoDrive.SPEED_APPROACH, false));
         addSequential(new ManipulatorContinousTimeout(false, 1.5));
-        addSequential(new AutoDrive(4, -AutoDrive.SPEED_APPROACH, false));
+        addSequential(new AutoDrive(2, -AutoDrive.SPEED_APPROACH, false));
         if (position == AutoTurn.STATE_TURN.POSITION_TWO)
         {
             addSequential(new AutoDrive(1, -AutoDrive.SPEED_APPROACH, false));
         }
         //addSequential(new KickerContinuousTimeout(true,1));
-        addParallel(new AimerContinuousTimeout(false, .5));//move aimer to detect target
-        addSequential(new AutoTurn(position));
+        //addParallel(new AimerContinuousTimeout(false, .5));//move aimer to detect target
+        //addSequential(new AutoTurn(position));
         if (shoot)
         {
             addSequential(new LiftToTop());
@@ -25,6 +25,9 @@ public class AutoChevalDeFrise extends CommandGroup
             addSequential(new ShooterFire());
             addSequential(new AutoTurn(0.0));
         }
-        
+        else
+        {
+            addSequential(new ShooterFire(false));
+        }
     }
 }

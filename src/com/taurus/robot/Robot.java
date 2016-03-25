@@ -36,10 +36,10 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoNone();
                 break;
             case DROP_ARMS_F:
-                autonomousCommand = new AutoReachDropArms(shoot);
+                autonomousCommand = new AutoReachDropArms(true);
                 break;
             case DROP_ARMS_B:
-                autonomousCommand = new AutoReachDropArms(shoot);
+                autonomousCommand = new AutoReachDropArms(false);
                 break;
             case LOWBAR:
                 autonomousCommand = new AutoLowBar(shoot);
