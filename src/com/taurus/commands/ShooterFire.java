@@ -41,6 +41,21 @@ public class ShooterFire extends CommandGroup
         addSequential(new DriveBrakeMode(false));
     }
     
+    public ShooterFire(boolean shoot)
+    {
+        addParallel(new DriveBrakeMode(true));
+        addSequential(new AimerLEDs(true));
+        addSequential(new AimerBetweenAngles(110,125));
+        addSequential(new TargetingDriveAim());
+        if (shoot)
+        {
+            addSequential(new ShooterFireRev());
+            addSequential(new ShooterFireRelease());
+        }
+        addParallel(new AimerLEDs(false));
+        addSequential(new DriveBrakeMode(false));
+    }
+    
     public void end()
     {
         Robot.aimerSubsystem.enableLEDs(false);        
