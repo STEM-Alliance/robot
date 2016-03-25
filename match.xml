@@ -1,5 +1,18 @@
 <xml version="1.0">
 <dashboard>
+	<static-widget class="team4818.smartdashboard.extension.LayoutSwitcher">
+		<location x="845" y="0"/>
+	</static-widget>
+	<widget field="IntakeSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1001" y="650"/>
+	</widget>
+	<widget field="CameraBackState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="774" y="648"/>
+		<height>20</height>
+	</widget>
+	<widget field="CameraMainState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="594" y="648"/>
+	</widget>
 	<widget field="desiredYaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="737" y="532"/>
 	</widget>
