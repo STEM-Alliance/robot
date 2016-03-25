@@ -443,7 +443,7 @@ public class LiftSubsystem extends Subsystem{
      * @return height in inches
      */
     private double getHeightFromLiftBottomR() {
-        return (Math.sin(Math.toRadians(getAngleR()/2))*LENGTH_SCISSOR_STEP)*2;
+        return (Math.sin(Math.toRadians(getAngleR()))*LENGTH_SCISSOR_STEP)*2;
     }
 
     /**
@@ -451,7 +451,7 @@ public class LiftSubsystem extends Subsystem{
      * @return height in inches
      */
     private double getHeightFromLiftBottomL() {
-        return (Math.sin(Math.toRadians(getAngleL()/2))*LENGTH_SCISSOR_STEP)*2;
+        return (Math.sin(Math.toRadians(getAngleL()))*LENGTH_SCISSOR_STEP)*2;
     }
 
     /**
