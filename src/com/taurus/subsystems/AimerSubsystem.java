@@ -150,6 +150,7 @@ public class AimerSubsystem extends Subsystem
         pid.setP(Preferences.getInstance().getDouble("AimerPID_P", .03));
         pid.setI(Preferences.getInstance().getDouble("AimerPID_I", 0.01));
         pid.setD(Preferences.getInstance().getDouble("AimerPID_D", 0.01));
+        pid.setMin(Preferences.getInstance().getDouble("AimerPID_Min", 0.1));
     }
     
     /**

@@ -26,8 +26,10 @@ public class TargetingDriveAim extends Command
     private double startTime;
     
     private double desiredYaw;
+    private double desiredPitch;
     private double currentDistance;
     private boolean YawFound;
+    private boolean PitchFound;
     
     public TargetingDriveAim() 
     {
@@ -69,43 +71,55 @@ public class TargetingDriveAim extends Command
         }
         
         // do the up/down aiming
-        if(Robot.aimerSubsystem.aim(target))
-            shooterAimed++;
-        else
-            shooterAimed = 0;
-
+        if(PitchFound)
+        {
+            if(shooterAimed <= HOLD_COUNT)
+            {
+                if(Robot.aimerSubsystem.aim(desiredPitch))
+                    shooterAimed++;
+                else
+                    shooterAimed = 0;
+            }
+            else
+            {
+                Robot.aimerSubsystem.setSpeed(0);
+            }
+        }
+        
         SmartDashboard.putBoolean("YawFound", YawFound);
         SmartDashboard.putNumber("desiredYaw", desiredYaw);
         // do the left/right aiming
-//        if (YawFound)
-//        {
-//            // Use Gyro fine angle
-//            // Use image for initial angle
-//            if(driveAimed <= HOLD_COUNT)
-//            {
-//                if(Robot.rockerDriveSubsystem.turnToAngle(desiredYaw, false, currentDistance < 90))
-//                    driveAimed++;
-//                else
-//                    driveAimed = 0;
-//            }
-//            else
-//            {
-//                Robot.rockerDriveSubsystem.driveRaw(0, 0);
-//            }
-//        }
-//        else
-//        {
-//            // we only want to change our desired heading/yaw if the target info is new
-//            // this should help with using old data from the image
-//            if(target.NewData())
-//            {
-//                desiredYaw = target.Yaw() + Robot.rockerDriveSubsystem.getYaw();
-//                desiredYaw = desiredYaw + Math.signum(target.Yaw()) * YAW_INTENTIONAL_OVERSHOOT;
-//                currentDistance = target.DistanceToTarget();
-//                target.NewDataClear();
-//                YawFound = true;
-//            }
-//        }
+        if (YawFound)
+        {
+            // Use Gyro fine angle
+            // Use image for initial angle
+            if(driveAimed <= HOLD_COUNT)
+            {
+                if(Robot.rockerDriveSubsystem.turnToAngle(desiredYaw, false, currentDistance < 90))
+                    driveAimed++;
+                else
+                    driveAimed = 0;
+            }
+            else
+            {
+                Robot.rockerDriveSubsystem.driveRaw(0, 0);
+            }
+        }
+        else
+        {
+            // we only want to change our desired heading/yaw if the target info is new
+            // this should help with using old data from the image
+            if(target.NewData())
+            {
+                desiredYaw = target.Yaw() + Robot.rockerDriveSubsystem.getYaw();
+                desiredYaw = desiredYaw + Math.signum(target.Yaw()) * YAW_INTENTIONAL_OVERSHOOT;
+                desiredPitch = target.Pitch() + Robot.aimerSubsystem.getCurrentAngle();
+                currentDistance = target.DistanceToTarget();
+                target.NewDataClear();
+                YawFound = true;
+                PitchFound = true;
+            }
+        }
         
         SmartDashboard.putBoolean("TargetAimPitch", shooterAimed > HOLD_COUNT);
         SmartDashboard.putBoolean("TargetAimYaw", driveAimed > HOLD_COUNT);

@@ -93,8 +93,8 @@ public class OI
 //        buttonX2.whileHeld(new AimerContinuous(true));
 //        buttonY2.whileHeld(new AimerContinuous(false));
 
-        buttonX2.whenPressed(new AimerToAngle(90));
-        buttonY2.whenPressed(new AimerToAngle(125));
+        buttonX2.whileHeld(new AimerToAngle(90));
+        buttonY2.whileHeld(new AimerToAngle(115));
 
         buttonBack2.toggleWhenPressed(new AimerLEDs(true));
         buttonStart2.toggleWhenPressed(new AimerLEDs(false));

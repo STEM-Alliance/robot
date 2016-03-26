@@ -33,7 +33,7 @@ public class RockerDriveSubsystem extends Subsystem
     private double desiredHeading;
     private PIDController headingPID;
     
-    private final double HEADING_TOLERANCE = 2;
+    private final double HEADING_TOLERANCE = 1.5;
     
     /**
      * Constructor
@@ -98,6 +98,8 @@ public class RockerDriveSubsystem extends Subsystem
      */
     public void driveRaw(double right, double left)
     {
+        
+        printSensors();
         right = scaleForDeadband(right);
         right = Math.min(Math.max(right, -1), 1);  // ensure value between -1 and 1
         
