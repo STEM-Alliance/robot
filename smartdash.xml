@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<static-widget class="team4818.smartdashboard.extension.LayoutSwitcher">
+		<location x="0" y="489"/>
+	</static-widget>
+	<widget field="YawFound" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="764" y="137"/>
+	</widget>
 	<widget field="IntakeSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="21" y="630"/>
 	</widget>

@@ -21,7 +21,7 @@ public class AimerStop extends Command
     protected void execute() 
     {
         Utilities.PrintCommand("Aimer", this);
-        Robot.aimerSubsystem.setSpeed(OI.getAimerY()/2);
+        Robot.aimerSubsystem.setSpeed(OI.getAimerY()*.325);
     }
 
     protected boolean isFinished() 

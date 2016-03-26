@@ -9,9 +9,9 @@ public class AutoPortCullis extends CommandGroup
         addSequential(new AutoSetStartAngle(180));
 
         addParallel(new ManipulatorContinousTimeout(false, 1.5));
-        addSequential(new AutoDrive(.5, -AutoDrive.SPEED_APPROACH, false));
+        addSequential(new AutoDrive(.5, -AutoDrive.SPEED_APPROACH*.75, false));
         //addParallel(new BallIntakeTimeout(true,1));
-        addSequential(new AutoDrive(3.5, -AutoDrive.SPEED_APPROACH, false));
+        addSequential(new AutoDrive(2.5, -AutoDrive.SPEED_APPROACH, false));
         if (position == AutoTurn.STATE_TURN.POSITION_TWO)
         {
             addSequential(new AutoDrive(1, -AutoDrive.SPEED_APPROACH, false));
@@ -19,7 +19,7 @@ public class AutoPortCullis extends CommandGroup
         //addParallel(new AimerContinuousTimeout(false, .5));
         // TODO - do something so AutoTurn is compensated for zero yaw being 180 degrees from our intended position
         //addSequential(new AutoDrive(1.45, 0.75, -0.75, false));  // Turn 180
-        //addSequential(new AutoTurn(position));
+        addSequential(new AutoTurn(position));
         if (shoot)
         {
             addSequential(new LiftToTop());
