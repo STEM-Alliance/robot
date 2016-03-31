@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ShooterGrab extends Command 
 {    
-    final double SHOOTER_SPEED = .4;
+    final double SHOOTER_SPEED = .6;
     
     public ShooterGrab() 
     {

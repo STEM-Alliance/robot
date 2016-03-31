@@ -6,6 +6,7 @@ import com.taurus.robot.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterSubsystem extends Subsystem 
 {    
@@ -45,5 +46,11 @@ public class ShooterSubsystem extends Subsystem
     {
         shooterFT.set(topSpeed);
         shooterFB.set(bottomSpeed);
+    }
+
+    public void printSensors()
+    {
+        SmartDashboard.putBoolean("Ball", stopSwitch.get());
+        
     }
 }

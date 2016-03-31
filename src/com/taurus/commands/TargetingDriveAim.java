@@ -15,13 +15,15 @@ public class TargetingDriveAim extends Command
 {
     private final double YAW_INTENTIONAL_OVERSHOOT = 1;  // Overshoot angle to compensate for snapback when motors stop
     public final static double DRIVE_ANGLE_TOLERANCE = .8;
+    private final static double AIMER_TOLERANCE = 1.5;
+    
     public final int HOLD_COUNT = 6;
 
     private int shooterAimed;
     private int driveAimed;
 
     private Vision vision;
-    private PIDController drivePID;
+    private PIDController aimerPID;
 
     private double startTime;
     
@@ -30,14 +32,14 @@ public class TargetingDriveAim extends Command
     private double currentDistance;
     private boolean YawFound;
     private boolean PitchFound;
-    
     public TargetingDriveAim() 
     {
         requires(Robot.aimerSubsystem);
         requires(Robot.rockerDriveSubsystem);
         
         vision = Vision.getInstance();        
-        //drivePID = new PIDController(.2, 0.1, 0.1, .75); //TODO change max output 
+        //drivePID = new PIDController(.2, 0.1, 0.1, .75); //TODO change max output
+        aimerPID = new PIDController(.2, 0, 0, 1);
     }
 
     protected void initialize() 
@@ -67,15 +69,16 @@ public class TargetingDriveAim extends Command
         {
             shooterAimed = 0;
             driveAimed = 0;
-            return;
+            this.cancel();
+            //return;
         }
         
         // do the up/down aiming
-        if(PitchFound)
+        //if(PitchFound)
         {
             if(shooterAimed <= HOLD_COUNT)
             {
-                if(Robot.aimerSubsystem.aim(desiredPitch))
+                if(aim(target))
                     shooterAimed++;
                 else
                     shooterAimed = 0;
@@ -105,7 +108,8 @@ public class TargetingDriveAim extends Command
                 Robot.rockerDriveSubsystem.driveRaw(0, 0);
             }
         }
-        else
+        
+        if(!YawFound || !PitchFound)
         {
             // we only want to change our desired heading/yaw if the target info is new
             // this should help with using old data from the image
@@ -128,15 +132,15 @@ public class TargetingDriveAim extends Command
 
     protected boolean isFinished() 
     {
-        return shooterAimed > HOLD_COUNT;// && driveAimed > HOLD_COUNT;
+        return shooterAimed > HOLD_COUNT && driveAimed > HOLD_COUNT;
     }
 
     protected void end()
     {
         Utilities.PrintCommand("Aimer", null);
         Utilities.PrintCommand("Drive", null);
-//        Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0);
-//        Robot.aimerSubsystem.setSpeed(0);
+        Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0);
+        Robot.aimerSubsystem.setSpeed(0);
     }
 
     protected void interrupted() 
@@ -144,30 +148,47 @@ public class TargetingDriveAim extends Command
         end();
     }
     
-    private boolean aim(double changeInAngle) 
+    public boolean aim(Target target)
     {
+        double motorOutput;
+        boolean done = false;
+        
+        double angleCurrent = Robot.aimerSubsystem.getCurrentAngle();
+        double desiredAngle = angleCurrent + target.Pitch();
+        
         updatedPIDConstants();
-        double motorOutput = -drivePID.update(changeInAngle);  //TODO add limits for angle
-
-        if(Math.abs(changeInAngle) <= DRIVE_ANGLE_TOLERANCE)
+        motorOutput = aimerPID.update(target.Pitch());
+       
+//        if (desiredAngle > ANGLE_MAX || desiredAngle < ANGLE_MIN)
+//        {
+//            // Being commanded to an unsafe angle
+//            SmartDashboard.putString("AimerAim", "Unsafe");
+//            setSpeed(0);
+//        }
+//        else
+        if (Math.abs(target.Pitch()) < AIMER_TOLERANCE)
         {
-            Robot.rockerDriveSubsystem.driveRaw(0.0, 0.0);
-            return true;
-        } 
+            // At the desired angle
+            SmartDashboard.putString("AimerAim", "At Angle");
+            Robot.aimerSubsystem.setSpeed(0);
+            done = true;
+        }
         else
         {
-            Robot.rockerDriveSubsystem.driveRaw(-motorOutput, motorOutput);
-            return false;
+            SmartDashboard.putString("AimerAim", "Moving " + motorOutput);
+            Robot.aimerSubsystem.setSpeed(motorOutput);
         }
+        
+        return done;
     }
 
     private void updatedPIDConstants()
     {
 
-        drivePID.setP(Preferences.getInstance().getDouble("DrivePID_P", .2));
-        drivePID.setI(Preferences.getInstance().getDouble("DrivePID_I", 0));
-        drivePID.setD(Preferences.getInstance().getDouble("DrivePID_D", 0));
-        drivePID.setMin(Preferences.getInstance().getDouble("DrivePID_Min", .1));
-        drivePID.setMax(Preferences.getInstance().getDouble("DrivePID_Max", 0.7));
+        aimerPID.setP(Preferences.getInstance().getDouble("AimerAutoPID_P", .2));
+        aimerPID.setI(Preferences.getInstance().getDouble("AimerAutoPID_I", 0));
+        aimerPID.setD(Preferences.getInstance().getDouble("AimerAutoPID_D", 0));
+        aimerPID.setMin(Preferences.getInstance().getDouble("AimerAutoPID_Min", .01));
+        aimerPID.setMax(Preferences.getInstance().getDouble("AimerAutoPID_Max", 1));
     }
 }

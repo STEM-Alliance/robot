@@ -31,11 +31,11 @@ public class ManipulatorContinousTimeout extends Command
         
         if(clockwise)
         {
-            Robot.manipulatorSubsystem.setSpeed(.5);
+            Robot.manipulatorSubsystem.setSpeed(.65);
         }
         else
         {
-            Robot.manipulatorSubsystem.setSpeed(-.5);
+            Robot.manipulatorSubsystem.setSpeed(-.65);
         }
     }
 

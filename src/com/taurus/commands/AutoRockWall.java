@@ -25,13 +25,7 @@ public class AutoRockWall extends CommandGroup
         
         if (shoot)
         {
-            addSequential(new LiftToTop());
-            addParallel(new LiftHold());
-            addSequential(new ShooterFire());
-            addSequential(new LiftToBottom());
-            //TODO turn to 0 yaw
-            //TODO raise manipulator and kicker?
-            //TODO go backwards over defense?
+            addSequential(new AutoLiftAndShoot());
         }
         else
         {
