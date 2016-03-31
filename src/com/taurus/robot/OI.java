@@ -57,6 +57,7 @@ public class OI
     Button panelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
     Button panelRightWhite = new PanelButton(panel, Panel.ButtonType.kWhiteR);
     Button panelLeftBlack = new PanelButton(panel, Panel.ButtonType.kBlackL);
+    Button panelLeftYellow = new PanelButton(panel, Panel.ButtonType.kYellowL);
     Button panelRightYellow = new PanelButton(panel, Panel.ButtonType.kYellowR);
     Button panelRightGreen = new PanelButton(panel, Panel.ButtonType.kGreenR);
     Button panelRightBlack = new PanelButton(panel, Panel.ButtonType.kBlackR);
@@ -101,6 +102,7 @@ public class OI
         
         //////////////////////////
         
+        panelLeftYellow.whileHeld(new AutoLiftAndShoot());
         panelLeftWhite.whileHeld(new LiftCal());
         panelLeftBlack.whileHeld(new LoadBallFromFloor());
         panelRightWhite.whileHeld(new LoadBall());

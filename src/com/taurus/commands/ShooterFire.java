@@ -58,7 +58,7 @@ public class ShooterFire extends CommandGroup
     
     public void end()
     {
-        Robot.aimerSubsystem.enableLEDs(false);        
+        Robot.ledsSubsystem.enableLEDs(false);        
         Robot.ballReleaseSubsystem.setBallRelease(false);
         //Vision.getInstance().enableBackCamera(true);     
     }

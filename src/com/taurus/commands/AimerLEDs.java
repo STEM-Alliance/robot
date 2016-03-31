@@ -11,14 +11,14 @@ public class AimerLEDs extends Command
     
     public AimerLEDs(boolean ledsOn) 
     {
-        requires(Robot.aimerSubsystem);
+        requires(Robot.ledsSubsystem);
         this.ledsOn = ledsOn;
     }
 
     protected void initialize() 
     {
-        Utilities.PrintCommand("Aimer", this);
-        Robot.aimerSubsystem.enableLEDs(ledsOn);
+        Utilities.PrintCommand("LEDs", this);
+        Robot.ledsSubsystem.enableLEDs(ledsOn);
         setTimeout(.25);
     }
     

@@ -31,9 +31,9 @@ public class Vision implements Runnable {
         private static final int LIME = 0x00ff80;
         private static final int GREEN = 0x00ff00;
         private static final int TEAL = 0x80ff00;
-        private static final int CYAN = 0xffff00;
-        private static final int VIOLET = 0xff8000;
-        private static final int BLUE = 0xff0000;
+        public static final int CYAN = 0xffff00;
+        public static final int VIOLET = 0xff8000;
+        public static final int BLUE = 0xff0000;
         private static final int PINK = 0xff0080;
         private static final int MAGENTA = 0xff00ff;
     }

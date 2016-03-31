@@ -31,7 +31,6 @@ public class AimerSubsystem extends Subsystem
     private CANTalon motor;
     private PIDController pid;    
     
-    private Relay leds;
 
     public AimerSubsystem()
     {
@@ -43,8 +42,6 @@ public class AimerSubsystem extends Subsystem
         angle = new MagnetoPotSRX(motor,360);
         angle.setAverage(true,6);
         vision = Vision.getInstance();
-        
-        leds = new Relay(RobotMap.PIN_RELAY_LEDS, Direction.kForward);
     }
 
     protected void initDefaultCommand()
@@ -228,15 +225,4 @@ public class AimerSubsystem extends Subsystem
         angle.setOffset(Preferences.getInstance().getDouble("AimerPotOffset", 45));
     }
     
-    public void enableLEDs(boolean enable)
-    {
-        if(enable)
-        {
-            leds.set(Value.kForward);
-        }
-        else
-        {
-            leds.set(Value.kOff);
-        }
-    }
 }

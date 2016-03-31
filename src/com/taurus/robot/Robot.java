@@ -73,6 +73,7 @@ public class Robot extends SampleRobot
 	public static AimerSubsystem aimerSubsystem;
 	public static ManipulatorSubsystem manipulatorSubsystem;
     public static IntakeSubsystem kickerSubsystem ;
+    public static LEDsSubsystem ledsSubsystem ;
 	public static OI oi;
 	public static BallReleaseSubsystem ballReleaseSubsystem;
     public static CameraSubsystem cameraSubsystem;
@@ -101,6 +102,7 @@ public class Robot extends SampleRobot
         backCameraSubsystem = new BackCameraSubsystem();
         kickerSubsystem = new IntakeSubsystem();
         climberClawSubsystem = new ClimberClawSubsystem();
+        ledsSubsystem = new LEDsSubsystem();
         
         oi = new OI();
         autoChooser = new SendableChooser();
@@ -142,6 +144,7 @@ public class Robot extends SampleRobot
         while (isOperatorControl() && isEnabled())
         {
             rockerDriveSubsystem.printSensors();
+            shooterSubsystem.printSensors();
             Scheduler.getInstance().run();
         }
     }
@@ -179,6 +182,7 @@ public class Robot extends SampleRobot
             rockerDriveSubsystem.printSensors();
             liftSubsystem.printSensors();
             aimerSubsystem.updatePotOffsets();
+            shooterSubsystem.printSensors();
             
             // this is some convoluted stuff
             // basically, wait until the camera has been initialized

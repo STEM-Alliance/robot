@@ -1,8 +1,14 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Ball" type="Boolean" class="team4818.smartdashboard.extension.CoolBool">
+		<location x="845" y="54"/>
+	</widget>
 	<static-widget class="team4818.smartdashboard.extension.LayoutSwitcher">
 		<location x="845" y="0"/>
 	</static-widget>
+	<widget field="LEDs Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1212" y="635"/>
+	</widget>
 	<widget field="IntakeSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1001" y="650"/>
 	</widget>
@@ -77,13 +83,13 @@
 		<location x="0" y="485"/>
 	</widget>
 	<widget field="TargetAimPitch" type="Boolean" class="team4818.smartdashboard.extension.CoolBool">
-		<location x="1206" y="160"/>
+		<location x="1168" y="157"/>
 	</widget>
 	<widget field="TargetFound" type="Boolean" class="team4818.smartdashboard.extension.CoolBool">
-		<location x="864" y="160"/>
+		<location x="843" y="155"/>
 	</widget>
 	<widget field="TargetAimYaw" type="Boolean" class="team4818.smartdashboard.extension.CoolBool">
-		<location x="1032" y="160"/>
+		<location x="999" y="158"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
 		<location x="1321" y="0"/>
@@ -191,7 +197,7 @@
 		<property name="Text" value="Mode"/>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
-		<location x="1056" y="258"/>
+		<location x="1055" y="240"/>
 		<width>112</width>
 		<property name="Text" value="Defense"/>
 	</static-widget>
@@ -201,11 +207,11 @@
 		<property name="Text" value="Position"/>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
-		<location x="1080" y="234"/>
+		<location x="1080" y="211"/>
 		<property name="Text" value="Autonomous"/>
 	</static-widget>
 	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="1040" y="272"/>
+		<location x="1040" y="253"/>
 	</widget>
 	<widget field="Position" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="880" y="274"/>
