@@ -1,4 +1,4 @@
-package com.taurus.swerve;
+package com.taurus.subsystems.swerve;
 
 //import com.sun.glass.ui.Timer;
 import com.taurus.controller.*;
@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Application implements com.taurus.Application {
+public class SwerveDriveTest {
 
     private final int TEST_MODE_NORMAL = 0;
     private final int TEST_MODE_WHEEL = 1;
@@ -18,10 +18,10 @@ public class Application implements com.taurus.Application {
     private SendableChooser testChooser = new SendableChooser();
     private SendableChooser testWheelChooser = new SendableChooser();
     
-    private SwerveChassis drive;
+    private SwerveDriveSubsystem drive;
     private SwerveController controller;
     
-    public Application()
+    public SwerveDriveTest()
     {
         testWheelChooser = new SendableChooser();
         testWheelChooser.addDefault("Front Left", Integer.valueOf(0));
@@ -44,15 +44,11 @@ public class Application implements com.taurus.Application {
         
         controller = new SwerveXbox();
         
-        drive = new SwerveChassis(controller);
+        drive = new SwerveDriveSubsystem(controller);
     }
     
-    public void TeleopInit()
-    {
 
-    }
-
-    public void TeleopPeriodic()
+    public void run()
     {
         int i = ((Integer) testWheelChooser.getSelected()).intValue();
 
@@ -113,54 +109,5 @@ public class Application implements com.taurus.Application {
                 drive.run();
                 break;
         }
-    }
-
-    public void TeleopDeInit()
-    {
-
-    }
-
-    public void AutonomousInit()
-    {
-
-    }
-
-    public void AutonomousPeriodic()
-    {
-
-    }
-
-    public void AutonomousDeInit()
-    {
-
-    }
-
-    public void TestModeInit()
-    {
-
-    }
-
-    public void TestModePeriodic()
-    {
-    }
-
-    public void TestModeDeInit()
-    {
-
-    }
-
-    public void DisabledInit()
-    {
-
-    }
-
-    public void DisabledPeriodic()
-    {
-
-    }
-
-    public void DisabledDeInit()
-    {
-
     }
 }

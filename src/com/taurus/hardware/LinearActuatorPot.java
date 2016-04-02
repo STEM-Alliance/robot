@@ -22,11 +22,11 @@ public class LinearActuatorPot extends LinearActuator {
      * @param PotPin Analog input pin for the potentiometer
      * @param DistanceFullTurn distance in inches a full turn translates to
      */
-    public LinearActuatorPot(int[] MotorPins, double[] MotorScaling,
+    public LinearActuatorPot(int[] MotorPins, MotorSystem.TYPES[] MotorTypes, double MotorScaling,
             double[] Positions, double PositionThreshold,
             int PotPin, double DistanceFullTurn)
     {
-        super(MotorPins, MotorScaling, Positions, PositionThreshold);
+        super(MotorPins, MotorTypes, MotorScaling, Positions, PositionThreshold);
         
         Pot = new MagnetoPot(PotPin);
         this.DistanceFullTurn = DistanceFullTurn;
@@ -45,11 +45,11 @@ public class LinearActuatorPot extends LinearActuator {
      * @param PotPin Analog input pin for the potentiometer
      * @param DistanceFullTurn distance in inches a full turn translates to
      */
-    public LinearActuatorPot(int[] MotorPins, double[] MotorScaling,
+    public LinearActuatorPot(int[] MotorPins, MotorSystem.TYPES[] MotorTypes, double MotorScaling,
             double[] Positions, 
             int PotPin, double DistanceFullTurn)
     {
-        super(MotorPins, MotorScaling, Positions );
+        super(MotorPins, MotorTypes, MotorScaling, Positions );
         
         Pot = new MagnetoPot(PotPin);
         this.DistanceFullTurn = DistanceFullTurn;

@@ -11,12 +11,12 @@ public class DriveArcadeWithXbox extends Command
 {
     public DriveArcadeWithXbox() 
     {
-        requires(Robot.rockerDriveSubsystem);
+        requires(Robot.tankDriveSubsystem);
     }
 
     protected void initialize() 
     {
-        Robot.rockerDriveSubsystem.enableGyro(false);
+        Robot.tankDriveSubsystem.enableGyro(false);
     }
 
     protected void execute() 
@@ -45,7 +45,7 @@ public class DriveArcadeWithXbox extends Command
         speedL = limit(speedL);
         speedR = limit(speedR);
         
-        Robot.rockerDriveSubsystem.driveRaw(speedR * adjust, speedL * adjust);
+        Robot.tankDriveSubsystem.driveRaw(speedR * adjust, speedL * adjust);
     }
     
     private double limit(double val)

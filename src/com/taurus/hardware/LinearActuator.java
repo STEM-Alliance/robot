@@ -3,6 +3,8 @@ package com.taurus.hardware;
 import com.taurus.PIDController;
 import com.taurus.Utilities;
 
+import edu.wpi.first.wpilibj.Preferences;
+
 /**
  * A Linear actuator subsystem using motor(s) and an encoder
  *
@@ -22,12 +24,11 @@ public abstract class LinearActuator {
     private static final double PositionThresholdDefault = 0.5;
 
 
-    public LinearActuator(int[] MotorPins, double[] MotorScaling,
+    public LinearActuator(int[] MotorPins, MotorSystem.TYPES[] MotorTypes, double MotorScaling,
             double[] Positions, double PositionThreshold)
     {
-        Motors = new MotorSystem(MotorPins);
-        Motors.SetScale(MotorScaling);
-        Motors.SetSafety(true, 2);
+        Motors = new MotorSystem(MotorPins, MotorTypes);
+        Motors.setScaling(MotorScaling);
 
         this.Positions = Positions;
         this.PositionThreshold = PositionThreshold;
@@ -46,10 +47,10 @@ public abstract class LinearActuator {
      * @param InchesPerPulse distance of travel per pulse on the encoder, in inches
      * @param Positions array of positions in inches to use for setpoints, readings
      */
-    public LinearActuator(int[] MotorPins, double[] MotorScaling,
+    public LinearActuator(int[] MotorPins, MotorSystem.TYPES[] MotorTypes, double MotorScaling,
             double[] Positions)
     {
-        this(MotorPins, MotorScaling, Positions, PositionThresholdDefault);
+        this(MotorPins, MotorTypes, MotorScaling, Positions, PositionThresholdDefault);
     }
 
     /**
@@ -75,7 +76,7 @@ public abstract class LinearActuator {
      */
     public void SetPosition(int i, double MaxSpeed)
     {        
-        Positions[i] = com.taurus.Application.prefs.getDouble("Positions_" + i + "", Positions[i]);
+        Positions[i] = Preferences.getInstance().getDouble("Positions_" + i + "", Positions[i]);
 
         // use the PI to get the desired speed based on distance from current
         // position
@@ -85,7 +86,7 @@ public abstract class LinearActuator {
         
         speed = Utilities.clampToRange(speed, -MaxSpeed, MaxSpeed);
         
-        Motors.Set(speed);
+        Motors.set(speed);
         
         LastPosition = i;
     }
@@ -170,7 +171,7 @@ public abstract class LinearActuator {
      */
     public void SetSpeedRaw(double speed)
     {
-        Motors.Set(speed);
+        Motors.set(speed);
     }
 
     /**

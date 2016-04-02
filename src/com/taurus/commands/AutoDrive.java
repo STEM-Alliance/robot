@@ -17,7 +17,7 @@ public class AutoDrive extends Command
      */
     public AutoDrive()
     {
-        requires(Robot.rockerDriveSubsystem);
+        requires(Robot.tankDriveSubsystem);
         speedR = 0;
         speedL = 0;
     }
@@ -27,7 +27,7 @@ public class AutoDrive extends Command
      */
     public AutoDrive(double endTime, double speedL, double speedR, boolean gyroEnabled)
     {
-        requires(Robot.rockerDriveSubsystem);
+        requires(Robot.tankDriveSubsystem);
         this.speedR = speedR;
         this.speedL = speedL;
         this.gyroEnabled = gyroEnabled;
@@ -44,14 +44,14 @@ public class AutoDrive extends Command
         if(gyroEnabled)
         {   
             // Create our heading straight in front of our current position
-            Robot.rockerDriveSubsystem.enableGyro(true);
+            Robot.tankDriveSubsystem.enableGyro(true);
             //Robot.rockerDriveSubsystem.zeroGyro(0); //TODO BDP Needed to zero here?
         }
     }
 
     protected void execute() 
     {
-        Robot.rockerDriveSubsystem.driveRaw(speedR, speedL);
+        Robot.tankDriveSubsystem.driveRaw(speedR, speedL);
     }
 
     protected boolean isFinished()
@@ -61,7 +61,7 @@ public class AutoDrive extends Command
 
     protected void end() 
     {
-        Robot.rockerDriveSubsystem.driveRaw(0, 0);
+        Robot.tankDriveSubsystem.driveRaw(0, 0);
     }
 
     protected void interrupted()

@@ -15,11 +15,11 @@ public class LinearActuatorEncoder extends LinearActuator {
      * @param EncoderPins 2 pins, A and B, that the encoder is connected to
      * @param InchesPerPulse distance of travel per pulse on the encoder, in inches
      */
-    public LinearActuatorEncoder(int[] MotorPins, double[] MotorScaling,
+    public LinearActuatorEncoder(int[] MotorPins, MotorSystem.TYPES[] MotorTypes, double MotorScaling,
             double[] Positions, double PositionThreshold,
             int[] EncoderPins, double InchesPerPulse)
     {
-        super(MotorPins, MotorScaling, Positions, PositionThreshold);
+        super(MotorPins, MotorTypes, MotorScaling, Positions, PositionThreshold);
 
         Enc = new Encoder(EncoderPins[0], EncoderPins[1]);
         Enc.setDistancePerPulse(InchesPerPulse);
@@ -33,10 +33,10 @@ public class LinearActuatorEncoder extends LinearActuator {
      * @param EncoderPins 2 pins, A and B, that the encoder is connected to
      * @param InchesPerPulse distance of travel per pulse on the encoder, in inches
      */
-    public LinearActuatorEncoder(int[] MotorPins, double[] MotorScaling,
+    public LinearActuatorEncoder(int[] MotorPins, MotorSystem.TYPES[] MotorTypes, double MotorScaling,
             double[] Positions, int[] EncoderPins, double InchesPerPulse)
     {
-        super(MotorPins, MotorScaling, Positions);
+        super(MotorPins, MotorTypes, MotorScaling, Positions);
 
         Enc = new Encoder(EncoderPins[0], EncoderPins[1]);
         Enc.setDistancePerPulse(InchesPerPulse);

@@ -12,12 +12,12 @@ public class AutoSetStartAngle extends Command {
     private double angle;
     
     public AutoSetStartAngle(double angle) { 
-        requires(Robot.rockerDriveSubsystem);
+        requires(Robot.tankDriveSubsystem);
         this.angle = angle;
     }
 
     protected void initialize() {
-        Robot.rockerDriveSubsystem.zeroYaw(angle);
+        Robot.tankDriveSubsystem.zeroYaw(angle);
     }
 
     // Called repeatedly when this Command is scheduled to run

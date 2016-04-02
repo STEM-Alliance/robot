@@ -10,13 +10,13 @@ public class DriveBrakeMode extends Command
     
     public DriveBrakeMode(boolean enable) 
     {
-        requires(Robot.rockerDriveSubsystem);
+        requires(Robot.tankDriveSubsystem);
         this.enable = enable;
     }
 
     protected void initialize() 
     {
-        Robot.rockerDriveSubsystem.setBrakeMode(enable);
+        Robot.tankDriveSubsystem.setBrakeMode(enable);
     }
 
     protected void execute() 

@@ -4,13 +4,14 @@
  * and open the template in the editor.
  */
 
-package com.taurus.swerve;
+package com.taurus.subsystems.swerve;
 
 import com.taurus.PIDController;
 import com.taurus.Utilities;
 import com.taurus.controller.SwerveController;
 import com.taurus.hardware.Gyro;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
@@ -23,7 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * 
  * @author Team 4818 Taurus Robotics
  */
-public class SwerveChassis extends Subsystem {
+public class SwerveDriveSubsystem extends Subsystem {
 
     private SwerveWheel[] Wheels;
 
@@ -52,7 +53,7 @@ public class SwerveChassis extends Subsystem {
 
     private double lastVelocityTimestamp;
 
-    private DriveScheme driveScheme;
+    private SwerveDriveScheme driveScheme;
 
     private double CrawlMode = 0.0;
     private SwerveVector AutoVector;
@@ -65,7 +66,7 @@ public class SwerveChassis extends Subsystem {
     /**
      * sets up individual wheels and their positions relative to robot center
      */
-    public SwerveChassis(SwerveController controller)
+    public SwerveDriveSubsystem(SwerveController controller)
     {
         this.controller = controller;
         
@@ -76,7 +77,7 @@ public class SwerveChassis extends Subsystem {
 
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
 
-        driveScheme = new DriveScheme();
+        driveScheme = new SwerveDriveScheme();
 
         try
         {
@@ -96,7 +97,7 @@ public class SwerveChassis extends Subsystem {
         {
             Wheels[i] = new SwerveWheel(i,
                     SwerveConstants.WheelPositions[i],
-                    Application.prefs.getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
+                    Preferences.getInstance().getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
 //                    SwerveConstants.WheelEncoderPins[i],
                     SwerveConstants.WheelPotPins[i],
                     SwerveConstants.WheelDriveMotorAddress[i],
@@ -131,79 +132,60 @@ public class SwerveChassis extends Subsystem {
      */
     public void run()
     {
-//        if (AutoRunEnable)
-//        {
-//            if((Timer.getFPGATimestamp() - AutoTimeStart) < AutoTimeLength)
-//            {
-//                setFieldRelative(false);
-//
-//                CrawlMode = 1;
-//
-//                UpdateDrive(AutoVector, 0, -1);
-//                
-//            }
-//            else 
-//            {
-//                AutoRunEnable = false;
-//            }
-//        }
-//        else
+
+        setCrawlMode(controller.getLowSpeed());
+
+        // Use the Joystick inputs to update the drive system
+        switch (driveScheme.get())
         {
+            case SwerveDriveScheme.ANGLE_DRIVE:
+                setFieldRelative(controller.getFieldRelative());
 
-            setCrawlMode(controller.getLowSpeed());
+                UpdateDrive(controller.getAngleDrive_Velocity(), 0,
+                        controller.getAngleDrive_Heading());
+                break;
 
-            // Use the Joystick inputs to update the drive system
-            switch (driveScheme.get())
-            {
-                case DriveScheme.ANGLE_DRIVE:
+            case SwerveDriveScheme.HALO_DRIVE:
+                setFieldRelative(controller.getFieldRelative());
+
+                UpdateHaloDrive(controller.getHaloDrive_Velocity(),
+                        controller.getHaloDrive_Rotation());
+                break;
+
+            default:
+            case SwerveDriveScheme.COMBO_DRIVE:
+                double dpad = controller.getDPad();
+                
+                if (dpad != -1)
+                {
+                    // use non field relative
+                    setFieldRelative(false);
+
+                    //CrawlMode = 0;
+
+                    SwerveVector drive = new SwerveVector();
+                    drive.setMagAngle(1, (dpad - 90));
+
+                    UpdateDrive(drive, controller.getHaloDrive_Rotation(),
+                            controller.getHaloDrive_Heading45());
+                }
+                else
+                {
                     setFieldRelative(controller.getFieldRelative());
 
-                    UpdateDrive(controller.getAngleDrive_Velocity(), 0,
-                            controller.getAngleDrive_Heading());
-                    break;
+                    UpdateDrive(controller.getHaloDrive_Velocity(),
+                            controller.getHaloDrive_Rotation(),
+                            controller.getHaloDrive_Heading45());
+                }
+                break;
+        }
 
-                case DriveScheme.HALO_DRIVE:
-                    setFieldRelative(controller.getFieldRelative());
-
-                    UpdateHaloDrive(controller.getHaloDrive_Velocity(),
-                            controller.getHaloDrive_Rotation());
-                    break;
-
-                default:
-                case DriveScheme.COMBO_DRIVE:
-                    double dpad = controller.getDPad();
-                    
-                    if (dpad != -1)
-                    {
-                        // use non field relative
-                        setFieldRelative(false);
-
-                        //CrawlMode = 0;
-
-                        SwerveVector drive = new SwerveVector();
-                        drive.setMagAngle(1, (dpad - 90));
-
-                        UpdateDrive(drive, controller.getHaloDrive_Rotation(),
-                                controller.getHaloDrive_Heading45());
-                    }
-                    else
-                    {
-                        setFieldRelative(controller.getFieldRelative());
-
-                        UpdateDrive(controller.getHaloDrive_Velocity(),
-                                controller.getHaloDrive_Rotation(),
-                                controller.getHaloDrive_Heading45());
-                    }
-                    break;
-            }
-
-            // set various options for the chassis
-            setGearHigh(controller.getHighGearEnable());
-            setBrake(controller.getSwerveBrake());
-            if (controller.getResetGyro())
-            {
-                ZeroGyro();
-            }
+        // set various options for the chassis
+        setGearHigh(controller.getHighGearEnable());
+        setBrake(controller.getSwerveBrake());
+        if (controller.getResetGyro())
+        {
+            ZeroGyro();
         }
     }
 
@@ -320,13 +302,13 @@ public class SwerveChassis extends Subsystem {
         // limit before slowing speed so it runs using the original values
         // set limitations on rotation,
         // so if driving full speed it doesn't take priority
-        MinRotationAdjust = Application.prefs.getDouble("MinRotationAdjust", MinRotationAdjust);
+        MinRotationAdjust = Preferences.getInstance().getDouble("MinRotationAdjust", MinRotationAdjust);
         double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + MinRotationAdjust, 1);
         RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
 
 //        SmartDashboard.putNumber("Drive R pre", RobotRotation);
         
-        double crawlSpeed = Application.prefs.getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
+        double crawlSpeed = Preferences.getInstance().getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
         
         RobotRotation *= (crawlSpeed + (1 - crawlSpeed) * getCrawlMode() * .9);
         
@@ -381,7 +363,7 @@ public class SwerveChassis extends Subsystem {
         }
 
         // grab max velocity from the dash
-        MaxAvailableVelocity = Application.prefs.getDouble("MAX_ROBOT_VELOCITY",
+        MaxAvailableVelocity = Preferences.getInstance().getDouble("MAX_ROBOT_VELOCITY",
                         MaxAvailableVelocity);
 
         // determine ratio to scale all wheel velocities by
@@ -427,7 +409,7 @@ public class SwerveChassis extends Subsystem {
         SwerveVector delta = robotVelocity.subtract(LastVelocity);
 
         // grab the max acceleration value from the dash
-        MaxAcceleration = Application.prefs.getDouble("MAX_ACCELERATION", MaxAcceleration);
+        MaxAcceleration = Preferences.getInstance().getDouble("MAX_ACCELERATION", MaxAcceleration);
 
         // determine if we are accelerating/decelerating too slow
         if (delta.getMag() > MaxAcceleration * TimeDelta)

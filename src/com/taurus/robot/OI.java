@@ -66,55 +66,10 @@ public class OI
     {
         buttonStart1.toggleWhenPressed(new DriveArcadeWithXbox());
         buttonBack1.toggleWhenPressed(new DriveTankWithXbox(true));
-        
-        buttonRB1.whileHeld(new ManipulatorContinous(true));
-        buttonLB1.whileHeld(new ManipulatorContinous(false));
-        
-        buttonLeftTrigger1.whileHeld(new CameraChange(true));
-
-        buttonA1.whileHeld(new BallIntake(true));
-        buttonB1.whileHeld(new BallIntake(false));
-//        buttonY1.whileHeld(new KickerToAngle(180));
-
-//        buttonA1.whileHeld(new KickerContinuous(true));
-//        buttonB1.whileHeld(new KickerContinuous(false));
-        
-        ////////////////////////
-        
-        buttonA2.whileHeld(new ShooterGrab());
-        buttonB2.whileHeld(new ShooterFire());
-        
-        buttonLeftTrigger2.whileHeld(new ShooterRevLEDs());
-        buttonRightTrigger2.whenPressed(new ShooterRelease());
-
-        buttonLB2.whenPressed(new LiftToTop());
-        buttonRB2.whenPressed(new LiftToBottom());
-        buttonStart2.toggleWhenPressed(new LiftStop());
-        
-//        buttonX2.whileHeld(new AimerContinuous(true));
-//        buttonY2.whileHeld(new AimerContinuous(false));
-
-        buttonX2.whileHeld(new AimerToAngle(90));
-        buttonY2.whileHeld(new AimerToAngle(115));
-
-        buttonBack2.toggleWhenPressed(new AimerLEDs(true));
-        buttonStart2.toggleWhenPressed(new AimerLEDs(false));
-        
+                
         //////////////////////////
         
-        panelLeftYellow.whileHeld(new AutoLiftAndShoot());
-        panelLeftWhite.whileHeld(new LiftCal());
-        panelLeftBlack.whileHeld(new LoadBallFromFloor());
-        panelRightWhite.whileHeld(new LoadBall());
-
-        panelRightYellow.whileHeld(new LiftContinuous(true));
-        panelRightGreen.whileHeld(new LiftContinuous(false));
-        panelRightBlack.whileHeld(new ClimberClaw(true));
-    }
-    
-    public static boolean getTractionControl()
-    {
-        return false;//xbox1.getBumper(Hand.kRight);
+        //////////////////////////
     }
     
     public static double getSpeedLeft()
@@ -142,12 +97,6 @@ public class OI
         return xbox1.getTriggerVal(Hand.kLeft);
     }
     
-    public static double getShooterSpeedAdjust()
-    {
-        //return xbox2.getTriggerVal(Hand.kRight);
-        return 1;
-    }
-
     public static int getDpad1()
     {
         return xbox1.getPOV(0);
@@ -157,27 +106,15 @@ public class OI
     {
         return xbox2.getPOV(0);
     }
-
-    public static double getTractionMiddleIncrease()
-    {
-        return xbox1.getTriggerVal(Hand.kRight);
-    }
     
     public static void setRumble1(RumbleType type, float value)
     {
         xbox1.setRumble(type, value);
     }
 
-    
     public static void setRumble2(RumbleType type, float value)
     {
         xbox2.setRumble(type, value);
     }
-
-    public static double getAimerY()
-    {
-        return xbox2.getY(Hand.kLeft);
-    }
-    
 }
 

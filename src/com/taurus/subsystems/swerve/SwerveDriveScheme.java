@@ -1,9 +1,9 @@
-package com.taurus.swerve;
+package com.taurus.subsystems.swerve;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveScheme {
+public class SwerveDriveScheme {
 
     public static final int HALO_DRIVE = 0;
     public static final int ANGLE_DRIVE = 1;
@@ -11,7 +11,7 @@ public class DriveScheme {
 
     private SendableChooser driveChooser = new SendableChooser();
 
-    public DriveScheme()
+    public SwerveDriveScheme()
     {
         // setup the drive chooser object
         driveChooser = new SendableChooser();
