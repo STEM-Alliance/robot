@@ -1,0 +1,76 @@
+
+package org.wfrobotics.commands;
+
+import org.wfrobotics.Utilities;
+import org.wfrobotics.robot.OI;
+import org.wfrobotics.robot.Robot;
+
+import edu.wpi.first.wpilibj.command.Command;
+
+public class DriveArcadeWithXbox extends Command 
+{
+    public DriveArcadeWithXbox() 
+    {
+        requires(Robot.tankDriveSubsystem);
+    }
+
+    protected void initialize() 
+    {
+        Robot.tankDriveSubsystem.enableGyro(false);
+    }
+
+    protected void execute() 
+    {
+
+        double adjust = 1.0 - .5 * OI.getThrottleHighSpeed();
+        double y = OI.getThrottleY();
+        double x = OI.getThrottleX() * .8;
+        double speedL = y;  // Default value as if forward/backwards
+        double speedR = y;  // Default value as if forward/backwards
+        
+        Utilities.PrintCommand("Drive", this);
+        
+        // this doesn't work
+//        // Determine if we are instead going left/right
+//        if (Math.abs(x) > Math.abs(y))
+//        {
+//            double direction = Math.signum(x);  // Going Right = 1, Going Left = -1
+//            
+//            speedL = x * direction;
+//            speedR = -x * direction;
+//        }
+        
+        speedL = y + x;
+        speedR = y - x;
+        speedL = limit(speedL);
+        speedR = limit(speedR);
+        
+        Robot.tankDriveSubsystem.driveRaw(speedR * adjust, speedL * adjust);
+    }
+    
+    private double limit(double val)
+    {
+        double output = val;
+        
+        if(val > 1)
+            output = 1;
+        else if (val < -1)
+            output= -1;
+        return output;
+    }
+
+    protected boolean isFinished() 
+    {
+        return false;  // Always run this command because it will be default command of the subsystem.
+    }
+
+    protected void end() 
+    {
+        
+    }
+
+    protected void interrupted() 
+    {
+        
+    }
+}
