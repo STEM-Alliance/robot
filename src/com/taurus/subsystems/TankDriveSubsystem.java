@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.command.PIDCommand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class RockerDriveSubsystem extends Subsystem 
+public class TankDriveSubsystem extends Subsystem 
 {
     private final double DEADBAND = 0;
 
@@ -38,7 +38,7 @@ public class RockerDriveSubsystem extends Subsystem
     /**
      * Constructor
      */
-    public RockerDriveSubsystem()
+    public TankDriveSubsystem()
     {
         
         // set up left side motors

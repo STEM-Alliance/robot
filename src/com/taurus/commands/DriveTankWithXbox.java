@@ -13,13 +13,13 @@ public class DriveTankWithXbox extends Command
     
     public DriveTankWithXbox(boolean backward) 
     {
-        requires(Robot.rockerDriveSubsystem);
+        requires(Robot.tankDriveSubsystem);
         this.backward = backward;
     }
 
     protected void initialize() 
     {
-        Robot.rockerDriveSubsystem.enableGyro(false);
+        Robot.tankDriveSubsystem.enableGyro(false);
     }
 
     protected void execute() 
@@ -49,7 +49,7 @@ public class DriveTankWithXbox extends Command
                 right = Math.signum(right) * magnitudeAverage;
             }
         }
-        Robot.rockerDriveSubsystem.driveRaw(right, left);
+        Robot.tankDriveSubsystem.driveRaw(right, left);
     }
 
     protected boolean isFinished() 

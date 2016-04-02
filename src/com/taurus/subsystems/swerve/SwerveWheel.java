@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.taurus.swerve;
+package com.taurus.subsystems.swerve;
 
 import com.taurus.Utilities;
 import com.taurus.controller.SwerveController;
@@ -12,6 +12,7 @@ import com.taurus.hardware.MagnetoPot;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Servo;
 
 /**
@@ -225,7 +226,7 @@ public class SwerveWheel {
      */
     private double AdjustAngle(double angle)
     {
-        this.AngleOrientation = Application.prefs.getDouble("Wheel_Orientation_" + Number, AngleOrientation);
+        this.AngleOrientation = Preferences.getInstance().getDouble("Wheel_Orientation_" + Number, AngleOrientation);
 
         double AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
         
@@ -241,7 +242,7 @@ public class SwerveWheel {
                     // we need to then update the angle
                     this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0, 360);
                     
-                    Application.prefs.putDouble("Wheel_Orientation_" + Number, AngleOrientation);
+                    Preferences.getInstance().putDouble("Wheel_Orientation_" + Number, AngleOrientation);
                     
                     AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
                 }
@@ -286,7 +287,7 @@ public class SwerveWheel {
         // Update the angle controller.
         AngleController.update(angle, AdjustAngle(getAnglePotValue()));
         
-        maxRotationSpeed = Application.prefs.getDouble("maxRotationSpeed", maxRotationSpeed);
+        maxRotationSpeed = Preferences.getInstance().getDouble("maxRotationSpeed", maxRotationSpeed);
 
         // Control the wheel angle.
         if (speed > MinSpeed)

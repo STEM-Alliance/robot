@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.taurus.swerve;
+package com.taurus.subsystems.swerve;
 
 /**
  * Pin assignments for Swerve Drive system
