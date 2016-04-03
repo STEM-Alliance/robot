@@ -2,7 +2,7 @@ package org.wfrobotics.subsystems;
 
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
-import org.wfrobotics.commands.DriveTankWithXbox;
+import org.wfrobotics.commands.drive.DriveTank;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.RobotMap;
 
@@ -11,12 +11,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDeviceStatus;
-import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.command.PIDCommand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,11 +21,10 @@ public class TankDriveSubsystem extends Subsystem
 
     // order is {Front, Middle, Back}
     //          {bogie, bogie, fixed}
-    private CANTalon motorsL[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_LEFT.length];
-    private CANTalon motorsR[] = new CANTalon[RobotMap.CAN_ROCKER_TALONS_RIGHT.length];
+    private CANTalon motorsL[] = new CANTalon[RobotMap.CAN_TANK_TALONS_LEFT.length];
+    private CANTalon motorsR[] = new CANTalon[RobotMap.CAN_TANK_TALONS_RIGHT.length];
     private Gyro navxMXP;  // Expander board, contains gyro
     
-    private boolean applyGyro;
     private double desiredHeading;
     private PIDController headingPID;
     
@@ -45,13 +39,13 @@ public class TankDriveSubsystem extends Subsystem
         // set up left side motors
         for (int i = 0; i < motorsL.length; i++)
         {
-            motorsL[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_LEFT[i]);
+            motorsL[i] = new CANTalon(RobotMap.CAN_TANK_TALONS_LEFT[i]);
         }
         
         // setup right side motors
         for (int i = 0; i < motorsR.length; i++)
         {
-            motorsR[i] = new CANTalon(RobotMap.CAN_ROCKER_TALONS_RIGHT[i]);
+            motorsR[i] = new CANTalon(RobotMap.CAN_TANK_TALONS_RIGHT[i]);
 
             // since the right side rotation is inverted from the left, set that in the controller
             motorsR[i].setInverted(true);
@@ -66,7 +60,6 @@ public class TankDriveSubsystem extends Subsystem
         } catch (RuntimeException ex ) {
             DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
         }
-        applyGyro = false;
         
         headingPID = new PIDController(.2, 0, 0, .5);
     }
@@ -77,7 +70,7 @@ public class TankDriveSubsystem extends Subsystem
     public void initDefaultCommand() 
     {
         // Set the default command for a subsystem here.
-        setDefaultCommand(new DriveTankWithXbox(false));
+        setDefaultCommand(new DriveTank(false));
     }
     
     /**
@@ -204,13 +197,7 @@ public class TankDriveSubsystem extends Subsystem
         // we're done if we're at the angle, and we're no longer turning
         return Math.abs(error) < HEADING_TOLERANCE;// && Math.abs(output) < .1;
     }
-    
-    
-    public void enableGyro(boolean enabled)
-    {
-        applyGyro = enabled;
-    }
-    
+        
     public void zeroGyro(double angle)
     {
         navxMXP.setZero(angle);

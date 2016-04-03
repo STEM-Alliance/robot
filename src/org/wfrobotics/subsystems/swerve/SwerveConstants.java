@@ -6,14 +6,9 @@ package org.wfrobotics.subsystems.swerve;
 /**
  * Pin assignments for Swerve Drive system
  * 
- * @author Team 4818 Taurus Robotics
+ * @author Team 4818 WFRobotics
  */
 public class SwerveConstants {
-
-    /*
-     * Digital: 0-9 are on-board, 10-25 are on the MXP Analog: 0-3 are on-board,
-     * 4-7 are on the MXP PWM: 0-9 are on-board, 10-19 are on the MXP
-     */
 
     public static final int WheelCount = 4;
 
@@ -25,14 +20,10 @@ public class SwerveConstants {
      * X & Y coordinate positions for wheel placement. Relative to robot center
      */
     public static final double[][] WheelPositions = {
-            { -ChassisWidth / ChassisScale, ChassisDepth / ChassisScale }, // front
-                                                                           // left
-            { ChassisWidth / ChassisScale, ChassisDepth / ChassisScale }, // front
-                                                                          // right
-            { ChassisWidth / ChassisScale, -ChassisDepth / ChassisScale }, // back
-                                                                           // right
-            { -ChassisWidth / ChassisScale, -ChassisDepth / ChassisScale } }; // back
-                                                                              // left
+            { -ChassisWidth / ChassisScale, ChassisDepth / ChassisScale }, // front left
+            { ChassisWidth / ChassisScale, ChassisDepth / ChassisScale }, // front right
+            { ChassisWidth / ChassisScale, -ChassisDepth / ChassisScale }, // back right
+            { -ChassisWidth / ChassisScale, -ChassisDepth / ChassisScale } }; // back left
 
     /**
      * Orientation Angle of each wheel in degrees clockwise. Relative to robot 0
@@ -40,7 +31,7 @@ public class SwerveConstants {
      */
     public static final double[] WheelOrientationAngle = { 115, // front left
             301, // front right
-            2109, // back right
+            210, // back right
             293 }; // back left
 
     /**
@@ -52,24 +43,9 @@ public class SwerveConstants {
             { 6, 7 } }; // back left
 
     /**
-     * Pins (Analog) for wheel angle potentiometer inputs
+     * Digital input pins for the angle calibration reed switch
      */
-    public static final int[] WheelPotPins = { 0, 1, 2, 3 };
-
-    /**
-     * CAN Address for wheel drive motor controller outputs
-     */
-    public static final int[] WheelDriveMotorAddress = { 14, 12, 13, 11 };
-
-    /**
-     * CAN Address for wheel angle motor controller outputs
-     */
-    public static final int[] WheelAngleMotorPins = { 18, 16, 17, 15 };
-
-    /**
-     * Pins (PWM) for wheel shifting servos
-     */
-    public static final int[] WheelShiftServoPins = { 0, 1, 2, 3 };
+    public static final int[] WheelAngleCalibrationPins = { 1, 2, 3, 8 };
 
     /**
      * Array of values for shifting gears, low then high values
@@ -87,8 +63,7 @@ public class SwerveConstants {
     /**
      * Wheel circumference
      */
-    public static final double DriveWheelCircumference = Math.PI
-            * DriveWheelDiameter;
+    public static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
 
     /**
      * Encoder pulses per 1 full encoder rotation
@@ -109,8 +84,7 @@ public class SwerveConstants {
     /**
      * The ratio between low gear top speed and high gear top speed
      */
-    public static final double DriveGearRatio = 0.5; // TODO: probably totally
-                                                     // wrong
+    public static final double DriveGearRatio = 0.5; // TODO: probably totally wrong
 
     /**
      * The wheel top speed in high gear
@@ -120,15 +94,8 @@ public class SwerveConstants {
     /**
      * The wheel top speed in low gear
      */
-    public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity
-            * DriveGearRatio;
+    public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity * DriveGearRatio;
 
     public static final double DriveSpeedCrawl = .4;
     public static final double DriveSpeedNormal = .85;
-    
-    
-    /**
-     * Digital input pins for the angle calibration reed switch
-     */
-    public static final int[] WheelAngleCalibrationPins = { 1, 2, 3, 8 };
 }

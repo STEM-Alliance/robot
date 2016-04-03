@@ -3,10 +3,9 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.commands.*;
 import org.wfrobotics.subsystems.*;
-import org.wfrobotics.vision.Vision;
+import org.wfrobotics.subsystems.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -39,6 +38,7 @@ public class Robot extends SampleRobot
     }
 
 	public static TankDriveSubsystem tankDriveSubsystem;
+	public static SwerveDriveSubsystem swerveDriveSubsystem;
 	public static OI oi;
 
     Command autonomousCommand;
@@ -46,14 +46,23 @@ public class Robot extends SampleRobot
     SendableChooser positionChooser;
     SendableChooser modeChooser;
 
-    
-
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
     public void robotInit() {
-        tankDriveSubsystem = new TankDriveSubsystem();
+        
+        switch(RobotMap.DriveSystem)
+        {
+            case DRIVE_SWERVE:
+                swerveDriveSubsystem = new SwerveDriveSubsystem();
+                break;
+                
+            case DRIVE_TANK:
+            default:
+                tankDriveSubsystem = new TankDriveSubsystem();
+                break;
+        }
         
         oi = new OI();
         autoChooser = new SendableChooser();

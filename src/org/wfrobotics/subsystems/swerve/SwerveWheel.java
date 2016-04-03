@@ -1,13 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.wfrobotics.subsystems.swerve;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.controller.SwerveController;
 import org.wfrobotics.hardware.MagnetoPot;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -16,9 +9,9 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Servo;
 
 /**
- * Handle motor outputs and feedback for an individual wheel
+ * Handle motor outputs and feedback for an individual swerve wheel
  * 
- * @author Team 4818 Taurus Robotics
+ * @author Team 4818 WFRobotics
  */
 public class SwerveWheel {
     String Name;
@@ -45,17 +38,14 @@ public class SwerveWheel {
     // motor
     public CANTalon MotorDrive;
     public CANTalon MotorAngle;
- 
 
     // sensor
     public MagnetoPot AnglePot;
-
     
     public DigitalInput CalibrationSensor;
+    private boolean CalibrationEnable;
     
-    /**
-     * angle that the sensor is mounted compared to 0
-     */
+    // angle that the sensor is mounted compared to 0
     public double CalibrationSensorAngle;
     private final double CALIBRATION_MINIMUM = 20;
 
@@ -73,30 +63,21 @@ public class SwerveWheel {
     // deadband
     private static final double MinSpeed = 0.1;
 
-    private final SwerveController controller;
-    
     /**
      * Set up the wheel with the specific IO and orientation on the robot
      * 
-     * @param Number
-     *            Number of the wheel
-     * @param Position
-     *            Wheel position relative to robot center as array
-     * @param Orientation
-     *            Angle of wheel relative to robot 0 angle in degrees
-     * @param EncoderPins
-     *            Pins for Speed Encoder input as array
-     * @param PotPin
-     *            Pin for Angle Potentiometer
-     * @param DriveAddress
-     *            Address for drive motor controller
-     * @param AngleAddress
-     *            Pin for angle motor controller
+     * @param Number Number of the wheel
+     * @param Position Wheel position relative to robot center as array
+     * @param Orientation Angle of wheel relative to robot 0 angle in degrees
+     * @param EncoderPins Pins for Speed Encoder input as array
+     * @param PotPin Pin for Angle Potentiometer
+     * @param DriveAddress Address for drive motor controller
+     * @param AngleAddress Pin for angle motor controller
      */
     public SwerveWheel(int Number, double[] Position, double Orientation,
             int PotPin, int DriveAddress, int AngleAddress,
             int ShiftPin, int[] ShiftVals,
-            int AngleCalibrationPin, SwerveController controller)
+            int AngleCalibrationPin)
     {
         Name = "Wheel" + this.Number;
         this.Number = Number;
@@ -105,26 +86,18 @@ public class SwerveWheel {
         WheelActual = new SwerveVector(0, 0);
         WheelDesired = new SwerveVector(0, 0);
         MotorDrive = new CANTalon(DriveAddress);
+        
 //        MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone, closeLoopRampRate, 0);
 //        MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 //        MotorDrive.changeControlMode(ControlMode.Disabled);
-//        if(Application.ROBOT_VERSION == 0)
-//        {
-            MotorAngle = new CANTalon(AngleAddress);
-//        }
-//        else
-//        {
-//            MotorAngleBackup = new Victor(AnglePin);
-//        }
+        
+        MotorAngle = new CANTalon(AngleAddress);
 
         HighGear = true;
         Shifter = new Servo(ShiftPin);
         ShifterValueHigh = ShiftVals[0];
         ShifterValueLow = ShiftVals[1];
 
-
-        // AnglePot = new AnalogPotentiometer(PotPin, 360 + Math.abs(SpinMin) +
-        // Math.abs(SpinMax), -SpinMin);
         AnglePot = new MagnetoPot(PotPin, 360);
         AngleController = new SwerveAngleController(Name + ".ctl");
 
@@ -132,7 +105,6 @@ public class SwerveWheel {
         
         CalibrationSensor = new DigitalInput(AngleCalibrationPin);
         
-        this.controller = controller;
     }
 
     /**
@@ -231,7 +203,7 @@ public class SwerveWheel {
         double AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
         
         
-        if(controller.getWheelCal())
+        if(CalibrationEnable)
         {
             if(CalibrationSensor.get())
             {
@@ -282,7 +254,7 @@ public class SwerveWheel {
      * 
      * @return Whether the drive motor should run in the opposite direction
      */
-    public boolean updateAngleMotor(double angle, double speed)
+    private boolean updateAngleMotor(double angle, double speed)
     {
         // Update the angle controller.
         AngleController.update(angle, AdjustAngle(getAnglePotValue()));
@@ -292,28 +264,14 @@ public class SwerveWheel {
         // Control the wheel angle.
         if (speed > MinSpeed)
         {
-//            if(Application.ROBOT_VERSION == 0)
-//            {
-                MotorAngle.set(AngleController.getMotorSpeed() * maxRotationSpeed);
-//            }
-             
-//            else
-//            {
-//                MotorAngleBackup.set(-AngleController.getMotorSpeed() * maxRotationSpeed);
-//            }
+            MotorAngle.set(AngleController.getMotorSpeed() * maxRotationSpeed);
+
         }
         else
         {
             // Too slow, do nothing
             AngleController.resetIntegral();
-//            if(Application.ROBOT_VERSION == 0)
-//            {
-                MotorAngle.set(0);
-//            }
-//            else
-//            {
-//                MotorAngleBackup.set(0);
-//            }
+            MotorAngle.set(0);
         }
 
         return AngleController.isReverseMotor();
@@ -358,8 +316,7 @@ public class SwerveWheel {
          */
 
         // Control the motor.
-        double driveMotorOutput = driveMotorSpeed;// +
-                                                  // driveMotorControllerOutput;
+        double driveMotorOutput = driveMotorSpeed;// + driveMotorControllerOutput;
 
         if (Brake)
         {

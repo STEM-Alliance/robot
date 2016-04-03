@@ -1,5 +1,5 @@
 
-package org.wfrobotics.commands;
+package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.OI;
@@ -7,24 +7,23 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveArcadeWithXbox extends Command 
+public class DriveTankArcade extends Command 
 {
-    public DriveArcadeWithXbox() 
+    public DriveTankArcade() 
     {
         requires(Robot.tankDriveSubsystem);
     }
 
     protected void initialize() 
     {
-        Robot.tankDriveSubsystem.enableGyro(false);
     }
 
     protected void execute() 
     {
 
-        double adjust = 1.0 - .5 * OI.getThrottleHighSpeed();
-        double y = OI.getThrottleY();
-        double x = OI.getThrottleX() * .8;
+        double adjust = OI.DriveArcadeOI.getThrottleSpeedAdjust();
+        double y = OI.DriveArcadeOI.getThrottle();
+        double x = OI.DriveArcadeOI.getTurn() * .8;
         double speedL = y;  // Default value as if forward/backwards
         double speedR = y;  // Default value as if forward/backwards
         
