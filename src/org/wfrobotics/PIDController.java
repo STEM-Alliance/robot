@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 /**
  * A basic PID controller for use with the Swerve drive
  * 
- * @author Team 4818 Taurus Robotics
+ * @author Team 4818 WFRobotics
  *
  */
 public final class PIDController {

@@ -1,12 +1,10 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.commands.*;
-import org.wfrobotics.controller.Panel;
-import org.wfrobotics.controller.PanelButton;
-import org.wfrobotics.controller.Xbox;
-import org.wfrobotics.controller.XboxButton;
-import org.wfrobotics.controller.XboxTriggerButton;
+import org.wfrobotics.commands.drive.*;
+import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Xbox.RumbleType;
+import org.wfrobotics.subsystems.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -17,104 +15,207 @@ import edu.wpi.first.wpilibj.buttons.Button;
  */
 public class OI 
 {
-    static Xbox xbox1 = new Xbox(0);
-    static Xbox xbox2 = new Xbox(1);
+    static Xbox xboxDrive = new Xbox(0);
+    static Xbox xboxMan = new Xbox(1);
     static Panel panel = new Panel(2);
     
-    //first controller
-    Button buttonA1 = new XboxButton(xbox1, Xbox.ButtonType.kA);
-    Button buttonB1 = new XboxButton(xbox1, Xbox.ButtonType.kB);
+    // drive controller
+
+    Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.ButtonType.kBack);
+    Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.ButtonType.kStart);
     
-    Button buttonY1 = new XboxButton(xbox1, Xbox.ButtonType.kY);
-    Button buttonX1 = new XboxButton(xbox1, Xbox.ButtonType.kX);
-    
-    Button buttonLeftTrigger1 = new XboxTriggerButton(xbox1, Xbox.Hand.kLeft);
-
-    Button buttonRB1 = new XboxButton(xbox1, Xbox.ButtonType.kRB);
-    Button buttonLB1 = new XboxButton(xbox1, Xbox.ButtonType.kLB);
-
-    Button buttonBack1 = new XboxButton(xbox1, Xbox.ButtonType.kBack);
-    Button buttonStart1 = new XboxButton(xbox1, Xbox.ButtonType.kStart);
-    
-    //second controller
-    Button buttonA2 = new XboxButton(xbox2, Xbox.ButtonType.kA);
-    Button buttonB2 = new XboxButton(xbox2, Xbox.ButtonType.kB);
-    
-    Button buttonY2 = new XboxButton(xbox2, Xbox.ButtonType.kY);
-    Button buttonX2 = new XboxButton(xbox2, Xbox.ButtonType.kX);
-
-    Button buttonRB2 = new XboxButton(xbox2, Xbox.ButtonType.kRB);
-    Button buttonLB2 = new XboxButton(xbox2, Xbox.ButtonType.kLB);
-
-    Button buttonBack2 = new XboxButton(xbox2, Xbox.ButtonType.kBack);
-    Button buttonStart2 = new XboxButton(xbox2, Xbox.ButtonType.kStart);
-
-    Button buttonRightTrigger2 = new XboxTriggerButton(xbox2, Xbox.Hand.kRight);
-    Button buttonLeftTrigger2 = new XboxTriggerButton(xbox2, Xbox.Hand.kLeft);
-
+    // manipulator controller
+    //Button buttonManBack = new XboxButton(xboxMan, Xbox.ButtonType.kBack);
     
     // panel
-    Button panelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
-    Button panelRightWhite = new PanelButton(panel, Panel.ButtonType.kWhiteR);
-    Button panelLeftBlack = new PanelButton(panel, Panel.ButtonType.kBlackL);
-    Button panelLeftYellow = new PanelButton(panel, Panel.ButtonType.kYellowL);
-    Button panelRightYellow = new PanelButton(panel, Panel.ButtonType.kYellowR);
-    Button panelRightGreen = new PanelButton(panel, Panel.ButtonType.kGreenR);
-    Button panelRightBlack = new PanelButton(panel, Panel.ButtonType.kBlackR);
+    //Button buttonPanelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
     
     public OI() 
     {
-        buttonStart1.toggleWhenPressed(new DriveArcadeWithXbox());
-        buttonBack1.toggleWhenPressed(new DriveTankWithXbox(true));
+        buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
+        buttonDriveBack.toggleWhenPressed(new DriveTank(true));
                 
         //////////////////////////
         
         //////////////////////////
     }
     
-    public static double getSpeedLeft()
+    public static class DriveTankOI
     {
-        return xbox1.getY(Hand.kLeft);
+        public static double getL()
+        {
+            return xboxDrive.getY(Hand.kLeft);
+        }
+        
+        public static double getR()
+        {
+            return xboxDrive.getY(Hand.kRight);        
+        }
+        
+        public static double getThrottleSpeedAdjust()
+        {
+            return 1.0 - .5 * xboxDrive.getTriggerVal(Hand.kLeft);
+        }
     }
     
-    public static double getSpeedRight()
+    public static class DriveArcadeOI
     {
-        return xbox1.getY(Hand.kRight);        
+        public static double getThrottle()
+        {
+          return xboxDrive.getY(Hand.kLeft);
+        }
+        
+        public static double getTurn()
+        {
+            return xboxDrive.getX(Hand.kLeft);
+        }
+        
+        public static double getThrottleSpeedAdjust()
+        {
+            return 1.0 - .5 * xboxDrive.getTriggerVal(Hand.kLeft);
+        }
     }
     
-    public static double getThrottleY()
+    public static class DriveSwerveOI
     {
-      return xbox1.getY(Hand.kLeft);
+        private static final double DEADBAND = 0.2;
+
+        /**
+         * Get the Rotation value of the joystick for Halo Drive
+         * 
+         * @return The Rotation value of the joystick.
+         */
+        public static double getHaloDrive_Rotation()
+        {
+            double value = 0;
+        
+            value = xboxDrive.getAxis(Xbox.AxisType.kRightX);
+        
+            if (Math.abs(value) < DEADBAND)
+            {
+                value = 0;
+            }
+            return value;
+        }
+
+        /**
+         * Get the {@link SwerveVector} (mag & angle) of the velocity joystick for Halo
+         * Drive
+         * 
+         * @return The vector of the joystick.
+         */
+        public static SwerveVector getHaloDrive_Velocity()
+        {
+            SwerveVector value;
+        
+            value = new SwerveVector(xboxDrive.getX(Hand.kLeft), xboxDrive.getY(Hand.kLeft));
+        
+            if (value.getMag() < DEADBAND)
+            {
+                value.setMag(0);
+            }
+        
+            return value;
+        }
+
+        public static double getHaloDrive_Heading45()
+        {
+            return -1;
+        }
+        
+        /**
+         * Get the heading/angle in degrees for Angle Drive
+         * 
+         * @return The angle in degrees of the joystick.
+         */
+        public static double getAngleDrive_Heading()
+        {
+            double Angle = -1;
+            
+            if (xboxDrive.getMagnitude(Hand.kRight) > 0.65)
+            {
+                Angle = xboxDrive.getDirectionDegrees(Hand.kRight);
+            }
+        
+            return Angle;
+        }
+
+        /**
+         * Get the rotation for Angle Drive
+         * 
+         * @return The rotation rate in rad/s.
+         */
+        public static double getAngleDrive_Rotation()
+        {
+            double Rotation = 0;
+            int dpad = getDpad();
+            
+            if (dpad == 90)
+            {
+                Rotation = .75;
+            }
+            else if (dpad == 270)
+            {
+                Rotation = -.75;
+            }
+            return Rotation;
+        }
+
+        /**
+         * Get the {@link SwerveVector} (mag & angle) of the velocity joystick for Angle
+         * Drive
+         * 
+         * @return The vector of the joystick.
+         */
+        public static SwerveVector getAngleDrive_Velocity()
+        {
+            SwerveVector value;
+        
+            value = new SwerveVector(xboxDrive.getX(Hand.kLeft), xboxDrive.getY(Hand.kLeft));
+        
+            if (value.getMag() < DEADBAND)
+            {
+                value.setMag(0);
+            }
+            return value;
+        }
+
+        public static boolean getHighGearEnable()
+        {
+            return xboxDrive.getBumper(Hand.kRight);
+        }
+        
+        public static double getCrawlSpeed()
+        {
+            return xboxDrive.getTriggerVal(Hand.kRight);
+        }
+        
+        public static boolean getBrake()
+        {
+            return false;
+        }
+        
+        public static int getDpad()
+        {
+            return xboxDrive.getPOV(0);
+        }
+
+        public static boolean getFieldRelative()
+        {
+            return true;
+        }
+
+        public static boolean getResetGyro()
+        {
+            return false;
+        }
+
     }
     
-    public static double getThrottleX()
+    public static void setDriveRumble(RumbleType type, float value)
     {
-        return xbox1.getX(Hand.kLeft);
-    }
-     
-    public static double getThrottleHighSpeed()
-    {
-        return xbox1.getTriggerVal(Hand.kLeft);
-    }
-    
-    public static int getDpad1()
-    {
-        return xbox1.getPOV(0);
+        xboxDrive.setRumble(type, value);
     }
 
-    public static int getDpad2()
-    {
-        return xbox2.getPOV(0);
-    }
-    
-    public static void setRumble1(RumbleType type, float value)
-    {
-        xbox1.setRumble(type, value);
-    }
-
-    public static void setRumble2(RumbleType type, float value)
-    {
-        xbox2.setRumble(type, value);
-    }
 }
 

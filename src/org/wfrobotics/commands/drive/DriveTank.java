@@ -1,5 +1,5 @@
 
-package org.wfrobotics.commands;
+package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.OI;
@@ -7,11 +7,11 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveTankWithXbox extends Command 
+public class DriveTank extends Command 
 {
     boolean backward;
     
-    public DriveTankWithXbox(boolean backward) 
+    public DriveTank(boolean backward) 
     {
         requires(Robot.tankDriveSubsystem);
         this.backward = backward;
@@ -19,16 +19,15 @@ public class DriveTankWithXbox extends Command
 
     protected void initialize() 
     {
-        Robot.tankDriveSubsystem.enableGyro(false);
     }
 
     protected void execute() 
     {
         Utilities.PrintCommand("Drive", this);
        
-        double adjust = 1.0 - .5 * OI.getThrottleHighSpeed();
-        double left = OI.getSpeedLeft() * adjust;
-        double right = OI.getSpeedRight() * adjust;
+        double adjust = OI.DriveTankOI.getThrottleSpeedAdjust();
+        double left = OI.DriveTankOI.getL() * adjust;
+        double right = OI.DriveTankOI.getR() * adjust;
 
         if(backward)
         {

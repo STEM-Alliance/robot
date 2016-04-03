@@ -1,14 +1,14 @@
-package org.wfrobotics.commands;
+package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveBrakeMode extends Command
+public class DriveTankBrakeMode extends Command
 {
     private boolean enable;
     
-    public DriveBrakeMode(boolean enable) 
+    public DriveTankBrakeMode(boolean enable) 
     {
         requires(Robot.tankDriveSubsystem);
         this.enable = enable;

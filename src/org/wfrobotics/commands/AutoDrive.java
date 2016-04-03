@@ -44,7 +44,6 @@ public class AutoDrive extends Command
         if(gyroEnabled)
         {   
             // Create our heading straight in front of our current position
-            Robot.tankDriveSubsystem.enableGyro(true);
             //Robot.rockerDriveSubsystem.zeroGyro(0); //TODO BDP Needed to zero here?
         }
     }

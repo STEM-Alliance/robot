@@ -11,7 +11,7 @@ import org.wfrobotics.Utilities;
  * Auto calculate angle and magnitude/angular velocity/distance from x and y
  * values
  * 
- * @author Team 4818 Taurus Robotics
+ * @author Team 4818 WFRobotics
  */
 public class SwerveVector {
     private double x;

@@ -8,30 +8,33 @@ package org.wfrobotics.subsystems.swerve;
 
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
-import org.wfrobotics.controller.SwerveController;
 import org.wfrobotics.hardware.Gyro;
+import org.wfrobotics.robot.RobotMap;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Swerve chassis implementation
  * 
- * @author Team 4818 Taurus Robotics
+ * @author Team 4818 WFRobotics
  */
 public class SwerveDriveSubsystem extends Subsystem {
 
     private SwerveWheel[] Wheels;
 
+    private Gyro navxMXP;
+    
     private boolean FieldRelative;
+    private double LastHeading;
     private boolean GearHigh;
     private boolean Brake;
-    private double LastHeading;
+    private double CrawlMode = 0.0;
+    private boolean HighSpeed = false;
 
     private PIDController ChassisAngleController;
     private double ChassisP = 2.5 / 180; // /1.3 / 180; // Full speed rotation
@@ -40,9 +43,6 @@ public class SwerveDriveSubsystem extends Subsystem {
     private double ChassisI = 0;
     private double ChassisD = 0;
 
-    private Gyro Gyro;
-    SerialPort serial_port;
-
     private double MinRotationAdjust = .3;
     private double MaxAcceleration = 2; // Smaller is slower acceleration
     private double MaxAvailableVelocity = 1;
@@ -50,46 +50,26 @@ public class SwerveDriveSubsystem extends Subsystem {
     protected double RotationRateAdjust = 1;
 
     private SwerveVector LastVelocity;
-
     private double lastVelocityTimestamp;
-
-    private SwerveDriveScheme driveScheme;
-
-    private double CrawlMode = 0.0;
-    private SwerveVector AutoVector;
-    private double AutoTimeLength;
-    private boolean AutoRunEnable;
-    private double AutoTimeStart;
-    
-    private final SwerveController controller;
 
     /**
      * sets up individual wheels and their positions relative to robot center
      */
-    public SwerveDriveSubsystem(SwerveController controller)
+    public SwerveDriveSubsystem()
     {
-        this.controller = controller;
-        
-        ChassisAngleController =
-                new PIDController(ChassisP, ChassisI, ChassisD, 1.0);
+        ChassisAngleController = new PIDController(ChassisP, ChassisI, ChassisD, 1.0);
 
         LastVelocity = new SwerveVector(0, 0);
 
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
 
-        driveScheme = new SwerveDriveScheme();
-
-        try
-        {
-            Gyro = new Gyro(SPI.Port.kMXP);
-        }
-        catch (Exception ex)
-        {
-        }
-
-        if (Gyro != null)
-        {
-            //LiveWindow.addSensor("IMU", "Gyro", Gyro);
+        try {
+            /* Communicate w/navX MXP via the MXP SPI Bus.                                     */
+            /* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
+            /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
+            navxMXP = new Gyro(SerialPort.Port.kMXP);
+        } catch (RuntimeException ex ) {
+            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
         }
 
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle
@@ -99,94 +79,14 @@ public class SwerveDriveSubsystem extends Subsystem {
                     SwerveConstants.WheelPositions[i],
                     Preferences.getInstance().getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
 //                    SwerveConstants.WheelEncoderPins[i],
-                    SwerveConstants.WheelPotPins[i],
-                    SwerveConstants.WheelDriveMotorAddress[i],
-                    SwerveConstants.WheelAngleMotorPins[i],
-                    SwerveConstants.WheelShiftServoPins[i],
+                    RobotMap.ANG_SWERVE_ANGLE[i],
+                    RobotMap.CAN_SWERVE_DRIVE_TALONS[i],
+                    RobotMap.CAN_SWERVE_ANGLE_TALONS[i],
+                    RobotMap.PWM_SWERVE_SHIFT_SERVOS[i],
                     SwerveConstants.WheelShiftServoVals[i],
-                    SwerveConstants.WheelAngleCalibrationPins[i],
-                    controller);
+                    SwerveConstants.WheelAngleCalibrationPins[i]);
         }
 
-    }
-
-    public boolean autoRun(SwerveVector AutoVector, double AutoTime,
-            boolean FirstTime)
-    {
-        if (FirstTime)
-        {
-            this.AutoVector = AutoVector;
-            this.AutoTimeLength = AutoTime;
-            AutoRunEnable = true;
-            AutoTimeStart = Timer.getFPGATimestamp();
-
-        }
-
-        return !AutoRunEnable;
-    }
-
-    /**
-     * Run the normal drive setup, using inputs from the controller
-     * 
-     * @param controller
-     */
-    public void run()
-    {
-
-        setCrawlMode(controller.getLowSpeed());
-
-        // Use the Joystick inputs to update the drive system
-        switch (driveScheme.get())
-        {
-            case SwerveDriveScheme.ANGLE_DRIVE:
-                setFieldRelative(controller.getFieldRelative());
-
-                UpdateDrive(controller.getAngleDrive_Velocity(), 0,
-                        controller.getAngleDrive_Heading());
-                break;
-
-            case SwerveDriveScheme.HALO_DRIVE:
-                setFieldRelative(controller.getFieldRelative());
-
-                UpdateHaloDrive(controller.getHaloDrive_Velocity(),
-                        controller.getHaloDrive_Rotation());
-                break;
-
-            default:
-            case SwerveDriveScheme.COMBO_DRIVE:
-                double dpad = controller.getDPad();
-                
-                if (dpad != -1)
-                {
-                    // use non field relative
-                    setFieldRelative(false);
-
-                    //CrawlMode = 0;
-
-                    SwerveVector drive = new SwerveVector();
-                    drive.setMagAngle(1, (dpad - 90));
-
-                    UpdateDrive(drive, controller.getHaloDrive_Rotation(),
-                            controller.getHaloDrive_Heading45());
-                }
-                else
-                {
-                    setFieldRelative(controller.getFieldRelative());
-
-                    UpdateDrive(controller.getHaloDrive_Velocity(),
-                            controller.getHaloDrive_Rotation(),
-                            controller.getHaloDrive_Heading45());
-                }
-                break;
-        }
-
-        // set various options for the chassis
-        setGearHigh(controller.getHighGearEnable());
-        setBrake(controller.getSwerveBrake());
-        if (controller.getResetGyro())
-        {
-            ZeroGyro();
-        }
     }
 
     /**
@@ -216,7 +116,7 @@ public class SwerveDriveSubsystem extends Subsystem {
                 // pressing on the dpad
                 // set the rotation using a PI controller based on current robot
                 // heading and new desired heading
-                Error = Utilities.wrapToRange(Heading - Gyro.getYaw(), -180,
+                Error = Utilities.wrapToRange(Heading - navxMXP.getYaw(), -180,
                                 180);
                 Rotation = ChassisAngleController.update(Error,
                                 Timer.getFPGATimestamp());
@@ -228,7 +128,7 @@ public class SwerveDriveSubsystem extends Subsystem {
                 // not pressing on dpad
                 // set the rotation using a PI controller based on current robot
                 // heading and new desired heading
-                Error = -Utilities.wrapToRange(LastHeading - Gyro.getYaw(),
+                Error = -Utilities.wrapToRange(LastHeading - navxMXP.getYaw(),
                                 -180, 180);
                 
                 SmartDashboard.putNumber("Rotation Error", Error);
@@ -241,7 +141,7 @@ public class SwerveDriveSubsystem extends Subsystem {
         {
             SmartDashboard.putString("Drive Mode", "Spinning");
             // spinning
-            LastHeading = Gyro.getYaw();
+            LastHeading = navxMXP.getYaw();
         }
 
         SmartDashboard.putNumber("Velocity X", Velocity.getX());
@@ -285,10 +185,8 @@ public class SwerveDriveSubsystem extends Subsystem {
     private SwerveVector[] setWheelVectors(SwerveVector RobotVelocity,
             double RobotRotation)
     {
-        SwerveVector[] WheelsUnscaled =
-                new SwerveVector[SwerveConstants.WheelCount];
-        SwerveVector[] WheelsActual =
-                new SwerveVector[SwerveConstants.WheelCount];
+        SwerveVector[] WheelsUnscaled = new SwerveVector[SwerveConstants.WheelCount];
+        SwerveVector[] WheelsActual = new SwerveVector[SwerveConstants.WheelCount];
         double MaxWantedVeloc = 0;
 
         // set limitations on speed
@@ -314,15 +212,13 @@ public class SwerveDriveSubsystem extends Subsystem {
         
 
 //        SmartDashboard.putNumber("Drive R pre 2", RobotRotation);
-        // scale the speed down unless we're in high speed mode
         
-        if (!controller.getHighSpeed())
+        // scale the speed down unless we're in high speed mode
+        if (!HighSpeed)
         {
-            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + 
-                    (1 - crawlSpeed) * getCrawlMode()));
+            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
             
-            
-            RobotRotation *=SwerveConstants.DriveSpeedNormal;
+            RobotRotation *= SwerveConstants.DriveSpeedNormal;
             RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DriveSpeedNormal);
         }
         else
@@ -330,11 +226,6 @@ public class SwerveDriveSubsystem extends Subsystem {
             RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
         }
         
-//        if(Application.ROBOT_VERSION == 1)
-//        {
-//            RobotRotation *= 1.25;
-//        }
-//        
         RobotRotation *= RotationRateAdjust;
         
 
@@ -348,13 +239,12 @@ public class SwerveDriveSubsystem extends Subsystem {
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
         {
             // calculate
-            WheelsUnscaled[i] =
-                    new SwerveVector(RobotVelocity.getX()
-                                     + RobotRotation
-                                     * Wheels[i].getPosition().getY(),
-                            RobotVelocity.getY()
-                                    + RobotRotation
-                                    * Wheels[i].getPosition().getX());
+            WheelsUnscaled[i] = new SwerveVector(RobotVelocity.getX()
+                                                     + RobotRotation
+                                                     * Wheels[i].getPosition().getY(),
+                                                 RobotVelocity.getY()
+                                                     + RobotRotation
+                                                     * Wheels[i].getPosition().getX());
 
             if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
             {
@@ -433,7 +323,7 @@ public class SwerveDriveSubsystem extends Subsystem {
     private double adjustAngleFromGyro(double Angle)
     {
         // adjust the desired angle based on the robot's current angle
-        double AdjustedAngle = Angle - Gyro.getYaw();
+        double AdjustedAngle = Angle - navxMXP.getYaw();
 
         // Wrap to fit in the range -180 to 180
         return Utilities.wrapToRange(AdjustedAngle, -180, 180);
@@ -444,7 +334,7 @@ public class SwerveDriveSubsystem extends Subsystem {
      */
     public void ZeroGyro()
     {
-        Gyro.zeroYaw();
+        navxMXP.zeroYaw();
         LastHeading = 0;
     }
 
@@ -456,7 +346,7 @@ public class SwerveDriveSubsystem extends Subsystem {
      */
     public void SetGyroZero(float yaw)
     {
-        Gyro.setZero(yaw);
+        navxMXP.setZero(yaw);
         LastHeading = yaw;
     }
     
@@ -569,7 +459,7 @@ public class SwerveDriveSubsystem extends Subsystem {
      */
     public Gyro getGyro()
     {
-        return Gyro;
+        return navxMXP;
     }
 
     /**

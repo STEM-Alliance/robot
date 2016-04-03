@@ -3,7 +3,7 @@ package org.wfrobotics;
 /**
  * A filter that tracks velocity given position readings
  * 
- * @author Team 4818 Taurus Robotics
+ * @author Team 4818 WFRobotics
  */
 public class VelocityCalculator {
     private double lastTimestamp;

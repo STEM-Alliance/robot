@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * Basic utilities
  * 
- * @author Team 4818 Taurus Robotics
+ * @author Team 4818 WFRobotics
  *
  */
 public final class Utilities {

@@ -7,9 +7,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 
 /**
- * Adapted from Team 3946 (https://github.com/frc3946)
  * 
- * @author Team 4818 Taurus Robotics
+ * @author Team 4818 WFRobotics
  *
  */
 public class Xbox extends GenericHID {
