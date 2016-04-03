@@ -7,6 +7,9 @@ package org.wfrobotics.subsystems.swerve;
 
 import org.wfrobotics.Utilities;
 
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Auto calculate angle and magnitude/angular velocity/distance from x and y
  * values
@@ -14,16 +17,17 @@ import org.wfrobotics.Utilities;
  * @author Team 4818 WFRobotics
  */
 public class SwerveVector {
-    private double x;
-    private double y;
+    
+    private double mag;
+    private double ang;
 
     /**
      * empty constructor
      */
     public SwerveVector()
     {
-        x = 0;
-        y = 0;
+        mag = 0;
+        ang = 0;
     }
 
     /**
@@ -34,8 +38,7 @@ public class SwerveVector {
      */
     public SwerveVector(double[] position)
     {
-        x = position[0];
-        y = position[1];
+        this.setXY(position[0], position[1]);
     }
 
     /**
@@ -48,8 +51,7 @@ public class SwerveVector {
      */
     public SwerveVector(double x, double y)
     {
-        this.x = x;
-        this.y = y;
+        this.setXY(x, y);
     }
 
     /**
@@ -60,33 +62,20 @@ public class SwerveVector {
      * @param angle
      *            angle of vector
      */
-    public static SwerveVector NewFromMagAngle(double mag, double angle)
+    public static SwerveVector NewFromMagAngle(double mag, double ang)
     {
         SwerveVector r = new SwerveVector();
-        r.setMagAngle(mag, angle);
+        r.mag = mag;
+        r.ang = ang;
         return r;
     }
-
-    /**
-     * Set the x value
-     * 
-     * @param x
-     */
-    public void setX(double x)
+    
+    public void setXY(double x, double y)
     {
-        this.x = x;
+        this.mag = Math.sqrt(x * x + y * y);
+        this.ang = Math.toDegrees(Math.atan2(y, x));
     }
-
-    /**
-     * Set the y value
-     * 
-     * @param y
-     */
-    public void setY(double y)
-    {
-        this.y = y;
-    }
-
+    
     /**
      * Set x and y from magnitude and angle degrees
      * 
@@ -95,11 +84,10 @@ public class SwerveVector {
      * @param angle
      *            angle of vector
      */
-    public void setMagAngle(double mag, double angle)
+    public void setMagAngle(double mag, double ang)
     {
-        double realAngle = Math.toRadians(Utilities.wrapToRange(angle, 0, 360));
-        x = Math.cos(realAngle) * mag;
-        y = Math.sin(realAngle) * mag;
+        this.mag = mag;
+        this.ang = ang;
     }
 
     /**
@@ -129,7 +117,8 @@ public class SwerveVector {
      */
     public double getX()
     {
-        return x;
+        double realAngle = Math.toRadians(Utilities.wrapToRange(ang, 0, 360));
+        return Math.cos(realAngle) * mag;
     }
 
     /**
@@ -139,7 +128,8 @@ public class SwerveVector {
      */
     public double getY()
     {
-        return y;
+        double realAngle = Math.toRadians(Utilities.wrapToRange(ang, 0, 360));
+        return Math.sin(realAngle) * mag;
     }
 
     /**
@@ -149,18 +139,17 @@ public class SwerveVector {
      */
     public double getMag()
     {
-        return Math.sqrt(x * x + y * y);
+        return mag;
     }
 
     /**
-     * Get the angle of the vector
+     * Get the angle of the vector in degrees
      * 
      * @return
      */
     public double getAngle()
     {
-        // *-1 to help math
-        return Math.toDegrees(Math.atan2(y, x));
+        return ang;
     }
     
     /**

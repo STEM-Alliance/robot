@@ -93,19 +93,14 @@ public class SwerveDriveSubsystem extends Subsystem {
      * Main drive update function, allows for xy movement, yaw rotation, and
      * turn to angle/heading
      * 
-     * @param Velocity
-     *            vector of xy movement of robot
-     * @param Rotation
-     *            robot's rotational movement, -1 to 1 rad/s
-     * @param Heading
-     *            0-360 of angle to turn to, -1 if not in use
+     * @param Velocity {@link SwerveVector} of xy movement of robot
+     * @param Rotation robot's rotational movement, -1 to 1 rad/s
+     * @param Heading 0-360 of angle to turn to, -1 if not in use
      * @return actual wheel readings
      */
     public SwerveVector[] UpdateDrive(SwerveVector Velocity, double Rotation,
             double Heading)
     {
-        
-        
         double Error = 0;
         if (Math.abs(Rotation) < .25)
         {
@@ -113,6 +108,7 @@ public class SwerveDriveSubsystem extends Subsystem {
             if (Heading != -1)
             {
                 SmartDashboard.putString("Drive Mode", "Rotate To Heading");
+                
                 // pressing on the dpad
                 // set the rotation using a PI controller based on current robot
                 // heading and new desired heading
@@ -152,13 +148,11 @@ public class SwerveDriveSubsystem extends Subsystem {
     }
 
     /**
-     * Updates the chassis for Halo Drive from SwerveVector type of velocity
+     * Updates the chassis for Halo Drive from {@link SwerveVector} type of velocity
      * 
-     * @param Velocity
-     *            robot's velocity using SwerveVector type
-     * @param Rotation
-     *            robot's rotational movement, -1 to 1 rad/s
-     * @return Array of SwerveVectors of the actual readings from the wheels
+     * @param Velocity robot's velocity using {@link SwerveVector} type
+     * @param Rotation robot's rotational movement, -1 to 1 rad/s
+     * @return Array of {@link SwerveVector} of the actual readings from the wheels
      */
     public SwerveVector[] UpdateHaloDrive(SwerveVector Velocity, double Rotation)
     {
@@ -167,7 +161,7 @@ public class SwerveDriveSubsystem extends Subsystem {
             Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
         }
 
-         UpdateShifter();
+        UpdateShifter();
 
         return setWheelVectors(Velocity, Rotation);
     }
@@ -176,11 +170,9 @@ public class SwerveDriveSubsystem extends Subsystem {
      * Scale the wheel vectors based on max available velocity, adjust for
      * rotation rate, then set/update the desired vectors individual wheels
      * 
-     * @param RobotVelocity
-     *            robot's velocity using SwerveVector type; max speed is 1.0
-     * @param RobotRotation
-     *            robot's rotational movement; max rotation speed is -1 or 1
-     * @return Array of SwerveVectors of the actual readings from the wheels
+     * @param RobotVelocity robot's velocity using {@link SwerveVector} type; max speed is 1.0
+     * @param RobotRotation robot's rotational movement; max rotation speed is -1 or 1
+     * @return Array of {@link SwerveVector} of the actual readings from the wheels
      */
     private SwerveVector[] setWheelVectors(SwerveVector RobotVelocity,
             double RobotRotation)
@@ -316,8 +308,7 @@ public class SwerveDriveSubsystem extends Subsystem {
     /**
      * Adjust the new angle based on the Gyroscope angle
      * 
-     * @param Angle
-     *            new desired angle
+     * @param Angle new desired angle
      * @return adjusted angle
      */
     private double adjustAngleFromGyro(double Angle)
@@ -341,8 +332,7 @@ public class SwerveDriveSubsystem extends Subsystem {
     /**
      * Set the Gyro to use a new zero value
      * 
-     * @param yaw
-     *            angle to offset by
+     * @param yaw angle to offset by
      */
     public void SetGyroZero(float yaw)
     {
@@ -353,8 +343,7 @@ public class SwerveDriveSubsystem extends Subsystem {
     /**
      * Set the chassis's brake
      * 
-     * @param Brake
-     *            if true, set the brake, else release brake
+     * @param Brake if true, set the brake, else release brake
      */
     public void setBrake(boolean Brake)
     {
@@ -387,16 +376,15 @@ public class SwerveDriveSubsystem extends Subsystem {
      */
      public void UpdateShifter()
      {
-     // switch to the desired gear
-     if (GearHigh)
-     {
-     SmartDashboard.putString("Gear", "High");
-    
-     }
-     else
-     {
-     SmartDashboard.putString("Gear", "Low");
-     }
+         // switch to the desired gear
+         if (GearHigh)
+         {
+             SmartDashboard.putString("Gear", "High");
+         }
+         else
+         {
+             SmartDashboard.putString("Gear", "Low");
+         }
      }
 
     /**
