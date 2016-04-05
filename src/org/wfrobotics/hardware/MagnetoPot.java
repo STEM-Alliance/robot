@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
  * potentiometer, when it doesn't have the full range of 0 to 1.
  * Created for using the 6127V1A360L.5FS (987-1393-ND on DigiKey)
  */
-public class MagnetoPot extends AnalogPotentiometer {
+public class MagnetoPot extends AnalogPotentiometer{
 
     private double InMin = 0.041; // measured from raw sensor input
     private double InMax = 0.961; // measured from raw sensor input
@@ -24,6 +24,7 @@ public class MagnetoPot extends AnalogPotentiometer {
     private CircularBuffer averageBuff;
     private double averageLastTime = 0;
     private double lastAverage = 0;
+    
     
     /**
      * Initialize a new Magnetic Potentiometer
@@ -97,9 +98,14 @@ public class MagnetoPot extends AnalogPotentiometer {
         this.offset = offset;
     }
 
-    private double getValue()
+    protected double getRawInput()
     {
-        double val = super.get();
+        return super.get();
+    }
+    
+    protected double getValue()
+    {
+        double val = getRawInput();
         
         if(average)
         {
@@ -142,14 +148,23 @@ public class MagnetoPot extends AnalogPotentiometer {
         // scale it based on the calibration values
         return Utilities.scaleToRange(val, InMin, InMax, 0, fullRange);
     }
-    
+
     /**
      * Get the scaled value of the sensor 
-     * @return value from offset to fullRange
+     * @return value from offset to (offset + fullRange)
      */
     public double get()
     {
         return getWithoutOffset() + offset;
+    }
+    
+    /**
+     * Get the scaled value of the sensor
+     * @return value from 0 to fullRange
+     */
+    public double getWrapped()
+    {
+        return Utilities.wrapToRange(get(), 0, fullRange);
     }
     
     /**
@@ -189,7 +204,7 @@ public class MagnetoPot extends AnalogPotentiometer {
         this.average = average;
         this.averageBuff = new CircularBuffer(size);
         
-        double val = super.get();
+        double val = getRawInput();
         
         for (int i = 0; i < size; i++)
         {

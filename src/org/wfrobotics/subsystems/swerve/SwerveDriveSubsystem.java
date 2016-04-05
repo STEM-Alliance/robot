@@ -77,7 +77,6 @@ public class SwerveDriveSubsystem extends Subsystem {
         {
             Wheels[i] = new SwerveWheel(i,
                     SwerveConstants.WheelPositions[i],
-                    Preferences.getInstance().getDouble("Wheel_Orientation_" + i, SwerveConstants.WheelOrientationAngle[i]),
 //                    SwerveConstants.WheelEncoderPins[i],
                     RobotMap.ANG_SWERVE_ANGLE[i],
                     RobotMap.CAN_SWERVE_DRIVE_TALONS[i],
