@@ -14,137 +14,138 @@ import edu.wpi.first.wpilibj.Servo;
  * 
  * @author Team 4818 WFRobotics
  */
-public class SwerveWheel
-{
-    String Name;
-    int Number;
+public class SwerveWheel {
+    /** 'Name' of the module */
+    public String name;
+    /** Index/number of the module*/
+    public int number;
 
-    // wheel stuff
-    private SwerveVector WheelPosition; // wheel location from center of robot
-    private SwerveVector WheelDesired; // wheel speed, x and y vals, hypotenuse
-                                       // val, angle
-    private SwerveVector WheelActual; // wheel speed, x and y vals, hypotenuse
-                                      // val, angle
+    /** Wheel location from center of robot */
+    private SwerveVector position;
+    /** Desired wheel vector, from input */
+    private SwerveVector desired;
+    /** Actual wheel vector, from sensors */
+    private SwerveVector actual;
 
-    private Servo Shifter;
-    private int ShifterValueHigh;
-    private int ShifterValueLow;
-    private boolean HighGear;
+    /** Gear Shifter servo */
+    private Servo gearShifter;
+    /** Angle for high gear */
+    private int gearShifterAngleHigh;
+    /** Angle for low gear */
+    private int gearShifterAngleLow;
+    /** If it's in high gear or not */
+    private boolean gearHigh;
 
-    private boolean Brake;
+    /** If the brake should be applied or not */
+    private boolean brake;
 
-    private double maxRotationSpeed = .7;
-
-    private double AngleOrientation = 0;
-
-    // motor
-    private CANTalon MotorDrive;
-    private CANTalon MotorAngle;
-
-    // sensor
-    private MagnetoPot AnglePot;
+    /** Drive motor object */
+    private CANTalon driveMotor;
     
-    private DigitalInput CalibrationSensor;
-    private boolean CalibrationEnable;
-    
-    // angle that the sensor is mounted compared to 0
-    public double CalibrationSensorAngle;
-    private final double CALIBRATION_MINIMUM = 20;
+    /** Angle motor object */
+    private CANTalon angleMotor;
+    /** Angle sensor */
+    private MagnetoPot anglePot;
+    /** Max speed the rotation can spin, relative to motor maximum */
+    private double angleMaxSpeed = .7;
+    /** Special angle PID controller */
+    private SwerveAngleController anglePID;
 
-    // controller
-    private SwerveAngleController AngleController;
+    /** Auto calibration sensor for having a known angle */
+    private DigitalInput angleCalSensor;
+    /** Enable/disable the auto calibration */
+    private boolean angleCalEnable;
+    /** Angle that the calibration sensor is mounted compared to 0 */
+    public double angelCalSensorOffset;
+    /** Threshold for triggering the calibration sensor */
+    private final double angleCalSensorThreshold = 10;
 
+    // private static final double DriveP = 0.3;
+    // private static final double DriveD= 0.5; // seconds needed to equal a P
+    // // term contribution
+    // private static final double DriveI = 0;// 2 / DriveTI;
+    // private static double DriveRampRate = 12; // volt/sec change
+    // private static double DriveIzone = 123;
 
-//    private static final double DriveP = 0.3;
-//    private static final double DriveD= 0.5; // seconds needed to equal a P
-//                                               // term contribution
-//    private static final double DriveI = 0;// 2 / DriveTI;
-//    private static double DriveRampRate = 12; // volt/sec change
-//    private static double DriveIzone = 123; 
-
-    // deadband
-    private static final double MinSpeed = 0.1;
+    /** Minimum speed, used for dead band */ 
+    private static final double MINIMUM_SPEED = 0.1;
 
     /**
-     * Set up the wheel with the specific IO and orientation on the robot
-     * 
-     * @param Number Number of the wheel
-     * @param Position Wheel position relative to robot center as array
-     * @param Orientation Angle of wheel relative to robot 0 angle in degrees
-     * @param EncoderPins Pins for Speed Encoder input as array
-     * @param PotPin Pin for Angle Potentiometer
-     * @param DriveAddress Address for drive motor controller
-     * @param AngleAddress Pin for angle motor controller
-     */
-    public SwerveWheel(int Number, double[] Position, double Orientation,
-            int PotPin, int DriveAddress, int AngleAddress,
-            int ShiftPin, int[] ShiftVals,
-            int AngleCalibrationPin)
-    {
-        this(Number, Position, Orientation, new MagnetoPot(PotPin, 360),
-                new CANTalon(DriveAddress), new CANTalon(AngleAddress),
-                new Servo(ShiftPin), ShiftVals, new DigitalInput(AngleCalibrationPin));
-    }
-    
-    /**
-     * Set up the wheel with the specific objects and orientation on the robot
-     * 
+     * Set up a swerve wheel using pin and address assignments
      * @param Number
      * @param Position
-     * @param Orientation
+     * @param PotPin
+     * @param DriveAddress
+     * @param AngleAddress
+     * @param ShiftPin
+     * @param ShiftVals
+     * @param AngleCalibrationPin
+     */
+    public SwerveWheel(int Number, double[] Position, int PotPin,
+            int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
+            int AngleCalibrationPin)
+    {
+        this(Number, Position, new MagnetoPot(PotPin, 360),
+                new CANTalon(DriveAddress), new CANTalon(AngleAddress),
+                new Servo(ShiftPin), ShiftVals,
+                new DigitalInput(AngleCalibrationPin));
+    }
+
+    /**
+     * Set up a swerve wheel using controllers/objects
+     * @param Number
+     * @param Position
      * @param Pot
      * @param DriveMotor
      * @param AngleMotor
      * @param Shifter
      * @param ShiftVals
      * @param Calibration
-     * @param AnglePID
      */
-    public SwerveWheel(int Number, double[] Position, double Orientation,
-            MagnetoPot Pot, CANTalon DriveMotor, CANTalon AngleMotor,
-            Servo Shifter, int[] ShiftVals,
-            DigitalInput Calibration)
+    public SwerveWheel(int Number, double[] Position, MagnetoPot Pot,
+            CANTalon DriveMotor, CANTalon AngleMotor, Servo Shifter,
+            int[] ShiftVals, DigitalInput Calibration)
     {
-        Name = "Wheel" + Number;
-        this.Number = Number;
+        name = "Wheel" + Number;
+        this.number = Number;
 
-        WheelPosition = new SwerveVector(Position);
-        WheelActual = new SwerveVector(0, 0);
-        WheelDesired = new SwerveVector(0, 0);
-        MotorDrive = DriveMotor;
-        
-//        MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone, closeLoopRampRate, 0);
-//        MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-//        MotorDrive.changeControlMode(ControlMode.Disabled);
-        
-        MotorAngle = AngleMotor;
+        position = new SwerveVector(Position);
+        actual = new SwerveVector(0, 0);
+        desired = new SwerveVector(0, 0);
+        driveMotor = DriveMotor;
 
-        HighGear = true;
-        this.Shifter = Shifter;
-        ShifterValueHigh = ShiftVals[0];
-        ShifterValueLow = ShiftVals[1];
+        // MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone,
+        // closeLoopRampRate, 0);
+        // MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        // MotorDrive.changeControlMode(ControlMode.Disabled);
 
-        AnglePot = Pot;
-        AngleController = new SwerveAngleController(Name + ".ctl");
+        angleMotor = AngleMotor;
 
-        AngleOrientation = Orientation;
-        
-        CalibrationSensor = Calibration;
+        gearHigh = true;
+        this.gearShifter = Shifter;
+        gearShifterAngleHigh = ShiftVals[0];
+        gearShifterAngleLow = ShiftVals[1];
+
+        anglePot = Pot;
+        anglePID = new SwerveAngleController(name + ".ctl");
+
+        angleCalSensor = Calibration;
     }
 
     /**
      * Set the desired wheel vector, auto updates the PID controllers
      * 
-     * @param NewDesired
-     * @param HighGear
+     * @param newDesired
+     * @param gearHigh
      * @return Actual vector reading of wheel
      */
-    public SwerveVector setDesired(SwerveVector NewDesired,
-            boolean NewHighGear, boolean NewBrake)
+    public SwerveVector setDesired(SwerveVector newDesired, boolean newHighGear,
+            boolean newBrake)
     {
-        WheelDesired = NewDesired;
-        HighGear = NewHighGear;
-        Brake = NewBrake;
+        // store off the new values
+        desired = newDesired;
+        gearHigh = newHighGear;
+        brake = newBrake;
 
         return updateTask();
     }
@@ -156,7 +157,7 @@ public class SwerveWheel
      */
     public SwerveVector getDesired()
     {
-        return WheelDesired;
+        return desired;
     }
 
     /**
@@ -166,9 +167,9 @@ public class SwerveWheel
      */
     public SwerveVector getActual()
     {
-     //   WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
-        WheelActual.setMagAngle(WheelDesired.getMag(), getAnglePotValue());
-        return WheelActual;
+        // WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
+        actual.setMagAngle(desired.getMag(), anglePot.get());
+        return actual;
     }
 
     /**
@@ -178,72 +179,59 @@ public class SwerveWheel
      */
     public SwerveVector getPosition()
     {
-        return WheelPosition;
+        return position;
     }
-    
+
     /**
      * Get whether the wheel is in high gear or low gear
      * 
      * @return Whether the wheel is in high gear
      */
-    public boolean getIsHighGear()
+    public boolean getHighGear()
     {
-        return HighGear;
+        return gearHigh;
     }
 
     private void updateShifter()
     {
-        if (HighGear)
+        if (gearHigh)
         {
-            Shifter.setAngle(ShifterValueHigh);
+            gearShifter.setAngle(gearShifterAngleHigh);
 
         }
         else
         {
-            Shifter.setAngle(ShifterValueLow);
+            gearShifter.setAngle(gearShifterAngleLow);
         }
     }
 
     /**
-     * Get the angle of the potentiometer
-     * 
-     * @return
+     * auto calibrate if enable and if the calibration sensor is triggered
      */
-    public double getAnglePotValue()
+    private void autoCalibration()
     {
-        return AnglePot.get();
-    }
-    
-    /**
-     * Adjust the angle for the orientation value.
-     * Will auto calibrate if the calibration sensor is triggered
-     * 
-     * @param angle
-     * @return adjusted angle from orientation value
-     */
-    private double AdjustAngle(double angle)
-    {
-        this.AngleOrientation = Preferences.getInstance().getDouble("Wheel_Orientation_" + Number, AngleOrientation);
 
-        double AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
-        
-        
-        if(CalibrationEnable && CalibrationSensor.get())
+        if (angleCalEnable && angleCalSensor.get())
         {
-            // the Calibration Sensor is triggered, so we should be facing forward
-            if(Math.abs(Utilities.wrapToRange(AdjustedAngle, -180, 180)) > CALIBRATION_MINIMUM)
+            // the Calibration Sensor is triggered, so we should be facing
+            // forward
+            if (Math.abs(Utilities.wrapToRange(anglePot.get(), -180,
+                    180)) > angleCalSensorThreshold)
             {
-                // we're more than CALIBRATION_MINIMUM away, yet the sensor is triggered,
-                // we need to then update the angle
-                this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0, 360);
+                // we're more than angleCalSensorThreshold away, yet the sensor 
+                // is triggered, we need to then update the angle
                 
-                Preferences.getInstance().putDouble("Wheel_Orientation_" + Number, AngleOrientation);
-                
-                AdjustedAngle = Utilities.wrapToRange(angle + 270 - AngleOrientation, 0, 360);
+                //TODO 
+//                this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0,
+//                360);
+//                
+//                saveAngleOrientation(AngleOrientation);
+//                
+//                AdjustedAngle = Utilities.wrapToRange(angle + 270 -
+//                AngleOrientation, 0, 360);
+//                Preferences.getInstance().putDouble("Wheel_Orientation_" + number, val);
             }
         }
-        
-        return AdjustedAngle;
     }
 
     /**
@@ -254,8 +242,7 @@ public class SwerveWheel
      */
     private SwerveVector updateTask()
     {
-        boolean reverse = updateAngleMotor(WheelDesired.getAngle(),
-                WheelDesired.getMag());
+        boolean reverse = updateAngleMotor();
 
         updateShifter();
 
@@ -267,7 +254,7 @@ public class SwerveWheel
         // WheelDesired.getAngle());
 
         return getActual();
-    }   
+    }
 
     /**
      * Update the angle motor based on the desired angle Called from
@@ -275,26 +262,29 @@ public class SwerveWheel
      * 
      * @return Whether the drive motor should run in the opposite direction
      */
-    private boolean updateAngleMotor(double angle, double speed)
+    private boolean updateAngleMotor()
     {
-        // Update the angle controller.
-        AngleController.update(angle, AdjustAngle(getAnglePotValue()));
-        
-        maxRotationSpeed = Preferences.getInstance().getDouble("maxRotationSpeed", maxRotationSpeed);
+        // update the offsets
+        autoCalibration();
+        updateAngleOffset();
+        updateMaxRotationSpeed();
 
-        // Control the wheel angle.
-        if (speed > MinSpeed)
+        // Update the angle controller.
+        anglePID.update(desired.getAngle(), anglePot.get());
+
+        if (desired.getMag() > MINIMUM_SPEED)
         {
-            MotorAngle.set(AngleController.getMotorSpeed() * maxRotationSpeed);
+            // Control the wheel angle.
+            angleMotor.set(anglePID.getMotorSpeed() * angleMaxSpeed);
         }
         else
         {
             // Too slow, do nothing
-            AngleController.resetIntegral();
-            MotorAngle.set(0);
+            anglePID.resetIntegral();
+            angleMotor.set(0);
         }
 
-        return AngleController.isReverseMotor();
+        return anglePID.isReverseMotor();
     }
 
     /**
@@ -303,10 +293,9 @@ public class SwerveWheel
      */
     private void updateDriveMotor(boolean reverse)
     {
-//        double time = Timer.getFPGATimestamp();
-
+        
         // Control the wheel speed.
-        double driveMotorSpeed = WheelDesired.getMag();
+        double driveMotorSpeed = desired.getMag();
 
         // Reverse the motor output if the angle controller is taking advantage
         // of rotational symmetry.
@@ -336,17 +325,18 @@ public class SwerveWheel
          */
 
         // Control the motor.
-        double driveMotorOutput = driveMotorSpeed;// + driveMotorControllerOutput;
+        double driveMotorOutput = driveMotorSpeed;// +
+        // driveMotorControllerOutput;
 
-        if (Brake)
+        if (brake)
         {
-            MotorDrive.set(0);
-            MotorDrive.enableBrakeMode(true);
+            driveMotor.set(0);
+            driveMotor.enableBrakeMode(true);
         }
         else
         {
-            MotorDrive.enableBrakeMode(false);
-            MotorDrive.set(driveMotorOutput);
+            driveMotor.enableBrakeMode(false);
+            driveMotor.set(driveMotorOutput);
         }
 
         // SmartDashboard.putNumber(Name + ".position.raw",
@@ -362,5 +352,18 @@ public class SwerveWheel
         // SmartDashboard.putNumber(Name + ".speed.adjust",
         // driveMotorControllerOutput);
         // SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
+    }
+
+    protected void updateAngleOffset()
+    {
+        anglePot.setOffset(Preferences.getInstance().getDouble(
+                "Wheel_Orientation_" + number,
+                SwerveConstants.WheelOrientationAngle[number]));
+    }
+
+    protected void updateMaxRotationSpeed()
+    {
+        angleMaxSpeed = Preferences.getInstance()
+                .getDouble("maxRotationSpeed", angleMaxSpeed);
     }
 }
