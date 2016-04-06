@@ -1,8 +1,7 @@
 package org.wfrobotics.subsystems.swerve;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.hardware.MagnetoPot;
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.hardware.*;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -85,7 +84,27 @@ public class SwerveWheel {
             int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
             int AngleCalibrationPin)
     {
-        this(Number, Position, new MagnetoPot(PotPin, 360),
+        this(Number, Position, new MagnetoPotAnalog(PotPin, 360),
+                new CANTalon(DriveAddress), new CANTalon(AngleAddress),
+                new Servo(ShiftPin), ShiftVals,
+                new DigitalInput(AngleCalibrationPin));
+    }
+
+    /**
+     * Set up a swerve wheel using pin and address assignments
+     * @param Number
+     * @param Position
+     * @param DriveAddress
+     * @param AngleAddress
+     * @param ShiftPin
+     * @param ShiftVals
+     * @param AngleCalibrationPin
+     */
+    public SwerveWheel(int Number, double[] Position, 
+            int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
+            int AngleCalibrationPin)
+    {
+        this(Number, Position, 
                 new CANTalon(DriveAddress), new CANTalon(AngleAddress),
                 new Servo(ShiftPin), ShiftVals,
                 new DigitalInput(AngleCalibrationPin));
@@ -127,6 +146,46 @@ public class SwerveWheel {
         gearShifterAngleLow = ShiftVals[1];
 
         anglePot = Pot;
+        anglePID = new SwerveAngleController(name + ".ctl");
+
+        angleCalSensor = Calibration;
+    }
+    
+    /**
+     * Set up a swerve wheel using controllers/objects
+     * @param Number
+     * @param Position
+     * @param DriveMotor
+     * @param AngleMotor
+     * @param Shifter
+     * @param ShiftVals
+     * @param Calibration
+     */
+    public SwerveWheel(int Number, double[] Position, 
+            CANTalon DriveMotor, CANTalon AngleMotor, Servo Shifter,
+            int[] ShiftVals, DigitalInput Calibration)
+    {
+        name = "Wheel" + Number;
+        this.number = Number;
+
+        position = new SwerveVector(Position);
+        actual = new SwerveVector(0, 0);
+        desired = new SwerveVector(0, 0);
+        driveMotor = DriveMotor;
+
+        // MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone,
+        // closeLoopRampRate, 0);
+        // MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+        // MotorDrive.changeControlMode(ControlMode.Disabled);
+
+        angleMotor = AngleMotor;
+
+        gearHigh = true;
+        this.gearShifter = Shifter;
+        gearShifterAngleHigh = ShiftVals[0];
+        gearShifterAngleLow = ShiftVals[1];
+
+        anglePot = new MagnetoPotSRX(angleMotor, 360);
         anglePID = new SwerveAngleController(name + ".ctl");
 
         angleCalSensor = Calibration;
