@@ -25,16 +25,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SwerveDriveSubsystem extends Subsystem {
 
-    private SwerveWheel[] Wheels;
+    protected SwerveWheel[] Wheels;
 
-    private Gyro navxMXP;
+    protected Gyro navxMXP;
     
     private boolean FieldRelative;
     private double LastHeading;
     private boolean GearHigh;
     private boolean Brake;
     private double CrawlMode = 0.0;
-    private boolean HighSpeed = false;
 
     private PIDController ChassisAngleController;
     private double ChassisP = 2.5 / 180; // /1.3 / 180; // Full speed rotation
@@ -57,20 +56,19 @@ public class SwerveDriveSubsystem extends Subsystem {
      */
     public SwerveDriveSubsystem()
     {
+        this(Gyro.getInstance());
+    }
+    
+    /**
+     * sets up individual wheels and their positions relative to robot center
+     */
+    public SwerveDriveSubsystem(Gyro gyro)
+    {
         ChassisAngleController = new PIDController(ChassisP, ChassisI, ChassisD, 1.0);
 
         LastVelocity = new SwerveVector(0, 0);
 
         Wheels = new SwerveWheel[SwerveConstants.WheelCount];
-
-        try {
-            /* Communicate w/navX MXP via the MXP SPI Bus.                                     */
-            /* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
-            /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
-            navxMXP = new Gyro(SerialPort.Port.kMXP);
-        } catch (RuntimeException ex ) {
-            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
-        }
 
         // {x, y}, Orientation, {EncoderA, EncoderB}, Pot, Drive, Angle
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
@@ -86,8 +84,22 @@ public class SwerveDriveSubsystem extends Subsystem {
                     SwerveConstants.WheelAngleCalibrationPins[i]);
         }
 
+        // Setup gyro
+        try {
+            navxMXP = gyro;
+        } catch (RuntimeException ex ) {
+            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+        }
     }
 
+    public void free()
+    {
+        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+        {
+            Wheels[i].free();
+        }
+    }
+    
     /**
      * Main drive update function, allows for xy movement, yaw rotation, and
      * turn to angle/heading
@@ -173,7 +185,7 @@ public class SwerveDriveSubsystem extends Subsystem {
      * @param RobotRotation robot's rotational movement; max rotation speed is -1 or 1
      * @return Array of {@link SwerveVector} of the actual readings from the wheels
      */
-    private SwerveVector[] setWheelVectors(SwerveVector RobotVelocity,
+    protected SwerveVector[] setWheelVectors(SwerveVector RobotVelocity,
             double RobotRotation)
     {
         SwerveVector[] WheelsUnscaled = new SwerveVector[SwerveConstants.WheelCount];
@@ -204,18 +216,11 @@ public class SwerveDriveSubsystem extends Subsystem {
 
 //        SmartDashboard.putNumber("Drive R pre 2", RobotRotation);
         
-        // scale the speed down unless we're in high speed mode
-        if (!HighSpeed)
-        {
-            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
-            
-            RobotRotation *= SwerveConstants.DriveSpeedNormal;
-            RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DriveSpeedNormal);
-        }
-        else
-        {
-            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
-        }
+        // scale the speed down
+        RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
+        RobotRotation *= SwerveConstants.DriveSpeedNormal;
+        RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DriveSpeedNormal);
+
         
         RobotRotation *= RotationRateAdjust;
         
@@ -281,7 +286,7 @@ public class SwerveDriveSubsystem extends Subsystem {
      * @param robotVelocity
      * @return
      */
-    private SwerveVector restrictVelocity(SwerveVector robotVelocity)
+    protected SwerveVector restrictVelocity(SwerveVector robotVelocity)
     {
         double TimeDelta = Timer.getFPGATimestamp() - lastVelocityTimestamp;
         lastVelocityTimestamp = Timer.getFPGATimestamp();

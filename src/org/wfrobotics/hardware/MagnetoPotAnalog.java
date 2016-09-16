@@ -48,6 +48,7 @@ public class MagnetoPotAnalog extends MagnetoPot{
         return m_Analog.get();
     }
     
+    @Override
     public void free()
     {
         m_Analog.free();

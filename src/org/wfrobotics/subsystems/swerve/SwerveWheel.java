@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.util.AllocationException;
 
 /**
  * Handle motor outputs and feedback for an individual swerve wheel
@@ -29,9 +30,7 @@ public class SwerveWheel {
     /** Gear Shifter servo */
     private Servo gearShifter;
     /** Angle for high gear */
-    private int gearShifterAngleHigh;
-    /** Angle for low gear */
-    private int gearShifterAngleLow;
+    public int[] gearShifterAngle;
     /** If it's in high gear or not */
     private boolean gearHigh;
 
@@ -84,7 +83,7 @@ public class SwerveWheel {
             int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
             int AngleCalibrationPin)
     {
-        this(Number, Position, new MagnetoPotAnalog(PotPin, 360),
+        this(Number, new SwerveVector(Position), new MagnetoPotAnalog(PotPin, 360),
                 new CANTalon(DriveAddress), new CANTalon(AngleAddress),
                 new Servo(ShiftPin), ShiftVals,
                 new DigitalInput(AngleCalibrationPin));
@@ -104,7 +103,7 @@ public class SwerveWheel {
             int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
             int AngleCalibrationPin)
     {
-        this(Number, Position, 
+        this(Number, new SwerveVector(Position), 
                 new CANTalon(DriveAddress), new CANTalon(AngleAddress),
                 new Servo(ShiftPin), ShiftVals,
                 new DigitalInput(AngleCalibrationPin));
@@ -121,14 +120,14 @@ public class SwerveWheel {
      * @param ShiftVals
      * @param Calibration
      */
-    public SwerveWheel(int Number, double[] Position, MagnetoPot Pot,
+    public SwerveWheel(int Number, SwerveVector Position, MagnetoPot Pot,
             CANTalon DriveMotor, CANTalon AngleMotor, Servo Shifter,
             int[] ShiftVals, DigitalInput Calibration)
     {
         name = "Wheel" + Number;
         this.number = Number;
 
-        position = new SwerveVector(Position);
+        position = Position;
         actual = new SwerveVector(0, 0);
         desired = new SwerveVector(0, 0);
         driveMotor = DriveMotor;
@@ -142,8 +141,7 @@ public class SwerveWheel {
 
         gearHigh = true;
         this.gearShifter = Shifter;
-        gearShifterAngleHigh = ShiftVals[0];
-        gearShifterAngleLow = ShiftVals[1];
+        gearShifterAngle = ShiftVals;
 
         anglePot = Pot;
         anglePID = new SwerveAngleController(name + ".ctl");
@@ -161,14 +159,14 @@ public class SwerveWheel {
      * @param ShiftVals
      * @param Calibration
      */
-    public SwerveWheel(int Number, double[] Position, 
+    public SwerveWheel(int Number, SwerveVector Position, 
             CANTalon DriveMotor, CANTalon AngleMotor, Servo Shifter,
             int[] ShiftVals, DigitalInput Calibration)
     {
         name = "Wheel" + Number;
         this.number = Number;
 
-        position = new SwerveVector(Position);
+        position = Position;
         actual = new SwerveVector(0, 0);
         desired = new SwerveVector(0, 0);
         driveMotor = DriveMotor;
@@ -182,8 +180,7 @@ public class SwerveWheel {
 
         gearHigh = true;
         this.gearShifter = Shifter;
-        gearShifterAngleHigh = ShiftVals[0];
-        gearShifterAngleLow = ShiftVals[1];
+        gearShifterAngle = ShiftVals;
 
         anglePot = new MagnetoPotSRX(angleMotor, 360);
         anglePID = new SwerveAngleController(name + ".ctl");
@@ -191,6 +188,13 @@ public class SwerveWheel {
         angleCalSensor = Calibration;
     }
 
+    public void free()
+    {
+        try { gearShifter.free(); } catch (AllocationException e) {}
+        try { anglePot.free(); } catch (AllocationException e) {}
+        try { angleCalSensor.free(); } catch (AllocationException e) {}
+    }
+    
     /**
      * Set the desired wheel vector, auto updates the PID controllers
      * 
@@ -205,6 +209,7 @@ public class SwerveWheel {
         desired = newDesired;
         gearHigh = newHighGear;
         brake = newBrake;
+        angleCalSensor.free();
 
         return updateTask();
     }
@@ -255,12 +260,12 @@ public class SwerveWheel {
     {
         if (gearHigh)
         {
-            gearShifter.setAngle(gearShifterAngleHigh);
+            gearShifter.setAngle(gearShifterAngle[0]);
 
         }
         else
         {
-            gearShifter.setAngle(gearShifterAngleLow);
+            gearShifter.setAngle(gearShifterAngle[1]);
         }
     }
 

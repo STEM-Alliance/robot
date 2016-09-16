@@ -48,4 +48,10 @@ public class MagnetoPotSRX extends MagnetoPot {
     {
         return (double)m_Talon.getAnalogInRaw()/1023;
     }
+
+    @Override
+    public void free()
+    {
+        
+    }
 }
