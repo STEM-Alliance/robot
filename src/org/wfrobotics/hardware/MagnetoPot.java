@@ -147,4 +147,6 @@ public abstract class MagnetoPot {
         lastAverage = val;
         
     }
+
+    public abstract void free();
 }
