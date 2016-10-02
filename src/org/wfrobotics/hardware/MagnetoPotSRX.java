@@ -1,11 +1,6 @@
 package org.wfrobotics.hardware;
 
-import org.wfrobotics.CircularBuffer;
-import org.wfrobotics.Utilities;
-
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Class to use a Magnetic Potentiometer through a Talon SRX
@@ -13,21 +8,9 @@ import edu.wpi.first.wpilibj.Timer;
  * full range of 0 to 1.
  * Created for using the 6127V1A360L.5FS (987-1393-ND on DigiKey)
  */
-public class MagnetoPotSRX  {
-
-    private double InMin = 0.041; // measured from raw sensor input
-    private double InMax = 0.961; // measured from raw sensor input
-
-    private double fullRange;
-    private double offset;
-    
-    private boolean average = false;
-    private CircularBuffer averageBuff;
-    private double averageLastTime = 0;
-    private double lastAverage = 0;
+public class MagnetoPotSRX extends MagnetoPot {
     
     public CANTalon m_Talon;
-    
 
     /**
      * Initialize a new Magnetic Potentiometer through the SRX data port
@@ -35,9 +18,7 @@ public class MagnetoPotSRX  {
      */
     public MagnetoPotSRX(CANTalon talon)
     {
-        m_Talon = talon;
-        this.fullRange = 1;
-        this.offset = 0;
+        this(talon, 1);
     }
 
     /**
@@ -47,13 +28,7 @@ public class MagnetoPotSRX  {
      */
     public MagnetoPotSRX(CANTalon talon, double fullRange)
     {
-        m_Talon = talon;
-        m_Talon.setFeedbackDevice(FeedbackDevice.AnalogPot);
-        
-        this.fullRange = fullRange;
-        this.offset = 0;
-        get();
-        getNormal();
+        this(talon, fullRange, 0);
     }
     
     /**
@@ -64,112 +39,19 @@ public class MagnetoPotSRX  {
      */
     public MagnetoPotSRX(CANTalon talon, double fullRange, double offset)
     {
+        super(fullRange, offset);
+        
         m_Talon = talon;
-        this.fullRange = fullRange;
-        this.offset = offset;
-        get();
-        getNormal();
     }
 
-    private double getValue()
+    protected double getRawInput()
     {
-        double val = (double)m_Talon.getAnalogInRaw()/1023;
-        
-        if(average)
-        {
-            if((Timer.getFPGATimestamp() - averageLastTime) > .01)
-            {
-                averageBuff.pushFront(val);
-                averageLastTime = Timer.getFPGATimestamp();
-                
-                val = averageBuff.getAverage();
-                lastAverage = val;
-            }
-            else
-            {
-                val = lastAverage;
-            }
-        }
-        
-        return val;
-    }
-    
-    /**
-     * Get the scaled value of the sensor 
-     * @return value from offset to fullRange
-     */
-    public double getWithoutOffset()
-    {
-        // convert to 0-1 scale
-        double val = getValue();
-        
-        // update the values if needed
-        if (val > InMax)
-        {
-            InMax = val;
-        }
-        if (val < InMin)
-        {
-            InMin = val;
-        }
-
-        // scale it based on the calibration values
-        return Utilities.scaleToRange(val, InMin, InMax, 0, fullRange);
-    }
-    
-    /**
-     * Get the scaled value of the sensor 
-     * @return value from offset to fullRange
-     */
-    public double get()
-    {
-        return getWithoutOffset() + offset;
+        return (double)m_Talon.getAnalogInRaw()/1023;
     }
 
-    /**
-     * Get the raw value of the sensor
-     * @return value from 0 to 1
-     */
-    public double getNormal()
+    @Override
+    public void free()
     {
-        double val = getValue();
-        
-        // update the values if needed
-        if (val > InMax)
-        {
-            InMax = val;
-        }
-        if (val < InMin)
-        {
-            InMin = val;
-        }
-
-        // scale it based on the calibration values
-        return Utilities.scaleToRange(val, InMin, InMax, 0, 1);
-    }
-
-    public void setFullRange(double fullRange)
-    {
-        this.fullRange = fullRange;
-    }
-    
-    public void setOffset(double offset)
-    {
-        this.offset = offset;
-    }
-    
-    public void setAverage(boolean average, int size)
-    {
-        this.average = average;
-        this.averageBuff = new CircularBuffer(size);
-        
-        double val = (double)m_Talon.getAnalogInRaw()/1023;
-        
-        for (int i = 0; i < size; i++)
-        {
-            this.averageBuff.pushFront(val);
-        }
-        lastAverage = val;
         
     }
 }
