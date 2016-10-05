@@ -6,12 +6,9 @@ import org.wfrobotics.commands.drive.DriveTank;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.RobotMap;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

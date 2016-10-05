@@ -2,8 +2,6 @@ package org.wfrobotics.vision;
 
 import java.util.Comparator;
 
-import org.wfrobotics.robot.Robot;
-
 public class Target implements Comparable<Target> {
 
     private double x; //center pixels (all)
