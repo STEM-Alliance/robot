@@ -6,6 +6,7 @@ import com.ni.vision.VisionException;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+@SuppressWarnings("unused")
 public class Camera
 {
 
