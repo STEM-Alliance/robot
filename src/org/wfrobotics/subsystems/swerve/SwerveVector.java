@@ -7,9 +7,6 @@ package org.wfrobotics.subsystems.swerve;
 
 import org.wfrobotics.Utilities;
 
-import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 /**
  * Auto calculate angle and magnitude/angular velocity/distance from x and y
  * values
