@@ -1,6 +1,5 @@
 package org.wfrobotics.vision;
 
-import org.wfrobotics.led.Color;
 import org.wfrobotics.vision.Vision.COLORS;
 
 import com.ni.vision.NIVision;

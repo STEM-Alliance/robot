@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.*;
 
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -38,7 +37,10 @@ public class Vision implements Runnable {
         private static final int MAGENTA = 0xff00ff;
     }
 
+    @SuppressWarnings("unused")
     private final double TIME_RATE_VISION = 1.0 / 30.0; // frame time at 30fps
+
+    @SuppressWarnings("unused")
     private int RescaleSize = 1; // large size == smaller image; 2 == 1/2 image
                                  // size
     private boolean targetDetectionOn = true;
@@ -121,14 +123,10 @@ public class Vision implements Runnable {
         double TimeLastVision = 0;
 
         Image frame;
-        final Image frameTH, frameDownsampled, frameDownsampledTH;
+        final Image frameTH;
 
         frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
         frameTH = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
-        frameDownsampled =
-                NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 10);
-        frameDownsampledTH =
-                NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_U8, 10);
 
         while (true)
         {
