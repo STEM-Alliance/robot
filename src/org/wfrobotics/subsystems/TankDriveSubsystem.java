@@ -3,6 +3,7 @@ package org.wfrobotics.subsystems;
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.drive.DriveTank;
+import org.wfrobotics.commands.drive.DriveTankArcade;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.RobotMap;
 
@@ -37,15 +38,14 @@ public class TankDriveSubsystem extends Subsystem
         for (int i = 0; i < motorsL.length; i++)
         {
             motorsL[i] = new CANTalon(RobotMap.CAN_TANK_TALONS_LEFT[i]);
+            motorsL[i].setInverted(true);
         }
         
         // setup right side motors
         for (int i = 0; i < motorsR.length; i++)
         {
             motorsR[i] = new CANTalon(RobotMap.CAN_TANK_TALONS_RIGHT[i]);
-
-            // since the right side rotation is inverted from the left, set that in the controller
-            motorsR[i].setInverted(true);
+            motorsR[i].setInverted(false);
         }
         
         // Setup gyro
@@ -67,7 +67,7 @@ public class TankDriveSubsystem extends Subsystem
     public void initDefaultCommand() 
     {
         // Set the default command for a subsystem here.
-        setDefaultCommand(new DriveTank(false));
+        setDefaultCommand(new DriveTankArcade());
     }
     
     /**
