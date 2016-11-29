@@ -27,8 +27,9 @@ public class OI
     
     Button buttonY1 = new XboxButton(xbox1, Xbox.ButtonType.kY);
     Button buttonX1 = new XboxButton(xbox1, Xbox.ButtonType.kX);
-    
+
     Button buttonLeftTrigger1 = new XboxTriggerButton(xbox1, Xbox.Hand.kLeft);
+    Button buttonRightTrigger1 = new XboxTriggerButton(xbox1, Xbox.Hand.kRight);
 
     Button buttonRB1 = new XboxButton(xbox1, Xbox.ButtonType.kRB);
     Button buttonLB1 = new XboxButton(xbox1, Xbox.ButtonType.kLB);
@@ -65,12 +66,12 @@ public class OI
     public OI() 
     {
         buttonStart1.toggleWhenPressed(new DriveArcadeWithXbox());
-        buttonBack1.toggleWhenPressed(new DriveTankWithXbox(true));
+        //buttonBack1.toggleWhenPressed(new DriveTankWithXbox(true));
         
         buttonRB1.whileHeld(new ManipulatorContinous(true));
         buttonLB1.whileHeld(new ManipulatorContinous(false));
         
-        buttonLeftTrigger1.whileHeld(new CameraChange(true));
+        //buttonLeftTrigger1.whileHeld(new CameraChange(true));
 
         buttonA1.whileHeld(new BallIntake(true));
         buttonB1.whileHeld(new BallIntake(false));
@@ -81,24 +82,24 @@ public class OI
         
         ////////////////////////
         
-        buttonA2.whileHeld(new ShooterGrab());
-        buttonB2.whileHeld(new ShooterFire());
+        //buttonA2.whileHeld(new ShooterGrab());
+        //buttonB2.whileHeld(new ShooterFire());
         
-        buttonLeftTrigger2.whileHeld(new ShooterRevLEDs());
-        buttonRightTrigger2.whenPressed(new ShooterRelease());
+        buttonLeftTrigger1.whileHeld(new ShooterRevLEDs());
+        buttonRightTrigger1.whenPressed(new ShooterRelease());
 
-        buttonLB2.whenPressed(new LiftToTop());
-        buttonRB2.whenPressed(new LiftToBottom());
-        buttonStart2.toggleWhenPressed(new LiftStop());
+        //buttonLB2.whenPressed(new LiftToTop());
+        //buttonRB2.whenPressed(new LiftToBottom());
+        //buttonStart2.toggleWhenPressed(new LiftStop());
         
 //        buttonX2.whileHeld(new AimerContinuous(true));
 //        buttonY2.whileHeld(new AimerContinuous(false));
 
-        buttonX2.whileHeld(new AimerToAngle(90));
-        buttonY2.whileHeld(new AimerToAngle(115));
+        //buttonX2.whileHeld(new AimerToAngle(90));
+        //buttonY2.whileHeld(new AimerToAngle(115));
 
-        buttonBack2.toggleWhenPressed(new AimerLEDs(true));
-        buttonStart2.toggleWhenPressed(new AimerLEDs(false));
+        //buttonBack2.toggleWhenPressed(new AimerLEDs(true));
+        //buttonStart2.toggleWhenPressed(new AimerLEDs(false));
         
         //////////////////////////
         
@@ -176,7 +177,7 @@ public class OI
 
     public static double getAimerY()
     {
-        return xbox2.getY(Hand.kLeft);
+        return xbox1.getY(Hand.kRight);
     }
     
 }

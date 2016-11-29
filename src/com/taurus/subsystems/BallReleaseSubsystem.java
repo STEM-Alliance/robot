@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class BallReleaseSubsystem extends Subsystem 
 {    
-    private final double BALL_RELEASE_ANGLE_EXTENDED = 120;
+    private final double BALL_RELEASE_ANGLE_EXTENDED = 145;
     private final double BALL_RELEASE_ANGLE_CONTRACTED = 0;
     private final double TOLERANCE = 1;
     

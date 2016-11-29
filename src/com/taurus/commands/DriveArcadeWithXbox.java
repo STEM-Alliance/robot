@@ -22,7 +22,7 @@ public class DriveArcadeWithXbox extends Command
     protected void execute() 
     {
 
-        double adjust = 1.0 - .5 * OI.getThrottleHighSpeed();
+        double adjust = .45;
         double y = OI.getThrottleY();
         double x = OI.getThrottleX() * .8;
         double speedL = y;  // Default value as if forward/backwards
