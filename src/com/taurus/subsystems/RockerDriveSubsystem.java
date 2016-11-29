@@ -3,6 +3,7 @@ package com.taurus.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.taurus.PIDController;
 import com.taurus.Utilities;
+import com.taurus.commands.DriveArcadeWithXbox;
 import com.taurus.commands.DriveTankWithXbox;
 import com.taurus.hardware.Gyro;
 import com.taurus.robot.RobotMap;
@@ -76,7 +77,7 @@ public class RockerDriveSubsystem extends Subsystem
     public void initDefaultCommand() 
     {
         // Set the default command for a subsystem here.
-        setDefaultCommand(new DriveTankWithXbox(false));
+        setDefaultCommand(new DriveArcadeWithXbox());
     }
     
     /**
