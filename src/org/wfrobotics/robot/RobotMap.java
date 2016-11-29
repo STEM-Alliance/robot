@@ -16,13 +16,17 @@ public class RobotMap {
     public enum DRIVE_SYSTEMS
     {
         DRIVE_TANK,
+        DRIVE_MECANUM,
         DRIVE_SWERVE
     }
     
-    public static final DRIVE_SYSTEMS DriveSystem = DRIVE_SYSTEMS.DRIVE_TANK;
+    public static final DRIVE_SYSTEMS DriveSystem = DRIVE_SYSTEMS.DRIVE_MECANUM;
+
+    public static final int CAN_TANK_TALONS_RIGHT[] = {1,2,3};
+    public static final int CAN_TANK_TALONS_LEFT[] = {4,7,8};
     
-    public static final int CAN_TANK_TALONS_RIGHT[] = {10,12,14};
-    public static final int CAN_TANK_TALONS_LEFT[] = {11,13,15};
+    public static final int CAN_MECANUM_TALONS_RIGHT[] = {7,2};
+    public static final int CAN_MECANUM_TALONS_LEFT[] = {8,1};
     
     public static final int ANG_SWERVE_ANGLE[] = { 0, 1, 2, 3 };
     public static final int CAN_SWERVE_DRIVE_TALONS[] = { 14, 12, 13, 11 };

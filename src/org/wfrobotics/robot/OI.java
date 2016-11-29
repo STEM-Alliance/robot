@@ -31,8 +31,8 @@ public class OI
     
     public OI() 
     {
-        buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
-        buttonDriveBack.toggleWhenPressed(new DriveTank(true));
+        //buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
+        //buttonDriveBack.toggleWhenPressed(new DriveTank(true));
                 
         //////////////////////////
         
@@ -74,6 +74,24 @@ public class OI
             return 1.0 - .5 * xboxDrive.getTriggerVal(Hand.kLeft);
         }
     }
+    
+    public static class DriveMecanumOI
+    {
+        public static double getY()
+        {
+          return xboxDrive.getY(Hand.kLeft);
+        }
+
+        public static double getX()
+        {
+            return xboxDrive.getX(Hand.kLeft);
+        }
+        public static double getRotation()
+        {
+            return xboxDrive.getX(Hand.kRight);
+        }
+    }
+    
     
     public static class DriveSwerveOI
     {
