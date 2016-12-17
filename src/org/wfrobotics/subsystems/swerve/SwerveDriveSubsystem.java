@@ -255,7 +255,7 @@ public class SwerveDriveSubsystem extends Subsystem {
         {
             // calculate
             WheelsUnscaled[i] = new SwerveVector(RobotVelocity.getX()
-                                                     + RobotRotation
+                                                     - RobotRotation
                                                      * Wheels[i].getPosition().getY(),
                                                  RobotVelocity.getY()
                                                      + RobotRotation

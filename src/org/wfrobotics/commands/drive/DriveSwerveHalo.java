@@ -25,7 +25,7 @@ public class DriveSwerveHalo extends Command
         Robot.swerveDriveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
 
         Robot.swerveDriveSubsystem.UpdateHaloDrive(OI.DriveSwerveOI.getHaloDrive_Velocity(),
-                OI.DriveSwerveOI.getHaloDrive_Rotation());
+                -OI.DriveSwerveOI.getHaloDrive_Rotation());
         Robot.swerveDriveSubsystem.setCrawlMode(OI.DriveSwerveOI.getCrawlSpeed());
     }
 

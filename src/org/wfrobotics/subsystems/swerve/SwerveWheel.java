@@ -354,6 +354,7 @@ public class SwerveWheel {
             anglePID.resetIntegral();
             angleMotor.set(0);
         }
+        SmartDashboard.putNumber(name + ".angle.des", desired.getAngle());
         SmartDashboard.putNumber(name + ".angle", getAnglePotAdjusted());
 
         return anglePID.isReverseMotor();
