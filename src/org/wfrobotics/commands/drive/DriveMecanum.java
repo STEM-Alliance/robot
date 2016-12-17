@@ -26,7 +26,7 @@ public class DriveMecanum extends Command {
        
         
         
-        Robot.mecanumDriveSubsystem.drive(DriveMecanumOI.getX()/2.0, DriveMecanumOI.getY()/2.0, DriveMecanumOI.getRotation()/2.0);
+        Robot.mecanumDriveSubsystem.drive(-DriveMecanumOI.getX()*0.7, DriveMecanumOI.getY()*0.7, -DriveMecanumOI.getRotation()*0.7);
         
     }
 
