@@ -19,13 +19,13 @@ public class RobotMap {
         DRIVE_SWERVE
     }
     
-    public static final DRIVE_SYSTEMS DriveSystem = DRIVE_SYSTEMS.DRIVE_TANK;
+    public static final DRIVE_SYSTEMS DriveSystem = DRIVE_SYSTEMS.DRIVE_SWERVE;
     
     public static final int CAN_TANK_TALONS_RIGHT[] = {10,12,14};
     public static final int CAN_TANK_TALONS_LEFT[] = {11,13,15};
     
     public static final int ANG_SWERVE_ANGLE[] = { 0, 1, 2, 3 };
-    public static final int CAN_SWERVE_DRIVE_TALONS[] = { 14, 12, 13, 11 };
-    public static final int CAN_SWERVE_ANGLE_TALONS[] = { 18, 16, 17, 15 };
+    public static final int CAN_SWERVE_DRIVE_TALONS[] = { 8, 5, 4, 1 };
+    public static final int CAN_SWERVE_ANGLE_TALONS[] = { 7, 6, 3, 2 };
     public static final int PWM_SWERVE_SHIFT_SERVOS[] = { 0, 1, 2, 3 };
 }

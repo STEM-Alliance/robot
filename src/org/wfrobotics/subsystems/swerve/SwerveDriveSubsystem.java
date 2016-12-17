@@ -8,6 +8,11 @@ package org.wfrobotics.subsystems.swerve;
 
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
+import org.wfrobotics.commands.drive.DriveSwerveCombo;
+import org.wfrobotics.commands.drive.DriveSwerveHalo;
+import org.wfrobotics.commands.drive.DriveSwerveSingleWheelTest;
+import org.wfrobotics.commands.drive.DriveSwerveWheelCalibration;
+import org.wfrobotics.commands.drive.DriveTank;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.RobotMap;
 
@@ -75,7 +80,7 @@ public class SwerveDriveSubsystem extends Subsystem {
             Wheels[i] = new SwerveWheel(i,
                     SwerveConstants.WheelPositions[i],
 //                    SwerveConstants.WheelEncoderPins[i],
-                    RobotMap.ANG_SWERVE_ANGLE[i],
+                    //RobotMap.ANG_SWERVE_ANGLE[i],
                     RobotMap.CAN_SWERVE_DRIVE_TALONS[i],
                     RobotMap.CAN_SWERVE_ANGLE_TALONS[i],
                     RobotMap.PWM_SWERVE_SHIFT_SERVOS[i],
@@ -91,12 +96,23 @@ public class SwerveDriveSubsystem extends Subsystem {
         }
     }
 
+
+    
+    /**
+     * set the default command
+     */
+    public void initDefaultCommand() 
+    {
+        // Set the default command for a subsystem here.
+        setDefaultCommand(new DriveSwerveHalo());
+    }
+    
     public void free()
     {
-        for (int i = 0; i < SwerveConstants.WheelCount; i++)
-        {
-            Wheels[i].free();
-        }
+//        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+//        {
+//            Wheels[i].free();
+//        }
     }
     
     /**
@@ -150,9 +166,6 @@ public class SwerveDriveSubsystem extends Subsystem {
             LastHeading = navxMXP.getYaw();
         }
 
-        SmartDashboard.putNumber("Velocity X", Velocity.getX());
-        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
-        SmartDashboard.putNumber("Rotation", Rotation);
 
         return UpdateHaloDrive(Velocity, Rotation);
     }
@@ -166,6 +179,11 @@ public class SwerveDriveSubsystem extends Subsystem {
      */
     public SwerveVector[] UpdateHaloDrive(SwerveVector Velocity, double Rotation)
     {
+        SmartDashboard.putNumber("Velocity X", Velocity.getX());
+        SmartDashboard.putNumber("Velocity Y", Velocity.getY());
+        SmartDashboard.putNumber("Rotation", Rotation);
+        SmartDashboard.putBoolean("FieldRelative", FieldRelative);
+        
         if (FieldRelative)
         {
             Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
@@ -226,9 +244,11 @@ public class SwerveDriveSubsystem extends Subsystem {
 
         RobotVelocity = restrictVelocity(RobotVelocity);
 
-//        SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
-//        SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
-//        SmartDashboard.putNumber("Drive R", RobotRotation);
+        SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
+        SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
+        SmartDashboard.putNumber("Drive Mag", RobotVelocity.getMag());
+        SmartDashboard.putNumber("Drive Ang", RobotVelocity.getAngle());
+        SmartDashboard.putNumber("Drive R", RobotRotation);
 
         // calculate vectors for each wheel
         for (int i = 0; i < SwerveConstants.WheelCount; i++)
@@ -259,7 +279,6 @@ public class SwerveDriveSubsystem extends Subsystem {
             Ratio = 1;
         }
 
-        boolean ActiveGear = GearHigh;
         
         if(SwerveConstants.WheelShiftDefaultHigh) 
             GearHigh = !GearHigh;
@@ -273,7 +292,6 @@ public class SwerveDriveSubsystem extends Subsystem {
 
             // Set the wheel speed
             WheelsActual[i] = Wheels[i].setDesired(WheelScaled, GearHigh, Brake);
-                    Wheels[i].setDesired(WheelScaled, ActiveGear, Brake);
         }
 
         return WheelsActual;
@@ -465,11 +483,6 @@ public class SwerveDriveSubsystem extends Subsystem {
         return Wheels[index];
     }
 
-    @Override
-    protected void initDefaultCommand()
-    {
-        // TODO Auto-generated method stub
-    }
 
     public double getCrawlMode()
     {

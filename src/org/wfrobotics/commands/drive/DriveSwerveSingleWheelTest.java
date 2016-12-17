@@ -18,6 +18,10 @@ public class DriveSwerveSingleWheelTest extends Command
     {
         requires(Robot.swerveDriveSubsystem);
         
+    }
+
+    protected void initialize() 
+    {
         testWheelChooser = new SendableChooser();
         testWheelChooser.addDefault("Front Left", Integer.valueOf(0));
         testWheelChooser.addObject("Front Right", Integer.valueOf(1));
@@ -26,15 +30,15 @@ public class DriveSwerveSingleWheelTest extends Command
         SmartDashboard.putData("Test Wheel", testWheelChooser);
     }
 
-    protected void initialize() 
-    {
-    }
-
     protected void execute() 
     {
         Utilities.PrintCommand("Drive", this);
 
         int i = ((Integer) testWheelChooser.getSelected()).intValue();
+
+        //SmartDashboard.putNumber("Test Wheel", i);
+        SmartDashboard.putNumber("Vel Ang", OI.DriveSwerveOI.getHaloDrive_Velocity().getAngle());
+        SmartDashboard.putNumber("Vel Mag", OI.DriveSwerveOI.getHaloDrive_Velocity().getMag());
         
         SwerveVector WheelActual = Robot.swerveDriveSubsystem.getWheel(i).setDesired(
                 OI.DriveSwerveOI.getHaloDrive_Velocity(),

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.AllocationException;
 
 /**
@@ -45,7 +46,7 @@ public class SwerveWheel {
     /** Angle sensor */
     private MagnetoPot anglePot;
     /** Max speed the rotation can spin, relative to motor maximum */
-    private double angleMaxSpeed = .7;
+    private double angleMaxSpeed = -.7;
     /** Special angle PID controller */
     private SwerveAngleController anglePID;
 
@@ -209,11 +210,15 @@ public class SwerveWheel {
         desired = newDesired;
         gearHigh = newHighGear;
         brake = newBrake;
-        angleCalSensor.free();
 
         return updateTask();
     }
 
+    private double getAnglePotAdjusted()
+    {
+        return Utilities.wrapToRange(-anglePot.get(),-180,180);
+    }
+    
     /**
      * Get the desired vector (velocity and rotation) of this wheel instance
      * 
@@ -232,7 +237,7 @@ public class SwerveWheel {
     public SwerveVector getActual()
     {
         // WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
-        actual.setMagAngle(desired.getMag(), anglePot.get());
+        actual.setMagAngle(desired.getMag(), getAnglePotAdjusted());
         return actual;
     }
 
@@ -279,8 +284,7 @@ public class SwerveWheel {
         {
             // the Calibration Sensor is triggered, so we should be facing
             // forward
-            if (Math.abs(Utilities.wrapToRange(anglePot.get(), -180,
-                    180)) > angleCalSensorThreshold)
+            if (Math.abs(getAnglePotAdjusted()) > angleCalSensorThreshold)
             {
                 // we're more than angleCalSensorThreshold away, yet the sensor 
                 // is triggered, we need to then update the angle
@@ -317,6 +321,9 @@ public class SwerveWheel {
         // SmartDashboard.putNumber(Name + ".desired.ang",
         // WheelDesired.getAngle());
 
+        //SmartDashboard.putNumber(name + ".angle.noOffset", anglePot.getWithoutOffset());
+        //SmartDashboard.putNumber(name + ".angle.raw", anglePot.getRawInput());
+        
         return getActual();
     }
 
@@ -334,7 +341,7 @@ public class SwerveWheel {
         updateMaxRotationSpeed();
 
         // Update the angle controller.
-        anglePID.update(desired.getAngle(), anglePot.get());
+        anglePID.update(desired.getAngle(), getAnglePotAdjusted());
 
         if (desired.getMag() > MINIMUM_SPEED)
         {
@@ -347,6 +354,7 @@ public class SwerveWheel {
             anglePID.resetIntegral();
             angleMotor.set(0);
         }
+        SmartDashboard.putNumber(name + ".angle", getAnglePotAdjusted());
 
         return anglePID.isReverseMotor();
     }
@@ -403,19 +411,13 @@ public class SwerveWheel {
             driveMotor.set(driveMotorOutput);
         }
 
-        // SmartDashboard.putNumber(Name + ".position.raw",
-        // DriveEncoder.getRaw());
-        // SmartDashboard.putNumber(Name + ".position.scaled",
-        // DriveEncoder.getDistance());
-        // SmartDashboard.putNumber(Name + ".speed.filtered",
-        // DriveEncoderFilter.getVelocity());
-        // SmartDashboard.putNumber(Name + ".speed.scaled",
-        // driveEncoderVelocityScaled);
-        // SmartDashboard.putNumber(Name + ".speed.error",
-        // driveMotorControllerError);
-        // SmartDashboard.putNumber(Name + ".speed.adjust",
-        // driveMotorControllerOutput);
-        // SmartDashboard.putNumber(Name + ".speed.motor", driveMotorOutput);
+        // SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
+        // SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
+        // SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
+        // SmartDashboard.putNumber(Name + ".speed.scaled", driveEncoderVelocityScaled);
+        // SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
+        // SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
+        SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
 
     protected void updateAngleOffset()

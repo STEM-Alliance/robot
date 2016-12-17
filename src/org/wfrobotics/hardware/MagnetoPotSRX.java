@@ -1,6 +1,8 @@
 package org.wfrobotics.hardware;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Class to use a Magnetic Potentiometer through a Talon SRX
@@ -42,11 +44,12 @@ public class MagnetoPotSRX extends MagnetoPot {
         super(fullRange, offset);
         
         m_Talon = talon;
+        m_Talon.setFeedbackDevice(FeedbackDevice.AnalogPot);
     }
 
-    protected double getRawInput()
+    public double getRawInput()
     {
-        return (double)m_Talon.getAnalogInRaw()/1023;
+        return (double)m_Talon.getAnalogInRaw()/1023.0;
     }
 
     @Override

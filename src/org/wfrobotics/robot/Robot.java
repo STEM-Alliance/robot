@@ -77,7 +77,7 @@ public class Robot extends SampleRobot
         
         while (isOperatorControl() && isEnabled())
         {
-            tankDriveSubsystem.printSensors();
+            //tankDriveSubsystem.printSensors();
             Scheduler.getInstance().run();
         }
     }
@@ -103,7 +103,7 @@ public class Robot extends SampleRobot
     {
         while (isDisabled())
         {
-            tankDriveSubsystem.printSensors();
+            //tankDriveSubsystem.printSensors();
             
             Scheduler.getInstance().run();
         }
