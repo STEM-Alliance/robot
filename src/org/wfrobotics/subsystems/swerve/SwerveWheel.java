@@ -50,6 +50,8 @@ public class SwerveWheel {
     /** Special angle PID controller */
     private SwerveAngleController anglePID;
 
+    /** Invert the angle motor and sensor to swap left/right */
+    private boolean angleInverted = false;
     /** Auto calibration sensor for having a known angle */
     private DigitalInput angleCalSensor;
     /** Enable/disable the auto calibration */
@@ -70,7 +72,8 @@ public class SwerveWheel {
     private static final double MINIMUM_SPEED = 0.1;
 
     /**
-     * Set up a swerve wheel using pin and address assignments
+     * Set up a swerve wheel using pin and address assignments,
+     * using an analog input for angle
      * @param Number
      * @param Position
      * @param PotPin
@@ -91,7 +94,8 @@ public class SwerveWheel {
     }
 
     /**
-     * Set up a swerve wheel using pin and address assignments
+     * Set up a swerve wheel using pin and address assignments, 
+     * using the SRX input for angle
      * @param Number
      * @param Position
      * @param DriveAddress
@@ -111,7 +115,8 @@ public class SwerveWheel {
     }
 
     /**
-     * Set up a swerve wheel using controllers/objects
+     * Set up a swerve wheel using controllers/objects,
+     * using a generic sensor for angle
      * @param Number
      * @param Position
      * @param Pot
@@ -151,7 +156,8 @@ public class SwerveWheel {
     }
     
     /**
-     * Set up a swerve wheel using controllers/objects
+     * Set up a swerve wheel using controllers/objects,
+     * using an SRX input for angle
      * @param Number
      * @param Position
      * @param DriveMotor
@@ -216,7 +222,8 @@ public class SwerveWheel {
 
     private double getAnglePotAdjusted()
     {
-        return Utilities.wrapToRange(-anglePot.get(),-180,180);
+        double invert = angleInverted ? -1 : 1;
+        return Utilities.wrapToRange(invert * anglePot.get(),-180,180);
     }
     
     /**
