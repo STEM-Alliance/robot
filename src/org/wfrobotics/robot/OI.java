@@ -53,7 +53,7 @@ public class OI
         
         public static double getThrottleSpeedAdjust()
         {
-            return 1.0 - .5 * xboxDrive.getTriggerVal(Hand.kLeft);
+            return 0.5 + .5 * xboxDrive.getTriggerVal(Hand.kLeft);
         }
     }
     
@@ -71,7 +71,7 @@ public class OI
         
         public static double getThrottleSpeedAdjust()
         {
-            return 1.0 - .5 * xboxDrive.getTriggerVal(Hand.kLeft);
+            return 0.5 + .5 * xboxDrive.getTriggerVal(Hand.kLeft);
         }
     }
     

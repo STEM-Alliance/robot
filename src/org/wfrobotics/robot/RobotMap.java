@@ -22,8 +22,8 @@ public class RobotMap {
     
     public static final DRIVE_SYSTEMS DriveSystem = DRIVE_SYSTEMS.DRIVE_MECANUM;
 
-    public static final int CAN_TANK_TALONS_RIGHT[] = {1,2,3};
-    public static final int CAN_TANK_TALONS_LEFT[] = {4,7,8};
+    public static final int CAN_TANK_TALONS_RIGHT[] = {12,13};
+    public static final int CAN_TANK_TALONS_LEFT[] = {10,11};
     
     public static final int CAN_MECANUM_TALONS_RIGHT[] = {7,2};
     public static final int CAN_MECANUM_TALONS_LEFT[] = {8,1};
