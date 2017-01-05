@@ -19,14 +19,15 @@ public final class SwerveAngleController {
     private static final double MaxOut = 1;
 
     private static final double P = .04;
-    private static final double I = 0;
-    private static final double D = .001;
+    private static final double I = 0.01;
+    private static final double D = 0.01;
 
     private final String name;
     private final PIDController controller;
 
     private double motorSpeed;
     private boolean reverseMotor;
+    public double error;
     
 
     /**
@@ -93,10 +94,10 @@ public final class SwerveAngleController {
     {
 
         // Calculate error, with detection of the drive motor reversal shortcut.
-        double error = calcErrorAndReverseNeeded(setPoint, sensorValue);
+        error = calcErrorAndReverseNeeded(setPoint, sensorValue);
 
 
-        motorSpeed = this.controller.update(error, Timer.getFPGATimestamp());
+        motorSpeed = this.controller.update(error);
 
         if(DEBUG)
         {
