@@ -51,7 +51,7 @@ public class SwerveWheel {
     private SwerveAngleController anglePID;
 
     /** Invert the angle motor and sensor to swap left/right */
-    private boolean angleInverted = false;
+    private boolean angleInverted = true;
     /** Auto calibration sensor for having a known angle */
     private DigitalInput angleCalSensor;
     /** Enable/disable the auto calibration */
@@ -347,9 +347,15 @@ public class SwerveWheel {
         updateAngleOffset();
         updateMaxRotationSpeed();
 
+        double des = desired.getAngle();
+        double sensor = getAnglePotAdjusted();
         // Update the angle controller.
-        anglePID.update(desired.getAngle(), getAnglePotAdjusted());
+        anglePID.update(des, sensor);
 
+        double error = anglePID.error;
+        
+        SmartDashboard.putNumber(name+".angle.raw", anglePot.getRawInput());
+        
         if (desired.getMag() > MINIMUM_SPEED)
         {
             // Control the wheel angle.
@@ -361,8 +367,9 @@ public class SwerveWheel {
             anglePID.resetIntegral();
             angleMotor.set(0);
         }
-        SmartDashboard.putNumber(name + ".angle.des", desired.getAngle());
-        SmartDashboard.putNumber(name + ".angle", getAnglePotAdjusted());
+        SmartDashboard.putNumber(name + ".angle.des", des);
+        SmartDashboard.putNumber(name + ".angle", sensor);
+        SmartDashboard.putNumber(name + ".angle.err", error);
 
         return anglePID.isReverseMotor();
     }
