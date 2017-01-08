@@ -43,7 +43,7 @@ public class MagnetoPotAnalog extends MagnetoPot{
         m_Analog = new AnalogPotentiometer(channel);
     }
 
-    protected double getRawInput()
+    public double getRawInput()
     {
         return m_Analog.get();
     }
