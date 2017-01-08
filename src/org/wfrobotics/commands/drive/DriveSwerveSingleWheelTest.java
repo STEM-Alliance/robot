@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSwerveSingleWheelTest extends Command 
 {
-    private SendableChooser testWheelChooser;
+    private SendableChooser<Integer> testWheelChooser;
     
     public DriveSwerveSingleWheelTest() 
     {
@@ -23,7 +23,7 @@ public class DriveSwerveSingleWheelTest extends Command
 
     protected void initialize() 
     {
-        testWheelChooser = new SendableChooser();
+        testWheelChooser = new SendableChooser<Integer>();
         testWheelChooser.addDefault("Front Left", Integer.valueOf(0));
         testWheelChooser.addObject("Front Right", Integer.valueOf(1));
         testWheelChooser.addObject("Back Right", Integer.valueOf(2));

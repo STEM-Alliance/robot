@@ -3,9 +3,9 @@ package org.wfrobotics.robot;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
-import org.wfrobotics.controller.Xbox.RumbleType;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 
 /**
@@ -55,7 +55,7 @@ public class OI
         
         public static double getThrottleSpeedAdjust()
         {
-            return 0.5 + .5 * xboxDrive.getTriggerVal(Hand.kLeft);
+            return 0.5 + .5 * xboxDrive.getTriggerAxis(Hand.kLeft);
         }
     }
     
@@ -73,7 +73,7 @@ public class OI
         
         public static double getThrottleSpeedAdjust()
         {
-            return 0.5 + .5 * xboxDrive.getTriggerVal(Hand.kLeft);
+            return 0.5 + .5 * xboxDrive.getTriggerAxis(Hand.kLeft);
         }
     }
     
@@ -203,7 +203,7 @@ public class OI
         
         public static double getCrawlSpeed()
         {
-            return xboxDrive.getTriggerVal(Hand.kRight);
+            return xboxDrive.getTriggerAxis(Hand.kRight);
         }
         
         public static boolean getBrake()
@@ -228,7 +228,7 @@ public class OI
 
     }
     
-    public static void setDriveRumble(RumbleType type, float value)
+    public static void setDriveRumble(XboxController.RumbleType type, float value)
     {
         xboxDrive.setRumble(type, value);
     }

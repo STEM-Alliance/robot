@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.*;
 
 import java.util.ArrayList;
 
+import com.ctre.CANTalon;
+
 /**
  * Used to create a system of motors that work in tandem, regardless of motor controller types,
  * as well as providing a single interface to set output speeds/values

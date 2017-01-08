@@ -41,9 +41,7 @@ public class Robot extends SampleRobot
     public static OI oi;
 
     Command autonomousCommand;
-    SendableChooser autoChooser;
-    SendableChooser positionChooser;
-    SendableChooser modeChooser;
+    SendableChooser<AUTO_COMMAND> autoChooser;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -68,7 +66,7 @@ public class Robot extends SampleRobot
         }
         
         oi = new OI();
-        autoChooser = new SendableChooser();
+        autoChooser = new SendableChooser<AUTO_COMMAND>();
         
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
         SmartDashboard.putData("Auto mode", autoChooser);
