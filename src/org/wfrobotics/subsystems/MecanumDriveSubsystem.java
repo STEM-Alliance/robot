@@ -1,17 +1,17 @@
 package org.wfrobotics.subsystems;
 
+import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.RobotDrive.MotorType;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  *
  */
-public class MecanumDriveSubsystem extends Subsystem {
+public class MecanumDriveSubsystem extends DriveSubsystem {
     
     private RobotDrive robotDrive;
     private CANTalon frontLeft;
@@ -23,6 +23,8 @@ public class MecanumDriveSubsystem extends Subsystem {
     // here. Call these from Commands.
     public MecanumDriveSubsystem()
     {
+        super();
+        
         frontLeft = new CANTalon(RobotMap.CAN_MECANUM_TALONS_LEFT[0]);
         frontRight = new CANTalon(RobotMap.CAN_MECANUM_TALONS_RIGHT[0]);
         backLeft = new CANTalon(RobotMap.CAN_MECANUM_TALONS_LEFT[1]);
@@ -42,11 +44,36 @@ public class MecanumDriveSubsystem extends Subsystem {
         //setDefaultCommand(new MySpecialCommand());
         setDefaultCommand(new DriveMecanum());
     }
-    
-    public void drive(double x, double y, double rotation)
+
+    @Override
+    public void driveTank(double right, double left)
     {
-        robotDrive.mecanumDrive_Cartesian(x, y, rotation, 0);
-   
+        //TODO?
+    }
+
+    @Override
+    public void driveVector(double magnitude, double angle, double rotation)
+    {
+        if(m_fieldRelative)
+            robotDrive.mecanumDrive_Polar(magnitude, m_gyro.getYaw() - angle, rotation);
+        else
+            robotDrive.mecanumDrive_Polar(magnitude, angle, rotation);
+    }
+
+    @Override
+    public void driveVector(Vector velocity, double rotation)
+    {
+        driveVector(velocity.getMag(), velocity.getAngle(), rotation);
+    }
+
+    @Override
+    public void driveXY(double x, double y, double rotation)
+    {
+        if(m_fieldRelative)
+            robotDrive.mecanumDrive_Cartesian(x, y, rotation, m_gyro.getYaw());
+        else
+            robotDrive.mecanumDrive_Cartesian(x, y, rotation, 0);
+            
     }
 }
 

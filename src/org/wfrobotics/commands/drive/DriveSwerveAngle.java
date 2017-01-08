@@ -11,7 +11,7 @@ public class DriveSwerveAngle extends Command
 {
     public DriveSwerveAngle() 
     {
-        requires(Robot.swerveDriveSubsystem);
+        requires(Robot.driveSubsystem);
     }
 
     protected void initialize() 
@@ -22,11 +22,11 @@ public class DriveSwerveAngle extends Command
     {
         Utilities.PrintCommand("Drive", this);
 
-        Robot.swerveDriveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
+        Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
     
-        Robot.swerveDriveSubsystem.UpdateDrive(OI.DriveSwerveOI.getAngleDrive_Velocity(),
-                0,
-                OI.DriveSwerveOI.getAngleDrive_Heading());
+        Robot.driveSubsystem.driveVector(OI.DriveSwerveOI.getAngleDrive_Velocity(), 0);
+        //TODO: handle the heading nonsense 
+        // OI.DriveSwerveOI.getAngleDrive_Heading()
     }
 
     protected boolean isFinished() 

@@ -1,6 +1,7 @@
 package org.wfrobotics.controller;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.Vector;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -321,7 +322,17 @@ public class Xbox extends GenericHID {
     {
         double Angle = Math.toDegrees(getDirectionRadians(hand));
         return Utilities.wrapToRange(Angle + 90, -180, 180);
-
+    }
+    
+    /**
+     * Get the vector formed by the hand
+     * @param hand
+     *            Hand associated with the Joystick
+     * @return Vector
+     */
+    public Vector getVector(Hand hand)
+    {
+        return new Vector(getX(hand), getY(hand));
     }
 
     /**

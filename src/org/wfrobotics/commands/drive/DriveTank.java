@@ -13,7 +13,7 @@ public class DriveTank extends Command
     
     public DriveTank(boolean backward) 
     {
-        requires(Robot.tankDriveSubsystem);
+        requires(Robot.driveSubsystem);
         this.backward = backward;
     }
 
@@ -48,7 +48,7 @@ public class DriveTank extends Command
                 right = Math.signum(right) * magnitudeAverage;
             }
         }
-        Robot.tankDriveSubsystem.driveRaw(right, left);
+        Robot.driveSubsystem.driveTank(right, left);
     }
 
     protected boolean isFinished() 

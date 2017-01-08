@@ -17,7 +17,7 @@ public class AutoNone extends Command
      */
     public AutoNone()
     {
-        requires(Robot.tankDriveSubsystem);
+        requires(Robot.driveSubsystem);
         speedR = 0;
         speedL = 0;
     }
@@ -28,7 +28,7 @@ public class AutoNone extends Command
 
     protected void execute() 
     {
-        Robot.tankDriveSubsystem.driveRaw(0, 0);
+        //Robot.tankDriveSubsystem.driveRaw(0, 0);
     }
 
     protected boolean isFinished()
@@ -38,7 +38,7 @@ public class AutoNone extends Command
 
     protected void end() 
     {
-        Robot.tankDriveSubsystem.driveRaw(0, 0);
+        //Robot.tankDriveSubsystem.driveRaw(0, 0);
     }
 
     // subsystems is scheduled to run
