@@ -31,7 +31,7 @@ public class DriveSwerveCombo extends Command
         
         if (OI.DriveSwerveOI.getResetGyro())
         {
-            ((SwerveDriveSubsystem)Robot.driveSubsystem).ZeroGyro();
+            ((SwerveDriveSubsystem)Robot.driveSubsystem).gyroZero();
         }
         
         ((SwerveDriveSubsystem)Robot.driveSubsystem).setCrawlMode(OI.DriveSwerveOI.getCrawlSpeed());
@@ -43,7 +43,7 @@ public class DriveSwerveCombo extends Command
             drive.setMagAngle(1, (dpad - 90));
             
             // use non field relative
-            ((SwerveDriveSubsystem)Robot.driveSubsystem).setFieldRelative(false);
+            Robot.driveSubsystem.setFieldRelative(false);
             
             Robot.driveSubsystem.driveVector(drive, OI.DriveSwerveOI.getHaloDrive_Rotation());
             //TODO fix this nonsense
@@ -51,7 +51,7 @@ public class DriveSwerveCombo extends Command
         }
         else
         {
-            ((SwerveDriveSubsystem)Robot.driveSubsystem).setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
+            Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
             
             Robot.driveSubsystem.driveVector(OI.DriveSwerveOI.getHaloDrive_Velocity(), OI.DriveSwerveOI.getHaloDrive_Rotation());
             //TODO fix this nonsense

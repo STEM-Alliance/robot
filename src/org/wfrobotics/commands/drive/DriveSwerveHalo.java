@@ -4,7 +4,6 @@ package org.wfrobotics.commands.drive;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -23,7 +22,7 @@ public class DriveSwerveHalo extends Command
     {
         Utilities.PrintCommand("Drive", this);
 
-        ((SwerveDriveSubsystem)Robot.driveSubsystem).setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
+        Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
 
         Robot.driveSubsystem.driveVector(OI.DriveSwerveOI.getHaloDrive_Velocity(), -OI.DriveSwerveOI.getHaloDrive_Rotation());
         //Robot.swerveDriveSubsystem.setCrawlMode(OI.DriveSwerveOI.getCrawlSpeed());

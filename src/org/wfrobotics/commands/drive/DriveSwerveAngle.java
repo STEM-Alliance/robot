@@ -4,7 +4,6 @@ package org.wfrobotics.commands.drive;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -23,7 +22,7 @@ public class DriveSwerveAngle extends Command
     {
         Utilities.PrintCommand("Drive", this);
 
-        ((SwerveDriveSubsystem)Robot.driveSubsystem).setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
+        Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
     
         Robot.driveSubsystem.driveVector(OI.DriveSwerveOI.getAngleDrive_Velocity(), 0);
         //TODO: handle the heading nonsense 

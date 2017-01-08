@@ -4,11 +4,9 @@ import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
-import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,9 +18,8 @@ public class TankDriveSubsystem extends DriveSubsystem
     //          {bogie, bogie, fixed}
     private CANTalon motorsL[] = new CANTalon[RobotMap.CAN_TANK_TALONS_LEFT.length];
     private CANTalon motorsR[] = new CANTalon[RobotMap.CAN_TANK_TALONS_RIGHT.length];
-    private Gyro navxMXP;  // Expander board, contains gyro
     
-    private double desiredHeading;
+    private double m_lastHeading;
     private PIDController headingPID;
     
     private final double HEADING_TOLERANCE = 1.5;
@@ -32,6 +29,7 @@ public class TankDriveSubsystem extends DriveSubsystem
      */
     public TankDriveSubsystem()
     {
+        super();
         
         // set up left side motors
         for (int i = 0; i < motorsL.length; i++)
@@ -46,17 +44,7 @@ public class TankDriveSubsystem extends DriveSubsystem
             motorsR[i] = new CANTalon(RobotMap.CAN_TANK_TALONS_RIGHT[i]);
             motorsR[i].setInverted(false);
         }
-        
-        // Setup gyro
-        try {
-            /* Communicate w/navX MXP via the MXP SPI Bus.                                     */
-            /* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
-            /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
-            navxMXP = Gyro.getInstance();
-        } catch (RuntimeException ex ) {
-            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
-        }
-        
+                
         headingPID = new PIDController(.2, 0, 0, .5);
     }
     
@@ -112,7 +100,7 @@ public class TankDriveSubsystem extends DriveSubsystem
     }
 
     @Override
-    public void drivePolar(double magnitude, double angle, double rotation)
+    public void driveVector(double magnitude, double angle, double rotation)
     {
         // TODO Auto-generated method stub
         
@@ -126,7 +114,7 @@ public class TankDriveSubsystem extends DriveSubsystem
     }
 
     @Override
-    public void driveCartesian(double x, double y, double rotation)
+    public void driveXY(double x, double y, double rotation)
     {
         // TODO Auto-generated method stub
         
@@ -140,7 +128,7 @@ public class TankDriveSubsystem extends DriveSubsystem
      */
     public boolean turnToAngleOffset(double angle)
     {
-        return turnToAngle(navxMXP.getYaw() + angle);
+        return turnToAngle(m_gyro.getYaw() + angle);
     }
     
     /**
@@ -162,7 +150,7 @@ public class TankDriveSubsystem extends DriveSubsystem
     public boolean turnToAngle(double angle, boolean singleSide, boolean forward)
     {
         double output = 0;
-        double error = Utilities.wrapToRange(angle - navxMXP.getYaw(), -180, 180);
+        double error = Utilities.wrapToRange(angle - m_gyro.getYaw(), -180, 180);
         
         updatePID();
         
@@ -209,17 +197,12 @@ public class TankDriveSubsystem extends DriveSubsystem
         }
         
         // save off angle in case you need to use it
-        desiredHeading = angle;
+        m_lastHeading = angle;
         
         // we're done if we're at the angle, and we're no longer turning
         return Math.abs(error) < HEADING_TOLERANCE;// && Math.abs(output) < .1;
     }
-        
-    public void zeroGyro(double angle)
-    {
-        navxMXP.setZero(angle);
-    }
-
+    
     /**
      * Apply a deadband.
      * 
@@ -246,21 +229,12 @@ public class TankDriveSubsystem extends DriveSubsystem
 
     public void printSensors()
     {
-        SmartDashboard.putNumber("Robot Heading", navxMXP.getYaw());
-        SmartDashboard.putNumber("Desired Heading", desiredHeading);
+        SmartDashboard.putNumber("Robot Heading", m_gyro.getYaw());
+        SmartDashboard.putNumber("Desired Heading", m_lastHeading);
 
-        SmartDashboard.putString("RobotPositionInfo", navxMXP.getYaw() +"," + motorsL[0].get()  +"," + motorsR[0].get());
+        SmartDashboard.putString("RobotPositionInfo", m_gyro.getYaw() +"," + motorsL[0].get()  +"," + motorsR[0].get());
     }
 
-    public double getYaw()
-    {
-        return navxMXP.getYaw();
-    }
-    
-    public void zeroYaw(double angle)
-    {
-        navxMXP.setZero(angle);
-    }
     
     public void setBrakeMode(boolean enable)
     {

@@ -4,7 +4,6 @@ package org.wfrobotics.commands.drive;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -23,7 +22,7 @@ public class DriveSwerveWheelCalibration extends Command
     {
         Utilities.PrintCommand("Drive", this);
         
-        ((SwerveDriveSubsystem)Robot.driveSubsystem).setFieldRelative(false);
+        Robot.driveSubsystem.setFieldRelative(false);
     
         Robot.driveSubsystem.driveVector(Vector.NewFromMagAngle(.2, 0), 0);
     }
