@@ -36,11 +36,9 @@ public class Robot extends SampleRobot
             return autonomousCommand;
         }
     }
-
-	public static TankDriveSubsystem tankDriveSubsystem;
-    public static MecanumDriveSubsystem mecanumDriveSubsystem;
-	public static SwerveDriveSubsystem swerveDriveSubsystem;
-	public static OI oi;
+    
+    public static DriveSubsystem driveSubsystem;
+    public static OI oi;
 
     Command autonomousCommand;
     SendableChooser autoChooser;
@@ -56,16 +54,16 @@ public class Robot extends SampleRobot
         switch(RobotMap.DriveSystem)
         {
             case DRIVE_SWERVE:
-                swerveDriveSubsystem = new SwerveDriveSubsystem();
+                driveSubsystem = new SwerveDriveSubsystem();
                 break;
 
             case DRIVE_MECANUM:
-                mecanumDriveSubsystem = new MecanumDriveSubsystem();
+                driveSubsystem = new MecanumDriveSubsystem();
                 break;
                 
             case DRIVE_TANK:
             default:
-                tankDriveSubsystem = new TankDriveSubsystem();
+                driveSubsystem = new TankDriveSubsystem();
                 break;
         }
         

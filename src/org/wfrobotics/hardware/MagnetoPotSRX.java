@@ -2,7 +2,6 @@ package org.wfrobotics.hardware;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Class to use a Magnetic Potentiometer through a Talon SRX

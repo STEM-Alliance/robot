@@ -1,6 +1,7 @@
 package org.wfrobotics.subsystems.swerve;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.Vector;
 import org.wfrobotics.hardware.*;
 
 import edu.wpi.first.wpilibj.CANTalon;
@@ -22,11 +23,11 @@ public class SwerveWheel {
     public int number;
 
     /** Wheel location from center of robot */
-    private SwerveVector position;
+    private Vector position;
     /** Desired wheel vector, from input */
-    private SwerveVector desired;
+    private Vector desired;
     /** Actual wheel vector, from sensors */
-    private SwerveVector actual;
+    private Vector actual;
 
     /** Gear Shifter servo */
     private Servo gearShifter;
@@ -87,7 +88,7 @@ public class SwerveWheel {
             int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
             int AngleCalibrationPin)
     {
-        this(Number, new SwerveVector(Position), new MagnetoPotAnalog(PotPin, 360),
+        this(Number, new Vector(Position), new MagnetoPotAnalog(PotPin, 360),
                 new CANTalon(DriveAddress), new CANTalon(AngleAddress),
                 new Servo(ShiftPin), ShiftVals,
                 new DigitalInput(AngleCalibrationPin));
@@ -108,7 +109,7 @@ public class SwerveWheel {
             int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
             int AngleCalibrationPin)
     {
-        this(Number, new SwerveVector(Position), 
+        this(Number, new Vector(Position), 
                 new CANTalon(DriveAddress), new CANTalon(AngleAddress),
                 new Servo(ShiftPin), ShiftVals,
                 new DigitalInput(AngleCalibrationPin));
@@ -126,7 +127,7 @@ public class SwerveWheel {
      * @param ShiftVals
      * @param Calibration
      */
-    public SwerveWheel(int Number, SwerveVector Position, MagnetoPot Pot,
+    public SwerveWheel(int Number, Vector Position, MagnetoPot Pot,
             CANTalon DriveMotor, CANTalon AngleMotor, Servo Shifter,
             int[] ShiftVals, DigitalInput Calibration)
     {
@@ -134,8 +135,8 @@ public class SwerveWheel {
         this.number = Number;
 
         position = Position;
-        actual = new SwerveVector(0, 0);
-        desired = new SwerveVector(0, 0);
+        actual = new Vector(0, 0);
+        desired = new Vector(0, 0);
         driveMotor = DriveMotor;
 
         // MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone,
@@ -166,7 +167,7 @@ public class SwerveWheel {
      * @param ShiftVals
      * @param Calibration
      */
-    public SwerveWheel(int Number, SwerveVector Position, 
+    public SwerveWheel(int Number, Vector Position, 
             CANTalon DriveMotor, CANTalon AngleMotor, Servo Shifter,
             int[] ShiftVals, DigitalInput Calibration)
     {
@@ -174,8 +175,8 @@ public class SwerveWheel {
         this.number = Number;
 
         position = Position;
-        actual = new SwerveVector(0, 0);
-        desired = new SwerveVector(0, 0);
+        actual = new Vector(0, 0);
+        desired = new Vector(0, 0);
         driveMotor = DriveMotor;
 
         // MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone,
@@ -209,7 +210,7 @@ public class SwerveWheel {
      * @param gearHigh
      * @return Actual vector reading of wheel
      */
-    public SwerveVector setDesired(SwerveVector newDesired, boolean newHighGear,
+    public Vector setDesired(Vector newDesired, boolean newHighGear,
             boolean newBrake)
     {
         // store off the new values
@@ -231,7 +232,7 @@ public class SwerveWheel {
      * 
      * @return Desired vector
      */
-    public SwerveVector getDesired()
+    public Vector getDesired()
     {
         return desired;
     }
@@ -241,7 +242,7 @@ public class SwerveWheel {
      * 
      * @return Actual vector reading of wheel
      */
-    public SwerveVector getActual()
+    public Vector getActual()
     {
         // WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
         actual.setMagAngle(desired.getMag(), getAnglePotAdjusted());
@@ -253,7 +254,7 @@ public class SwerveWheel {
      * 
      * @return Wheel position
      */
-    public SwerveVector getPosition()
+    public Vector getPosition()
     {
         return position;
     }
@@ -315,7 +316,7 @@ public class SwerveWheel {
      * 
      * @return Actual vector reading of wheel
      */
-    private SwerveVector updateTask()
+    private Vector updateTask()
     {
         boolean reverse = updateAngleMotor();
 

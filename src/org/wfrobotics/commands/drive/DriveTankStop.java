@@ -9,7 +9,7 @@ public class DriveTankStop extends Command
 {
     public DriveTankStop() 
     {
-        requires(Robot.tankDriveSubsystem);
+        requires(Robot.driveSubsystem);
     }
 
     protected void initialize() 
@@ -20,7 +20,7 @@ public class DriveTankStop extends Command
     protected void execute() 
     {
         Utilities.PrintCommand("Drive", this);
-        Robot.tankDriveSubsystem.driveRaw(0, 0);
+        Robot.driveSubsystem.driveTank(0, 0);
     }
 
     protected boolean isFinished() 
