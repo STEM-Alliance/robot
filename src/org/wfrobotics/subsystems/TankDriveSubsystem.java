@@ -2,6 +2,7 @@ package org.wfrobotics.subsystems;
 
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
+import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.RobotMap;
@@ -9,10 +10,9 @@ import org.wfrobotics.robot.RobotMap;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class TankDriveSubsystem extends Subsystem 
+public class TankDriveSubsystem extends DriveSubsystem 
 {
     private final double DEADBAND = 0;
 
@@ -86,9 +86,9 @@ public class TankDriveSubsystem extends Subsystem
      * @param left value, -1 to 1
      * @param enables traction control
      */
-    public void driveRaw(double right, double left)
+    @Override
+    public void driveTank(double right, double left)
     {
-        
         printSensors();
         right = scaleForDeadband(right);
         right = Math.min(Math.max(right, -1), 1);  // ensure value between -1 and 1
@@ -108,6 +108,27 @@ public class TankDriveSubsystem extends Subsystem
         }
         SmartDashboard.putNumber("MotorL", left);
         SmartDashboard.putNumber("MotorR", right);
+        
+    }
+
+    @Override
+    public void drivePolar(double magnitude, double angle, double rotation)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void driveVector(Vector velocity, double rotation)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void driveCartesian(double x, double y, double rotation)
+    {
+        // TODO Auto-generated method stub
         
     }
     
@@ -161,30 +182,30 @@ public class TankDriveSubsystem extends Subsystem
                     // spin clockwise
                     if(forward)
                         // set left side forward, not right
-                        driveRaw(0,output);
+                        driveTank(0,output);
                     else
                         // set right side backward, not left
-                        driveRaw(-output,0);
+                        driveTank(-output,0);
                 }
                 else
                 {
                     // spin counter clockwise
                     if(forward)
                         // set right side forward, not left
-                        driveRaw(-output,0);
+                        driveTank(-output,0);
                     else
                         // set left side backward, not right
-                        driveRaw(0,output);
+                        driveTank(0,output);
                 }
             }
             else
             {
-                driveRaw(-output,output);
+                driveTank(-output,output);
             }
         }
         else
         {
-            driveRaw(0,0);
+            driveTank(0,0);
         }
         
         // save off angle in case you need to use it

@@ -3,9 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.wfrobotics.subsystems.swerve;
-
-import org.wfrobotics.Utilities;
+package org.wfrobotics;
 
 /**
  * Auto calculate angle and magnitude/angular velocity/distance from x and y
@@ -13,7 +11,7 @@ import org.wfrobotics.Utilities;
  * 
  * @author Team 4818 WFRobotics
  */
-public class SwerveVector {
+public class Vector {
     
     private double mag;
     private double ang;
@@ -21,7 +19,7 @@ public class SwerveVector {
     /**
      * empty constructor
      */
-    public SwerveVector()
+    public Vector()
     {
         mag = 0;
         ang = 0;
@@ -33,7 +31,7 @@ public class SwerveVector {
      * @param position
      *            values as array
      */
-    public SwerveVector(double[] position)
+    public Vector(double[] position)
     {
         this.setXY(position[0], position[1]);
     }
@@ -46,7 +44,7 @@ public class SwerveVector {
      * @param y
      *            position value
      */
-    public SwerveVector(double x, double y)
+    public Vector(double x, double y)
     {
         this.setXY(x, y);
     }
@@ -59,9 +57,9 @@ public class SwerveVector {
      * @param angle
      *            angle of vector
      */
-    public static SwerveVector NewFromMagAngle(double mag, double ang)
+    public static Vector NewFromMagAngle(double mag, double ang)
     {
-        SwerveVector r = new SwerveVector();
+        Vector r = new Vector();
         r.mag = mag;
         r.ang = ang;
         return r;
@@ -154,9 +152,9 @@ public class SwerveVector {
      * @param other
      * @return
      */
-    public SwerveVector add(SwerveVector other)
+    public Vector add(Vector other)
     {
-        return new SwerveVector(
+        return new Vector(
             this.getX() + other.getX(), 
             this.getY() + other.getY());
     }
@@ -166,9 +164,9 @@ public class SwerveVector {
      * @param other
      * @return
      */
-    public SwerveVector subtract(SwerveVector other)
+    public Vector subtract(Vector other)
     {
-        return new SwerveVector(
+        return new Vector(
             this.getX() - other.getX(), 
             this.getY() - other.getY());
     }

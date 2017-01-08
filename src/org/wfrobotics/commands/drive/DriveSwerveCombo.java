@@ -2,9 +2,10 @@
 package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.Vector;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.swerve.SwerveVector;
+import org.wfrobotics.subsystems.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -12,7 +13,7 @@ public class DriveSwerveCombo extends Command
 {
     public DriveSwerveCombo() 
     {
-        requires(Robot.swerveDriveSubsystem);
+        requires(Robot.driveSubsystem);
     }
 
     protected void initialize() 
@@ -25,36 +26,36 @@ public class DriveSwerveCombo extends Command
         
         double dpad = OI.DriveSwerveOI.getDpad();
         
-        Robot.swerveDriveSubsystem.setGearHigh(OI.DriveSwerveOI.getHighGearEnable());
-        Robot.swerveDriveSubsystem.setBrake(OI.DriveSwerveOI.getBrake());
+        ((SwerveDriveSubsystem)Robot.driveSubsystem).setGearHigh(OI.DriveSwerveOI.getHighGearEnable());
+        ((SwerveDriveSubsystem)Robot.driveSubsystem).setBrake(OI.DriveSwerveOI.getBrake());
         
         if (OI.DriveSwerveOI.getResetGyro())
         {
-            Robot.swerveDriveSubsystem.ZeroGyro();
+            ((SwerveDriveSubsystem)Robot.driveSubsystem).ZeroGyro();
         }
         
-        Robot.swerveDriveSubsystem.setCrawlMode(OI.DriveSwerveOI.getCrawlSpeed());
+        ((SwerveDriveSubsystem)Robot.driveSubsystem).setCrawlMode(OI.DriveSwerveOI.getCrawlSpeed());
         
         
         if (dpad != -1)
         {
-            SwerveVector drive = new SwerveVector();
+            Vector drive = new Vector();
             drive.setMagAngle(1, (dpad - 90));
             
             // use non field relative
-            Robot.swerveDriveSubsystem.setFieldRelative(false);
+            ((SwerveDriveSubsystem)Robot.driveSubsystem).setFieldRelative(false);
             
-            Robot.swerveDriveSubsystem.UpdateDrive(drive,
-                    OI.DriveSwerveOI.getHaloDrive_Rotation(),
-                    OI.DriveSwerveOI.getHaloDrive_Heading45());
+            Robot.driveSubsystem.driveVector(drive, OI.DriveSwerveOI.getHaloDrive_Rotation());
+            //TODO fix this nonsense
+            ///OI.DriveSwerveOI.getHaloDrive_Heading45());
         }
         else
         {
-            Robot.swerveDriveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
+            ((SwerveDriveSubsystem)Robot.driveSubsystem).setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
             
-            Robot.swerveDriveSubsystem.UpdateDrive(OI.DriveSwerveOI.getHaloDrive_Velocity(),
-                    OI.DriveSwerveOI.getHaloDrive_Rotation(),
-                    OI.DriveSwerveOI.getHaloDrive_Heading45());
+            Robot.driveSubsystem.driveVector(OI.DriveSwerveOI.getHaloDrive_Velocity(), OI.DriveSwerveOI.getHaloDrive_Rotation());
+            //TODO fix this nonsense
+            ///OI.DriveSwerveOI.getHaloDrive_Heading45());
         }
     }
 

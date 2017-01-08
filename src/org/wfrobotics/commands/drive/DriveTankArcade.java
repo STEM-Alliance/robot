@@ -11,7 +11,7 @@ public class DriveTankArcade extends Command
 {
     public DriveTankArcade() 
     {
-        requires(Robot.tankDriveSubsystem);
+        requires(Robot.driveSubsystem);
     }
 
     protected void initialize() 
@@ -44,7 +44,7 @@ public class DriveTankArcade extends Command
         speedL = limit(speedL);
         speedR = limit(speedR);
         
-        Robot.tankDriveSubsystem.driveRaw(speedR * adjust, speedL * adjust);
+        Robot.driveSubsystem.driveTank(speedR * adjust, speedL * adjust);
     }
     
     private double limit(double val)

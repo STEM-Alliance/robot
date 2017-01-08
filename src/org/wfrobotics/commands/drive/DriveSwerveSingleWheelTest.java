@@ -2,9 +2,10 @@
 package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.Vector;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.swerve.SwerveVector;
+import org.wfrobotics.subsystems.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,7 +17,7 @@ public class DriveSwerveSingleWheelTest extends Command
     
     public DriveSwerveSingleWheelTest() 
     {
-        requires(Robot.swerveDriveSubsystem);
+        requires(Robot.driveSubsystem);
         
     }
 
@@ -40,7 +41,7 @@ public class DriveSwerveSingleWheelTest extends Command
         SmartDashboard.putNumber("Vel Ang", OI.DriveSwerveOI.getHaloDrive_Velocity().getAngle());
         SmartDashboard.putNumber("Vel Mag", OI.DriveSwerveOI.getHaloDrive_Velocity().getMag());
         
-        SwerveVector WheelActual = Robot.swerveDriveSubsystem.getWheel(i).setDesired(
+        Vector WheelActual = ((SwerveDriveSubsystem)Robot.driveSubsystem).getWheel(i).setDesired(
                 OI.DriveSwerveOI.getHaloDrive_Velocity(),
                 OI.DriveSwerveOI.getHighGearEnable(),
                 OI.DriveSwerveOI.getBrake());
