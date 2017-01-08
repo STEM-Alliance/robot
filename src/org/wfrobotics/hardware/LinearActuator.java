@@ -65,8 +65,7 @@ public abstract class LinearActuator {
     
     public void ResetError()
     {
-        ActuatorPIController.integral = 0;
-        ActuatorPIController.lastError = 0;
+        ActuatorPIController.resetError();
     }
     
     /**

@@ -13,17 +13,20 @@ public final class PIDController {
     private static final double MaxTimestampDiff = 1.0;
 
     // Configuration.
-    private double P;
-    private double I;
-    private double D;
+    private double m_P;
+    private double m_I;
+    private double m_D;
 
-    private double maxOutput;
-    private double minOutput;
+    private double m_MaxOutput;
+    private double m_MinOutput;
 
     // State.
-    public double integral;
-    public double lastTimestamp;
-    public double lastError;
+    private double integral;
+    private double prevTime;
+    private double lastError;
+    private double totalError;
+
+    private boolean preStageClamp = true;
 
 
     /**
@@ -50,14 +53,14 @@ public final class PIDController {
      */
     public PIDController(double p, double i, double d, double maxOutput, double minOutput)
     {
-        this.P = p;
-        this.I = i;
-        this.D = d;
-        this.maxOutput = maxOutput;
-        this.minOutput = minOutput;
+        this.m_P = p;
+        this.m_I = i;
+        this.m_D = d;
+        this.m_MaxOutput = maxOutput;
+        this.m_MinOutput = minOutput;
 
         this.integral = 0;
-        this.lastTimestamp = Double.NEGATIVE_INFINITY;
+        this.prevTime = 0.0f;
     }
     
     /**
@@ -81,45 +84,49 @@ public final class PIDController {
      */
     public double update(double error)
     {
-        double timestamp = Timer.getFPGATimestamp();
+        // Get time since we were last called.
+        double currTime = Timer.getFPGATimestamp();
+        double timeDiff = currTime - prevTime;
+        prevTime = currTime;
         
         // Proportional term.
-        double proportional = Utilities.clampToRange(error * P,
-                -this.maxOutput, this.maxOutput);
-
-        // Get time since we were last called.
-        double timeDiff = timestamp - this.lastTimestamp;
-        this.lastTimestamp = timestamp;
+        double proportional = error * m_P;
+        if(preStageClamp) proportional = Utilities.clampToRange(proportional, m_MaxOutput);
         
-        double derivative = Utilities.clampToRange((error - lastError) / timeDiff * D, 
-                -this.maxOutput, this.maxOutput);
+        double derivative = 0;
+        if(timeDiff > 0)
+        {
+            derivative = (error - lastError) / timeDiff * m_D;
+            if(preStageClamp) derivative = Utilities.clampToRange(derivative, m_MaxOutput);
+        }
 
-        if (timeDiff < MaxTimestampDiff)
+        totalError += error;
+        
+        if (timeDiff <= MaxTimestampDiff)
         {
             // Integrate the proportional term over time.
-            this.integral += proportional * timeDiff * I;
-            this.integral = Utilities.clampToRange(this.integral,
-                    -this.maxOutput, this.maxOutput);
+            integral += totalError * timeDiff * m_I;
+            if(preStageClamp) integral = Utilities.clampToRange(integral, m_MaxOutput);
         }
         else
         {
             // We were probably disabled; reset the integral.
-            this.integral = 0;
+            integral = 0;
             derivative = 0;
         }
         
         this.lastError = error;
 
         // Calculate output with coefficients.
-        double clampedVal = Utilities.clampToRange(proportional + this.integral + derivative,
-                -this.maxOutput, this.maxOutput);
+        double clampedVal = proportional + integral + derivative;
+        clampedVal = Utilities.clampToRange(clampedVal, m_MaxOutput);
         
         // make sure it's more than the specified minimum
         if(Math.abs(clampedVal) > .01)
         {
-            if(Math.abs(clampedVal) < this.minOutput)
+            if(Math.abs(clampedVal) < m_MinOutput)
             {
-                clampedVal = Math.signum(clampedVal) * this.minOutput;
+                clampedVal = Math.signum(clampedVal) * m_MinOutput;
             }
         }
         else
@@ -132,42 +139,58 @@ public final class PIDController {
 
     public double getP()
     {
-        return P;
+        return m_P;
     }
     
     public double getI()
     {
-        return I;
+        return m_I;
     }
     
     public double getD()
     {
-        return D;
+        return m_D;
     }
     
     public void setP(double P)
     {
-        this.P = P;
+        this.m_P = P;
     }
 
     public void setI(double I)
     {
-        this.I = I;
+        this.m_I = I;
     }
     
     public void setD(double D)
     {
-        this.D = D;
+        this.m_D = D;
     }
 
     public void setMax(double max)
     {
-        this.maxOutput = max;
+        this.m_MaxOutput = max;
         
     }
     
     public void setMin(double min)
     {
-        this.minOutput = min;
+        this.m_MinOutput = min;
+    }
+    
+    public void resetError()
+    {
+        this.integral = 0;
+        this.lastError = 0;
+        this.totalError = 0;
+    }
+    
+    /**
+     * Enable or disable clamping during calculation stages, rather than just the output
+     * @param preStageClamp if true, clamp at each calculation step (P, I, D)
+     */
+    public void preStageClamp(boolean preStageClamp)
+    {
+        this.preStageClamp  = preStageClamp;
     }
 }

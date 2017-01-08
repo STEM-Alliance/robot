@@ -57,7 +57,7 @@ public final class SwerveAngleController {
      */
     public void resetIntegral()
     {
-        this.controller.integral = 0;
+        this.controller.resetError();
     }
 
     /**

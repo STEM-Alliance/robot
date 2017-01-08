@@ -123,6 +123,20 @@ public final class Utilities {
     }
 
     /**
+     * Trim a value to keep it in the min/max range.
+     * 
+     * @param value
+     *            Input value
+     * @param limit
+     *            Maximum and -minimum expected output value
+     * @return A value between min and max
+     */
+    public static final double clampToRange(double value, double limit)
+    {
+        return clampToRange(value, -limit, limit);
+    }
+
+    /**
      * Scale a value from the expected input range to the expected output range.
      * 
      * @param value
