@@ -35,7 +35,7 @@ public abstract class MagnetoPot {
     }
 
 
-    protected abstract double getRawInput();
+    public abstract double getRawInput();
     
     protected double getValue()
     {
