@@ -127,7 +127,7 @@ public class OI
         {
             SwerveVector value;
         
-            value = new SwerveVector(xboxDrive.getX(Hand.kLeft), xboxDrive.getY(Hand.kLeft));
+            value = new SwerveVector(xboxDrive.getX(Hand.kLeft), xboxDrive.getY(Hand.kLeft)*1.2);
         
             if (value.getMag() < DEADBAND)
             {
