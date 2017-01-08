@@ -17,7 +17,7 @@ public class AutoDrive extends Command
      */
     public AutoDrive()
     {
-        requires(Robot.tankDriveSubsystem);
+        requires(Robot.driveSubsystem);
         speedR = 0;
         speedL = 0;
     }
@@ -27,7 +27,7 @@ public class AutoDrive extends Command
      */
     public AutoDrive(double endTime, double speedL, double speedR, boolean gyroEnabled)
     {
-        requires(Robot.tankDriveSubsystem);
+        requires(Robot.driveSubsystem);
         this.speedR = speedR;
         this.speedL = speedL;
         this.gyroEnabled = gyroEnabled;
@@ -50,7 +50,7 @@ public class AutoDrive extends Command
 
     protected void execute() 
     {
-        Robot.tankDriveSubsystem.driveRaw(speedR, speedL);
+        //Robot.tankDriveSubsystem.driveRaw(speedR, speedL);
     }
 
     protected boolean isFinished()
@@ -60,7 +60,7 @@ public class AutoDrive extends Command
 
     protected void end() 
     {
-        Robot.tankDriveSubsystem.driveRaw(0, 0);
+        //Robot.driveSubsystem.driveRaw(0, 0);
     }
 
     protected void interrupted()

@@ -9,15 +9,15 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class AutoSetStartAngle extends Command {
     
-    private double angle;
+    //private double angle;
     
     public AutoSetStartAngle(double angle) { 
-        requires(Robot.tankDriveSubsystem);
-        this.angle = angle;
+        requires(Robot.driveSubsystem);
+        //angle.this.angle = angle;
     }
 
     protected void initialize() {
-        Robot.tankDriveSubsystem.zeroYaw(angle);
+        //Robot.tankDriveSubsystem.zeroYaw(angle);
     }
 
     // Called repeatedly when this Command is scheduled to run

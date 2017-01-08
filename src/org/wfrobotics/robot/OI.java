@@ -1,9 +1,9 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Xbox.RumbleType;
-import org.wfrobotics.subsystems.swerve.SwerveVector;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -63,7 +63,7 @@ public class OI
     {
         public static double getThrottle()
         {
-          return xboxDrive.getY(Hand.kLeft);
+            return xboxDrive.getY(Hand.kLeft);
         }
         
         public static double getTurn()
@@ -81,13 +81,14 @@ public class OI
     {
         public static double getY()
         {
-          return xboxDrive.getY(Hand.kLeft);
+            return xboxDrive.getY(Hand.kLeft);
         }
 
         public static double getX()
         {
             return xboxDrive.getX(Hand.kLeft);
         }
+        
         public static double getRotation()
         {
             return xboxDrive.getX(Hand.kRight);
@@ -118,16 +119,14 @@ public class OI
         }
 
         /**
-         * Get the {@link SwerveVector} (mag & angle) of the velocity joystick for Halo
+         * Get the {@link Vector} (mag & angle) of the velocity joystick for Halo
          * Drive
          * 
          * @return The vector of the joystick.
          */
-        public static SwerveVector getHaloDrive_Velocity()
+        public static Vector getHaloDrive_Velocity()
         {
-            SwerveVector value;
-        
-            value = new SwerveVector(xboxDrive.getX(Hand.kLeft), xboxDrive.getY(Hand.kLeft));
+            Vector value = xboxDrive.getVector(Hand.kLeft);
         
             if (value.getMag() < DEADBAND)
             {
@@ -181,16 +180,14 @@ public class OI
         }
 
         /**
-         * Get the {@link SwerveVector} (mag & angle) of the velocity joystick for Angle
+         * Get the {@link Vector} (mag & angle) of the velocity joystick for Angle
          * Drive
          * 
          * @return The vector of the joystick.
          */
-        public static SwerveVector getAngleDrive_Velocity()
+        public static Vector getAngleDrive_Velocity()
         {
-            SwerveVector value;
-        
-            value = new SwerveVector(xboxDrive.getX(Hand.kLeft), xboxDrive.getY(Hand.kLeft));
+            Vector value = xboxDrive.getVector(Hand.kLeft);
         
             if (value.getMag() < DEADBAND)
             {
