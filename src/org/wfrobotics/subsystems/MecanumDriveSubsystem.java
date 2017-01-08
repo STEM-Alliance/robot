@@ -23,6 +23,8 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     // here. Call these from Commands.
     public MecanumDriveSubsystem()
     {
+        super();
+        
         frontLeft = new CANTalon(RobotMap.CAN_MECANUM_TALONS_LEFT[0]);
         frontRight = new CANTalon(RobotMap.CAN_MECANUM_TALONS_RIGHT[0]);
         backLeft = new CANTalon(RobotMap.CAN_MECANUM_TALONS_LEFT[1]);
@@ -50,21 +52,28 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     }
 
     @Override
-    public void drivePolar(double magnitude, double angle, double rotation)
+    public void driveVector(double magnitude, double angle, double rotation)
     {
-        robotDrive.mecanumDrive_Polar(magnitude, angle, rotation);
+        if(m_fieldRelative)
+            robotDrive.mecanumDrive_Polar(magnitude, m_gyro.getYaw() - angle, rotation);
+        else
+            robotDrive.mecanumDrive_Polar(magnitude, angle, rotation);
     }
 
     @Override
     public void driveVector(Vector velocity, double rotation)
     {
-        robotDrive.mecanumDrive_Polar(velocity.getMag(), velocity.getAngle(), rotation);
+        driveVector(velocity.getMag(), velocity.getAngle(), rotation);
     }
 
     @Override
-    public void driveCartesian(double x, double y, double rotation)
+    public void driveXY(double x, double y, double rotation)
     {
-        robotDrive.mecanumDrive_Cartesian(x, y, rotation, 0);
+        if(m_fieldRelative)
+            robotDrive.mecanumDrive_Cartesian(x, y, rotation, m_gyro.getYaw());
+        else
+            robotDrive.mecanumDrive_Cartesian(x, y, rotation, 0);
+            
     }
 }
 

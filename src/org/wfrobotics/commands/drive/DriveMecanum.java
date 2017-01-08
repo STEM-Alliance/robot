@@ -22,7 +22,7 @@ public class DriveMecanum extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         
-        Robot.driveSubsystem.driveCartesian(-DriveMecanumOI.getX()*0.7, DriveMecanumOI.getY()*0.7, -DriveMecanumOI.getRotation()*0.7);
+        Robot.driveSubsystem.driveXY(-DriveMecanumOI.getX()*0.7, DriveMecanumOI.getY()*0.7, -DriveMecanumOI.getRotation()*0.7);
         
     }
 
