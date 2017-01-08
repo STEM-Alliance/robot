@@ -24,6 +24,6 @@ public class XboxTriggerButton extends Button
 
     public boolean get()
     {
-        return hardware.getTriggerVal(hand) > limit;
+        return hardware.getTriggerAxis(hand) > limit;
     }
 }

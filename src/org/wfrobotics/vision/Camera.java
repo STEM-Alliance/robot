@@ -1,4 +1,4 @@
-package org.wfrobotics.vision;
+/*package org.wfrobotics.vision;
 
 import com.ni.vision.NIVision;
 import com.ni.vision.NIVision.Image;
@@ -205,7 +205,7 @@ public class Camera
         return m_mode; 
     }
     
-    /** Set the brightness, as a percentage (0-1). */
+    *//** Set the brightness, as a percentage (0-1). *//*
     public synchronized void setBrightness(double brightness)
     {
 //        if (brightness > 1)
@@ -223,13 +223,13 @@ public class Camera
         m_needSettingsUpdate = true;
     }
 
-    /** Get the brightness, as a percentage (0-1). */
+    *//** Get the brightness, as a percentage (0-1). *//*
     public synchronized double getBrightness()
     {
         return m_brightness;
     }
     
-    /** Set the white balance to auto. */
+    *//** Set the white balance to auto. *//*
     public synchronized void setWhiteBalanceAuto()
     {
         m_whiteBalance = "auto";
@@ -237,7 +237,7 @@ public class Camera
         m_needSettingsUpdate = true;
     }
 
-    /** Set the white balance to hold current. */
+    *//** Set the white balance to hold current. *//*
     public synchronized void setWhiteBalanceHoldCurrent()
     {
         m_whiteBalance = "manual";
@@ -245,7 +245,7 @@ public class Camera
         m_needSettingsUpdate = true;
     }
 
-    /** Set the white balance to manual, with specified color temperature. */
+    *//** Set the white balance to manual, with specified color temperature. *//*
     public synchronized void setWhiteBalanceManual(int value)
     {
         m_whiteBalance = "manual";
@@ -258,7 +258,7 @@ public class Camera
         return m_whiteBalanceValue; 
     }
 
-    /** Set the exposure to auto aperature. */
+    *//** Set the exposure to auto aperature. *//*
     public synchronized void setExposureAuto()
     {
         m_exposure = "auto";
@@ -266,7 +266,7 @@ public class Camera
         m_needSettingsUpdate = true;
     }
 
-    /** Set the exposure to hold current. */
+    *//** Set the exposure to hold current. *//*
     public synchronized void setExposureHoldCurrent()
     {
         m_exposure = "manual";
@@ -274,7 +274,7 @@ public class Camera
         m_needSettingsUpdate = true;
     }
 
-    /** Set the exposure to manual, as a percentage (0-1). */
+    *//** Set the exposure to manual, as a percentage (0-1). *//*
     public synchronized void setExposureManual(double value)
     {
         m_exposure = "manual";
@@ -339,3 +339,4 @@ public class Camera
 
     }
 }
+*/

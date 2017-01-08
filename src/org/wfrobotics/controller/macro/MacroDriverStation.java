@@ -1,8 +1,9 @@
 package org.wfrobotics.controller.macro;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
+import edu.wpi.first.wpilibj.hal.HAL;
 
+/*
 public class MacroDriverStation extends DriverStation {
     
     
@@ -10,8 +11,8 @@ public class MacroDriverStation extends DriverStation {
     
     private static boolean m_useMacros = false;
     
-    private double[][] m_joystickAxes = new double[kJoystickPorts][FRCNetworkCommunicationsLibrary.kMaxJoystickAxes];
-    private int[][] m_joystickPOVs = new int[kJoystickPorts][FRCNetworkCommunicationsLibrary.kMaxJoystickPOVs];
+    private double[][] m_joystickAxes = new double[kJoystickPorts][HAL.kMaxJoystickAxes];
+    private int[][] m_joystickPOVs = new int[kJoystickPorts][HAL.kMaxJoystickPOVs];
     private int[] m_joystickButtons = new int[kJoystickPorts];
 
     public static DriverStation getInstance() {
@@ -35,15 +36,13 @@ public class MacroDriverStation extends DriverStation {
         return m_useMacros;
     }
 
-    protected MacroDriverStation() {
-    }
     
     public synchronized double getStickAxis(int stick, int axis) {
         if(stick < 0 || stick >= kJoystickPorts) {
             throw new RuntimeException("Joystick index is out of range, should be 0-5");
         }
 
-        if (axis < 0 || axis >= FRCNetworkCommunicationsLibrary.kMaxJoystickAxes) {
+        if (axis < 0 || axis >= HAL.kMaxJoystickAxes) {
             throw new RuntimeException("Joystick axis is out of range");
         }
 
@@ -69,7 +68,7 @@ public class MacroDriverStation extends DriverStation {
             throw new RuntimeException("Joystick index is out of range, should be 0-5");
         }
 
-        if (pov < 0 || pov >= FRCNetworkCommunicationsLibrary.kMaxJoystickPOVs) {
+        if (pov < 0 || pov >= HAL.kMaxJoystickPOVs) {
             throw new RuntimeException("Joystick POV is out of range");
         }
 
@@ -130,7 +129,7 @@ public class MacroDriverStation extends DriverStation {
             throw new RuntimeException("Joystick index is out of range, should be 0-5");
         }
 
-        if (axis < 0 || axis >= FRCNetworkCommunicationsLibrary.kMaxJoystickAxes) {
+        if (axis < 0 || axis >= HAL.kMaxJoystickAxes) {
             throw new RuntimeException("Joystick axis is out of range");
         }
 
@@ -147,7 +146,7 @@ public class MacroDriverStation extends DriverStation {
             throw new RuntimeException("Joystick index is out of range, should be 0-5");
         }
 
-        if (pov < 0 || pov >= FRCNetworkCommunicationsLibrary.kMaxJoystickPOVs) {
+        if (pov < 0 || pov >= HAL.kMaxJoystickPOVs) {
             throw new RuntimeException("Joystick POV is out of range");
         }
 
@@ -190,3 +189,4 @@ public class MacroDriverStation extends DriverStation {
         }
     }
 }
+*/

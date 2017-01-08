@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SensorBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.communication.UsageReporting;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.tables.ITable;
 
@@ -124,8 +122,7 @@ public abstract class MaxBotix extends SensorBase implements PIDSource,
                 
                 if (u.isEnabled())
                 {
-                    u.m_pingChannel.pulse(m_pingChannel.getChannelForRouting(),
-                            (float) m_pingTime); // do the ping
+                    u.m_pingChannel.pulse(m_pingTime); // do the ping
                 }
                 
                 Timer.delay(kMaxUltrasonicTime); // wait for ping to return
@@ -196,7 +193,7 @@ public abstract class MaxBotix extends SensorBase implements PIDSource,
         setAutomaticMode(originalMode);
 
         m_instances++;
-        UsageReporting.report(tResourceType.kResourceType_Ultrasonic, m_instances);
+        //UsageReporting.report(tResourceType.kResourceType_Ultrasonic, m_instances);
         
         m_distanceBufferInches = new double[m_distanceBufferLength];
         
@@ -327,7 +324,7 @@ public abstract class MaxBotix extends SensorBase implements PIDSource,
                                     // single sensor
         
         // do the ping to start getting a single range
-        m_pingChannel.pulse(m_pingChannel.getChannelForRouting(), (float) m_pingTime); 
+        m_pingChannel.pulse(m_pingTime); 
     }
     
     /**

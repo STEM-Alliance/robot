@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import edu.wpi.first.wpilibj.Timer;
-
+/*
 public class MacroPlay {
     
     private Scanner m_scanner;
@@ -99,3 +99,5 @@ public class MacroPlay {
         }
     }
 }
+
+*/
