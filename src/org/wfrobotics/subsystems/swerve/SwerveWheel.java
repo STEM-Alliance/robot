@@ -199,7 +199,7 @@ public class SwerveWheel {
 
     public void free()
     {
-        try { gearShifter.free(); } catch (AllocationException e) {}
+        //try { gearShifter.free(); } catch (AllocationException e) {}
         try { anglePot.free(); } catch (AllocationException e) {}
         try { angleCalSensor.free(); } catch (AllocationException e) {}
     }
