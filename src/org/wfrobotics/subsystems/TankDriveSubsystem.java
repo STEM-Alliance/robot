@@ -78,7 +78,18 @@ public class TankDriveSubsystem extends DriveSubsystem
     @Override
     public void driveTank(double right, double left)
     {
-        printSensors();
+        printDash();
+
+        for (int index = 0; index < motorsL.length; index++)
+        {
+            motorsL[index].enableBrakeMode(m_brake);
+        }
+        
+        for (int index = 0; index < motorsR.length; index++)
+        {
+            motorsR[index].enableBrakeMode(m_brake);
+        }
+        
         right = scaleForDeadband(right);
         right = Math.min(Math.max(right, -1), 1);  // ensure value between -1 and 1
         
@@ -120,7 +131,17 @@ public class TankDriveSubsystem extends DriveSubsystem
         // TODO Auto-generated method stub
         
     }
-    
+
+    @Override
+    public void printDash()
+    {
+        super.printDash();
+        
+        SmartDashboard.putNumber("Desired Heading", m_lastHeading);
+
+        SmartDashboard.putString("RobotPositionInfo", m_gyro.getYaw() +"," + motorsL[0].get()  +"," + motorsR[0].get());
+
+    }
 
     /**
      * turn to an angle, offset from current heading
@@ -226,28 +247,6 @@ public class TankDriveSubsystem extends DriveSubsystem
         }
         
         return value;
-    }    
-
-    public void printSensors()
-    {
-        SmartDashboard.putNumber("Robot Heading", m_gyro.getYaw());
-        SmartDashboard.putNumber("Desired Heading", m_lastHeading);
-
-        SmartDashboard.putString("RobotPositionInfo", m_gyro.getYaw() +"," + motorsL[0].get()  +"," + motorsR[0].get());
-    }
-
-    
-    public void setBrakeMode(boolean enable)
-    {
-        for (int index = 0; index < motorsL.length; index++)
-        {
-            motorsL[index].enableBrakeMode(enable);
-        }
-        
-        for (int index = 0; index < motorsR.length; index++)
-        {
-            motorsR[index].enableBrakeMode(enable);
-        }
     }
 }
             
