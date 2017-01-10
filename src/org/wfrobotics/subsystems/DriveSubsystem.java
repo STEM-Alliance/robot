@@ -5,6 +5,7 @@ import org.wfrobotics.hardware.Gyro;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public abstract class DriveSubsystem extends Subsystem {
 
@@ -92,5 +93,13 @@ public abstract class DriveSubsystem extends Subsystem {
      * @param rotation -1..1
      */
     public abstract void driveXY(double x, double y, double rotation);
+    
+    public void printDash()
+    {
+        SmartDashboard.putNumber("Gyro", m_gyro.getYaw());
+        SmartDashboard.putNumber("Last Heading", m_lastHeading);
+        SmartDashboard.putBoolean("FieldRelative", m_fieldRelative);
+        SmartDashboard.putBoolean("Brake", m_brake);
+    }
 
 }

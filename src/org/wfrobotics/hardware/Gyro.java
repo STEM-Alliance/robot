@@ -13,6 +13,8 @@ public class Gyro {
     public enum PORT
     {
         SERIAL_MXP,
+        SERIAL_USB,
+        I2C_MXP,
         SPI_MXP;
         
         public AHRS getGyro()
@@ -23,6 +25,14 @@ public class Gyro {
             {
                 case SPI_MXP:
                     gyro = new AHRS(edu.wpi.first.wpilibj.SPI.Port.kMXP);
+                    break;
+                    
+                case I2C_MXP:
+                    gyro = new AHRS(edu.wpi.first.wpilibj.I2C.Port.kMXP);
+                    break;
+                    
+                case SERIAL_USB:
+                    gyro = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
                     break;
                     
                 case SERIAL_MXP:

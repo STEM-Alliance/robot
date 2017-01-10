@@ -55,6 +55,8 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     @Override
     public void driveVector(double magnitude, double angle, double rotation)
     {
+        printDash();
+        
         if(m_fieldRelative)
             robotDrive.mecanumDrive_Polar(magnitude, m_gyro.getYaw() - angle, rotation);
         else
@@ -70,11 +72,19 @@ public class MecanumDriveSubsystem extends DriveSubsystem {
     @Override
     public void driveXY(double x, double y, double rotation)
     {
+        printDash();
+        
         if(m_fieldRelative)
             robotDrive.mecanumDrive_Cartesian(x, y, rotation, m_gyro.getYaw());
         else
             robotDrive.mecanumDrive_Cartesian(x, y, rotation, 0);
             
+    }
+    
+    @Override
+    public void printDash()
+    {
+        super.printDash();
     }
 }
 
