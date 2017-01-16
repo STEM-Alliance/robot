@@ -7,6 +7,8 @@ import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,8 +46,13 @@ public class TankDriveSubsystem extends DriveSubsystem
         {
             motorsR[i] = new CANTalon(RobotMap.CAN_TANK_TALONS_RIGHT[i]);
             motorsR[i].setInverted(false);
+            motorsR[i].setPID(.115,0.0001,0.015);
+            motorsR[i].setCloseLoopRampRate(.01);
         }
-                
+        
+        motorsR[0].setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        motorsR[0].changeControlMode(TalonControlMode.Speed);
+        
         headingPID = new PIDController(.2, 0, 0, .5);
     }
     
@@ -96,7 +103,8 @@ public class TankDriveSubsystem extends DriveSubsystem
         
         for (int i = 0; i < motorsR.length; i++)
         {
-            motorsR[i].set(right);
+            //motorsR[i].set(right);
+            motorsR[0].set(-3500);
         }
         
         left = scaleForDeadband(left);
@@ -136,6 +144,8 @@ public class TankDriveSubsystem extends DriveSubsystem
     public void printDash()
     {
         super.printDash();
+        SmartDashboard.putNumber("MotorSpeed", motorsR[0].getSpeed());
+        SmartDashboard.putNumber("MotorOutput", motorsR[0].get());
         
         SmartDashboard.putNumber("Desired Heading", m_lastHeading);
 

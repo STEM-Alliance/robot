@@ -20,7 +20,7 @@ public class RobotMap {
         DRIVE_SWERVE
     }
     
-    public static final DRIVE_SYSTEMS DriveSystem = DRIVE_SYSTEMS.DRIVE_SWERVE;
+    public static final DRIVE_SYSTEMS DriveSystem = DRIVE_SYSTEMS.DRIVE_TANK;
 
     public static final int CAN_TANK_TALONS_RIGHT[] = {12,13};
     public static final int CAN_TANK_TALONS_LEFT[] = {10,11};
