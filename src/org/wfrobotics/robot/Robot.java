@@ -38,6 +38,7 @@ public class Robot extends SampleRobot
     }
     
     public static DriveSubsystem driveSubsystem;
+    public static IntakeSubsystem intakeSubsystem;
     public static OI oi;
 
     Command autonomousCommand;

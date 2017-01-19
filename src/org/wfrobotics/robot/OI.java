@@ -1,6 +1,7 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.Vector;
+import org.wfrobotics.commands.IntakeSetup;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
 
@@ -22,6 +23,7 @@ public class OI
 
     Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.ButtonType.kBack);
     Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.ButtonType.kStart);
+    Button buttonIntakeStart = new XboxButton(xboxDrive, Xbox.ButtonType.kA);
     
     // manipulator controller
     //Button buttonManBack = new XboxButton(xboxMan, Xbox.ButtonType.kBack);
@@ -37,6 +39,8 @@ public class OI
         //buttonDriveBack.toggleWhenPressed(new DriveTank(true));
                 
         //////////////////////////
+        
+        buttonIntakeStart.whenPressed(new IntakeSetup(true));
         
         //////////////////////////
     }
