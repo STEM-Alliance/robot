@@ -19,3 +19,7 @@ Potential Features:
 - Moving the rope with a non-climber guiding mechanism
 - Agitating the balls in the hopper
 - Feedback that the hopper is mostly full
+
+Completed Code Academy:
+- Kyle
+- Gabby
