@@ -1,0 +1,21 @@
+Potential Commands:
+- Scoring the gear in autonomous
+- Scoring the balls in autonomous at the ball bin
+- Scoring the balls in autonomous at the boiler
+- Scoring the balls in general
+- Feeding the balls into the shooter
+- Moving to the boiler in autonomous
+- Moving to the ball bin in autonomous
+- Triggering the ball bin in autonomous
+- Starting or stopping the ball intake
+
+Potential Features:
+- While driving, turn on/off the intake(s) based on which direction we are driving (or off if we are not driving)
+- While driving, turn on/off the feeder based if we are driving?
+- Should we sense if balls are (or have been recently) in the intakes?
+- Averaging the camera samples
+- Sensing the rope is in the climber
+- Sensing the rope is acquired by a non-climber guiding mechanism
+- Moving the rope with a non-climber guiding mechanism
+- Agitating the balls in the hopper
+- Feedback that the hopper is mostly full
