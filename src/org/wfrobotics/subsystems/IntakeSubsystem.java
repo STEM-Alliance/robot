@@ -20,7 +20,9 @@ public class IntakeSubsystem extends Subsystem {
         
         for (int i = 0; i < RobotMap.INTAKE_MOTOR_SRX.length; i++)
         {
-            m_motors.add(new CANTalon(RobotMap.INTAKE_MOTOR_SRX[i]));
+            CANTalon motor = new CANTalon(RobotMap.INTAKE_MOTOR_SRX[i]);
+            motor.setInverted(RobotMap.INTAKE_MOTOR_INVERT[i]);
+            m_motors.add(motor);
         }
     }
     

@@ -2,6 +2,7 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.commands.*;
+import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.subsystems.*;
 import org.wfrobotics.subsystems.drive.DriveSubsystem;
 import org.wfrobotics.subsystems.drive.MecanumDriveSubsystem;
@@ -114,6 +115,8 @@ public class Robot extends SampleRobot
     {
         while (isDisabled())
         {
+            //Gyro.getInstance().displayNavxMXPValues();
+            
             driveSubsystem.printDash();
             
             Scheduler.getInstance().run();

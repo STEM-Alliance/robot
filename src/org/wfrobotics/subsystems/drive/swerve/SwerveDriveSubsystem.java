@@ -166,8 +166,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
                 
                 // set the rotation using a PID controller based on current robot
                 // heading and new desired heading
-                //Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
-                //Rotation = m_chassisAngleController.update(Error);
+                Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
+                Rotation = m_chassisAngleController.update(Error);
             }
         }
         else
@@ -203,7 +203,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         // based on the gyro heading
         if (m_fieldRelative)
         {
+            SmartDashboard.putNumber("FieldRelativePre", Velocity.getAngle());
             Velocity.setAngle(adjustAngleFromGyro(Velocity.getAngle()));
+            SmartDashboard.putNumber("FieldRelativePost", Velocity.getAngle());
         }
 
 
@@ -360,7 +362,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     private double adjustAngleFromGyro(double Angle)
     {
         // adjust the desired angle based on the robot's current angle
-        double AdjustedAngle = Angle - m_gyro.getYaw();
+        double AdjustedAngle = Angle + m_gyro.getYaw();
 
         // Wrap to fit in the range -180 to 180
         return Utilities.wrapToRange(AdjustedAngle, -180, 180);
