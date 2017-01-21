@@ -3,7 +3,10 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.commands.*;
 import org.wfrobotics.subsystems.*;
-import org.wfrobotics.subsystems.swerve.SwerveDriveSubsystem;
+import org.wfrobotics.subsystems.drive.DriveSubsystem;
+import org.wfrobotics.subsystems.drive.MecanumDriveSubsystem;
+import org.wfrobotics.subsystems.drive.TankDriveSubsystem;
+import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;

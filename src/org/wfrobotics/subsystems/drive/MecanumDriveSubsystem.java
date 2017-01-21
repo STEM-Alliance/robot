@@ -1,4 +1,4 @@
-package org.wfrobotics.subsystems;
+package org.wfrobotics.subsystems.drive;
 
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;

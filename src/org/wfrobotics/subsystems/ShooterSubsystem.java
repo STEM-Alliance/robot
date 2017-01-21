@@ -1,10 +1,30 @@
 package org.wfrobotics.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import org.wfrobotics.robot.RobotMap;
+
+import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class ShooterSubsystem extends Subsystem {
 
+    private CANTalon m_motor;
+    private double m_currentSpeed;
+
+    public ShooterSubsystem()
+    {
+        m_motor = new CANTalon(RobotMap.SHOOTER_MOTOR_SRX);
+        m_motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        m_motor.changeControlMode(TalonControlMode.Speed);
+        m_motor.setPID(.115,0.0001,0.015);
+        m_motor.setCloseLoopRampRate(.01);
+        
+        //is this needed?
+        m_motor.setInverted(true);
+    }
+    
     @Override
     protected void initDefaultCommand()
     {
@@ -13,11 +33,16 @@ public class ShooterSubsystem extends Subsystem {
 
     /**
      * Control speed of the shooting wheel(s)
-     * @param speed -1 (full backward) to 1 (full forward)
+     * @param speed speed in rpm (usually between 3500 and 4000)
+     * @return current speed the shooter wheel is running at
      */
-    public void setSpeed(double speed)
+    public double setSpeed(double speed)
     {
-        DriverStation.reportError("Shooter set speed not implemented yet", true);
+        m_currentSpeed = speed;
+
+        m_motor.set(m_currentSpeed);
+        
+        return m_motor.getSpeed();
     }
     
     /**
@@ -27,10 +52,15 @@ public class ShooterSubsystem extends Subsystem {
      */
     public boolean speedReached(double tolerance)
     {
-        DriverStation.reportError("Shooter speed reached not implemented yet", true);
-        
-        // TODO DRL get actual value based on sensor or otherwise, compare to setpoint within specified tolerance
-        
-        return false;  // TODO DRL
+        // get actual value based on sensor,
+        // compare to setpoint within specified tolerance
+        if(Math.abs(m_currentSpeed - m_motor.getSpeed()) <= tolerance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

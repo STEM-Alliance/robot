@@ -5,7 +5,7 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.swerve.SwerveDriveSubsystem;
+import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 

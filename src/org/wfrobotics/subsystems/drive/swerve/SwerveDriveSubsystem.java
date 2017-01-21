@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.wfrobotics.subsystems.swerve;
+package org.wfrobotics.subsystems.drive.swerve;
 
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
@@ -12,7 +12,7 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.RobotMap;
-import org.wfrobotics.subsystems.DriveSubsystem;
+import org.wfrobotics.subsystems.drive.DriveSubsystem;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
@@ -35,7 +35,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     private double m_chassisD = 0;
 
     private double m_crawlMode = 0.0;
-    private final boolean ENABLE_CRAWL_MODE = true;
+    private final boolean ENABLE_CRAWL_MODE = false;
     
     private double m_maxAcceleration = 2; // Smaller is slower acceleration
     private final boolean ENABLE_ACCELERATION_LIMIT = false;
