@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.wfrobotics.subsystems.swerve;
+package org.wfrobotics.subsystems.drive.swerve;
 
 /**
  * Pin assignments for Swerve Drive system

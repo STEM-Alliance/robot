@@ -1,10 +1,20 @@
 package org.wfrobotics.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import org.wfrobotics.robot.RobotMap;
+
+import com.ctre.CANTalon;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class IntakeSubsystem extends Subsystem {
 
+    private CANTalon m_motor;
+
+    public IntakeSubsystem()
+    {
+        m_motor = new CANTalon(RobotMap.INTAKE_MOTOR_SRX);
+    }
+    
     @Override
     protected void initDefaultCommand()
     {
@@ -17,6 +27,6 @@ public class IntakeSubsystem extends Subsystem {
      */
     public void setSpeed(double speed)
     {
-        DriverStation.reportError("Intake set speed not implemented yet", true);
+        m_motor.set(speed);
     }
 }

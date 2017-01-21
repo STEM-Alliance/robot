@@ -86,7 +86,7 @@ public class Xbox extends XboxController {
     @Override
     public double getRawAxis(int axis)
     {
-        return scaleForDeadband(getRawAxis(axis));
+        return scaleForDeadband(super.getRawAxis(axis));
     }
 
     /**
