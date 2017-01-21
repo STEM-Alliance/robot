@@ -114,7 +114,7 @@ public class Robot extends SampleRobot
     {
         while (isDisabled())
         {
-            //tankDriveSubsystem.printSensors();
+            driveSubsystem.printDash();
             
             Scheduler.getInstance().run();
         }

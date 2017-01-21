@@ -12,9 +12,9 @@ public class SwerveConstants {
 
     public static final int WheelCount = 4;
 
-    public static final double ChassisWidth = 22.5;
-    public static final double ChassisDepth = 35;
-    public static final double ChassisScale = ChassisWidth;
+    public static final double ChassisWidth = 24.75;
+    public static final double ChassisDepth = 28.5;
+    public static final double ChassisScale = ChassisDepth;
 
     /**
      * X & Y coordinate positions for wheel placement. Relative to robot center
@@ -33,14 +33,6 @@ public class SwerveConstants {
             301, // front right
             210, // back right
             293 }; // back left
-
-    /**
-     * Pins (Digital) for wheel speed encoder inputs
-     */
-    public static final int[][] WheelEncoderPins = { { 0, 1 }, // front left
-            { 2, 3 }, // front right
-            { 4, 5 }, // back right
-            { 6, 7 } }; // back left
 
     /**
      * Digital input pins for the angle calibration reed switch
