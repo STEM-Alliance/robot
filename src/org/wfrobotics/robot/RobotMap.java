@@ -29,7 +29,7 @@ public class RobotMap {
 
     public static final int SHOOTER_MOTOR_SRX = 21;
     
-    public static final int INTAKE_MOTOR_SRX = 22;
+    public static final int INTAKE_MOTOR_SRX[] = {22, 23};
 
     public static final int CAN_TANK_TALONS_RIGHT[] = {12,13};
     public static final int CAN_TANK_TALONS_LEFT[] = {10,11};
