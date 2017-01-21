@@ -2,6 +2,8 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.IntakeSetup;
+import org.wfrobotics.commands.Shoot;
+import org.wfrobotics.commands.UnJam;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
 
@@ -23,8 +25,9 @@ public class OI
 
     Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.ButtonType.kBack);
     Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.ButtonType.kStart);
-    Button buttonIntakeStart = new XboxButton(xboxDrive, Xbox.ButtonType.kA);
-    
+    Button buttonIntakeStart = new XboxButton(xboxMan, Xbox.ButtonType.kA);
+    Button buttonShooterStart = new XboxButton(xboxMan, Xbox.ButtonType.kB);
+    Button buttonUnJamStart = new XboxButton(xboxMan, Xbox.ButtonType.kRB);
     // manipulator controller
     //Button buttonManBack = new XboxButton(xboxMan, Xbox.ButtonType.kBack);
     
@@ -41,6 +44,9 @@ public class OI
         //////////////////////////
         
         buttonIntakeStart.whenPressed(new IntakeSetup(true));
+        buttonShooterStart.toggleWhenPressed(new Shoot(true));
+        buttonUnJamStart.toggleWhenPressed(new UnJam(true));
+        
         
         //////////////////////////
     }
