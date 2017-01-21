@@ -25,25 +25,26 @@ public class OI
 
     Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.ButtonType.kBack);
     Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.ButtonType.kStart);
-    Button buttonIntakeStart = new XboxButton(xboxMan, Xbox.ButtonType.kA);
-    Button buttonShooterStart = new XboxButton(xboxMan, Xbox.ButtonType.kB);
-    Button buttonUnJamStart = new XboxButton(xboxMan, Xbox.ButtonType.kRB);
+    
+    Button buttonIntakeStart = new XboxButton(xboxDrive, Xbox.ButtonType.kA);
+    Button buttonShooterStart = new XboxButton(xboxDrive, Xbox.ButtonType.kB);
+    Button buttonUnJamStart = new XboxButton(xboxDrive, Xbox.ButtonType.kRB);
+    
     // manipulator controller
-    //Button buttonManBack = new XboxButton(xboxMan, Xbox.ButtonType.kBack);
     
     // panel
     //Button buttonPanelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
     
     public OI() 
     {
-        //buttonDriveStart.toggleWhenPressed(new DriveSwerveSingleWheelTest());
+        buttonDriveStart.toggleWhenPressed(new DriveSwerveWheelCalibration());
         //buttonDriveBack.toggleWhenPressed(new DriveSwerveWheelCalibration());
         //buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
         //buttonDriveBack.toggleWhenPressed(new DriveTank(true));
                 
         //////////////////////////
         
-        buttonIntakeStart.whenPressed(new IntakeSetup(true));
+        buttonIntakeStart.toggleWhenPressed(new IntakeSetup(true));
         buttonShooterStart.toggleWhenPressed(new Shoot(true));
         buttonUnJamStart.toggleWhenPressed(new UnJam(true));
         

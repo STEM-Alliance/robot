@@ -166,8 +166,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
                 
                 // set the rotation using a PID controller based on current robot
                 // heading and new desired heading
-                Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
-                Rotation = m_chassisAngleController.update(Error);
+                //Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
+                //Rotation = m_chassisAngleController.update(Error);
             }
         }
         else

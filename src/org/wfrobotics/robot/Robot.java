@@ -11,6 +11,7 @@ import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,6 +44,7 @@ public class Robot extends SampleRobot
     public static DriveSubsystem driveSubsystem;
     public static IntakeSubsystem intakeSubsystem;
     public static OI oi;
+    public static ShooterSubsystem shooterSubsystem;
 
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;
@@ -68,6 +70,10 @@ public class Robot extends SampleRobot
                 driveSubsystem = new TankDriveSubsystem();
                 break;
         }
+        
+
+        intakeSubsystem = new IntakeSubsystem();
+        shooterSubsystem = new ShooterSubsystem();
         
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();

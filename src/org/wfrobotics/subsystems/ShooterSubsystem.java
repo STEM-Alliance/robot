@@ -1,5 +1,6 @@
 package org.wfrobotics.subsystems;
 
+import org.wfrobotics.commands.*;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
@@ -7,11 +8,12 @@ import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterSubsystem extends Subsystem {
 
     private CANTalon m_motor;
-    private double m_currentSpeed;
+    private double m_speedDesired;
 
     public ShooterSubsystem()
     {
@@ -28,7 +30,7 @@ public class ShooterSubsystem extends Subsystem {
     @Override
     protected void initDefaultCommand()
     {
-        // TODO Auto-generated method stub
+        setDefaultCommand(new ShootStop());
     }
 
     /**
@@ -38,9 +40,11 @@ public class ShooterSubsystem extends Subsystem {
      */
     public double setSpeed(double speed)
     {
-        m_currentSpeed = speed;
+        m_speedDesired = speed;
 
-        m_motor.set(m_currentSpeed);
+        m_motor.set(m_speedDesired);
+        
+        printDash();
         
         return m_motor.getSpeed();
     }
@@ -54,7 +58,7 @@ public class ShooterSubsystem extends Subsystem {
     {
         // get actual value based on sensor,
         // compare to setpoint within specified tolerance
-        if(Math.abs(m_currentSpeed - m_motor.getSpeed()) <= tolerance)
+        if(Math.abs(m_speedDesired - m_motor.getSpeed()) <= tolerance)
         {
             return true;
         }
@@ -62,5 +66,11 @@ public class ShooterSubsystem extends Subsystem {
         {
             return false;
         }
+    }
+
+    public void printDash()
+    {
+        SmartDashboard.putNumber("ShooterSpeedDesired", m_speedDesired);
+        SmartDashboard.putNumber("ShooterSpeedActual", m_motor.getSpeed());
     }
 }
