@@ -1,5 +1,7 @@
 package org.wfrobotics.subsystems;
 
+import org.wfrobotics.commands.IntakeSetup;
+import org.wfrobotics.commands.drive.DriveTankArcade;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
@@ -18,7 +20,7 @@ public class IntakeSubsystem extends Subsystem {
     @Override
     protected void initDefaultCommand()
     {
-        // TODO Auto-generated method stub
+        setDefaultCommand(new IntakeSetup(false));
     }
 
     /**

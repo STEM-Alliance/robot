@@ -24,7 +24,7 @@ public class DriveSwerveWheelCalibration extends Command
         
         Robot.driveSubsystem.setFieldRelative(false);
     
-        Robot.driveSubsystem.driveVector(Vector.NewFromMagAngle(.2, 0), 0);
+        Robot.driveSubsystem.driveVector(Vector.NewFromMagAngle(.75, 0), 0);
     }
 
     protected boolean isFinished() 
