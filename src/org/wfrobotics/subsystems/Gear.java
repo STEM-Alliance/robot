@@ -3,7 +3,7 @@ package org.wfrobotics.subsystems;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class GearSubsystem extends Subsystem {
+public class Gear extends Subsystem {
 
     @Override
     protected void initDefaultCommand()

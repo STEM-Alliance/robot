@@ -10,12 +10,12 @@ import com.ctre.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ShooterSubsystem extends Subsystem {
+public class Shooter extends Subsystem {
 
     private CANTalon m_motor;
     private double m_speedDesired;
 
-    public ShooterSubsystem()
+    public Shooter()
     {
         m_motor = new CANTalon(RobotMap.SHOOTER_MOTOR_SRX);
         m_motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
