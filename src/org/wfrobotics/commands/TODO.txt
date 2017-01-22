@@ -7,19 +7,34 @@ Potential Commands:
 - Moving to the boiler in autonomous
 - Moving to the ball bin in autonomous
 - Triggering the ball bin in autonomous
-- Starting or stopping the ball intake
 
-Potential Features:
-- While driving, turn on/off the intake(s) based on which direction we are driving (or off if we are not driving)
-- While driving, turn on/off the feeder based if we are driving?
-- Should we sense if balls are (or have been recently) in the intakes?
+Camera Potential Features:
 - Averaging the camera samples
+
+Climber Potential Features:
 - Sensing the rope is in the climber
 - Sensing the rope is acquired by a non-climber guiding mechanism
 - Moving the rope with a non-climber guiding mechanism
+
+Feeder potential features:
+- Move the ball as far in as possible, then stop based on a sensor
+- Pause loading the feeder to let RPMs get back into range
+
+Intake Potential Features:
+- While driving, turn on/off the intake(s) based on which direction we are driving (or off if we are not driving)
+- While driving, turn on/off the feeder based if we are driving?
+- Should we sense if balls are (or have been recently) in the intakes?
+
+Hopper Potential Features:
 - Agitating the balls in the hopper
 - Feedback that the hopper is mostly full
+
+Shooter Potential Features:
+- Rev Shooter automatically when we know we might be interested in shooting, such as for the next 10 seconds if we just scored a gear
 
 Completed Code Academy:
 - Kyle
 - Gabby
+
+Done:
+- Starting or stopping the ball intake

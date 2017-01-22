@@ -30,17 +30,17 @@ public class ShooterSubsystem extends Subsystem {
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new ShootStop());
+        setDefaultCommand(new Rev(0));
     }
 
     /**
      * Control speed of the shooting wheel(s)
-     * @param speed speed in rpm (usually between 3500 and 4000)
+     * @param rpm (usually between 3500 and 4000)
      * @return current speed the shooter wheel is running at
      */
-    public double setSpeed(double speed)
+    public double setSpeed(double rpm)
     {
-        m_speedDesired = speed;
+        m_speedDesired = rpm;
 
         m_motor.set(m_speedDesired);
         
@@ -51,7 +51,7 @@ public class ShooterSubsystem extends Subsystem {
     
     /**
      * Tells if the current speed is at the previously set speed within this tolerance
-     * @param tolerance percent above or below that counts as being at that speed (.1 = +/-10%) 
+     * @param tolerance percent above or below that counts as being at that speed (ex: .1 = +/-10%) 
      * @return if the shooting wheel(s) is at that speed
      */
     public boolean speedReached(double tolerance)
