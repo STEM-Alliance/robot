@@ -37,8 +37,10 @@ public class OI
     
     public OI() 
     {
-        buttonDriveStart.toggleWhenPressed(new DriveSwerveWheelCalibration());
-        //buttonDriveBack.toggleWhenPressed(new DriveSwerveWheelCalibration());
+        
+        //buttonDriveStart.toggleWhenPressed(new DriveSwerveWheelCalibration());
+        buttonDriveBack.whenPressed(new DriveToggleFieldRelative());
+        buttonDriveStart.whenPressed(new DriveZeroGyro());
         //buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
         //buttonDriveBack.toggleWhenPressed(new DriveTank(true));
                 
@@ -109,6 +111,7 @@ public class OI
     
     public static class DriveSwerveOI
     {
+        private static boolean m_fieldRelative = false;
         private static final double DEADBAND = 0.2;
 
         /**
@@ -229,7 +232,7 @@ public class OI
 
         public static boolean getFieldRelative()
         {
-            return false;
+            return m_fieldRelative;
         }
 
         public static boolean getResetGyro()

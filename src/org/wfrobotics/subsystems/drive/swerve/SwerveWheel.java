@@ -414,7 +414,8 @@ public class SwerveWheel {
          */
 
         // Control the motor.
-        double driveMotorOutput = driveMotorSpeed;// +
+        // don't try and drive if it's below the friction limit
+        double driveMotorOutput = Math.abs(driveMotorSpeed) < .2 ? 0 : driveMotorSpeed;// +
         // driveMotorControllerOutput;
 
         if (brake)
