@@ -22,7 +22,7 @@ public class DriveSwerveHalo extends Command
     {
         Utilities.PrintCommand("Drive", this);
 
-        Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
+        //Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
 
         Robot.driveSubsystem.driveVector(OI.DriveSwerveOI.getHaloDrive_Velocity(), -OI.DriveSwerveOI.getHaloDrive_Rotation());
         //Robot.swerveDriveSubsystem.setCrawlMode(OI.DriveSwerveOI.getCrawlSpeed());
