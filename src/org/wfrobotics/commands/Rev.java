@@ -1,6 +1,5 @@
 package org.wfrobotics.commands;
 
-import org.wfrobotics.commands.Constants.MODE;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -14,7 +13,6 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Rev extends Command
 {
-    private boolean finished = false;
     private double setpoint;    
     
     public Rev(double speed)
@@ -29,7 +27,7 @@ public class Rev extends Command
         requires(Robot.shooterSubsystem);
         
         setpoint = speed;
-        this.setTimeout(timeout);
+        setTimeout(timeout);
     }
 
     @Override

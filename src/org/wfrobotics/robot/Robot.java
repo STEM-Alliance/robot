@@ -42,10 +42,11 @@ public class Robot extends SampleRobot
         }
     }
     
+    public static Climber climberSubsystem;
     public static DriveSubsystem driveSubsystem;
     public static Feeder feederSubsystem;
-    public static IntakeSubsystem intakeSubsystem;
-    public static ShooterSubsystem shooterSubsystem;
+    public static Intake intakeSubsystem;
+    public static Shooter shooterSubsystem;
     public static OI oi;
 
     Command autonomousCommand;
@@ -74,8 +75,8 @@ public class Robot extends SampleRobot
         }
         
 
-        intakeSubsystem = new IntakeSubsystem();
-        shooterSubsystem = new ShooterSubsystem();
+        intakeSubsystem = new Intake();
+        shooterSubsystem = new Shooter();
         
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();

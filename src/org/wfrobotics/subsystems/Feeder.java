@@ -13,7 +13,7 @@ public class Feeder extends Subsystem {
         setDefaultCommand(new Feed(Feed.MODE.OFF));
     }
 
-    public void feed()
+    public void feed(boolean feederOn)
     {
         DriverStation.reportError("Feeder feed() not implemented yet", true);
     }

@@ -14,13 +14,12 @@ public class Feed extends Command
 {
     public enum MODE {SINGLE, CONTINUOUS, OFF};
     
-    private MODE mode;
+    private final MODE mode;
     private boolean hasFed = false;
     
     public Feed(MODE mode)
     {
         requires(Robot.feederSubsystem);
-        requires(Robot.shooterSubsystem);  // DRL Unfortunately we need the shooter to ask if we are at the correct RPMs. Other ideas?
         
         this.mode = mode;
     }
@@ -28,7 +27,6 @@ public class Feed extends Command
     public Feed(MODE mode, double timeout)
     {
         requires(Robot.feederSubsystem);
-        requires(Robot.shooterSubsystem);  // DRL Unfortunately we need the shooter to ask if we are at the correct RPMs. Other ideas?
         
         this.mode = mode;
         setTimeout(timeout);
@@ -43,17 +41,12 @@ public class Feed extends Command
     {
         if (mode == MODE.OFF)
         {
-            Robot.shooterSubsystem.setSpeed(0);
+            Robot.feederSubsystem.feed(false);
         }
-        else
+        else if (Robot.shooterSubsystem.speedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
         {
-            Robot.shooterSubsystem.setSpeed(Constants.SHOOTER_READY_SHOOT_SPEED);
-            
-            if (Robot.shooterSubsystem.speedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
-            {
-                Robot.feederSubsystem.feed();  // TODO DRL do we need to reset the feeder?
-                hasFed = true;
-            }
+            Robot.feederSubsystem.feed(true);  // TODO DRL do we need to reset the feeder?
+            hasFed = true;
         }
     }
 
@@ -83,7 +76,7 @@ public class Feed extends Command
 
     protected void end()
     {
-        Robot.shooterSubsystem.setSpeed(0);  // Remember you can always create a new Rev Command
+        Robot.feederSubsystem.feed(false);
     }
 
     protected void interrupted()

@@ -3,18 +3,17 @@ package org.wfrobotics.subsystems;
 import java.util.ArrayList;
 
 import org.wfrobotics.commands.IntakeSetup;
-import org.wfrobotics.commands.drive.DriveTankArcade;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class IntakeSubsystem extends Subsystem {
+public class Intake extends Subsystem {
 
     private ArrayList<CANTalon> m_motors;
 
-    public IntakeSubsystem()
+    public Intake()
     {
         m_motors = new ArrayList<CANTalon>();
         

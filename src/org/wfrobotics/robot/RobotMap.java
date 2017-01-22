@@ -31,6 +31,8 @@ public class RobotMap {
 
     public static final int INTAKE_MOTOR_SRX[] = {22, 23};
     public static final boolean INTAKE_MOTOR_INVERT[] = {false, true};
+    
+    public static final int CLIMBER_MOTOR_SRX = 24;
 
     public static final int CAN_TANK_TALONS_RIGHT[] = {12,13};
     public static final int CAN_TANK_TALONS_LEFT[] = {10,11};

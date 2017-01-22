@@ -1,6 +1,7 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.Vector;
+import org.wfrobotics.commands.Feed.MODE;
 import org.wfrobotics.commands.IntakeSetup;
 import org.wfrobotics.commands.Shoot;
 import org.wfrobotics.commands.UnJam;
@@ -47,7 +48,7 @@ public class OI
         //////////////////////////
         
         buttonIntakeStart.toggleWhenPressed(new IntakeSetup(true));
-        buttonShooterStart.toggleWhenPressed(new Shoot(true));
+        buttonShooterStart.toggleWhenPressed(new Shoot(MODE.CONTINUOUS));
         buttonUnJamStart.toggleWhenPressed(new UnJam(true));
         
         
