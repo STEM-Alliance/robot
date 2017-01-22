@@ -42,9 +42,10 @@ public class Robot extends SampleRobot
     }
     
     public static DriveSubsystem driveSubsystem;
+    public static Feeder feederSubsystem;
     public static IntakeSubsystem intakeSubsystem;
-    public static OI oi;
     public static ShooterSubsystem shooterSubsystem;
+    public static OI oi;
 
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;
