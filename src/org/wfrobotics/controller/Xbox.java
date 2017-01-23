@@ -12,59 +12,40 @@ import edu.wpi.first.wpilibj.XboxController;
  */
 public class Xbox extends XboxController {
 
-    public static class AxisType {
+    public static enum AXIS {
+        LEFT_X(0),
+        LEFT_Y(1),
+        LEFT_TRIGGER(2),
+        RIGHT_TRIGGER(3),
+        RIGHT_X(4),
+        RIGHT_Y(5);
+        
         public final int value;
         
-        private static final int kLeftX_val = 0;
-        private static final int kLeftY_val = 1;
-        private static final int kLeftTrigger_val = 2;
-        private static final int kRightTrigger_val = 3;
-        private static final int kRightX_val = 4;
-        private static final int kRightY_val = 5;
-        
-        private AxisType(int value) { this.value = value; }
-        
-        public static final AxisType kLeftX = new AxisType(kLeftX_val);
-        public static final AxisType kLeftY = new AxisType(kLeftY_val);
-        public static final AxisType kLeftTrigger = new AxisType(kLeftTrigger_val);
-        public static final AxisType kRightTrigger = new AxisType(kRightTrigger_val);        
-        public static final AxisType kRightX = new AxisType(kRightX_val);
-        public static final AxisType kRightY = new AxisType(kRightY_val);
+        private AXIS(int value) { this.value = value; }
+        public int get() { return value; }
     }
     
-    public static class ButtonType {
-        public final int value;
+    public static enum BUTTON {
+        A(1),
+        B(2),
+        X(3),
+        Y(4),
+        LB(5),
+        RB(6),
+        BACK(7),
+        START(8),
+        LEFT_STICK(9),
+        RIGHT_STICK(10);
         
-        private static final int kA_val = 1;
-        private static final int kB_val = 2;
-        private static final int kX_val = 3;
-        private static final int kY_val = 4;
-        private static final int kLB_val = 5;
-        private static final int kRB_val = 6;
-        private static final int kBack_val = 7;
-        private static final int kStart_val = 8;
-        private static final int kLeftStick_val = 9;
-        private static final int kRightStick_val = 10;
+        private final int value;
 
-        private ButtonType(int value) { this.value = value; }
-
-        public static final ButtonType kLeftStick = new ButtonType(kLeftStick_val);
-        public static final ButtonType kRightStick = new ButtonType(kRightStick_val);
-        public static final ButtonType kX = new ButtonType(kX_val);
-        public static final ButtonType kY = new ButtonType(kY_val);
-        public static final ButtonType kA = new ButtonType(kA_val);
-        public static final ButtonType kB = new ButtonType(kB_val);
-        public static final ButtonType kRB = new ButtonType(kRB_val);
-        public static final ButtonType kLB = new ButtonType(kLB_val);
-        public static final ButtonType kStart = new ButtonType(kStart_val);
-        public static final ButtonType kBack = new ButtonType(kBack_val);
+        private BUTTON(int value) { this.value = value; }
+        public int get() { return value; }
     }
 
-
-        
     private static final double DEADBAND = 0.2;
 
-    
     /**
      * Constructor
      * 
@@ -79,8 +60,7 @@ public class Xbox extends XboxController {
     /**
      * Get Value from an Axis
      * 
-     * @param axis
-     *            Axis Number
+     * @param axis Axis Number
      * @return Value from Axis (-1 to 1)
      */
     @Override
@@ -92,35 +72,33 @@ public class Xbox extends XboxController {
     /**
      * Get Value from an Axis
      * 
-     * @param axis
-     *            AxisType
+     * @param axis AxisType
      * @return
      */
-    public double getAxis(AxisType axis)
+    public double getAxis(AXIS axis)
     {
         // we need forward Y to be positive instead of negative
-        if(axis == AxisType.kLeftY || axis == AxisType.kRightY)
-            return -getRawAxis(axis.value);
+        if(axis == AXIS.LEFT_Y || axis == AXIS.RIGHT_Y)
+            return -getRawAxis(axis.get());
         else
-            return getRawAxis(axis.value);
+            return getRawAxis(axis.get());
     }
 
     /**
      * Retrieve value for X axis
      * 
-     * @param hand
-     *            Hand associated with the Joystick
+     * @param hand Hand associated with the Joystick
      * @return Value of Axis (-1 to 1)
      */
     public double getX(Hand hand)
     {
         if (hand.value == Hand.kRight.value)
         {
-            return getAxis(AxisType.kRightX);
+            return getAxis(AXIS.RIGHT_X);
         }
         else if (hand.value == Hand.kLeft.value)
         {
-            return getAxis(AxisType.kLeftX);
+            return getAxis(AXIS.LEFT_X);
         }
         else
         {
@@ -131,19 +109,18 @@ public class Xbox extends XboxController {
     /**
      * Retrieve value for Y axis
      * 
-     * @param hand
-     *            Hand associated with the Joystick
+     * @param hand Hand associated with the Joystick
      * @return Value of Axis (-1 to 1)
      */
     public double getY(Hand hand)
     {
         if (hand.value == Hand.kRight.value)
         {
-            return getAxis(AxisType.kRightY);
+            return getAxis(AXIS.RIGHT_Y);
         }
         else if (hand.value == Hand.kLeft.value)
         {
-            return getAxis(AxisType.kLeftY);
+            return getAxis(AXIS.LEFT_Y);
         }
         else
         {
@@ -152,23 +129,10 @@ public class Xbox extends XboxController {
     }
 
     /**
-     * Unused
-     * 
-     * @param hand
-     *            Unused
-     * @return 0
-     */
-    public double getZ(Hand hand)
-    {
-        return 0;
-    }
-
-    /**
      * Get the magnitude of the direction vector formed by the joystick's
      * current position relative to its origin
      * 
-     * @param hand
-     *            Hand associated with the Joystick
+     * @param hand Hand associated with the Joystick
      * @return the magnitude of the direction vector
      */
     public double getMagnitude(Hand hand)
@@ -180,8 +144,7 @@ public class Xbox extends XboxController {
      * Get the direction of the vector formed by the joystick and its origin in
      * radians
      * 
-     * @param hand
-     *            Hand associated with the Joystick
+     * @param hand Hand associated with the Joystick
      * @return The direction of the vector in radians
      */
     public double getDirectionRadians(Hand hand)
@@ -193,8 +156,7 @@ public class Xbox extends XboxController {
      * Get the direction of the vector formed by the joystick and its origin in
      * degrees
      * 
-     * @param hand
-     *            Hand associated with the Joystick
+     * @param hand Hand associated with the Joystick
      * @return The direction of the vector in degrees
      */
     public double getDirectionDegrees(Hand hand)
@@ -205,8 +167,7 @@ public class Xbox extends XboxController {
     
     /**
      * Get the vector formed by the hand
-     * @param hand
-     *            Hand associated with the Joystick
+     * @param hand Hand associated with the Joystick
      * @return Vector
      */
     public Vector getVector(Hand hand)
@@ -218,11 +179,10 @@ public class Xbox extends XboxController {
     /**
      * Get Value from a button
      * 
-     * @param button
-     *            Button Type
+     * @param button Button Type
      * @return
      */
-    public boolean getButton(ButtonType button)
+    public boolean getButton(BUTTON button)
     {
         return getRawButton(button.value);
     }
@@ -230,8 +190,7 @@ public class Xbox extends XboxController {
     /**
      * Get Trigger Value as Button
      * 
-     * @param hand
-     *            Hand associated with button
+     * @param hand Hand associated with button
      * @return false
      */
     @Override
@@ -239,11 +198,11 @@ public class Xbox extends XboxController {
     {
         if (hand == Hand.kLeft)
         {
-            return getAxis(AxisType.kLeftTrigger) > 0.6;
+            return getAxis(AXIS.LEFT_TRIGGER) > 0.6;
         }
         else if (hand == Hand.kRight)
         {
-            return getAxis(AxisType.kRightTrigger) > 0.6;
+            return getAxis(AXIS.RIGHT_TRIGGER) > 0.6;
         }
         else
         {

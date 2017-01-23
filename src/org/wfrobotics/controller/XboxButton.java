@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj.buttons.Button;
 public class XboxButton extends Button
 {
     Xbox hardware;
-    Xbox.ButtonType button;
+    Xbox.BUTTON button;
     
-    public XboxButton(Xbox hardware, Xbox.ButtonType button) {
+    public XboxButton(Xbox hardware, Xbox.BUTTON button) {
         this.hardware = hardware;
         this.button = button;
     }

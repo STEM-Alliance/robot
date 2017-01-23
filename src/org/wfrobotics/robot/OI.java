@@ -24,12 +24,12 @@ public class OI
     
     // drive controller
 
-    Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.ButtonType.kBack);
-    Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.ButtonType.kStart);
+    Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.BUTTON.BACK);
+    Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.BUTTON.START);
     
-    Button buttonIntakeStart = new XboxButton(xboxDrive, Xbox.ButtonType.kA);
-    Button buttonShooterStart = new XboxButton(xboxDrive, Xbox.ButtonType.kB);
-    Button buttonUnJamStart = new XboxButton(xboxDrive, Xbox.ButtonType.kRB);
+    Button buttonIntakeStart = new XboxButton(xboxDrive, Xbox.BUTTON.A);
+    Button buttonShooterStart = new XboxButton(xboxDrive, Xbox.BUTTON.B);
+    Button buttonUnJamStart = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
     
     // manipulator controller
     
@@ -124,7 +124,7 @@ public class OI
         {
             double value = 0;
         
-            value = xboxDrive.getAxis(Xbox.AxisType.kRightX);
+            value = xboxDrive.getAxis(Xbox.AXIS.RIGHT_X);
         
             if (Math.abs(value) < DEADBAND)
             {
