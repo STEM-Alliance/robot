@@ -41,11 +41,11 @@ public class Feed extends Command
     {
         if (mode == MODE.OFF)
         {
-            Robot.feederSubsystem.feed(false);
+            Robot.feederSubsystem.setSpeed(0);
         }
-        else if (Robot.shooterSubsystem.speedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
+        else if (Robot.feederSubsystem.speedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
         {
-            Robot.feederSubsystem.feed(true);  // TODO DRL do we need to reset the feeder?
+            Robot.feederSubsystem.setSpeed(Constants.FEEDER_READY_FEED_SPEED);  // TODO DRL do we need to reset the feeder?
             hasFed = true;
         }
     }
@@ -76,7 +76,7 @@ public class Feed extends Command
 
     protected void end()
     {
-        Robot.feederSubsystem.feed(false);
+        Robot.feederSubsystem.setSpeed(0);
     }
 
     protected void interrupted()
