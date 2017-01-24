@@ -17,8 +17,8 @@ public final class SwerveAngleController {
     private static final double HalfCircle = 180;
     private static final double MaxOut = 1;
 
-    private static final double P = .03;
-    private static final double I = 0.00;
+    private static final double P = .025;
+    private static final double I = 0.0001;
     private static final double D = 0.00;
 
     private final String name;

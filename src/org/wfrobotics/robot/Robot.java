@@ -77,6 +77,8 @@ public class Robot extends SampleRobot
 
         intakeSubsystem = new Intake();
         shooterSubsystem = new Shooter();
+        climberSubsystem = new Climber();
+        feederSubsystem = new Feeder();
         
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();
@@ -91,7 +93,6 @@ public class Robot extends SampleRobot
         
         while (isOperatorControl() && isEnabled())
         {
-            //tankDriveSubsystem.printSensors();
             Scheduler.getInstance().run();
         }
     }
@@ -117,7 +118,8 @@ public class Robot extends SampleRobot
     {
         while (isDisabled())
         {
-            //Gyro.getInstance().displayNavxMXPValues();
+            if(OI.xboxDrive.getStartButton())
+                Gyro.getInstance().displayNavxMXPValues();
             
             driveSubsystem.printDash();
             
