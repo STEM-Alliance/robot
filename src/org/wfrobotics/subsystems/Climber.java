@@ -1,25 +1,29 @@
 package org.wfrobotics.subsystems;
 
+import org.wfrobotics.commands.Up;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Climber extends Subsystem
 {
     private CANTalon motor;
+    private DigitalInput sensor;
     
     public Climber()
     {
         motor = new CANTalon(RobotMap.CLIMBER_MOTOR_SRX);
+        sensor = new DigitalInput(RobotMap.CLIMBER_SENSOR);
     }
     
     @Override
     protected void initDefaultCommand()
     {
-        // TODO Auto-generated method stub
+        setDefaultCommand(new Up(Up.MODE.OFF));
     }
 
     /**
@@ -30,5 +34,11 @@ public class Climber extends Subsystem
     {
         DriverStation.reportError("Climber set speed not implemented yet", true);
         motor.set(0);
+    }
+    
+    public boolean isAtTop()
+    {
+        return sensor.get(); //TODO: make sure sensor = HIGH is on; This could be backwards
+      
     }
 }
