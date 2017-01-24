@@ -178,7 +178,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
             SmartDashboard.putString("Drive Mode", "Spinning");
             
             // just take the rotation value from the controller
-            m_lastHeading = m_gyro.getYaw() + (m_gyro.getYaw() - gyroLast)*8;
+            m_lastHeading = m_gyro.getYaw() + (m_gyro.getYaw() - gyroLast)*5;
             
             gyroLast = m_gyro.getYaw();
         }

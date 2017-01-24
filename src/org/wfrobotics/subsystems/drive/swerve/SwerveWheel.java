@@ -181,6 +181,7 @@ public class SwerveWheel {
         desired = new Vector(0, 0);
         driveMotor = DriveMotor;
 
+        driveMotor.setVoltageRampRate(48);
         // MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone,
         // closeLoopRampRate, 0);
         // MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);

@@ -9,6 +9,7 @@ import org.wfrobotics.subsystems.drive.MecanumDriveSubsystem;
 import org.wfrobotics.subsystems.drive.TankDriveSubsystem;
 import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -93,6 +94,7 @@ public class Robot extends SampleRobot
         
         while (isOperatorControl() && isEnabled())
         {
+            SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
             Scheduler.getInstance().run();
         }
     }
