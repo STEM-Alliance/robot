@@ -30,8 +30,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     private boolean m_gearHigh;
 
     private PIDController m_chassisAngleController;
-    private double m_chassisP = 2.5 / 180;
-    private double m_chassisI = 0;
+    private double m_chassisP = .015;
+    private double m_chassisI = 0.0;
     private double m_chassisD = 0;
 
     private double m_crawlMode = 0.0;
@@ -49,6 +49,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
 
     private Vector m_lastVelocity;
     private double m_lastVelocityTimestamp;
+
+    double gyroLast;
 
     /**
      * sets up individual wheels and their positions relative to robot center
@@ -110,13 +112,13 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     @Override
     public void driveVector(Vector velocity, double rotation)
     {
-        UpdateDrive(velocity, rotation, -1);
+        driveWithHeading(velocity, rotation, -1);
     }
 
     @Override
     public void driveXY(double x, double y, double rotation)
     {
-        UpdateDrive(new Vector(x,y), rotation, -1);
+        driveWithHeading(new Vector(x,y), rotation, -1);
     }
     
     @Override
@@ -136,7 +138,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
      * @param Heading 0-360 of angle to turn to, -1 if not in use
      * @return actual wheel readings
      */
-    public Vector[] UpdateDrive(Vector Velocity, double Rotation, double Heading)
+    public Vector[] driveWithHeading(Vector Velocity, double Rotation, double Heading)
     {
         double Error = 0;
         
@@ -176,14 +178,15 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
             SmartDashboard.putString("Drive Mode", "Spinning");
             
             // just take the rotation value from the controller
+            m_lastHeading = m_gyro.getYaw() + (m_gyro.getYaw() - gyroLast)*8;
             
-            m_lastHeading = m_gyro.getYaw();
+            gyroLast = m_gyro.getYaw();
         }
 
         SmartDashboard.putNumber("Rotation Error", Error);
         
         // now update the drive
-        return UpdateHaloDrive(Velocity, Rotation);
+        return drive(Velocity, Rotation);
     }
 
     /**
@@ -193,7 +196,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
      * @param Rotation robot's rotational movement, -1 to 1 rad/s
      * @return Array of {@link Vector} of the actual readings from the wheels
      */
-    public Vector[] UpdateHaloDrive(Vector Velocity, double Rotation)
+    protected Vector[] drive(Vector Velocity, double Rotation)
     {
         SmartDashboard.putNumber("Velocity X", Velocity.getX());
         SmartDashboard.putNumber("Velocity Y", Velocity.getY());

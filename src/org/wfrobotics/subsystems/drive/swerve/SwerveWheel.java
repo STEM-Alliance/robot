@@ -42,6 +42,7 @@ public class SwerveWheel {
 
     /** Drive motor object */
     private CANTalon driveMotor;
+    private final double DRIVE_MOTOR_SPEED_MIN = .05;
     
     /** Angle motor object */
     private CANTalon angleMotor;
@@ -415,7 +416,13 @@ public class SwerveWheel {
 
         // Control the motor.
         // don't try and drive if it's below the friction limit
-        double driveMotorOutput = Math.abs(driveMotorSpeed) < .2 ? 0 : driveMotorSpeed;// +
+        double driveMotorOutput = 0;
+        
+        if(Math.abs(driveMotorSpeed) >= DRIVE_MOTOR_SPEED_MIN)
+        {
+            driveMotorOutput = driveMotorSpeed;
+        }
+        
         // driveMotorControllerOutput;
 
         if (brake)

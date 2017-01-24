@@ -46,8 +46,7 @@ public class Gyro {
     
     protected static Gyro instance = null;
     protected static AHRS navxMXP = null;
-    
-    protected double customYaw;
+   
 
     /**
      * get the default instance using the Serial Port
@@ -75,7 +74,7 @@ public class Gyro {
     protected Gyro(PORT port)
     {
         navxMXP = port.getGyro();
-        customYaw = 0.0f;
+        zeroYaw();
     }
 
     /**
@@ -90,8 +89,7 @@ public class Gyro {
      */
     public void setZero(double angle)
     {
-        customYaw = angle;
-        navxMXP.zeroYaw();
+        navxMXP.setAngleAdjustment(angle);
     }
 
     /**
@@ -106,10 +104,10 @@ public class Gyro {
      */
     public float getYaw()
     {
-        float yaw = (float)Utilities.wrapToRange(navxMXP.getYaw() + customYaw,
-                -180, 180);
-        return yaw;
+        SmartDashboard.putNumber("GyroAngle", navxMXP.getAngle());
+        return (float)Utilities.wrapToRange(navxMXP.getAngle(), -180, 180);
     }
+    
 
     /**
      * Sets the user-specified yaw offset to the current yaw value reported by
@@ -120,7 +118,6 @@ public class Gyro {
      */
     public void zeroYaw()
     {
-        customYaw = 0.0f;
         navxMXP.zeroYaw();
     }
     
