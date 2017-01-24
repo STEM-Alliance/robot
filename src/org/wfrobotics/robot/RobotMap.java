@@ -28,6 +28,7 @@ public class RobotMap {
     public static final int PWM_SWERVE_SHIFT_SERVOS[] = { 0, 1, 2, 3 };
 
     public static final int SHOOTER_MOTOR_SRX = 21;
+    public static final int FEEDER_MOTOR_SRX = 25; //Change if necessary and config 
 
     public static final int INTAKE_MOTOR_SRX[] = {22, 23};
     public static final boolean INTAKE_MOTOR_INVERT[] = {false, true};

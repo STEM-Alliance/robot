@@ -15,6 +15,7 @@ public class Shoot extends CommandGroup
     protected void end()
     {
         Robot.shooterSubsystem.setSpeed(0);
+        Robot.feederSubsystem.setSpeed(0);
     }
     
     protected void interrupted()
