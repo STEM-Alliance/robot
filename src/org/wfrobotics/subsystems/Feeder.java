@@ -54,11 +54,6 @@ public class Feeder extends Subsystem {
         }
               
     }
-
-    public void feed(boolean feederOn)
-    {
-        DriverStation.reportError("Feeder feed() not implemented yet", true);
-    }
     
     public void printDash()
     {
