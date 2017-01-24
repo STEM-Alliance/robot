@@ -32,19 +32,41 @@ public class Up extends Command
     @Override
     protected void execute()
     {
-        throw new RuntimeException("Modes not implemented yet");
+        if(this.mode == MODE.CLIMB)
+        {
+            Robot.climberSubsystem.setSpeed(1);
+        }
+        else if(this.mode == MODE.HOLD)
+        {
+            Robot.climberSubsystem.setSpeed(.25);
+        }
+        else if(this.mode == MODE.DOWN)
+        {
+            Robot.climberSubsystem.setSpeed(-1);
+        }
+        else if(this.mode == MODE.OFF)
+        {
+            Robot.climberSubsystem.setSpeed(0);
+        }
     }
 
     @Override
     protected boolean isFinished()
     {
-        return false;
+        if(this.mode == MODE.CLIMB)
+        {
+            return Robot.climberSubsystem.isAtTop();
+        }
+        else
+        {
+            return false;
+        }
     }
 
     @Override
     protected void end()
     {
-
+        //Not sure if we should turn off the motor; Robot might fall?
     }
 
     @Override
