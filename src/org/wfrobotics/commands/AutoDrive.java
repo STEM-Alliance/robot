@@ -22,7 +22,7 @@ public class AutoDrive extends Command
         speedL = 0;
     }
 
-    /**
+    /** 
      * Drive. Go any direction including turning.
      */
     public AutoDrive(double endTime, double speedL, double speedR, boolean gyroEnabled)
