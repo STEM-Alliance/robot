@@ -30,11 +30,11 @@ public class Robot extends SampleRobot
             switch(this)
             {
             case NONE:
-                autonomousCommand = new AutoNone();
+                autonomousCommand = new AutoDrive();
                 break;
             
             default:
-                autonomousCommand = new AutoNone();
+                autonomousCommand = new AutoDrive();
                 break;
             }
             
