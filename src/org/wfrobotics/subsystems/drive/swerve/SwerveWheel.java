@@ -9,6 +9,7 @@ import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.AllocationException;
 
@@ -43,6 +44,8 @@ public class SwerveWheel {
     /** Drive motor object */
     private CANTalon driveMotor;
     private final double DRIVE_MOTOR_SPEED_MIN = .05;
+    private double driveLastSpeed;
+    private double driveLastChangeTime;
     
     /** Angle motor object */
     private CANTalon angleMotor;
@@ -181,7 +184,9 @@ public class SwerveWheel {
         desired = new Vector(0, 0);
         driveMotor = DriveMotor;
 
-        driveMotor.setVoltageRampRate(48);
+        driveMotor.setVoltageRampRate(20);
+        driveLastChangeTime = Timer.getFPGATimestamp();
+        //driveMotor.setCurrentLimit(5);
         // MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone,
         // closeLoopRampRate, 0);
         // MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
@@ -424,6 +429,22 @@ public class SwerveWheel {
             driveMotorOutput = driveMotorSpeed;
         }
         
+        double diff = Math.abs(driveLastSpeed - driveMotorOutput);
+        
+        if(diff > .5)
+        {
+            driveMotor.setVoltageRampRate(8);
+            driveLastChangeTime = Timer.getFPGATimestamp();
+            if(this.number == 0)
+                SmartDashboard.putNumber("VoltageRampRate", 8);
+        }
+        else if(diff < .35 && (Timer.getFPGATimestamp() - driveLastChangeTime > .25))
+        {
+            driveMotor.setVoltageRampRate(30);
+            if(this.number == 0)
+                SmartDashboard.putNumber("VoltageRampRate", 30);
+        }
+        
         // driveMotorControllerOutput;
 
         if (brake)
@@ -437,6 +458,7 @@ public class SwerveWheel {
             driveMotor.set(driveMotorOutput);
         }
 
+        driveLastSpeed = driveMotorOutput;
         // SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
         // SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
         // SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
