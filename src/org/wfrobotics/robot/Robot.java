@@ -44,7 +44,7 @@ public class Robot extends SampleRobot
     }
     
     public static Climber climberSubsystem;
-    public static DriveSubsystem driveSubsystem;
+    public static SwerveDriveSubsystem driveSubsystem;
     public static Feeder feederSubsystem;
     public static Intake intakeSubsystem;
     public static Shooter shooterSubsystem;
@@ -57,25 +57,10 @@ public class Robot extends SampleRobot
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-    public void robotInit() {
-        
-        switch(RobotMap.DriveSystem)
-        {
-            case DRIVE_SWERVE:
-                driveSubsystem = new SwerveDriveSubsystem();
-                break;
+    public void robotInit() 
+    {
 
-            case DRIVE_MECANUM:
-                driveSubsystem = new MecanumDriveSubsystem();
-                break;
-                
-            case DRIVE_TANK:
-            default:
-                driveSubsystem = new TankDriveSubsystem();
-                break;
-        }
-        
-
+        driveSubsystem = new SwerveDriveSubsystem();
         intakeSubsystem = new Intake();
         shooterSubsystem = new Shooter();
         climberSubsystem = new Climber();
