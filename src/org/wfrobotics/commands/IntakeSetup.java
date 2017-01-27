@@ -9,14 +9,20 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class IntakeSetup extends Command {
-    boolean start;
+    
+    boolean on;
     final Intake.MOTOR motor;
     
+    public void setOn(boolean on)
+    {
+        this.on = on;
+    }
+
+
     public IntakeSetup(boolean on, Intake.MOTOR motor) {
         requires(Robot.intakeSubsystem);
-        start = on;
+        this.on = on;
         this.motor = motor;
-       
     }
 
     // Called just before this Command runs the first time
@@ -24,19 +30,10 @@ public class IntakeSetup extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
-        if(start && motor == Intake.MOTOR.LEFT)
-        {
-            Robot.intakeSubsystem.setSpeed(1, Intake.MOTOR.LEFT);
-        }
-        else if (start && motor == Intake.MOTOR.RIGHT)
-        {
-            Robot.intakeSubsystem.setSpeed(1, Intake.MOTOR.RIGHT);
-        }
-        else
-        {
-            Robot.intakeSubsystem.setSpeed(0, Intake.MOTOR.BOTH);
-        }
+    protected void execute() 
+    {
+        double speed = (on) ? 1:0;
+        Robot.intakeSubsystem.setSpeed(speed, motor);
     }
 
     // Make this return true when this Command no longer needs to run execute()

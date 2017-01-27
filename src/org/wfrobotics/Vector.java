@@ -54,7 +54,7 @@ public class Vector {
      * 
      * @param mag
      *            magnitude of vector
-     * @param angle
+     * @param ANGLE_INTAKE_OFF
      *            angle of vector
      */
     public static Vector NewFromMagAngle(double mag, double ang)
@@ -76,7 +76,7 @@ public class Vector {
      * 
      * @param mag
      *            magnitude of vector
-     * @param angle
+     * @param ANGLE_INTAKE_OFF
      *            angle of vector
      */
     public void setMagAngle(double mag, double ang)
