@@ -1,6 +1,7 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.Vector;
+import org.wfrobotics.commands.AugerCmd;
 import org.wfrobotics.commands.Feed.MODE;
 import org.wfrobotics.commands.IntakeSetup;
 import org.wfrobotics.commands.Shoot;
@@ -32,6 +33,8 @@ public class OI
     Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
     Button buttonShooterStart = new XboxButton(xboxDrive, Xbox.BUTTON.B);
     Button buttonUnJamStart = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
+    Button buttonAugerStart = new XboxButton(xboxDrive, Xbox.BUTTON.A);
+
     
     
     // manipulator controller
@@ -54,7 +57,7 @@ public class OI
         buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, Intake.MOTOR.RIGHT));
         buttonShooterStart.toggleWhenPressed(new Shoot(MODE.CONTINUOUS));
         buttonUnJamStart.toggleWhenPressed(new UnJam(true));
-        
+        buttonAugerStart.toggleWhenPressed(new AugerCmd(true));
         
         //////////////////////////
     }
