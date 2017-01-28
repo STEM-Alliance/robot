@@ -5,6 +5,8 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.hardware.*;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
@@ -43,7 +45,6 @@ public class SwerveWheel {
 
     /** Drive motor object */
     private CANTalon driveMotor;
-    private final double DRIVE_MOTOR_SPEED_MIN = .05;
     private double driveLastSpeed;
     private double driveLastChangeTime;
     
@@ -187,10 +188,15 @@ public class SwerveWheel {
         driveMotor.setVoltageRampRate(20);
         driveLastChangeTime = Timer.getFPGATimestamp();
         //driveMotor.setCurrentLimit(5);
-        // MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone,
-        // closeLoopRampRate, 0);
-        // MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        // MotorDrive.changeControlMode(ControlMode.Disabled);
+        
+        if(SwerveConstants.DRIVE_MOTOR_SPEED_SENSOR_ENABLE)
+        {
+            driveMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+            driveMotor.changeControlMode(TalonControlMode.Speed);
+            driveMotor.setPID(SwerveConstants.DRIVE_PID_P,
+                              SwerveConstants.DRIVE_PID_I,
+                              SwerveConstants.DRIVE_PID_D);
+        }
 
         angleMotor = AngleMotor;
 
@@ -253,7 +259,14 @@ public class SwerveWheel {
     public Vector getActual()
     {
         // WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
-        actual.setMagAngle(desired.getMag(), getAnglePotAdjusted());
+        if(SwerveConstants.DRIVE_MOTOR_SPEED_SENSOR_ENABLE)
+        {
+            actual.setMagAngle(driveMotor.getSpeed()/SwerveConstants.DriveMaxSpeed, getAnglePotAdjusted());
+        }
+        else
+        {
+            actual.setMagAngle(desired.getMag(), getAnglePotAdjusted());
+        }
         return actual;
     }
 
@@ -400,52 +413,60 @@ public class SwerveWheel {
             driveMotorSpeed = -driveMotorSpeed;
         }
 
-        /*
-         * // Update the velocity estimate.
-         * DriveEncoderFilter.updateEstimate(DriveEncoder.getDistance(), time);
-         * 
-         * // Determine the max velocity. double driveEncoderMaxVelocity; if
-         * (HighGear) { driveEncoderMaxVelocity =
-         * SwerveConstants.DriveHighGearMaxVelocity; } else {
-         * driveEncoderMaxVelocity = SwerveConstants.DriveLowGearMaxVelocity; }
-         * 
-         * // Scale the velocity estimate. double driveEncoderVelocityScaled =
-         * DriveEncoderFilter.getVelocity() / driveEncoderMaxVelocity;
-         * driveEncoderVelocityScaled =
-         * Utilities.clampToRange(driveEncoderVelocityScaled, -1, 1);
-         * 
-         * // Update the wheel speed controller. double
-         * driveMotorControllerError = driveMotorSpeed -
-         * driveEncoderVelocityScaled; double driveMotorControllerOutput =
-         * DriveEncoderController.update(driveMotorControllerError, time);
-         */
+        // limit the ramp rate to prevent voltage drops
+        // and brownouts
+        if(!SwerveConstants.DRIVE_MOTOR_SPEED_SENSOR_ENABLE)
+        {
+            // we don't have speed feedback, so brute force it
+            // using the desired and the last desired values
+            double diff = Math.abs(driveLastSpeed - driveMotorSpeed);
+            
+            if(diff > .5)
+            {
+                driveMotor.setVoltageRampRate(8);
+                driveLastChangeTime = Timer.getFPGATimestamp();
+                if(this.number == 0)
+                    SmartDashboard.putNumber("VoltageRampRate", 8);
+            }
+            else if(diff < .35 && (Timer.getFPGATimestamp() - driveLastChangeTime > .25))
+            {
+                driveMotor.setVoltageRampRate(30);
+                if(this.number == 0)
+                    SmartDashboard.putNumber("VoltageRampRate", 30);
+            }
 
-        // Control the motor.
-        // don't try and drive if it's below the friction limit
+            driveLastSpeed = driveMotorSpeed;
+        }
+        else
+        {
+            // we have a speed sensor, so 
+            double speedCurrent = driveMotor.getSpeed();
+            
+            double speedDesired = driveMotorSpeed * SwerveConstants.DriveMaxSpeed;
+            
+            double speedDiff = Math.abs(speedDesired-speedCurrent);
+            
+            // limit to 0 - max
+            speedDiff = Math.min(speedDiff, SwerveConstants.DriveMaxSpeed);
+            
+            // linearly scale the speed difference to the ramp range
+            //TODO should it be linear?
+            double rampValue = Utilities.scaleToRange(speedDiff,
+                    0, SwerveConstants.DriveMaxSpeed, // input range
+                    SwerveConstants.DRIVE_RAMP_LOW, SwerveConstants.DRIVE_RAMP_HIGH); // output range
+
+            driveMotor.setVoltageRampRate(rampValue);
+            SmartDashboard.putNumber("VoltageRampRate", rampValue);
+            
+            driveLastSpeed = driveMotorSpeed;
+        }
+
         double driveMotorOutput = 0;
-        
-        if(Math.abs(driveMotorSpeed) >= DRIVE_MOTOR_SPEED_MIN)
+        // don't try and drive if it's below the friction limit
+        if(Math.abs(driveMotorSpeed) >= SwerveConstants.DRIVE_MOTOR_SPEED_MIN)
         {
             driveMotorOutput = driveMotorSpeed;
         }
-        
-        double diff = Math.abs(driveLastSpeed - driveMotorOutput);
-        
-        if(diff > .5)
-        {
-            driveMotor.setVoltageRampRate(8);
-            driveLastChangeTime = Timer.getFPGATimestamp();
-            if(this.number == 0)
-                SmartDashboard.putNumber("VoltageRampRate", 8);
-        }
-        else if(diff < .35 && (Timer.getFPGATimestamp() - driveLastChangeTime > .25))
-        {
-            driveMotor.setVoltageRampRate(30);
-            if(this.number == 0)
-                SmartDashboard.putNumber("VoltageRampRate", 30);
-        }
-        
-        // driveMotorControllerOutput;
 
         if (brake)
         {
@@ -458,7 +479,6 @@ public class SwerveWheel {
             driveMotor.set(driveMotorOutput);
         }
 
-        driveLastSpeed = driveMotorOutput;
         // SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
         // SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
         // SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());

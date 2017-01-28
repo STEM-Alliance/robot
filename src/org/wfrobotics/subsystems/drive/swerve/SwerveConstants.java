@@ -39,6 +39,14 @@ public class SwerveConstants {
      */
     public static final int[] WheelAngleCalibrationPins = { 1, 2, 3, 8 };
 
+
+    /**
+     * angle PID values
+     */
+    public static final double ANGLE_PID_P = .025;
+    public static final double ANGLE_PID_I = 0.0001;
+    public static final double ANGLE_PID_D = 0.00;
+    
     /**
      * Array of values for shifting gears, low then high values
      */
@@ -46,48 +54,54 @@ public class SwerveConstants {
          { 120, 45 }, { 45, 120 } };
 
     public static final boolean WheelShiftDefaultHigh = false;
+
+    /**
+     * Minimum speed to cutoff motor output to prevent stalling
+     */
+    public static final double DRIVE_MOTOR_SPEED_MIN = .05;
+
+    /**
+     * if the speed sensor is in use
+     */
+    public static final boolean DRIVE_MOTOR_SPEED_SENSOR_ENABLE = false;
+
+    /**
+     * drive PID values
+     */
+    public static final double DRIVE_PID_P = .01;
+    public static final double DRIVE_PID_I = .00;
+    public static final double DRIVE_PID_D = .00;
+    public static final double DRIVE_PID_F = .00;
     
     /**
-     * Wheel diameter
+     * voltage ramp ranges for calculations
      */
-    public static final double DriveWheelDiameter = 4.0; // inches
-
+    public static final double DRIVE_RAMP_LOW = 5;
+    public static final double DRIVE_RAMP_HIGH = 30;
+    
     /**
-     * Wheel circumference
+     * Max RPM output of the motor
+     * ~5300 for CIM
+     * ~5800 for Mini CIM
      */
-    public static final double DriveWheelCircumference = Math.PI * DriveWheelDiameter;
-
+    public static final double DriveMaxRPM = 5300;
+    
     /**
-     * Encoder pulses per 1 full encoder rotation
+     * Estimate of efficiency of the gearing from motor to sensor
      */
-    public static final int DriveEncoderPulses = 64;
-
+    public static final double DriveEfficiency = .8;
+    
     /**
-     * Full encoder rotations per wheel rotation
+     * The gear ratio conversion from motor output to sensor
      */
-    public static final double DriveEncoderRotPerWheelRot = 3.0;
-
+    public static final double DriveGearRatio = 12 / 48 * 12;
+    
     /**
-     * Inches per encoder pulse
+     * Value to use for converting raw input (-1 to 1) to speed (in rpm)
+     * that the sensor will detect
      */
-    public static final double DriveEncoderRate = DriveWheelCircumference
-            / DriveEncoderRotPerWheelRot / DriveEncoderPulses;
-
-    /**
-     * The ratio between low gear top speed and high gear top speed
-     */
-    public static final double DriveGearRatio = 0.5; // TODO: probably totally wrong
-
-    /**
-     * The wheel top speed in high gear
-     */
-    public static final double DriveHighGearMaxVelocity = DriveWheelCircumference * 9.5;
-
-    /**
-     * The wheel top speed in low gear
-     */
-    public static final double DriveLowGearMaxVelocity = DriveHighGearMaxVelocity * DriveGearRatio;
-
+    public static final double DriveMaxSpeed = DriveMaxRPM * DriveEfficiency * DriveGearRatio;
+    
     public static final double DriveSpeedCrawl = .4;
     public static final double DriveSpeedNormal = .85;
 }
