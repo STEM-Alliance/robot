@@ -17,10 +17,6 @@ public final class SwerveAngleController {
     private static final double HalfCircle = 180;
     private static final double MaxOut = 1;
 
-    private static final double P = .025;
-    private static final double I = 0.0001;
-    private static final double D = 0.00;
-
     private final String name;
     private final PIDController controller;
 
@@ -49,7 +45,10 @@ public final class SwerveAngleController {
         this.motorSpeed = 0;
         this.reverseMotor = false;
 
-        this.controller = new PIDController(P, I, D, MaxOut);    
+        this.controller = new PIDController(SwerveConstants.DRIVE_PID_P, 
+                                            SwerveConstants.DRIVE_PID_I,
+                                            SwerveConstants.DRIVE_PID_D,
+                                            MaxOut);    
     }
 
     /**
