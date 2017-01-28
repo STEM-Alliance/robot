@@ -10,35 +10,29 @@ package org.wfrobotics.subsystems.drive.swerve;
  */
 public class SwerveConstants {
 
-    public static final int WheelCount = 4;
+    public static final int WHEEL_COUNT = 4;
 
-    public static final double ChassisWidth = 24.75;
-    public static final double ChassisDepth = 28.5;
-    public static final double ChassisScale = ChassisDepth;
+    public static final double CHASSIS_WIDTH = 24.75;
+    public static final double CHASSIS_DEPTH = 28.5;
+    public static final double CHASSIS_SCALE = CHASSIS_DEPTH;
 
     /**
      * X & Y coordinate positions for wheel placement. Relative to robot center
      */
-    public static final double[][] WheelPositions = {
-            { -ChassisWidth / ChassisScale, ChassisDepth / ChassisScale }, // front left
-            { ChassisWidth / ChassisScale, ChassisDepth / ChassisScale }, // front right
-            { ChassisWidth / ChassisScale, -ChassisDepth / ChassisScale }, // back right
-            { -ChassisWidth / ChassisScale, -ChassisDepth / ChassisScale } }; // back left
+    public static final double[][] POSITIONS = {
+            { -CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE }, // front left
+            { CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE }, // front right
+            { CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE }, // back right
+            { -CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE } }; // back left
 
     /**
      * Orientation Angle of each wheel in degrees clockwise. Relative to robot 0
      * angle
      */
-    public static final double[] WheelOrientationAngle = { 115, // front left
-            301, // front right
-            210, // back right
-            293 }; // back left
-
-    /**
-     * Digital input pins for the angle calibration reed switch
-     */
-    public static final int[] WheelAngleCalibrationPins = { 1, 2, 3, 8 };
-
+    public static final double[] ANGLE_OFFSET = { 115, // front left
+                                                  301, // front right
+                                                  210, // back right
+                                                  293 }; // back left
 
     /**
      * angle PID values
@@ -50,28 +44,30 @@ public class SwerveConstants {
     /**
      * Array of values for shifting gears, low then high values
      */
-    public static final int[] WheelShiftServoVals[] = { { 120, 45 }, { 45, 120 },
-         { 120, 45 }, { 45, 120 } };
+    public static final int[] SHIFTER_VALS[] = { { 120, 45 }, 
+                                                 { 45, 120 },
+                                                 { 120, 45 }, 
+                                                 { 45, 120 } };
 
-    public static final boolean WheelShiftDefaultHigh = false;
+    public static final boolean SHIFTER_DEFAULT_HIGH = false;
 
     /**
      * Minimum speed to cutoff motor output to prevent stalling
      */
-    public static final double DRIVE_MOTOR_SPEED_MIN = .05;
+    public static final double DRIVE_SPEED_MIN = .05;
 
     /**
      * if the speed sensor is in use
      */
-    public static final boolean DRIVE_MOTOR_SPEED_SENSOR_ENABLE = false;
+    public static final boolean DRIVE_SPEED_SENSOR_ENABLE = true;
 
     /**
      * drive PID values
      */
-    public static final double DRIVE_PID_P = .01;
-    public static final double DRIVE_PID_I = .00;
-    public static final double DRIVE_PID_D = .00;
-    public static final double DRIVE_PID_F = .00;
+    public static final double DRIVE_PID_P = .007;
+    public static final double DRIVE_PID_I = .0001;
+    public static final double DRIVE_PID_D = 0.00;
+    public static final double DRIVE_PID_F = .04;
     
     /**
      * voltage ramp ranges for calculations
@@ -84,24 +80,27 @@ public class SwerveConstants {
      * ~5300 for CIM
      * ~5800 for Mini CIM
      */
-    public static final double DriveMaxRPM = 5300;
+    public static final double DRIVE_MAX_RPM = 5300;
     
     /**
      * Estimate of efficiency of the gearing from motor to sensor
+     * TODO
      */
-    public static final double DriveEfficiency = .8;
+    public static final double DRIVE_EFFICIENCY = .8;
     
     /**
      * The gear ratio conversion from motor output to sensor
      */
-    public static final double DriveGearRatio = 12 / 48 * 12;
+    public static final double DRIVE_GEAR_SENSOR_RATIO = 14.0 / 10.0;
     
     /**
      * Value to use for converting raw input (-1 to 1) to speed (in rpm)
      * that the sensor will detect
      */
-    public static final double DriveMaxSpeed = DriveMaxRPM * DriveEfficiency * DriveGearRatio;
+    public static final double DRIVE_MAX_SPEED = DRIVE_MAX_RPM * DRIVE_EFFICIENCY * DRIVE_GEAR_SENSOR_RATIO;
     
-    public static final double DriveSpeedCrawl = .4;
-    public static final double DriveSpeedNormal = .85;
+    
+    
+    public static final double DRIVE_SPEED_CRAWL = .4;
+    public static final double DRIVE_SPEED_NORMAL = .85;
 }

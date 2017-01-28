@@ -63,20 +63,20 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
 
         m_lastVelocity = new Vector(0, 0);
 
-        m_wheels = new SwerveWheel[SwerveConstants.WheelCount];
+        m_wheels = new SwerveWheel[SwerveConstants.WHEEL_COUNT];
 
         // creat the wheel objects
-        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
             // use SRXs for the angle inputs
             m_wheels[i] = new SwerveWheel(i,
-                    SwerveConstants.WheelPositions[i],
+                    SwerveConstants.POSITIONS[i],
                     //RobotMap.ANG_SWERVE_ANGLE[i],
                     RobotMap.CAN_SWERVE_DRIVE_TALONS[i],
                     RobotMap.CAN_SWERVE_ANGLE_TALONS[i],
                     RobotMap.PWM_SWERVE_SHIFT_SERVOS[i],
-                    SwerveConstants.WheelShiftServoVals[i],
-                    SwerveConstants.WheelAngleCalibrationPins[i]);
+                    SwerveConstants.SHIFTER_VALS[i],
+                    RobotMap.DIO_SWERVE_CAL[i]);
         }
     }
     
@@ -90,7 +90,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     
     public void free()
     {
-        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
             m_wheels[i].free();
         }
@@ -226,8 +226,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     protected Vector[] setWheelVectors(Vector RobotVelocity,
             double RobotRotation)
     {
-        Vector[] WheelsUnscaled = new Vector[SwerveConstants.WheelCount];
-        Vector[] WheelsActual = new Vector[SwerveConstants.WheelCount];
+        Vector[] WheelsUnscaled = new Vector[SwerveConstants.WHEEL_COUNT];
+        Vector[] WheelsActual = new Vector[SwerveConstants.WHEEL_COUNT];
         double MaxWantedVeloc = 0;
 
         // set limitations on speed
@@ -251,14 +251,14 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         
         if(ENABLE_CRAWL_MODE)
         {
-            double crawlSpeed = Preferences.getInstance().getDouble("Drive_Speed_Crawl", SwerveConstants.DriveSpeedCrawl);
+            double crawlSpeed = Preferences.getInstance().getDouble("Drive_Speed_Crawl", SwerveConstants.DRIVE_SPEED_CRAWL);
             
             RobotRotation *= (crawlSpeed + (1 - crawlSpeed) * getCrawlMode() * .9);
             
             // scale the speed down
             RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
-            RobotRotation *= SwerveConstants.DriveSpeedNormal;
-            RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DriveSpeedNormal);
+            RobotRotation *= SwerveConstants.DRIVE_SPEED_NORMAL;
+            RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DRIVE_SPEED_NORMAL);
         }
         
         if(ENABLE_ROTATION_LIMIT)
@@ -278,7 +278,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         SmartDashboard.putNumber("Drive R", RobotRotation);
 
         // calculate vectors for each wheel
-        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
             // calculate
             WheelsUnscaled[i] = new Vector(RobotVelocity.getX()
@@ -310,9 +310,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
             }
         }
         
-        boolean actualGearHigh = m_gearHigh ? SwerveConstants.WheelShiftDefaultHigh : !SwerveConstants.WheelShiftDefaultHigh;
+        boolean actualGearHigh = m_gearHigh ? SwerveConstants.SHIFTER_DEFAULT_HIGH : !SwerveConstants.SHIFTER_DEFAULT_HIGH;
         
-        for (int i = 0; i < SwerveConstants.WheelCount; i++)
+        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
             // Scale values for each wheel
             Vector WheelScaled = Vector.NewFromMagAngle(WheelsUnscaled[i].getMag() * VelocityRatio, WheelsUnscaled[i].getAngle());
