@@ -35,10 +35,16 @@ public class RobotMap {
     
     public static final int CLIMBER_MOTOR_SRX = 24;
     public static final int CLIMBER_SENSOR = 0; //TODO: Correct pin number 
-
-    public static final int CAN_TANK_TALONS_RIGHT[] = {12,13};
-    public static final int CAN_TANK_TALONS_LEFT[] = {10,11};
+//    
+//    public static final int CAN_TANK_TALONS_RIGHT[] = {12,13};
+//    public static final int CAN_TANK_TALONS_LEFT[] = {10,11};
+//    
+//    public static final int CAN_MECANUM_TALONS_RIGHT[] = {7,2};
+//    public static final int CAN_MECANUM_TALONS_LEFT[] = {8,1};
+//    
+    public static final int LED_TOP[] = {0}; //TODO: Correct analog numbers
+    public static final int LED_SIDE[] = {1}; //TODO: Correct analog numbers
     
-    public static final int CAN_MECANUM_TALONS_RIGHT[] = {7,2};
-    public static final int CAN_MECANUM_TALONS_LEFT[] = {8,1};
+    public static final int AUGER_MOTOR = 10; //Change if necessary and config 
+
 }

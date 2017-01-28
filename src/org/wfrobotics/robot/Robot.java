@@ -4,6 +4,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.commands.*;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.subsystems.*;
+import org.wfrobotics.subsystems.Auger;
 import org.wfrobotics.subsystems.drive.DriveSubsystem;
 import org.wfrobotics.subsystems.drive.MecanumDriveSubsystem;
 import org.wfrobotics.subsystems.drive.TankDriveSubsystem;
@@ -49,6 +50,8 @@ public class Robot extends SampleRobot
     public static Intake intakeSubsystem;
     public static Shooter shooterSubsystem;
     public static OI oi;
+    public static Led ledSubsystem;
+    public static Auger augerSubsystem;
 
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;
@@ -65,7 +68,9 @@ public class Robot extends SampleRobot
         shooterSubsystem = new Shooter();
         climberSubsystem = new Climber();
         feederSubsystem = new Feeder();
-        
+        ledSubsystem = new Led();
+        augerSubsystem = new Auger();
+
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();
         
