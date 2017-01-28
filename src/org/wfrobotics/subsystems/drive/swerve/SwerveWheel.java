@@ -3,6 +3,7 @@ package org.wfrobotics.subsystems.drive.swerve;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.hardware.*;
+import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
@@ -72,113 +73,21 @@ public class SwerveWheel {
     private static final double MINIMUM_SPEED = 0.1;
 
     /**
-     * Set up a swerve wheel using pin and address assignments,
-     * using an analog input for angle
-     * @param Number
-     * @param Position
-     * @param PotPin
-     * @param DriveAddress
-     * @param AngleAddress
-     * @param ShiftPin
-     * @param ShiftVals
-     * @param AngleCalibrationPin
-     */
-    public SwerveWheel(int Number, double[] Position, int PotPin,
-            int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
-            int AngleCalibrationPin)
-    {
-        this(Number, new Vector(Position), new MagnetoPotAnalog(PotPin, 360),
-                new CANTalon(DriveAddress), new CANTalon(AngleAddress),
-                new Servo(ShiftPin), ShiftVals,
-                new DigitalInput(AngleCalibrationPin));
-    }
-
-    /**
-     * Set up a swerve wheel using pin and address assignments, 
-     * using the SRX input for angle
-     * @param Number
-     * @param Position
-     * @param DriveAddress
-     * @param AngleAddress
-     * @param ShiftPin
-     * @param ShiftVals
-     * @param AngleCalibrationPin
-     */
-    public SwerveWheel(int Number, double[] Position, 
-            int DriveAddress, int AngleAddress, int ShiftPin, int[] ShiftVals,
-            int AngleCalibrationPin)
-    {
-        this(Number, new Vector(Position), 
-                new CANTalon(DriveAddress), new CANTalon(AngleAddress),
-                new Servo(ShiftPin), ShiftVals,
-                new DigitalInput(AngleCalibrationPin));
-    }
-
-    /**
-     * Set up a swerve wheel using controllers/objects,
-     * using a generic sensor for angle
-     * @param Number
-     * @param Position
-     * @param Pot
-     * @param DriveMotor
-     * @param AngleMotor
-     * @param Shifter
-     * @param ShiftVals
-     * @param Calibration
-     */
-    public SwerveWheel(int Number, Vector Position, MagnetoPot Pot,
-            CANTalon DriveMotor, CANTalon AngleMotor, Servo Shifter,
-            int[] ShiftVals, DigitalInput Calibration)
-    {
-        name = "Wheel" + Number;
-        this.number = Number;
-
-        position = Position;
-        actual = new Vector(0, 0);
-        desired = new Vector(0, 0);
-        driveMotor = DriveMotor;
-
-        // MotorDrive.setPID(DriveP, DriveI, DriveD, 0, izone,
-        // closeLoopRampRate, 0);
-        // MotorDrive.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-        // MotorDrive.changeControlMode(ControlMode.Disabled);
-
-        angleMotor = AngleMotor;
-
-        gearHigh = true;
-        this.gearShifter = Shifter;
-        gearShifterAngle = ShiftVals;
-
-        anglePot = Pot;
-        anglePID = new SwerveAngleController(name + ".ctl");
-
-        angleCalSensor = Calibration;
-    }
-    
-    /**
      * Set up a swerve wheel using controllers/objects,
      * using an SRX input for angle
      * @param Number
-     * @param Position
-     * @param DriveMotor
-     * @param AngleMotor
-     * @param Shifter
-     * @param ShiftVals
-     * @param Calibration
      */
-    public SwerveWheel(int Number, Vector Position, 
-            CANTalon DriveMotor, CANTalon AngleMotor, Servo Shifter,
-            int[] ShiftVals, DigitalInput Calibration)
+    public SwerveWheel(int Number)
     {
         name = "Wheel" + Number;
         this.number = Number;
 
-        position = Position;
+        position = new Vector(SwerveConstants.POSITIONS[number]);
         actual = new Vector(0, 0);
         desired = new Vector(0, 0);
-        driveMotor = DriveMotor;
+        driveMotor = new CANTalon(RobotMap.CAN_SWERVE_DRIVE_TALONS[number]);
 
-        driveMotor.setVoltageRampRate(20);
+        driveMotor.setVoltageRampRate(10);
         driveLastChangeTime = Timer.getFPGATimestamp();
         //driveMotor.setCurrentLimit(5);
         
@@ -193,16 +102,17 @@ public class SwerveWheel {
             driveMotor.reverseSensor(true);
         }
 
-        angleMotor = AngleMotor;
+        angleMotor = new CANTalon(RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
+        angleMotor.setVoltageRampRate(20);
 
         gearHigh = true;
-        this.gearShifter = Shifter;
-        gearShifterAngle = ShiftVals;
+        this.gearShifter = new Servo(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number]);
+        gearShifterAngle = SwerveConstants.SHIFTER_VALS[number];
 
         anglePot = new MagnetoPotSRX(angleMotor, 360);
         anglePID = new SwerveAngleController(name + ".ctl");
 
-        angleCalSensor = Calibration;
+        //angleCalSensor = new DigitalInput(RobotMap.DIO_SWERVE_CAL[number]);
     }
 
     public void free()
@@ -253,7 +163,6 @@ public class SwerveWheel {
      */
     public Vector getActual()
     {
-        // WheelActual.setMagAngle(DriveEncoder.getRate(), getAnglePotValue());
         if(SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE)
         {
             actual.setMagAngle(driveMotor.getSpeed()/SwerveConstants.DRIVE_MAX_SPEED, getAnglePotAdjusted());
@@ -431,14 +340,15 @@ public class SwerveWheel {
                 if(this.number == 0)
                     SmartDashboard.putNumber("VoltageRampRate", 8);
             }
-            else if(diff < .35 && (Timer.getFPGATimestamp() - driveLastChangeTime > .25))
+            else if(diff < .35 && (Timer.getFPGATimestamp() - driveLastChangeTime > .40))
             {
-                driveMotor.setVoltageRampRate(30);
+                driveMotor.setVoltageRampRate(15);
                 if(this.number == 0)
-                    SmartDashboard.putNumber("VoltageRampRate", 30);
+                    SmartDashboard.putNumber("VoltageRampRate", 15);
             }
 
             driveLastSpeed = driveMotorSpeed;
+            driveMotorOutput = driveMotorSpeed;
             
         }
         else
@@ -462,7 +372,7 @@ public class SwerveWheel {
                     0, SwerveConstants.DRIVE_MAX_SPEED, // input range
                     SwerveConstants.DRIVE_RAMP_HIGH, SwerveConstants.DRIVE_RAMP_LOW); // output range
 
-            driveMotor.setCloseLoopRampRate(5);
+            driveMotor.setCloseLoopRampRate(1);
             SmartDashboard.putNumber("VoltageRampRate" + number, rampValue);
             SmartDashboard.putNumber("SpeedDiff" + number, speedDiff);
             
@@ -482,12 +392,6 @@ public class SwerveWheel {
             driveMotor.set(driveMotorOutput);
         }
 
-        // SmartDashboard.putNumber(Name + ".position.raw", DriveEncoder.getRaw());
-        // SmartDashboard.putNumber(Name + ".position.scaled", DriveEncoder.getDistance());
-        // SmartDashboard.putNumber(Name + ".speed.filtered", DriveEncoderFilter.getVelocity());
-        // SmartDashboard.putNumber(Name + ".speed.scaled", driveEncoderVelocityScaled);
-        // SmartDashboard.putNumber(Name + ".speed.error", driveMotorControllerError);
-        // SmartDashboard.putNumber(Name + ".speed.adjust", driveMotorControllerOutput);
         SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
 

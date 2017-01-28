@@ -69,14 +69,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
             // use SRXs for the angle inputs
-            m_wheels[i] = new SwerveWheel(i,
-                    SwerveConstants.POSITIONS[i],
-                    //RobotMap.ANG_SWERVE_ANGLE[i],
-                    RobotMap.CAN_SWERVE_DRIVE_TALONS[i],
-                    RobotMap.CAN_SWERVE_ANGLE_TALONS[i],
-                    RobotMap.PWM_SWERVE_SHIFT_SERVOS[i],
-                    SwerveConstants.SHIFTER_VALS[i],
-                    RobotMap.DIO_SWERVE_CAL[i]);
+            m_wheels[i] = new SwerveWheel(i);
         }
     }
     
