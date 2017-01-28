@@ -65,7 +65,7 @@ public class SwerveConstants {
      * drive PID values
      */
     public static final double DRIVE_PID_P = .007;
-    public static final double DRIVE_PID_I = .0001;
+    public static final double DRIVE_PID_I = .000;
     public static final double DRIVE_PID_D = 0.00;
     public static final double DRIVE_PID_F = .04;
     

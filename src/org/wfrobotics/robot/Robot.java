@@ -97,6 +97,7 @@ public class Robot extends SampleRobot
         
         while (isAutonomous() && isEnabled())
         {
+            SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
             Scheduler.getInstance().run();
         }
     }
@@ -107,8 +108,11 @@ public class Robot extends SampleRobot
         {
             if(OI.xboxDrive.getStartButton())
                 Gyro.getInstance().displayNavxMXPValues();
+            if(OI.xboxDrive.getBackButton())
+                Gyro.getInstance().zeroYaw();
             
             driveSubsystem.printDash();
+            SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
             
             Scheduler.getInstance().run();
         }
