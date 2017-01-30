@@ -45,7 +45,8 @@ public class Robot extends SampleRobot
     }
     
     public static Climber climberSubsystem;
-    public static SwerveDriveSubsystem driveSubsystem;
+    public static SwerveDriveSubsystem driveSubsystem;  // TODO DRL Try the 2017 drive type: SwerveDriveStreamworks (uncomment it below)
+    //public static SwerveDriveSteamworks driveSubsystem;
     public static Feeder feederSubsystem;
     public static Intake intakeSubsystem;
     public static Shooter shooterSubsystem;

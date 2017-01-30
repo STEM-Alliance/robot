@@ -11,7 +11,6 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.hardware.Gyro;
-import org.wfrobotics.robot.RobotMap;
 import org.wfrobotics.subsystems.drive.DriveSubsystem;
 
 import edu.wpi.first.wpilibj.Preferences;

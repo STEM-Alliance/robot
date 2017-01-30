@@ -10,6 +10,5 @@ public class Constants
 {    
    public static double SHOOTER_READY_SHOOT_SPEED = 3750;  // Ideal speed for shooter to shoot balls
    public static double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
-   public static double FEEDER_READY_FEED_SPEED = 3500;
-   
+   public static double AUGER_SPEED = 3500;  // Ideal for giving balls to shooter while shooter maintains speed (above min shooter recovery time)
 }

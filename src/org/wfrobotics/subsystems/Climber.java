@@ -6,7 +6,6 @@ import org.wfrobotics.robot.RobotMap;
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Climber extends Subsystem
@@ -17,7 +16,7 @@ public class Climber extends Subsystem
     public Climber()
     {
         motor = new CANTalon(RobotMap.CLIMBER_MOTOR_SRX);
-        sensor = new DigitalInput(RobotMap.CLIMBER_SENSOR);
+        sensor = new DigitalInput(RobotMap.CLIMBER_SENSOR_DIGITAL);
     }
     
     @Override
@@ -32,13 +31,11 @@ public class Climber extends Subsystem
      */
     public void setSpeed(double speed)
     {
-        DriverStation.reportError("Climber set speed not implemented yet", true);
-        motor.set(0);
+        motor.set(speed);
     }
     
     public boolean isAtTop()
     {
-        return sensor.get(); //TODO: make sure sensor = HIGH is on; This could be backwards
-      
+        return sensor.get(); //TODO: make sure sensor = HIGH is on; This could be backwards     
     }
 }
