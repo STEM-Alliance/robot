@@ -6,8 +6,6 @@ import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.subsystems.*;
 import org.wfrobotics.subsystems.Auger;
 import org.wfrobotics.subsystems.drive.DriveSubsystem;
-import org.wfrobotics.subsystems.drive.MecanumDriveSubsystem;
-import org.wfrobotics.subsystems.drive.TankDriveSubsystem;
 import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.DriverStation;
