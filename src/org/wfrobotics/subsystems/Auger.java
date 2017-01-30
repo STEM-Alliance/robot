@@ -1,11 +1,18 @@
 package org.wfrobotics.subsystems;
 
+import org.wfrobotics.commands.Conveyor;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+/**
+ * Screw conveyor or auger conveyor
+ * This subsystem controls the flighting/auger that acts as a ball conveyor
+ * @author drlindne
+ *
+ */
 public class Auger extends Subsystem {
 
     private CANTalon m_motor; 
@@ -18,17 +25,15 @@ public class Auger extends Subsystem {
     @Override
     protected void initDefaultCommand()
     {
-        
+        setDefaultCommand(new Conveyor(Conveyor.MODE.OFF));
     }
+    
     /**
      * control speed of the auger wheels
      * @param rpm speed of the motor
-     * @return current speed of the motor
      */
-    public double setSpeed (double rpm)
+    public void setSpeed (double rpm)
     {
-        m_motor.set(rpm);
-        
-        return m_motor.getSpeed();
+        m_motor.set(rpm);;
     }
 }

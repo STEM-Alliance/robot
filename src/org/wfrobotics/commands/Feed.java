@@ -2,20 +2,20 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * Feed a ball into the shooter, if able.
- * I envision this command being smart enough that it knows if feeding the shooter is okay.
+ * Feed the shooter
+ * Set the motor speed which accelerates balls into the shooter.
  * @author drlindne
  *
  */
 public class Feed extends Command 
-{
-    public enum MODE {SINGLE, CONTINUOUS, OFF};
+{    
+    public enum MODE {FEED, OFF};  // TODO DRL Unjam?
     
     private final MODE mode;
-    private boolean hasFed = false;
     
     public Feed(MODE mode)
     {
@@ -31,54 +31,43 @@ public class Feed extends Command
         this.mode = mode;
         setTimeout(timeout);
     }
-    
+
+    @Override
     protected void initialize()
     {
         
     }
 
+    @Override
     protected void execute()
     {
-        if (mode == MODE.OFF)
+        if (mode == MODE.FEED)
+        {
+            Robot.feederSubsystem.setSpeed(Constants.SHOOTER_READY_SHOOT_SPEED);
+        }
+        else if (mode == MODE.OFF)
         {
             Robot.feederSubsystem.setSpeed(0);
         }
-        else if (Robot.feederSubsystem.speedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
-        {
-            Robot.feederSubsystem.setSpeed(Constants.FEEDER_READY_FEED_SPEED);  // TODO DRL do we need to reset the feeder?
-            hasFed = true;
-        }
-    }
-
-    protected boolean isFinished()
-    {
-        boolean finished;
-        
-        if (mode == MODE.OFF)
-        {
-            finished = false;
-        }
-        else if (mode == MODE.SINGLE)
-        {
-            finished = hasFed && !isTimedOut();
-        }
-        else if (mode == MODE.CONTINUOUS)
-        {
-            finished = isTimedOut();
-        }            
         else
         {
-            finished = true;
+            DriverStation.reportError("Feed mode not supported", true);
         }
-        
-        return finished;
     }
 
+    @Override
+    protected boolean isFinished()
+    {
+        return isTimedOut();
+    }
+
+    @Override
     protected void end()
     {
-        Robot.feederSubsystem.setSpeed(0);
+        // If you need to shut off the motors, probably create a new command or set the subsystem in your group's end()???
     }
 
+    @Override
     protected void interrupted()
     {
         end();

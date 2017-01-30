@@ -2,6 +2,7 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -13,20 +14,22 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Rev extends Command
 {
-    private double setpoint;    
+    public enum MODE {SHOOT, OFF};  // TODO DRL Unjam?
     
-    public Rev(double speed)
+    private final MODE mode;
+    
+    public Rev(MODE mode)
     {
         requires(Robot.shooterSubsystem);
         
-        setpoint = speed;
+        this.mode = mode;
     }
     
-    public Rev(double speed, double timeout)
+    public Rev(MODE mode, double timeout)
     {
         requires(Robot.shooterSubsystem);
         
-        setpoint = speed;
+        this.mode = mode;
         setTimeout(timeout);
     }
 
@@ -39,7 +42,18 @@ public class Rev extends Command
     @Override
     protected void execute()
     {
-        Robot.shooterSubsystem.setSpeed(setpoint);
+        if (mode == MODE.SHOOT)
+        {
+            Robot.shooterSubsystem.setSpeed(Constants.SHOOTER_READY_SHOOT_SPEED);
+        }
+        else if (mode == MODE.OFF)
+        {
+            Robot.shooterSubsystem.setSpeed(0);
+        }
+        else
+        {
+            DriverStation.reportError("Rev mode not supported", true);
+        }
     }
 
     @Override
@@ -51,7 +65,7 @@ public class Rev extends Command
     @Override
     protected void end()
     {
-        // If you need to shut off the motors, probably create a new Rev(0) command???
+        // If you need to shut off the motors, probably create a new command or set the subsystem in your group's end()???
     }
 
     @Override

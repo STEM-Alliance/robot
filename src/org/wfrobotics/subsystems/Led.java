@@ -1,68 +1,42 @@
 package org.wfrobotics.subsystems;
 
-import java.util.ArrayList;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import org.wfrobotics.led.Color;
-import org.wfrobotics.led.Effect;
-import org.wfrobotics.led.Hardware;
+import org.wfrobotics.commands.LED;
 import org.wfrobotics.robot.RobotMap;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogOutput;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Led extends Subsystem {
-
-    // THIS NEEDS TO CHANGE
-    public enum MODE { TOP, SIDE};
-    private MODE mode;
-//    private DigitalInput 
+public class Led extends Subsystem 
+{
+    public enum HARDWARE {TOP, SIDE, ALL};
     
-    //could be a digital ouput
-    private AnalogOutput ledTop;
-    private AnalogOutput ledSide;
-
+    private AnalogOutput top;
+    private AnalogOutput side;
 
     public Led()
     {
-        ledTop = new AnalogOutput(RobotMap.LED_TOP[0]);
-        ledSide = new AnalogOutput(RobotMap.LED_SIDE[1]);
+        top = new AnalogOutput(RobotMap.LED_TOP_ANALOG);
+        side = new AnalogOutput(RobotMap.LED_SIDE_ANALOG);
     }  
     
     @Override
     protected void initDefaultCommand()
     {
-        
+        setDefaultCommand(new LED(HARDWARE.ALL, LED.MODE.OFF));
     }
     
-    public void setOn(boolean on, MODE mode)
+    public void setOn(HARDWARE hardware, boolean on)
     {
-            if (mode == MODE.TOP)
-            {
-                if (on == true)
-                {
-                    // assuming that the LEDs are 5v
-                    ledTop.setVoltage(5);
-                }
-                else
-                {
-                    ledTop.setVoltage(0);
-                }
-            }   
-            else if (mode == MODE.SIDE)
-            {
-                if (on == true)
-                {
-                    // assuming that the LEDs are 5v
-                    ledTop.setVoltage(5);
-                }
-                else
-                {
-                    ledTop.setVoltage(0);
-                }
-            }     
+        double voltage = (on) ? 5:0;
+        
+        if (hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+        {
+            top.setVoltage(voltage);
+        }   
+        
+        if (hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+        {
+            side.setVoltage(voltage);
+        }
     }
-
 }
