@@ -40,7 +40,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     private final boolean ENABLE_ACCELERATION_LIMIT = false;
     
     private double m_maxAvailableVelocity = 1;
-    private final boolean ENABLE_VELOCITY_LIMIT = false;
+    private final boolean ENABLE_VELOCITY_LIMIT = true;
 
     private double m_minRotationAdjust = .3;
     protected double m_rotationRateAdjust = 1;
@@ -262,6 +262,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         {
             RobotVelocity = restrictVelocity(RobotVelocity);
         }
+
+        m_lastVelocity = RobotVelocity;
         
         SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
         SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
@@ -344,7 +346,6 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
             robotVelocity = m_lastVelocity.add(delta);
         }
 
-        m_lastVelocity = robotVelocity;
         return robotVelocity;
     }
 
@@ -368,11 +369,22 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
      * get the last heading used for the robot. If free spinning, this will
      * constantly update
      * 
-     * @return angle in degrees
+     * @return angle in degrees of the robot heading, relative to the field
      */
     public double getLastHeading()
     {
         return m_lastHeading;
+    }
+    
+    /**
+     * get the last movement vector of the robot, relative to the robot heading.
+     * the adjustment for field relative mode, if applicable, has already been taken
+     * into consideration
+     * @return movement vector relative to the robot heading
+     */
+    public Vector getLastVector()
+    {
+        return m_lastVelocity;
     }
 
     /**

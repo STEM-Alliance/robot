@@ -26,13 +26,7 @@ public class SteamworksDrive extends CommandGroup
     
     protected void execute()
     {
-        double lastHeading;
-        double joystickAngle;
-        double angleDifference;
-        
-        joystickAngle = -OI.DriveSwerveOI.getHaloDrive_Rotation();
-        lastHeading = Robot.driveSubsystem.getLastHeading(); // TODO What are the units? We assume -180 to 180
-        angleDifference = lastHeading - joystickAngle;
+        double angleDifference = Robot.driveSubsystem.getLastVector().getAngle();
  
         setIntakeRight(angleDifference);
         setIntakeLeft(angleDifference);
