@@ -7,14 +7,14 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class IntakeSetup extends Command
 {    
-    boolean on;
+    boolean isOn;
     final Intake.MOTOR motor;
 
     public IntakeSetup(boolean on, Intake.MOTOR motor)
     {
         requires(Robot.intakeSubsystem);
         
-        this.on = on;
+        this.isOn = on;
         this.motor = motor;
     }
 
@@ -25,7 +25,7 @@ public class IntakeSetup extends Command
 
     protected void execute() 
     {
-        double speed = (on) ? 1:0;
+        double speed = (isOn) ? 1:0;
         
         Robot.intakeSubsystem.setSpeed(speed, motor);
     }
@@ -45,8 +45,8 @@ public class IntakeSetup extends Command
         end();
     }
     
-    public void setOn(boolean on)
+    public void set(boolean on)
     {
-        this.on = on;
+        this.isOn = on;
     }
 }

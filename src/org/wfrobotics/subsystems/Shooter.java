@@ -12,19 +12,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends Subsystem 
 {
-    private CANTalon m_motor;
+    private final CANTalon flywheelTop;
+    private final CANTalon flywheelBottom;
     private double m_speedDesired;
 
     public Shooter()
     {
-        m_motor = new CANTalon(RobotMap.SHOOTER_MOTOR_SRX);
-        m_motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        m_motor.changeControlMode(TalonControlMode.Speed);
-        m_motor.setPID(.115,0.0001,0.015);
-        m_motor.setCloseLoopRampRate(.01);
+        flywheelTop = new CANTalon(RobotMap.SHOOTER_MOTOR_SRX);
+        flywheelTop.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        flywheelTop.changeControlMode(TalonControlMode.Speed);
+        flywheelTop.setPID(.115,0.0001,0.015);
+        flywheelTop.setCloseLoopRampRate(.01);
+        flywheelTop.setInverted(true);  //is this needed?
         
-        //is this needed?
-        m_motor.setInverted(true);
+        flywheelBottom = new CANTalon(RobotMap.FEEDER_MOTOR_SRX);
     }
     
     @Override
@@ -40,11 +41,12 @@ public class Shooter extends Subsystem
      */
     public double setSpeed(double rpm)
     {
+        flywheelTop.set(rpm);        
+        flywheelBottom.set(rpm);
         m_speedDesired = rpm;
-        m_motor.set(m_speedDesired);
         printDash();
         
-        return m_motor.getSpeed();
+        return flywheelTop.getSpeed();
     }
     
     /**
@@ -54,12 +56,14 @@ public class Shooter extends Subsystem
      */
     public boolean speedReached(double tolerance)
     {
-        return Math.abs(m_speedDesired - m_motor.getSpeed()) <= tolerance;
+        // TODO DRL should our return value be based on both flywheels?        
+        return Math.abs(m_speedDesired - flywheelTop.getSpeed()) <= tolerance;
     }
 
     public void printDash()
     {
         SmartDashboard.putNumber("ShooterSpeedDesired", m_speedDesired);
-        SmartDashboard.putNumber("ShooterSpeedActual", m_motor.getSpeed());
+        SmartDashboard.putNumber("FlywheelTopSpeedActual", flywheelTop.getSpeed());
+        SmartDashboard.putNumber("FlywheelBottomSpeedActual", flywheelBottom.getSpeed());
     }
 }
