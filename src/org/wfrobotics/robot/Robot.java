@@ -111,8 +111,6 @@ public class Robot extends SampleRobot
         while (isDisabled())
         {
             if(OI.xboxDrive.getStartButton())
-                Gyro.getInstance().displayNavxMXPValues();
-            if(OI.xboxDrive.getBackButton())
                 Gyro.getInstance().zeroYaw();
             
             driveSubsystem.printDash();

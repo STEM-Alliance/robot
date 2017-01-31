@@ -97,8 +97,11 @@ public class SwerveWheel {
             driveMotor.changeControlMode(TalonControlMode.Speed);
             driveMotor.setPID(SwerveConstants.DRIVE_PID_P,
                               SwerveConstants.DRIVE_PID_I,
-                              SwerveConstants.DRIVE_PID_D);
-            driveMotor.setF(SwerveConstants.DRIVE_PID_F);
+                              SwerveConstants.DRIVE_PID_D,
+                              SwerveConstants.DRIVE_PID_F,
+                              0,
+                              10,
+                              0);
             driveMotor.reverseSensor(true);
         }
 
@@ -372,7 +375,7 @@ public class SwerveWheel {
                     0, SwerveConstants.DRIVE_MAX_SPEED, // input range
                     SwerveConstants.DRIVE_RAMP_HIGH, SwerveConstants.DRIVE_RAMP_LOW); // output range
 
-            driveMotor.setCloseLoopRampRate(1);
+            //driveMotor.setCloseLoopRampRate(rampValue);
             SmartDashboard.putNumber("VoltageRampRate" + number, rampValue);
             SmartDashboard.putNumber("SpeedDiff" + number, speedDiff);
             
@@ -380,7 +383,10 @@ public class SwerveWheel {
             driveLastSpeed = driveMotorSpeed;
         }
 
-
+        if(number == 0)
+        {
+            SmartDashboard.putNumber("CLRampRate" + number, driveMotor.getCloseLoopRampRate());
+        }
         if (brake)
         {
             driveMotor.set(0);
