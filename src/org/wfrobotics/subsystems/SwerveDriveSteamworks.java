@@ -1,14 +1,21 @@
 package org.wfrobotics.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import org.wfrobotics.commands.SteamworksDrive;
+import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
-public class Gear extends Subsystem {
+import edu.wpi.first.wpilibj.DriverStation;
+
+public class SwerveDriveSteamworks extends SwerveDriveSubsystem 
+{
+    public SwerveDriveSteamworks()
+    {
+        // TODO setup some digital inputs to read the sensors
+    }
 
     @Override
-    protected void initDefaultCommand()
+    public void initDefaultCommand() 
     {
-        // TODO Auto-generated method stub
+        setDefaultCommand(new SteamworksDrive());
     }
 
     /**
@@ -17,7 +24,7 @@ public class Gear extends Subsystem {
      */
     public boolean isGearStored()
     {
-        DriverStation.reportError("Gear is gear stored not implemented yet", true);
+        DriverStation.reportError("SteamworksDrive is gear stored not implemented yet", true);
         
         return false;  // TODO DRL return sensor feedback
     }
@@ -28,7 +35,7 @@ public class Gear extends Subsystem {
      */
     public boolean isSpringInGear()
     {
-        DriverStation.reportError("Gear is spring in gear not implemented yet", true);
+        DriverStation.reportError("SteamworksDrive is spring in gear not implemented yet", true);
         
         return false;  // TODO DRL return sensor feedback
     }

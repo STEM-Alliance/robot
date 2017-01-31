@@ -18,8 +18,7 @@ public class LED extends Command
     public enum MODE { BLINK, SOLID, OFF};
     
     private final HARDWARE hardware;
-    private final MODE mode;
-    public boolean isOn;
+    private MODE mode;
     
     public LED(HARDWARE hardware, MODE mode)
     {
@@ -29,6 +28,7 @@ public class LED extends Command
         this.mode = mode;
 
     }
+    
     public LED(HARDWARE hardware, MODE mode, double timeout)
     {
         requires(Robot.ledSubsystem);
@@ -47,21 +47,26 @@ public class LED extends Command
     @Override
     protected void execute()
     {
-        if (mode == MODE.OFF || mode == MODE.SOLID)
+        double time = Math.floor(timeSinceInitialized());
+        boolean state = false;
+        
+        if (mode == MODE.OFF)
         {
-            Robot.ledSubsystem.setOn(hardware, isOn);
+            state = false;
+        }
+        else if (mode == MODE.SOLID)
+        {
+            state = true;
         }
         else if (mode == MODE.BLINK)
         {
-            double time = Math.floor(timeSinceInitialized());
-            boolean state = time % 2 == 0;
-
-            Robot.ledSubsystem.setOn(hardware, state);
+            state = time % 2 == 0;
         }
         else
         {
             DriverStation.reportError("LED mode not supported", true);
         }
+        Robot.ledSubsystem.setOn(hardware, state);
     }
     
     @Override
@@ -80,5 +85,10 @@ public class LED extends Command
     protected void interrupted()
     {
         end();
+    }
+
+    public void set(MODE mode)
+    {
+        this.mode = mode;
     }
 }
