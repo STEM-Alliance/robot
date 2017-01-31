@@ -5,16 +5,11 @@ import org.wfrobotics.commands.*;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.subsystems.*;
 import org.wfrobotics.subsystems.Auger;
-import org.wfrobotics.subsystems.drive.DriveSubsystem;
-import org.wfrobotics.subsystems.drive.MecanumDriveSubsystem;
-import org.wfrobotics.subsystems.drive.TankDriveSubsystem;
-import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,9 +40,7 @@ public class Robot extends SampleRobot
     }
     
     public static Climber climberSubsystem;
-    public static SwerveDriveSubsystem driveSubsystem;  // TODO DRL Try the 2017 drive type: SwerveDriveStreamworks (uncomment it below)
-    //public static SwerveDriveSteamworks driveSubsystem;
-    public static Feeder feederSubsystem;
+    public static SwerveDriveSteamworks driveSubsystem;
     public static Intake intakeSubsystem;
     public static Shooter shooterSubsystem;
     public static OI oi;
@@ -64,11 +57,10 @@ public class Robot extends SampleRobot
     public void robotInit() 
     {
 
-        driveSubsystem = new SwerveDriveSubsystem();
+        driveSubsystem = new SwerveDriveSteamworks();
         intakeSubsystem = new Intake();
         shooterSubsystem = new Shooter();
         climberSubsystem = new Climber();
-        feederSubsystem = new Feeder();
         ledSubsystem = new Led();
         augerSubsystem = new Auger();
 

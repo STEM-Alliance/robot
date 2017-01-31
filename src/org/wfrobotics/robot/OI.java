@@ -2,7 +2,6 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.Conveyor;
-import org.wfrobotics.commands.Feed;
 import org.wfrobotics.commands.Conveyor.MODE;
 import org.wfrobotics.commands.IntakeSetup;
 import org.wfrobotics.commands.Shoot;

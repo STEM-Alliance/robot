@@ -9,7 +9,6 @@ public class Shoot extends CommandGroup
     public Shoot(Conveyor.MODE feedMode)
     {
         addParallel(new Rev(Rev.MODE.OFF));
-        addParallel(new Feed(Feed.MODE.OFF));
         addSequential(new Conveyor(feedMode));
     }
     
@@ -18,7 +17,6 @@ public class Shoot extends CommandGroup
     protected void end()
     {
         Robot.shooterSubsystem.setSpeed(0);
-        Robot.feederSubsystem.setSpeed(0);
         Robot.augerSubsystem.setSpeed(0);
     }
     
