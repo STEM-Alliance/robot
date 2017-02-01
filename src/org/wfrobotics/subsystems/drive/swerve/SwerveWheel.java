@@ -87,7 +87,7 @@ public class SwerveWheel {
         desired = new Vector(0, 0);
         driveMotor = new CANTalon(RobotMap.CAN_SWERVE_DRIVE_TALONS[number]);
 
-        driveMotor.setVoltageRampRate(10);
+        driveMotor.setVoltageRampRate(20);
         driveLastChangeTime = Timer.getFPGATimestamp();
         //driveMotor.setCurrentLimit(5);
         
@@ -252,14 +252,6 @@ public class SwerveWheel {
 
         updateDriveMotor(reverse);
 
-        // SmartDashboard.putNumber(Name + ".desired.mag",
-        // WheelDesired.getMag());
-        // SmartDashboard.putNumber(Name + ".desired.ang",
-        // WheelDesired.getAngle());
-
-        //SmartDashboard.putNumber(name + ".angle.noOffset", anglePot.getWithoutOffset());
-        //SmartDashboard.putNumber(name + ".angle.raw", anglePot.getRawInput());
-        
         return getActual();
     }
 

@@ -36,8 +36,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     private double m_crawlMode = 0.0;
     private final boolean ENABLE_CRAWL_MODE = false;
     
-    private double m_maxAcceleration = 2; // Smaller is slower acceleration
-    private final boolean ENABLE_ACCELERATION_LIMIT = false;
+    private double m_maxAcceleration = 5; // Smaller is slower acceleration
+    private final boolean ENABLE_ACCELERATION_LIMIT = true;
     
     private double m_maxAvailableVelocity = 1;
     private final boolean ENABLE_VELOCITY_LIMIT = true;
@@ -48,6 +48,14 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
 
     private Vector m_lastVelocity;
     private double m_lastVelocityTimestamp;
+    
+    // this is used to address the counter spinning
+    private double m_lastHeadingTimestamp;
+    private final double HEADING_TIMEOUT = .2;
+    
+    // this will hopefully prevent locking the wheels when slowing down
+    private final double AUTO_ROTATION_MIN = .1;
+    
 
     double gyroLast;
 
@@ -135,33 +143,45 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         double Error = 0;
         
         // determine which drive mode to use between
-        if (Math.abs(Rotation) < .25)
+        if (Math.abs(Rotation) < .15)
         {
-            // if we're not spinning
-            if (Heading != -1)
+            if((Timer.getFPGATimestamp() - m_lastHeadingTimestamp) > HEADING_TIMEOUT)
             {
-                // pressing on the dpad
-                SmartDashboard.putString("Drive Mode", "Rotate To Heading");
-                
-                // this should snap us to a specific angle
-                
-                // set the rotation using a PID controller based on current robot
-                // heading and new desired heading
-                Error = Utilities.wrapToRange(Heading - m_gyro.getYaw(), -180, 180);
-                Rotation = m_chassisAngleController.update(Error);
-                m_lastHeading = Heading;
+                // if we're not spinning
+                if (Heading != -1)
+                {
+                    // pressing on the dpad
+                    SmartDashboard.putString("Drive Mode", "Rotate To Heading");
+                    
+                    // this should snap us to a specific angle
+                    
+                    // set the rotation using a PID controller based on current robot
+                    // heading and new desired heading
+                    Error = Utilities.wrapToRange(Heading - m_gyro.getYaw(), -180, 180);
+                    Rotation = m_chassisAngleController.update(Error);
+                    m_lastHeading = Heading;
+                }
+                else
+                {
+                    // not pressing on dpad
+                    SmartDashboard.putString("Drive Mode", "Stay At Angle");
+                    
+                    // this should keep us facing the same direction
+                    
+                    // set the rotation using a PID controller based on current robot
+                    // heading and new desired heading
+                    Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
+                    double tempRotation = m_chassisAngleController.update(Error);
+                    SmartDashboard.putNumber("MaintainRotation", tempRotation);
+                    if(tempRotation > AUTO_ROTATION_MIN)
+                    {
+                        Rotation = tempRotation;
+                    }
+                }
             }
             else
             {
-                // not pressing on dpad
-                SmartDashboard.putString("Drive Mode", "Stay At Angle");
-                
-                // this should keep us facing the same direction
-                
-                // set the rotation using a PID controller based on current robot
-                // heading and new desired heading
-                Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
-                Rotation = m_chassisAngleController.update(Error);
+                m_lastHeading = m_gyro.getYaw();
             }
         }
         else
@@ -170,7 +190,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
             SmartDashboard.putString("Drive Mode", "Spinning");
             
             // just take the rotation value from the controller
-            m_lastHeading = m_gyro.getYaw() + (m_gyro.getYaw() - gyroLast)*5;
+            m_lastHeading = m_gyro.getYaw();// + (m_gyro.getYaw() - gyroLast)*5;
+
+            m_lastHeadingTimestamp = Timer.getFPGATimestamp();
             
             gyroLast = m_gyro.getYaw();
         }
@@ -339,7 +361,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         m_maxAcceleration = Preferences.getInstance().getDouble("MAX_ACCELERATION", m_maxAcceleration);
 
         // determine if we are accelerating/decelerating too slow
-        if (delta.getMag() > m_maxAcceleration * TimeDelta)
+        if (Math.abs(delta.getMag()) > m_maxAcceleration * TimeDelta)
         {
             // if we are, slow that down by the MaxAcceleration value
             delta.setMag(m_maxAcceleration * TimeDelta);
