@@ -1,22 +1,22 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class IntakeSetup extends Command
 {    
-    boolean isOn;
-    final Intake.MOTOR motor;
-
-    public IntakeSetup(boolean on, Intake.MOTOR motor)
+    boolean isRightOn;
+    boolean isLeftOn;
+    
+    public IntakeSetup(boolean onRight, boolean onLeft)
     {
         requires(Robot.intakeSubsystem);
         
-        this.isOn = on;
-        this.motor = motor;
+        this.isRightOn = onRight;
+        this.isLeftOn = onLeft;
     }
+    
 
     protected void initialize() 
     {
@@ -25,9 +25,10 @@ public class IntakeSetup extends Command
 
     protected void execute() 
     {
-        double speed = (isOn) ? 1:0;
-        
-        Robot.intakeSubsystem.setSpeed(speed, motor);
+        double speedLeft = (isLeftOn) ? 1:0;
+        double speedRight= (isRightOn) ? 1:0;
+
+        Robot.intakeSubsystem.setSpeed(speedLeft, speedRight);
     }
 
     protected boolean isFinished() 
@@ -37,7 +38,7 @@ public class IntakeSetup extends Command
 
     protected void end() 
     {
-        Robot.intakeSubsystem.setSpeed(0, motor);
+        Robot.intakeSubsystem.setSpeed(0, 0);
     }
 
     protected void interrupted() 
@@ -45,8 +46,9 @@ public class IntakeSetup extends Command
         end();
     }
     
-    public void set(boolean on)
+    public void set(boolean left, boolean right)
     {
-        this.isOn = on;
+        this.isRightOn = left;
+        this.isLeftOn = right;
     }
 }
