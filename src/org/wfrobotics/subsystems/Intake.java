@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Intake extends Subsystem 
 {
     private ArrayList<CANTalon> m_motors;
-    public enum MOTOR {LEFT, RIGHT, BOTH};
     
     public Intake()
     {
@@ -29,23 +28,16 @@ public class Intake extends Subsystem
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new IntakeSetup(false, Intake.MOTOR.BOTH));
+        setDefaultCommand(new IntakeSetup(false, false));
     }
 
     /**
      * Control speed of the ball intake roller
      * @param speed -1 (full outward) to 1 (full inward)
      */
-    public void setSpeed(double speed, MOTOR motor) // TODO Left/Right Intake motors may be reversed
+    public void setSpeed(double left, double right)
     {
-        if(motor == Intake.MOTOR.BOTH || motor == Intake.MOTOR.LEFT)
-        {
-            m_motors.get(0).set(speed);
-        }
-        
-        if(motor == Intake.MOTOR.BOTH || motor == Intake.MOTOR.RIGHT)
-        {
-            m_motors.get(1).set(speed);
-        }
+        m_motors.get(0).set(left);
+        m_motors.get(1).set(right);
     }
 }
