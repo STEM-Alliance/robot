@@ -5,6 +5,12 @@
 	<classpathentry kind="var" path="networktables" sourcepath="networktables.sources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libraries/navx_frc.jar" sourcepath="libraries/navx_frx_src"/>
+	<classpathentry kind="lib" path="libraries/mindsensors.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Robot/libraries/mindsensors-javadoc.jar!/"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Robot/libraries"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="libraries/CTRLib.jar">
 		<attributes>
@@ -17,5 +23,6 @@
 	<classpathentry kind="lib" path="libraries/sf2-frc.jar" sourcepath="libraries/sf2_src"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/CTRLib.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/The Herd/Downloads/mindsensors/user/java/lib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

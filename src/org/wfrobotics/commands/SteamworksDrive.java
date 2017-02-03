@@ -5,6 +5,7 @@ import org.wfrobotics.commands.drive.DriveSwerveHalo;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.Led;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -14,6 +15,11 @@ public class SteamworksDrive extends CommandGroup
     
     private IntakeSetup intake;
     private LED leds;
+    
+    private boolean onLeft = false;
+    private boolean onRight = false;
+    private double startLeft;
+    private double startRight;
     
     public SteamworksDrive()
     {   
@@ -49,19 +55,37 @@ public class SteamworksDrive extends CommandGroup
     {
         angleDifference = -(angleDifference - 90);
         angleDifference = Utilities.wrapToRange(angleDifference, -180, 180);
-        boolean right = angleDifference > ANGLE_INTAKE_OFF &&
-                       angleDifference  < (180 - ANGLE_INTAKE_OFF);
-        boolean left = angleDifference  < -ANGLE_INTAKE_OFF &&
-                angleDifference  > (-180 + ANGLE_INTAKE_OFF);
-        
-        if(Math.abs(vectorMag) < .1)
+       
+        if(Math.abs(vectorMag) > .1)
         {
-            left = false;
-            right = false;
+            if(angleDifference  < -ANGLE_INTAKE_OFF &&
+               angleDifference  > (-180 + ANGLE_INTAKE_OFF))
+            {
+                onLeft = true;
+                startLeft = Timer.getFPGATimestamp();
+            }
+            if (angleDifference > ANGLE_INTAKE_OFF &&
+                    angleDifference  < (180 - ANGLE_INTAKE_OFF))
+            {
+                onRight = true;
+                startRight = Timer.getFPGATimestamp();
+            }
+            
         }
-        printDash(angleDifference, right, left);
+        else
+        {
+            if ((Timer.getFPGATimestamp() - startLeft) > 1)
+            {
+                onLeft = false;   
+            }
+            if ((Timer.getFPGATimestamp() - startRight) > 1)
+            {
+                onRight = false;   
+            }
+        }
+        printDash(angleDifference, onRight, onLeft);
         
-        intake.set(left, right);
+        intake.set(onLeft, onRight);
     }
     
     public void setLEDs()
