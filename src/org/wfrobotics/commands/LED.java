@@ -5,6 +5,7 @@ import org.wfrobotics.subsystems.Led.HARDWARE;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Set robot LEDs
@@ -61,7 +62,7 @@ public class LED extends Command
         }
         else
         {
-            DriverStation.reportError("LED mode not supported", true);
+            
         }
     }
     
