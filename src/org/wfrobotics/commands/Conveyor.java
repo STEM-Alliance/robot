@@ -44,7 +44,7 @@ public class Conveyor extends Command
         {
             Robot.augerSubsystem.setSpeed(0);
         }
-        else if (Robot.shooterSubsystem.speedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
+        else if (Robot.shooterSubsystem.topSpeedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
         {
             // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?
             Robot.augerSubsystem.setSpeed(.3);
