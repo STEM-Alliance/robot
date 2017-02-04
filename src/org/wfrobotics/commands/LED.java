@@ -65,7 +65,7 @@ public class LED extends Command
         }
         else
         {
-            DriverStation.reportError("LED mode not supported", true);
+            
         }
         
     }

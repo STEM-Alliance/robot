@@ -38,18 +38,29 @@ public class Shooter extends Subsystem
     }
 
     /**
-     * Control speed of the shooting wheel(s)
+     * Control speed of the TOP shooting wheel
      * @param rpm (usually between 3500 and 4000)
      * @return current speed the shooter wheel is running at
      */
-    public double setSpeed(double rpm)
+    public double setSpeedTop(double rpm)
     {
         flywheelTop.set(rpm);        
-        flywheelBottom.set(rpm);
         m_speedDesired = rpm;
         printDash();
         
         return flywheelTop.getSpeed();
+    }
+    /**
+     * Control speed of the BOTTOM shooting wheel
+     * @param rpm (usually between 3500 and 4000)
+     * @return current speed the shooter wheel is running at
+     */
+    public double setSpeedBottom(double rpm)
+    {
+        flywheelBottom.set(rpm);
+        m_speedDesired = rpm;
+        
+        return flywheelBottom.getSpeed();
     }
     
     /**
@@ -57,10 +68,51 @@ public class Shooter extends Subsystem
      * @param tolerance percent above or below that counts as being at that speed (ex: .1 = +/-10%) 
      * @return if the shooting wheel(s) is at that speed
      */
-    public boolean speedReached(double tolerance)
+    public boolean topSpeedReached(double tolerance)
     {
         // TODO DRL should our return value be based on both flywheels?        
         return Math.abs(m_speedDesired - flywheelTop.getSpeed()) <= tolerance;
+    }
+    
+    public boolean bottomSpeedReached(double tolerance)
+    {
+        // TODO DRL should our return value be based on both flywheels?        
+        return Math.abs(m_speedDesired - flywheelBottom.getSpeed()) <= tolerance;
+    }
+    
+    /**
+     * Test to see if the top motor has REVed to a certain speed then starts to spin the 
+     * bottom flywheel to get it up to speed
+     * 
+     * ToDo: set the tolerance to something reasonable (currently set to 100)
+     * 
+     * @param tollerance speed for the top motor speed (hard coded)
+     * @param speed for the bottom motor
+     */
+    public void topThenBottom(double rpm)
+    {
+        if (rpm != 0)
+        {
+            flywheelTop.set(rpm);
+            if(topSpeedReached(100))
+            {
+                flywheelBottom.set(rpm);
+            }
+            else
+            {
+                SmartDashboard.putBoolean("Desired speed", topSpeedReached(100));
+            }
+        }
+        else
+        {
+            flywheelBottom.set(0);
+            //testing if the bottom flywheel is below a therasholod before turning off the top one
+            if (bottomSpeedReached(100))
+            {
+                flywheelTop.set(0);
+            }
+        }
+        
     }
 
     public void printDash()

@@ -44,11 +44,11 @@ public class Rev extends Command
     {
         if (mode == MODE.SHOOT)
         {
-            Robot.shooterSubsystem.setSpeed(Constants.SHOOTER_READY_SHOOT_SPEED);
+            Robot.shooterSubsystem.topThenBottom(Constants.SHOOTER_READY_SHOOT_SPEED);
         }
         else if (mode == MODE.OFF)
         {
-            Robot.shooterSubsystem.setSpeed(0);
+            Robot.shooterSubsystem.topThenBottom(0);
         }
         else
         {
