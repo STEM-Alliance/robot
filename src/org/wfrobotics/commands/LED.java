@@ -46,27 +46,23 @@ public class LED extends Command
 
     @Override
     protected void execute()
-    {
-        double time = Math.floor(timeSinceInitialized());
-        boolean state = false;
-        
+    {   
         if (mode == MODE.OFF)
         {
-            state = false;
+            Robot.ledSubsystem.setOn(hardware, false);
         }
         else if (mode == MODE.SOLID)
         {
-            state = true;
+            Robot.ledSubsystem.setOn(hardware, true);
         }
         else if (mode == MODE.BLINK)
         {
-            state = time % 2 == 0;
+            Robot.ledSubsystem.blink(hardware, 5);
         }
         else
         {
             DriverStation.reportError("LED mode not supported", true);
         }
-        Robot.ledSubsystem.setOn(hardware, state);
     }
     
     @Override

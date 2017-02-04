@@ -20,6 +20,8 @@ public class Auger extends Subsystem {
     public Auger() 
     {
         m_motor = new CANTalon(RobotMap.AUGER_MOTOR);
+        m_motor.setInverted(true);  //is this needed?
+
     }
     
     @Override
@@ -34,6 +36,6 @@ public class Auger extends Subsystem {
      */
     public void setSpeed (double rpm)
     {
-        m_motor.set(rpm);;
+        m_motor.set(rpm);
     }
 }
