@@ -2,6 +2,7 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -46,9 +47,13 @@ public class Conveyor extends Command
         else if (Robot.shooterSubsystem.speedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
         {
             // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?
-            Robot.augerSubsystem.setSpeed(Constants.AUGER_SPEED);
+            Robot.augerSubsystem.setSpeed(.3);
             hasFed = true;
             // TODO DRL do we want to unjam the auger periodically?
+        }
+        else
+        {
+            DriverStation.reportError("Conveyor mode not supported", true);
         }
     }
 

@@ -8,7 +8,7 @@ public class Shoot extends CommandGroup
 {
     public Shoot(Conveyor.MODE feedMode)
     {
-        addParallel(new Rev(Rev.MODE.OFF));
+        addParallel(new Rev(Rev.MODE.SHOOT));
         addSequential(new Conveyor(feedMode));
     }
     
