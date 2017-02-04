@@ -46,6 +46,7 @@ public class Robot extends SampleRobot
     public static OI oi;
     public static Led ledSubsystem;
     public static Auger augerSubsystem;
+    public static Targeting targetingSubsystem;
 
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;
@@ -63,6 +64,7 @@ public class Robot extends SampleRobot
         climberSubsystem = new Climber();
         ledSubsystem = new Led();
         augerSubsystem = new Auger();
+        targetingSubsystem = new Targeting();
 
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();

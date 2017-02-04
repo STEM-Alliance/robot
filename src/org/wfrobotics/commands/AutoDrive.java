@@ -1,16 +1,22 @@
 
 package org.wfrobotics.commands;
 
+import org.wfrobotics.Vector;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class AutoDrive extends Command 
 {
+    enum MODE {DRIVE, ROTATE}
+    
     public final static double SPEED_APPROACH = .5;
     final double speedR;
     final double speedL;
+    double heading;
+    double tolerance;
     boolean gyroEnabled;
+    final MODE mode;   
     
     /**
      * Default to not driving (speed equals zero)
@@ -18,6 +24,7 @@ public class AutoDrive extends Command
     public AutoDrive()
     {
         requires(Robot.driveSubsystem);
+        this.mode = MODE.DRIVE;
         speedR = 0;
         speedL = 0;
     }
@@ -28,6 +35,7 @@ public class AutoDrive extends Command
     public AutoDrive(double endTime, double speedL, double speedR, boolean gyroEnabled)
     {
         requires(Robot.driveSubsystem);
+        this.mode = MODE.DRIVE;
         this.speedR = speedR;
         this.speedL = speedL;
         this.gyroEnabled = gyroEnabled;
@@ -38,7 +46,17 @@ public class AutoDrive extends Command
     {
         this(endTime, speed, speed, gyroEnabled);
     }
-
+    
+    public AutoDrive(double heading, double tolerance)
+    {
+        requires(Robot.driveSubsystem);
+        this.mode = MODE.ROTATE;
+        this.heading = heading; 
+        this.tolerance = tolerance;
+        this.speedL = 0;
+        this.speedR = 0;       
+    }
+    
     protected void initialize()
     {
         if(gyroEnabled)
@@ -50,14 +68,35 @@ public class AutoDrive extends Command
 
     protected void execute() 
     {
-        //Robot.tankDriveSubsystem.driveRaw(speedR, speedL);
+        if(mode == MODE.DRIVE)
+        {
+          //Robot.tankDriveSubsystem.driveRaw(speedR, speedL);    
+        }
+        else if(mode == MODE.ROTATE)
+        {
+          //TODO: allow us to choose the parameters
+            Vector vector = new Vector(.5, .5); 
+            Robot.driveSubsystem.driveWithHeading(vector, .5, heading);
+        }
     }
 
     protected boolean isFinished()
     {
+        if(mode == MODE.DRIVE)
+        {
         return isTimedOut();
+    
+        }
+        else if(mode == MODE.ROTATE)
+        {
+            if(Robot.driveSubsystem.getLastHeading() - heading >= 0 - tolerance ||
+                    Robot.driveSubsystem.getLastHeading() - heading <= 0 + tolerance)
+            {
+                return isTimedOut();
+            }
+        }
+        return false;
     }
-
     protected void end() 
     {
         //Robot.driveSubsystem.driveRaw(0, 0);
