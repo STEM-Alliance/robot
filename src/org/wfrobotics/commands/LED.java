@@ -5,6 +5,7 @@ import org.wfrobotics.subsystems.Led.HARDWARE;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Set robot LEDs
@@ -41,12 +42,16 @@ public class LED extends Command
     @Override
     protected void initialize()
     {
-        
+        if (mode == MODE.BLINK)
+        {
+            Robot.ledSubsystem.blink(hardware, .7);
+        }
     }
 
     @Override
     protected void execute()
     {   
+        SmartDashboard.putString("LED Mode", mode.name());
         if (mode == MODE.OFF)
         {
             Robot.ledSubsystem.setOn(hardware, false);
@@ -57,18 +62,18 @@ public class LED extends Command
         }
         else if (mode == MODE.BLINK)
         {
-            Robot.ledSubsystem.blink(hardware, 5);
         }
         else
         {
             DriverStation.reportError("LED mode not supported", true);
         }
+        
     }
     
     @Override
     protected boolean isFinished()
     {
-        return isTimedOut();
+        return false;//isTimedOut();
     }
 
     @Override

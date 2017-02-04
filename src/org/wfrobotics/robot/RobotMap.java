@@ -29,7 +29,7 @@ public class RobotMap
     public static final int CLIMBER_MOTOR_SRX = 24;
     public static final int CLIMBER_SENSOR_DIGITAL = 0;
    
-    public static final int CAN_LIGHT[] = {8 , 9 };
+    public static final int CAN_LIGHT[] = {30 , 31 };
     
     public static final int AUGER_MOTOR = 10; //Change if necessary and config 
 

@@ -4,10 +4,11 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.commands.Conveyor;
 import org.wfrobotics.commands.Conveyor.MODE;
 import org.wfrobotics.commands.IntakeSetup;
+import org.wfrobotics.commands.LED;
 import org.wfrobotics.commands.Shoot;
-import org.wfrobotics.commands.UnJam;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
+import org.wfrobotics.subsystems.Led.HARDWARE;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
@@ -31,8 +32,8 @@ public class OI
     Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
     Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
     Button buttonShooterStart = new XboxButton(xboxDrive, Xbox.BUTTON.B);
-    Button buttonUnJamStart = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
     Button buttonAugerStart = new XboxButton(xboxDrive, Xbox.BUTTON.A);
+    Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
     
     // manipulator controller
     
@@ -53,8 +54,9 @@ public class OI
         buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
         buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
         buttonShooterStart.toggleWhenPressed(new Shoot(MODE.CONTINUOUS));
-        buttonUnJamStart.toggleWhenPressed(new UnJam(true));
         buttonAugerStart.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
+        buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
+
         
         //////////////////////////
     }

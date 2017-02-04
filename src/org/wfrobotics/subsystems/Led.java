@@ -1,12 +1,15 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.commands.LED;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotMap;
 
 import com.mindsensors.*;
 
 import edu.wpi.first.wpilibj.AnalogOutput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import javafx.scene.paint.Color;
 
 public class Led extends Subsystem 
@@ -14,7 +17,7 @@ public class Led extends Subsystem
 //    http://mindsensors.com/largefiles/CANLight/CANLight_Demo.java    
 //    public static final Color Black = new Color(0, 0, 0);
 //    public static final Color Red = new Color(0xfff, 0, 0);
-//    public static final Color Yellow = new Color(0xfff, 0x8ff, 0);
+//    public static final Color Yellow = new Color(255, 103, 0);
 //    public static final Color Green = new Color(0, 0xfff, 0);
 //    public static final Color Cyan = new Color(0, 0xfff, 0xfff);
 //    public static final Color Blue = new Color(0, 0, 0xfff);
@@ -26,6 +29,8 @@ public class Led extends Subsystem
    
     private CANLight topLights;
     private CANLight sideLights;
+    private double  time = Math.floor(Timer.getFPGATimestamp());
+
     
     public Led()
     {
@@ -47,40 +52,65 @@ public class Led extends Subsystem
     */
     public void setOn(HARDWARE hardware, boolean on)
     {
-        if(hardware == HARDWARE.TOP)
+        if(on)
         {
-            topLights.showRGB(0, 0, 0xfff);  
+            if(hardware == HARDWARE.TOP)
+            {
+                topLights.showRGB(0, 255, 0);
+            }
+            if(hardware == HARDWARE.SIDE)
+            {
+                sideLights.showRGB(0, 255, 0);  
+            }
+            if(hardware == HARDWARE.ALL)
+            {
+                topLights.showRGB(0, 255, 0);  
+                sideLights.showRGB(0, 255, 0);  
+            }
         }
-        if(hardware == HARDWARE.SIDE)
+        else
         {
-            sideLights.showRGB(0, 0, 0xfff); 
+            
+            if(hardware == HARDWARE.TOP)
+            {
+                topLights.showRGB(0, 0, 0);  
+            }
+            if(hardware == HARDWARE.SIDE)
+            {
+                sideLights.showRGB(0, 0, 0); 
+            }
+            if(hardware == HARDWARE.ALL)
+            {
+                topLights.showRGB(0, 0, 0); 
+                sideLights.showRGB(0, 0, 0); 
+            }
         }
-        if(hardware == HARDWARE.ALL)
-        {
-            topLights.showRGB(0, 0, 0xfff); 
-            sideLights.showRGB(0, 0, 0xfff); 
-        }
+        SmartDashboard.putBoolean("LED is on", on);
+
+        
     }
-    public void blink(HARDWARE hardware, int time)
+    public void blink(HARDWARE hardware, double blinkLength)
     {
         if(hardware == HARDWARE.TOP)
         {
-            topLights.blinkLED(time);
-            topLights.showRGB(0, 0, 0xfff);
+
+            topLights.writeRegister(0, blinkLength, 0, 255, 0);  
+            topLights.writeRegister(1, blinkLength, 255, 103, 0);
+            topLights.fade(0, 1);
         }
         if(hardware == HARDWARE.SIDE)
         {
-            sideLights.blinkLED(time);
-            topLights.showRGB(0, 0, 0xfff);
+            topLights.writeRegister(0, blinkLength, 0, 255, 0);  
+            topLights.writeRegister(1, blinkLength, 255, 103, 0);            
+            topLights.cycle(0, 1);
+
         }
         if(hardware == HARDWARE.ALL)
         {
-            sideLights.blinkLED(time);
-            topLights.blinkLED(time);
 
-            topLights.showRGB(0, 0, 0xfff);
-            sideLights.showRGB(0, 0, 0xfff);
-
+            topLights.writeRegister(0, blinkLength, 0, 255, 0);  
+            topLights.writeRegister(1, blinkLength, 255, 103, 0);            
+            topLights.fade(0, 1);
         }
    }
     public void setOnColor(HARDWARE hardware, boolean on, int r, int g, int b)
@@ -88,19 +118,19 @@ public class Led extends Subsystem
         if(on)
         { 
             
-        if(hardware == HARDWARE.TOP)
-        {
-            topLights.showRGB(r, g, b);
-        }
-        if(hardware == HARDWARE.SIDE)
-        {
-            sideLights.showRGB(r, g, b);
-        }
-        if(hardware == HARDWARE.ALL)
-        {
-            topLights.showRGB(r, g, b);
-            sideLights.showRGB(r, g, b);
-        }
+            if(hardware == HARDWARE.TOP)
+            {
+                topLights.showRGB(r, g, b);
+            }
+            if(hardware == HARDWARE.SIDE)
+            {
+                sideLights.showRGB(r, g, b);
+            }
+            if(hardware == HARDWARE.ALL)
+            {
+                topLights.showRGB(r, g, b);
+                sideLights.showRGB(r, g, b);
+            }
         
         }
         else
