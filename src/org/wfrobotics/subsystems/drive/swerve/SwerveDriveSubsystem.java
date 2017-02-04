@@ -49,14 +49,13 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     private Vector m_lastVelocity;
     private double m_lastVelocityTimestamp;
     
-    // this is used to address the counter spinning
+    // this is used to address the counter spinning/snapback
     private double m_lastHeadingTimestamp;
     private final double HEADING_TIMEOUT = .2;
     
     // this will hopefully prevent locking the wheels when slowing down
     private final double AUTO_ROTATION_MIN = .1;
     
-
     double gyroLast;
 
     /**
@@ -145,6 +144,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         // determine which drive mode to use between
         if (Math.abs(Rotation) < .15)
         {
+            // delay the stay at angle to prevent snapback
             if((Timer.getFPGATimestamp() - m_lastHeadingTimestamp) > HEADING_TIMEOUT)
             {
                 // if we're not spinning
@@ -172,6 +172,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
                     // heading and new desired heading
                     Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
                     double tempRotation = m_chassisAngleController.update(Error);
+                    
+                    // add a deadband to hopefully help with wheel lock after stopping
                     SmartDashboard.putNumber("MaintainRotation", tempRotation);
                     if(tempRotation > AUTO_ROTATION_MIN)
                     {
@@ -181,6 +183,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
             }
             else
             {
+                // save off the latest heading until the timeout
                 m_lastHeading = m_gyro.getYaw();
             }
         }
@@ -192,6 +195,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
             // just take the rotation value from the controller
             m_lastHeading = m_gyro.getYaw();// + (m_gyro.getYaw() - gyroLast)*5;
 
+            // save off timestamp to counter snapback
             m_lastHeadingTimestamp = Timer.getFPGATimestamp();
             
             gyroLast = m_gyro.getYaw();

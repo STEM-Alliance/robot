@@ -24,10 +24,10 @@ public class SteamworksDrive extends CommandGroup
     public SteamworksDrive()
     {   
         intake = new IntakeSetup(false, false);
-        leds = new LED(Led.HARDWARE.TOP, LED.MODE.OFF);
+//        leds = new LED(Led.HARDWARE.TOP, LED.MODE.OFF);
         
         addParallel(intake);
-        addParallel(leds);
+//        addParallel(leds);
         addSequential(new DriveSwerveHalo());
     }
     
@@ -37,7 +37,7 @@ public class SteamworksDrive extends CommandGroup
         double vectorMag = Robot.driveSubsystem.getLastVector().getMag();
         
         setIntakes(angleDifference, vectorMag);
-        setLEDs();
+//        setLEDs();
     }
     
     protected void end() 
@@ -88,21 +88,21 @@ public class SteamworksDrive extends CommandGroup
         intake.set(onLeft, onRight);
     }
     
-    public void setLEDs()
-    {
-        if (Robot.driveSubsystem.isGearStored())
-        {
-            leds.set(LED.MODE.BLINK);
-        }        
-        else if (Robot.driveSubsystem.isSpringInGear())
-        {
-            leds.set(LED.MODE.SOLID);
-        }
-        else
-        {
-            leds.set(LED.MODE.OFF);
-        }
-    }
+//    public void setLEDs()
+//    {
+//        if (Robot.driveSubsystem.isGearStored())
+//        {
+//            leds.set(LED.MODE.BLINK);
+//        }        
+//        else if (Robot.driveSubsystem.isSpringInGear())
+//        {
+//            leds.set(LED.MODE.SOLID);
+//        }
+//        else
+//        {
+//            leds.set(LED.MODE.OFF);
+//        }
+//    }
 
     public void printDash(double angleDifference, boolean right, boolean left)
     {
