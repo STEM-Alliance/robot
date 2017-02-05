@@ -82,20 +82,17 @@ public class AutoDrive extends Command
 
     protected boolean isFinished()
     {
-        if(mode == MODE.DRIVE)
+        if(mode == MODE.ROTATE)
         {
-        return isTimedOut();
-    
+            boolean done = Robot.driveSubsystem.getLastHeading() - heading >= 0 - tolerance ||
+                           Robot.driveSubsystem.getLastHeading() - heading <= 0 + tolerance;
+            
+            return done;
         }
-        else if(mode == MODE.ROTATE)
+        else
         {
-            if(Robot.driveSubsystem.getLastHeading() - heading >= 0 - tolerance ||
-                    Robot.driveSubsystem.getLastHeading() - heading <= 0 + tolerance)
-            {
-                return isTimedOut();
-            }
+            return isTimedOut();
         }
-        return false;
     }
     protected void end() 
     {

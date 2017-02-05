@@ -12,22 +12,30 @@ public class Aligning extends Subsystem
 {
     public class AlignData
     {
-        public double Yaw = 0;
-        public boolean InView = false;
+        public double Yaw = -20;
+        public boolean InView = true;
     }
+    
+    AlignData data;
     
     @Override
     protected void initDefaultCommand()
     {
-        // TODO Auto-generated method stub
+        // TODO set a commmand IF this remains a subsystem
     }
     
     public AlignData getData()
     {
         AlignData data = new AlignData();
         
-        // TODO DRL Take a frame from the Camera object, process it, return information so the command can make decisions
+        // TODO get the data from the pi
         
         return data;
+    }
+    
+    // TODO remove this after we can get info from the pi
+    public void testIncrementData(double yawOffset, double pitchOffset)
+    {
+        data.Yaw += yawOffset;
     }
 }

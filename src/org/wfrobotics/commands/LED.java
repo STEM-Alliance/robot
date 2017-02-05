@@ -3,7 +3,6 @@ package org.wfrobotics.commands;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.Led.HARDWARE;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -11,8 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Set robot LEDs
  * This command sets the highly visible LEDs mounted on the robot
  * Useful for communication of events to driver or human player, or flaunting after we do something awesome
- * @author drlindne
- *
  */
 public class LED extends Command
 {
@@ -59,21 +56,13 @@ public class LED extends Command
         else if (mode == MODE.SOLID)
         {
             Robot.ledSubsystem.setOn(hardware, true);
-        }
-        else if (mode == MODE.BLINK)
-        {
-        }
-        else
-        {
-            
-        }
-        
+        }      
     }
     
     @Override
     protected boolean isFinished()
     {
-        return false;//isTimedOut();
+        return false;//isTimedOut();  // TODO delete this comment or remove timeout from constructor
     }
 
     @Override

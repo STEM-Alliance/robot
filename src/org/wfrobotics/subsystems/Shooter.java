@@ -69,14 +69,12 @@ public class Shooter extends Subsystem
      * @return if the shooting wheel(s) is at that speed
      */
     public boolean topSpeedReached(double tolerance)
-    {
-        // TODO DRL should our return value be based on both flywheels?        
+    {    
         return Math.abs(m_speedDesired - flywheelTop.getSpeed()) <= tolerance;
     }
     
     public boolean bottomSpeedReached(double tolerance)
-    {
-        // TODO DRL should our return value be based on both flywheels?        
+    {     
         return Math.abs(m_speedDesired - flywheelBottom.getSpeed()) <= tolerance;
     }
     
