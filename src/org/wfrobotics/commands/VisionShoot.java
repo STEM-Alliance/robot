@@ -19,8 +19,6 @@ public class VisionShoot extends CommandGroup {
             // rotate the robot command thing here
             addParallel(new AutoDrive(yawOffset, .05 * yawOffset));
             double pitchOffset = data.Pitch;
-            
-           
         }
         
     //check coordinates (tolerances)

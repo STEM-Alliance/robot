@@ -74,5 +74,4 @@ public class Up extends Command
     {
 
     }
-
 }
