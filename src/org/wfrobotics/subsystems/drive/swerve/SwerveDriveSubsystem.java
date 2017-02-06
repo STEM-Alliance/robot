@@ -142,43 +142,57 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         double Error = 0;
         
         // determine which drive mode to use between
-        if (Math.abs(Rotation) < .15)
+        if (Heading != -1)
         {
+            // rotate to angle
+            SmartDashboard.putString("Drive Mode", "Rotate To Heading");
+            
+            // this should snap us to a specific angle
+            
+            // set the rotation using a PID controller based on current robot
+            // heading and new desired heading
+            Error = Utilities.wrapToRange(Heading - m_gyro.getYaw(), -180, 180);
+            Rotation = m_chassisAngleController.update(Error);
+            m_lastHeading = Heading;
+        }
+        else if (Math.abs(Rotation) > .1)
+        {
+            // spinning
+            SmartDashboard.putString("Drive Mode", "Spinning");
+            
+            // just take the rotation value from the controller
+            m_lastHeading = m_gyro.getYaw();
+
+            // save off timestamp to counter snapback
+            m_lastHeadingTimestamp = Timer.getFPGATimestamp();
+            
+            gyroLast = m_gyro.getYaw();
+            
+            // square rotation value to give it more control at lower values
+            // but keep the same sign since a negative squared is positive
+            Rotation = Math.signum(Rotation) * Math.pow(Rotation, 2);
+        }
+        else
+        {
+            // maintain angle
+            
             // delay the stay at angle to prevent snapback
             if((Timer.getFPGATimestamp() - m_lastHeadingTimestamp) > HEADING_TIMEOUT)
             {
-                // if we're not spinning
-                if (Heading != -1)
+                SmartDashboard.putString("Drive Mode", "Stay At Angle");
+                
+                // this should keep us facing the same direction
+                
+                // set the rotation using a PID controller based on current robot
+                // heading and new desired heading
+                Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
+                double tempRotation = m_chassisAngleController.update(Error);
+                
+                // add a deadband to hopefully help with wheel lock after stopping
+                SmartDashboard.putNumber("MaintainRotation", tempRotation);
+                if(tempRotation > AUTO_ROTATION_MIN)
                 {
-                    // pressing on the dpad
-                    SmartDashboard.putString("Drive Mode", "Rotate To Heading");
-                    
-                    // this should snap us to a specific angle
-                    
-                    // set the rotation using a PID controller based on current robot
-                    // heading and new desired heading
-                    Error = Utilities.wrapToRange(Heading - m_gyro.getYaw(), -180, 180);
-                    Rotation = m_chassisAngleController.update(Error);
-                    m_lastHeading = Heading;
-                }
-                else
-                {
-                    // not pressing on dpad
-                    SmartDashboard.putString("Drive Mode", "Stay At Angle");
-                    
-                    // this should keep us facing the same direction
-                    
-                    // set the rotation using a PID controller based on current robot
-                    // heading and new desired heading
-                    Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
-                    double tempRotation = m_chassisAngleController.update(Error);
-                    
-                    // add a deadband to hopefully help with wheel lock after stopping
-                    SmartDashboard.putNumber("MaintainRotation", tempRotation);
-                    if(tempRotation > AUTO_ROTATION_MIN)
-                    {
-                        Rotation = tempRotation;
-                    }
+                    Rotation = tempRotation;
                 }
             }
             else
@@ -186,19 +200,6 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
                 // save off the latest heading until the timeout
                 m_lastHeading = m_gyro.getYaw();
             }
-        }
-        else
-        {
-            // spinning
-            SmartDashboard.putString("Drive Mode", "Spinning");
-            
-            // just take the rotation value from the controller
-            m_lastHeading = m_gyro.getYaw();// + (m_gyro.getYaw() - gyroLast)*5;
-
-            // save off timestamp to counter snapback
-            m_lastHeadingTimestamp = Timer.getFPGATimestamp();
-            
-            gyroLast = m_gyro.getYaw();
         }
 
         SmartDashboard.putNumber("Rotation Error", Error);
@@ -255,7 +256,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         }
         
         // by squaring the magnitude, we get more fine adjustments at low speed
-        RobotVelocity.setMag(RobotVelocity.getMag() * RobotVelocity.getMag());
+        // but keep the sign since negative squared is positive
+        RobotVelocity.setMag(Math.signum(RobotVelocity.getMag()) * Math.pow(RobotVelocity.getMag(), 2));
 
         // limit before slowing speed so it runs using the original values
         // set limitations on rotation,
