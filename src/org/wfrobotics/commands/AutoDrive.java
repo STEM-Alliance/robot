@@ -3,6 +3,7 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.Vector;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.subsystems.Targeting;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -16,7 +17,9 @@ public class AutoDrive extends Command
     double heading;
     double tolerance;
     boolean gyroEnabled;
-    final MODE mode;   
+    final MODE mode;  
+    Vector vector = new Vector();
+
     
     /**
      * Default to not driving (speed equals zero)
@@ -47,10 +50,10 @@ public class AutoDrive extends Command
         this(endTime, speed, speed, gyroEnabled);
     }
     
-    public AutoDrive(double heading, double tolerance)
+    public AutoDrive(double heading, double tolerance, AutoDrive.MODE mode)
     {
         requires(Robot.driveSubsystem);
-        this.mode = MODE.ROTATE;
+        this.mode = mode;
         this.heading = heading; 
         this.tolerance = tolerance;
         this.speedL = 0;
@@ -70,6 +73,15 @@ public class AutoDrive extends Command
     {
         if(mode == MODE.DRIVE)
         {
+            if(Robot.targetingSubsystem.DistanceToTarget() < Constants.OPTIMAL_SHOOTING_DISTANCE)
+            {
+                this.vector = new Vector(0, .3);
+            }
+            else if(Robot.targetingSubsystem.DistanceToTarget() > Constants.OPTIMAL_SHOOTING_DISTANCE)
+            {
+                this.vector= new Vector(0, -.3);
+            }
+            Robot.driveSubsystem.driveWithHeading(vector, 0, -1);
           //Robot.tankDriveSubsystem.driveRaw(speedR, speedL);    
         }
         else if(mode == MODE.ROTATE)

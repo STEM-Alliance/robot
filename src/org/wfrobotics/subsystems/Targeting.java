@@ -1,5 +1,7 @@
 package org.wfrobotics.subsystems;
 
+import org.wfrobotics.vision.Constants;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -40,5 +42,9 @@ public class Targeting extends Subsystem
     {
         data.Yaw += yawOffset;
         data.Pitch += pitchOffset;
+    }
+    public double DistanceToTarget()
+    {
+        return (Constants.TargetHeightIn * Constants.FocalLengthIn) / data.Pitch;
     }
 }
