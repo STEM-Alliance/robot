@@ -11,4 +11,5 @@ public class Constants
    public static double SHOOTER_READY_SHOOT_SPEED = 3750;  // Ideal speed for shooter to shoot balls
    public static double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
    public static double AUGER_SPEED = 100;  // Ideal for giving balls to shooter while shooter maintains speed (above min shooter recovery time)
+   public static double TAPE_SEPERATION_SHOOT = 0; //Ideal distance the camera sees between the two pieces of reflective tape. (if it is too far the separation will be smaller)
 }
