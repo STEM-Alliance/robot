@@ -2,6 +2,7 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -12,9 +13,10 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Up extends Command
 {
-    public enum MODE {CLIMB, HOLD, DOWN, OFF};
+    public enum MODE {CLIMB, DOWN, OFF};
     
-    private final MODE mode;
+    private double time;
+    private MODE mode;
     
     public Up(MODE mode)
     {
@@ -34,11 +36,24 @@ public class Up extends Command
     {
         if(this.mode == MODE.CLIMB)
         {
-            Robot.climberSubsystem.setSpeed(1);
-        }
-        else if(this.mode == MODE.HOLD)
-        {
-            Robot.climberSubsystem.setSpeed(.25);
+            //is the robot at the top?
+            if (!Robot.climberSubsystem.isAtTop())
+            {
+                time = this.timeSinceInitialized();
+                Robot.climberSubsystem.setSpeed(1);
+            }     
+            //TODO: The buffer is currently set to 0.5 seconds THIS NEEDS TO BE TESTED!! 
+            else
+            {
+                if(this.timeSinceInitialized() - time <= 0.5)
+                {
+                    Robot.climberSubsystem.setSpeed(1);
+                }
+                else
+                {
+                    mode = MODE.OFF;
+                }
+            }
         }
         else if(this.mode == MODE.DOWN)
         {
