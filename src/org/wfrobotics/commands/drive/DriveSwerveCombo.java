@@ -26,13 +26,13 @@ public class DriveSwerveCombo extends Command
         
         double dpad = OI.DriveSwerveOI.getDpad();
         
-        ((SwerveDriveSubsystem)Robot.driveSubsystem).setGearHigh(OI.DriveSwerveOI.getHighGearEnable());
-        ((SwerveDriveSubsystem)Robot.driveSubsystem).setBrake(OI.DriveSwerveOI.getBrake());
+        //((SwerveDriveSubsystem)Robot.driveSubsystem).setGearHigh(OI.DriveSwerveOI.getHighGearEnable());
+        //((SwerveDriveSubsystem)Robot.driveSubsystem).setBrake(OI.DriveSwerveOI.getBrake());
         
-        if (OI.DriveSwerveOI.getResetGyro())
-        {
-            ((SwerveDriveSubsystem)Robot.driveSubsystem).gyroZero();
-        }
+        //if (OI.DriveSwerveOI.getResetGyro())
+        //{
+        //    ((SwerveDriveSubsystem)Robot.driveSubsystem).gyroZero();
+        //}
         
         ((SwerveDriveSubsystem)Robot.driveSubsystem).setCrawlMode(OI.DriveSwerveOI.getCrawlSpeed());
         
@@ -51,7 +51,7 @@ public class DriveSwerveCombo extends Command
         }
         else
         {
-            Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
+            //Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
             
             Robot.driveSubsystem.driveVector(OI.DriveSwerveOI.getHaloDrive_Velocity(), OI.DriveSwerveOI.getHaloDrive_Rotation());
             //TODO fix this nonsense

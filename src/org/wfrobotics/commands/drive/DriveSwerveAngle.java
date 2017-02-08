@@ -22,7 +22,7 @@ public class DriveSwerveAngle extends Command
     {
         Utilities.PrintCommand("Drive", this);
 
-        Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
+        //Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
     
         Robot.driveSubsystem.driveVector(OI.DriveSwerveOI.getAngleDrive_Velocity(), 0);
         //TODO: handle the heading nonsense 
