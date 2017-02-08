@@ -11,4 +11,9 @@ public class Constants
    public static double SHOOTER_READY_SHOOT_SPEED = 3750;  // Ideal speed for shooter to shoot balls
    public static double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
    public static double AUGER_SPEED = 100;  // Ideal for giving balls to shooter while shooter maintains speed (above min shooter recovery time)
+   public static final double TARGET_HEIGHT_IN = 8; //top of top tape to bottom of bottom tape (8 inches)
+   public static final double TEST_TARGET_HEIGHT_PIXEL = 0; //number of pixels from top of top tap to bottom of bottom tape at ideal distance
+   public static final double TEST_TARGET_DISTANCE_IN = 0; //optimal distance from boiler (needs to be tested)
+   public static final double FOCAL_LENGTH_IN = TEST_TARGET_HEIGHT_PIXEL * TEST_TARGET_DISTANCE_IN / TARGET_HEIGHT_IN;
+   public static final double OPTIMAL_SHOOTING_DISTANCE = 0;
 }
