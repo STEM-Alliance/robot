@@ -19,7 +19,6 @@ public class AutoDrive extends Command
     boolean gyroEnabled;
     final MODE mode;  
     Vector vector = new Vector();
-
     
     /**
      * Default to not driving (speed equals zero)
@@ -75,13 +74,13 @@ public class AutoDrive extends Command
         {
             if(Robot.targetingSubsystem.DistanceToTarget() < Constants.OPTIMAL_SHOOTING_DISTANCE)
             {
-                this.vector = new Vector(0, .3);
+                Robot.driveSubsystem.driveXY(0, .3, -1);            
             }
             else if(Robot.targetingSubsystem.DistanceToTarget() > Constants.OPTIMAL_SHOOTING_DISTANCE)
             {
-                this.vector= new Vector(0, -.3);
+                Robot.driveSubsystem.driveXY(0, -.3, -1);            
             }
-            Robot.driveSubsystem.driveWithHeading(vector, 0, -1);
+            
           //Robot.tankDriveSubsystem.driveRaw(speedR, speedL);    
         }
         else if(mode == MODE.ROTATE)
