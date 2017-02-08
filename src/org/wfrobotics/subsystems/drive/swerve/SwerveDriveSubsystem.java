@@ -271,14 +271,14 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         
         if(ENABLE_CRAWL_MODE)
         {
-            double crawlSpeed = Preferences.getInstance().getDouble("Drive_Speed_Crawl", SwerveConstants.DRIVE_SPEED_CRAWL);
+            double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", SwerveConstants.DRIVE_SPEED_CRAWL);
             
-            RobotRotation *= (crawlSpeed + (1 - crawlSpeed) * getCrawlMode() * .9);
-            
-            // scale the speed down
-            RobotVelocity.setMag(RobotVelocity.getMag() * (crawlSpeed + (1 - crawlSpeed) * getCrawlMode()));
-            RobotRotation *= SwerveConstants.DRIVE_SPEED_NORMAL;
-            RobotVelocity.setMag(RobotVelocity.getMag() * SwerveConstants.DRIVE_SPEED_NORMAL);
+            // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
+            double scale = Utilities.scaleToRange(m_crawlMode, 0, 1, crawlSpeed, 1);
+
+            // then scale back both rotation and velocity
+            RobotRotation *= scale;
+            RobotVelocity.setMag(RobotVelocity.getMag() * scale);
         }
         
         if(ENABLE_ROTATION_LIMIT)

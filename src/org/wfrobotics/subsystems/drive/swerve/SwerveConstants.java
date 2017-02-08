@@ -99,8 +99,5 @@ public class SwerveConstants {
      */
     public static final double DRIVE_MAX_SPEED = DRIVE_MAX_RPM * DRIVE_EFFICIENCY * DRIVE_GEAR_SENSOR_RATIO;
     
-    
-    
     public static final double DRIVE_SPEED_CRAWL = .4;
-    public static final double DRIVE_SPEED_NORMAL = .85;
 }

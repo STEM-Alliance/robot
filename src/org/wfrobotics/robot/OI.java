@@ -26,6 +26,7 @@ public class OI
     
     // drive controller
 
+    Button buttonDriveLB = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
     Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.BUTTON.BACK);
     Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.BUTTON.START);
     
@@ -33,7 +34,7 @@ public class OI
     Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
     Button buttonShooterStart = new XboxButton(xboxDrive, Xbox.BUTTON.B);
     Button buttonAugerStart = new XboxButton(xboxDrive, Xbox.BUTTON.A);
-    Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
+    //Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
     
     // manipulator controller
     
@@ -44,6 +45,7 @@ public class OI
     {
         
         //buttonDriveStart.toggleWhenPressed(new DriveSwerveWheelCalibration());
+        buttonDriveLB.whenPressed(new DriveToggleHighGear());
         buttonDriveBack.whenPressed(new DriveToggleFieldRelative());
         buttonDriveStart.whenPressed(new DriveZeroGyro());
         //buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
@@ -55,7 +57,7 @@ public class OI
         buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
         buttonShooterStart.toggleWhenPressed(new Shoot(MODE.CONTINUOUS));
         buttonAugerStart.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
-        buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
+        //buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
 
         
         //////////////////////////
@@ -118,7 +120,6 @@ public class OI
     
     public static class DriveSwerveOI
     {
-        private static boolean m_fieldRelative = false;
         private static final double DEADBAND = 0.2;
 
         /**
@@ -227,24 +228,9 @@ public class OI
             return xboxDrive.getTriggerAxis(Hand.kRight);
         }
         
-        public static boolean getBrake()
-        {
-            return false;
-        }
-        
         public static int getDpad()
         {
             return xboxDrive.getPOV(0);
-        }
-
-        public static boolean getFieldRelative()
-        {
-            return m_fieldRelative;
-        }
-
-        public static boolean getResetGyro()
-        {
-            return false;
         }
 
     }

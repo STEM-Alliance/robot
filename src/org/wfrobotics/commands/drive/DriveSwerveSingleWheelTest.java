@@ -44,7 +44,7 @@ public class DriveSwerveSingleWheelTest extends Command
         Vector WheelActual = ((SwerveDriveSubsystem)Robot.driveSubsystem).getWheel(i).setDesired(
                 OI.DriveSwerveOI.getHaloDrive_Velocity(),
                 OI.DriveSwerveOI.getHighGearEnable(),
-                OI.DriveSwerveOI.getBrake());
+                false);
             
         // display in SmartDashboard
         SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
