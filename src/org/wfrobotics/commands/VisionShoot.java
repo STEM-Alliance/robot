@@ -16,27 +16,28 @@ public class VisionShoot extends CommandGroup {
         
         if (data.InView)
         {
-            double pitchOffset = data.Pitch;
-            addSequential(new AutoDrive(pitchOffset, .05 * pitchOffset, MODE.DRIVE));
-            // sample correct tape separation 
-            //get current tape separation
-            // if current separation is less than correct separation
-
-              //move closer (how much closer)
-            //else if current separation is greater than correct separation
-              //move farther (how much farther)
-            //else
-              //don't move
-            
-            //we need to calculate the time based on the data.pitchOffset
-           
-            // rotate the robot command thing here
-            double yawOffset = data.Yaw;
+            double yawOffset = data.Yaw; //rotate control
             addSequential(new AutoDrive(yawOffset, .05 * yawOffset, MODE.ROTATE));
-            //get correct tape point
-            //get current tape point
-            //using inverse sin find the angle based on the distance and offset of current and correct tape points
-        }
+          
+            //distance to boiler 
+            double tolerance = Constants.OPTIMAL_SHOOTING_DISTANCE * .05;
+            if(Math.abs(Constants.OPTIMAL_SHOOTING_DISTANCE - 
+                    Robot.targetingSubsystem.DistanceToTarget()) <= tolerance )
+            {
+            
+             if(Robot.targetingSubsystem.DistanceToTarget() < 
+                    Constants.OPTIMAL_SHOOTING_DISTANCE )
+                
+            {
+                Robot.driveSubsystem.driveXY(0, .3, -1);            
+            }
+            else if(Robot.targetingSubsystem.DistanceToTarget() > 
+                    Constants.OPTIMAL_SHOOTING_DISTANCE )
+            {
+                Robot.driveSubsystem.driveXY(0, -.3, -1);            
+            }
+            }
+        
         
     //check coordinates (tolerances)
         
@@ -49,4 +50,5 @@ public class VisionShoot extends CommandGroup {
       
     //shoot
     }
+}
 }
