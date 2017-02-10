@@ -1,6 +1,5 @@
 package org.wfrobotics.commands;
 
-import org.wfrobotics.commands.AutoDrive.MODE;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.Targeting.TargetData;
 
@@ -17,7 +16,7 @@ public class VisionShoot extends CommandGroup {
         if (data.InView)
         {
             double yawOffset = data.Yaw; //rotate control
-            addSequential(new AutoDrive(yawOffset, .05 * yawOffset, MODE.ROTATE));
+            addSequential(new AutoDrive(yawOffset, .05));
           
             //distance to boiler 
             double tolerance = Constants.OPTIMAL_SHOOTING_DISTANCE * .05;

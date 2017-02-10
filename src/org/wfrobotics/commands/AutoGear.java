@@ -23,7 +23,7 @@ public class AutoGear extends CommandGroup
         //stop at a certain distance before lift
         if(startPos == STARTPOS.CENTER)
         {
-        addSequential(new AutoDrive(2, 1, 1, false));
+        addSequential(new AutoDrive(2, 1, 0, 1));
         //Time will most likely vary
         }
         else if (startPos == STARTPOS.LEFT)

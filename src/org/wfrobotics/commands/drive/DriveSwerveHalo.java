@@ -9,13 +9,14 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveSwerveHalo extends Command 
 {
-    public DriveSwerveHalo() 
+    public DriveSwerveHalo()
     {
         requires(Robot.driveSubsystem);
     }
 
-    protected void initialize() 
+    protected void initialize()
     {
+        
     }
 
     protected void execute() 
