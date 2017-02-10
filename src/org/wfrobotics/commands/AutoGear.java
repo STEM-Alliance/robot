@@ -1,5 +1,8 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.robot.Robot;
+
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 // TODO Add this command to the list of commands we can select from while we are setting up the robot per match
@@ -13,30 +16,48 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoGear extends CommandGroup
 {
     enum STARTPOS {LEFT, CENTER, RIGHT};
-
+    final STARTPOS startPos;
+    boolean isMoving = false;
+    
     // TODO be smart enough to vary based on which starting position we are at
         // Which means we will have some extra turning and different distances to move
     
-    public AutoGear(STARTPOS startPos)
+    public AutoGear(STARTPOS startpos)
     { 
-        //drive to lift        
-        //stop at a certain distance before lift
+        startPos = startpos;
+        requires(Robot.driveSubsystem);
+        requires(Robot.aligningSubsystem);
+        //turn towards lift using angle constant
+        
         if(startPos == STARTPOS.CENTER)
         {
         addSequential(new AutoDrive(2, 1, 0, 1));
+            //Robot.driveSubsystem.driveXY(0, 1, 0);
+            isMoving = true;
         //Time will most likely vary
         }
         else if (startPos == STARTPOS.LEFT)
         {
+         
+            /* Vector vector = new Vector(0, 1);
+           Robot.driveSubsystem.driveWithHeading(vector, .5, 45);
+           */
+           addSequential(new AutoDrive(2, 1, 1, false));
+           addSequential(new AutoDrive(45, 0, AutoDrive.MODE.ROTATE));
+           isMoving = true;
             //TODO Fill in
         }
         else if (startPos == STARTPOS.RIGHT)
         {
-            //TODO Fill in
+            
+            /*
+            Vector vector = new Vector(0, 1);
+            Robot.driveSubsystem.driveWithHeading(vector, -.5, 315);
+            */
+            addSequential(new AutoDrive(2, 1, 1, false));
+            addSequential(new AutoDrive(315, 0, AutoDrive.MODE.ROTATE));
+            isMoving = true;
         }
-        
-        //turn towards lift using angle constant
-        
         //take picture and retrieve yaw
         
         //shift left/right
@@ -66,13 +87,42 @@ public class AutoGear extends CommandGroup
         // TODO Should we try to shoot? Should this be optional? Should this be smart?
     }
     
+    protected void execute()
+    {
+        if(isMoving == true)
+        {
+            if(Robot.aligningSubsystem.getData().Yaw > 0) // to far to the right
+            {
+                Robot.driveSubsystem.driveXY(-0.2, 0, 0);                
+            }
+            else if(Robot.aligningSubsystem.getData().Yaw < 0)// to far to the left
+            {
+                Robot.driveSubsystem.driveXY(0.2, 0, 0);
+            }
+            else if(Robot.aligningSubsystem.getData().Yaw == 0)
+            {
+                if(Robot.targetingSubsystem.DistanceToTarget() > 0)
+                {
+                    Robot.driveSubsystem.driveXY(0, 0.5, 0);
+                }
+                else if(Robot.targetingSubsystem.DistanceToTarget() == 0)
+                {
+                    Robot.driveSubsystem.driveXY(0, 0, 0);
+                    isMoving = false;
+                }
+            }
+        }
+    }
+    
     protected void end()
     {
-        // TODO?
+        Robot.driveSubsystem.driveXY(0, 0, 0);
     }
     
     protected void interrupted()
     {
         // TODO?
     }
+
 }
+
