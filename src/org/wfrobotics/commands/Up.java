@@ -2,14 +2,11 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  * Controls the climber's motion
  * This command controls the climber subsystem motor
- * @author drlindne
- *
  */
 public class Up extends Command
 {
@@ -34,18 +31,20 @@ public class Up extends Command
     @Override
     protected void execute()
     {
-        if(this.mode == MODE.CLIMB)
+        if(mode == MODE.OFF)
         {
-            //is the robot at the top?
+            Robot.climberSubsystem.setSpeed(0);
+        }
+        else if (mode == MODE.CLIMB)
+        {
             if (!Robot.climberSubsystem.isAtTop())
             {
-                time = this.timeSinceInitialized();
+                time = timeSinceInitialized();
                 Robot.climberSubsystem.setSpeed(1);
-            }     
-            //TODO: The buffer is currently set to 0.5 seconds THIS NEEDS TO BE TESTED!! 
+            }
             else
             {
-                if(this.timeSinceInitialized() - time <= 0.5)
+                if(timeSinceInitialized() - time < Constants.CLIMBER_CLIMB_TIME_AFTER_TOP_REACHED)
                 {
                     Robot.climberSubsystem.setSpeed(1);
                 }
@@ -55,11 +54,11 @@ public class Up extends Command
                 }
             }
         }
-        else if(this.mode == MODE.DOWN)
+        else if (mode == MODE.DOWN)
         {
             Robot.climberSubsystem.setSpeed(-1);
         }
-        else if(this.mode == MODE.OFF)
+        else
         {
             Robot.climberSubsystem.setSpeed(0);
         }

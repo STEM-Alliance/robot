@@ -11,15 +11,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SteamworksDrive extends CommandGroup 
 {
-    public int ANGLE_INTAKE_OFF = 25;
+    private final int INTAKE_OFF_ANGLE = 25;
+    private final int INTAKE_OFF_TIMEOUT = 1;
     
     private IntakeSetup intake;
     private LED leds;
     
-    private boolean onLeft = false;
-    private boolean onRight = false;
-    private double startLeft;
-    private double startRight;
+    private double intakeStartL;
+    private double intakeStartR;
     
     public SteamworksDrive()
     {   
@@ -52,37 +51,32 @@ public class SteamworksDrive extends CommandGroup
     {
         double angleDifference = Robot.driveSubsystem.getLastVector().getAngle();
         double vectorMag = Robot.driveSubsystem.getLastVector().getMag();
+        boolean onRight;
+        boolean onLeft;
         
         angleDifference = -(angleDifference - 90);
         angleDifference = Utilities.wrapToRange(angleDifference, -180, 180);
        
+        // Restart the intake timers whenever we move in that direction
         if(Math.abs(vectorMag) > .1)
         {
-            if(angleDifference  < -ANGLE_INTAKE_OFF &&
-               angleDifference  > (-180 + ANGLE_INTAKE_OFF))
+            if(angleDifference  < -INTAKE_OFF_ANGLE &&
+               angleDifference  > (-180 + INTAKE_OFF_ANGLE))
             {
-                onLeft = true;
-                startLeft = Timer.getFPGATimestamp();
-            }
-            if (angleDifference > ANGLE_INTAKE_OFF &&
-                    angleDifference  < (180 - ANGLE_INTAKE_OFF))
-            {
-                onRight = true;
-                startRight = Timer.getFPGATimestamp();
+                intakeStartL = Timer.getFPGATimestamp();
             }
             
-        }
-        else
-        {
-            if ((Timer.getFPGATimestamp() - startLeft) > 1)
+            if (angleDifference > INTAKE_OFF_ANGLE &&
+                angleDifference  < (180 - INTAKE_OFF_ANGLE))
             {
-                onLeft = false;   
-            }
-            if ((Timer.getFPGATimestamp() - startRight) > 1)
-            {
-                onRight = false;   
-            }
+                intakeStartR = Timer.getFPGATimestamp();
+            }            
         }
+        
+        // Keep the intakes for a while after we stop moving in that direction
+        onLeft = (Timer.getFPGATimestamp() - intakeStartL) < INTAKE_OFF_TIMEOUT;
+        onRight = (Timer.getFPGATimestamp() - intakeStartR) < INTAKE_OFF_TIMEOUT;
+        
         printDash(angleDifference, onRight, onLeft);
         
         intake.set(onLeft, onRight);
@@ -90,13 +84,13 @@ public class SteamworksDrive extends CommandGroup
     
     public void setLEDs()
     {
-        if (Robot.driveSubsystem.isGearStored())
-        {
-            leds.set(LED.MODE.BLINK);
-        }        
-        else if (Robot.driveSubsystem.isSpringInGear())
+        if (Robot.driveSubsystem.isSpringInGear())
         {
             leds.set(LED.MODE.SOLID);
+        }
+        else if (Robot.driveSubsystem.isGearStored())
+        {
+            leds.set(LED.MODE.BLINK);
         }
         else
         {

@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * 
  * @author Team 4818 WFRobotics
  */
-public class SwerveDriveSubsystem extends DriveSubsystem {
-
+public class SwerveDriveSubsystem extends DriveSubsystem 
+{
+    public static final  double HEADING_IGNORE = -1;
+    
     protected SwerveWheel[] m_wheels;
     
     private boolean m_gearHigh;
@@ -93,8 +95,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         {
             m_wheels[i].free();
         }
-    }
-    
+    }    
 
     @Override
     public void driveTank(double right, double left)
@@ -111,13 +112,13 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     @Override
     public void driveVector(Vector velocity, double rotation)
     {
-        driveWithHeading(velocity, rotation, -1);
+        driveWithHeading(velocity, rotation, HEADING_IGNORE);
     }
 
     @Override
     public void driveXY(double x, double y, double rotation)
     {
-        driveWithHeading(new Vector(x,y), rotation, -1);
+        driveWithHeading(new Vector(x,y), rotation, HEADING_IGNORE);
     }
     
     @Override
@@ -142,7 +143,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         double Error = 0;
         
         // determine which drive mode to use between
-        if (Heading != -1)
+        if (Heading != HEADING_IGNORE)
         {
             // rotate to angle
             SmartDashboard.putString("Drive Mode", "Rotate To Heading");
@@ -306,7 +307,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
             WheelsUnscaled[i] = new Vector(RobotVelocity.getX()
                                                      - RobotRotation
                                                      * m_wheels[i].getPosition().getY(),
-                                                 RobotVelocity.getY()
+                                           RobotVelocity.getY()
                                                      + RobotRotation
                                                      * m_wheels[i].getPosition().getX());
 
@@ -470,7 +471,6 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
         return m_wheels[index];
     }
 
-
     public double getCrawlMode()
     {
         return m_crawlMode;
@@ -480,5 +480,4 @@ public class SwerveDriveSubsystem extends DriveSubsystem {
     {
         m_crawlMode = crawlMode;
     }
-
 }
