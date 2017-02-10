@@ -70,9 +70,9 @@ public class AutoDrive extends Command
 
     protected void execute() 
     {
+        //TODO Use a PID loop here if this isn't good enough
         if(mode == MODE.DRIVE)
         {
-            //TODO Use a PID loop here if this isn't good enough
             if(Robot.targetingSubsystem.DistanceToTarget() < Constants.OPTIMAL_SHOOTING_DISTANCE)
             {
                 Robot.driveSubsystem.driveXY(0, .3, 0);            
@@ -80,7 +80,7 @@ public class AutoDrive extends Command
             else if(Robot.targetingSubsystem.DistanceToTarget() > Constants.OPTIMAL_SHOOTING_DISTANCE)
             {
                 Robot.driveSubsystem.driveXY(0, -.3, 0);            
-            }
+            } 
             
           //Robot.tankDriveSubsystem.driveRaw(speedR, speedL);    
         }
