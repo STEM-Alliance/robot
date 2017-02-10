@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * Provides information used to shoot the ball.
  * This subsystem translates pictures into data that commands can use to correct how they are aiming.
- * @author drlindne
  *
  */
 public class Targeting extends Subsystem 
@@ -43,6 +42,7 @@ public class Targeting extends Subsystem
         data.Yaw += yawOffset;
         data.Pitch += pitchOffset;
     }
+    
     public double DistanceToTarget()
     {
         return (Constants.TargetHeightIn * Constants.FocalLengthIn) / data.Pitch;

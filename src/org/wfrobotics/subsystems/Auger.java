@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * Screw conveyor or auger conveyor
  * This subsystem controls the flighting/auger that acts as a ball conveyor
- * @author drlindne
  *
  */
 public class Auger extends Subsystem {
@@ -21,7 +20,6 @@ public class Auger extends Subsystem {
     {
         m_motor = new CANTalon(RobotMap.AUGER_MOTOR);
         m_motor.setInverted(true);  //is this needed?
-
     }
     
     @Override

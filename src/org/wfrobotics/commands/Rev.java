@@ -2,19 +2,17 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  * This command rev's the shooters motor. 
  * This may be useful by itself in situations when you anticipate the need to shoot, reducing the setup time.
  * If another command tries to use the shooter subsystem, I envision this command ending.
- * @author drlindne
  *
  */
 public class Rev extends Command
 {
-    public enum MODE {SHOOT, OFF};  // TODO DRL Unjam?
+    public enum MODE {SHOOT, OFF};
     
     private final MODE mode;
     
@@ -42,17 +40,17 @@ public class Rev extends Command
     @Override
     protected void execute()
     {
-        if (mode == MODE.SHOOT)
-        {
-            Robot.shooterSubsystem.topThenBottom(Constants.SHOOTER_READY_SHOOT_SPEED);
-        }
-        else if (mode == MODE.OFF)
+        if (mode == MODE.OFF)
         {
             Robot.shooterSubsystem.topThenBottom(0);
         }
+        else if (mode == MODE.SHOOT)
+        {
+            Robot.shooterSubsystem.topThenBottom(Constants.SHOOTER_READY_SHOOT_SPEED);
+        }
         else
         {
-            DriverStation.reportError("Rev mode not supported", true);
+            Robot.shooterSubsystem.topThenBottom(0);
         }
     }
 

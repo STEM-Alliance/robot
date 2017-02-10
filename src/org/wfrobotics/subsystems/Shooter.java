@@ -26,7 +26,7 @@ public class Shooter extends Subsystem
 //        flywheelTop.changeControlMode(TalonControlMode.Speed);
 //        flywheelTop.setPID(.115,0.0001,0.015);
 //        flywheelTop.setCloseLoopRampRate(.01);    
-       flywheelTop.setInverted(true);  //is this needed?
+        flywheelTop.setInverted(true);  //is this needed?
       
         flywheelBottom = new CANTalon(RobotMap.FEEDER_MOTOR_SRX);
     }

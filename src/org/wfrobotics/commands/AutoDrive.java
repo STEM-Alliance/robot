@@ -3,112 +3,112 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.Vector;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.Targeting;
+import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class AutoDrive extends Command 
+public class AutoDrive extends Command
 {
-    enum MODE {DRIVE, ROTATE}
-    
-    public final static double SPEED_APPROACH = .5;
-    final double speedR;
-    final double speedL;
-    double heading;
-    double tolerance;
-    boolean gyroEnabled;
-    final MODE mode;  
-    Vector vector = new Vector();
+    private Vector vector;
+    private double rotate;
+    private double heading;
+    private double headingTolerance = 0;
     
     /**
-     * Default to not driving (speed equals zero)
+     * Drive Off
+     * Details: Stay put until another command uses the drive subsystem
      */
     public AutoDrive()
     {
         requires(Robot.driveSubsystem);
-        this.mode = MODE.DRIVE;
-        speedR = 0;
-        speedL = 0;
+        this.vector = new Vector(0, 0);
+        this.rotate = 0;
+        this.heading = SwerveDriveSubsystem.HEADING_IGNORE;
     }
 
-    /** 
-     * Drive. Go any direction including turning.
+    /**
+     * Drive Normally
+     * Details: Drive any magnitude and angle. Forward, backwards, sideways, at an angle.
+     * Note: Use this constructor or the turn to angle one for the majority of autonomous driving
+     * @param speedX Magnitude to move right (positive) and left (negative). (Range: -1 to 1)
+     * @param speedY Magnitude to move forward (positive) and backward (negative). (Range: -1 to 1)
+     * @param speedR Magnitude to turn clockwise (positive) or counterclockwise (negative) while driving. (Range: -1 to 1, Zero: Means don't spin)
+     * @param timeout How long before this command finishes (Seconds)
      */
-    public AutoDrive(double endTime, double speedL, double speedR, boolean gyroEnabled)
+    public AutoDrive(double speedX, double speedY, double speedR, double timeout)
     {
         requires(Robot.driveSubsystem);
-        this.mode = MODE.DRIVE;
-        this.speedR = speedR;
-        this.speedL = speedL;
-        this.gyroEnabled = gyroEnabled;
-        setTimeout(endTime);
+        vector = new Vector(speedX, speedY);
+        rotate = speedR;
+        heading = SwerveDriveSubsystem.HEADING_IGNORE;
+        setTimeout(timeout);
     }
     
-    public AutoDrive(double endTime, double speed, boolean gyroEnabled)
-    {
-        this(endTime, speed, speed, gyroEnabled);
-    }
-    
-    public AutoDrive(double heading, double tolerance, AutoDrive.MODE mode)
+    /**
+     * Turn to an Angle
+     * Details: Rotate to a field relative angle
+     * Note: This constructor doesn't need a timeout because the command will end when the angle is reached (within tolerance)
+     * @param speedR Magnitude to turn clockwise (positive) or counterclockwise (negative) while driving. (Range: -1 to 1, Zero: Means don't spin)
+     * @param angle Angle to turn the robot to a field relative angle (Range: -180 to 180, Units: Degrees)
+     * @param tolerance
+     */
+    public AutoDrive(double speedR, double angle, double tolerance)
     {
         requires(Robot.driveSubsystem);
-        this.mode = mode;
-        this.heading = heading; 
-        this.tolerance = tolerance;
-        this.speedL = 0;
-        this.speedR = 0;       
+        vector = new Vector(0, 0);
+        rotate = speedR;
+        heading = angle; 
+        headingTolerance = tolerance;
+    }
+    
+    /**
+     * Drive Halo
+     * Details: Drive while simultaneously turning to (and thereafter maintaining) a specific field relative angle. 
+     * Note: A.K.A drive like your drive system is legit
+     * @param speedX Magnitude to move right (positive) and left (negative). (Range: -1 to 1)
+     * @param speedY Magnitude to move forward (positive) and backward (negative). (Range: -1 to 1)
+     * @param speedR Magnitude to turn clockwise (positive) or counterclockwise (negative) while driving. (Range: -1 to 1, Zero: Means don't spin)
+     * @param angle Angle to turn the robot to a field relative angle while driving (Range: -180 to 180, Units: Degrees)
+     * @param timeout How long before this command finishes (Seconds)
+     */
+    public AutoDrive(double speedX, double speedY, double speedR, double angle, double timeout)
+    {
+        requires(Robot.driveSubsystem);
+        vector = new Vector(speedX, speedY);
+        rotate = speedR;
+        heading = angle;
+        setTimeout(timeout);
     }
     
     protected void initialize()
     {
-        if(gyroEnabled)
-        {   
-            // Create our heading straight in front of our current position
-            //Robot.rockerDriveSubsystem.zeroGyro(0); //TODO BDP Needed to zero here?
-        }
+        
     }
 
     protected void execute() 
     {
-        if(mode == MODE.DRIVE)
-        {
-            //TODO Use a PID loop here if this isn't good enough
-            if(Robot.targetingSubsystem.DistanceToTarget() < Constants.OPTIMAL_SHOOTING_DISTANCE)
-            {
-                Robot.driveSubsystem.driveXY(0, .3, 0);            
-            }
-            else if(Robot.targetingSubsystem.DistanceToTarget() > Constants.OPTIMAL_SHOOTING_DISTANCE)
-            {
-                Robot.driveSubsystem.driveXY(0, -.3, 0);            
-            }
-            
-          //Robot.tankDriveSubsystem.driveRaw(speedR, speedL);    
-        }
-        else if(mode == MODE.ROTATE)
-        {
-          //TODO: allow us to choose the parameters
-            Vector vector = new Vector(.5, .5); 
-            Robot.driveSubsystem.driveWithHeading(vector, .5, heading);
-        }
+        Robot.driveSubsystem.driveWithHeading(vector, rotate, heading);
     }
 
     protected boolean isFinished()
     {
-        if(mode == MODE.ROTATE)
+        boolean done;
+        
+        if(headingTolerance != 0)
         {
-            boolean done = Robot.driveSubsystem.getLastHeading() - heading >= 0 - tolerance ||
-                           Robot.driveSubsystem.getLastHeading() - heading <= 0 + tolerance;
-            
-            return done;
+            done = Math.abs(heading - Robot.driveSubsystem.getLastHeading()) < headingTolerance;
         }
         else
         {
-            return isTimedOut();
+            done = isTimedOut();
         }
+        
+        return done;
     }
+    
     protected void end() 
     {
-        //Robot.driveSubsystem.driveRaw(0, 0);
+        
     }
 
     protected void interrupted()

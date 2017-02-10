@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * Provides information used to score a gear.
  * This subsystem translates pictures into data that commands can use to correct how the robot is aligned to the spring.
- * @author drlindne
  *
  */
 public class Aligning extends Subsystem 

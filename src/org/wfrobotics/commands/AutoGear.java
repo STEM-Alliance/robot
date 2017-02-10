@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoGear extends CommandGroup
 {
     enum STARTPOS {LEFT, CENTER, RIGHT};
+    
     final STARTPOS startPos;
     boolean isMoving = false;
     
@@ -42,8 +43,8 @@ public class AutoGear extends CommandGroup
             /* Vector vector = new Vector(0, 1);
            Robot.driveSubsystem.driveWithHeading(vector, .5, 45);
            */
-           addSequential(new AutoDrive(2, 1, 1, false));
-           addSequential(new AutoDrive(45, 0, AutoDrive.MODE.ROTATE));
+           addSequential(new AutoDrive(1, 1, 0, 2));
+           addSequential(new AutoDrive(Constants.AUTONOMOUS_TURN_SPEED, 45, Constants.AUTONOMOUS_TURN_TOLERANCE));
            isMoving = true;
             //TODO Fill in
         }
@@ -54,8 +55,8 @@ public class AutoGear extends CommandGroup
             Vector vector = new Vector(0, 1);
             Robot.driveSubsystem.driveWithHeading(vector, -.5, 315);
             */
-            addSequential(new AutoDrive(2, 1, 1, false));
-            addSequential(new AutoDrive(315, 0, AutoDrive.MODE.ROTATE));
+            addSequential(new AutoDrive(1, 1, 0, 2));
+            addSequential(new AutoDrive(Constants.AUTONOMOUS_TURN_SPEED, 315, Constants.AUTONOMOUS_TURN_TOLERANCE));
             isMoving = true;
         }
         //take picture and retrieve yaw
