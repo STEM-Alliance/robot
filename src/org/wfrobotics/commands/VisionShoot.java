@@ -1,5 +1,6 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.Vector;
 import org.wfrobotics.commands.AutoDrive.MODE;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.Targeting.TargetData;
@@ -10,35 +11,59 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  *
  */
 public class VisionShoot extends CommandGroup {
+        private TargetData data;
+        private Shoot shoot;
 
     public VisionShoot() {
-        TargetData data = Robot.targetingSubsystem.getData();
-        
+        requires (Robot.driveSubsystem);
+        this.data = Robot.targetingSubsystem.getData();
+        shoot = new Shoot(Conveyor.MODE.OFF);
+        addSequential(shoot);
+    }
+    protected void execute()
+    {
         if (data.InView)
         {
             double yawOffset = data.Yaw; //rotate control
-            addSequential(new AutoDrive(yawOffset, .05 * yawOffset, MODE.ROTATE));
-          
+            Vector vector = new Vector(.5, .5); 
+            Robot.driveSubsystem.driveWithHeading(vector, .5, yawOffset);
+
             //distance to boiler 
             double tolerance = Constants.OPTIMAL_SHOOTING_DISTANCE * .05;
             if(Math.abs(Constants.OPTIMAL_SHOOTING_DISTANCE - 
-                    Robot.targetingSubsystem.DistanceToTarget()) <= tolerance )
+                    Robot.targetingSubsystem.DistanceToTarget()) >= tolerance )
             {
-            
-             if(Robot.targetingSubsystem.DistanceToTarget() < 
-                    Constants.OPTIMAL_SHOOTING_DISTANCE )
-                
+                shoot = new Shoot(Conveyor.MODE.OFF);
+
+              //TODO Use a PID loop here if this isn't good enough
+                //speed = GetPIDSpeed(error, )
+                 //error = desired-actual
+                 //public double GetPIDSpeed(error)
+//                 {
+//                return 5;
+//                 }
+                if(Robot.targetingSubsystem.DistanceToTarget() < Constants.OPTIMAL_SHOOTING_DISTANCE)
+                {
+                    Robot.driveSubsystem.driveXY(0, .3, 0);            
+                }
+                else if(Robot.targetingSubsystem.DistanceToTarget() > Constants.OPTIMAL_SHOOTING_DISTANCE)
+                {
+                    Robot.driveSubsystem.driveXY(0, -.3, 0);            
+                }
+            }
+            else
             {
-                Robot.driveSubsystem.driveXY(0, .3, -1);            
+                //addSequential(new Shoot(Conveyor.MODE.CONTINUOUS));
+                shoot = new Shoot(Conveyor.MODE.CONTINUOUS);
             }
-            else if(Robot.targetingSubsystem.DistanceToTarget() > 
-                    Constants.OPTIMAL_SHOOTING_DISTANCE )
-            {
-                Robot.driveSubsystem.driveXY(0, -.3, -1);            
-            }
-            }
-        
-        
+        }
+        else
+        {
+            //TODO: Turn until you see the boiler
+        }
+       
+    }
+}   
     //check coordinates (tolerances)
         
         //check distance (tolerances) 
@@ -49,6 +74,6 @@ public class VisionShoot extends CommandGroup {
     //verify coordinates
       
     //shoot
-    }
-}
-}
+    
+
+
