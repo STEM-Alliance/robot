@@ -15,6 +15,7 @@ public class AutoShoot extends CommandGroup
     {
         // Just like AutoGear, think through this by writing pseudocode, then implement
         //check what place you start in
+        //Programmed for RED team for now
         if(startPos == STARTPOS.CENTER)
         {
             //TODO Fill in
@@ -30,7 +31,8 @@ public class AutoShoot extends CommandGroup
             // Drive past the Base line
             // drive back to the hopper and hit it
             // drive to correct shooting distance
-            addSequential (new VisionShoot());
+            addSequential (new AutoDrive(2, 1, 1, true)); //not correct values
+            addSequential (new VisionShoot()); 
 
         }
         else if (startPos == STARTPOS.RIGHT)
