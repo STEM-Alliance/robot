@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SteamworksDrive extends CommandGroup 
-{    
+{
     public int ANGLE_INTAKE_OFF = 25;
     
     private IntakeSetup intake;
@@ -24,20 +24,17 @@ public class SteamworksDrive extends CommandGroup
     public SteamworksDrive()
     {   
         intake = new IntakeSetup(false, false);
-//        leds = new LED(Led.HARDWARE.TOP, LED.MODE.OFF);
+        leds = new LED(Led.HARDWARE.TOP, LED.MODE.OFF);
         
         addParallel(intake);
-//        addParallel(leds);
+        addParallel(leds);
         addSequential(new DriveSwerveHalo());
     }
     
     protected void execute()
     {
-        double angleDifference = Robot.driveSubsystem.getLastVector().getAngle();
-        double vectorMag = Robot.driveSubsystem.getLastVector().getMag();
-        
-        setIntakes(angleDifference, vectorMag);
-//        setLEDs();
+        setIntakes();
+        setLEDs();
     }
     
     protected void end() 
@@ -51,8 +48,11 @@ public class SteamworksDrive extends CommandGroup
         end();
     }
     
-    public void setIntakes(double angleDifference, double vectorMag)
+    public void setIntakes()
     {
+        double angleDifference = Robot.driveSubsystem.getLastVector().getAngle();
+        double vectorMag = Robot.driveSubsystem.getLastVector().getMag();
+        
         angleDifference = -(angleDifference - 90);
         angleDifference = Utilities.wrapToRange(angleDifference, -180, 180);
        
@@ -88,21 +88,21 @@ public class SteamworksDrive extends CommandGroup
         intake.set(onLeft, onRight);
     }
     
-//    public void setLEDs()
-//    {
-//        if (Robot.driveSubsystem.isGearStored())
-//        {
-//            leds.set(LED.MODE.BLINK);
-//        }        
-//        else if (Robot.driveSubsystem.isSpringInGear())
-//        {
-//            leds.set(LED.MODE.SOLID);
-//        }
-//        else
-//        {
-//            leds.set(LED.MODE.OFF);
-//        }
-//    }
+    public void setLEDs()
+    {
+        if (Robot.driveSubsystem.isGearStored())
+        {
+            leds.set(LED.MODE.BLINK);
+        }        
+        else if (Robot.driveSubsystem.isSpringInGear())
+        {
+            leds.set(LED.MODE.SOLID);
+        }
+        else
+        {
+            leds.set(LED.MODE.OFF);
+        }
+    }
 
     public void printDash(double angleDifference, boolean right, boolean left)
     {
