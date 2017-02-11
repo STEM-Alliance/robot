@@ -1,8 +1,5 @@
 package org.wfrobotics.commands;
 
-import org.wfrobotics.commands.AutoGear.STARTPOS;
-import org.wfrobotics.robot.Robot;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoShoot extends CommandGroup 
@@ -31,7 +28,7 @@ public class AutoShoot extends CommandGroup
             // Drive past the Base line
             // drive back to the hopper and hit it
             // drive to correct shooting distance
-            addSequential (new AutoDrive(2, 1, 1, true)); //not correct values
+            addSequential (new AutoDrive(0, 1, 0, 2)); //not correct values
             addSequential (new VisionShoot()); 
 
         }

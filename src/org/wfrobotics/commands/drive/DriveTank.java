@@ -9,11 +9,15 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveTank extends Command 
 {
+    public enum MODE {TANK, ARCADE, OFF}
+    
+    public final MODE mode;
     boolean backward;
     
-    public DriveTank(boolean backward) 
+    public DriveTank(MODE mode, boolean backward) 
     {
         requires(Robot.driveSubsystem);
+        this.mode = mode;
         this.backward = backward;
     }
 
@@ -23,31 +27,63 @@ public class DriveTank extends Command
 
     protected void execute() 
     {
+        double left = 0;
+        double right = 0;
+        
         Utilities.PrintCommand("Drive", this);
        
-        double adjust = OI.DriveTankOI.getThrottleSpeedAdjust();
-        double left = OI.DriveTankOI.getL() * adjust;
-        double right = OI.DriveTankOI.getR() * adjust;
-
-        if(backward)
+        if (mode == MODE.TANK)
         {
-            double temp;
-            temp = left * -1.0;
-            left = right * -1.0;
-            right = temp;
-        }
-        
-        // make sure both are non-zero before we try to lock straight
-        if(Math.abs(left) > .01 && Math.abs(right) > .01)
-        {
-            // Assume we want to go straight if similar value
-            if (Math.abs(left - right) < .15)
+            double adjust = OI.DriveTankOI.getThrottleSpeedAdjust();
+            left = OI.DriveTankOI.getL() * adjust;
+            right = OI.DriveTankOI.getR() * adjust;
+    
+            if(backward)
             {
-                double magnitudeAverage = Math.abs((left + right) / 2);
-                left = Math.signum(left) * magnitudeAverage;
-                right = Math.signum(right) * magnitudeAverage;
+                double temp;
+                temp = left * -1.0;
+                left = right * -1.0;
+                right = temp;
+            }
+            
+            // make sure both are non-zero before we try to lock straight
+            if(Math.abs(left) > .01 && Math.abs(right) > .01)
+            {
+                // Assume we want to go straight if similar value
+                if (Math.abs(left - right) < .15)
+                {
+                    double magnitudeAverage = Math.abs((left + right) / 2);
+                    left = Math.signum(left) * magnitudeAverage;
+                    right = Math.signum(right) * magnitudeAverage;
+                }
             }
         }
+        else if (mode == MODE.ARCADE)
+        {
+            double adjust = OI.DriveArcadeOI.getThrottleSpeedAdjust();
+            double y = OI.DriveArcadeOI.getThrottle();
+            double x = OI.DriveArcadeOI.getTurn() * .8;
+            left = y;  // Default value as if forward/backwards
+            right = y;  // Default value as if forward/backwards
+            
+            Utilities.PrintCommand("Drive", this);
+            
+            // this doesn't work
+//            // Determine if we are instead going left/right
+//            if (Math.abs(x) > Math.abs(y))
+//            {
+//                double direction = Math.signum(x);  // Going Right = 1, Going Left = -1
+//                
+//                speedL = x * direction;
+//                speedR = -x * direction;
+//            }
+            
+            left = y + x;
+            right = y - x;
+            left = limit(left) * adjust;
+            right = limit(right) * adjust;
+        }
+
         Robot.driveSubsystem.driveTank(right, left);
     }
 
@@ -58,9 +94,22 @@ public class DriveTank extends Command
 
     protected void end() 
     {
+        
     }
 
     protected void interrupted() 
     {
+        
+    }
+    
+    private double limit(double val)
+    {
+        double output = val;
+        
+        if(val > 1)
+            output = 1;
+        else if (val < -1)
+            output= -1;
+        return output;
     }
 }
