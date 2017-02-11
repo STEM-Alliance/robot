@@ -1,16 +1,13 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.commands.LED;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotMap;
 
-import com.mindsensors.*;
+import com.mindsensors.CANLight;
 
-import edu.wpi.first.wpilibj.AnalogOutput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import javafx.scene.paint.Color;
 
 public class Led extends Subsystem 
 {

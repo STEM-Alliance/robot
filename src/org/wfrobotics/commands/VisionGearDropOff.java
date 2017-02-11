@@ -1,7 +1,7 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.Targeting.TargetData;
+import org.wfrobotics.subsystems.Camera.TargetData;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class VisionGearDropOff extends CommandGroup {
 
     public VisionGearDropOff() {
-        TargetData data = Robot.targetingSubsystem.getData(false);
+        TargetData data = Robot.targetingSubsystem.getData();
         
     if(data.InView)
     {
@@ -22,14 +22,14 @@ public class VisionGearDropOff extends CommandGroup {
 
         //distance to boiler 
 
-        if(Math.abs(Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE - Robot.targetingSubsystem.DistanceToTarget(false)) <= tolerance )
+        if(Math.abs(Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE - Robot.targetingSubsystem.DistanceToTarget()) <= tolerance )
         {
 
-            if(Robot.targetingSubsystem.DistanceToTarget(false) < Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE )                
+            if(Robot.targetingSubsystem.DistanceToTarget() < Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE )                
             {
                 Robot.driveSubsystem.driveXY(0, .3, -1);            
             }
-            else if(Robot.targetingSubsystem.DistanceToTarget(false) > Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE )
+            else if(Robot.targetingSubsystem.DistanceToTarget() > Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE )
             {
                 Robot.driveSubsystem.driveXY(0, -.3, -1);            
             }
