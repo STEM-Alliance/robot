@@ -20,13 +20,12 @@ public class Shooter extends Subsystem
     {
         flywheelTop = new CANTalon(RobotMap.SHOOTER_MOTOR_SRX);
         
-//      This is commented out until we get a sensor on the shooter
-//        flywheelTop.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-//        
-//        flywheelTop.changeControlMode(TalonControlMode.Speed);
-//        flywheelTop.setPID(.115,0.0001,0.015);
-//        flywheelTop.setCloseLoopRampRate(.01);    
-        flywheelTop.setInverted(true);  //is this needed?
+        flywheelTop.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        flywheelTop.changeControlMode(TalonControlMode.Speed);
+        flywheelTop.setPID(.115,0.0001,0.015);
+        flywheelTop.setCloseLoopRampRate(.01);
+        
+        flywheelTop.setInverted(false);
       
         flywheelBottom = new CANTalon(RobotMap.FEEDER_MOTOR_SRX);
     }

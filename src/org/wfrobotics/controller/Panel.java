@@ -75,7 +75,7 @@ public class Panel extends XboxController{
     @Override
     public double getRawAxis(int axis)
     {
-        return getRawAxis(axis);
+        return super.getRawAxis(axis);
     }
 
     /**

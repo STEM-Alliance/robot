@@ -90,6 +90,11 @@ public class SwerveWheel {
         driveMotor.setVoltageRampRate(20);
         driveLastChangeTime = Timer.getFPGATimestamp();
         //driveMotor.setCurrentLimit(5);
+        driveMotor.ConfigFwdLimitSwitchNormallyOpen(true);
+        driveMotor.ConfigRevLimitSwitchNormallyOpen(true);
+        driveMotor.enableForwardSoftLimit(false);
+        driveMotor.enableReverseSoftLimit(false);
+        driveMotor.enableBrakeMode(false);
         
         if(SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE)
         {
@@ -107,6 +112,11 @@ public class SwerveWheel {
 
         angleMotor = new CANTalon(RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
         angleMotor.setVoltageRampRate(20);
+        angleMotor.ConfigFwdLimitSwitchNormallyOpen(true);
+        angleMotor.ConfigRevLimitSwitchNormallyOpen(true);
+        angleMotor.enableForwardSoftLimit(false);
+        angleMotor.enableReverseSoftLimit(false);
+        angleMotor.enableBrakeMode(false);
 
         gearHigh = true;
         this.gearShifter = new Servo(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number]);
@@ -146,7 +156,7 @@ public class SwerveWheel {
     private double getAnglePotAdjusted()
     {
         double invert = angleInverted ? -1 : 1;
-        return Utilities.wrapToRange(invert * anglePot.get(),-180,180);
+        return Utilities.round(Utilities.wrapToRange(invert * anglePot.get(),-180,180),2);
     }
     
     /**
@@ -395,20 +405,20 @@ public class SwerveWheel {
 
     public void updateAngleOffset()
     {
-        updateAngleOffset(0);
+        updateAngleOffset(Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
+                          SwerveConstants.ANGLE_OFFSET[number]));
     }
 
     /**
      * Test with the specified value as the angle offset.
-     * Note: this will add the specified value to the already existing offset
      * @param value angle offset in degrees
      */
     public void updateAngleOffset(double value)
     {
-        double savedAngle = Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
-                SwerveConstants.ANGLE_OFFSET[number]);
+        //double savedAngle = Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
+        //        SwerveConstants.ANGLE_OFFSET[number]);
         
-        anglePot.setOffset(savedAngle + value);
+        anglePot.setOffset(value);
     }
     
     /**
@@ -418,15 +428,21 @@ public class SwerveWheel {
      */
     public void saveAngleOffset(double value)
     {
-        double savedAngle = Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
-                SwerveConstants.ANGLE_OFFSET[number]);
+        //double savedAngle = Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
+        //        SwerveConstants.ANGLE_OFFSET[number]);
 
-        Preferences.getInstance().putDouble("Wheel_Orientation_" + number, savedAngle + value);
+        Preferences.getInstance().putDouble("Wheel_Orientation_" + number, value);
     }
 
     protected void updateMaxRotationSpeed()
     {
         angleMaxSpeed = Preferences.getInstance()
                 .getDouble("maxRotationSpeed", angleMaxSpeed);
+    }
+
+    public void printDash()
+    {
+        SmartDashboard.putNumber(name + ".angle", getAnglePotAdjusted());
+        SmartDashboard.putNumber("SpeedCurrent" + number, driveMotor.getSpeed());
     }
 }
