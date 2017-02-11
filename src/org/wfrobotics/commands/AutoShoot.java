@@ -1,8 +1,5 @@
 package org.wfrobotics.commands;
 
-import org.wfrobotics.commands.AutoGear.STARTPOS;
-import org.wfrobotics.robot.Robot;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoShoot extends CommandGroup 
@@ -22,6 +19,7 @@ public class AutoShoot extends CommandGroup
             // Drive past the Base line
             // drive back to the hopper and hit it
             // drive to correct shooting distance
+            
             addSequential (new VisionShoot());
 
         }
@@ -30,8 +28,15 @@ public class AutoShoot extends CommandGroup
             //TODO Fill in
             // Drive past the Base line
             // drive back to the hopper and hit it
-            // drive to correct shooting distance
-            addSequential (new AutoDrive(2, 1, 1, true)); //not correct values
+                // drive to correct shooting distance
+                addSequential (new AutoDrive(-1, 1, 0, 1)); //move diagonally as to not hit the airship
+                addSequential (new AutoDrive (0, 1, 0, 3)); //pass the Launchpad Line
+                addSequential (new AutoDrive(-1, -1, 0, 2)); //comes back towards the hopper
+            //TODO correct numbers
+            addSequential (new AutoDrive(-1, 0, 0, 1)); //engage the hopper 
+            addSequential (new AutoDrive(0, -1, 0, 1)); //catch the balls 
+            addSequential (new AutoDrive(1, -1, 0, 2));
+           
             addSequential (new VisionShoot()); 
 
         }
