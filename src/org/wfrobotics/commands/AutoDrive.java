@@ -83,6 +83,7 @@ public class AutoDrive extends Command
     protected void initialize()
     {
         
+        //TODO Use a PID loop here if this isn't good enough
     }
 
     protected void execute() 

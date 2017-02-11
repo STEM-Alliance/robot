@@ -6,6 +6,7 @@ import org.wfrobotics.commands.Conveyor.MODE;
 import org.wfrobotics.commands.IntakeSetup;
 import org.wfrobotics.commands.LED;
 import org.wfrobotics.commands.Shoot;
+import org.wfrobotics.commands.VisionShoot;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Panel.BUTTON;
@@ -40,7 +41,8 @@ public class OI
     Button buttonShooterStart = new XboxButton(xboxDrive, Xbox.BUTTON.B);
     Button buttonAugerStart = new XboxButton(xboxDrive, Xbox.BUTTON.A);
     //Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
-    
+    Button buttonVisionShootStart = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
+
     // manipulator controller
     
     // panel
@@ -65,6 +67,7 @@ public class OI
         buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
         buttonShooterStart.toggleWhenPressed(new Shoot(MODE.CONTINUOUS));
         buttonAugerStart.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
+        buttonVisionShootStart.toggleWhenPressed(new VisionShoot());
         //buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
 
         
