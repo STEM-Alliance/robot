@@ -4,8 +4,6 @@ import org.wfrobotics.commands.Rev;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
-import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -110,6 +108,21 @@ public class Shooter extends Subsystem
             }
         }
         
+    }
+    public boolean bothInTollerance(double tolerance)
+    {
+        if (topSpeedReached(tolerance))
+        {
+            if (bottomSpeedReached(tolerance))
+            {
+                return true;
+            }
+        }       
+            return false;
+    }
+    public double getSpeedTop()
+    {
+        return flywheelTop.getSpeed();
     }
 
     public void printDash()

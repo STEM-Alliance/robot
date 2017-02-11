@@ -2,16 +2,13 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.Conveyor;
-import org.wfrobotics.commands.Conveyor.MODE;
 import org.wfrobotics.commands.IntakeSetup;
-import org.wfrobotics.commands.LED;
 import org.wfrobotics.commands.Shoot;
 import org.wfrobotics.commands.VisionShoot;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Panel.BUTTON;
 import org.wfrobotics.controller.Panel.COLOR;
-import org.wfrobotics.subsystems.Led.HARDWARE;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
@@ -48,12 +45,11 @@ public class OI
     // panel
     //Button buttonPanelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
     
-    public OI() 
-    {
-        
+    public OI()
+    {        
         //buttonDriveStart.toggleWhenPressed(new DriveSwerveWheelCalibration());
-        buttonDriveLB.whenPressed(new DriveToggleHighGear());
-        buttonDriveBack.whenPressed(new DriveToggleFieldRelative());
+        buttonDriveLB.whenPressed(new DriveConfigToggle(DriveConfigToggle.MODE.HIGH_GEAR));
+        buttonDriveBack.whenPressed(new DriveConfigToggle(DriveConfigToggle.MODE.FIELD_RELATIVE));
         buttonDriveStart.whenPressed(new DriveZeroGyro());
         //buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
         //buttonDriveBack.toggleWhenPressed(new DriveTank(true));
@@ -65,11 +61,10 @@ public class OI
         
         buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
         buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
-        buttonShooterStart.toggleWhenPressed(new Shoot(MODE.CONTINUOUS));
+        buttonShooterStart.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
         buttonAugerStart.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
         buttonVisionShootStart.toggleWhenPressed(new VisionShoot());
         //buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
-
         
         //////////////////////////
     }
@@ -276,6 +271,5 @@ public class OI
         panel.setLEDs(Hand.kLeft, ledsL[0], ledsL[1], ledsL[2], ledsL[3]);
         panel.setLEDs(Hand.kRight, ledsR[0], ledsR[1], ledsR[2], ledsR[3]);
     }
-
 }
 

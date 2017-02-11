@@ -86,7 +86,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public void initDefaultCommand() 
     {
-        setDefaultCommand(new DriveSwerveHalo());
+        setDefaultCommand(new DriveSwerve(DriveSwerve.MODE.HALO));
     }
     
     public void free()

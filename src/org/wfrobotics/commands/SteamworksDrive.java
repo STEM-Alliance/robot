@@ -1,7 +1,7 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.commands.drive.DriveSwerveHalo;
+import org.wfrobotics.commands.drive.DriveSwerve;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.Led;
 
@@ -27,7 +27,7 @@ public class SteamworksDrive extends CommandGroup
         
         addParallel(intake);
         addParallel(leds);
-        addSequential(new DriveSwerveHalo());
+        addSequential(new DriveSwerve(DriveSwerve.MODE.HALO));
     }
     
     protected void execute()
