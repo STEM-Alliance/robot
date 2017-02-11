@@ -110,6 +110,21 @@ public class Shooter extends Subsystem
         }
         
     }
+    public boolean bothInTollerance(double tolerance)
+    {
+        if (topSpeedReached(tolerance))
+        {
+            if (bottomSpeedReached(tolerance))
+            {
+                return true;
+            }
+        }       
+            return false;
+    }
+    public double getSpeedTop()
+    {
+        return flywheelTop.getSpeed();
+    }
 
     public void printDash()
     {
