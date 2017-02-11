@@ -102,11 +102,11 @@ public class AutoGear extends CommandGroup
             }
             else if(Robot.aligningSubsystem.getData().Yaw == 0)
             {
-                if(Robot.targetingSubsystem.DistanceToTarget() > 0)
+                if(Robot.targetingSubsystem.DistanceToTarget(false) > 0)
                 {
                     Robot.driveSubsystem.driveXY(0, 0.5, 0);
                 }
-                else if(Robot.targetingSubsystem.DistanceToTarget() == 0)
+                else if(Robot.targetingSubsystem.DistanceToTarget(false) == 0)
                 {
                     Robot.driveSubsystem.driveXY(0, 0, 0);
                     isMoving = false;
