@@ -13,6 +13,7 @@ public class Constants
    
    public static final double SHOOTER_READY_SHOOT_SPEED = 3750;  // Ideal speed for shooter to shoot balls
    public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
+   public static final double SHOOTER_TRIGGER_SPEED_DROP = SHOOTER_READY_SHOOT_SPEED * 0.05 * 0.5 ; // Speed for the unjamming gate (
    
    public static final double AUGER_SPEED = 100;  // Ideal for giving balls to shooter while shooter maintains speed (above min shooter recovery time)
    
@@ -23,4 +24,6 @@ public class Constants
    public static final double TEST_TARGET_DISTANCE_IN = 0; //optimal distance from boiler (needs to be tested)
    public static final double FOCAL_LENGTH_IN = TEST_TARGET_HEIGHT_PIXEL * TEST_TARGET_DISTANCE_IN / TARGET_HEIGHT_IN;
    public static final double OPTIMAL_SHOOTING_DISTANCE = 0;
+   public static final double OPTIMAL_GEAR_DROP_OFF_DISTANCE = 0;
+
 }

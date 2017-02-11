@@ -2,16 +2,18 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.Vector;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.Targeting.TargetData;
+import org.wfrobotics.subsystems.Camera.TargetData;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class VisionShoot extends CommandGroup 
-{
+{   
+    private TargetData data;
+    private Shoot shoot;
+    
     public VisionShoot() 
     {
-        private TargetData data;
-        private Shoot shoot;
+     
         requires (Robot.driveSubsystem);
         this.data = Robot.targetingSubsystem.getData();
         shoot = new Shoot(Conveyor.MODE.OFF);
@@ -27,7 +29,13 @@ public class VisionShoot extends CommandGroup
             addSequential(new AutoDrive(Constants.AUTONOMOUS_TURN_SPEED, yawOffset, Constants.AUTONOMOUS_TURN_TOLERANCE));
 
             //distance to boiler 
-                    Robot.targetingSubsystem.DistanceToTarget()) >= tolerance )
+            double tolerance = Constants.OPTIMAL_SHOOTING_DISTANCE * .05;
+            if(Math.abs(Constants.OPTIMAL_SHOOTING_DISTANCE - 
+                   Robot.targetingSubsystem.DistanceToTarget()) <= tolerance &&
+                   Math.abs(Constants.OPTIMAL_SHOOTING_DISTANCE - 
+                           Robot.targetingSubsystem.DistanceToTarget()) >= tolerance)
+            {
+            
                 shoot = new Shoot(Conveyor.MODE.OFF);
 
               //TODO Use a PID loop here if this isn't good enough
@@ -57,7 +65,8 @@ public class VisionShoot extends CommandGroup
         }
        
     }
-}   
+    }
+}
                 //check coordinates (tolerances)
 
                 //check distance (tolerances) 

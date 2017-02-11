@@ -92,21 +92,21 @@ public class AutoGear extends CommandGroup
     {
         if(isMoving == true)
         {
-            if(Robot.aligningSubsystem.getData().Yaw > 0) // to far to the right
+            if(Robot.aligningSubsystem.getData().Yaw > 0) // too far to the right
             {
                 Robot.driveSubsystem.driveXY(-0.2, 0, 0);                
             }
-            else if(Robot.aligningSubsystem.getData().Yaw < 0)// to far to the left
+            else if(Robot.aligningSubsystem.getData().Yaw < 0)// too far to the left
             {
                 Robot.driveSubsystem.driveXY(0.2, 0, 0);
             }
             else if(Robot.aligningSubsystem.getData().Yaw == 0)
             {
-                if(Robot.targetingSubsystem.DistanceToTarget(false) > 0)
+                if(Robot.targetingSubsystem.DistanceToTarget() > 0)
                 {
                     Robot.driveSubsystem.driveXY(0, 0.5, 0);
                 }
-                else if(Robot.targetingSubsystem.DistanceToTarget(false) == 0)
+                else if(Robot.targetingSubsystem.DistanceToTarget() == 0)
                 {
                     Robot.driveSubsystem.driveXY(0, 0, 0);
                     isMoving = false;
