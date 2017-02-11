@@ -58,8 +58,8 @@ public class OI
         //buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
         //buttonDriveBack.toggleWhenPressed(new DriveTank(true));
 
-        buttonPanelSwitchL.whenPressed(new DriveSwervePanelTest());
-        buttonPanelSwitchR.whenPressed(new DriveSwervePanelTest());
+        buttonPanelSwitchL.whileHeld(new DriveSwervePanelTest());
+        buttonPanelSwitchR.whileHeld(new DriveSwervePanelTest());
                 
         //////////////////////////
         
@@ -256,7 +256,7 @@ public class OI
 
         public static boolean getPanelSave()
         {
-            return panel.getButton(BUTTON.SWITCH_L) && panel.getButton(BUTTON.SWITCH_L);
+            return panel.getButton(BUTTON.SWITCH_L) && panel.getButton(BUTTON.SWITCH_R);
         }
 
     }
