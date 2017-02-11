@@ -1,57 +1,60 @@
 package org.wfrobotics.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoShoot extends CommandGroup 
 {
-    public enum MODE {DIRECT, HOPPER};
-    enum STARTPOS {LEFT, CENTER, RIGHT};
-
+    public enum MODE {PRELOADED, HOPPER};
+        public boolean toBaseLine; 
     
-    public AutoShoot(STARTPOS startPos)
+    private final MODE mode;
+    
+    public AutoShoot(MODE mode, boolean toBaseLine)
     {
-        // Just like AutoGear, think through this by writing pseudocode, then implement
+        this.toBaseLine= toBaseLine;
+        this.mode = mode;
+        int signx = 1;
+
         //check what place you start in
-        //Programmed for RED team for now
-        if(startPos == STARTPOS.CENTER)
+        if( DriverStation.getInstance().getAlliance() == Alliance.Red)
         {
-            //TODO Fill in
-            // Drive past the Base line
-            // drive back to the hopper and hit it
-            // drive to correct shooting distance
-            
-            addSequential (new VisionShoot());
-
+            signx = -1;
         }
-        else if (startPos == STARTPOS.LEFT)
+        if(mode == MODE.HOPPER)
         {
-            //TODO Fill in
-            // Drive past the Base line
-            // drive back to the hopper and hit it
-                // drive to correct shooting distance
-                addSequential (new AutoDrive(-1, 1, 0, 1)); //move diagonally as to not hit the airship
-                addSequential (new AutoDrive (0, 1, 0, 3)); //pass the Launchpad Line
-                addSequential (new AutoDrive(-1, -1, 0, 2)); //comes back towards the hopper
-            //TODO correct numbers
-            addSequential (new AutoDrive(-1, 0, 0, 1)); //engage the hopper 
-            addSequential (new AutoDrive(0, -1, 0, 1)); //catch the balls 
-            addSequential (new AutoDrive(1, -1, 0, 2));
-           
-            addSequential (new VisionShoot()); 
-
+            if(toBaseLine)
+            {
+                addSequential (new AutoDrive (signx*0, 1, 0, 3)); //pass the Launchpad Line
+                addSequential (new AutoDrive(signx*-1, -1, 0, 2)); //comes back towards the hopper
+                addSequential (new AutoDrive(signx*-1, 0, 0, 1)); //engage the hopper 
+                addSequential (new AutoDrive(signx*.2, -1, 0, 1)); //catch the balls 
+                addSequential (new AutoDrive(signx*1, -1, 0, 2)); //get to a more open area
+                //TODO correct numbers
+                addSequential (new VisionShoot()); 
+            }
+            else
+            {
+                addSequential (new AutoDrive(signx*-.2, 1, 0, 3)); //go diagonally to the hopper
+                addSequential (new AutoDrive(signx*-1, 0, 0, 1)); //engage the hopper
+                addSequential (new AutoDrive(signx*.2, -1, 0, 1)); //catch the balls 
+                addSequential (new AutoDrive(signx*1, -1, 0, 2)); //get to a more open area
+                //TODO correct numbers
+                addSequential (new VisionShoot()); 
+               
+            }
         }
-        else if (startPos == STARTPOS.RIGHT)
+        else
         {
-            //TODO Fill in
-            // Drive past the Base line
-            // drive back to the hopper and hit it
-            // drive to correct shooting distance
-            addSequential (new VisionShoot());
+           addSequential (new AutoDrive (signx*-1, 1, 0, 2));
+           addSequential (new VisionShoot());
         }
         // TODO Shoot directly at the boiler or do a sequence of commands to load from the hopper and shoot
             // Many steps for the latter
 
     }
+
     
     protected void end()
     {
