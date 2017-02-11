@@ -2,7 +2,6 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -13,10 +12,13 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Conveyor extends Command 
 {
-    public enum MODE {SINGLE, CONTINUOUS, OFF};
+    public enum MODE {SINGLE, CONTINUOUS, UNJAM, OFF};
     
     private final MODE mode;
     private boolean hasFed = false;
+    private double lastBall;
+    private double unjamTime;
+    private boolean unjaming;
     
     public Conveyor(MODE mode)
     {
@@ -44,19 +46,45 @@ public class Conveyor extends Command
         {
             Robot.augerSubsystem.setSpeed(0);
         }
-        else if (Robot.shooterSubsystem.topSpeedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
+        else if(mode == MODE.UNJAM)
         {
-            // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?
-            Robot.augerSubsystem.setSpeed(.3);
-            hasFed = true;
-            // TODO DRL do we want to unjam the auger periodically?
+            Robot.augerSubsystem.setSpeed(-0.4);
         }
-        else
+        else 
         {
-            DriverStation.reportError("Conveyor mode not supported", true);
+            double augerSpeed = 0;
+            
+            if (Robot.shooterSubsystem.bothInTollerance(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
+            {
+                // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?
+                augerSpeed = .3;
+                if(!isJamed() && !unjaming )
+                {
+                    unjamTime = timeSinceInitialized();
+                    hasFed = true;
+                }
+                else
+                {  
+                    unjaming = timeSinceInitialized() - unjamTime < 2;
+                    if(unjaming)
+                    {
+                        augerSpeed = -0.3;
+                    }
+                }
+            }
+            
+            Robot.augerSubsystem.setSpeed(augerSpeed);
         }
     }
-
+    public boolean isJamed()
+    {        
+        if ( Constants.SHOOTER_READY_SHOOT_SPEED - Robot.shooterSubsystem.getSpeedTop() > Constants.SHOOTER_TRIGGER_SPEED_DROP )
+        {
+            lastBall = timeSinceInitialized();
+        }        
+        return (timeSinceInitialized() - lastBall > 5);
+    }
+    
     protected boolean isFinished()
     {
         boolean finished;
