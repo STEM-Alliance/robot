@@ -50,7 +50,7 @@ public class AutoDrive extends Command
      * Note: This constructor doesn't need a timeout because the command will end when the angle is reached (within tolerance)
      * @param speedR Magnitude to turn clockwise (positive) or counterclockwise (negative) while driving. (Range: -1 to 1, Zero: Means don't spin)
      * @param angle Angle to turn the robot to a field relative angle (Range: -180 to 180, Units: Degrees)
-     * @param tolerance
+     * @param tolerance Maximum error while at that angle(Units: Degrees)
      */
     public AutoDrive(double speedR, double angle, double tolerance)
     {
