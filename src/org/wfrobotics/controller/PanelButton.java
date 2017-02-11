@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj.buttons.Button;
 public class PanelButton extends Button
 {
     Panel hardware;
-    Panel.ButtonType button;
+    Panel.BUTTON button;
     
-    public PanelButton(Panel hardware, Panel.ButtonType button) {
+    public PanelButton(Panel hardware, Panel.BUTTON button) {
         this.hardware = hardware;
         this.button = button;
     }

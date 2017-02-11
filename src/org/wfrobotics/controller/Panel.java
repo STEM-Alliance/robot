@@ -1,317 +1,203 @@
 package org.wfrobotics.controller;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.hal.HAL;
 
-public class Panel {
+import org.wfrobotics.Utilities;
 
-    private DriverStation m_ds;
-    private final int m_port;
+import edu.wpi.first.wpilibj.XboxController;
+
+public class Panel extends XboxController{
+
+    public static enum AXIS {
+        DIAL_TOP_L     (0), 
+        DIAL_TOP_R     (1),
+        SLIDER_L       (2),
+        SLIDER_R       (3),
+        DIAL_BOTTOM_L  (4),
+        DIAL_BOTTOM_R  (5);
         
-    /**
-     * Represents an analog axis on the panel.
-     */
-    public static class AxisType {
-
-        /**
-         * The integer value representing this enumeration
-         */
-        public final int value;
-        private static final int kSliderLeft_val = 0;
-        private static final int kSliderRight_val = 1;
-        private static final int kKnobLeft_val = 2;
-        private static final int kKnobRight_val = 3;
-
-        private AxisType(int value)
-        {
-            this.value = value;
-        }
-
-        public static final AxisType kSliderLeft = new AxisType(kSliderLeft_val);
-
-        public static final AxisType kSliderRight = new AxisType(kSliderRight_val);
-
-        public static final AxisType kKnobLeft = new AxisType(kKnobLeft_val);
-
-        public static final AxisType kKnobRight = new AxisType(kKnobRight_val);
-    }
-
-    /**
-     * Represents a digital button on the panel
-     */
-    public static class ButtonType {
-
-        /**
-         * The integer value representing this enumeration
-         */
-        public final int value;
-        private static final int kYellowR_val = 1;
-        private static final int kGreenR_val = 2;
-        private static final int kBlackR_val = 3;
-        private static final int kWhiteR_val = 4;
-        private static final int kYellowL_val = 5;
-        private static final int kGreenL_val = 6;
-        private static final int kBlackL_val = 7;
-        private static final int kWhiteL_val = 8;
-        private static final int kSwitchR_val = 9;
-        private static final int kSwitchL_val = 10;
-        private static final int kKey_val = 11;
-        private static final int kFoot_val = 12;
-
-        private ButtonType(int value)
-        {
-            this.value = value;
-        }
-
-        public static final ButtonType kYellowR = new ButtonType(kYellowR_val);
+        private final int value;
         
-        public static final ButtonType kGreenR = new ButtonType(kGreenR_val);
-        
-        public static final ButtonType kBlackR = new ButtonType(kBlackR_val);
-        
-        public static final ButtonType kWhiteR = new ButtonType(kWhiteR_val);
-
-
-        public static final ButtonType kYellowL = new ButtonType(kYellowL_val);
-        
-        public static final ButtonType kGreenL = new ButtonType(kGreenL_val);
-        
-        public static final ButtonType kBlackL = new ButtonType(kBlackL_val);
-        
-        public static final ButtonType kWhiteL = new ButtonType(kWhiteL_val);
-        
-        public static final ButtonType kSwitchR = new ButtonType(kSwitchR_val);
-
-        public static final ButtonType kSwitchL = new ButtonType(kSwitchL_val);
-
-        public static final ButtonType kKey = new ButtonType(kKey_val);
-        
-        public static final ButtonType kFoot = new ButtonType(kFoot_val);
+        private AXIS(int value) { this.value = value; }
+        public int get() { return value; }
     }
     
+    public static enum BUTTON {
+        GREEN_B  (1),
+        GREEN_T  (2),
+        YELLOW_B (3),
+        YELLOW_T (4),
+        SWITCH_L (5),
+        WHITE_B  (6),
+        WHITE_T  (7),
+        BLACK_B  (8),
+        BLACK_T  (9),
+        SWITCH_R (10);
+        
+        private final int value;
+        
+        private BUTTON(int value) { this.value = value; }
+        public int get() { return value; }
+    }
+
+    public static enum COLOR
+    {
+        BLACK(0),
+        RED(1),
+        BLUE(2),
+        GREEN(3);
+        
+        private final int value;
+        
+        private COLOR(int value) { this.value = value; }
+        public int get() { return value; }
+    }
+
+    private short m_LEDMsgL;
+    private short m_LEDMsgR;
+    
+    /**
+     * Constructor
+     * 
+     * @param port USB Port on DriverStation
+     */
     public Panel(int port)
     {
-        super();
-        m_port = port;
-        m_ds = DriverStation.getInstance();
+        super(port);
     }
 
     /**
      * Get Value from an Axis
      * 
-     * @param axis
-     *            Axis Number
+     * @param axis Axis Number
      * @return Value from Axis (-1 to 1)
      */
+    @Override
     public double getRawAxis(int axis)
     {
-        return m_ds.getStickAxis(m_port, axis);
+        return getRawAxis(axis);
     }
 
     /**
      * Get Value from an Axis
      * 
-     * @param axis
-     *            AxisType
-     * @return
+     * @param axis AxisType
+     * @return Value from Axis (-1 to 1)
      */
-    public double getAxis(AxisType axis)
+    public double getAxis(AXIS axis)
     {
-        return getRawAxis(axis.value);
+        return getRawAxis(axis.get());
+    }
+
+    /**
+     * Retrieve value for slider
+     * 
+     * @param hand Hand associated with the Slider
+     * @return Value of Axis (-1 to 1)
+     */
+    public double getSlider(Hand hand)
+    {
+        if (hand.value == Hand.kRight.value)
+        {
+            return getAxis(AXIS.SLIDER_R);
+        }
+        else if (hand.value == Hand.kLeft.value)
+        {
+            return getAxis(AXIS.SLIDER_L);
+        }
+        else
+        {
+            return 0;
+        }
     }
     
     /**
-     * Gets value from a button
+     * Retrieve value for the top dial
      * 
-     * @param button
-     *            number of the button
-     * @return State of the button
+     * @param hand Hand associated with the dial
+     * @return Value of Axis (-1 to 1)
      */
-    public boolean getRawButton(int button)
+    public double getTopDial(Hand hand)
     {
-        return ((0x1 << (button - 1)) & m_ds.getStickButtons(m_port)) != 0;
+        if (hand.value == Hand.kRight.value)
+        {
+            return getAxis(AXIS.DIAL_TOP_R);
+        }
+        else if (hand.value == Hand.kLeft.value)
+        {
+            return getAxis(AXIS.DIAL_TOP_L);
+        }
+        else
+        {
+            return 0;
+        }
     }
-
+    
+    /**
+     * Retrieve value for the bottom dial
+     * 
+     * @param hand Hand associated with the dial
+     * @return Value of Axis (-1 to 1)
+     */
+    public double getBottomDial(Hand hand)
+    {
+        if (hand.value == Hand.kRight.value)
+        {
+            return getAxis(AXIS.DIAL_BOTTOM_R);
+        }
+        else if (hand.value == Hand.kLeft.value)
+        {
+            return getAxis(AXIS.DIAL_BOTTOM_L);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
     /**
      * Get Value from a button
      * 
-     * @param button
-     *            Button Type
+     * @param button Button Type
      * @return
      */
-    public boolean getButton(ButtonType button)
+    public boolean getButton(BUTTON button)
     {
-        return getRawButton(button.value);
+        return getRawButton(button.get());
     }
     
     /**
-     * Get Value from the left slider
-     * @return value from 0 to 1
-     */
-    public double getSliderLeft()
-    {
-        return getAxis(AxisType.kSliderLeft);
-    }
-
-    /**
-     * Get Value from the left knob
-     * @return value from 0 to 1
-     */
-    public double getKnobLeft()
-    {
-        return getAxis(AxisType.kKnobLeft);
-    }
-    
-    /**
-     * Get Value from the Right slider
-     * @return value from 0 to 1
-     */
-    public double getSliderRight()
-    {
-        return getAxis(AxisType.kSliderRight);
-    }
-
-    /**
-     * Get Value from the Right knob
-     * @return value from 0 to 1
-     */
-    public double getKnobRight()
-    {
-        return getAxis(AxisType.kKnobRight);
-    }
-
-    /**
-     * Get State of Green Right Button
-     * 
-     * @return State of button
-     */
-    public boolean getGreenRButton()
-    {
-        return getButton(ButtonType.kGreenR);
-    }
-
-    /**
-     * Get State of Yellow Right Button
-     * 
-     * @return State of button
-     */
-    public boolean getYellowRButton()
-    {
-        return getButton(ButtonType.kYellowR);
-    }
-
-    /**
-     * Get State of Black Right Button
-     * 
-     * @return State of button
-     */
-    public boolean getBlackRButton()
-    {
-        return getButton(ButtonType.kBlackR);
-    }
-
-    /**
-     * Get State of White Right Button
-     * 
-     * @return State of button
-     */
-    public boolean getWhiteRButton()
-    {
-        return getButton(ButtonType.kWhiteR);
-    }
-
-    /**
-     * Get State of Switch Right
-     * 
-     * @return State of switch
-     */
-    public boolean getSwitchR()
-    {
-        return getButton(ButtonType.kSwitchR);
-    }
-
-    /**
-     * Get State of Green Left Button
-     * 
-     * @return State of button
-     */
-    public boolean getGreenLButton()
-    {
-        return getButton(ButtonType.kGreenL);
-    }
-
-    /**
-     * Get State of Yellow Left Button
-     * 
-     * @return State of button
-     */
-    public boolean getYellowLButton()
-    {
-        return getButton(ButtonType.kYellowL);
-    }
-
-    /**
-     * Get State of Black Left Button
-     * 
-     * @return State of button
-     */
-    public boolean getBlackLButton()
-    {
-        return getButton(ButtonType.kBlackL);
-    }
-
-    /**
-     * Get State of White Left Button
-     * 
-     * @return State of button
-     */
-    public boolean getWhiteLButton()
-    {
-        return getButton(ButtonType.kWhiteL);
-    }
-
-    /**
-     * Get State of Switch Right
-     * 
-     * @return State of switch
-     */
-    public boolean getSwitchL()
-    {
-        return getButton(ButtonType.kSwitchL);
-    }
-    
-    /**
-     * Get State of Key Switch
-     * 
-     * @return State of switch
-     */
-    public boolean getKeySwitch()
-    {
-        return getButton(ButtonType.kKey);
-    }
-    
-    /**
-     * Get State of Foot Switch
-     * 
-     * @return State of switch
-     */
-    public boolean getFootSwitch()
-    {
-        return getButton(ButtonType.kFoot);
-    }
-
-    /**
-     * Get State of the Rotary Switch.
-     * The switch has 6 positions, so that gives each position 60 degrees.
-     * ie Position 0: 0 degrees;
-     *    Position 1: 60 degrees;
-     *    etc
-     * 
-     * @return value from 0 to 360 of switch
+     * Get the Rotary encoder as values from 0-7
+     * @return
      */
     public int getRotary()
     {
-        return m_ds.getStickPOV(m_port, 0);
+        int Angle = super.getPOV(0);
+        if (Angle != -1)
+        {
+            return (int) Utilities.wrapToRange(Angle, 0, 360) / 45;
+        }
+        else
+        {
+            return -1;
+        }
     }
-    
-    
+
+    /**
+     * Set the LEDs on the panel
+     * @param hand
+     * @param LED1
+     * @param LED2
+     * @param LED3
+     * @param LED4
+     */
+    public void setLEDs(Hand hand, COLOR LED1, COLOR LED2, COLOR LED3, COLOR LED4)
+    {
+        // this value might need to be multiplied by 256
+        if(hand == Hand.kLeft)
+            m_LEDMsgL = (short) (LED1.get() << 6 | LED2.get() << 4 | LED3.get() << 2 | LED4.get());
+        if(hand == Hand.kRight)
+            m_LEDMsgR = (short) (LED1.get() << 6 | LED2.get() << 4 | LED3.get() << 2 | LED4.get());
+        HAL.setJoystickOutputs((byte) getPort(), 0, m_LEDMsgL, m_LEDMsgR);
+    }
 }
