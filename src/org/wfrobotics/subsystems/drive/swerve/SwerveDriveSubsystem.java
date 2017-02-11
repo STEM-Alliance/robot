@@ -476,8 +476,35 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         return m_crawlMode;
     }
 
+    /**
+     * Set the speed scaling value for crawl mode
+     * @param crawlMode 0 to 1, directly proportional to speed sent to wheels
+     */
     public void setCrawlMode(double crawlMode)
     {
         m_crawlMode = crawlMode;
+    }
+    
+    /**
+     * Do a full wheel calibration, adjusting the angles by the specified values,
+     * and save the values for use
+     * @param speed speed value to test against, 0-1
+     * @param values array of values, 0-1, to adjust the wheel angle offsets
+     */
+    public void fullWheelCalibration(double speed, double values[], boolean save)
+    {
+        
+        Vector vector = Vector.NewFromMagAngle(speed, 90);
+        
+        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
+        {
+            m_wheels[i].updateAngleOffset(values[i] * 180);
+            m_wheels[i].setDesired(vector, false, false);
+            
+            if(save)
+            {
+                m_wheels[i].saveAngleOffset(values[i] * 180);
+            }
+        }
     }
 }

@@ -8,6 +8,8 @@ import org.wfrobotics.commands.LED;
 import org.wfrobotics.commands.Shoot;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
+import org.wfrobotics.controller.Panel.BUTTON;
+import org.wfrobotics.controller.Panel.COLOR;
 import org.wfrobotics.subsystems.Led.HARDWARE;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -29,6 +31,9 @@ public class OI
     Button buttonDriveLB = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
     Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.BUTTON.BACK);
     Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.BUTTON.START);
+
+    Button buttonPanelSwitchL = new PanelButton(panel, Panel.BUTTON.SWITCH_L);
+    Button buttonPanelSwitchR = new PanelButton(panel, Panel.BUTTON.SWITCH_R);
     
     Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
     Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
@@ -50,6 +55,9 @@ public class OI
         buttonDriveStart.whenPressed(new DriveZeroGyro());
         //buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
         //buttonDriveBack.toggleWhenPressed(new DriveTank(true));
+
+        buttonPanelSwitchL.whenPressed(new DriveSwervePanelTest());
+        buttonPanelSwitchR.whenPressed(new DriveSwervePanelTest());
                 
         //////////////////////////
         
@@ -232,12 +240,38 @@ public class OI
         {
             return xboxDrive.getPOV(0);
         }
+        
+        public static double[] getPanelKnobs()
+        {
+            return new double[] {
+                            panel.getTopDial(Hand.kLeft),
+                            panel.getTopDial(Hand.kRight),
+                            panel.getBottomDial(Hand.kLeft),
+                            panel.getBottomDial(Hand.kRight), 
+                    };
+        }
+
+        public static boolean getPanelSave()
+        {
+            return panel.getButton(BUTTON.SWITCH_L) && panel.getButton(BUTTON.SWITCH_L);
+        }
 
     }
     
     public static void setDriveRumble(XboxController.RumbleType type, float value)
     {
         xboxDrive.setRumble(type, value);
+    }
+
+    public static void setPanelLEDs(Hand hand, COLOR LED1, COLOR LED2, COLOR LED3, COLOR LED4)
+    {
+        panel.setLEDs(hand, LED1, LED2, LED3, LED4);
+    }
+    
+    public static void setPanelLEDs(COLOR ledsL[], COLOR ledsR[])
+    {
+        panel.setLEDs(Hand.kLeft, ledsL[0], ledsL[1], ledsL[2], ledsL[3]);
+        panel.setLEDs(Hand.kRight, ledsR[0], ledsR[1], ledsR[2], ledsR[3]);
     }
 
 }

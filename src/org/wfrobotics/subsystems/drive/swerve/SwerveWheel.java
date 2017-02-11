@@ -393,11 +393,35 @@ public class SwerveWheel {
         SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
 
-    protected void updateAngleOffset()
+    public void updateAngleOffset()
     {
-        anglePot.setOffset(Preferences.getInstance().getDouble(
-                "Wheel_Orientation_" + number,
-                SwerveConstants.ANGLE_OFFSET[number]));
+        updateAngleOffset(0);
+    }
+
+    /**
+     * Test with the specified value as the angle offset.
+     * Note: this will add the specified value to the already existing offset
+     * @param value angle offset in degrees
+     */
+    public void updateAngleOffset(double value)
+    {
+        double savedAngle = Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
+                SwerveConstants.ANGLE_OFFSET[number]);
+        
+        anglePot.setOffset(savedAngle + value);
+    }
+    
+    /**
+     * Save the specified value as the angle offset.
+     * Note: this will add the specified value to the already existing offset
+     * @param value angle offset in degrees
+     */
+    public void saveAngleOffset(double value)
+    {
+        double savedAngle = Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
+                SwerveConstants.ANGLE_OFFSET[number]);
+
+        Preferences.getInstance().putDouble("Wheel_Orientation_" + number, savedAngle + value);
     }
 
     protected void updateMaxRotationSpeed()
