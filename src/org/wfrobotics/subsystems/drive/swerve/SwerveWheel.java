@@ -2,63 +2,42 @@ package org.wfrobotics.subsystems.drive.swerve;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.hardware.*;
 import org.wfrobotics.robot.RobotMap;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
-import com.ctre.CANTalon.TalonControlMode;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.AllocationException;
 
 /**
- * Handle motor outputs and feedback for an individual swerve wheel
- * 
+ * Handle motor outputs and feedback for an individual swerve wheel * 
  * @author Team 4818 WFRobotics
  */
-public class SwerveWheel 
+public class SwerveWheel
 {
-    public String name;  /** 'Name' of the module */
-    public int number;  /** Index/number of the module*/
+    public String name;
+    public int number;
 
-    private Vector position;  /** Wheel location from center of robot */
-    private Vector desired;  /** Desired wheel vector, from input */
-    private Vector actual;  /** Actual wheel vector, from sensors */
+    /** Wheel location from center of robot */
+    public final Vector position;
+    /** Actual wheel vector, from sensors */
+    private Vector actualVector;
 
-    private final Shifter shifter;  /** High gear vs Low gear, affects the speed by shifting */
+    private final WheelDriveManager driveManager;
+    private final WheelAngleManager angleManager;
+    private final Shifter shifter;
+    
+    private Vector desiredVector;
+    private boolean desiredBrake;
     private boolean desiredGear;
 
-    /** If the brake should be applied or not */
-    private boolean brake;
-
     /** Drive motor object */
-    private CANTalon driveMotor;
     private double driveLastSpeed;
     private double driveLastChangeTime;
     
-    /** Angle motor object */
-    private CANTalon angleMotor;
-    /** Angle sensor */
-    private MagnetoPot anglePot;
     /** Max speed the rotation can spin, relative to motor maximum */
     private double angleMaxSpeed = -.7;
     /** Special angle PID controller */
     private SwerveAngleController anglePID;
-
-    /** Invert the angle motor and sensor to swap left/right */
-    private boolean angleInverted = true;
-    /** Auto calibration sensor for having a known angle */
-    private DigitalInput angleCalSensor;
-    /** Enable/disable the auto calibration */
-    private boolean angleCalEnable;
-    /** Angle that the calibration sensor is mounted compared to 0 */
-    public double angelCalSensorOffset;
-    /** Threshold for triggering the calibration sensor */
-    private final double angleCalSensorThreshold = 10;
 
     /** Minimum speed, used for dead band */ 
     private static final double MINIMUM_SPEED = 0.1;
@@ -75,165 +54,57 @@ public class SwerveWheel
         this.number = Number;
 
         position = new Vector(SwerveConstants.POSITIONS[number]);
-        actual = new Vector(0, 0);
-        desired = new Vector(0, 0);
+        actualVector = new Vector(0, 0);
+        desiredVector = new Vector(0, 0);
 
         // set up the drive motor
-        driveMotor = new CANTalon(RobotMap.CAN_SWERVE_DRIVE_TALONS[number]);
-
-        driveMotor.setVoltageRampRate(20);
+        driveManager = new WheelDriveManager(RobotMap.CAN_SWERVE_DRIVE_TALONS[number], SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE);
         driveLastChangeTime = Timer.getFPGATimestamp();
         //driveMotor.setCurrentLimit(5);
-        driveMotor.ConfigFwdLimitSwitchNormallyOpen(true);
-        driveMotor.ConfigRevLimitSwitchNormallyOpen(true);
-        driveMotor.enableForwardSoftLimit(false);
-        driveMotor.enableReverseSoftLimit(false);
-        driveMotor.enableBrakeMode(false);
-        
-        // if we have it configured to use a speed sensor, setup that too
-        if(SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE)
-        {
-            driveMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-            driveMotor.changeControlMode(TalonControlMode.Speed);
-            driveMotor.setPID(SwerveConstants.DRIVE_PID_P,
-                              SwerveConstants.DRIVE_PID_I,
-                              SwerveConstants.DRIVE_PID_D,
-                              SwerveConstants.DRIVE_PID_F,
-                              0,
-                              10,
-                              0);
-            driveMotor.reverseSensor(true);
-        }
 
-        // setup the angle motor
-        angleMotor = new CANTalon(RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
-        angleMotor.setVoltageRampRate(20);
-        angleMotor.ConfigFwdLimitSwitchNormallyOpen(true);
-        angleMotor.ConfigRevLimitSwitchNormallyOpen(true);
-        angleMotor.enableForwardSoftLimit(false);
-        angleMotor.enableReverseSoftLimit(false);
-        angleMotor.enableBrakeMode(false);
-
-        // setup the angle sensor to use the SRX port
-        anglePot = new MagnetoPotSRX(angleMotor, 360);
+        angleManager = new WheelAngleManager(RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
         anglePID = new SwerveAngleController(name + ".ctl");
 
         //angleCalSensor = new DigitalInput(RobotMap.DIO_SWERVE_CAL[number]);
 
         shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number], SwerveConstants.SHIFTER_VALS[number][0], SwerveConstants.SHIFTER_VALS[number][1]);
-    }
-
-    public void free()
-    {
-        //try { gearShifter.free(); } catch (AllocationException e) {}
-        try { anglePot.free(); } catch (AllocationException e) {}
-        try { angleCalSensor.free(); } catch (AllocationException e) {}
+        desiredGear = false;
     }
     
     /**
      * Set the desired wheel vector, auto updates the PID controllers
-     * 
-     * @param newDesired
-     * @param gearHigh
-     * @return Actual vector reading of wheel
+     * @param desiredVector Velocity and Rotation of this wheel instance
+     * @param gearHigh True: High, False: Low
+     * @return Actual vector of wheel (sensor feedback)
      */
-    public Vector setDesired(Vector newDesired, boolean newHighGear, boolean newBrake)
+    public Vector setDesired(Vector desiredVector, boolean desiredgear, boolean desiredBrake)
     {
-        // store off the new values
-        desired = newDesired;
-        desiredGear = newHighGear;
-        brake = newBrake;
+        boolean reverseDriveMotors;
+        
+        // Store desired values
+        this.desiredVector = desiredVector;
+        this.desiredGear = desiredgear;
+        this.desiredBrake = desiredBrake;
 
-        return updateTask();
-    }
+        // Set the hardware based on the new desired values
+        reverseDriveMotors = updateAngleMotor();
+        shifter.setGear(this.desiredGear);
+        updateDriveMotor(reverseDriveMotors);
 
-    private double getAnglePotAdjusted()
-    {
-        double invert = angleInverted ? -1 : 1;
-        return Utilities.round(Utilities.wrapToRange(invert * anglePot.get(),-180,180),2);
-    }
-    
-    /**
-     * Get the desired vector (velocity and rotation) of this wheel instance
-     * 
-     * @return Desired vector
-     */
-    public Vector getDesired()
-    {
-        return desired;
+        return getActual();
     }
 
     /**
      * Get the actual vector reading of the wheel
-     * 
      * @return Actual vector reading of wheel
      */
     public Vector getActual()
     {
-        if(SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE)
-        {
-            actual.setMagAngle(driveMotor.getSpeed()/SwerveConstants.DRIVE_MAX_SPEED, getAnglePotAdjusted());
-        }
-        else
-        {
-            actual.setMagAngle(desired.getMag(), getAnglePotAdjusted());
-        }
-        return actual;
-    }
-
-    /**
-     * Get the wheel's position relative to robot center
-     * 
-     * @return Wheel position
-     */
-    public Vector getPosition()
-    {
-        return position;
-    }
-
-    /**
-     * auto calibrate if enable and if the calibration sensor is triggered
-     * TODO
-     */
-    private void autoCalibration()
-    {
-
-        if (angleCalEnable && angleCalSensor.get())
-        {
-            // the Calibration Sensor is triggered, so we should be facing
-            // forward
-            if (Math.abs(getAnglePotAdjusted()) > angleCalSensorThreshold)
-            {
-                // we're more than angleCalSensorThreshold away, yet the sensor 
-                // is triggered, we need to then update the angle
-                
-//                this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0,
-//                360);
-//                
-//                saveAngleOrientation(AngleOrientation);
-//                
-//                AdjustedAngle = Utilities.wrapToRange(angle + 270 -
-//                AngleOrientation, 0, 360);
-//                Preferences.getInstance().putDouble("Wheel_Orientation_" + number, val);
-            }
-        }
-    }
-
-    /**
-     * invoke updating the actual values and the motor outputs called
-     * automatically from setDesired()
-     * 
-     * @return Actual vector reading of wheel
-     */
-    private Vector updateTask()
-    {
-        boolean reverse = updateAngleMotor();
-
-        shifter.setGear(desiredGear);
-
-        updateDriveMotor(reverse);
-
-        return getActual();
+        double magnitude = (SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE) ? driveManager.get()/SwerveConstants.DRIVE_MAX_SPEED:desiredVector.getMag();
+        
+        actualVector.setMagAngle(magnitude, angleManager.getAnglePotAdjusted());
+        
+        return actualVector;
     }
 
     /**
@@ -244,33 +115,31 @@ public class SwerveWheel
      */
     private boolean updateAngleMotor()
     {
-        // update the offsets
-        autoCalibration();
+        double error;
+        
         updateAngleOffset();
         updateMaxRotationSpeed();
 
-        double des = desired.getAngle();
-        double sensor = getAnglePotAdjusted();
-        // Update the angle controller.
-        anglePID.update(des, sensor);
-
-        double error = anglePID.error;
+        double setpoint = desiredVector.getAngle();
+        double current = angleManager.getAnglePotAdjusted();
         
-        SmartDashboard.putNumber(name+".angle.raw", anglePot.getRawInput());
+        anglePID.update(setpoint, current);
+        error = anglePID.error;
         
-        if (desired.getMag() > MINIMUM_SPEED)
+        SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
+        
+        if (desiredVector.getMag() > MINIMUM_SPEED)
         {
-            // Control the wheel angle.
-            angleMotor.set(anglePID.getMotorSpeed() * angleMaxSpeed);
+            angleManager.set(anglePID.getMotorSpeed() * angleMaxSpeed);  // Control the wheel angle.
         }
         else
         {
             // Too slow, do nothing
             anglePID.resetIntegral();
-            angleMotor.set(0);
+            angleManager.set(0);
         }
-        SmartDashboard.putNumber(name + ".angle.des", des);
-        SmartDashboard.putNumber(name + ".angle", sensor);
+        SmartDashboard.putNumber(name + ".angle.des", setpoint);
+        SmartDashboard.putNumber(name + ".angle", current);
         SmartDashboard.putNumber(name + ".angle.err", error);
 
         return anglePID.isReverseMotor();
@@ -282,70 +151,54 @@ public class SwerveWheel
      */
     private void updateDriveMotor(boolean reverse)
     {
-        
         // Control the wheel speed.
-        double driveMotorSpeed = desired.getMag();
-
-        // Reverse the motor output if the angle controller is taking advantage
-        // of rotational symmetry.
-        if (reverse)
-        {
-            driveMotorSpeed = -driveMotorSpeed;
-        }
-
-        // don't try and drive if it's below the friction limit
-        if(Math.abs(driveMotorSpeed) < SwerveConstants.DRIVE_SPEED_MIN)
-        {
-            driveMotorSpeed = 0;
-        }
-        
+        double driveMotorSpeed = desiredVector.getMag();
         double driveMotorOutput = 0;
+
+        // Reverse the output if the angle PID can take advantage of rotational symmetry
+        driveMotorSpeed = (reverse) ? -driveMotorSpeed:driveMotorSpeed;
         
-        // limit the ramp rate to prevent voltage drops
-        // and brownouts
+        // Don't drive if below the friction limit
+        driveMotorSpeed = (Math.abs(driveMotorSpeed) < SwerveConstants.DRIVE_SPEED_MIN) ? 0:driveMotorSpeed;
+        
+        // Limit ramp rate, prevents voltage drops and brownouts
         if(!SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE)
         {
-            // we don't have speed feedback, so brute force it
-            // using the desired and the last desired values
+            // We don't have speed feedback, so brute force it using the desired and the last desired values
             double diff = Math.abs(driveLastSpeed - driveMotorSpeed);
             
             if(diff > .5)
             {
-                driveMotor.setVoltageRampRate(8);
+                driveManager.setVoltageRampRate(8);
                 driveLastChangeTime = Timer.getFPGATimestamp();
                 if(this.number == 0)
                     SmartDashboard.putNumber("VoltageRampRate", 8);
             }
             else if(diff < .35 && (Timer.getFPGATimestamp() - driveLastChangeTime > .40))
             {
-                driveMotor.setVoltageRampRate(15);
+                driveManager.setVoltageRampRate(15);
                 if(this.number == 0)
                     SmartDashboard.putNumber("VoltageRampRate", 15);
             }
 
             driveLastSpeed = driveMotorSpeed;
             driveMotorOutput = driveMotorSpeed;
-            
         }
         else
         {
-            // we have a speed sensor, so 
-            double speedCurrent = driveMotor.getSpeed();
+            // We have a speed sensor, so 
+            double speedCurrent = driveManager.get();
 
             SmartDashboard.putNumber("SpeedCurrent" + number, speedCurrent);
             SmartDashboard.putNumber("SpeedInput" + number, driveMotorSpeed);
             driveMotorSpeed = driveMotorSpeed * SwerveConstants.DRIVE_MAX_SPEED;
             SmartDashboard.putNumber("SpeedOutput" + number, driveMotorSpeed);
-            
-            double speedDiff = Math.abs(driveMotorSpeed-speedCurrent);
-            
+
             // limit to 0 - max
-            speedDiff = Math.min(speedDiff, SwerveConstants.DRIVE_MAX_SPEED);
-            
-            // linearly scale the speed difference to the ramp range
-            //TODO should it be linear?
-            double rampValue = Utilities.scaleToRange(speedDiff,
-                    0, SwerveConstants.DRIVE_MAX_SPEED, // input range
+            double speedDiff = Math.min(Math.abs(driveMotorSpeed-speedCurrent), SwerveConstants.DRIVE_MAX_SPEED);
+                        
+            // linearly scale the speed difference to the ramp range, //TODO should it be linear?
+            double rampValue = Utilities.scaleToRange(speedDiff, 0, SwerveConstants.DRIVE_MAX_SPEED, // input range
                     SwerveConstants.DRIVE_RAMP_HIGH, SwerveConstants.DRIVE_RAMP_LOW); // output range
 
             //driveMotor.setCloseLoopRampRate(rampValue);
@@ -358,18 +211,13 @@ public class SwerveWheel
 
         if(number == 0)
         {
-            SmartDashboard.putNumber("CLRampRate" + number, driveMotor.getCloseLoopRampRate());
+            SmartDashboard.putNumber("CLRampRate" + number, driveManager.debugGetCloseLoopRampRate());
         }
-        if (brake)
-        {
-            driveMotor.set(0);
-            driveMotor.enableBrakeMode(true);
-        }
-        else
-        {
-            driveMotor.enableBrakeMode(false);
-            driveMotor.set(driveMotorOutput);
-        }
+        
+        // If braking is requested
+        driveMotorOutput = (desiredBrake) ? 0:driveMotorOutput;        
+        driveManager.set(driveMotorOutput);
+        driveManager.setBrake(desiredBrake);
 
         SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
@@ -382,14 +230,14 @@ public class SwerveWheel
 
     /**
      * Test with the specified value as the angle offset.
-     * @param value angle offset in degrees
+     * @param angleOffset angle offset in degrees
      */
-    public void updateAngleOffset(double value)
+    public void updateAngleOffset(double angleOffset)
     {
         //double savedAngle = Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
         //        SwerveConstants.ANGLE_OFFSET[number]);
         
-        anglePot.setOffset(value);
+        angleManager.setPotOffset(angleOffset);
     }
     
     /**
@@ -411,9 +259,15 @@ public class SwerveWheel
                 .getDouble("maxRotationSpeed", angleMaxSpeed);
     }
 
+    public void free()
+    {
+        //try { gearShifter.free(); } catch (AllocationException e) {}
+        angleManager.free();
+    }
+
     public void printDash()
     {
-        SmartDashboard.putNumber(name + ".angle", getAnglePotAdjusted());
-        SmartDashboard.putNumber("SpeedCurrent" + number, driveMotor.getSpeed());
+        SmartDashboard.putNumber(name + ".angle", angleManager.getAnglePotAdjusted());
+        SmartDashboard.putNumber("SpeedCurrent" + number, driveManager.get());
     }
 }

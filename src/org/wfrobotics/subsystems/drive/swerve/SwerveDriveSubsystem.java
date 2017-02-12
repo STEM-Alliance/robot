@@ -311,10 +311,10 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             // calculate
             WheelsUnscaled[i] = new Vector(RobotVelocity.getX()
                                                      - RobotRotation
-                                                     * m_wheels[i].getPosition().getY(),
+                                                     * m_wheels[i].position.getY(),
                                            RobotVelocity.getY()
                                                      + RobotRotation
-                                                     * m_wheels[i].getPosition().getX());
+                                                     * m_wheels[i].position.getX());
 
             if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
             {
