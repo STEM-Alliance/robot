@@ -3,11 +3,11 @@ package org.wfrobotics.commands;
 /**
  * Constant values to be shared by commands. 
  * Constants should be reusable values, meaning they are useful across multiple commands.
- * @author drlindne
  *
  */
 public class Constants 
 {
+   public static final double AUTONOMOUS_DRIVE_SPEED = .5;
    public static final double AUTONOMOUS_TURN_SPEED = .5;
    public static final double AUTONOMOUS_TURN_TOLERANCE = .1;
    

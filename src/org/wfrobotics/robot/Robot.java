@@ -18,7 +18,8 @@ public class Robot extends SampleRobot
 {
     public enum AUTO_COMMAND
     {
-        NONE;
+        NONE,
+        GEAR;
         
         public Command getCommand()
         {
@@ -29,7 +30,9 @@ public class Robot extends SampleRobot
             case NONE:
                 autonomousCommand = new AutoDrive();
                 break;
-            
+            //case GEAR:
+                //autonomousCommand = new AutoGear();  // TODO get the starting position from smart dashboard
+                //break;
             default:
                 autonomousCommand = new AutoDrive();
                 break;
