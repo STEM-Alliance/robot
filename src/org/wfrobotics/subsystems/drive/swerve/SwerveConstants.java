@@ -37,8 +37,8 @@ public class SwerveConstants {
     /**
      * angle PID values
      */
-    public static final double ANGLE_PID_P = .030;
-    public static final double ANGLE_PID_I = 0.0001;
+    public static final double ANGLE_PID_P = .015;
+    public static final double ANGLE_PID_I = 0.00001;
     public static final double ANGLE_PID_D = 0.00;
     
     /**
