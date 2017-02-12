@@ -101,13 +101,13 @@ public class Gyro {
      * 
      * Note that the returned yaw value will be offset by a user-specified
      * offset value; this user-specified offset value is set by invoking the
-     * zeroYaw() method or the setZerio(float) method.
+     * zeroYaw() method or the setZero(float) method.
      * 
      * @return The current yaw value in degrees (-180 to 180).
      */
     public float getYaw()
     {
-        float angle = (float) (navxMXP.getAngle() - zeroVal);
+        float angle = (float) (navxMXP.getYaw() - zeroVal);
         angle = Utilities.wrapToRange(angle, -180, 180);
         return angle;
     }
@@ -124,7 +124,7 @@ public class Gyro {
     {
 //        navxMXP.setAngleAdjustment(0);
 //        navxMXP.zeroYaw();
-        double angle =  navxMXP.getAngle();
+        double angle = navxMXP.getYaw();
         angle = Utilities.wrapToRange(angle, -180, 180);;
         zeroVal = angle;
     }

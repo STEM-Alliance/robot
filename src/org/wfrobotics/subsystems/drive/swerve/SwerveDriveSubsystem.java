@@ -29,10 +29,11 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     protected SwerveWheel[] m_wheels;
     
     private boolean m_gearHigh = false;
+    private boolean m_gyroEnabled = true;
 
     private PIDController m_chassisAngleController;
-    private double m_chassisP = .015;
-    private double m_chassisI = 0.0;
+    private double m_chassisP = .035;
+    private double m_chassisI = 0.00001;
     private double m_chassisD = 0;
 
     private double m_crawlMode = 0.0;
@@ -131,6 +132,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             m_wheels[i].printDash();
         }
 
+        SmartDashboard.putBoolean("Gyro Enabled", m_gyroEnabled);
         SmartDashboard.putBoolean("High Gear", m_gearHigh);
     }
     
@@ -154,11 +156,13 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             SmartDashboard.putString("Drive Mode", "Rotate To Heading");
             
             // this should snap us to a specific angle
-            
-            // set the rotation using a PID controller based on current robot
-            // heading and new desired heading
-            Error = Utilities.wrapToRange(Heading - m_gyro.getYaw(), -180, 180);
-            Rotation = m_chassisAngleController.update(Error);
+            if(m_gyroEnabled)
+            {
+                // set the rotation using a PID controller based on current robot
+                // heading and new desired heading
+                Error = Utilities.wrapToRange(Heading - m_gyro.getYaw(), -180, 180);
+                Rotation = m_chassisAngleController.update(Error);
+            }
             m_lastHeading = Heading;
         }
         else if (Math.abs(Rotation) > .1)
@@ -187,18 +191,21 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             {
                 SmartDashboard.putString("Drive Mode", "Stay At Angle");
                 
-                // this should keep us facing the same direction
-                
-                // set the rotation using a PID controller based on current robot
-                // heading and new desired heading
-                Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
-                double tempRotation = m_chassisAngleController.update(Error);
-                
-                // add a deadband to hopefully help with wheel lock after stopping
-                SmartDashboard.putNumber("MaintainRotation", tempRotation);
-                if(tempRotation > AUTO_ROTATION_MIN)
+                if(m_gyroEnabled)
                 {
-                    Rotation = tempRotation;
+                    // this should keep us facing the same direction
+                    
+                    // set the rotation using a PID controller based on current robot
+                    // heading and new desired heading
+                    Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
+                    double tempRotation = m_chassisAngleController.update(Error);
+                    
+                    // add a deadband to hopefully help with wheel lock after stopping
+                    SmartDashboard.putNumber("MaintainRotation", tempRotation);
+                    if(tempRotation > AUTO_ROTATION_MIN)
+                    {
+                        Rotation = tempRotation;
+                    }
                 }
             }
             else
@@ -521,5 +528,15 @@ public class SwerveDriveSubsystem extends DriveSubsystem
            cals[i] = m_wheels[i].getAngleOffset();
         }
         return cals;
+    }
+
+    public boolean getGyroEnabled()
+    {
+        return m_gyroEnabled;
+    }
+
+    public void setGyroEnabled(boolean gyroEnabled)
+    {
+        m_gyroEnabled = gyroEnabled;
     }
 }
