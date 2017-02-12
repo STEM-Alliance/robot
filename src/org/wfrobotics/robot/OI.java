@@ -24,7 +24,6 @@ public class OI
     static Xbox xboxMan = new Xbox(1);
     static Panel panel = new Panel(2);
     
-    // drive controller
 
     Button buttonDriveLB = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
     Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.BUTTON.BACK);
@@ -33,17 +32,14 @@ public class OI
     Button buttonPanelSwitchL = new PanelButton(panel, Panel.BUTTON.SWITCH_L);
     Button buttonPanelSwitchR = new PanelButton(panel, Panel.BUTTON.SWITCH_R);
     
-//    Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
-//    Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
     Button buttonDriveB = new XboxButton(xboxDrive, Xbox.BUTTON.B);
-    Button buttonAugerStart = new XboxButton(xboxDrive, Xbox.BUTTON.A);
-    //Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
-    Button buttonVisionShootStart = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
-
-    // manipulator controller
+    Button buttonDriveA = new XboxButton(xboxDrive, Xbox.BUTTON.A);
+    Button buttonDriveRB = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
     
-    // panel
-    //Button buttonPanelLeftWhite = new PanelButton(panel, Panel.ButtonType.kWhiteL);
+//  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
+//  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
+//  Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
+
     
     public OI()
     {        
@@ -54,16 +50,13 @@ public class OI
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
                 
-        //////////////////////////
-        
-//        buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
-//        buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
         buttonDriveB.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
-        buttonAugerStart.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
-        buttonVisionShootStart.toggleWhenPressed(new VisionShoot());
-        //buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
+        buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
+        buttonDriveRB.toggleWhenPressed(new VisionShoot());
         
-        //////////////////////////
+//      buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
+//      buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
+//      buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
     }
     
     public static class DriveTankOI
