@@ -19,6 +19,7 @@ public class DriveSwerveCalibration extends Command
     private final MODE mode;
 
     private SendableChooser<Integer> testWheelChooser;
+    private double[] m_wheelCalibrations;
     
     public DriveSwerveCalibration(MODE mode)
     {
@@ -34,6 +35,7 @@ public class DriveSwerveCalibration extends Command
                 break;
                 
             case PANEL:
+                m_wheelCalibrations = Robot.driveSubsystem.getWheelCalibrations();
                 break;
                 
             case SINGLE:
@@ -93,14 +95,14 @@ public class DriveSwerveCalibration extends Command
                 SmartDashboard.putNumber("Vel Ang", OI.DriveSwerveOI.getHaloDrive_Velocity().getAngle());
                 SmartDashboard.putNumber("Vel Mag", OI.DriveSwerveOI.getHaloDrive_Velocity().getMag());
                 
-                Vector WheelActual = ((SwerveDriveSubsystem)Robot.driveSubsystem).getWheel(i).setDesired(
-                        OI.DriveSwerveOI.getHaloDrive_Velocity(),
-                        OI.DriveSwerveOI.getHighGearEnable(),
-                        false);
-                    
-                // display in SmartDashboard
-                SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
-                SmartDashboard.putNumber("Test Wheel Angle Actual", WheelActual.getAngle());
+//                Vector WheelActual = ((SwerveDriveSubsystem)Robot.driveSubsystem).getWheel(i).setDesired(
+//                        OI.DriveSwerveOI.getHaloDrive_Velocity(),
+//                        OI.DriveSwerveOI.getHighGearEnable(),
+//                        false);
+//                    
+//                // display in SmartDashboard
+//                SmartDashboard.putNumber("Test Wheel Mag Actual", WheelActual.getMag());
+//                SmartDashboard.putNumber("Test Wheel Angle Actual", WheelActual.getAngle());
                 break;
             default:
                 break;

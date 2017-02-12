@@ -495,7 +495,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      * Do a full wheel calibration, adjusting the angles by the specified values,
      * and save the values for use
      * @param speed speed value to test against, 0-1
-     * @param values array of values, 0-1, to adjust the wheel angle offsets
+     * @param values array of values, -180 to 180, to adjust the wheel angle offsets
      */
     public void fullWheelCalibration(double speed, double values[], boolean save)
     {
@@ -504,13 +504,22 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         
         for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
-            m_wheels[i].updateAngleOffset(values[i] * 180.0);
+            m_wheels[i].updateAngleOffset(values[i]);
             m_wheels[i].setDesired(vector, false, false);
             
             if(save)
             {
-                m_wheels[i].saveAngleOffset(values[i] * 180.0);
+                m_wheels[i].saveAngleOffset(values[i]);
             }
         }
+    }
+    public double[] getWheelCalibrations()
+    {
+        double[] cals = {0,0,0,0};
+        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
+        {
+           cals[i] = m_wheels[i].getAngleOffset();
+        }
+        return cals;
     }
 }

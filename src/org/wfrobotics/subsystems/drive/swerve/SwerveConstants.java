@@ -37,17 +37,17 @@ public class SwerveConstants {
     /**
      * angle PID values
      */
-    public static final double ANGLE_PID_P = .025;
+    public static final double ANGLE_PID_P = .030;
     public static final double ANGLE_PID_I = 0.0001;
     public static final double ANGLE_PID_D = 0.00;
     
     /**
      * Array of values for shifting gears, low then high values
      */
-    public static final int[] SHIFTER_VALS[] = { { 120, 45 }, 
-                                                 { 45, 120 },
-                                                 { 120, 45 }, 
-                                                 { 45, 120 } };
+    public static final int[] SHIFTER_VALS[] = { { 145, 45 }, 
+                                                 { 60, 145 },
+                                                 { 145, 45 }, 
+                                                 { 0, 120 } };
 
     public static final boolean SHIFTER_DEFAULT_HIGH = false;
 

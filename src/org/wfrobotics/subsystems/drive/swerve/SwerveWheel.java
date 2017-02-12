@@ -455,4 +455,9 @@ public class SwerveWheel {
         SmartDashboard.putNumber(name + ".angle", getAnglePotAdjusted());
         SmartDashboard.putNumber("SpeedCurrent" + number, driveMotor.getSpeed());
     }
+
+    public double getAngleOffset()
+    {
+        return Preferences.getInstance().getDouble("Wheel_Orientation_" + number, SwerveConstants.ANGLE_OFFSET[number]);
+    }
 }
