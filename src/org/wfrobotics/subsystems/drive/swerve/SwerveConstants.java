@@ -88,16 +88,15 @@ public class SwerveConstants {
      */
     public static final double DRIVE_EFFICIENCY = .8;
     
-    /**
-     * The gear ratio conversion from motor output to sensor
-     */
-    public static final double DRIVE_GEAR_SENSOR_RATIO = 14.0 / 10.0;
+    public static final double SHIFTER_SENSOR_RATIO = 14.0 / 10.0;  // The gear ratio conversion from motor output to sensor
+    // TODO DRL calibrate/test SHIFTER_SHIFT_TIME
+    public static final double SHIFTER_SHIFT_TIME = 1;  // Time for servo to shift between gears (Units: Seconds)
     
     /**
      * Value to use for converting raw input (-1 to 1) to speed (in rpm)
      * that the sensor will detect
      */
-    public static final double DRIVE_MAX_SPEED = DRIVE_MAX_RPM * DRIVE_EFFICIENCY * DRIVE_GEAR_SENSOR_RATIO;
+    public static final double DRIVE_MAX_SPEED = DRIVE_MAX_RPM * DRIVE_EFFICIENCY * SHIFTER_SENSOR_RATIO;
     
     public static final double DRIVE_SPEED_CRAWL = .4;
 }

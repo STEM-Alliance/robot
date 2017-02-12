@@ -11,7 +11,6 @@ import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.AllocationException;
@@ -21,25 +20,17 @@ import edu.wpi.first.wpilibj.util.AllocationException;
  * 
  * @author Team 4818 WFRobotics
  */
-public class SwerveWheel {
-    /** 'Name' of the module */
-    public String name;
-    /** Index/number of the module*/
-    public int number;
+public class SwerveWheel 
+{
+    public String name;  /** 'Name' of the module */
+    public int number;  /** Index/number of the module*/
 
-    /** Wheel location from center of robot */
-    private Vector position;
-    /** Desired wheel vector, from input */
-    private Vector desired;
-    /** Actual wheel vector, from sensors */
-    private Vector actual;
+    private Vector position;  /** Wheel location from center of robot */
+    private Vector desired;  /** Desired wheel vector, from input */
+    private Vector actual;  /** Actual wheel vector, from sensors */
 
-    /** Gear Shifter servo */
-    private Servo gearShifter;
-    /** Angle for high gear */
-    public int[] gearShifterAngle;
-    /** If it's in high gear or not */
-    private boolean gearHigh;
+    private final Shifter shifter;  /** High gear vs Low gear, affects the speed by shifting */
+    private boolean desiredGear;
 
     /** If the brake should be applied or not */
     private boolean brake;
@@ -129,10 +120,7 @@ public class SwerveWheel {
 
         //angleCalSensor = new DigitalInput(RobotMap.DIO_SWERVE_CAL[number]);
 
-        // setup high gear
-        gearHigh = true;
-        this.gearShifter = new Servo(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number]);
-        gearShifterAngle = SwerveConstants.SHIFTER_VALS[number];
+        shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number], SwerveConstants.SHIFTER_VALS[number][0], SwerveConstants.SHIFTER_VALS[number][1]);
     }
 
     public void free()
@@ -149,12 +137,11 @@ public class SwerveWheel {
      * @param gearHigh
      * @return Actual vector reading of wheel
      */
-    public Vector setDesired(Vector newDesired, boolean newHighGear,
-            boolean newBrake)
+    public Vector setDesired(Vector newDesired, boolean newHighGear, boolean newBrake)
     {
         // store off the new values
         desired = newDesired;
-        gearHigh = newHighGear;
+        desiredGear = newHighGear;
         brake = newBrake;
 
         return updateTask();
@@ -205,32 +192,6 @@ public class SwerveWheel {
     }
 
     /**
-     * Get whether the wheel is in high gear or low gear
-     * 
-     * @return Whether the wheel is in high gear
-     */
-    public boolean getHighGear()
-    {
-        return gearHigh;
-    }
-
-    /**
-     * Needed to be called to change the actual shifter
-     */
-    private void updateShifter()
-    {
-        if (gearHigh)
-        {
-            gearShifter.setAngle(gearShifterAngle[0]);
-
-        }
-        else
-        {
-            gearShifter.setAngle(gearShifterAngle[1]);
-        }
-    }
-
-    /**
      * auto calibrate if enable and if the calibration sensor is triggered
      * TODO
      */
@@ -268,7 +229,7 @@ public class SwerveWheel {
     {
         boolean reverse = updateAngleMotor();
 
-        updateShifter();
+        shifter.setGear(desiredGear);
 
         updateDriveMotor(reverse);
 
