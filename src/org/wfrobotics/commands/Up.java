@@ -1,5 +1,6 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -40,13 +41,13 @@ public class Up extends Command
             if (!Robot.climberSubsystem.isAtTop())
             {
                 time = timeSinceInitialized();
-                Robot.climberSubsystem.setSpeed(Constants.CLIMBER_CLIMB_SPEED);
+                Robot.climberSubsystem.setSpeed(OI.getClimbSpeed());
             }
             else
             {
                 if(timeSinceInitialized() - time < Constants.CLIMBER_CLIMB_TIME_AFTER_TOP_REACHED)
                 {
-                    Robot.climberSubsystem.setSpeed(Constants.CLIMBER_CLIMB_SPEED);
+                    Robot.climberSubsystem.setSpeed(1);
                 }
                 else
                 {
@@ -56,7 +57,7 @@ public class Up extends Command
         }
         else if (mode == MODE.DOWN)
         {
-            Robot.climberSubsystem.setSpeed(-Constants.CLIMBER_CLIMB_SPEED);
+            Robot.climberSubsystem.setSpeed(-OI.getClimbSpeed());
         }
         else
         {
