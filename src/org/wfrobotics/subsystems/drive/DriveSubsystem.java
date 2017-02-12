@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public abstract class DriveSubsystem extends Subsystem {
 
-    protected boolean m_fieldRelative = false;
+    protected boolean m_fieldRelative = true;
     protected boolean m_brake = false;
     protected Gyro m_gyro;
     protected double m_lastHeading;
