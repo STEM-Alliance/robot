@@ -40,6 +40,7 @@ public class OI
     Button buttonDriveA = new XboxButton(xboxDrive, Xbox.BUTTON.A);
     Button buttonDriveRB = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
     Button buttonPanelYellowTop = new PanelButton(panel, Panel.BUTTON.YELLOW_T);
+    Button buttonPanelYellowBottom = new PanelButton(panel, Panel.BUTTON.YELLOW_B);
     
 //  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
 //  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
@@ -50,9 +51,11 @@ public class OI
     {        
         buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
         buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
-        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.ZERO_GYRO));
-
+        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
+        buttonPanelYellowBottom.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_DISABLE));
+        
         buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
+        
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
                 
@@ -248,10 +251,10 @@ public class OI
         public static double[] getPanelKnobs()
         {
             return new double[] {
-                            panel.getTopDial(Hand.kLeft),
-                            panel.getTopDial(Hand.kRight),
-                            panel.getBottomDial(Hand.kLeft),
-                            panel.getBottomDial(Hand.kRight), 
+                            panel.getTopDial(Hand.kLeft) * 180.0,
+                            panel.getTopDial(Hand.kRight) * 180.0,
+                            panel.getBottomDial(Hand.kLeft) * 180.0,
+                            panel.getBottomDial(Hand.kRight) * 180.0, 
                     };
         }
 

@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveConfig extends Command
 {
-    public enum MODE {HIGH_GEAR, FIELD_RELATIVE, ZERO_GYRO}
+    public enum MODE {HIGH_GEAR, FIELD_RELATIVE, GYRO_ZERO, GYRO_DISABLE}
     
     private final MODE mode;
     
@@ -27,9 +27,11 @@ public class DriveConfig extends Command
             case FIELD_RELATIVE:
                 Robot.driveSubsystem.setFieldRelative(!Robot.driveSubsystem.getFieldRelative());
                 break;
-            case ZERO_GYRO:
+            case GYRO_ZERO:
                 Robot.driveSubsystem.gyroZero();
                 break;
+            case GYRO_DISABLE:
+                Robot.driveSubsystem.setGyroEnabled(!Robot.driveSubsystem.getGyroEnabled());
             default:
                 break;
         }
