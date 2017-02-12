@@ -3,6 +3,7 @@ package org.wfrobotics.subsystems.drive.swerve;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 
+/** Swerve Drive Shifter that shifts each Swerve Wheel */
 public class Shifter
 {
     private final Servo shifter;
