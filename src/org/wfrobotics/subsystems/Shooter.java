@@ -4,6 +4,8 @@ import org.wfrobotics.commands.Rev;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,13 +20,12 @@ public class Shooter extends Subsystem
     {
         flywheelTop = new CANTalon(RobotMap.SHOOTER_MOTOR_SRX);
         
-//      This is commented out until we get a sensor on the shooter
-//        flywheelTop.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-//        
-//        flywheelTop.changeControlMode(TalonControlMode.Speed);
-//        flywheelTop.setPID(.115,0.0001,0.015);
-//        flywheelTop.setCloseLoopRampRate(.01);    
-        flywheelTop.setInverted(true);  //is this needed?
+        flywheelTop.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        flywheelTop.changeControlMode(TalonControlMode.Speed);
+        flywheelTop.setPID(.115,0.0001,0.015);
+        flywheelTop.setCloseLoopRampRate(.01);
+        
+        flywheelTop.setInverted(false);
       
         flywheelBottom = new CANTalon(RobotMap.FEEDER_MOTOR_SRX);
     }
@@ -68,12 +69,16 @@ public class Shooter extends Subsystem
      */
     public boolean topSpeedReached(double tolerance)
     {    
-        return Math.abs(m_speedDesired - flywheelTop.getSpeed()) <= tolerance;
+        boolean reached = Math.abs(m_speedDesired - flywheelTop.getSpeed()) <= tolerance;
+        SmartDashboard.putBoolean("TopSpeedReached", reached);
+        return reached;
     }
     
     public boolean bottomSpeedReached(double tolerance)
-    {     
-        return Math.abs(m_speedDesired - flywheelBottom.getSpeed()) <= tolerance;
+    {
+        boolean reached = Math.abs(m_speedDesired - flywheelBottom.getSpeed()) <= tolerance;
+        SmartDashboard.putBoolean("BottomSpeedReached", reached);
+        return reached;
     }
     
     /**

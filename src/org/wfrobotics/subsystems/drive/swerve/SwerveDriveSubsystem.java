@@ -36,9 +36,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     private double m_chassisD = 0;
 
     private double m_crawlMode = 0.0;
-    private final boolean ENABLE_CRAWL_MODE = false;
+    private final boolean ENABLE_CRAWL_MODE = true;
     
-    private double m_maxAcceleration = 5; // Smaller is slower acceleration
+    private double m_maxAcceleration = 6; // Smaller is slower acceleration
     private final boolean ENABLE_ACCELERATION_LIMIT = true;
     
     private double m_maxAvailableVelocity = 1;
@@ -125,6 +125,11 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     public void printDash()
     {
         super.printDash();
+        
+        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
+        {
+            m_wheels[i].printDash();
+        }
 
         SmartDashboard.putBoolean("High Gear", m_gearHigh);
     }
@@ -268,6 +273,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             m_minRotationAdjust = Preferences.getInstance().getDouble("MinRotationAdjust", m_minRotationAdjust);
             double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + m_minRotationAdjust, 1);
             RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
+            RobotRotation *= m_rotationRateAdjust;
         }
         
         if(ENABLE_CRAWL_MODE)
@@ -280,11 +286,6 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             // then scale back both rotation and velocity
             RobotRotation *= scale;
             RobotVelocity.setMag(RobotVelocity.getMag() * scale);
-        }
-        
-        if(ENABLE_ROTATION_LIMIT)
-        {
-            RobotRotation *= m_rotationRateAdjust;
         }
         
         if(ENABLE_ACCELERATION_LIMIT)
@@ -494,16 +495,16 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     public void fullWheelCalibration(double speed, double values[], boolean save)
     {
         
-        Vector vector = Vector.NewFromMagAngle(speed, 90);
+        Vector vector = Vector.NewFromMagAngle(speed, 0);
         
         for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
-            m_wheels[i].updateAngleOffset(values[i] * 180);
+            m_wheels[i].updateAngleOffset(values[i] * 180.0);
             m_wheels[i].setDesired(vector, false, false);
             
             if(save)
             {
-                m_wheels[i].saveAngleOffset(values[i] * 180);
+                m_wheels[i].saveAngleOffset(values[i] * 180.0);
             }
         }
     }
