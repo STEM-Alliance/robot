@@ -10,10 +10,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SteamworksDrive extends CommandGroup 
-{
-    private final int INTAKE_OFF_ANGLE = 25;
-    private final int INTAKE_OFF_TIMEOUT = 1;
-    
+{  
     private IntakeSetup intake;
     private LED leds;
     
@@ -60,22 +57,22 @@ public class SteamworksDrive extends CommandGroup
         // Restart the intake timers whenever we move in that direction
         if(Math.abs(vectorMag) > .1)
         {
-            if(angleDifference  < -INTAKE_OFF_ANGLE &&
-               angleDifference  > (-180 + INTAKE_OFF_ANGLE))
+            if(angleDifference  < -Constants.INTAKE_OFF_ANGLE &&
+               angleDifference  > (-180 + Constants.INTAKE_OFF_ANGLE))
             {
                 intakeStartL = Timer.getFPGATimestamp();
             }
             
-            if (angleDifference > INTAKE_OFF_ANGLE &&
-                angleDifference  < (180 - INTAKE_OFF_ANGLE))
+            if (angleDifference > Constants.INTAKE_OFF_ANGLE &&
+                angleDifference  < (180 - Constants.INTAKE_OFF_ANGLE))
             {
                 intakeStartR = Timer.getFPGATimestamp();
             }            
         }
         
         // Keep the intakes for a while after we stop moving in that direction
-        onLeft = (Timer.getFPGATimestamp() - intakeStartL) < INTAKE_OFF_TIMEOUT;
-        onRight = (Timer.getFPGATimestamp() - intakeStartR) < INTAKE_OFF_TIMEOUT;
+        onLeft = (Timer.getFPGATimestamp() - intakeStartL) < Constants.INTAKE_OFF_TIMEOUT;
+        onRight = (Timer.getFPGATimestamp() - intakeStartR) < Constants.INTAKE_OFF_TIMEOUT;
         
         printDash(angleDifference, onRight, onLeft);
         
