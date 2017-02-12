@@ -18,7 +18,7 @@ public class Shoot extends CommandGroup
     protected void end()
     {
         
-        Robot.shooterSubsystem.topThenBottom(0);
+        Robot.shooterSubsystem.topThenBottom(0,  Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
 
         Robot.augerSubsystem.setSpeed(0);
     }

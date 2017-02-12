@@ -28,7 +28,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     
     protected SwerveWheel[] m_wheels;
     
-    private boolean m_gearHigh;
+    private boolean m_gearHigh = false;
 
     private PIDController m_chassisAngleController;
     private double m_chassisP = .015;
@@ -65,7 +65,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public SwerveDriveSubsystem()
     {
-        super();
+        // set it into field relative by default
+        super(true);
         
         m_chassisAngleController = new PIDController(m_chassisP, m_chassisI, m_chassisD, 1.0);
 
@@ -73,10 +74,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
         m_wheels = new SwerveWheel[SwerveConstants.WHEEL_COUNT];
 
-        // creat the wheel objects
+        // create the wheel objects
         for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
-            // use SRXs for the angle inputs
             m_wheels[i] = new SwerveWheel(i);
         }
     }
@@ -236,7 +236,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             SmartDashboard.putNumber("FieldRelativePost", Velocity.getAngle());
         }
 
-
+        // now actually tell the wheels to turn
         return setWheelVectors(Velocity, Rotation);
     }
 
@@ -270,12 +270,14 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         // so if driving full speed it doesn't take priority
         if(ENABLE_ROTATION_LIMIT)
         {
-            m_minRotationAdjust = Preferences.getInstance().getDouble("MinRotationAdjust", m_minRotationAdjust);
+            m_minRotationAdjust = Preferences.getInstance().getDouble("DRIVE_MIN_ROTATION", m_minRotationAdjust);
             double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + m_minRotationAdjust, 1);
             RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
             RobotRotation *= m_rotationRateAdjust;
         }
         
+        // scale the input speed down from max of 1 to DRIVE_SPEED_CRAWL
+        // and then use a controller input to adjust the max back up to 1
         if(ENABLE_CRAWL_MODE)
         {
             double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", SwerveConstants.DRIVE_SPEED_CRAWL);
@@ -288,6 +290,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             RobotVelocity.setMag(RobotVelocity.getMag() * scale);
         }
         
+        // limit the rate of change of velocity (ie limit acceleration)
+        // Low limits will decrease the acceleration, slowing initial movements, smoothing out motion, but makes it less responsive.
         if(ENABLE_ACCELERATION_LIMIT)
         {
             RobotVelocity = restrictVelocity(RobotVelocity);
@@ -352,6 +356,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
     /**
      * Returns the velocity restricted by the maximum acceleration
+     * A low MAX_ACCELERATION value will slow the speed down  more than a high value
      * TODO: this should be replaced by a PID controller, probably...
      * 
      * @param robotVelocity

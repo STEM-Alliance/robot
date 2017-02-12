@@ -14,7 +14,7 @@ public abstract class DriveSubsystem extends Subsystem {
     protected Gyro m_gyro;
     protected double m_lastHeading;
 
-    public DriveSubsystem()
+    public DriveSubsystem(boolean FieldRelative)
     {
         super();
         

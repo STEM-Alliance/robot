@@ -33,9 +33,9 @@ public class OI
     Button buttonPanelSwitchL = new PanelButton(panel, Panel.BUTTON.SWITCH_L);
     Button buttonPanelSwitchR = new PanelButton(panel, Panel.BUTTON.SWITCH_R);
     
-    Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
-    Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
-    Button buttonShooterStart = new XboxButton(xboxDrive, Xbox.BUTTON.B);
+//    Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
+//    Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
+    Button buttonDriveB = new XboxButton(xboxDrive, Xbox.BUTTON.B);
     Button buttonAugerStart = new XboxButton(xboxDrive, Xbox.BUTTON.A);
     //Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
     Button buttonVisionShootStart = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
@@ -47,21 +47,18 @@ public class OI
     
     public OI()
     {        
-        //buttonDriveStart.toggleWhenPressed(new DriveSwerveWheelCalibration());
-        buttonDriveLB.whenPressed(new DriveConfigToggle(DriveConfigToggle.MODE.HIGH_GEAR));
-        buttonDriveBack.whenPressed(new DriveConfigToggle(DriveConfigToggle.MODE.FIELD_RELATIVE));
-        buttonDriveStart.whenPressed(new DriveZeroGyro());
-        //buttonDriveStart.toggleWhenPressed(new DriveTankArcade());
-        //buttonDriveBack.toggleWhenPressed(new DriveTank(true));
+        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
+        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
+        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.ZERO_GYRO));
 
-        buttonPanelSwitchL.whileHeld(new DriveSwervePanelTest());
-        buttonPanelSwitchR.whileHeld(new DriveSwervePanelTest());
+        buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
+        buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
                 
         //////////////////////////
         
-        buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
-        buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
-        buttonShooterStart.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
+//        buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
+//        buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
+        buttonDriveB.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
         buttonAugerStart.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
         buttonVisionShootStart.toggleWhenPressed(new VisionShoot());
         //buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));

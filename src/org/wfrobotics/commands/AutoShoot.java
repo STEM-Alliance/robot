@@ -22,7 +22,7 @@ public class AutoShoot extends CommandGroup
         {
             signx = -1;
         }
-        if(mode == MODE.HOPPER)
+        if(this.mode == MODE.HOPPER)
         {
             if(toBaseLine)
             {
