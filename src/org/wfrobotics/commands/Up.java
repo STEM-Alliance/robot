@@ -40,13 +40,13 @@ public class Up extends Command
             if (!Robot.climberSubsystem.isAtTop())
             {
                 time = timeSinceInitialized();
-                Robot.climberSubsystem.setSpeed(1);
+                Robot.climberSubsystem.setSpeed(Constants.CLIMBER_CLIMB_SPEED);
             }
             else
             {
                 if(timeSinceInitialized() - time < Constants.CLIMBER_CLIMB_TIME_AFTER_TOP_REACHED)
                 {
-                    Robot.climberSubsystem.setSpeed(1);
+                    Robot.climberSubsystem.setSpeed(Constants.CLIMBER_CLIMB_SPEED);
                 }
                 else
                 {
@@ -56,7 +56,7 @@ public class Up extends Command
         }
         else if (mode == MODE.DOWN)
         {
-            Robot.climberSubsystem.setSpeed(-1);
+            Robot.climberSubsystem.setSpeed(-Constants.CLIMBER_CLIMB_SPEED);
         }
         else
         {
@@ -81,6 +81,7 @@ public class Up extends Command
     protected void end()
     {
         //Not sure if we should turn off the motor; Robot might fall?
+            // no it wont we have a ratchet to keep that from happening
     }
 
     @Override

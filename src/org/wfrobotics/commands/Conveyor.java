@@ -48,7 +48,7 @@ public class Conveyor extends Command
         }
         else if(mode == MODE.UNJAM)
         {
-            Robot.augerSubsystem.setSpeed(-0.4);
+            Robot.augerSubsystem.setSpeed(Constants.AUGER_UNJAM_SPEED);
         }
         else 
         {
@@ -57,7 +57,7 @@ public class Conveyor extends Command
             if (Robot.shooterSubsystem.bothInTolerance(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
             {
                 // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?
-                augerSpeed = .3;
+                augerSpeed = Constants.AUGER_SPEED;
                 if(!isJamed() && !unjaming )
                 {
                     unjamTime = timeSinceInitialized();
@@ -68,7 +68,7 @@ public class Conveyor extends Command
                     unjaming = timeSinceInitialized() - unjamTime < 2;
                     if(unjaming)
                     {
-                        augerSpeed = -0.3;
+                        augerSpeed = Constants.AUGER_UNJAM_SPEED;
                     }
                 }
             }
@@ -83,7 +83,7 @@ public class Conveyor extends Command
         {
             lastBall = timeSinceInitialized();
         }        
-        return (timeSinceInitialized() - lastBall > 5);
+        return (timeSinceInitialized() - lastBall > Constants.AUGER_UNJAMING_TIME);
     }
     
     protected boolean isFinished()
