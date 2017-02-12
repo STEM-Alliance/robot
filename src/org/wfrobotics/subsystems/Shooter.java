@@ -4,6 +4,8 @@ import org.wfrobotics.commands.Rev;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -67,12 +69,16 @@ public class Shooter extends Subsystem
      */
     public boolean topSpeedReached(double tolerance)
     {    
-        return Math.abs(m_speedDesired - flywheelTop.getSpeed()) <= tolerance;
+        boolean reached = Math.abs(m_speedDesired - flywheelTop.getSpeed()) <= tolerance;
+        SmartDashboard.putBoolean("TopSpeedReached", reached);
+        return reached;
     }
     
     public boolean bottomSpeedReached(double tolerance)
-    {     
-        return Math.abs(m_speedDesired - flywheelBottom.getSpeed()) <= tolerance;
+    {
+        boolean reached = Math.abs(m_speedDesired - flywheelBottom.getSpeed()) <= tolerance;
+        SmartDashboard.putBoolean("BottomSpeedReached", reached);
+        return reached;
     }
     
     /**
