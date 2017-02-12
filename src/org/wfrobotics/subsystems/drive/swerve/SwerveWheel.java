@@ -79,12 +79,15 @@ public class SwerveWheel {
      */
     public SwerveWheel(int Number)
     {
+        // store some info off the start
         name = "Wheel" + Number;
         this.number = Number;
 
         position = new Vector(SwerveConstants.POSITIONS[number]);
         actual = new Vector(0, 0);
         desired = new Vector(0, 0);
+
+        // set up the drive motor
         driveMotor = new CANTalon(RobotMap.CAN_SWERVE_DRIVE_TALONS[number]);
 
         driveMotor.setVoltageRampRate(20);
@@ -96,6 +99,7 @@ public class SwerveWheel {
         driveMotor.enableReverseSoftLimit(false);
         driveMotor.enableBrakeMode(false);
         
+        // if we have it configured to use a speed sensor, setup that too
         if(SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE)
         {
             driveMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
@@ -110,6 +114,7 @@ public class SwerveWheel {
             driveMotor.reverseSensor(true);
         }
 
+        // setup the angle motor
         angleMotor = new CANTalon(RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
         angleMotor.setVoltageRampRate(20);
         angleMotor.ConfigFwdLimitSwitchNormallyOpen(true);
@@ -118,14 +123,16 @@ public class SwerveWheel {
         angleMotor.enableReverseSoftLimit(false);
         angleMotor.enableBrakeMode(false);
 
-        gearHigh = true;
-        this.gearShifter = new Servo(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number]);
-        gearShifterAngle = SwerveConstants.SHIFTER_VALS[number];
-
+        // setup the angle sensor to use the SRX port
         anglePot = new MagnetoPotSRX(angleMotor, 360);
         anglePID = new SwerveAngleController(name + ".ctl");
 
         //angleCalSensor = new DigitalInput(RobotMap.DIO_SWERVE_CAL[number]);
+
+        // setup high gear
+        gearHigh = true;
+        this.gearShifter = new Servo(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number]);
+        gearShifterAngle = SwerveConstants.SHIFTER_VALS[number];
     }
 
     public void free()
@@ -207,6 +214,9 @@ public class SwerveWheel {
         return gearHigh;
     }
 
+    /**
+     * Needed to be called to change the actual shifter
+     */
     private void updateShifter()
     {
         if (gearHigh)
@@ -222,6 +232,7 @@ public class SwerveWheel {
 
     /**
      * auto calibrate if enable and if the calibration sensor is triggered
+     * TODO
      */
     private void autoCalibration()
     {
@@ -235,7 +246,6 @@ public class SwerveWheel {
                 // we're more than angleCalSensorThreshold away, yet the sensor 
                 // is triggered, we need to then update the angle
                 
-                //TODO 
 //                this.AngleOrientation = Utilities.wrapToRange(270 - angle, 0,
 //                360);
 //                

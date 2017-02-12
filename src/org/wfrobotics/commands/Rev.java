@@ -42,15 +42,15 @@ public class Rev extends Command
     {
         if (mode == MODE.OFF)
         {
-            Robot.shooterSubsystem.topThenBottom(0);
+            Robot.shooterSubsystem.topThenBottom(0,  Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
         }
         else if (mode == MODE.SHOOT)
         {
-            Robot.shooterSubsystem.topThenBottom(Constants.SHOOTER_READY_SHOOT_SPEED);
+            Robot.shooterSubsystem.topThenBottom(Constants.SHOOTER_READY_SHOOT_SPEED, Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
         }
         else
         {
-            Robot.shooterSubsystem.topThenBottom(0);
+            Robot.shooterSubsystem.topThenBottom(0,  Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
         }
     }
 

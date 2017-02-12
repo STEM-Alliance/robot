@@ -85,37 +85,52 @@ public class Shooter extends Subsystem
      * Test to see if the top motor has REVed to a certain speed then starts to spin the 
      * bottom flywheel to get it up to speed
      * 
-     * ToDo: set the tolerance to something reasonable (currently set to 100)
-     * 
-     * @param tollerance speed for the top motor speed (hard coded)
-     * @param speed for the bottom motor
+     * @param rpm to set flywheels to
+     * @param tolerance tolerance in rpm used to turn on wheels in sequence
+     * @return if the desired speed is reached
      */
-    public void topThenBottom(double rpm)
+    public boolean topThenBottom(double rpm, double tolerance)
     {
+        boolean atSpeed = false;
+        
         if (rpm != 0)
         {
             flywheelTop.set(rpm);
-            if(topSpeedReached(100))
+            
+            if(topSpeedReached(tolerance))
             {
                 flywheelBottom.set(rpm);
+                
+                if(bottomSpeedReached(tolerance))
+                {
+                    atSpeed = true;
+                }
             }
             else
             {
-                SmartDashboard.putBoolean("Desired speed", topSpeedReached(100));
+                //SmartDashboard.putBoolean("Desired speed", topSpeedReached(tolerance));
             }
         }
         else
         {
             flywheelBottom.set(0);
-            //testing if the bottom flywheel is below a therasholod before turning off the top one
+            
+            //testing if the bottom flywheel is below a threshold before turning off the top one
             if (bottomSpeedReached(100))
             {
                 flywheelTop.set(0);
             }
         }
         
+        return atSpeed;
     }
-    public boolean bothInTollerance(double tolerance)
+    
+    /**
+     * Check if both flywheels are within a tolerance
+     * @param tolerance
+     * @return
+     */
+    public boolean bothInTolerance(double tolerance)
     {
         if (topSpeedReached(tolerance))
         {
@@ -124,8 +139,9 @@ public class Shooter extends Subsystem
                 return true;
             }
         }       
-            return false;
+        return false;
     }
+    
     public double getSpeedTop()
     {
         return flywheelTop.getSpeed();
