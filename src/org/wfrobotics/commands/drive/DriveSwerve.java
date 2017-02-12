@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveSwerve extends Command 
 {
-    public enum MODE {HALO, COMBO, ANGLE}
+    public enum MODE {HALO, COMBO, ANGLE, STOP}
     
     private final MODE mode;
     
@@ -90,9 +90,11 @@ public class DriveSwerve extends Command
                 // OI.DriveSwerveOI.getAngleDrive_Heading()
                 break;
             
+            case STOP:
             default:
                 speedRobot = new Vector(0, 0);
                 speedRotation = 0;
+                Robot.driveSubsystem.setBrake(true);
                 break;
         }
         
@@ -106,11 +108,11 @@ public class DriveSwerve extends Command
 
     protected void end() 
     {
-        
+        Robot.driveSubsystem.setBrake(false);
     }
 
     protected void interrupted() 
     {
-        
+        this.end();
     }
 }

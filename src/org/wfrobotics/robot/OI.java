@@ -1,10 +1,8 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.commands.Conveyor;
-import org.wfrobotics.commands.IntakeSetup;
-import org.wfrobotics.commands.Shoot;
-import org.wfrobotics.commands.VisionShoot;
+import org.wfrobotics.commands.*;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Panel.BUTTON;
@@ -31,10 +29,17 @@ public class OI
 
     Button buttonPanelSwitchL = new PanelButton(panel, Panel.BUTTON.SWITCH_L);
     Button buttonPanelSwitchR = new PanelButton(panel, Panel.BUTTON.SWITCH_R);
+
+    Button buttonPanelWhiteTop = new PanelButton(panel, Panel.BUTTON.WHITE_T);
+    Button buttonPanelWhiteBottom = new PanelButton(panel, Panel.BUTTON.WHITE_B);
     
+    
+    Button buttonDriveX = new XboxButton(xboxDrive, Xbox.BUTTON.X);
+    Button buttonDriveY = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
     Button buttonDriveB = new XboxButton(xboxDrive, Xbox.BUTTON.B);
     Button buttonDriveA = new XboxButton(xboxDrive, Xbox.BUTTON.A);
     Button buttonDriveRB = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
+    Button buttonPanelYellowTop = new PanelButton(panel, Panel.BUTTON.YELLOW_T);
     
 //  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
 //  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
@@ -47,16 +52,32 @@ public class OI
         buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
         buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.ZERO_GYRO));
 
+        buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
                 
         buttonDriveB.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
         buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
+        
+        buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
+        buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.DOWN));
+        
         buttonDriveRB.toggleWhenPressed(new VisionShoot());
         
 //      buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
 //      buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
 //      buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
+    }
+    
+    public static double getClimbSpeed()
+    {
+        double val = panel.getAxis(Panel.AXIS.SLIDER_L);
+        if(val < 0)
+            val = 0;
+        if(val > 1)
+            val = 1;
+        
+        return Utilities.scaleToRange(val, 0, 1, .2, 1);
     }
     
     public static class DriveTankOI
@@ -214,14 +235,9 @@ public class OI
             return value;
         }
 
-        public static boolean getHighGearEnable()
-        {
-            return xboxDrive.getBumper(Hand.kRight);
-        }
-        
         public static double getCrawlSpeed()
         {
-            return xboxDrive.getTriggerAxis(Hand.kRight);
+            return xboxDrive.getTriggerAxis(Hand.kLeft);
         }
         
         public static int getDpad()
