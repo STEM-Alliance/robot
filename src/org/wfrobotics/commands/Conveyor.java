@@ -7,23 +7,27 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  * Move a ball into the shooter, if able.
  * I envision this command being smart enough that it knows if feeding the shooter (and feeder) is okay.
- * @author drlindne
- *
  */
 public class Conveyor extends Command 
 {
     public enum MODE {SINGLE, CONTINUOUS, UNJAM, OFF};
+    public enum UNJAM {JAM, OKAY, UNJAMING};
+    
+    private final double LASTBALL_INVALID = -1;
     
     private final MODE mode;
+    private UNJAM unjam;
     private boolean hasFed = false;
     private double lastBall;
-    private double unjamTime;
-    private boolean unjaming;
+    private double unjamStart;
+    private boolean stillUnjaming;
+    private double augerSpeed;
     
     public Conveyor(MODE mode)
     {
         requires(Robot.augerSubsystem);
         
+        unjam = UNJAM.OKAY;
         this.mode = mode;
     }
     
@@ -32,12 +36,15 @@ public class Conveyor extends Command
         requires(Robot.augerSubsystem);
         
         this.mode = mode;
+        unjam = UNJAM.OKAY;
+        lastBall = -1;
+
         setTimeout(timeout);
     }
     
     protected void initialize()
     {
-        
+        lastBall = LASTBALL_INVALID;
     }
 
     protected void execute()
@@ -52,28 +59,39 @@ public class Conveyor extends Command
         }
         else 
         {
-            double augerSpeed = 0;
-            
-            if (Robot.shooterSubsystem.bothInTolerance(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
+            if (Robot.shooterSubsystem.topSpeedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
             {
-                // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?
-                augerSpeed = Constants.AUGER_SPEED;
-                if(!isJamed() && !unjaming )
+                if (lastBall == LASTBALL_INVALID)
                 {
-                    unjamTime = timeSinceInitialized();
-                    hasFed = true;
+                    lastBall = timeSinceInitialized();  // Reset the timer the first time so we don't start in unjamming mode
                 }
-                else
-                {  
-                    unjaming = timeSinceInitialized() - unjamTime < 2;
-                    if(unjaming)
+                
+                // Default is NOT_JAM
+                if (unjam == UNJAM.OKAY)
+                {
+                    augerSpeed = Constants.AUGER_SPEED;
+                    unjamStart = timeSinceInitialized();  
+                    
+                    if(isJamed())
                     {
-                        augerSpeed = Constants.AUGER_UNJAM_SPEED;
+                        unjam = UNJAM.UNJAMING;                        
                     }
                 }
+                if (unjam == UNJAM.UNJAMING)
+                {
+                    stillUnjaming = timeSinceInitialized() - unjamStart < Constants.AUGER_UNJAMING_TIME;
+                    if(stillUnjaming)
+                    {            
+                        augerSpeed = Constants.AUGER_UNJAM_SPEED;
+                    }
+                    else
+                    {
+                        unjam = UNJAM.OKAY;
+                    }
+                }
+                Robot.augerSubsystem.setSpeed(augerSpeed);
+                // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?            
             }
-            
-            Robot.augerSubsystem.setSpeed(augerSpeed);
         }
     }
     
@@ -82,8 +100,9 @@ public class Conveyor extends Command
         if ( Constants.SHOOTER_READY_SHOOT_SPEED - Robot.shooterSubsystem.getSpeedTop() > Constants.SHOOTER_TRIGGER_SPEED_DROP )
         {
             lastBall = timeSinceInitialized();
+            hasFed = true;
         }        
-        return (timeSinceInitialized() - lastBall > Constants.AUGER_UNJAMING_TIME);
+        return (timeSinceInitialized() - lastBall > Constants.AUGER_TIME_SINCE_BALL);
     }
     
     protected boolean isFinished()
