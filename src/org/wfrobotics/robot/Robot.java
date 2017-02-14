@@ -115,6 +115,7 @@ public class Robot extends SampleRobot
                 Gyro.getInstance().zeroYaw();
             
             driveSubsystem.printDash();
+            climberSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
             
             Scheduler.getInstance().run();
