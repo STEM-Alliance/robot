@@ -12,7 +12,7 @@ public class AutoGear extends CommandGroup
     public class Config
     {
         public final double timeForward, timeToSpring, angleSpring;
-        
+        //comment
         public Config(double timeForward, double timeToSpring, double angleSpring)
         {
             this.timeForward = timeForward;
