@@ -6,7 +6,6 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.subsystems.drive.DriveSubsystem;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -40,56 +39,25 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         }
     }
     
-    public class WheelVector
-    {
-        Vector velocity;
-        double spin;
-        
-        public WheelVector(Vector velocity,  double rotationalSpeed)
-        {
-            this.velocity = velocity;
-            this.spin = rotationalSpeed;
-        }
-    }
-    
     public class SwerveConfiguration
     {
         /**
          * Sets shifter to high or low gear (True: High gear, False: Low gear)
          */
-        public boolean m_gearHigh = false;
-        public boolean m_gyroEnabled = true;
-        private final double HEADING_TIMEOUT = .2;
+        public boolean gearHigh = false;
+        public boolean gyroEnable = true;
+
         private final double AUTO_ROTATION_MIN = .1;  // this will hopefully prevent locking the wheels when slowing down
-    }
-    
-    public class WheelConfiguration
-    {
-        private final boolean ENABLE_CRAWL_MODE = true;
-        /**
-         * Amount to scale back speeds (range: 0 (min - no crawl) to 1 (max - basically don't move))
-         */
-        public double crawlModeMagnitude = 0.0;
-        private final boolean ENABLE_ACCELERATION_LIMIT = true;
-        private double m_maxAcceleration = 6; // Smaller is slower acceleration
-        private final boolean ENABLE_VELOCITY_LIMIT = true;
-        private double m_maxAvailableVelocity = 1;
-        private final boolean ENABLE_ROTATION_LIMIT = false;
-        private double m_minRotationAdjust = .3;
-        private double m_rotationRateAdjust = 1;
+        private final double HEADING_TIMEOUT = .2;
     }
 
     public static final double HEADING_IGNORE = -1;
 
     public SwerveConfiguration configSwerve;
-    public WheelConfiguration configWheel;
-    protected SwerveWheel[] m_wheels;    
+    public WheelManager wheelManager;
     private PIDController m_chassisAngleController;
 
-    private Vector m_lastVelocity;
-    private double m_lastVelocityTimestamp;
     private double m_lastHeadingTimestamp;  // this is used to address the counter spinning/snapback
-
     double m_gyroLast;
 
     /**
@@ -101,13 +69,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         
         configSwerve = new SwerveConfiguration();
         m_chassisAngleController = new PIDController(.035, .00001, 0, 1.0);
-        m_wheels = new SwerveWheel[SwerveConstants.WHEEL_COUNT];
-        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            m_wheels[i] = new SwerveWheel(i);
-        }
-        
-        m_lastVelocity = new Vector(0, 0);
+        wheelManager = new WheelManager();
     }
 
     public void initDefaultCommand() 
@@ -153,7 +115,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         cv.spin = ApplySpinMode(cv);
         cv.velocity = applyVelocityMode(cv);
         
-        return setWheelVectors(Velocity, Rotation);
+        return wheelManager.setWheelVectors(Velocity, Rotation, configSwerve.gearHigh, m_brake);
     }
     
     private double ApplySpinMode(ChassisVector cv)
@@ -163,14 +125,13 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         // Determine which drive mode to use between
         if (!cv.ignoreHeading())
         {
-            // rotate to angle
+            // Rotate to angle
             SmartDashboard.putString("Drive Mode", "Rotate To Heading");
 
-            // this should snap us to a specific angle
-            if(configSwerve.m_gyroEnabled)
+            // This should snap us to a specific angle
+            if(configSwerve.gyroEnable)
             {
-                // set the rotation using a PID controller based on current robot
-                // heading and new desired heading
+                // Set the rotation using a PID controller based on current robot heading and new desired heading
                 Error = Utilities.wrapToRange(cv.heading - m_gyro.getYaw(), -180, 180);
                 cv.spin = m_chassisAngleController.update(Error);
             }
@@ -180,19 +141,18 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         {
             if (Math.abs(cv.spin) > .1)
             {
-                // spinning
+                // Spinning
                 SmartDashboard.putString("Drive Mode", "Spinning");
 
-                // just take the rotation value from the controller
+                // Just take the rotation value from the controller
                 m_lastHeading = m_gyro.getYaw();
 
-                // save off timestamp to counter snapback
+                // Save off timestamp to counter snapback
                 m_lastHeadingTimestamp = Timer.getFPGATimestamp();
 
                 m_gyroLast = m_gyro.getYaw();
 
-                // square rotation value to give it more control at lower values
-                // but keep the same sign since a negative squared is positive
+                // Square rotation value to give it more control at lower values but keep the same sign since a negative squared is positive
                 cv.spin = Math.signum(cv.spin) * Math.pow(cv.spin, 2);
             }
             else // maintain angle
@@ -202,16 +162,16 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                 {
                     SmartDashboard.putString("Drive Mode", "Stay At Angle");
 
-                    if(configSwerve.m_gyroEnabled)
+                    if(configSwerve.gyroEnable)
                     {
-                        // this should keep us facing the same direction
+                        // This should keep us facing the same direction
 
-                        // set the rotation using a PID controller based on current robot
+                        // Set the rotation using a PID controller based on current robot
                         // heading and new desired heading
                         Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
                         double tempRotation = m_chassisAngleController.update(Error);
 
-                        // add a deadband to hopefully help with wheel lock after stopping
+                        // Add a deadband to hopefully help with wheel lock after stopping
                         SmartDashboard.putNumber("MaintainRotation", tempRotation);
                         if(tempRotation > configSwerve.AUTO_ROTATION_MIN)
                         {
@@ -221,7 +181,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                 }
                 else
                 {
-                    m_lastHeading = m_gyro.getYaw(); // save off the latest heading until the timeout
+                    m_lastHeading = m_gyro.getYaw(); // Save off the latest heading until the timeout
                 }
             }
         }
@@ -253,140 +213,6 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     }
 
     /**
-     * Scale the wheel vectors based on max available velocity, adjust for
-     * rotation rate, then set/update the desired vectors individual wheels
-     * @param RobotVelocity robot's velocity using {@link Vector} type; max speed is 1.0
-     * @param RobotRotation robot's rotational movement; max rotation speed is -1 or 1
-     * @return Array of {@link Vector} of the actual readings from the wheels
-     */
-    protected Vector[] setWheelVectors(Vector RobotVelocity, double RobotRotation)
-    {
-        Vector[] WheelsUnscaled = new Vector[SwerveConstants.WHEEL_COUNT];
-        Vector[] WheelsActual = new Vector[SwerveConstants.WHEEL_COUNT];
-        double MaxWantedVeloc = 0;
-        double RobotVelocityClamped = (RobotVelocity.getMag() > 1.0) ? 1:RobotVelocity.getMag();
-        
-        RobotVelocity.setMag(RobotVelocityClamped);  // Set limitations on speed
-
-        // By squaring the magnitude, we get more fine adjustments at low speed but keep the sign since negative squared is positive
-        RobotVelocity.setMag(Math.signum(RobotVelocity.getMag()) * Math.pow(RobotVelocity.getMag(), 2));
-
-        // limit before slowing speed so it runs using the original values
-        // set limitations on rotation, so if driving full speed it doesn't take priority
-        if(configWheel.ENABLE_ROTATION_LIMIT)
-        {
-            configWheel.m_minRotationAdjust = Preferences.getInstance().getDouble("DRIVE_MIN_ROTATION", configWheel.m_minRotationAdjust);
-            double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + configWheel.m_minRotationAdjust, 1);
-            RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
-            RobotRotation *= configWheel.m_rotationRateAdjust;
-        }
-        
-        // Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
-        if(configWheel.ENABLE_CRAWL_MODE)
-        {
-            double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", SwerveConstants.DRIVE_SPEED_CRAWL);
-            double scale = Utilities.scaleToRange(configWheel.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
-
-            // Scale rotation and velocity back up
-            RobotRotation *= scale;
-            RobotVelocity.setMag(RobotVelocity.getMag() * scale);
-        }
-
-        // Limit the rate of change of velocity (ie limit acceleration)
-        // Low limits will decrease the acceleration, slowing initial movements, smoothing out motion, but makes it less responsive.
-        if(configWheel.ENABLE_ACCELERATION_LIMIT)
-        {
-            RobotVelocity = restrictVelocity(RobotVelocity);
-        }
-
-        m_lastVelocity = RobotVelocity;
-
-        SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
-        SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
-        SmartDashboard.putNumber("Drive Mag", RobotVelocity.getMag());
-        SmartDashboard.putNumber("Drive Ang", RobotVelocity.getAngle());
-        SmartDashboard.putNumber("Drive R", RobotRotation);
-
-        // calculate vectors for each wheel
-        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            // calculate
-            WheelsUnscaled[i] = new Vector(RobotVelocity.getX()
-                    - RobotRotation
-                    * m_wheels[i].position.getY(),
-                    RobotVelocity.getY()
-                    + RobotRotation
-                    * m_wheels[i].position.getX());
-
-            if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
-            {
-                MaxWantedVeloc = WheelsUnscaled[i].getMag();
-            }
-        }
-
-        double VelocityRatio = 1;
-
-        if(configWheel.ENABLE_VELOCITY_LIMIT)
-        {
-            // grab max velocity from the dash
-            configWheel.m_maxAvailableVelocity = Preferences.getInstance().getDouble("MAX_ROBOT_VELOCITY", configWheel.m_maxAvailableVelocity);
-
-            // determine ratio to scale all wheel velocities by
-            VelocityRatio = configWheel.m_maxAvailableVelocity / MaxWantedVeloc;
-
-            if (VelocityRatio > 1)
-            {
-                VelocityRatio = 1;
-            }
-        }
-
-        boolean actualGearHigh = configSwerve.m_gearHigh ? SwerveConstants.SHIFTER_DEFAULT_HIGH : !SwerveConstants.SHIFTER_DEFAULT_HIGH;
-
-        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            // Scale values for each wheel
-            Vector WheelScaled = Vector.NewFromMagAngle(WheelsUnscaled[i].getMag() * VelocityRatio, WheelsUnscaled[i].getAngle());
-
-            // Set the wheel speed
-            WheelsActual[i] = m_wheels[i].setDesired(WheelScaled, actualGearHigh, m_brake);
-        }
-
-        printDash();
-
-        return WheelsActual;
-    }
-
-    /**
-     * Returns the velocity restricted by the maximum acceleration
-     * A low MAX_ACCELERATION value will slow the speed down  more than a high value
-     * TODO: this should be replaced by a PID controller, probably...
-     * 
-     * @param robotVelocity
-     * @return
-     */
-    protected Vector restrictVelocity(Vector robotVelocity)
-    {
-        double TimeDelta = Timer.getFPGATimestamp() - m_lastVelocityTimestamp;
-        m_lastVelocityTimestamp = Timer.getFPGATimestamp();
-
-        // get the difference between last velocity and this velocity
-        Vector delta = robotVelocity.subtract(m_lastVelocity);
-
-        // grab the max acceleration value from the dash
-        configWheel.m_maxAcceleration = Preferences.getInstance().getDouble("MAX_ACCELERATION", configWheel.m_maxAcceleration);
-
-        // determine if we are accelerating/decelerating too slow
-        if (Math.abs(delta.getMag()) > configWheel.m_maxAcceleration * TimeDelta)
-        {
-            // if we are, slow that down by the MaxAcceleration value
-            delta.setMag(configWheel.m_maxAcceleration * TimeDelta);
-            robotVelocity = m_lastVelocity.add(delta);
-        }
-
-        return robotVelocity;
-    }
-
-    /**
      * Get the last heading used for the robot. If free spinning, this will constantly update
      * @return angle in degrees of the robot heading, relative to the field
      */
@@ -397,23 +223,12 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
     /**
      * Get the last movement vector of the robot, relative to the robot heading.
-     * the adjustment for field relative mode, if applicable, has already been taken
-     * into consideration
+     * the adjustment for field relative mode, if applicable, has already been taken into consideration
      * @return movement vector relative to the robot heading
      */
     public Vector getLastVector()
     {
-        return m_lastVelocity;
-    }
-
-    /**
-     * Get the actual reading of a wheel
-     * @param index Index of the wheel
-     * @return Actual reading of the wheel
-     */
-    public Vector getWheelActual(int index)
-    {
-        return m_wheels[index].getActual();
+        return wheelManager.getLastVector();
     }
 
     /**
@@ -424,43 +239,22 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public void fullWheelCalibration(double speed, double values[], boolean save)
     {
-
-        Vector vector = Vector.NewFromMagAngle(speed, 0);
-
-        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            m_wheels[i].updateAngleOffset(values[i]);
-            m_wheels[i].setDesired(vector, false, false);
-
-            if(save)
-            {
-                m_wheels[i].saveAngleOffset(values[i]);
-            }
-        }
+        wheelManager.fullWheelCalibration(speed, values, save);
     }
 
     public double[] getWheelCalibrations()
     {
-        double[] cals = {0,0,0,0};
-        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            cals[i] = m_wheels[i].getAngleOffset();
-        }
-        return cals;
+        return wheelManager.getWheelCalibrations();
     }
     
     @Override
     public void printDash()
     {
         super.printDash();
+        wheelManager.printDash();
 
-        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            m_wheels[i].printDash();
-        }
-
-        SmartDashboard.putBoolean("Gyro Enabled", configSwerve.m_gyroEnabled);
-        SmartDashboard.putBoolean("High Gear", configSwerve.m_gearHigh);
+        SmartDashboard.putBoolean("Gyro Enabled", configSwerve.gyroEnable);
+        SmartDashboard.putBoolean("High Gear", configSwerve.gearHigh);
     }
 
     /**
@@ -468,9 +262,6 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public void free()
     {
-        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            m_wheels[i].free();
-        }
+        wheelManager.free();
     }    
 }

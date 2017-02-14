@@ -22,7 +22,7 @@ public class DriveConfig extends Command
         switch(mode)
         {
             case HIGH_GEAR:
-                Robot.driveSubsystem.configSwerve.m_gearHigh = !Robot.driveSubsystem.configSwerve.m_gearHigh;
+                Robot.driveSubsystem.configSwerve.gearHigh = !Robot.driveSubsystem.configSwerve.gearHigh;
                 break;
             case FIELD_RELATIVE:
                 Robot.driveSubsystem.setFieldRelative(!Robot.driveSubsystem.getFieldRelative());
@@ -31,7 +31,7 @@ public class DriveConfig extends Command
                 Robot.driveSubsystem.gyroZero();
                 break;
             case GYRO_DISABLE:
-                Robot.driveSubsystem.configSwerve.m_gyroEnabled = !Robot.driveSubsystem.configSwerve.m_gyroEnabled;
+                Robot.driveSubsystem.configSwerve.gyroEnable = !Robot.driveSubsystem.configSwerve.gyroEnable;
             default:
                 break;
         }
