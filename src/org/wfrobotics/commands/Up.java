@@ -47,7 +47,7 @@ public class Up extends Command
             {
                 if(timeSinceInitialized() - time < Constants.CLIMBER_CLIMB_TIME_AFTER_TOP_REACHED)
                 {
-                    Robot.climberSubsystem.setSpeed(1);
+                    Robot.climberSubsystem.setSpeed(.4);
                 }
                 else
                 {
