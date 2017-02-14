@@ -9,6 +9,7 @@ public class VisionGearDropOff extends CommandGroup
 {
     enum STATE {YAW, APPROACH, SPRING, VICTORY};
     STATE state;
+    //comment
     TargetData data;
     double tolerance;
     
