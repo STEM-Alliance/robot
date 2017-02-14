@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public abstract class DriveSubsystem extends Subsystem {
-
+public abstract class DriveSubsystem extends Subsystem 
+{
     protected boolean m_fieldRelative = true;
     protected boolean m_brake = false;
     protected Gyro m_gyro;
@@ -101,5 +101,4 @@ public abstract class DriveSubsystem extends Subsystem {
         SmartDashboard.putBoolean("FieldRelative", m_fieldRelative);
         SmartDashboard.putBoolean("Brake", m_brake);
     }
-
 }
