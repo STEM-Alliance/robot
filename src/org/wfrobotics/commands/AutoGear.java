@@ -1,7 +1,5 @@
 package org.wfrobotics.commands;
 
-import org.wfrobotics.subsystems.Led;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -38,8 +36,13 @@ public class AutoGear extends CommandGroup
         
         // We are at the gear. Score it
         addSequential(new VisionGearDropOff());  // TODO should we put this in a special mode or cancel this if we near the end of autonomous without scoring?
-        addParallel(new LED(Led.HARDWARE.ALL, LED.MODE.BLINK, 5));
-        // If there is any time left, we should shoot or start moving to our next destination (like getting another gear   // TODO While we have not scored? Maybe we only get one chance?
+
+        // If there is any time left, we should shoot or start moving to our next destination (like getting another gear)
+        // TODO
+        
+        
+        
+        // TODO While we have not scored? Maybe we only get one chance?
         // Perhaps the body of this is a function that adds commands or it's own private Class CommandGroup
         // TODO Move towards spring
         // TODO Ultrasonic black magic to do this? Not only sense distance but that we are square?
@@ -71,7 +74,7 @@ public class AutoGear extends CommandGroup
         }
         else
         {
-            return new Config(0, 0, 0); 
+            return new Config(0, 0, 0);
         }
     }
 }
