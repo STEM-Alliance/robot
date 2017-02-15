@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class WheelManager
 {
-    public class WheelVector
+    public class RobotVector
     {
         Vector velocity;
         double spin;
 
-        public WheelVector(Vector velocity,  double rotationalSpeed)
+        public RobotVector(Vector velocity,  double rotationalSpeed)
         {
             this.velocity = velocity;
             this.spin = rotationalSpeed;
@@ -28,6 +28,7 @@ public class WheelManager
     {
         private final boolean ENABLE_ACCELERATION_LIMIT = true;
         private final boolean ENABLE_CRAWL_MODE = true;
+        private final boolean ENABLE_SQUARE_MAGNITUDE = true;
         private final boolean ENABLE_ROTATION_LIMIT = false;
         private final boolean ENABLE_VELOCITY_LIMIT = true;
 
@@ -50,7 +51,7 @@ public class WheelManager
     public WheelManager()
     {
         config = new WheelConfiguration();
-        
+
         wheels = new SwerveWheel[SwerveConstants.WHEEL_COUNT];
         for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
@@ -71,138 +72,45 @@ public class WheelManager
      */
     protected Vector[] setWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
     {
-        Vector[] WheelsUnscaled = new Vector[SwerveConstants.WHEEL_COUNT];
+        RobotVector robot = new RobotVector(RobotVelocity, RobotRotation);
+        Vector[] WheelsScaled;
         Vector[] WheelsActual = new Vector[SwerveConstants.WHEEL_COUNT];
-        double MaxWantedVeloc = 0;
-        double RobotVelocityClamped = (RobotVelocity.getMag() > 1.0) ? 1:RobotVelocity.getMag();
 
-        RobotVelocity.setMag(RobotVelocityClamped);  // Set limitations on speed
+        robot = applyClampVelocity(robot);
+        robot = (config.ENABLE_SQUARE_MAGNITUDE) ? applyMagnitudeSquare(robot):robot;
+        robot = (config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(robot):robot;  
+        robot = (config.ENABLE_CRAWL_MODE) ? applyCrawlMode(robot):robot;
+        robot = (config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(robot):robot;
+        lastVelocity = robot.velocity;
 
-        // By squaring the magnitude, we get more fine adjustments at low speed but keep the sign since negative squared is positive
-        RobotVelocity.setMag(Math.signum(RobotVelocity.getMag()) * Math.pow(RobotVelocity.getMag(), 2));
+        SmartDashboard.putNumber("Drive X", robot.velocity.getX());
+        SmartDashboard.putNumber("Drive Y", robot.velocity.getY());
+        SmartDashboard.putNumber("Drive Mag", robot.velocity.getMag());
+        SmartDashboard.putNumber("Drive Ang", robot.velocity.getAngle());
+        SmartDashboard.putNumber("Drive R", robot.spin);
 
-        // limit before slowing speed so it runs using the original values
-        // set limitations on rotation, so if driving full speed it doesn't take priority
-        if(config.ENABLE_ROTATION_LIMIT)
-        {
-            config.rotationAdjustMin = Preferences.getInstance().getDouble("DRIVE_MIN_ROTATION", config.rotationAdjustMin);
-            double RotationAdjust = Math.min(1 - RobotVelocity.getMag() + config.rotationAdjustMin, 1);
-            RobotRotation = Utilities.clampToRange(RobotRotation, -RotationAdjust, RotationAdjust);
-            RobotRotation *= config.rotationAdjustRate;
-        }
-
-        // Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
-        if(config.ENABLE_CRAWL_MODE)
-        {
-            double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", SwerveConstants.DRIVE_SPEED_CRAWL);
-            double scale = Utilities.scaleToRange(config.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
-            // Scale rotation and velocity back up
-            RobotRotation *= scale;
-            RobotVelocity.setMag(RobotVelocity.getMag() * scale);
-        }
-
-        // Limit the rate of change of velocity (ie limit acceleration)
-        // Low limits will decrease the acceleration, slowing initial movements, smoothing out motion, but makes it less responsive.
-        if(config.ENABLE_ACCELERATION_LIMIT)
-        {
-            RobotVelocity = restrictVelocity(RobotVelocity);
-        }
-
-        lastVelocity = RobotVelocity;
-
-        SmartDashboard.putNumber("Drive X", RobotVelocity.getX());
-        SmartDashboard.putNumber("Drive Y", RobotVelocity.getY());
-        SmartDashboard.putNumber("Drive Mag", RobotVelocity.getMag());
-        SmartDashboard.putNumber("Drive Ang", RobotVelocity.getAngle());
-        SmartDashboard.putNumber("Drive R", RobotRotation);
-
-        // Calculate vectors for each wheel
+        WheelsScaled = scaleWheelVectors(robot);
         for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
-            WheelsUnscaled[i] = new Vector(RobotVelocity.getX()
-                    - RobotRotation
-                    * wheels[i].position.getY(),
-                    RobotVelocity.getY()
-                    + RobotRotation
-                    * wheels[i].position.getX());
-
-            if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
-            {
-                MaxWantedVeloc = WheelsUnscaled[i].getMag();
-            }
-        }
-
-        double VelocityRatio = 1;
-
-        if(config.ENABLE_VELOCITY_LIMIT)
-        {
-            // Grab max velocity from the dash
-            config.velocityMaxAvailable = Preferences.getInstance().getDouble("MAX_ROBOT_VELOCITY", config.velocityMaxAvailable);
-
-            // Determine ratio to scale all wheel velocities by
-            VelocityRatio = config.velocityMaxAvailable / MaxWantedVeloc;
-
-            VelocityRatio = (VelocityRatio > 1) ? 1:VelocityRatio;
-        }
-
-        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            // Scale values for each wheel
-            Vector WheelScaled = Vector.NewFromMagAngle(WheelsUnscaled[i].getMag() * VelocityRatio, WheelsUnscaled[i].getAngle());
-
-            // Set the wheel speed
-            WheelsActual[i] = wheels[i].setDesired(WheelScaled, gear, brake);
+            WheelsActual[i] = wheels[i].setDesired(WheelsScaled[i], gear, brake);
         }
 
         printDash();
 
         return WheelsActual;
     }
-
-    /**
-     * Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
-     * @param vector
-     * @return
-     */
-    public WheelVector applyCrawlMode(WheelVector vector)
+    
+    public double getVelocityLimit(double MaxWantedVeloc)
     {
-        double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", SwerveConstants.DRIVE_SPEED_CRAWL);
-        double scale = Utilities.scaleToRange(config.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
+        config.velocityMaxAvailable = Preferences.getInstance().getDouble("MAX_ROBOT_VELOCITY", config.velocityMaxAvailable);
+        double velocityRatio = 1;
 
-        // Scale rotation and velocity back up
-        vector.spin *= scale;
-        vector.velocity.setMag(vector.velocity.getMag() * scale);
+        // Determine ratio to scale all wheel velocities by
+        velocityRatio = config.velocityMaxAvailable / MaxWantedVeloc;
 
-        return vector;
-    }
+        velocityRatio = (velocityRatio > 1) ? 1:velocityRatio;
 
-    /**
-     * Returns the velocity restricted by the maximum acceleration
-     * A low MAX_ACCELERATION value will slow the speed down  more than a high value
-     * TODO: this should be replaced by a PID controller, probably... 
-     * @param robotVelocity
-     * @return
-     */
-    protected Vector restrictVelocity(Vector robotVelocity)
-    {
-        double TimeDelta = Timer.getFPGATimestamp() - lastVelocityTimestamp;
-        lastVelocityTimestamp = Timer.getFPGATimestamp();
-
-        // Get the difference between last velocity and this velocity
-        Vector delta = robotVelocity.subtract(lastVelocity);
-
-        // Grab the max acceleration value from the dash
-        config.accelerationMax = Preferences.getInstance().getDouble("MAX_ACCELERATION", config.accelerationMax);
-
-        // Determine if we are accelerating/decelerating too slow
-        if (Math.abs(delta.getMag()) > config.accelerationMax * TimeDelta)
-        {
-            // if we are, slow that down by the MaxAcceleration value
-            delta.setMag(config.accelerationMax * TimeDelta);
-            robotVelocity = lastVelocity.add(delta);
-        }
-
-        return robotVelocity;
+        return velocityRatio;
     }
 
     /**
@@ -222,7 +130,7 @@ public class WheelManager
      * @param speed speed value to test against, 0-1
      * @param values array of values, -180 to 180, to adjust the wheel angle offsets
      */
-    public void fullWheelCalibration(double speed, double values[], boolean save)
+    public void doFullWheelCalibration(double speed, double values[], boolean save)
     {
 
         Vector vector = Vector.NewFromMagAngle(speed, 0);
@@ -266,5 +174,126 @@ public class WheelManager
         {
             wheels[i].free();
         }
-    }   
+    }
+
+    /**
+     * Scale each wheel vector set to within range. Values are scaled down relative to the fastest wheel.
+     * @param robot
+     * @return Scaled vectors to command the wheels with
+     */
+    private Vector[] scaleWheelVectors(RobotVector robot)
+    {
+        Vector[] WheelsUnscaled = new Vector[SwerveConstants.WHEEL_COUNT];
+        Vector[] WheelsScaled = new Vector[SwerveConstants.WHEEL_COUNT];
+        double MaxWantedVeloc = 0;
+        double VelocityRatio;
+
+        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
+        {
+            WheelsUnscaled[i] = new Vector(robot.velocity.getX() - robot.spin * wheels[i].position.getY(),
+                    robot.velocity.getY() + robot.spin * wheels[i].position.getX());
+
+            if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
+            {
+                MaxWantedVeloc = WheelsUnscaled[i].getMag();
+            }
+        }
+
+        VelocityRatio = (config.ENABLE_VELOCITY_LIMIT) ? getVelocityLimit(MaxWantedVeloc):1;
+
+        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
+        {
+            // Scale values for each wheel
+            WheelsScaled[i] = Vector.NewFromMagAngle(WheelsUnscaled[i].getMag() * VelocityRatio, WheelsUnscaled[i].getAngle());
+        }
+
+        return WheelsScaled;
+    }
+
+    /**
+     * Set limitations on speed
+     * @param robot
+     * @return
+     */
+    private RobotVector applyClampVelocity(RobotVector robot)
+    {
+        double RobotVelocityClamped = (robot.velocity.getMag() > 1.0) ? 1:robot.velocity.getMag();
+
+        robot.velocity.setMag(RobotVelocityClamped);
+
+        return robot;
+    }
+
+    /**
+     * By squaring the magnitude, we get more fine adjustments at low speed but keep the sign since negative squared is positive
+     * @param robot
+     * @return
+     */
+    private RobotVector applyMagnitudeSquare(RobotVector robot)
+    {
+        robot.velocity.setMag(Math.signum(robot.velocity.getMag()) * Math.pow(robot.velocity.getMag(), 2));
+        return robot;
+    }
+
+    /**
+     * Limit before slowing speed so it runs using the original values set limitations on rotation, so if driving full speed it doesn't take priority
+     * @param robot
+     * @return
+     */
+    private RobotVector applyRotationLimit(RobotVector robot)
+    {
+        config.rotationAdjustMin = Preferences.getInstance().getDouble("DRIVE_MIN_ROTATION", config.rotationAdjustMin);
+        double RotationAdjust = Math.min(1 - robot.velocity.getMag() + config.rotationAdjustMin, 1);
+
+        robot.spin = Utilities.clampToRange(robot.spin, -RotationAdjust, RotationAdjust);
+        robot.spin *= config.rotationAdjustRate;
+
+        return robot;
+    }
+
+    /**
+     * Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
+     * @param robot
+     * @return
+     */
+    private RobotVector applyCrawlMode(RobotVector robot)
+    {
+        double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", SwerveConstants.DRIVE_SPEED_CRAWL);
+        double scale = Utilities.scaleToRange(config.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
+
+        // Scale rotation and velocity back up
+        robot.spin *= scale;
+        robot.velocity.setMag(robot.velocity.getMag() * scale);
+
+        return robot;
+    }
+
+    /**
+     * Returns the velocity restricted by the maximum acceleration
+     * A low MAX_ACCELERATION value will slow the speed down  more than a high value
+     * TODO: this should be replaced by a PID controller, probably... 
+     * @param robot
+     * @return
+     */
+    private RobotVector applyAccelerationLimit(RobotVector robot)
+    {
+        double TimeDelta = Timer.getFPGATimestamp() - lastVelocityTimestamp;
+        lastVelocityTimestamp = Timer.getFPGATimestamp();
+
+        // Get the difference between last velocity and this velocity
+        Vector delta = robot.velocity.subtract(lastVelocity);
+
+        // Grab the max acceleration value from the dash
+        config.accelerationMax = Preferences.getInstance().getDouble("MAX_ACCELERATION", config.accelerationMax);
+
+        // Determine if we are accelerating/decelerating too slow
+        if (Math.abs(delta.getMag()) > config.accelerationMax * TimeDelta)
+        {
+            // if we are, slow that down by the MaxAcceleration value
+            delta.setMag(config.accelerationMax * TimeDelta);
+            robot.velocity = lastVelocity.add(delta);
+        }
+
+        return robot;
+    }
 }
