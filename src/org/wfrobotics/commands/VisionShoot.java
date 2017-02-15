@@ -16,7 +16,7 @@ public class VisionShoot extends CommandGroup
      
         requires (Robot.driveSubsystem);
         this.data = Robot.targetingSubsystem.getData();
-        shoot = new Shoot(Conveyor.MODE.OFF);
+        shoot = new Shoot(Conveyer.MODE.OFF);
         addSequential(shoot);
     }
     protected void execute()
@@ -36,7 +36,7 @@ public class VisionShoot extends CommandGroup
                            Robot.targetingSubsystem.DistanceToTarget()) >= tolerance)
             {
             
-                shoot = new Shoot(Conveyor.MODE.OFF);
+                shoot = new Shoot(Conveyer.MODE.OFF);
 
               //TODO Use a PID loop here if this isn't good enough
                 //speed = GetPIDSpeed(error, )
@@ -55,8 +55,8 @@ public class VisionShoot extends CommandGroup
                 }
             else
             {
-                //addSequential(new Shoot(Conveyor.MODE.CONTINUOUS));
-                shoot = new Shoot(Conveyor.MODE.CONTINUOUS);
+                //addSequential(new Shoot(Conveyer.MODE.CONTINUOUS));
+                shoot = new Shoot(Conveyer.MODE.CONTINUOUS);
             }
         }
         else

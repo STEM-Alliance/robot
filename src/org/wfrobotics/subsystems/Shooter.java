@@ -16,18 +16,38 @@ public class Shooter extends Subsystem
     private final CANTalon flywheelBottom;
     private double m_speedDesired;
 
+    private final double TOP_P = 0.05;
+    private final double TOP_I = 0.0001;
+    private final double TOP_D = 0.001;
+    
+    // 100% of total feed forward / native counts per 100ms @ 4000rpm
+    private final double TOP_F = 0;//1.0 * 1023 / ( 4000 * (1/60) * (1/10) * 4096);
+    private final double TOP_RAMP = 0.01;
+
+    private final double BOTTOM_P = 0.05;
+    private final double BOTTOM_I = 0.0001;
+    private final double BOTTOM_D = 0.001;
+    
+    // 100% of total feed forward / native counts per 100ms @ 4000rpm
+    private final double BOTTOM_F = 0;//1.0 * 1023 / ( 4000 * (1/60) * (1/10) * 4096);
+    private final double BOTTOM_RAMP = 0.01;
+    
     public Shooter()
     {
         flywheelTop = new CANTalon(RobotMap.SHOOTER_MOTOR_SRX);
         
         flywheelTop.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
         flywheelTop.changeControlMode(TalonControlMode.Speed);
-        flywheelTop.setPID(.115,0.0001,0.015);
-        flywheelTop.setCloseLoopRampRate(.01);
+        flywheelTop.setPID(TOP_P,TOP_I,TOP_D,TOP_F,0,TOP_RAMP,0);
         
-        flywheelTop.setInverted(false);
+        flywheelTop.reverseSensor(true);
+        flywheelTop.setInverted(true);
       
         flywheelBottom = new CANTalon(RobotMap.FEEDER_MOTOR_SRX);
+        
+        flywheelBottom.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        flywheelBottom.changeControlMode(TalonControlMode.Speed);
+        flywheelBottom.setPID(BOTTOM_P,BOTTOM_I,BOTTOM_D,BOTTOM_F,0,BOTTOM_RAMP,0);
     }
     
     @Override
@@ -47,7 +67,7 @@ public class Shooter extends Subsystem
         m_speedDesired = rpm;
         printDash();
         
-        return flywheelTop.getSpeed();
+        return getSpeedTop();
     }
     /**
      * Control speed of the BOTTOM shooting wheel
@@ -69,7 +89,7 @@ public class Shooter extends Subsystem
      */
     public boolean topSpeedReached(double tolerance)
     {    
-        boolean reached = Math.abs(m_speedDesired - flywheelTop.getSpeed()) <= tolerance;
+        boolean reached = Math.abs(m_speedDesired - getSpeedTop()) <= tolerance;
         SmartDashboard.putBoolean("TopSpeedReached", reached);
         return reached;
     }
@@ -92,14 +112,17 @@ public class Shooter extends Subsystem
     public boolean topThenBottom(double rpm, double tolerance)
     {
         boolean atSpeed = false;
+        printDash();
         
         if (rpm != 0)
         {
             flywheelTop.set(rpm);
+            flywheelTop.enable();
             
             if(topSpeedReached(tolerance))
             {
                 flywheelBottom.set(rpm);
+                flywheelBottom.enable();
                 
                 if(bottomSpeedReached(tolerance))
                 {
@@ -114,11 +137,13 @@ public class Shooter extends Subsystem
         else
         {
             flywheelBottom.set(0);
+            flywheelBottom.disable();
             
             //testing if the bottom flywheel is below a threshold before turning off the top one
             if (bottomSpeedReached(100))
             {
                 flywheelTop.set(0);
+                flywheelTop.disable();
             }
         }
         
@@ -144,13 +169,13 @@ public class Shooter extends Subsystem
     
     public double getSpeedTop()
     {
-        return flywheelTop.getSpeed();
+        return -flywheelTop.getSpeed();
     }
 
     public void printDash()
     {
         SmartDashboard.putNumber("ShooterSpeedDesired", m_speedDesired);
-        SmartDashboard.putNumber("FlywheelTopSpeedActual", flywheelTop.getSpeed());
+        SmartDashboard.putNumber("FlywheelTopSpeedActual", getSpeedTop());
         SmartDashboard.putNumber("FlywheelBottomSpeedActual", flywheelBottom.getSpeed());
     }
 }

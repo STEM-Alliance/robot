@@ -1,5 +1,6 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -8,7 +9,7 @@ import edu.wpi.first.wpilibj.command.Command;
  * Move a ball into the shooter, if able.
  * I envision this command being smart enough that it knows if feeding the shooter (and feeder) is okay.
  */
-public class Conveyor extends Command 
+public class Conveyer extends Command 
 {
     public enum MODE {SINGLE, CONTINUOUS, UNJAM, OFF};
     public enum UNJAM {JAM, OKAY, UNJAMING};
@@ -23,15 +24,15 @@ public class Conveyor extends Command
     private boolean stillUnjaming;
     private double augerSpeed;
     
-    public Conveyor(MODE mode)
+    public Conveyer(MODE mode)
     {
         requires(Robot.augerSubsystem);
         
         unjam = UNJAM.OKAY;
         this.mode = mode;
     }
-    
-    public Conveyor(MODE mode, double timeout)
+     
+    public Conveyer(MODE mode, double timeout)
     {
         requires(Robot.augerSubsystem);
         
@@ -49,6 +50,8 @@ public class Conveyor extends Command
 
     protected void execute()
     {
+        Utilities.PrintCommand("Conveyer", this, mode.toString());
+        
         if (mode == MODE.OFF)
         {
             Robot.augerSubsystem.setSpeed(0);
