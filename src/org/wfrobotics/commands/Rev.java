@@ -1,5 +1,6 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -40,6 +41,8 @@ public class Rev extends Command
     @Override
     protected void execute()
     {
+        Utilities.PrintCommand("Shooter", this, mode.toString());
+        
         if (mode == MODE.OFF)
         {
             Robot.shooterSubsystem.topThenBottom(0,  Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
