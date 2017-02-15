@@ -239,7 +239,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public void fullWheelCalibration(double speed, double values[], boolean save)
     {
-        wheelManager.fullWheelCalibration(speed, values, save);
+        wheelManager.doFullWheelCalibration(speed, values, save);
     }
 
     public double[] getWheelCalibrations()
