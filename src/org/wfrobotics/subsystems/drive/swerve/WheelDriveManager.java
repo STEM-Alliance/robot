@@ -12,7 +12,7 @@ public class WheelDriveManager
     {
         driveMotor = new CANTalon(talonIndex);
 
-        driveMotor.setVoltageRampRate(20);
+        driveMotor.setVoltageRampRate(30);
         //driveMotor.setCurrentLimit(5);
         driveMotor.ConfigFwdLimitSwitchNormallyOpen(true);
         driveMotor.ConfigRevLimitSwitchNormallyOpen(true);
