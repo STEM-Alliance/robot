@@ -18,7 +18,7 @@ public class WheelAngleManager
     public WheelAngleManager(int talonAddress)
     {
         angleMotor = new CANTalon(talonAddress);
-        angleMotor.setVoltageRampRate(20);
+        angleMotor.setVoltageRampRate(30);
         angleMotor.ConfigFwdLimitSwitchNormallyOpen(true);
         angleMotor.ConfigRevLimitSwitchNormallyOpen(true);
         angleMotor.enableForwardSoftLimit(false);

@@ -29,14 +29,17 @@ public class WheelManager
         private final boolean ENABLE_ACCELERATION_LIMIT = true;
         private final boolean ENABLE_CRAWL_MODE = true;
         private final boolean ENABLE_SQUARE_MAGNITUDE = true;
-        private final boolean ENABLE_ROTATION_LIMIT = false;
+        private final boolean ENABLE_ROTATION_LIMIT = true;
         private final boolean ENABLE_VELOCITY_LIMIT = true;
 
         private double accelerationMax = 6; // Smaller is slower acceleration
+        
         /**
          * Amount to scale back speeds (range: 0 (min - no crawl) to 1 (max - basically don't move))
+         * This should get set from the controller/command
          */
         public double crawlModeMagnitude = 0.0;
+        
         private double rotationAdjustMin = .3;
         private double rotationAdjustRate = 1;
         private double velocityMaxAvailable = 1;
@@ -245,8 +248,10 @@ public class WheelManager
         config.rotationAdjustMin = Preferences.getInstance().getDouble("DRIVE_MIN_ROTATION", config.rotationAdjustMin);
         double RotationAdjust = Math.min(1 - robot.velocity.getMag() + config.rotationAdjustMin, 1);
 
-        robot.spin = Utilities.clampToRange(robot.spin, -RotationAdjust, RotationAdjust);
-        robot.spin *= config.rotationAdjustRate;
+        //robot.spin = Utilities.clampToRange(robot.spin, -RotationAdjust, RotationAdjust);
+        robot.spin *= RotationAdjust;
+        SmartDashboard.putNumber("SwerveRotationAdjust", RotationAdjust);
+        
 
         return robot;
     }
