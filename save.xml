@@ -1,20 +1,51 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="697" y="51"/>
-		<height>266</height>
-		<property name="Buffer Size (samples)" value="500"/>
+	<widget field="Wheel0UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="403" y="53"/>
+		<property name="Buffer Size (samples)" value="100"/>
+	</widget>
+	<widget field="Drive R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="268" y="613"/>
+	</widget>
+	<widget field="SwerveRotationAdjust" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="699" y="634"/>
+	</widget>
+	<widget field="Wheel0.angle.err" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1617" y="535"/>
+	</widget>
+	<widget field="BottomSpeedReached" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1244" y="154"/>
+		<width>155</width>
+	</widget>
+	<widget field="TopSpeedReached" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1246" y="174"/>
+		<width>139</width>
+	</widget>
+	<widget field="Wheel1UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="69" y="646"/>
+	</widget>
+	<widget field="Wheel3UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="62" y="687"/>
+	</widget>
+	<widget field="Wheel2UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="69" y="668"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
+		<location x="0" y="0"/>
+	</static-widget>
+	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1012" y="153"/>
+		<width>224</width>
+	</widget>
+	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1029" y="179"/>
+		<width>208</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
 		<location x="1409" y="0"/>
 		<width>488</width>
 		<height>351</height>
 	</static-widget>
-	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="290" y="52"/>
-		<height>265</height>
-		<property name="Buffer Size (samples)" value="500"/>
-	</widget>
 	<widget field="ShooterSpeedDesired" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1134" y="212"/>
 	</widget>
@@ -49,12 +80,6 @@
 		<height>267</height>
 		<property name="Buffer Size (samples)" value="500"/>
 	</widget>
-	<widget field="TopSpeedReached" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1184" y="176"/>
-	</widget>
-	<widget field="BottomSpeedReached" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1161" y="153"/>
-	</widget>
 	<widget field="intakeonleft" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1142" y="364"/>
 	</widget>
@@ -65,25 +90,13 @@
 		<location x="1680" y="432"/>
 	</widget>
 	<widget field="LED is on" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="368" y="106"/>
+		<location x="1226" y="280"/>
 	</widget>
 	<widget field="LED Mode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="368" y="80"/>
+		<location x="1220" y="253"/>
 	</widget>
 	<widget field="Wheel3.speed.motor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="720" y="608"/>
-	</widget>
-	<widget field="SpeedDiff3" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1438" y="506"/>
-	</widget>
-	<widget field="VoltageRampRate3" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="479" y="608"/>
-	</widget>
-	<widget field="SpeedOutput3" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1003" y="506"/>
-	</widget>
-	<widget field="SpeedInput3" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="768" y="506"/>
 	</widget>
 	<widget field="Wheel3.angle.err" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1616" y="608"/>
@@ -92,22 +105,10 @@
 		<location x="1392" y="608"/>
 	</widget>
 	<widget field="Wheel3.angle.raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="948" y="608"/>
+		<location x="960" y="608"/>
 	</widget>
 	<widget field="Wheel2.speed.motor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="720" y="586"/>
-	</widget>
-	<widget field="SpeedDiff2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1438" y="480"/>
-	</widget>
-	<widget field="VoltageRampRate2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="479" y="586"/>
-	</widget>
-	<widget field="SpeedOutput2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1003" y="480"/>
-	</widget>
-	<widget field="SpeedInput2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="768" y="480"/>
 	</widget>
 	<widget field="Wheel2.angle.err" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1616" y="586"/>
@@ -120,18 +121,6 @@
 	</widget>
 	<widget field="Wheel1.speed.motor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="720" y="560"/>
-	</widget>
-	<widget field="SpeedDiff1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1440" y="458"/>
-	</widget>
-	<widget field="VoltageRampRate1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="479" y="560"/>
-	</widget>
-	<widget field="SpeedOutput1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1003" y="458"/>
-	</widget>
-	<widget field="SpeedInput1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="772" y="458"/>
 	</widget>
 	<widget field="Wheel1.angle.err" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1616" y="560"/>
@@ -148,31 +137,12 @@
 	<widget field="CLRampRate0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="337" y="505"/>
 	</widget>
-	<widget field="SpeedDiff0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1438" y="432"/>
-	</widget>
-	<widget field="VoltageRampRate0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="480" y="538"/>
-	</widget>
-	<widget field="SpeedOutput0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1003" y="432"/>
-	</widget>
-	<widget field="SpeedInput0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="768" y="432"/>
-	</widget>
-	<widget field="Wheel0.angle.err" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1616" y="538"/>
-	</widget>
 	<widget field="Wheel0.angle.des" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1392" y="538"/>
 		<width>217</width>
 	</widget>
 	<widget field="Wheel0.angle.raw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="960" y="538"/>
-	</widget>
-	<widget field="Drive R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="144" y="602"/>
-		<width>80</width>
 	</widget>
 	<widget field="Drive Ang" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="128" y="570"/>
@@ -190,14 +160,8 @@
 		<location x="19" y="544"/>
 		<width>93</width>
 	</widget>
-	<widget field="FieldRelativePost" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="236" y="656"/>
-	</widget>
-	<widget field="FieldRelativePre" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="240" y="634"/>
-	</widget>
 	<widget field="Rotation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="269" y="602"/>
+		<location x="265" y="591"/>
 	</widget>
 	<widget field="Velocity Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="256" y="570"/>
@@ -226,16 +190,16 @@
 		<location x="1172" y="104"/>
 	</widget>
 	<widget field="SpeedCurrent2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1216" y="480"/>
+		<location x="512" y="586"/>
 	</widget>
 	<widget field="SpeedCurrent3" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1216" y="506"/>
+		<location x="512" y="608"/>
 	</widget>
 	<widget field="SpeedCurrent0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1216" y="432"/>
+		<location x="512" y="538"/>
 	</widget>
 	<widget field="SpeedCurrent1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1216" y="458"/>
+		<location x="512" y="560"/>
 	</widget>
 	<widget field="Last Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="496" y="378"/>
@@ -258,4 +222,20 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="SpeedDiff0"/>
+	<hidden field="SpeedDiff1"/>
+	<hidden field="SpeedDiff2"/>
+	<hidden field="SpeedDiff3"/>
+	<hidden field="SpeedOutput0"/>
+	<hidden field="SpeedOutput1"/>
+	<hidden field="SpeedOutput2"/>
+	<hidden field="SpeedOutput3"/>
+	<hidden field="SpeedInput0"/>
+	<hidden field="SpeedInput2"/>
+	<hidden field="SpeedInput1"/>
+	<hidden field="SpeedInput3"/>
+	<hidden field="VoltageRampRate1"/>
+	<hidden field="VoltageRampRate0"/>
+	<hidden field="VoltageRampRate3"/>
+	<hidden field="VoltageRampRate2"/>
 </xml>

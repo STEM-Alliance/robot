@@ -16,6 +16,10 @@ public class SwerveConstants {
     public static final double CHASSIS_DEPTH = 28.5;
     public static final double CHASSIS_SCALE = CHASSIS_DEPTH;
 
+    public static final double CHASSIS_PID_P = .025;
+    public static final double CHASSIS_PID_I = .000005;
+    public static final double CHASSIS_PID_D = 0.002;
+    
     /**
      * X & Y coordinate positions for wheel placement. Relative to robot center
      */
@@ -37,9 +41,9 @@ public class SwerveConstants {
     /**
      * angle PID values
      */
-    public static final double ANGLE_PID_P = .015;
-    public static final double ANGLE_PID_I = 0.00001;
-    public static final double ANGLE_PID_D = 0.00;
+    public static final double ANGLE_PID_P = .018; // higher values cause overshoot
+    public static final double ANGLE_PID_I = 0.0000075; // higher values cause jitter
+    public static final double ANGLE_PID_D = 0.0001; // ? who knows
     
     /**
      * Array of values for shifting gears, low then high values
