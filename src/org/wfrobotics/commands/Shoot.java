@@ -6,17 +6,18 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class Shoot extends CommandGroup
 {
-    public Shoot(Conveyer.MODE feedMode)
+    public Shoot(Conveyor.MODE feedMode)
     {
         addParallel(new Rev(Rev.MODE.SHOOT));
         
-        addSequential(new Conveyer(feedMode));
+        addSequential(new Conveyor(feedMode));
     }
     
     // TODO DRL in execute, we could unjam if our sensor has not detected a ball shot after some time
     
     protected void end()
     {
+        
         Robot.shooterSubsystem.topThenBottom(0,  Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
 
         Robot.augerSubsystem.setSpeed(0);

@@ -1,10 +1,8 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Rotation Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="504" y="453"/>
-	</widget>
-	<widget field="Wheel0UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="18" y="623"/>
+	<widget field="Wheel0UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="403" y="53"/>
+		<property name="Buffer Size (samples)" value="100"/>
 	</widget>
 	<widget field="Drive R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="268" y="613"/>
@@ -24,13 +22,13 @@
 		<width>139</width>
 	</widget>
 	<widget field="Wheel1UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="16" y="648"/>
+		<location x="69" y="646"/>
 	</widget>
 	<widget field="Wheel3UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="18" y="694"/>
+		<location x="62" y="687"/>
 	</widget>
 	<widget field="Wheel2UpdateRate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="16" y="673"/>
+		<location x="69" y="668"/>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
 		<location x="0" y="0"/>
@@ -172,8 +170,11 @@
 	<widget field="Velocity X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="256" y="544"/>
 	</widget>
+	<widget field="Rotation Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="492" y="458"/>
+	</widget>
 	<widget field="MaintainRotation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="488" y="430"/>
+		<location x="477" y="426"/>
 	</widget>
 	<widget field="Drive Mode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="188" y="410"/>

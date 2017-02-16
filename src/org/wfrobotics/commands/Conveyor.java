@@ -1,6 +1,5 @@
 package org.wfrobotics.commands;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -8,50 +7,41 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  * Move a ball into the shooter, if able.
  * I envision this command being smart enough that it knows if feeding the shooter (and feeder) is okay.
+ * @author drlindne
+ *
  */
-public class Conveyer extends Command 
+public class Conveyor extends Command 
 {
     public enum MODE {SINGLE, CONTINUOUS, UNJAM, OFF};
-    public enum UNJAM {JAM, OKAY, UNJAMING};
-    
-    private final double LASTBALL_INVALID = -1;
     
     private final MODE mode;
-    private UNJAM unjam;
     private boolean hasFed = false;
     private double lastBall;
-    private double unjamStart;
-    private boolean stillUnjaming;
-    private double augerSpeed;
+    private double unjamTime;
+    private boolean unjaming;
     
-    public Conveyer(MODE mode)
+    public Conveyor(MODE mode)
     {
         requires(Robot.augerSubsystem);
         
-        unjam = UNJAM.OKAY;
         this.mode = mode;
     }
-     
-    public Conveyer(MODE mode, double timeout)
+    
+    public Conveyor(MODE mode, double timeout)
     {
         requires(Robot.augerSubsystem);
         
         this.mode = mode;
-        unjam = UNJAM.OKAY;
-        lastBall = -1;
-
         setTimeout(timeout);
     }
     
     protected void initialize()
     {
-        lastBall = LASTBALL_INVALID;
+        
     }
 
     protected void execute()
     {
-        Utilities.PrintCommand("Conveyer", this, mode.toString());
-        
         if (mode == MODE.OFF)
         {
             Robot.augerSubsystem.setSpeed(0);
@@ -62,39 +52,28 @@ public class Conveyer extends Command
         }
         else 
         {
-            if (Robot.shooterSubsystem.topSpeedReached(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
+            double augerSpeed = 0;
+            
+            if (Robot.shooterSubsystem.bothInTolerance(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE))
             {
-                if (lastBall == LASTBALL_INVALID)
+                // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?
+                augerSpeed = Constants.AUGER_SPEED;
+                if(!isJamed() && !unjaming )
                 {
-                    lastBall = timeSinceInitialized();  // Reset the timer the first time so we don't start in unjamming mode
+                    unjamTime = timeSinceInitialized();
+                    hasFed = true;
                 }
-                
-                // Default is NOT_JAM
-                if (unjam == UNJAM.OKAY)
-                {
-                    augerSpeed = Constants.AUGER_SPEED;
-                    unjamStart = timeSinceInitialized();  
-                    
-                    if(isJamed())
+                else
+                {  
+                    unjaming = timeSinceInitialized() - unjamTime < 2;
+                    if(unjaming)
                     {
-                        unjam = UNJAM.UNJAMING;                        
-                    }
-                }
-                if (unjam == UNJAM.UNJAMING)
-                {
-                    stillUnjaming = timeSinceInitialized() - unjamStart < Constants.AUGER_UNJAMING_TIME;
-                    if(stillUnjaming)
-                    {            
                         augerSpeed = Constants.AUGER_UNJAM_SPEED;
                     }
-                    else
-                    {
-                        unjam = UNJAM.OKAY;
-                    }
                 }
-                Robot.augerSubsystem.setSpeed(augerSpeed);
-                // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?            
             }
+            
+            Robot.augerSubsystem.setSpeed(augerSpeed);
         }
     }
     
@@ -103,9 +82,8 @@ public class Conveyer extends Command
         if ( Constants.SHOOTER_READY_SHOOT_SPEED - Robot.shooterSubsystem.getSpeedTop() > Constants.SHOOTER_TRIGGER_SPEED_DROP )
         {
             lastBall = timeSinceInitialized();
-            hasFed = true;
         }        
-        return (timeSinceInitialized() - lastBall > Constants.AUGER_TIME_SINCE_BALL);
+        return (timeSinceInitialized() - lastBall > Constants.AUGER_UNJAMING_TIME);
     }
     
     protected boolean isFinished()
