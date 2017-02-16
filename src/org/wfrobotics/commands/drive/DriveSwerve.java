@@ -11,9 +11,10 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveSwerve extends Command 
 {
-    public enum MODE {HALO, COMBO, ANGLE, STOP}
+    public enum MODE {HALO, FUSION, COMBO, ANGLE, STOP}
     
     private final MODE mode;
+    private double startFusionPosition;  // FUSION mode adds dial rotation minus it's start position (relative rotation) to driver rotation (absolute rotation)
     
     public DriveSwerve(MODE mode)
     {
@@ -24,7 +25,7 @@ public class DriveSwerve extends Command
 
     protected void initialize()
     {
-        
+        startFusionPosition = -OI.DriveSwerveOI.getFusionDrive_Rotation();
     }
 
     protected void execute() 
@@ -42,7 +43,12 @@ public class DriveSwerve extends Command
                 speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
                 speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation();
                 break;
+            case FUSION:
+                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
                 
+                speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
+                speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation() + -OI.DriveSwerveOI.getFusionDrive_Rotation() + startFusionPosition;
+                break;
             case COMBO:
                 double dpad = OI.DriveSwerveOI.getDpad();
                 

@@ -263,6 +263,10 @@ public class OI
             return panel.getButton(BUTTON.SWITCH_L) && panel.getButton(BUTTON.SWITCH_R);
         }
 
+        public static double getFusionDrive_Rotation()
+        {
+            return panel.getBottomDial(Hand.kRight);
+        }
     }
     
     public static void setDriveRumble(XboxController.RumbleType type, float value)
