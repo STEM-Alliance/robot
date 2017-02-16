@@ -3,6 +3,7 @@ package org.wfrobotics.subsystems.drive.swerve;
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -90,7 +91,8 @@ public final class SwerveAngleController {
      */
     public double update(double setPoint, double sensorValue)
     {
-
+        updatePID();
+        
         // Calculate error, with detection of the drive motor reversal shortcut.
         error = calcErrorAndReverseNeeded(setPoint, sensorValue);
 
@@ -107,6 +109,13 @@ public final class SwerveAngleController {
         }
         
         return motorSpeed;
+    }
+
+    private void updatePID()
+    {
+        controller.setP(Preferences.getInstance().getDouble("WheelAnglePID_P", SwerveConstants.ANGLE_PID_P));
+        controller.setI(Preferences.getInstance().getDouble("WheelAnglePID_I", SwerveConstants.ANGLE_PID_I));
+        controller.setD(Preferences.getInstance().getDouble("WheelAnglePID_D", SwerveConstants.ANGLE_PID_D));
     }
 
     /**

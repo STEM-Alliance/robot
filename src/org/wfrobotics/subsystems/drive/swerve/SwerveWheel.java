@@ -41,6 +41,8 @@ public class SwerveWheel
 
     /** Minimum speed, used for dead band */ 
     private static final double MINIMUM_SPEED = 0.1;
+    
+    private double lastUpdateTime = 0;
 
     /**
      * Set up a swerve wheel using controllers/objects,
@@ -69,6 +71,8 @@ public class SwerveWheel
 
         shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number], SwerveConstants.SHIFTER_VALS[number][0], SwerveConstants.SHIFTER_VALS[number][1]);
         desiredGear = false;
+        
+        lastUpdateTime = Timer.getFPGATimestamp();
     }
     
     /**
@@ -91,6 +95,8 @@ public class SwerveWheel
         shifter.setGear(this.desiredGear);
         updateDriveMotor(reverseDriveMotors);
 
+        SmartDashboard.putNumber(name+"UpdateRate", Timer.getFPGATimestamp() - lastUpdateTime);
+        lastUpdateTime = Timer.getFPGATimestamp();
         return getActual();
     }
 
@@ -169,16 +175,16 @@ public class SwerveWheel
             
             if(diff > .5)
             {
-                driveManager.setVoltageRampRate(8);
+                //driveManager.setVoltageRampRate(8);
                 driveLastChangeTime = Timer.getFPGATimestamp();
-                if(this.number == 0)
-                    SmartDashboard.putNumber("VoltageRampRate", 8);
+                //if(this.number == 0)
+                    //SmartDashboard.putNumber("VoltageRampRate", 8);
             }
             else if(diff < .35 && (Timer.getFPGATimestamp() - driveLastChangeTime > .40))
             {
-                driveManager.setVoltageRampRate(15);
-                if(this.number == 0)
-                    SmartDashboard.putNumber("VoltageRampRate", 15);
+                //driveManager.setVoltageRampRate(15);
+                //if(this.number == 0)
+                    //SmartDashboard.putNumber("VoltageRampRate", 15);
             }
 
             driveLastSpeed = driveMotorSpeed;
@@ -189,10 +195,10 @@ public class SwerveWheel
             // We have a speed sensor, so 
             double speedCurrent = driveManager.get();
 
-            SmartDashboard.putNumber("SpeedCurrent" + number, speedCurrent);
-            SmartDashboard.putNumber("SpeedInput" + number, driveMotorSpeed);
+            //SmartDashboard.putNumber("SpeedCurrent" + number, speedCurrent);
+            //SmartDashboard.putNumber("SpeedInput" + number, driveMotorSpeed);
             driveMotorSpeed = driveMotorSpeed * SwerveConstants.DRIVE_MAX_SPEED;
-            SmartDashboard.putNumber("SpeedOutput" + number, driveMotorSpeed);
+            //SmartDashboard.putNumber("SpeedOutput" + number, driveMotorSpeed);
 
             // limit to 0 - max
             double speedDiff = Math.min(Math.abs(driveMotorSpeed-speedCurrent), SwerveConstants.DRIVE_MAX_SPEED);
@@ -202,8 +208,8 @@ public class SwerveWheel
                     SwerveConstants.DRIVE_RAMP_HIGH, SwerveConstants.DRIVE_RAMP_LOW); // output range
 
             //driveMotor.setCloseLoopRampRate(rampValue);
-            SmartDashboard.putNumber("VoltageRampRate" + number, rampValue);
-            SmartDashboard.putNumber("SpeedDiff" + number, speedDiff);
+            //SmartDashboard.putNumber("VoltageRampRate" + number, rampValue);
+            //SmartDashboard.putNumber("SpeedDiff" + number, speedDiff);
             
             driveMotorOutput = driveMotorSpeed;
             driveLastSpeed = driveMotorSpeed;

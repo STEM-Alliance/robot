@@ -6,6 +6,7 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.subsystems.drive.DriveSubsystem;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -48,7 +49,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         public boolean gyroEnable = true;
 
         private final double AUTO_ROTATION_MIN = .1;  // this will hopefully prevent locking the wheels when slowing down
-        private final double HEADING_TIMEOUT = .2;
+        private final double HEADING_TIMEOUT = .6;
     }
 
     public static final double HEADING_IGNORE = -1;
@@ -68,7 +69,10 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         super(true);  // set it into field relative by default
         
         configSwerve = new SwerveConfiguration();
-        m_chassisAngleController = new PIDController(.035, .00001, 0, 1.0);
+        m_chassisAngleController = new PIDController(SwerveConstants.CHASSIS_PID_P,
+                                                     SwerveConstants.CHASSIS_PID_I,
+                                                     SwerveConstants.CHASSIS_PID_D,
+                                                     1.0);
         wheelManager = new WheelManager();
     }
 
@@ -114,13 +118,19 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
         cv.spin = ApplySpinMode(cv);
         cv.velocity = applyVelocityMode(cv);
+
+        printDash();
         
-        return wheelManager.setWheelVectors(Velocity, Rotation, configSwerve.gearHigh, m_brake);
+        return wheelManager.setWheelVectors(cv.velocity, cv.spin, configSwerve.gearHigh, m_brake);
     }
     
     private double ApplySpinMode(ChassisVector cv)
     {
         double Error = 0;
+
+        m_chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", SwerveConstants.CHASSIS_PID_P));
+        m_chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", SwerveConstants.CHASSIS_PID_I));
+        m_chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", SwerveConstants.CHASSIS_PID_D));
 
         // Determine which drive mode to use between
         if (!cv.ignoreHeading())
@@ -173,7 +183,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
                         // Add a deadband to hopefully help with wheel lock after stopping
                         SmartDashboard.putNumber("MaintainRotation", tempRotation);
-                        if(tempRotation > configSwerve.AUTO_ROTATION_MIN)
+                        if(Math.abs(tempRotation) > configSwerve.AUTO_ROTATION_MIN)
                         {
                             cv.spin = tempRotation;
                         }
@@ -181,6 +191,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                 }
                 else
                 {
+                    m_chassisAngleController.resetError();
                     m_lastHeading = m_gyro.getYaw(); // Save off the latest heading until the timeout
                 }
             }
@@ -203,10 +214,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             double AdjustedAngle = cv.velocity.getAngle() + m_gyro.getYaw();
             
             AdjustedAngle = Utilities.wrapToRange(AdjustedAngle, -180, 180);
-            
-            SmartDashboard.putNumber("FieldRelativePre", cv.velocity.getAngle());            
+                    
             cv.velocity.setAngle(AdjustedAngle);
-            SmartDashboard.putNumber("FieldRelativePost", cv.velocity.getAngle());
         }
 
         return cv.velocity;
