@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class VisionGearDropOff extends CommandGroup 
 {
-    enum STATE {YAW, APPROACH, SPRING, VICTORY};
+    enum STATE {YAW, APPROACH, SPRING};
     STATE state;
     //comment
     TargetData data;
@@ -17,11 +17,11 @@ public class VisionGearDropOff extends CommandGroup
     {
         data = Robot.targetingSubsystem.getData();
         state = STATE.YAW;
-
-        if(data.InView)
+       
+       /* if(data.InView)
         {
             double yawOffset = data.Yaw; //rotate control
-            double tolerance = Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE * 0.05;
+            //double tolerance = Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE * 0.05;
 
             addSequential(new AutoDrive(Constants.AUTONOMOUS_TURN_SPEED, yawOffset, Constants.AUTONOMOUS_TURN_TOLERANCE));
 
@@ -39,7 +39,7 @@ public class VisionGearDropOff extends CommandGroup
                     Robot.driveSubsystem.driveXY(0, -.3, -1);            
                 }
             }
-        }
+        }*/
     }
     
     protected void execute()
@@ -71,12 +71,8 @@ public class VisionGearDropOff extends CommandGroup
             case SPRING:
                 if(!Robot.driveSubsystem.isGearStored())
                 {
-                    state = STATE.VICTORY;
+                    isFinished();
                 }
-                break;
-            case VICTORY:
-                addSequential( new AutoDrive(0, -.5, 0, 0, 1));
-                isFinished();
                 break;
         }
     }
