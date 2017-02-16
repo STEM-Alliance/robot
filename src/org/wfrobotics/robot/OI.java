@@ -59,8 +59,8 @@ public class OI
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
                 
-        buttonDriveB.toggleWhenPressed(new Shoot(Conveyer.MODE.CONTINUOUS));
-        buttonDriveA.toggleWhenPressed(new Conveyer(Conveyer.MODE.OFF));
+        buttonDriveB.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
+        buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
         
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.DOWN));

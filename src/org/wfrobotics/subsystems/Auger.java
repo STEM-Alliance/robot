@@ -1,6 +1,6 @@
 package org.wfrobotics.subsystems;
 
-import org.wfrobotics.commands.Conveyer;
+import org.wfrobotics.commands.Conveyor;
 import org.wfrobotics.robot.RobotMap;
 
 import com.ctre.CANTalon;
@@ -8,8 +8,8 @@ import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * Screw conveyer or auger conveyer
- * This subsystem controls the flighting/auger that acts as a ball conveyer
+ * Screw conveyor or auger conveyor
+ * This subsystem controls the flighting/auger that acts as a ball conveyor
  *
  */
 public class Auger extends Subsystem {
@@ -25,7 +25,7 @@ public class Auger extends Subsystem {
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new Conveyer(Conveyer.MODE.OFF));
+        setDefaultCommand(new Conveyor(Conveyor.MODE.OFF));
     }
     
     /**

@@ -54,8 +54,6 @@ public class Robot extends SampleRobot
 
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;
-    
-    boolean gyroInitialZero = false;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -113,22 +111,10 @@ public class Robot extends SampleRobot
     {
         while (isDisabled())
         {
-            // it takes some time before the gyro initializes
-            // so we have to wait before we can actually zero
-            if(!gyroInitialZero)
-            {
-                if(Math.abs(Gyro.getInstance().getYaw()) > 0.1)
-                {
-                    Gyro.getInstance().zeroYaw();
-                    gyroInitialZero = true;
-                }
-            }
-            
             if(OI.xboxDrive.getStartButton())
                 Gyro.getInstance().zeroYaw();
             
             driveSubsystem.printDash();
-            climberSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
             
             Scheduler.getInstance().run();

@@ -5,7 +5,6 @@ import org.wfrobotics.Utilities;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -106,11 +105,11 @@ public class Gyro {
      * 
      * @return The current yaw value in degrees (-180 to 180).
      */
-    public double getYaw()
+    public float getYaw()
     {
-        double angle = navxMXP.getYaw() - zeroVal;
+        float angle = (float) (navxMXP.getYaw() - zeroVal);
         angle = Utilities.wrapToRange(angle, -180, 180);
-        return Utilities.round(angle,1);
+        return angle;
     }
     
 
@@ -126,8 +125,7 @@ public class Gyro {
 //        navxMXP.setAngleAdjustment(0);
 //        navxMXP.zeroYaw();
         double angle = navxMXP.getYaw();
-        angle = Utilities.wrapToRange(angle, -180, 180);
-        
+        angle = Utilities.wrapToRange(angle, -180, 180);;
         zeroVal = angle;
     }
     
