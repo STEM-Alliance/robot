@@ -1,5 +1,9 @@
 package org.wfrobotics.subsystems.drive.swerve;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
@@ -55,8 +59,10 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     public static final double HEADING_IGNORE = -1;
 
     public SwerveConfiguration configSwerve;
-    public WheelManager wheelManager;
     private PIDController m_chassisAngleController;
+    
+    private ScheduledExecutorService scheduler;
+    private WheelManager wheelManager;
 
     private double m_lastHeadingTimestamp;  // this is used to address the counter spinning/snapback
     double m_gyroLast;
@@ -73,7 +79,11 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                                                      SwerveConstants.CHASSIS_PID_I,
                                                      SwerveConstants.CHASSIS_PID_D,
                                                      1.0);
+        
+        scheduler = Executors.newScheduledThreadPool(1);
         wheelManager = new WheelManager();
+        
+        scheduler.scheduleAtFixedRate(wheelManager, 1, 5, TimeUnit.MILLISECONDS);
     }
 
     public void initDefaultCommand() 
