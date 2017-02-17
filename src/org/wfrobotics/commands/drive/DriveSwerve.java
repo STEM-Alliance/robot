@@ -13,6 +13,7 @@ public class DriveSwerve extends Command
 {
     public enum MODE {HALO, FUSION, COMBO, ANGLE, STOP}
     
+    private boolean AUTO_SHIFT_ENABLE = false;
     private final double AUTO_SHIFT_TIME = 1;
     private final double AUTO_SHIFT_SPEED = .5;
     
@@ -114,8 +115,11 @@ public class DriveSwerve extends Command
                 break;
         }
         
-        Robot.driveSubsystem.driveVector(speedRobot, speedRotation);        
-        Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > AUTO_SHIFT_TIME && speedRobot.getMag() > AUTO_SHIFT_SPEED;
+        if (AUTO_SHIFT_ENABLE)
+        {
+            Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > AUTO_SHIFT_TIME && speedRobot.getMag() > AUTO_SHIFT_SPEED;
+        }
+        Robot.driveSubsystem.driveVector(speedRobot, speedRotation);
     }
 
     protected boolean isFinished() 
