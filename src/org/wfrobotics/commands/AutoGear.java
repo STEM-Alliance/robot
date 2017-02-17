@@ -4,6 +4,8 @@ import org.wfrobotics.commands.Rev.MODE;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import org.wfrobotics.vision.DashboardView;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -47,7 +49,6 @@ public class AutoGear extends CommandGroup
         
         // We are at the gear. Score it
         addSequential(new VisionGearDropOff());  // TODO should we put this in a special mode or cancel this if we near the end of autonomous without scoring?
-
         // If there is any time left, we should shoot or start moving to our next destination (like getting another gear)
         addParallel( new Rev(MODE.SHOOT));
         //TODO TEST NUBMERS
