@@ -24,7 +24,7 @@ public class SteamworksDrive extends CommandGroup
         
         addParallel(intake);
         addParallel(leds);
-        addSequential(new DriveSwerve(DriveSwerve.MODE.FUSION));
+        addSequential(new DriveSwerve(DriveSwerve.MODE.HALO));
     }
     
     protected void execute()
