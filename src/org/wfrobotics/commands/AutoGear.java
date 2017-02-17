@@ -1,5 +1,11 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.commands.Rev.MODE;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import org.wfrobotics.vision.DashboardView;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -8,11 +14,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public class AutoGear extends CommandGroup
 {
-    public static enum POSITION {LEFT, CENTER, RIGHT}
+    public static enum POSITION {LEFT, CENTER, RIGHT};
+    public double shootAngle;
+    boolean redAlliance;
     public class Config
     {
         public final double timeForward, timeToSpring, angleSpring;
-        
         public Config(double timeForward, double timeToSpring, double angleSpring)
         {
             this.timeForward = timeForward;
@@ -25,6 +32,12 @@ public class AutoGear extends CommandGroup
     {
         Config config = selectConfig(startingPosition);
         
+        
+        if(DriverStation.getInstance().getAlliance() == Alliance.Red)
+        {
+            redAlliance = true;
+        }
+
         // Drive forwards while turning towards the airship's spring
         addSequential(new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, config.angleSpring, config.timeForward));
         
@@ -36,9 +49,51 @@ public class AutoGear extends CommandGroup
         
         // We are at the gear. Score it
         addSequential(new VisionGearDropOff());  // TODO should we put this in a special mode or cancel this if we near the end of autonomous without scoring?
-
         // If there is any time left, we should shoot or start moving to our next destination (like getting another gear)
-        // TODO
+        addParallel( new Rev(MODE.SHOOT));
+        //TODO TEST NUBMERS
+        //move to begin shooting balls in robot
+        if(redAlliance)
+        {
+           
+            switch(startingPosition)
+            {
+            
+                case CENTER:
+                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 90, 1));
+                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
+                    break;
+                case RIGHT:
+                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 135, 1));
+                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
+                    break;
+                case LEFT:
+                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 45, 1));
+                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 2));
+                    break;
+            }                    
+        }
+        else
+        {
+            switch(startingPosition)
+            {
+                case CENTER:
+                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 90, 1));
+                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
+                    break;
+                case LEFT:
+                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 135, 1));
+                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
+                    break;
+                case RIGHT:
+                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 45, 1));
+                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 2));
+                    break;
+            }
+        }   
+
+        //TODO definitely trigger visionshoot
+        addSequential(new VisionShoot());
         
         
         
@@ -62,14 +117,17 @@ public class AutoGear extends CommandGroup
     {
         if (startingPosition == POSITION.CENTER)
         {
+            shootAngle = 0;
             return new Config(3, 0, 0);
         }
         else if(startingPosition == POSITION.LEFT)
         {
+            shootAngle = -45;
             return new Config(5, 2, 45);
         }
         else if(startingPosition == POSITION.RIGHT)
         {
+            shootAngle = 45;
             return new Config(5, 2, -45);
         }
         else
