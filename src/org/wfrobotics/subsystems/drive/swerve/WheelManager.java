@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * This class configures, updates, and commands the wheels
  */
-public class WheelManager
+public class WheelManager implements Runnable
 {
     public class RobotVector
     {
@@ -50,6 +50,11 @@ public class WheelManager
 
     private Vector lastVelocity;
     private double lastVelocityTimestamp;
+    
+    Vector requestedRobotVelocity; 
+    double requestedRobotRotation; 
+    boolean requestedGear;
+    boolean requestedBrake;
 
     public WheelManager()
     {
@@ -64,6 +69,20 @@ public class WheelManager
         lastVelocity = new Vector(0, 0);
         lastVelocityTimestamp = Timer.getFPGATimestamp();
     }
+    
+    @Override  // Entry point for running this class as a runnable/thread
+    public void run()
+    {
+        setWheelVectors(requestedRobotVelocity, requestedRobotRotation, requestedGear, requestedBrake);
+    }
+    
+    public synchronized void updateWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
+    {
+        requestedRobotVelocity = RobotVelocity; 
+        requestedRobotRotation = RobotRotation; 
+        requestedGear = gear;
+        requestedBrake = brake;
+    }
 
     /**
      * Scale the wheel vectors based on max available velocity, adjust for rotation rate, then set/update the desired vectors individual wheels
@@ -73,7 +92,7 @@ public class WheelManager
      * @param brake Enable brake mode? True: Yes, False: No
      * @return Array of {@link Vector} of the actual readings from the wheels
      */
-    protected Vector[] setWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
+    Vector[] setWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
     {
         RobotVector robot = new RobotVector(RobotVelocity, RobotRotation);
         Vector[] WheelsScaled;
@@ -133,7 +152,7 @@ public class WheelManager
      * @param speed speed value to test against, 0-1
      * @param values array of values, -180 to 180, to adjust the wheel angle offsets
      */
-    public void doFullWheelCalibration(double speed, double values[], boolean save)
+    public synchronized void doFullWheelCalibration(double speed, double values[], boolean save)
     {
 
         Vector vector = Vector.NewFromMagAngle(speed, 0);
