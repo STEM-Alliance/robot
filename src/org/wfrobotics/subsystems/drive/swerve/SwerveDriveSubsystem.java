@@ -122,7 +122,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      * @param Heading 0-360 of angle to turn to, -1 if not in use
      * @return actual wheel readings
      */
-    public Vector[] driveWithHeading(Vector Velocity, double Rotation, double Heading)
+    public void driveWithHeading(Vector Velocity, double Rotation, double Heading)
     {
         ChassisVector cv = new ChassisVector(Velocity, Rotation, Heading);
 
@@ -131,7 +131,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
         printDash();
         
-        return wheelManager.setWheelVectors(cv.velocity, cv.spin, configSwerve.gearHigh, m_brake);
+        wheelManager.updateWheelVectors(cv.velocity, cv.spin, configSwerve.gearHigh, m_brake);
     }
     
     private double ApplySpinMode(ChassisVector cv)
