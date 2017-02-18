@@ -15,6 +15,7 @@ public class Conveyor extends Command
 
     private final MODE mode;
     private double timeStartPeriod;
+    private boolean unjamming;
 
     public Conveyor(MODE mode)
     {
@@ -34,6 +35,7 @@ public class Conveyor extends Command
     protected void initialize()
     {
         timeStartPeriod = timeSinceInitialized();
+        unjamming = false;
     }
 
     protected void execute()
@@ -52,18 +54,23 @@ public class Conveyor extends Command
         }
         else 
         {
-            double nextPeriod = timeStartPeriod + Constants.AUGER_UNJAM_PERIOD;
-            double nextUnjam = nextPeriod * (1 - Constants.AUGER_UNJAM_DUTYCYCLE);
-            double now = timeSinceInitialized();
-            double speed = (now > nextUnjam) ? Constants.AUGER_SPEED:Constants.AUGER_UNJAM_SPEED;
-
-            if (now > nextPeriod)
-            {
-                timeStartPeriod = now;
-            }
+//            double nextPeriod = timeStartPeriod + Constants.AUGER_UNJAM_PERIOD;
+//            double nextUnjam = nextPeriod * (1 - Constants.AUGER_UNJAM_DUTYCYCLE);
+//            double now = timeSinceInitialized();
+            double speed = (unjamming) ? Constants.AUGER_UNJAM_SPEED:Constants.AUGER_SPEED;
 
             SmartDashboard.putNumber("AugerSpeed", speed);
             Robot.augerSubsystem.setSpeed(speed);
+
+            if (timeSinceInitialized() - timeStartPeriod > Constants.AUGER_NORMAL_PERIOD + Constants.AUGER_UNJAM_PERIOD)
+            {
+                unjamming = false;
+                timeStartPeriod = timeSinceInitialized();
+            }
+            else if (timeSinceInitialized() - timeStartPeriod > Constants.AUGER_NORMAL_PERIOD)
+            {
+                unjamming = true;
+            }
         }
     }
 

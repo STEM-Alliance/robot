@@ -20,8 +20,8 @@ public class Constants
    
    public static final double AUGER_UNJAM_SPEED = -0.3;
    public static final double AUGER_SPEED = 0.3;  // Ideal for giving balls to shooter while shooter maintains speed (above min shooter recovery time)
-   public static final double AUGER_UNJAM_PERIOD = 1; // Seconds between each unjam attempt
-   public static final double AUGER_UNJAM_DUTYCYCLE = .05; // Percent of AUGER_UNJAM_PERIOD to unjam (Ex: .1 -> 90% shoot, 10% unjam, repeat)
+   public static final double AUGER_UNJAM_PERIOD = .1; // Percent of AUGER_UNJAM_PERIOD to unjam (Ex: .1 -> 90% shoot, 10% unjam, repeat)
+   public static final double AUGER_NORMAL_PERIOD = 1.4; // Seconds between each unjam attempt
 
    public static final int INTAKE_OFF_ANGLE = 25;
    public static final int INTAKE_OFF_TIMEOUT = 1;
