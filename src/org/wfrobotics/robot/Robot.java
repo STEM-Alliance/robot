@@ -37,6 +37,7 @@ public class Robot extends SampleRobot
                 break;
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
+                break;
             //case GEAR:
                 //autonomousCommand = new AutoGear();  // TODO get the starting position from smart dashboard
                 //break;
@@ -89,6 +90,7 @@ public class Robot extends SampleRobot
 
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
         autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
+        autoChooser.addObject("Auto Shoot No Vision", AUTO_COMMAND.SHOOT_NO_VISION);
         SmartDashboard.putData("Auto Mode", autoChooser);
         
         angleChooser = new SendableChooser<Double>();

@@ -1,6 +1,7 @@
 
 package org.wfrobotics.commands;
 
+import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
@@ -9,6 +10,9 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class AutoDrive extends Command
 {
+    private enum MODE {DRIVE, TURN, OFF}
+    
+    private final MODE mode;
     private Vector vector;
     private double rotate;
     private double heading;
@@ -21,6 +25,7 @@ public class AutoDrive extends Command
     public AutoDrive()
     {
         requires(Robot.driveSubsystem);
+        this.mode = MODE.OFF;
         this.vector = new Vector(0, 0);
         this.rotate = 0;
         this.heading = SwerveDriveSubsystem.HEADING_IGNORE;
@@ -38,6 +43,7 @@ public class AutoDrive extends Command
     public AutoDrive(double speedX, double speedY, double speedR, double timeout)
     {
         requires(Robot.driveSubsystem);
+        this.mode = MODE.DRIVE;
         vector = new Vector(speedX, speedY);
         rotate = speedR;
         heading = SwerveDriveSubsystem.HEADING_IGNORE;
@@ -55,6 +61,7 @@ public class AutoDrive extends Command
     public AutoDrive(double speedR, double angle, double tolerance)
     {
         requires(Robot.driveSubsystem);
+        this.mode = MODE.TURN;
         vector = new Vector(0, 0);
         rotate = speedR;
         heading = angle; 
@@ -74,6 +81,7 @@ public class AutoDrive extends Command
     public AutoDrive(double speedX, double speedY, double speedR, double angle, double timeout)
     {
         requires(Robot.driveSubsystem);
+        this.mode = MODE.DRIVE;
         vector = new Vector(speedX, speedY);
         rotate = speedR;
         heading = angle;
@@ -88,20 +96,32 @@ public class AutoDrive extends Command
 
     protected void execute() 
     {
-        Robot.driveSubsystem.driveWithHeading(vector, rotate, heading);
+        Utilities.PrintCommand("Drive", this, "" + vector.getMag() + " " +vector.getAngle());
+        if (mode != MODE.OFF)
+        {
+            Robot.driveSubsystem.driveWithHeading(vector, rotate, heading);
+        }
     }
 
     protected boolean isFinished()
     {
         boolean done;
         
-        if(headingTolerance != 0)
+        if (mode == MODE.OFF)
+        {
+            done = false;
+        }
+        else if (mode == MODE.DRIVE)
+        {
+            done = isTimedOut();
+        }
+        else if (mode == MODE.TURN)
         {
             done = Math.abs(heading - Robot.driveSubsystem.getLastHeading()) < headingTolerance;
         }
         else
         {
-            done = isTimedOut();
+            done = false;
         }
         
         return done;

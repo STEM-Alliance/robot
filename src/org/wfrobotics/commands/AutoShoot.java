@@ -19,13 +19,13 @@ public class AutoShoot extends CommandGroup
         
         if (this.mode == MODE.HOPPER && !useVision)
         {
-            addSequential (new AutoDrive (0, 1, 0, 5)); // Forward to Baseline Y
+            addSequential (new AutoDrive (0, .75, 0, 4)); // Forward to Baseline Y
             // TODO pause to make transitions easier???
-            addSequential (new AutoDrive (0, -1, 0, 1)); // Backwards to hopper Y
+            addSequential (new AutoDrive (0, -.75, 0, 1)); // Backwards to hopper Y
             addSequential (new AutoDrive (1, 180, .1)); // Rotate to face boiler
-            addSequential (new AutoDrive (signx*1, 0, 0, 2)); // Sideways to hopper X
-            addSequential (new AutoDrive (signx*1, 0, 0, .25)); // Sideways to get off wall X
-            addSequential (new AutoDrive (0, -.5, 0, .5)); // Backwards to catch position Y
+            addSequential (new AutoDrive (signx * .5, 0, 0, 3)); // Sideways to hopper X
+            addSequential (new AutoDrive (signx * .75, 0, 0, .25)); // Sideways to get off wall X
+            addSequential (new AutoDrive (0, -.75, 0, .25)); // Backwards to catch position Y
             addSequential (new Shoot(Conveyor.MODE.CONTINUOUS));  // Shoot, no vision
         }
         else if(this.mode == MODE.HOPPER)
