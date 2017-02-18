@@ -13,7 +13,7 @@
 		<location x="0" y="351"/>
 	</widget>
 	<widget field="Auto Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="1146" y="132"/>
+		<location x="1141" y="64"/>
 	</widget>
 	<widget field="AugerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1089" y="267"/>
@@ -265,6 +265,21 @@
 	<widget field="Starting Angle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="1043" y="73"/>
 	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
+		<location x="345" y="7"/>
+		<width>575</width>
+		<height>431</height>
+		<property name="Camera Choice" value=""/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
+		<location x="0" y="0"/>
+		<width>32</width>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
+		<location x="1409" y="0"/>
+		<width>488</width>
+		<height>351</height>
+	</static-widget>
 </dashboard>
 <live-window>
 </live-window>

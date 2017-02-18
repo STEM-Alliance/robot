@@ -107,11 +107,7 @@ public class AutoDrive extends Command
     {
         boolean done;
         
-        if (mode == MODE.OFF)
-        {
-            done = false;
-        }
-        else if (mode == MODE.DRIVE)
+        if (mode == MODE.DRIVE || mode == MODE.OFF)
         {
             done = isTimedOut();
         }
