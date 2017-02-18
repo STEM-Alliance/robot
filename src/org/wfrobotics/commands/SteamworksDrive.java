@@ -2,6 +2,7 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.drive.DriveSwerve;
+import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.Led;
 
@@ -24,9 +25,10 @@ public class SteamworksDrive extends CommandGroup
         
         addParallel(intake);
         addParallel(leds);
-        addSequential(new DriveSwerve(DriveSwerve.MODE.HALO));
+        addSequential(new DriveSwerve(DriveSwerve.MODE.FUSION));
     }
-    
+   
+
     protected void execute()
     {
         setIntakes();
@@ -73,6 +75,15 @@ public class SteamworksDrive extends CommandGroup
         // Keep the intakes for a while after we stop moving in that direction
         onLeft = (Timer.getFPGATimestamp() - intakeStartL) < Constants.INTAKE_OFF_TIMEOUT;
         onRight = (Timer.getFPGATimestamp() - intakeStartR) < Constants.INTAKE_OFF_TIMEOUT;
+        
+        if(OI.buttonPanelBlackBottom.get())
+        {
+            onRight = true;
+        }
+        if(OI.buttonPanelBlackTop.get())
+        {
+            onLeft = true;
+        }
         
         printDash(angleDifference, onRight, onLeft);
         

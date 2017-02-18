@@ -37,7 +37,7 @@ public class Intake extends Subsystem
      */
     public void setSpeed(double left, double right)
     {
-        m_motors.get(0).set(left);
-        m_motors.get(1).set(right);
+        m_motors.get(0).set(-left);
+        m_motors.get(1).set(-right);
     }
 }

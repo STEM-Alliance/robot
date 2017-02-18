@@ -5,6 +5,7 @@ import org.wfrobotics.commands.*;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.subsystems.*;
 import org.wfrobotics.subsystems.Auger;
+import org.wfrobotics.vision.DashboardView;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -51,7 +52,8 @@ public class Robot extends SampleRobot
     public static Auger augerSubsystem;
     public static Targeting targetingSubsystem;
     public static Aligning aligningSubsystem;
-
+    public static DashboardView dashboardView;
+    
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;
 
@@ -70,6 +72,7 @@ public class Robot extends SampleRobot
         augerSubsystem = new Auger();
         targetingSubsystem = new Targeting();
         aligningSubsystem = new Aligning();
+        dashboardView = new DashboardView();
 
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();

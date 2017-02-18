@@ -62,7 +62,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     private PIDController m_chassisAngleController;
     
     private ScheduledExecutorService scheduler;
-    private WheelManager wheelManager;
+    public WheelManager wheelManager;
 
     private double m_lastHeadingTimestamp;  // this is used to address the counter spinning/snapback
     double m_gyroLast;

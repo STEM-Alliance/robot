@@ -3,12 +3,14 @@ package org.wfrobotics.commands;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shoot extends CommandGroup
 {
     public Shoot(Conveyor.MODE feedMode)
     {
         addParallel(new Rev(Rev.MODE.SHOOT));
+        SmartDashboard.putString("ConveyorMode", feedMode.toString());
         
         addSequential(new Conveyor(feedMode));
     }

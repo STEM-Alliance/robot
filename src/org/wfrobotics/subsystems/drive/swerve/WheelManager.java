@@ -28,6 +28,7 @@ public class WheelManager implements Runnable
     {
         private final boolean ENABLE_ACCELERATION_LIMIT = true;
         private final boolean ENABLE_CRAWL_MODE = true;
+        private final boolean CRAWL_MODE_DEFAULT_HIGH = false;
         private final boolean ENABLE_SQUARE_MAGNITUDE = true;
         private final boolean ENABLE_ROTATION_LIMIT = true;
         private final boolean ENABLE_VELOCITY_LIMIT = true;
@@ -283,8 +284,17 @@ public class WheelManager implements Runnable
     private RobotVector applyCrawlMode(RobotVector robot)
     {
         double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", SwerveConstants.DRIVE_SPEED_CRAWL);
-        double scale = Utilities.scaleToRange(config.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
-
+        double scale = 1;
+        
+        if(config.CRAWL_MODE_DEFAULT_HIGH)
+        {
+            scale = Utilities.scaleToRange(1 - config.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
+        }
+        else
+        {
+            scale = Utilities.scaleToRange(config.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
+        }
+        
         // Scale rotation and velocity back up
         robot.spin *= scale;
         robot.velocity.setMag(robot.velocity.getMag() * scale);
