@@ -34,6 +34,9 @@ public class OI
     Button buttonPanelWhiteTop = new PanelButton(panel, Panel.BUTTON.WHITE_T);
     Button buttonPanelWhiteBottom = new PanelButton(panel, Panel.BUTTON.WHITE_B);
     
+
+    Button buttonManLB = new XboxButton(xboxMan, Xbox.BUTTON.LB);
+    Button buttonManRB = new XboxButton(xboxMan, Xbox.BUTTON.RB);
     
     Button buttonDriveX = new XboxButton(xboxDrive, Xbox.BUTTON.X);
     Button buttonDriveY = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
@@ -67,9 +70,11 @@ public class OI
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
 
         buttonDriveA.toggleWhenPressed(new Rev(Rev.MODE.SHOOT));
-        buttonDriveB.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
+        buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
         //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
 
+        buttonManRB.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
+        buttonManLB.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
         buttonPanelGreenTop.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
         buttonPanelGreenBottom.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
         
@@ -83,15 +88,28 @@ public class OI
 //      buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
     }
     
-    public static double getClimbSpeed()
+    private static double AdjustClimb(double value)
     {
-        double val = panel.getAxis(Panel.AXIS.SLIDER_L);
-        if(val < 0)
-            val = 0;
-        if(val > 1)
-            val = 1;
+        if(value < .2)
+        {
+            value = 0;
+        }
+        else
+        {
+            value = Utilities.scaleToRange(value, .2, 1, 0, 1);
+        }
         
-        return Utilities.scaleToRange(val, 0, 1, .2, 1);
+        return value;
+    }
+    
+    public static double getClimbSpeedUp()
+    {
+        return AdjustClimb(xboxMan.getTriggerAxis(Hand.kRight));
+    }
+
+    public static double getClimbSpeedDown()
+    {   
+        return AdjustClimb(xboxMan.getTriggerAxis(Hand.kLeft));
     }
     
     public static class DriveTankOI

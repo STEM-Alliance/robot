@@ -20,6 +20,7 @@ public class Robot extends SampleRobot
     public enum AUTO_COMMAND
     {
         NONE,
+        DRIVE,
         GEAR;
         
         public Command getCommand()
@@ -31,6 +32,8 @@ public class Robot extends SampleRobot
             case NONE:
                 autonomousCommand = new AutoDrive();
                 break;
+            case DRIVE:
+                autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
             //case GEAR:
                 //autonomousCommand = new AutoGear();  // TODO get the starting position from smart dashboard
                 //break;
@@ -56,7 +59,11 @@ public class Robot extends SampleRobot
     
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;
-
+    
+    double startAngle = 0;
+    SendableChooser<Double> angleChooser;
+    boolean gyroInitialZero = false;
+    
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -78,7 +85,14 @@ public class Robot extends SampleRobot
         autoChooser = new SendableChooser<AUTO_COMMAND>();
         
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
-        SmartDashboard.putData("Auto mode", autoChooser);
+        SmartDashboard.putData("Auto Mode", autoChooser);
+        
+        angleChooser = new SendableChooser<Double>();
+        angleChooser.addDefault("0", 0.0);
+        angleChooser.addObject("-90", -90.0);
+        angleChooser.addObject("90", 90.0);
+        angleChooser.addObject("180", 180.0);
+        SmartDashboard.putData("Starting Angle", angleChooser);
     }
 
     public void operatorControl()
@@ -115,10 +129,28 @@ public class Robot extends SampleRobot
         while (isDisabled())
         {
             if(OI.xboxDrive.getStartButton())
+            {
                 Gyro.getInstance().zeroYaw();
+            }
+            else
+            {
+                //Gyro.getInstance().setZero(angleChooser.getSelected());
+            }
+            // it takes some time before the gyro initializes
+            // so we have to wait before we can actually zero
+            if(!gyroInitialZero)
+            {
+                if(Math.abs(Gyro.getInstance().getYaw()) > 0.1)
+                {
+                    Gyro.getInstance().zeroYaw();
+                    gyroInitialZero = true;
+                }
+            }
+            
             
             driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
+            
             
             Scheduler.getInstance().run();
         }
