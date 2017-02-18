@@ -4,7 +4,6 @@ package org.wfrobotics.robot;
 import org.wfrobotics.commands.*;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.subsystems.*;
-import org.wfrobotics.subsystems.Auger;
 import org.wfrobotics.vision.DashboardView;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -20,6 +19,7 @@ public class Robot extends SampleRobot
     public enum AUTO_COMMAND
     {
         NONE,
+        SHOOT_NO_VISION,
         GEAR;
         
         public Command getCommand()
@@ -30,6 +30,9 @@ public class Robot extends SampleRobot
             {
             case NONE:
                 autonomousCommand = new AutoDrive();
+                break;
+            case SHOOT_NO_VISION:
+                autonomousCommand = new AutoShoot(AutoShoot.MODE.HOPPER, false);
                 break;
             //case GEAR:
                 //autonomousCommand = new AutoGear();  // TODO get the starting position from smart dashboard
