@@ -7,41 +7,33 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Move a ball into the shooter, if able.
- * I envision this command being smart enough that it knows if feeding the shooter (and feeder) is okay.
- * @author drlindne
- *
+ * I envision this command being smart enough that it knows if feeding the shooter (and feeder) is okay
  */
-public class Conveyor extends Command 
+public class Conveyor extends Command
 {
-    public enum MODE {SINGLE, CONTINUOUS, UNJAM, ON_HOLD, OFF};
-    
+    public enum MODE {CONTINUOUS, UNJAM, ON_HOLD, OFF};
+
     private final MODE mode;
-    private boolean hasFed = false;
-    private double lastBall;
-    private double unjamTime;
-    private boolean unjaming;
-    private boolean timeoutMode = false;
-    
+    private double timeStartPeriod;
+
     public Conveyor(MODE mode)
     {
         requires(Robot.augerSubsystem);
-        
+
         this.mode = mode;
-        timeoutMode = false;
     }
-    
+
     public Conveyor(MODE mode, double timeout)
     {
         requires(Robot.augerSubsystem);
-        
+
         this.mode = mode;
         setTimeout(timeout);
-        timeoutMode = true;
     }
-    
+
     protected void initialize()
     {
-        
+        timeStartPeriod = timeSinceInitialized();
     }
 
     protected void execute()
@@ -60,69 +52,32 @@ public class Conveyor extends Command
         }
         else 
         {
-            double augerSpeed = 0;
-            
-            if (Robot.shooterSubsystem.bothInTolerance(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM))
+            double nextPeriod = timeStartPeriod + Constants.AUGER_UNJAM_PERIOD;
+            double nextUnjam = nextPeriod * (1 - Constants.AUGER_UNJAM_DUTYCYCLE);
+            double now = timeSinceInitialized();
+            double speed = (now > nextUnjam) ? Constants.AUGER_SPEED:Constants.AUGER_UNJAM_SPEED;
+
+            if (now > nextPeriod)
             {
-                SmartDashboard.putBoolean("ShooterReady", true);
-                // TODO DRL do we care to check the feeder speed? Is this important to make consistent shots?
-                augerSpeed = Constants.AUGER_SPEED;
-                if(!isJamed() && !unjaming )
-                {
-                    unjamTime = timeSinceInitialized();
-                    hasFed = true;
-                }
-                else
-                {  
-                    unjaming = timeSinceInitialized() - unjamTime < Constants.AUGER_UNJAMING_TIME;
-                    if(unjaming)
-                    {
-                        augerSpeed = Constants.AUGER_UNJAM_SPEED;
-                    }
-                }
-            }
-            else
-            {
-                SmartDashboard.putBoolean("ShooterReady", false);
+                timeStartPeriod = now;
             }
 
-            SmartDashboard.putNumber("AugerSpeed", augerSpeed);
-            Robot.augerSubsystem.setSpeed(augerSpeed);
+            SmartDashboard.putNumber("AugerSpeed", speed);
+            Robot.augerSubsystem.setSpeed(speed);
         }
     }
-    
-    public boolean isJamed()
-    {        
-        if ( Constants.SHOOTER_READY_SHOOT_SPEED - Robot.shooterSubsystem.getSpeedTop() > Constants.SHOOTER_TRIGGER_SPEED_DROP )
-        {
-            lastBall = timeSinceInitialized();
-        }        
-        SmartDashboard.putNumber("UnJamTime", timeSinceInitialized() - lastBall);
-        return (timeSinceInitialized() - lastBall > Constants.AUGER_TIME_SINCE_BALL);
-    }
-    
+
     protected boolean isFinished()
     {
         boolean finished;
-        
+
         if (mode == MODE.OFF)
         {
             finished = false;
         }
-        else if (mode == MODE.SINGLE)
-        {
-            finished = hasFed && !isTimedOut();
-        }
         else if (mode == MODE.CONTINUOUS)
         {
-            if(timeoutMode)
-            {
-                finished = isTimedOut();
-            }
-            else
-            {
-                finished = false;
-            }
+            finished = isTimedOut();
         }
         else if (mode == MODE.ON_HOLD || mode == MODE.UNJAM)
         {
@@ -132,7 +87,7 @@ public class Conveyor extends Command
         {
             finished = true;
         }
-        
+
         return finished;
     }
 
