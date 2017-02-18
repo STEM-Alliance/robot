@@ -17,7 +17,7 @@
 //
 //    enum CAMERAS {
 //        MAIN, BACK, NONE
-//    }
+//    };
 //
 //    @SuppressWarnings("unused")
 //    public static final class COLORS {

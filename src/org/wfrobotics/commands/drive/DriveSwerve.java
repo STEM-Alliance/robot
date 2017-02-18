@@ -53,7 +53,7 @@ public class DriveSwerve extends Command
                 Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
                 
                 speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
-                speedRotation = -OI.DriveSwerveOI.getFusionDrive_Rotation() + startFusionPosition;
+                speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation() -OI.DriveSwerveOI.getFusionDrive_Rotation() + startFusionPosition;
                 
                 if (speedRobot.getMag() < AUTO_SHIFT_SPEED)  // Allow high gear to "kick in" after AUTO_SHIFT_SPEED seconds of high speed
                 {
