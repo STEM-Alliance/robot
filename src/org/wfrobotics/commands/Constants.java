@@ -12,15 +12,15 @@ public class Constants
    public static final double AUTONOMOUS_TURN_TOLERANCE = .1;
    
    public static final double SHOOTER_READY_SHOOT_SPEED = 3750;  // Ideal speed for shooter to shoot balls
-   public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
+   //public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
    public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM = 100;  // Ideal tolerance of RPMs for safely shooting the balls
    public static final double SHOOTER_TRIGGER_SPEED_DROP = SHOOTER_READY_SHOOT_SPEED * 0.05 * 0.5 ; // Speed for the unjamming gate (
    
    
    public static final double AUGER_UNJAM_SPEED = -0.4;
    public static final double AUGER_SPEED = 0.3;  // Ideal for giving balls to shooter while shooter maintains speed (above min shooter recovery time)
-   public static final double AUGER_UNJAMING_TIME = 2; //secounds
-   public static final double AUGER_TIME_SINCE_BALL = 2; //secounds
+   public static final double AUGER_UNJAMING_TIME = 0.25; //secounds
+   public static final double AUGER_TIME_SINCE_BALL = 5; //secounds
 
    public static final int INTAKE_OFF_ANGLE = 25;
    public static final int INTAKE_OFF_TIMEOUT = 1;

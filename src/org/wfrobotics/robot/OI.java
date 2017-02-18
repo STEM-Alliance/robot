@@ -60,12 +60,12 @@ public class OI
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
                 
         buttonDriveB.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
-        buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
+        //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
         
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.DOWN));
         
-        buttonDriveRB.toggleWhenPressed(new VisionShoot());
+        //buttonDriveRB.toggleWhenPressed(new VisionShoot());
         
 //      buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
 //      buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
@@ -265,7 +265,7 @@ public class OI
 
         public static double getFusionDrive_Rotation()
         {
-            return panel.getBottomDial(Hand.kRight);
+            return xboxMan.getX(Hand.kRight);
         }
     }
     

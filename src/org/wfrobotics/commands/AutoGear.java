@@ -4,7 +4,6 @@ import org.wfrobotics.commands.Rev.MODE;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import org.wfrobotics.vision.DashboardView;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
