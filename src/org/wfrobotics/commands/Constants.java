@@ -17,7 +17,7 @@ public class Constants
    public static final double SHOOTER_TRIGGER_SPEED_DROP = SHOOTER_READY_SHOOT_SPEED * 0.05 * 0.5 ; // Speed for the unjamming gate (
    
    
-   public static final double AUGER_UNJAM_SPEED = -0.4;
+   public static final double AUGER_UNJAM_SPEED = -0.5;
    public static final double AUGER_SPEED = 0.3;  // Ideal for giving balls to shooter while shooter maintains speed (above min shooter recovery time)
    public static final double AUGER_UNJAMING_TIME = 0.25; //secounds
    public static final double AUGER_TIME_SINCE_BALL = 5; //secounds
