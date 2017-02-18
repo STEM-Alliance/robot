@@ -85,6 +85,14 @@ public class SteamworksDrive extends CommandGroup
             onLeft = true;
         }
         
+        if(OI.buttonManY.get())
+        {
+            onRight = true;
+        }
+        if(OI.buttonManY.get())
+        {
+            onLeft = true;
+        }
         printDash(angleDifference, onRight, onLeft);
         
         intake.set(onLeft, onRight);

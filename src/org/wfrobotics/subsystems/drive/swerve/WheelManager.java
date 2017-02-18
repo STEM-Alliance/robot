@@ -28,7 +28,7 @@ public class WheelManager implements Runnable
     {
         private final boolean ENABLE_ACCELERATION_LIMIT = true;
         private final boolean ENABLE_CRAWL_MODE = true;
-        private final boolean CRAWL_MODE_DEFAULT_HIGH = false;
+        private final boolean CRAWL_MODE_DEFAULT_HIGH = true;
         private final boolean ENABLE_SQUARE_MAGNITUDE = true;
         private final boolean ENABLE_ROTATION_LIMIT = true;
         private final boolean ENABLE_VELOCITY_LIMIT = true;

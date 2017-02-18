@@ -51,6 +51,8 @@ public class OI
     // used for manual intake DO NOT USE OTHERWISE
     public static Button buttonPanelBlackTop = new PanelButton(panel, Panel.BUTTON.BLACK_B);
     public static Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_T);
+    public static Button buttonManX= new XboxButton (xboxMan, Xbox.BUTTON.X);
+    public static Button buttonManY= new XboxButton (xboxMan, Xbox.BUTTON.Y);
     
 //  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
 //  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
@@ -69,7 +71,7 @@ public class OI
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
 
-        buttonDriveA.toggleWhenPressed(new Rev(Rev.MODE.SHOOT));
+        buttonDriveA.whileHeld(new Rev(Rev.MODE.SHOOT));
         buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
         //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
 

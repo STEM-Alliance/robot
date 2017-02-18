@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="ClimbSpeedDown" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="520"/>
+	</widget>
+	<widget field="ClimbSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="497"/>
+	</widget>
 	<widget field="Up Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1443" y="399"/>
 	</widget>
@@ -7,7 +13,7 @@
 		<location x="0" y="351"/>
 	</widget>
 	<widget field="Auto Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="0" y="305"/>
+		<location x="1146" y="132"/>
 	</widget>
 	<widget field="AugerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1089" y="267"/>

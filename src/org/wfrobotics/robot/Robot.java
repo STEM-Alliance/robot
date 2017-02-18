@@ -83,8 +83,9 @@ public class Robot extends SampleRobot
 
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();
-        
+
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
+        autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
         SmartDashboard.putData("Auto Mode", autoChooser);
         
         angleChooser = new SendableChooser<Double>();
