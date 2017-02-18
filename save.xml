@@ -1,16 +1,22 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="AugerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="0" y="328"/>
-		<property name="Buffer Size (samples)" value="100"/>
+	<widget field="Up Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1443" y="399"/>
 	</widget>
-	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="988" y="335"/>
-		<property name="Buffer Size (samples)" value="100"/>
+	<widget field="CLRampRate0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="351"/>
 	</widget>
-	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="978" y="56"/>
-		<property name="Buffer Size (samples)" value="100"/>
+	<widget field="Auto Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="0" y="305"/>
+	</widget>
+	<widget field="AugerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1089" y="267"/>
+	</widget>
+	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1009" y="239"/>
+	</widget>
+	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1022" y="214"/>
 	</widget>
 	<widget field="ShooterReady" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="969" y="9"/>
@@ -18,7 +24,7 @@
 		<height>34</height>
 	</widget>
 	<widget field="UnJamTime" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="305"/>
+		<location x="1122" y="308"/>
 	</widget>
 	<widget field="ConveyorMode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1430" y="492"/>
@@ -38,7 +44,7 @@
 		<width>92</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
-		<location x="391" y="3"/>
+		<location x="345" y="7"/>
 		<width>575</width>
 		<height>431</height>
 		<property name="Camera Choice" value=""/>
@@ -214,7 +220,7 @@
 		<width>205</width>
 	</widget>
 	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="1292" y="7"/>
+		<location x="1144" y="85"/>
 	</widget>
 	<widget field="ClimberDistance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1685" y="466"/>
@@ -250,8 +256,10 @@
 	<widget field="Wheel0.angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1198" y="538"/>
 	</widget>
+	<widget field="Starting Angle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="1043" y="73"/>
+	</widget>
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="CLRampRate0"/>
 </xml>

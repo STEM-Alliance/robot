@@ -1,9 +1,12 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 
+
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Controls the climber's motion
@@ -32,16 +35,36 @@ public class Up extends Command
     @Override
     protected void execute()
     {
+        Utilities.PrintCommand("Up", this, mode.toString());
         if(mode == MODE.OFF)
         {
-            Robot.climberSubsystem.setSpeed(0);
+            double up = OI.getClimbSpeedUp();
+            double down = OI.getClimbSpeedDown();
+
+            SmartDashboard.putNumber("ClimbSpeed", up);
+            SmartDashboard.putNumber("ClimbSpeedDown", down);
+            
+            if(up > .1)
+            {
+                Robot.climberSubsystem.setSpeed(up);
+            }
+            else if(down > .1)
+            {
+                Robot.climberSubsystem.setSpeed(-down);
+            }
+            else
+            {
+                Robot.climberSubsystem.setSpeed(0);
+            }
+            
         }
         else if (mode == MODE.CLIMB)
         {
             if (!Robot.climberSubsystem.isAtTop())
             {
                 time = timeSinceInitialized();
-                Robot.climberSubsystem.setSpeed(OI.getClimbSpeed());
+                
+                Robot.climberSubsystem.setSpeed(.5);
             }
             else
             {
@@ -57,7 +80,7 @@ public class Up extends Command
         }
         else if (mode == MODE.DOWN)
         {
-            Robot.climberSubsystem.setSpeed(-OI.getClimbSpeed());
+            Robot.climberSubsystem.setSpeed(-.2);
         }
         else
         {

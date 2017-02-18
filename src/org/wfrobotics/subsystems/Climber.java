@@ -36,6 +36,6 @@ public class Climber extends Subsystem
     
     public boolean isAtTop()
     {
-        return sensor.get(); //TODO: make sure sensor = HIGH is on; This could be backwards     
+        return false;//sensor.get(); //TODO: make sure sensor = HIGH is on; This could be backwards     
     }
 }
