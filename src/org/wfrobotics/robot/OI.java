@@ -7,6 +7,7 @@ import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Panel.BUTTON;
 import org.wfrobotics.controller.Panel.COLOR;
+import org.wfrobotics.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
@@ -41,6 +42,12 @@ public class OI
     Button buttonDriveRB = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
     Button buttonPanelYellowTop = new PanelButton(panel, Panel.BUTTON.YELLOW_T);
     Button buttonPanelYellowBottom = new PanelButton(panel, Panel.BUTTON.YELLOW_B);
+    Button buttonPanelGreenTop = new PanelButton(panel, Panel.BUTTON.GREEN_T);
+    Button buttonPanelGreenBottom = new PanelButton(panel, Panel.BUTTON.GREEN_B);
+    
+    // used for manual intake DO NOT USE OTHERWISE
+    public static Button buttonPanelBlackTop = new PanelButton(panel, Panel.BUTTON.BLACK_B);
+    public static Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_T);
     
 //  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
 //  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
@@ -58,9 +65,13 @@ public class OI
         
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
-                
+
+        buttonDriveA.toggleWhenPressed(new Rev(Rev.MODE.SHOOT));
         buttonDriveB.toggleWhenPressed(new Shoot(Conveyor.MODE.CONTINUOUS));
         //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
+
+        buttonPanelGreenTop.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
+        buttonPanelGreenBottom.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
         
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.DOWN));

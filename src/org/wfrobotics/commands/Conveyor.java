@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Conveyor extends Command 
 {
-    public enum MODE {SINGLE, CONTINUOUS, UNJAM, OFF};
+    public enum MODE {SINGLE, CONTINUOUS, UNJAM, ON_HOLD, OFF};
     
     private final MODE mode;
     private boolean hasFed = false;
@@ -53,6 +53,10 @@ public class Conveyor extends Command
         else if(mode == MODE.UNJAM)
         {
             Robot.augerSubsystem.setSpeed(Constants.AUGER_UNJAM_SPEED);
+        }
+        else if(mode == MODE.ON_HOLD)
+        {
+            Robot.augerSubsystem.setSpeed(Constants.AUGER_SPEED);
         }
         else 
         {
@@ -119,7 +123,11 @@ public class Conveyor extends Command
             {
                 finished = false;
             }
-        }            
+        }
+        else if (mode == MODE.ON_HOLD || mode == MODE.UNJAM)
+        {
+            finished = false;
+        }
         else
         {
             finished = true;
