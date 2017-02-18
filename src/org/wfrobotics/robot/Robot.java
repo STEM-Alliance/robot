@@ -4,7 +4,6 @@ package org.wfrobotics.robot;
 import org.wfrobotics.commands.*;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.subsystems.*;
-import org.wfrobotics.subsystems.Auger;
 import org.wfrobotics.vision.DashboardView;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -21,6 +20,7 @@ public class Robot extends SampleRobot
     {
         NONE,
         DRIVE,
+        SHOOT_NO_VISION,
         GEAR;
         
         public Command getCommand()
@@ -31,6 +31,9 @@ public class Robot extends SampleRobot
             {
             case NONE:
                 autonomousCommand = new AutoDrive();
+                break;
+            case SHOOT_NO_VISION:
+                autonomousCommand = new AutoShoot(AutoShoot.MODE.HOPPER, false);
                 break;
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
