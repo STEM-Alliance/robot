@@ -24,16 +24,6 @@ public class LED extends Command
         
         this.hardware = hardware;
         this.mode = mode;
-
-    }
-    
-    public LED(HARDWARE hardware, MODE mode, double timeout)
-    {
-        requires(Robot.ledSubsystem);
-        
-        this.hardware = hardware;
-        this.mode = mode;
-        setTimeout(timeout);
     }
     
     @Override
@@ -62,7 +52,7 @@ public class LED extends Command
     @Override
     protected boolean isFinished()
     {
-        return false;//isTimedOut();  // TODO delete this comment or remove timeout from constructor
+        return false;
     }
 
     @Override

@@ -22,15 +22,13 @@ public class Led extends Subsystem
     //    public static final Color Orange = new Color(0xfff, 0x666, 0x000)
     public enum HARDWARE {TOP, SIDE, ALL};
 
-
-    private CANLight topLights;
-    private CANLight sideLights;
-
+    private CANLight top;
+    private CANLight side;
 
     public Led()
     {
-        topLights = new CANLight(RobotMap.CAN_LIGHT[0]);
-        sideLights = new CANLight(RobotMap.CAN_LIGHT[1]);
+        top = new CANLight(RobotMap.CAN_LIGHT[0]);
+        side = new CANLight(RobotMap.CAN_LIGHT[1]);
     }  
 
     @Override
@@ -47,85 +45,55 @@ public class Led extends Subsystem
      */
     public void setOn(HARDWARE hardware, boolean on)
     {
-        if(on)
+        int r = 0;
+        int g = (on) ? 255:0;
+        int b = 0;
+
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
         {
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-            {
-                topLights.showRGB(0, 255, 0);
-            }
-
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-            {
-                sideLights.showRGB(0, 255, 0);  
-            }
+            top.showRGB(r, g, b);
         }
-        else
-        {            
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-            {
-                topLights.showRGB(0, 0, 0);  
-            }
 
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-            {
-                sideLights.showRGB(0, 0, 0); 
-            }
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+        {
+            side.showRGB(r, g, b);  
         }
         SmartDashboard.putBoolean("LED is on", on);        
     }
 
     public void blink(HARDWARE hardware, double blinkLength)
     {
-        if(hardware == HARDWARE.TOP)
+        top.writeRegister(0, blinkLength, 0, 255, 0);  
+        top.writeRegister(1, blinkLength, 255, 103, 0);
+        
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
         {
-
-            topLights.writeRegister(0, blinkLength, 0, 255, 0);  
-            topLights.writeRegister(1, blinkLength, 255, 103, 0);
-            topLights.fade(0, 1);
+            top.fade(0, 1);
         }
 
         if(hardware == HARDWARE.SIDE)
-        {
-            topLights.writeRegister(0, blinkLength, 0, 255, 0);  
-            topLights.writeRegister(1, blinkLength, 255, 103, 0);            
-            topLights.cycle(0, 1);
-
-        }
-
-        if(hardware == HARDWARE.ALL)
-        {
-
-            topLights.writeRegister(0, blinkLength, 0, 255, 0);  
-            topLights.writeRegister(1, blinkLength, 255, 103, 0);            
-            topLights.fade(0, 1);
+        {       
+            top.cycle(0, 1);
         }
     }
 
     public void setOnColor(HARDWARE hardware, boolean on, int r, int g, int b)
     {
-        if(on)
-        {             
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-            {
-                topLights.showRGB(r, g, b);
-            }
-
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-            {
-                sideLights.showRGB(r, g, b);
-            }
-        }
-        else
+        if (!on)
         {
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-            {
-                topLights.showRGB(0, 0, 0);    
-            }
+            r = 0;
+            g = 0;
+            b = 0;
+        }
 
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-            {
-                sideLights.showRGB(0, 0, 0);
-            }            
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+        {
+            top.showRGB(r, g, b);
+        }
+
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+        {
+            side.showRGB(r, g, b);
         }
     }
 }

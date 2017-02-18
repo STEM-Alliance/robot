@@ -6,6 +6,7 @@ import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoDrive extends Command
 {
@@ -88,6 +89,7 @@ public class AutoDrive extends Command
 
     protected void execute() 
     {
+        SmartDashboard.putString("AutoDrive", "X: " + vector.getX()+ "Y: " + vector.getY() + "R: " + rotate + "H: " + heading);
         Robot.driveSubsystem.driveWithHeading(vector, rotate, heading);
     }
 
