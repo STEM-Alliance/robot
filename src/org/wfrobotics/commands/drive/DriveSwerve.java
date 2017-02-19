@@ -3,16 +3,19 @@ package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
+import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSwerve extends Command 
 {
     public enum MODE {HALO, FUSION, COMBO, ANGLE, STOP}
     
+    private boolean DPAD_MOVEMENT_ENABLE;
     private boolean AUTO_SHIFT_ENABLE = false;
     private final double AUTO_SHIFT_TIME = 1;
     private final double AUTO_SHIFT_SPEED = .5;
@@ -20,6 +23,10 @@ public class DriveSwerve extends Command
     private final MODE mode;
     private double startFusionPosition;  // FUSION mode adds dial rotation minus it's start position (relative rotation) to driver rotation (absolute rotation)
     private double highVelocityStart;
+
+    private double dpadPrev = -1;
+    private boolean fieldRelativeLast = false;
+    private boolean gyroLast = false;
     
     public DriveSwerve(MODE mode)
     {
@@ -36,6 +43,7 @@ public class DriveSwerve extends Command
 
     protected void execute() 
     {
+        double dpad = OI.DriveSwerveOI.getDpad();
         Vector speedRobot;
         double speedRotation;
 
@@ -50,10 +58,43 @@ public class DriveSwerve extends Command
                 speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation();
                 break;
             case FUSION:
+                
                 Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
                 
                 speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
                 speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation() -OI.DriveSwerveOI.getFusionDrive_Rotation() + startFusionPosition;
+                
+                SmartDashboard.putNumber("Dpad", dpad);
+
+                if(DPAD_MOVEMENT_ENABLE)
+                {
+                    if (dpad != -1)
+                    {
+                        speedRobot.setMagAngle(.5, -(dpad-90));
+                        speedRotation *= .5;
+    
+                        if(dpadPrev == -1)
+                        {
+                            //we need to save off the field relative
+                            fieldRelativeLast = Robot.driveSubsystem.getFieldRelative();
+                            gyroLast = Robot.driveSubsystem.configSwerve.gyroEnable;
+                        }
+                        
+                        // disable field relative
+                        Robot.driveSubsystem.setFieldRelative(false);
+                        Robot.driveSubsystem.configSwerve.gyroEnable = false;
+                    }
+                    else
+                    {
+                        if(dpadPrev != -1)
+                        {
+                            // now we can restore field relative
+                            Robot.driveSubsystem.setFieldRelative(fieldRelativeLast);
+                            Robot.driveSubsystem.configSwerve.gyroEnable = gyroLast;
+                        }
+                    }
+                    dpadPrev = dpad;
+                }
                 
                 if (speedRobot.getMag() < AUTO_SHIFT_SPEED)  // Allow high gear to "kick in" after AUTO_SHIFT_SPEED seconds of high speed
                 {
@@ -61,7 +102,6 @@ public class DriveSwerve extends Command
                 }
                 break;
             case COMBO:
-                double dpad = OI.DriveSwerveOI.getDpad();
                 
                 //((SwerveDriveSubsystem)Robot.driveSubsystem).setGearHigh(OI.DriveSwerveOI.getHighGearEnable());
                 //((SwerveDriveSubsystem)Robot.driveSubsystem).setBrake(OI.DriveSwerveOI.getBrake());
