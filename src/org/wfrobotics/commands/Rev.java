@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Rev extends Command
 {
-    public enum MODE {SHOOT, OFF};
+    public enum MODE {SHOOT, RAMP, OFF};
     
     private final MODE mode;
+    private int consecutiveSamplesAtSpeed;
     
     public Rev(MODE mode)
     {
@@ -28,6 +29,7 @@ public class Rev extends Command
         requires(Robot.shooterSubsystem);
         
         this.mode = mode;
+        this.consecutiveSamplesAtSpeed = 0;
         setTimeout(timeout);
     }
 
@@ -44,9 +46,18 @@ public class Rev extends Command
         {
             Robot.shooterSubsystem.topThenBottom(0,  Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
         }
-        else if (mode == MODE.SHOOT)
+        else if (mode == MODE.SHOOT || mode == MODE.RAMP)
         {
             Robot.shooterSubsystem.topThenBottom(Constants.SHOOTER_READY_SHOOT_SPEED, Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
+            
+            if (Robot.shooterSubsystem.bothInTolerance(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM))
+            {
+                consecutiveSamplesAtSpeed++;
+            }
+            else
+            {
+                consecutiveSamplesAtSpeed = 0;
+            }
         }
         else
         {
@@ -57,7 +68,14 @@ public class Rev extends Command
     @Override
     protected boolean isFinished()
     {
-        return isTimedOut();
+        if (mode == MODE.RAMP)
+        {
+            return isTimedOut() || consecutiveSamplesAtSpeed > Constants.SHOOTER_READY_CONSECUTIVE_SAMPLES;
+        }
+        else
+        {
+            return isTimedOut();
+        }
     }
 
     @Override
