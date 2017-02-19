@@ -50,7 +50,7 @@ public class Up extends Command
             }
             else if(down > .1)
             {
-                Robot.climberSubsystem.setSpeed(-down);
+                // LEE SAYS NEVER DO THIS
             }
             else
             {
