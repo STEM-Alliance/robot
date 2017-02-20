@@ -124,7 +124,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public Vector[] driveWithHeading(Vector Velocity, double Rotation, double Heading)
     {
-        ChassisVector cv = new ChassisVector(Velocity, Rotation, Heading);
+        ChassisVector cv = new ChassisVector(Velocity.clone(), Rotation, Heading);
 
         cv.spin = ApplySpinMode(cv);
         cv.velocity = applyVelocityMode(cv);
