@@ -170,4 +170,10 @@ public class Vector {
             this.getX() - other.getX(), 
             this.getY() - other.getY());
     }
+    
+    public Vector clone()
+    {
+        return Vector.NewFromMagAngle(this.mag, this.ang);
+    }
+    
 }

@@ -99,7 +99,7 @@ public class AutoDrive extends Command
         Utilities.PrintCommand("Drive", this, "" + vector.getMag() + " " +vector.getAngle());
         if (mode != MODE.OFF)
         {
-            Robot.driveSubsystem.driveWithHeading(vector, rotate, heading);
+            Robot.driveSubsystem.driveWithHeading(vector.clone(), rotate, heading);
         }
     }
 

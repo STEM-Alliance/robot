@@ -15,7 +15,7 @@ public class DriveSwerve extends Command
 {
     public enum MODE {HALO, FUSION, COMBO, ANGLE, STOP}
     
-    private boolean DPAD_MOVEMENT_ENABLE;
+    private boolean DPAD_MOVEMENT_ENABLE = true;
     private boolean AUTO_SHIFT_ENABLE = false;
     private final double AUTO_SHIFT_TIME = 1;
     private final double AUTO_SHIFT_SPEED = .5;

@@ -16,17 +16,17 @@ public class Shooter extends Subsystem
     private final CANTalon flywheelBottom;
     private double m_speedDesired;
 
-    private final double TOP_P = 0.05;
-    private final double TOP_I = 0.0001;
+    private final double TOP_P = 0.2;
+    private final double TOP_I = 0.00015;
     private final double TOP_D = 0.001;
     
     // 100% of total feed forward / native counts per 100ms @ 4000rpm
     private final double TOP_F = 0;//1.0 * 1023 / ( 4000 * (1/60) * (1/10) * 4096);
     private final double TOP_RAMP = 0.01;
 
-    private final double BOTTOM_P = 0.05;
+    private final double BOTTOM_P = 0.2;
     private final double BOTTOM_I = 0.0002;
-    private final double BOTTOM_D = 0.0005;
+    private final double BOTTOM_D = 0.001;
     
     // 100% of total feed forward / native counts per 100ms @ 4000rpm
     private final double BOTTOM_F = 0;//1.0 * 1023 / ( 4000 * (1/60) * (1/10) * 4096);
