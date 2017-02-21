@@ -38,9 +38,9 @@ public class Robot extends SampleRobot
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
                 break;
-            //case GEAR:
-                //autonomousCommand = new AutoGear();  // TODO get the starting position from smart dashboard
-                //break;
+            case GEAR:
+                autonomousCommand = new AutoGear();
+                break;
             default:
                 autonomousCommand = new AutoDrive();
                 break;
