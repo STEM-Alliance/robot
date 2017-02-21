@@ -13,9 +13,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public class AutoGear extends CommandGroup
 {
-    public static enum POSITION {LEFT, CENTER, RIGHT};
+   // public static enum POSITION {LEFT, CENTER, RIGHT};
     public double shootAngle;
     boolean redAlliance;
+    int startingPosition = DriverStation.getInstance().getLocation(); //numbered left to right 1-3
     public class Config
     {
         public final double timeForward, timeToSpring, angleSpring;
@@ -27,9 +28,10 @@ public class AutoGear extends CommandGroup
         }
     }    
 
-    public AutoGear(POSITION startingPosition)
+    public  AutoGear()
     {
-        Config config = selectConfig(startingPosition);
+        
+    Config config = selectConfig(startingPosition);
         
         
         if(DriverStation.getInstance().getAlliance() == Alliance.Red)
@@ -50,25 +52,24 @@ public class AutoGear extends CommandGroup
         addSequential(new VisionGearDropOff());  // TODO should we put this in a special mode or cancel this if we near the end of autonomous without scoring?
         // If there is any time left, we should shoot or start moving to our next destination (like getting another gear)
         addParallel( new Rev(MODE.SHOOT));
-        //TODO TEST NUBMERS
+        //TODO TEST NUMBERS
         //move to begin shooting balls in robot
         if(redAlliance)
         {
            
             switch(startingPosition)
             {
-            
-                case CENTER:
+                case 1:
+                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 45, 1));
+                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 2));
+                    break;
+                case 2:
                     addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 90, 1));
                     addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
                     break;
-                case RIGHT:
+                case 3:
                     addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 135, 1));
                     addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
-                    break;
-                case LEFT:
-                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 45, 1));
-                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 2));
                     break;
             }                    
         }
@@ -76,55 +77,38 @@ public class AutoGear extends CommandGroup
         {
             switch(startingPosition)
             {
-                case CENTER:
-                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 90, 1));
-                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
-                    break;
-                case LEFT:
+                case 1:
                     addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 135, 1));
                     addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
                     break;
-                case RIGHT:
+                case 2:
+                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 90, 1));
+                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
+                    break;
+                case 3:
                     addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 45, 1));
                     addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 2));
                     break;
             }
         }   
 
-        //TODO definitely trigger visionshoot
         addSequential(new VisionShoot());
-        
-        
-        
-        // TODO While we have not scored? Maybe we only get one chance?
-        // Perhaps the body of this is a function that adds commands or it's own private Class CommandGroup
-        // TODO Move towards spring
-        // TODO Ultrasonic black magic to do this? Not only sense distance but that we are square?
-        // TODO Or Camera? There's those reflective tape strips centered on the spring.
-        // TODO Detect spring?
-        // TODO If we make it, double check this command will alert the human player with LEDs
-        // TODO Then we are going to want to leave this loop
-        // TODO reset???
-        // TODO Back out
-        // TODO If we have scored, this condones serious flaunting (of our LEDs)?
-        // TODO Turn towards the boiler?
-        // TODO if we are going to shoot, revving while turning would save time
-        // TODO Should we try to shoot? Should this be optional? Should this be smart?
+
     }
     
-    private Config selectConfig(POSITION startingPosition)
+    private Config selectConfig(int startingPosition)
     {
-        if (startingPosition == POSITION.CENTER)
+        if (startingPosition == 2)
         {
             shootAngle = 0;
             return new Config(3, 0, 0);
         }
-        else if(startingPosition == POSITION.LEFT)
+        else if(startingPosition == 1)
         {
             shootAngle = -45;
             return new Config(5, 2, 45);
         }
-        else if(startingPosition == POSITION.RIGHT)
+        else if(startingPosition == 3)
         {
             shootAngle = 45;
             return new Config(5, 2, -45);
