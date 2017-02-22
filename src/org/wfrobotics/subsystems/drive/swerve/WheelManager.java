@@ -74,6 +74,7 @@ public class WheelManager implements Runnable
     @Override  // Entry point for running this class as a runnable/thread
     public void run()
     {
+        Utilities.PrintCommand("Thread: Wheel Manager", this, " " + requestedRobotVelocity.getMag() + " " + requestedRobotRotation);
         setWheelVectors(requestedRobotVelocity, requestedRobotRotation, requestedGear, requestedBrake);
     }
     
@@ -83,44 +84,6 @@ public class WheelManager implements Runnable
         requestedRobotRotation = RobotRotation; 
         requestedGear = gear;
         requestedBrake = brake;
-    }
-
-    /**
-     * Scale the wheel vectors based on max available velocity, adjust for rotation rate, then set/update the desired vectors individual wheels
-     * @param RobotVelocity Robot's velocity using {@link Vector} type; max speed is 1.0
-     * @param RobotRotation Robot's rotational movement; max rotation speed is -1 or 1
-     * @param gear Which gear should the shifter use? True: High, False: Low
-     * @param brake Enable brake mode? True: Yes, False: No
-     * @return Array of {@link Vector} of the actual readings from the wheels
-     */
-    Vector[] setWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
-    {
-        RobotVector robot = new RobotVector(RobotVelocity, RobotRotation);
-        Vector[] WheelsScaled;
-        Vector[] WheelsActual = new Vector[SwerveConstants.WHEEL_COUNT];
-
-        robot = applyClampVelocity(robot);
-        robot = (config.ENABLE_SQUARE_MAGNITUDE) ? applyMagnitudeSquare(robot):robot;
-        robot = (config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(robot):robot;  
-        robot = (config.ENABLE_CRAWL_MODE) ? applyCrawlMode(robot):robot;
-        robot = (config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(robot):robot;
-        lastVelocity = robot.velocity;
-
-        SmartDashboard.putNumber("Drive X", robot.velocity.getX());
-        SmartDashboard.putNumber("Drive Y", robot.velocity.getY());
-        SmartDashboard.putNumber("Drive Mag", robot.velocity.getMag());
-        SmartDashboard.putNumber("Drive Ang", robot.velocity.getAngle());
-        SmartDashboard.putNumber("Drive R", robot.spin);
-
-        WheelsScaled = scaleWheelVectors(robot);
-        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            WheelsActual[i] = wheels[i].setDesired(WheelsScaled[i], gear, brake);
-        }
-
-        printDash();
-
-        return WheelsActual;
     }
     
     public double getVelocityLimit(double MaxWantedVeloc)
@@ -199,6 +162,42 @@ public class WheelManager implements Runnable
         }
     }
 
+    /**
+     * Scale the wheel vectors based on max available velocity, adjust for rotation rate, then set/update the desired vectors individual wheels
+     * @param RobotVelocity Robot's velocity using {@link Vector} type; max speed is 1.0
+     * @param RobotRotation Robot's rotational movement; max rotation speed is -1 or 1
+     * @param gear Which gear should the shifter use? True: High, False: Low
+     * @param brake Enable brake mode? True: Yes, False: No
+     * @return Array of {@link Vector} of the actual readings from the wheels
+     */
+    private void setWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
+    {
+        RobotVector robot = new RobotVector(RobotVelocity, RobotRotation);
+        Vector[] WheelsScaled;
+        Vector[] WheelsActual = new Vector[SwerveConstants.WHEEL_COUNT];
+
+        robot = applyClampVelocity(robot);
+        robot = (config.ENABLE_SQUARE_MAGNITUDE) ? applyMagnitudeSquare(robot):robot;
+        robot = (config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(robot):robot;  
+        robot = (config.ENABLE_CRAWL_MODE) ? applyCrawlMode(robot):robot;
+        robot = (config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(robot):robot;
+        lastVelocity = robot.velocity;
+
+        SmartDashboard.putNumber("Drive X", robot.velocity.getX());
+        SmartDashboard.putNumber("Drive Y", robot.velocity.getY());
+        SmartDashboard.putNumber("Drive Mag", robot.velocity.getMag());
+        SmartDashboard.putNumber("Drive Ang", robot.velocity.getAngle());
+        SmartDashboard.putNumber("Drive R", robot.spin);
+
+        WheelsScaled = scaleWheelVectors(robot);
+        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
+        {
+            WheelsActual[i] = wheels[i].setDesired(WheelsScaled[i], gear, brake);
+        }
+
+        printDash();
+    }
+    
     /**
      * Scale each wheel vector set to within range. Values are scaled down relative to the fastest wheel.
      * @param robot
