@@ -50,7 +50,7 @@ public class Rev extends Command
         {
             Robot.shooterSubsystem.topThenBottom(Constants.SHOOTER_READY_SHOOT_SPEED, Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
             
-            if (Robot.shooterSubsystem.bothInTolerance(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM))
+            if (Robot.shooterSubsystem.inTolerance(Constants.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM))
             {
                 consecutiveSamplesAtSpeed++;
             }
