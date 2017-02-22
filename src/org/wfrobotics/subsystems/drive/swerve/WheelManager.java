@@ -74,16 +74,18 @@ public class WheelManager implements Runnable
     @Override  // Entry point for running this class as a runnable/thread
     public void run()
     {
-        Utilities.PrintCommand("Thread: Wheel Manager", this, " " + requestedRobotVelocity.getMag() + " " + requestedRobotRotation);
-        setWheelVectors(requestedRobotVelocity, requestedRobotRotation, requestedGear, requestedBrake);
+        //Utilities.PrintCommand("Thread: Wheel Manager", this, " " + requestedRobotVelocity.getMag() + " " + requestedRobotRotation);
+        //SmartDashboard.putNumber("thread mag", requestedRobotVelocity.getMag());
+        setWheelVectors(new Vector(1,1), 0, false, false);
     }
     
     public synchronized void updateWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
     {
-        requestedRobotVelocity = RobotVelocity; 
-        requestedRobotRotation = RobotRotation; 
-        requestedGear = gear;
-        requestedBrake = brake;
+        this.requestedRobotVelocity = new Vector(RobotVelocity.getMag(), RobotVelocity.getAngle()); 
+        this.requestedRobotRotation = RobotRotation; 
+        this.requestedGear = gear;
+        this.requestedBrake = brake;
+        //SmartDashboard.putNumber("thread update", requestedRobotVelocity.getMag());
     }
     
     public double getVelocityLimit(double MaxWantedVeloc)
@@ -145,10 +147,10 @@ public class WheelManager implements Runnable
 
     public void printDash()
     {
-        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            wheels[i].printDash();
-        }
+//        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
+//        {
+//            wheels[i].printDash();
+//        }
     }
 
     /**

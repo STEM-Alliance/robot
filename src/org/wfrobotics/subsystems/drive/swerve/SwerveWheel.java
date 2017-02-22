@@ -273,8 +273,8 @@ public class SwerveWheel
 
     public void printDash()
     {
-        SmartDashboard.putNumber(name + ".angle", angleManager.getAnglePotAdjusted());
-        SmartDashboard.putNumber("SpeedCurrent" + number, driveManager.get());
+        //SmartDashboard.putNumber(name + ".angle", angleManager.getAnglePotAdjusted());
+        //SmartDashboard.putNumber("SpeedCurrent" + number, driveManager.get());
     }
 
     public double getAngleOffset()
