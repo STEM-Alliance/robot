@@ -20,7 +20,7 @@ public class Robot extends SampleRobot
     {
         NONE,
         DRIVE,
-        SHOOT_NO_VISION,
+        SHOOT,
         GEAR;
         
         public Command getCommand()
@@ -32,8 +32,8 @@ public class Robot extends SampleRobot
             case NONE:
                 autonomousCommand = new AutoDrive();
                 break;
-            case SHOOT_NO_VISION:
-                autonomousCommand = new AutoShoot(AutoShoot.MODE.HOPPER, false);
+            case SHOOT:
+                autonomousCommand = new AutoShoot();
                 break;
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
@@ -90,7 +90,7 @@ public class Robot extends SampleRobot
 
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
         autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
-        autoChooser.addObject("Auto Shoot No Vision", AUTO_COMMAND.SHOOT_NO_VISION);
+        autoChooser.addObject("Auto Shoot No Vision", AUTO_COMMAND.SHOOT);
         SmartDashboard.putData("Auto Mode", autoChooser);
         
         angleChooser = new SendableChooser<Double>();
