@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class AutoDrive extends Command
 {
-    private enum MODE {DRIVE, TURN, OFF}
+    protected enum MODE {DRIVE, TURN, OFF}
     
-    private final MODE mode;
-    private Vector vector;
-    private double rotate;
-    private double heading;
-    private double headingTolerance = 0;
+    protected final MODE mode;
+    protected Vector vector;
+    protected double rotate;
+    protected double heading;
+    protected double headingTolerance = 0;
     
     /**
      * Drive Off
