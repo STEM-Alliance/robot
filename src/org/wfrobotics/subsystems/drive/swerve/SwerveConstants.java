@@ -48,11 +48,15 @@ public class SwerveConstants {
     /**
      * Array of values for shifting gears, low then high values
      */
+//    public static final int[] SHIFTER_VALS[] = { { 120, 60 }, 
+//                                                 { 70, 130 },
+//                                                 { 130, 60 }, 
+//                                                 { 10, 80 } };
     public static final int[] SHIFTER_VALS[] = { { 120, 60 }, 
-                                                 { 70, 130 },
-                                                 { 130, 60 }, 
-                                                 { 10, 80 } };
-
+            { 30, 100 },
+            { 150, 60 }, 
+            { 0, 100 } };
+    
     public static final boolean SHIFTER_DEFAULT_HIGH = false;
 
     /**
@@ -68,10 +72,10 @@ public class SwerveConstants {
     /**
      * drive PID values
      */
-    public static final double DRIVE_PID_P = .007;
+    public static final double DRIVE_PID_P = .03;
     public static final double DRIVE_PID_I = .000;
     public static final double DRIVE_PID_D = 0.00;
-    public static final double DRIVE_PID_F = .04;
+    public static final double DRIVE_PID_F = .1;
     
     /**
      * voltage ramp ranges for calculations
@@ -90,7 +94,7 @@ public class SwerveConstants {
      * Estimate of efficiency of the gearing from motor to sensor
      * TODO
      */
-    public static final double DRIVE_EFFICIENCY = .8;
+    public static final double DRIVE_EFFICIENCY = 1.0;
     
     public static final double SHIFTER_SENSOR_RATIO = 14.0 / 10.0;  // The gear ratio conversion from motor output to sensor
     // TODO DRL calibrate/test SHIFTER_SHIFT_TIME
