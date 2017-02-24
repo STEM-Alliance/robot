@@ -101,11 +101,11 @@ public final class SwerveAngleController {
 
         if(DEBUG)
         {
-            SmartDashboard.putNumber(name + ".SetPoint", setPoint);
-            SmartDashboard.putNumber(name + ".SensorValue", sensorValue);
-            SmartDashboard.putNumber(name + ".Error", error);
-            SmartDashboard.putBoolean(name + ".Reverse", reverseMotor);
-            SmartDashboard.putNumber(name + ".Output", motorSpeed);
+//            SmartDashboard.putNumber(name + ".SetPoint", setPoint);
+//            SmartDashboard.putNumber(name + ".SensorValue", sensorValue);
+//            SmartDashboard.putNumber(name + ".Error", error);
+//            SmartDashboard.putBoolean(name + ".Reverse", reverseMotor);
+//            SmartDashboard.putNumber(name + ".Output", motorSpeed);
         }
         
         return motorSpeed;

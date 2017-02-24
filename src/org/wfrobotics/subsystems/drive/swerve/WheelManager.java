@@ -46,7 +46,7 @@ public class WheelManager implements Runnable
         private double velocityMaxAvailable = 1;
     }
 
-    public WheelConfiguration config;
+    private WheelConfiguration config;
     private SwerveWheel[] wheels;
 
     private Vector lastVelocity;
@@ -74,19 +74,23 @@ public class WheelManager implements Runnable
     @Override  // Entry point for running this class as a runnable/thread
     public void run()
     {
-        Utilities.PrintCommand("Thread: Wheel Manager", this, " " + requestedRobotVelocity.getMag() + " " + requestedRobotRotation);
-        setWheelVectors(requestedRobotVelocity, requestedRobotRotation, requestedGear, requestedBrake);
+
+        while (true)
+        {
+            Utilities.PrintCommand("Thread: Wheel Manager", this, " " + requestedRobotVelocity.getMag() + " " + requestedRobotRotation);
+            setWheelVectors(new Vector(.3, .3), requestedRobotRotation, requestedGear, requestedBrake);
+        }
     }
     
     public synchronized void updateWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
     {
-        requestedRobotVelocity = RobotVelocity; 
+        requestedRobotVelocity = RobotVelocity.clone(); 
         requestedRobotRotation = RobotRotation; 
         requestedGear = gear;
         requestedBrake = brake;
     }
     
-    public double getVelocityLimit(double MaxWantedVeloc)
+    public synchronized double getVelocityLimit(double MaxWantedVeloc)
     {
         config.velocityMaxAvailable = Preferences.getInstance().getDouble("MAX_ROBOT_VELOCITY", config.velocityMaxAvailable);
         double velocityRatio = 1;
@@ -105,7 +109,7 @@ public class WheelManager implements Runnable
      * into consideration
      * @return movement vector relative to the robot heading
      */
-    public Vector getLastVector()
+    public synchronized Vector getLastVector()
     {
         return lastVelocity;
     }
@@ -133,7 +137,7 @@ public class WheelManager implements Runnable
         }
     }
 
-    public double[] getWheelCalibrations()
+    public synchronized double[] getWheelCalibrations()
     {
         double[] cals = {0,0,0,0};
         for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
@@ -143,18 +147,18 @@ public class WheelManager implements Runnable
         return cals;
     }
 
-    public void printDash()
+    public synchronized void printDash()
     {
-        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            wheels[i].printDash();
-        }
+//        for(int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
+//        {
+//            wheels[i].printDash();
+//        }
     }
 
     /**
      * For unit testing
      */
-    public void free()
+    public synchronized void free()
     {
         for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
@@ -183,11 +187,11 @@ public class WheelManager implements Runnable
         robot = (config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(robot):robot;
         lastVelocity = robot.velocity;
 
-        SmartDashboard.putNumber("Drive X", robot.velocity.getX());
-        SmartDashboard.putNumber("Drive Y", robot.velocity.getY());
-        SmartDashboard.putNumber("Drive Mag", robot.velocity.getMag());
-        SmartDashboard.putNumber("Drive Ang", robot.velocity.getAngle());
-        SmartDashboard.putNumber("Drive R", robot.spin);
+//        SmartDashboard.putNumber("Drive X", robot.velocity.getX());
+//        SmartDashboard.putNumber("Drive Y", robot.velocity.getY());
+//        SmartDashboard.putNumber("Drive Mag", robot.velocity.getMag());
+//        SmartDashboard.putNumber("Drive Ang", robot.velocity.getAngle());
+//        SmartDashboard.putNumber("Drive R", robot.spin);
 
         WheelsScaled = scaleWheelVectors(robot);
         for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
@@ -269,7 +273,7 @@ public class WheelManager implements Runnable
 
         //robot.spin = Utilities.clampToRange(robot.spin, -RotationAdjust, RotationAdjust);
         robot.spin *= RotationAdjust;
-        SmartDashboard.putNumber("SwerveRotationAdjust", RotationAdjust);
+        //SmartDashboard.putNumber("SwerveRotationAdjust", RotationAdjust);
         
 
         return robot;

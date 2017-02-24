@@ -132,7 +132,7 @@ public class SwerveWheel
         anglePID.update(setpoint, current);
         error = anglePID.error;
         
-        SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
+        //SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
         
         if (desiredVector.getMag() > MINIMUM_SPEED)
         {
@@ -144,9 +144,9 @@ public class SwerveWheel
             anglePID.resetIntegral();
             angleManager.set(0);
         }
-        SmartDashboard.putNumber(name + ".angle.des", setpoint);
-        SmartDashboard.putNumber(name + ".angle", current);
-        SmartDashboard.putNumber(name + ".angle.err", error);
+//        SmartDashboard.putNumber(name + ".angle.des", setpoint);
+//        SmartDashboard.putNumber(name + ".angle", current);
+//        SmartDashboard.putNumber(name + ".angle.err", error);
 
         return anglePID.isReverseMotor();
     }
@@ -217,7 +217,7 @@ public class SwerveWheel
 
         if(number == 0)
         {
-            SmartDashboard.putNumber("CLRampRate" + number, driveManager.debugGetCloseLoopRampRate());
+            //SmartDashboard.putNumber("CLRampRate" + number, driveManager.debugGetCloseLoopRampRate());
         }
         
         // If braking is requested
@@ -225,7 +225,7 @@ public class SwerveWheel
         driveManager.set(driveMotorOutput);
         driveManager.setBrake(desiredBrake);
 
-        SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
+//        SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
 
     public void updateAngleOffset()
@@ -273,8 +273,8 @@ public class SwerveWheel
 
     public void printDash()
     {
-        SmartDashboard.putNumber(name + ".angle", angleManager.getAnglePotAdjusted());
-        SmartDashboard.putNumber("SpeedCurrent" + number, driveManager.get());
+//        SmartDashboard.putNumber(name + ".angle", angleManager.getAnglePotAdjusted());
+//        SmartDashboard.putNumber("SpeedCurrent" + number, driveManager.get());
     }
 
     public double getAngleOffset()
