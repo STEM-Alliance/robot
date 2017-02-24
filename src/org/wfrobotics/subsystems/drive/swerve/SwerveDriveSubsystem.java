@@ -134,7 +134,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
         printDash();
         
-        //wheelManager.setWheelVectors(cv.velocity, cv.spin, configSwerve.gearHigh, m_brake);
+        wheelManager.updateWheelVectors(cv.velocity, cv.spin, configSwerve.gearHigh, m_brake);
     }
     
     private double ApplySpinMode(ChassisVector cv)
