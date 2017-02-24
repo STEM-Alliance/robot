@@ -93,7 +93,7 @@ public class SwerveWheel
         // Set the hardware based on the new desired values
         reverseDriveMotors = updateAngleMotor();
         shifter.setGear(this.desiredGear);
-        updateDriveMotor(reverseDriveMotors);
+        updateDriveMotor(false);
 
         SmartDashboard.putNumber(name+"UpdateRate", Timer.getFPGATimestamp() - lastUpdateTime);
         lastUpdateTime = Timer.getFPGATimestamp();
@@ -223,7 +223,7 @@ public class SwerveWheel
         // If braking is requested
         driveMotorOutput = (desiredBrake) ? 0:driveMotorOutput;        
         driveManager.set(driveMotorOutput);
-        driveManager.setBrake(desiredBrake);
+        //driveManager.setBrake(desiredBrake);
 
 //        SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
