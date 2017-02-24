@@ -52,14 +52,14 @@ public class DriveSwerve extends Command
         switch(mode)
         {
             case HALO:
-                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
+                //Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
     
                 speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
                 speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation();
                 break;
             case FUSION:
                 
-                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
+                //Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
                 
                 speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
                 speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation() -OI.DriveSwerveOI.getFusionDrive_Rotation() + startFusionPosition;
@@ -111,8 +111,7 @@ public class DriveSwerve extends Command
                 //    ((SwerveDriveSubsystem)Robot.driveSubsystem).gyroZero();
                 //}
                 
-                ((SwerveDriveSubsystem)Robot.driveSubsystem).wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
-                
+                //((SwerveDriveSubsystem)Robot.driveSubsystem).wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
                 
                 if (dpad != -1)
                 {

@@ -80,10 +80,13 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                                                      SwerveConstants.CHASSIS_PID_D,
                                                      1.0);
         
-        scheduler = Executors.newScheduledThreadPool(1);
+        //scheduler = Executors.newScheduledThreadPool(1);
         wheelManager = new WheelManager();
+        Thread wheelThread = new Thread(wheelManager);
+        wheelThread.setPriority(Thread.NORM_PRIORITY);
+        wheelThread.start();
         
-        scheduler.scheduleAtFixedRate(wheelManager, 1, 5, TimeUnit.MILLISECONDS);
+        //scheduler.scheduleAtFixedRate(wheelManager, 1, 5, TimeUnit.MILLISECONDS);
     }
 
     public void initDefaultCommand() 
@@ -131,7 +134,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
         printDash();
         
-        wheelManager.updateWheelVectors(cv.velocity, cv.spin, configSwerve.gearHigh, m_brake);
+        //wheelManager.setWheelVectors(cv.velocity, cv.spin, configSwerve.gearHigh, m_brake);
     }
     
     private double ApplySpinMode(ChassisVector cv)
