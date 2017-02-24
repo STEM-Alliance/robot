@@ -223,7 +223,7 @@ public class SwerveWheel
         // If braking is requested
         driveMotorOutput = (desiredBrake) ? 0:driveMotorOutput;        
         driveManager.set(driveMotorOutput);
-        driveManager.setBrake(desiredBrake);
+        // WARNING: Setting brake mode each iteration drastically decreases performance driveManager.setBrake(desiredBrake);
 
         SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
