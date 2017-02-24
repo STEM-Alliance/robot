@@ -29,8 +29,8 @@ public class Shooter extends Subsystem
             motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
             motor.changeControlMode(TalonControlMode.Speed);
             motor.setPID(p, i, d, f, 0, ramp, 0);  // f is 100% of total feed forward / native counts per 100ms @ 4000rpm
-            motorT.motor.reverseSensor(invert);
-            motorT.motor.setInverted(invert);
+            motor.reverseSensor(invert);
+            motor.setInverted(invert);
         }
         
         public double get()
