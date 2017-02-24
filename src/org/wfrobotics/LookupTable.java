@@ -14,8 +14,11 @@ public class LookupTable {
      */
     public LookupTable(double[] in_array, double[] out_array)
     {
-        int size = Math.min(in_array.length, out_array.length);
-                
+        size = Math.min(in_array.length, out_array.length);
+        
+        m_Input = new double[size];
+        m_Output = new double[size];
+        
         for (int i = 0; i < size; i++)
         {
             m_Input[i] = in_array[i];
