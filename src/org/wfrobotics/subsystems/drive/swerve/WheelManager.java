@@ -52,6 +52,9 @@ public class WheelManager implements Runnable
     private Vector lastVelocity;
     private double lastVelocityTimestamp;
     
+    
+    double requestedMag;
+    double requestedAngle;
     Vector requestedRobotVelocity; 
     double requestedRobotRotation; 
     boolean requestedGear;
@@ -77,14 +80,17 @@ public class WheelManager implements Runnable
 
         while (true)
         {
-            Utilities.PrintCommand("Thread: Wheel Manager", this, " " + requestedRobotVelocity.getMag() + " " + requestedRobotRotation);
-            setWheelVectors(new Vector(.3, .3), requestedRobotRotation, requestedGear, requestedBrake);
+            //Utilities.PrintCommand("Thread: Wheel Manager", this, " " + requestedRobotVelocity.getMag() + " " + requestedRobotRotation);
+            setWheelVectors(new Vector(requestedMag, requestedAngle), requestedRobotRotation, requestedGear, requestedBrake);
         }
     }
     
     public synchronized void updateWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
     {
-        requestedRobotVelocity = RobotVelocity.clone(); 
+
+        requestedMag = RobotVelocity.getMag();
+        requestedAngle = RobotVelocity.getAngle();
+        //requestedRobotVelocity = new Vector(RobotVelocity.getMag(), RobotVelocity.getAngle());//RobotVelocity.clone(); 
         requestedRobotRotation = RobotRotation; 
         requestedGear = gear;
         requestedBrake = brake;
