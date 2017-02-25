@@ -57,7 +57,8 @@ public class Robot extends SampleRobot
     public static OI oi;
     public static Led ledSubsystem;
     public static Auger augerSubsystem;
-    public static Targeting targetingSubsystem;
+    public static CameraShooter targetingSubsystem;
+    public static CameraGear targetGearSubsystem;
     public static Aligning aligningSubsystem;
     public static DashboardView dashboardView;
     
@@ -81,7 +82,8 @@ public class Robot extends SampleRobot
         climberSubsystem = new Climber();
         ledSubsystem = new Led();
         augerSubsystem = new Auger();
-        targetingSubsystem = new Targeting();
+        targetingSubsystem = new CameraShooter();
+        targetGearSubsystem = new CameraGear();
         aligningSubsystem = new Aligning();
         dashboardView = new DashboardView();
 
@@ -91,6 +93,7 @@ public class Robot extends SampleRobot
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE);
         autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
         autoChooser.addObject("Auto Shoot No Vision", AUTO_COMMAND.SHOOT);
+        autoChooser.addObject("Auto Gear", AUTO_COMMAND.GEAR);
         SmartDashboard.putData("Auto Mode", autoChooser);
         
         angleChooser = new SendableChooser<Double>();
