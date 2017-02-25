@@ -2,7 +2,7 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Vector;
-import org.wfrobotics.commands.AutoDrive;
+import org.wfrobotics.commands.drive.AutoDrive;
 
 public class AutoLineDrive extends AutoDrive
 {

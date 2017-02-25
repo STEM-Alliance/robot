@@ -1,6 +1,7 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.Vector;
+import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.Camera.TargetData;
 
@@ -12,8 +13,7 @@ public class VisionShoot extends CommandGroup
     private Shoot shoot;
     
     public VisionShoot() 
-    {
-     
+    {     
         requires (Robot.driveSubsystem);
         this.data = Robot.targetingSubsystem.getData();
         shoot = new Shoot(Conveyor.MODE.OFF);

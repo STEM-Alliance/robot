@@ -1,5 +1,5 @@
 
-package org.wfrobotics.commands;
+package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
@@ -131,5 +131,19 @@ public class AutoDrive extends Command
     protected void interrupted()
     {
         
+    }
+    
+    /**
+     * Update the AutoDrive command over time (such as based on sensor feedback)
+     * @param speedX Magnitude to move right (positive) and left (negative). (Range: -1 to 1)
+     * @param speedY Magnitude to move forward (positive) and backward (negative). (Range: -1 to 1)
+     * @param speedR Magnitude to turn clockwise (positive) or counterclockwise (negative) while driving. (Range: -1 to 1, Zero: Means don't spin)
+     * @param angle Angle to turn the robot to a field relative angle while driving (Range: -180 to 180, Units: Degrees)
+     */
+    public void set(double speedX, double speedY, double speedR, double angle)
+    {
+        vector = new Vector(speedX, speedY);
+        rotate = speedR;
+        heading = angle;
     }
 }
