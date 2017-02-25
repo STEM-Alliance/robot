@@ -7,12 +7,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class VisionGearDropOff extends CommandGroup 
 {    
-    private GearCamera camera;
+    private GearDetection camera;
     private AutoDrive drive;
     
     public VisionGearDropOff() 
     {
-        camera = new GearCamera(GearCamera.MODE.GETDATA);
+        camera = new GearDetection(GearDetection.MODE.GETDATA);
         drive = new AutoDrive(0, 0, 0, 0, 999);
         
         addParallel(camera);
@@ -21,7 +21,7 @@ public class VisionGearDropOff extends CommandGroup
     
     protected void execute()
     {
-        TargetData data = camera.getData();
+        //TargetData data = camera.getData();  // TODO grab the data from the command
         
         drive.set(0, 0, 0, 0);  // TODO update AutoDrive after we add that ability to autodrive
     }
