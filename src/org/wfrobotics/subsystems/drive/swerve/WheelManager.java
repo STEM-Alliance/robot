@@ -47,7 +47,7 @@ public class WheelManager implements Runnable
     }
 
     public WheelConfiguration config;
-    private SwerveWheel[] wheels;
+    private SwerveWheel[] wheels;  // TODO test this as static for performance
 
     private Vector lastVelocity;
     private double lastVelocityTimestamp;
