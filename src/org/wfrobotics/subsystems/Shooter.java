@@ -14,10 +14,11 @@ public class Shooter extends Subsystem
 {
     private class ShooterMotor
     {
-        public CANTalon motor;
-
         private final String name;
         private final double invert;  // Account for inverted motor when asking for speed (Inverted: 1, Not-inverted: -1)
+
+        private CANTalon motor;
+        private double lastSpeedCommanded;
 
         public ShooterMotor(String name, int address, double p, double i, double d, double f, double ramp, boolean invert)
         {
@@ -31,6 +32,8 @@ public class Shooter extends Subsystem
             motor.setPID(p, i, d, f, 0, ramp, 0);  // f is 100% of total feed forward / native counts per 100ms @ 4000rpm
             motor.reverseSensor(invert);
             motor.setInverted(invert);
+            
+            lastSpeedCommanded = -.000000001;  // Unlikely default last value such that we do something in the first call to set()
         }
         
         public double get()
@@ -42,14 +45,18 @@ public class Shooter extends Subsystem
         {
             motor.set(rpm);
             
-            if (rpm != 0)
+            if (rpm != lastSpeedCommanded)  // Not enabling/disabling each iteration in case this impacts performance
             {
-                motor.enable();
+                if (rpm != 0)
+                {
+                    motor.enable();
+                }
+                else
+                {
+                    motor.disable();
+                }
             }
-            else
-            {
-                motor.disable();
-            }
+            lastSpeedCommanded = rpm;
         }
 
         public boolean atSpeed(double tolerance)

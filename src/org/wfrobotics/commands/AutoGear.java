@@ -1,10 +1,11 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.commands.Rev.MODE;
+import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -13,109 +14,83 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public class AutoGear extends CommandGroup
 {
-   // public static enum POSITION {LEFT, CENTER, RIGHT};
-    public double shootAngle;
-    boolean redAlliance;
-    int startingPosition = DriverStation.getInstance().getLocation(); //numbered left to right 1-3
-    public class Config
+    public static class Config
     {
-        public final double timeForward, timeToSpring, angleSpring;
-        public Config(double timeForward, double timeToSpring, double angleSpring)
-        {
-            this.timeForward = timeForward;
-            this.timeToSpring = timeToSpring;
-            this.angleSpring = angleSpring;
-        }
-    }    
+        public final double timeApproachAirship, angleSpring, approachSpringX, shootAngle;
 
-    public  AutoGear()
-    {
-        
-    Config config = selectConfig(startingPosition);
-        
-        
-        if(DriverStation.getInstance().getAlliance() == Alliance.Red)
+        private Config(double timeApproachAirship, double approachSpringAngle, double approachSpringX, double shootAngle)
         {
-            redAlliance = true;
-        }
-
-        // Drive forwards while turning towards the airship's spring
-        addSequential(new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, config.angleSpring, config.timeForward));
-        
-        // Drive towards the spring directly ahead
-        if(config.timeToSpring > 0)
-        {
-            addSequential(new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, config.angleSpring, config.timeForward));
+            this.timeApproachAirship = timeApproachAirship;
+            this.angleSpring = approachSpringAngle;
+            this.approachSpringX = approachSpringX;
+            this.shootAngle = shootAngle;
         }
         
-        // We are at the gear. Score it
-        addSequential(new VisionGearDropOff());  // TODO should we put this in a special mode or cancel this if we near the end of autonomous without scoring?
-        // If there is any time left, we should shoot or start moving to our next destination (like getting another gear)
-        addParallel( new Rev(MODE.SHOOT));
-        //TODO TEST NUMBERS
-        //move to begin shooting balls in robot
-        if(redAlliance)
+        public static Config getConfig(POSITION_ROTARY startingPosition)
         {
-           
-            switch(startingPosition)
+            // Assume values are Red Alliance (boiler on your right)
+            if (startingPosition == POSITION_ROTARY.CENTER)
             {
-                case 1:
-                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 45, 1));
-                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 2));
-                    break;
-                case 2:
-                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 90, 1));
-                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
-                    break;
-                case 3:
-                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 135, 1));
-                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
-                    break;
-            }                    
-        }
-        else
-        {
-            switch(startingPosition)
-            {
-                case 1:
-                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 135, 1));
-                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
-                    break;
-                case 2:
-                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 90, 1));
-                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 1));
-                    break;
-                case 3:
-                    addSequential( new AutoDrive(0, -Constants.AUTONOMOUS_DRIVE_SPEED, Constants.AUTONOMOUS_TURN_SPEED, 45, 1));
-                    addSequential( new AutoDrive(0, Constants.AUTONOMOUS_DRIVE_SPEED, 0, 0, 2));
-                    break;
+                return new Config(3, 0, 0, 0);
             }
-        }   
-
-        addSequential(new VisionShoot());
-
+            else if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
+            {
+                return new Config(5, 45, -.5, -45);
+            }
+            else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
+            {
+                return new Config(5, -45, .5, 45);
+            }
+            else
+            {
+                return new Config(0, 0, 0, 0);
+            }
+        }            
     }
-    
-    private Config selectConfig(int startingPosition)
+
+    private enum POST_GEAR_AUTONOMOUS {GET_GEAR, RECKONING_SHOOT, VISION_SHOOT};
+
+    private final POSITION_ROTARY startPosition;
+    private final int signX;
+    private final Config config;
+
+    public  AutoGear(POSITION_ROTARY startPosition)
     {
-        if (startingPosition == 2)
+        this.startPosition = startPosition;
+        signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1;  // X driving based on alliance for mirrored field
+        config = Config.getConfig(startPosition);
+
+        scoreGear();
+        postGearAutonomous(POST_GEAR_AUTONOMOUS.GET_GEAR);
+    }
+
+    private void scoreGear()
+    {
+        addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
+        if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
         {
-            shootAngle = 0;
-            return new Config(3, 0, 0);
+            addSequential(new AutoDrive(signX * config.approachSpringX, .5, signX * .5, config.angleSpring, 1));  // Drive towards the spring
         }
-        else if(startingPosition == 1)
+        addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
+    }
+
+    private void postGearAutonomous(POST_GEAR_AUTONOMOUS mode)
+    {
+        addSequential(new AutoDrive(signX * -config.approachSpringX, -.5, signX * .5, config.angleSpring, .5));  // Back out of spring
+
+        if (mode == POST_GEAR_AUTONOMOUS.GET_GEAR)
         {
-            shootAngle = -45;
-            return new Config(5, 2, 45);
+            addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, .5));  //
         }
-        else if(startingPosition == 3)
+        else if (mode == POST_GEAR_AUTONOMOUS.VISION_SHOOT)
         {
-            shootAngle = 45;
-            return new Config(5, 2, -45);
+            // TODO Get to the boiler reckoning shoot position
+            addSequential(new VisionShoot());
         }
-        else
+        else if (mode == POST_GEAR_AUTONOMOUS.RECKONING_SHOOT)
         {
-            return new Config(0, 0, 0);
+            // TODO Get to the boiler vision shoot position
+            addParallel( new Rev(MODE.SHOOT));
         }
     }
 }
