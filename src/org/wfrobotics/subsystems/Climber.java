@@ -6,6 +6,7 @@ import org.wfrobotics.robot.RobotMap;
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Climber extends Subsystem
@@ -21,8 +22,9 @@ public class Climber extends Subsystem
     
     @Override
     protected void initDefaultCommand()
+    
     {
-        setDefaultCommand(new Up(Up.MODE.OFF));
+         setDefaultCommand(new Up(Up.MODE.OFF));
     }
 
     /**

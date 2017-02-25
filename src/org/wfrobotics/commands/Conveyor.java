@@ -1,5 +1,6 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -50,7 +51,7 @@ public class Conveyor extends Command
         }
         else if(mode == MODE.ON_HOLD)
         {
-            Robot.augerSubsystem.setSpeed(Constants.AUGER_SPEED);
+            Robot.augerSubsystem.setSpeed(Constants.AUGER_SPEED - OI.getAugerSpeedAdjust()*.2);
         }
         else 
         {

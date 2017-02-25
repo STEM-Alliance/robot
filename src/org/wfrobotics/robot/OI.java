@@ -109,9 +109,9 @@ public class OI
         return AdjustClimb(xboxMan.getTriggerAxis(Hand.kRight));
     }
 
-    public static double getClimbSpeedDown()
+    public static double getAugerSpeedAdjust()
     {   
-        return AdjustClimb(xboxMan.getTriggerAxis(Hand.kLeft));
+        return xboxMan.getTriggerAxis(Hand.kLeft);
     }
     
     public static class DriveTankOI
