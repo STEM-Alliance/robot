@@ -1,9 +1,11 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.Camera.TargetData;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionGearDropOff extends CommandGroup {
     enum STATE {
@@ -16,32 +18,19 @@ public class VisionGearDropOff extends CommandGroup {
 
     public VisionGearDropOff()
     {
-        Robot.targetGearSubsystem.run();
-
-        /*
-         * if(data.InView) { double yawOffset = data.Yaw; //rotate control
-         * //double tolerance = Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE * 0.05;
-         * 
-         * addSequential(new AutoDrive(Constants.AUTONOMOUS_TURN_SPEED,
-         * yawOffset, Constants.AUTONOMOUS_TURN_TOLERANCE));
-         * 
-         * //distance to boiler
-         * 
-         * if(Math.abs(Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE -
-         * Robot.targetingSubsystem.DistanceToTarget()) <= tolerance ) {
-         * 
-         * if(Robot.targetingSubsystem.DistanceToTarget() <
-         * Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE ) {
-         * Robot.driveSubsystem.driveXY(0, .3, -1); } else
-         * if(Robot.targetingSubsystem.DistanceToTarget() >
-         * Constants.OPTIMAL_GEAR_DROP_OFF_DISTANCE ) {
-         * Robot.driveSubsystem.driveXY(0, -.3, -1); } } }
-         */
+        requires(Robot.targetGearSubsystem);
+        state = STATE.YAW;
     }
+
 
     protected void execute()
     {
+        Utilities.PrintCommand("VisionGearDropOff", this, state.toString());
+        
+        Robot.targetGearSubsystem.run();
+        
         double xDistance = Robot.targetGearSubsystem.DistanceFromCenter;
+        
         switch (state)
         {
             case YAW:

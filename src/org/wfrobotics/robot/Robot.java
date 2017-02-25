@@ -59,7 +59,6 @@ public class Robot extends SampleRobot
     public static Auger augerSubsystem;
     public static CameraShooter targetingSubsystem;
     public static CameraGear targetGearSubsystem;
-    public static Aligning aligningSubsystem;
     public static DashboardView dashboardView;
     
     Command autonomousCommand;
@@ -84,7 +83,6 @@ public class Robot extends SampleRobot
         augerSubsystem = new Auger();
         targetingSubsystem = new CameraShooter();
         targetGearSubsystem = new CameraGear();
-        aligningSubsystem = new Aligning();
         dashboardView = new DashboardView();
 
         oi = new OI();
