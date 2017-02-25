@@ -27,7 +27,7 @@ public class CameraGear extends Camera
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new GearDetection());
+        setDefaultCommand(new GearDetection(GearDetection.MODE.OFF));
     }
     
     public void run()
