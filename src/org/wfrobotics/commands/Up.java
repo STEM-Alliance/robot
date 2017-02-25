@@ -4,7 +4,7 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -19,6 +19,7 @@ public class Up extends Command
     private double time;
     private MODE mode;
     
+    
     public Up(MODE mode)
     {
         requires(Robot.climberSubsystem);
@@ -29,7 +30,7 @@ public class Up extends Command
     @Override
     protected void initialize()
     {
-
+        
     }
 
     @Override
@@ -39,22 +40,29 @@ public class Up extends Command
         if(mode == MODE.OFF)
         {
             double up = OI.getClimbSpeedUp();
-            double down = OI.getClimbSpeedDown();
 
             SmartDashboard.putNumber("ClimbSpeed", up);
-            SmartDashboard.putNumber("ClimbSpeedDown", down);
             
             if(up > .1)
             {
                 Robot.climberSubsystem.setSpeed(up);
             }
-            else if(down > .1)
+            else
             {
-                // LEE SAYS NEVER DO THIS
+                Robot.climberSubsystem.setSpeed(0);
+            }
+
+            if(DriverStation.getInstance().getMatchTime() < 30
+                    && 
+                    DriverStation.getInstance().getMatchTime() >29
+                    && !(DriverStation.getInstance().isAutonomous()))
+            {
+                Robot.climberSubsystem.setSpeed(.5);
             }
             else
             {
                 Robot.climberSubsystem.setSpeed(0);
+
             }
             
         }
@@ -66,7 +74,7 @@ public class Up extends Command
                 
                 Robot.climberSubsystem.setSpeed(.5);
             }
-            else
+            else if(mode == MODE.DOWN)
             {
                 if(timeSinceInitialized() - time < Constants.CLIMBER_CLIMB_TIME_AFTER_TOP_REACHED)
                 {
