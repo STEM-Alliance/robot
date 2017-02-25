@@ -6,6 +6,7 @@ import java.util.Comparator;
 import org.wfrobotics.vision.TargetTable;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public abstract class Camera extends Subsystem {
 
     public class TargetData 
@@ -65,15 +66,18 @@ public abstract class Camera extends Subsystem {
         table.update();
         
         if(table.targetsFound > 0)
-            data.clear();
-        
-        for(int i = 0; i < table.targetsFound; i++)
         {
-            data.add(new TargetData(
-                    table.x[i],
-                    table.y[i],
-                    table.width[i],
-                    table.height[i]));
+            data.clear();
+            
+            for(int i = 0; i < table.targetsFound; i++)
+            {
+                TargetData d = new TargetData(
+                        table.x[i],
+                        table.y[i],
+                        table.width[i],
+                        table.height[i]);
+                data.add(d);
+            }
         }
     }
 //    public TargetData getData()

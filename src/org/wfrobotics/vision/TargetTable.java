@@ -1,6 +1,7 @@
 package org.wfrobotics.vision;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TargetTable {
 
@@ -36,6 +37,7 @@ public class TargetTable {
         area = table.getNumberArray("area", area);
         
         targetsFound = Math.min(x.length, Math.min(y.length, Math.min(height.length, width.length)));
+        //SmartDashboard.putNumber(name + "targets", targetsFound);
     }
 
 }

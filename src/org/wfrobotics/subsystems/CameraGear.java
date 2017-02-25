@@ -1,6 +1,10 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.commands.GearDetection;
+import org.wfrobotics.commands.drive.DriveSwerve;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -23,17 +27,17 @@ public class CameraGear extends Camera
     @Override
     protected void initDefaultCommand()
     {
-        // TODO set a commmand IF this remains a subsystem
+        setDefaultCommand(new GearDetection());
     }
     
     public void run()
     {
-        table.update();
+        getUpdatedData();
         
         double xAverage = 0;
         double xPercent = 0;
         
-        if(data.size() == 2)
+        if(data.size() == LOOKING_FOR_COUNT)
         {
             xAverage = (data.get(0).x + data.get(1).x)/2.0;
             xPercent = xAverage / table.imageWidth;
@@ -45,6 +49,8 @@ public class CameraGear extends Camera
             DistanceFromCenter = 0;
             InView = false;
         }
+
+        SmartDashboard.putNumber("GearDistanceX", DistanceFromCenter);
         
         //TODO?
 //        if(data.size() > LOOKING_FOR_COUNT)
