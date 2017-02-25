@@ -61,8 +61,8 @@ public class Robot extends SampleRobot
     public static OI oi;
     public static Led ledSubsystem;
     public static Auger augerSubsystem;
-    public static Targeting targetingSubsystem;
-    public static Aligning aligningSubsystem;
+    public static CameraShooter targetingSubsystem;
+    public static CameraGear targetGearSubsystem;
     public static DashboardView dashboardView;
     
     Command autonomousCommand;
@@ -79,14 +79,14 @@ public class Robot extends SampleRobot
     public void robotInit() 
     {
         driveSubsystem = new SwerveDriveSteamworks();
-        aligningSubsystem = new Aligning();
+        targetGearSubsystem = new CameraGear();
         augerSubsystem = new Auger();
         climberSubsystem = new Climber();
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();
         ledSubsystem = new Led();
         shooterSubsystem = new Shooter();
-        targetingSubsystem = new Targeting();
+        targetingSubsystem = new CameraShooter();
 
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();

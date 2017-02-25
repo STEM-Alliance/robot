@@ -2,10 +2,8 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.Led.HARDWARE;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Set robot LEDs
@@ -14,9 +12,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class GearDetection extends Command
 {
-    public GearDetection()
+    public enum MODE {GETDATA, OFF};
+    
+    private final MODE mode;
+    
+    public GearDetection(MODE mode)
     {
         requires(Robot.targetGearSubsystem);
+        
+        this.mode = mode;
     }
     
     @Override
@@ -27,11 +31,15 @@ public class GearDetection extends Command
     @Override
     protected void execute()
     {
-        Utilities.PrintCommand("GearDetectin", this);
-        Robot.targetGearSubsystem.run();
+        Utilities.PrintCommand("CameraGear", this, mode.toString());
+    
+        if (mode == MODE.GETDATA)
+        {
+            
+            Robot.targetGearSubsystem.run();
 
-        double xDistance = Robot.targetGearSubsystem.DistanceFromCenter;
-        
+            double xDistance = Robot.targetGearSubsystem.DistanceFromCenter;
+        }
     }
     
     @Override
