@@ -10,8 +10,8 @@ public class TargetTable {
     public String name;
 
     //TODO figure out how to get this automatically
-    public double imageWidth = 640;
-    public double imageHeight = 480;
+    public double imageWidth = 640.0;
+    public double imageHeight = 480.0;
     
     public double[] x = {0};
     public double[] y = {0};
@@ -37,7 +37,7 @@ public class TargetTable {
         area = table.getNumberArray("area", area);
         
         targetsFound = Math.min(x.length, Math.min(y.length, Math.min(height.length, width.length)));
-        //SmartDashboard.putNumber(name + "targets", targetsFound);
+        SmartDashboard.putNumber("TargetsFound", targetsFound);
     }
 
 }

@@ -16,6 +16,8 @@ public class GearDetection extends Command
     
     private final MODE mode;
     
+    private double lastDistanceFromCenter;
+    
     public GearDetection(MODE mode)
     {
         requires(Robot.targetGearSubsystem);
@@ -37,8 +39,6 @@ public class GearDetection extends Command
         {
             
             Robot.targetGearSubsystem.run();
-
-            double xDistance = Robot.targetGearSubsystem.DistanceFromCenter;
         }
     }
     
@@ -58,5 +58,15 @@ public class GearDetection extends Command
     protected void interrupted()
     {
         end();
+    }
+    
+    public double getDistanceFromCenter()
+    {
+        return Robot.targetGearSubsystem.DistanceFromCenter;
+    }
+    
+    public boolean getIsFound()
+    {
+        return Robot.targetGearSubsystem.InView;
     }
 }

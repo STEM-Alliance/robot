@@ -36,12 +36,19 @@ public class CameraGear extends Camera
         
         double xAverage = 0;
         double xPercent = 0;
-        
+
+        SmartDashboard.putNumber("GearTargets", data.size());
         if(data.size() == LOOKING_FOR_COUNT)
         {
             xAverage = (data.get(0).x + data.get(1).x)/2.0;
             xPercent = xAverage / table.imageWidth;
             DistanceFromCenter = Utilities.scaleToRange(xPercent, 0, 1, -1, 1);
+            InView = true;
+        }
+        else if (data.size() == 1)
+        {
+            SmartDashboard.putNumber("percent", data.get(0).x / table.imageWidth);
+            DistanceFromCenter = Utilities.scaleToRange(data.get(0).x / table.imageWidth, 0.0, 1.0, -1.0, 1.0);
             InView = true;
         }
         else
