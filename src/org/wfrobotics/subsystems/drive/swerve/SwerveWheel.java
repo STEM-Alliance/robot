@@ -132,7 +132,7 @@ public class SwerveWheel
         anglePID.update(setpoint, current);
         error = anglePID.error;
         
-        SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
+        //SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
         
         if (desiredVector.getMag() > MINIMUM_SPEED)
         {
@@ -144,8 +144,8 @@ public class SwerveWheel
             anglePID.resetIntegral();
             angleManager.set(0);
         }
-        SmartDashboard.putNumber(name + ".angle.des", setpoint);
-        SmartDashboard.putNumber(name + ".angle", current);
+        //SmartDashboard.putNumber(name + ".angle.des", setpoint);
+        //SmartDashboard.putNumber(name + ".angle", current);
         SmartDashboard.putNumber(name + ".angle.err", error);
 
         return anglePID.isReverseMotor();
@@ -214,18 +214,13 @@ public class SwerveWheel
             driveMotorOutput = driveMotorSpeed;
             driveLastSpeed = driveMotorSpeed;
         }
-
-        if(number == 0)
-        {
-            SmartDashboard.putNumber("CLRampRate" + number, driveManager.debugGetCloseLoopRampRate());
-        }
         
         // If braking is requested
         driveMotorOutput = (desiredBrake) ? 0:driveMotorOutput;        
         driveManager.set(driveMotorOutput);
         // WARNING: Setting brake mode each iteration drastically decreases performance driveManager.setBrake(desiredBrake);
 
-        SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
+        //SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
 
     public void updateAngleOffset()
