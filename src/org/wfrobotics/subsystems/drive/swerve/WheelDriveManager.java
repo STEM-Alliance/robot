@@ -4,6 +4,8 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class WheelDriveManager 
 {
     private CANTalon driveMotor;
@@ -19,6 +21,8 @@ public class WheelDriveManager
         driveMotor.enableForwardSoftLimit(false);
         driveMotor.enableReverseSoftLimit(false);
         driveMotor.enableBrakeMode(false);
+        driveMotor.configNominalOutputVoltage(SwerveWheel.MINIMUM_SPEED, -SwerveWheel.MINIMUM_SPEED);  // Hardware deadband in closed-loop modes
+        //driveMotor.setv
 //      7.8.2. Recommended Procedure
 //        // TODO DRL test nondefault values (these are defaults) driveMotor.SetVelocityMeasurementPeriod(VelocityMeasurementPeriod.Period_100Ms);
 //        // TODO DRL test nondefault values (these are defaults) driveMotor.SetVelocityMeasurementWindow(64);
@@ -45,7 +49,9 @@ public class WheelDriveManager
     
     public double get()
     {
-        return driveMotor.getSpeed();
+        double speed = driveMotor.getSpeed();
+        SmartDashboard.putNumber("Drive Talon reported speed", speed);
+        return speed;
     }
     
     public void set(double speed)
