@@ -40,7 +40,7 @@ public class SwerveWheel
     private SwerveAngleController anglePID;
 
     /** Minimum speed, used for dead band */ 
-    private static final double MINIMUM_SPEED = 0.1;
+    protected static final double MINIMUM_SPEED = 0.1;
     
     private double lastUpdateTime = 0;
 
@@ -134,16 +134,8 @@ public class SwerveWheel
         
         //SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
         
-        if (desiredVector.getMag() > MINIMUM_SPEED)
-        {
-            angleManager.set(anglePID.getMotorSpeed() * angleMaxSpeed);  // Control the wheel angle.
-        }
-        else
-        {
-            // Too slow, do nothing
-            anglePID.resetIntegral();
-            angleManager.set(0);
-        }
+        angleManager.set(anglePID.getMotorSpeed() * angleMaxSpeed);  // Control the wheel angle.
+
         //SmartDashboard.putNumber(name + ".angle.des", setpoint);
         //SmartDashboard.putNumber(name + ".angle", current);
         SmartDashboard.putNumber(name + ".angle.err", error);
@@ -163,9 +155,6 @@ public class SwerveWheel
 
         // Reverse the output if the angle PID can take advantage of rotational symmetry
         driveMotorSpeed = (reverse) ? -driveMotorSpeed:driveMotorSpeed;
-        
-        // Don't drive if below the friction limit
-        driveMotorSpeed = (Math.abs(driveMotorSpeed) < SwerveConstants.DRIVE_SPEED_MIN) ? 0:driveMotorSpeed;
         
         // Limit ramp rate, prevents voltage drops and brownouts
         if(!SwerveConstants.DRIVE_SPEED_SENSOR_ENABLE)
