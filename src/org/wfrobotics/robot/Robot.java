@@ -50,6 +50,23 @@ public class Robot extends SampleRobot
             
             return autonomousCommand;
         }
+        
+        public double getGryoOffset()
+        {
+            double startAngle;
+            
+            switch(this)
+            {
+            case SHOOT:
+                startAngle = 180;
+                break;
+            default:
+                startAngle = 0;
+                break;
+            }
+            
+            return startAngle;
+        }
     }
     
     public enum POSITION_ROTARY {SIDE_BOILER, CENTER, SIDE_LOADING_STATION};
@@ -115,13 +132,15 @@ public class Robot extends SampleRobot
         }
     }
     
-    
     public void autonomous()
     {
         //autonomousCommand = (Command) autoChooser.getSelected();
         AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
         
         autonomousCommand = command.getCommand();
+        
+        // Zero the Gyro based on starting orientation of the selected autonomous mode
+        Gyro.getInstance().zeroYaw(command.getGryoOffset());
         
         // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();
@@ -137,8 +156,8 @@ public class Robot extends SampleRobot
     {
         while (isDisabled())
         {
-            disabledDoGyro();           
-            autonomousStartPosition = getRotaryStartingPosition();            
+            autonomousStartPosition = getRotaryStartingPosition();
+            disabledDoGyro();
             driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
                    
@@ -156,16 +175,16 @@ public class Robot extends SampleRobot
     
     private void disabledDoGyro()
     {
-        if(OI.xboxDrive.getStartButton())
-        {
-            Gyro.getInstance().zeroYaw();
-        }
-        else
+//        if(OI.xboxDrive.getStartButton())
+//        {
+//            Gyro.getInstance().zeroYaw();
+//        }
+//        else
         {
             //Gyro.getInstance().setZero(angleChooser.getSelected());
         }
-        // it takes some time before the gyro initializes
-        // so we have to wait before we can actually zero
+        
+        // It takes some time before the gyro initializes so we have to wait before we can actually zero the first time
         if(!gyroInitialZero)
         {
             if(Math.abs(Gyro.getInstance().getYaw()) > 0.1)
@@ -173,6 +192,10 @@ public class Robot extends SampleRobot
                 Gyro.getInstance().zeroYaw();
                 gyroInitialZero = true;
             }
+        }
+        else
+        {
+            Gyro.getInstance().zeroYaw();
         }
     }
     
