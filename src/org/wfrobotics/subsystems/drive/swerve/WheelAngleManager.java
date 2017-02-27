@@ -25,6 +25,8 @@ public class WheelAngleManager
         angleMotor.enableReverseSoftLimit(false);
         angleMotor.enableBrakeMode(false);
         angleMotor.configNominalOutputVoltage(SwerveWheel.MINIMUM_SPEED, -SwerveWheel.MINIMUM_SPEED);  // Hardware deadband in closed-loop modes
+        //angleMotor.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_50Ms);
+        //angleMotor.SetVelocityMeasurementWindow(32);
         
         anglePot = new MagnetoPotSRX(angleMotor, 360);
     }
