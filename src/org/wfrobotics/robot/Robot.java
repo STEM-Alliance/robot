@@ -41,7 +41,7 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
                 break;
             case GEAR:
-                autonomousCommand = new AutoGear(autonomousStartPosition);
+                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.DEAD_RECKONING);
                 break;
             default:
                 autonomousCommand = new AutoDrive();

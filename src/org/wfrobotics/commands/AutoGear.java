@@ -1,6 +1,5 @@
 package org.wfrobotics.commands;
 
-import org.wfrobotics.commands.Rev.MODE;
 import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
@@ -35,11 +34,11 @@ public class AutoGear extends CommandGroup
             }
             else if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
             {
-                return new Config(5, 45, -.5, -45);
+                return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.5, -VisionGearDropOff.HEXAGON_ANGLE);
             }
             else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
             {
-                return new Config(5, -45, .5, 45);
+                return new Config(5, -VisionGearDropOff.HEXAGON_ANGLE, .5, VisionGearDropOff.HEXAGON_ANGLE);
             }
             else
             {
@@ -49,14 +48,17 @@ public class AutoGear extends CommandGroup
     }
 
     private enum POST_GEAR_AUTONOMOUS {GET_GEAR, RECKONING_SHOOT, VISION_SHOOT};
+    public enum MODE {DEAD_RECKONING, VISION};
 
     private final POSITION_ROTARY startPosition;
+    private final MODE mode;
     private final int signX;
     private final Config config;
 
-    public  AutoGear(POSITION_ROTARY startPosition)
+    public  AutoGear(POSITION_ROTARY startPosition, MODE mode)
     {
         this.startPosition = startPosition;
+        this.mode = mode;
         signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1;  // X driving based on alliance for mirrored field
         config = Config.getConfig(startPosition);
 
@@ -67,30 +69,49 @@ public class AutoGear extends CommandGroup
     private void scoreGear()
     {
         addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
-        if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
+        if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
-            addSequential(new AutoDrive(signX * config.approachSpringX, .5, signX * .5, config.angleSpring, 1));  // Drive towards the spring
+            addSequential(new AutoDrive(signX * config.approachSpringX,       // Towards the airship
+                                        Math.abs(config.approachSpringX),     // Always forwards with X magnitude
+                                        signX * .5, config.angleSpring, 1));
         }
-        addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
+        
+        if (mode == MODE.DEAD_RECKONING)  // In front of the gear; drive into the spring
+        {
+            addSequential(new AutoDrive(signX * config.approachSpringX, 
+                          Math.abs(config.approachSpringX),
+                          signX * .5, config.angleSpring, 1));
+        }
+        else if (mode == MODE.VISION)
+        {
+            addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
+        }
     }
 
-    private void postGearAutonomous(POST_GEAR_AUTONOMOUS mode)
+    private void postGearAutonomous(POST_GEAR_AUTONOMOUS autoType)
     {
-        addSequential(new AutoDrive(signX * -config.approachSpringX, -.5, signX * .5, config.angleSpring, .5));  // Back out of spring
+        // Back out of spring
+        addSequential(new AutoDrive(signX * -config.approachSpringX,  // Away from airship
+                      -Math.abs(config.approachSpringX),              // Always backwards with X magnitude
+                      signX * .5, config.angleSpring, 1));           
 
-        if (mode == POST_GEAR_AUTONOMOUS.GET_GEAR)
+        if (mode == MODE.VISION)
         {
-            addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, .5));  //
-        }
-        else if (mode == POST_GEAR_AUTONOMOUS.VISION_SHOOT)
-        {
-            // TODO Get to the boiler reckoning shoot position
-            addSequential(new VisionShoot());
-        }
-        else if (mode == POST_GEAR_AUTONOMOUS.RECKONING_SHOOT)
-        {
-            // TODO Get to the boiler vision shoot position
-            addParallel( new Rev(MODE.SHOOT));
+            if (autoType == POST_GEAR_AUTONOMOUS.GET_GEAR)
+            {
+                // TODO Get to the outside of airship (based on starting position) so you can go straight forwards towards the loading station but not over the line
+                addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, .5));
+            }
+            else if (autoType == POST_GEAR_AUTONOMOUS.VISION_SHOOT)
+            {
+                // TODO Get to the boiler reckoning shoot position
+                addSequential(new VisionShoot());
+            }
+            else if (autoType == POST_GEAR_AUTONOMOUS.RECKONING_SHOOT)
+            {
+                // TODO Get to the boiler vision shoot position
+                addParallel( new Rev(Rev.MODE.SHOOT));
+            }
         }
     }
 }
