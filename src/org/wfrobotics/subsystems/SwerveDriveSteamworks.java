@@ -24,7 +24,7 @@ public class SwerveDriveSteamworks extends SwerveDriveSubsystem
      */
     public boolean isGearStored()
     {
-        DriverStation.reportError("SteamworksDrive is gear stored not implemented yet", true);
+        DriverStation.reportWarning("SteamworksDrive is gear stored not implemented yet", true);
         
         return false;  // TODO DRL return sensor feedback
     }
@@ -35,7 +35,7 @@ public class SwerveDriveSteamworks extends SwerveDriveSubsystem
      */
     public boolean isSpringInGear()
     {
-        DriverStation.reportError("SteamworksDrive is spring in gear not implemented yet", true);
+        DriverStation.reportWarning("SteamworksDrive is spring in gear not implemented yet", true);
         
         return false;  // TODO DRL return sensor feedback
     }
