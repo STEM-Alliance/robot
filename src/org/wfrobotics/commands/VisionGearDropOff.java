@@ -75,6 +75,7 @@ public class VisionGearDropOff extends CommandGroup
                 if(camera.getIsFound())
                 {
                     state = STATE.APPROACH;
+                    stateTime = Timer.getFPGATimestamp();
                 }
                 else
                 {
