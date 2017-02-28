@@ -35,7 +35,7 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoDrive();
                 break;
             case SHOOT:
-                autonomousCommand = new AutoShoot();
+                autonomousCommand = new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING);
                 break;
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
