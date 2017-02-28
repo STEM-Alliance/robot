@@ -138,6 +138,7 @@ public class Robot extends SampleRobot
         
         // Zero the Gyro based on starting orientation of the selected autonomous mode
         Gyro.getInstance().zeroYaw(command.getGryoOffset());
+        Robot.driveSubsystem.setLastHeading(command.getGryoOffset());
         
         // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();

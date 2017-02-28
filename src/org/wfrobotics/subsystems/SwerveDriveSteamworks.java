@@ -40,5 +40,10 @@ public class SwerveDriveSteamworks extends SwerveDriveSubsystem
         return false;  // TODO DRL return sensor feedback
     }
 
+    public void setLastHeading(double gyroOffset)
+    {
+        m_lastHeading = gyroOffset;
+    }
+
 
 }
