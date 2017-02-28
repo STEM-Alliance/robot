@@ -1,6 +1,6 @@
 package org.wfrobotics.subsystems;
 
-import org.wfrobotics.vision.Constants;
+import org.wfrobotics.commands.ShooterDetection;
 
 /**
  * Provides information used to shoot the ball.
@@ -18,8 +18,13 @@ public class CameraShooter extends Camera
     @Override
     protected void initDefaultCommand()
     {
-        // TODO set a commmand IF this remains a subsystem
-    }   
+        setDefaultCommand(new ShooterDetection(ShooterDetection.MODE.OFF));
+    }
+    
+    public void run()
+    {
+        getUpdatedData();
+    }
     
     public double DistanceToTarget()
     {
