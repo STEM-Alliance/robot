@@ -50,9 +50,7 @@ public class WheelDriveManager
     
     public double get()
     {
-        double speed = driveMotor.getSpeed();
-        SmartDashboard.putNumber("Drive Talon reported speed", speed);
-        return speed;
+        return driveMotor.getSpeed();
     }
     
     public void set(double speed)

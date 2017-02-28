@@ -149,4 +149,11 @@ public class AutoDrive extends Command
         rotate = speedR;
         heading = angle;
     }
+    
+    public void set(Vector vect, double speedR, double angle)
+    {
+        vector = vect;
+        rotate = speedR;
+        heading = angle;
+    }
 }

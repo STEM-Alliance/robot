@@ -2,6 +2,7 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
+import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
@@ -12,8 +13,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionGearDropOff extends CommandGroup 
-{     
-    public enum STATE { START, GO, BACK, END};
+{
+    final static double HEXAGON_ANGLE = 30;  // All corners are 120 on the interior, therefore the sides we want are 30 degrees past straight ahead
+    public enum STATE { START, APPROACH, WAIT, BACK, END};
     
     private STATE state;
     
@@ -22,7 +24,7 @@ public class VisionGearDropOff extends CommandGroup
     private PIDController pid;
     private double heading;
 
-    private double backTime;
+    private double stateTime;
 
     private boolean startingFieldRelative;
     
@@ -33,7 +35,7 @@ public class VisionGearDropOff extends CommandGroup
         drive = new AutoDrive(0, 0, 0, -1, 999);
         
         addParallel(camera);
-        addSequential(drive); // TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
+        addSequential(drive);
     }
     
     protected void initialize()
@@ -52,11 +54,12 @@ public class VisionGearDropOff extends CommandGroup
 //        {
 //            heading = 0;
 //        }
-        state = STATE.GO;
+        state = STATE.START;
         
         //startingFieldRelative = Robot.driveSubsystem.getFieldRelative();
         //Robot.driveSubsystem.setFieldRelative(false);
     }
+    
     protected void execute()
     {
         double distanceFromCenter = camera.getDistanceFromCenter();
@@ -69,42 +72,81 @@ public class VisionGearDropOff extends CommandGroup
         switch(state)
         {
             case START:
-                drive.set(0, 0, 0, -1); 
-                state = STATE.GO;
-                break;
-                
-            case GO:
                 if(camera.getIsFound())
                 {
+                    state = STATE.APPROACH;
+                }
+                else
+                {
+                    state = STATE.END;
+                }
+               break;
+            case APPROACH:
+                if(camera.getIsFound())
+                {
+                    // we think we've found at least one target
+                    
+                    // so get an estimate speed to line us up
                     valueX = pid.update(distanceFromCenter);
                 
-                    if(Math.abs(distanceFromCenter) < .3)
+                    // then if we're somewhat lined up
+                    if(Math.abs(distanceFromCenter) < .4)
                     {
-                        valueY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .3, -.55, -.2);
-                        
+                        // start approaching slowly
+                        valueY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.55, -.2);
                     }
+                    
                     if(Math.abs(distanceFromCenter) < .1)
                     {
+                        // if we started really far away from center, 
+                        // this will then reduce that overshoot
+                        // maybe
                         pid.resetError();
                     }
                     
+                    // we can still see a target
                     if(visionWidth > 15)
                     {
-                        //drive.set(valueX, valueY, getRotationalSpeed, heading);  // TODO update AutoDrive after we add that ability to autodrive
-                        drive.set(valueX, valueY, 0, -1);  // TODO update AutoDrive after we add that ability to autodrive
+                        Vector vector = new Vector(valueX, valueY);
+
+                        //TODO this only works for the front facing spring
+                        // address field heading here
+                        drive.set(vector, 0, -1);
                     }
                     else
                     {
-                        state = STATE.BACK;
-                        backTime = Timer.getFPGATimestamp();
+                        // if the detected target width is less than 15, 
+                        // we're either at the target
+                        // or something went wrong
+                        state = STATE.WAIT;
+                    }
+                    stateTime = Timer.getFPGATimestamp();
+                }
+                else
+                {
+                    // we lost a camera, so give it some time before we cancel everything
+                    if(Timer.getFPGATimestamp() - stateTime > 2)
+                    {
+                        state = STATE.END;
                     }
                 }
                 break;
                 
-            case BACK:
-                drive.set(0, -.5, 0, -1);  // TODO update AutoDrive after we add that ability to autodrive
                 
-                if(Timer.getFPGATimestamp() - backTime > 1)
+            case WAIT:
+                // time to pull the spring up?
+                if(Timer.getFPGATimestamp() - stateTime > 1)
+                {
+                    state = STATE.BACK;
+                }
+                break;
+                
+            case BACK:
+                // backup for a second
+                //TODO account for Heading
+                drive.set(0, -.5, 0, -1);
+                
+                if(Timer.getFPGATimestamp() - stateTime > 1)
                 {
                     state = STATE.END;
                 }
@@ -127,12 +169,16 @@ public class VisionGearDropOff extends CommandGroup
     protected boolean isFinished() 
     {
         return state == STATE.END;
-        
     }
     
     protected void end()
     {
         //Robot.driveSubsystem.setFieldRelative(startingFieldRelative);
+    }
+
+    protected void interrupted()
+    {
+        end();
     }
     
     double getRotationalSpeed()
