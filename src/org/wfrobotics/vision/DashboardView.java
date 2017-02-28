@@ -9,9 +9,7 @@ public class DashboardView
     {
         new Thread(() -> {
             UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-            camera.setResolution(720, 480);
-            
-            
+            camera.setResolution(480, 360);
         }).start();
     }
 }
