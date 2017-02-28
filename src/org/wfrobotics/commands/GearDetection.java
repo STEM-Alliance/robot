@@ -69,4 +69,9 @@ public class GearDetection extends Command
     {
         return Robot.targetGearSubsystem.InView;
     }
+
+    public double getFullWidth()
+    {
+        return Robot.targetGearSubsystem.FullWidth;
+    }
 }
