@@ -23,12 +23,14 @@ public class VisionGearDropOff extends CommandGroup
     private double heading;
 
     private double backTime;
+
+    private boolean startingFieldRelative;
     
     public VisionGearDropOff() 
     {
-        pid = new PIDController(1.1, 0.0015, 0.0001, .5);
+        pid = new PIDController(1.1, 0.015, 0.0001, .5);
         camera = new GearDetection(GearDetection.MODE.GETDATA);
-        drive = new AutoDrive(0, 0, 0, 0, 999);
+        drive = new AutoDrive(0, 0, 0, -1, 999);
         
         addParallel(camera);
         addSequential(drive); // TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
@@ -36,21 +38,24 @@ public class VisionGearDropOff extends CommandGroup
     
     protected void initialize()
     {
-        double robotHeading = Robot.driveSubsystem.getLastHeading();
-        
-        if (robotHeading < 67.5 && robotHeading > 22.5)  
-        {
-            heading = 45;  // Snap to left spring
-        }
-        else if (robotHeading > -67.5 && robotHeading < -22.5)  
-        {
-            heading = -45;  // Snap to right spring
-        }
-        else
-        {
-            heading = 0;
-        }
+//        double robotHeading = Robot.driveSubsystem.getLastHeading();
+//        
+//        if (robotHeading < 67.5 && robotHeading > 22.5)  
+//        {
+//            heading = 45;  // Snap to left spring
+//        }
+//        else if (robotHeading > -67.5 && robotHeading < -22.5)  
+//        {
+//            heading = -45;  // Snap to right spring
+//        }
+//        else
+//        {
+//            heading = 0;
+//        }
         state = STATE.GO;
+        
+        //startingFieldRelative = Robot.driveSubsystem.getFieldRelative();
+        //Robot.driveSubsystem.setFieldRelative(false);
     }
     protected void execute()
     {
@@ -64,19 +69,21 @@ public class VisionGearDropOff extends CommandGroup
         switch(state)
         {
             case START:
+                drive.set(0, 0, 0, -1); 
+                state = STATE.GO;
                 break;
                 
             case GO:
                 if(camera.getIsFound())
                 {
-                    valueY = pid.update(distanceFromCenter);
+                    valueX = pid.update(distanceFromCenter);
                 
                     if(Math.abs(distanceFromCenter) < .3)
                     {
-                        valueX = Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .3, -.55, -.2);
+                        valueY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .3, -.55, -.2);
                         
                     }
-                    if(Math.abs(distanceFromCenter) < .05)
+                    if(Math.abs(distanceFromCenter) < .1)
                     {
                         pid.resetError();
                     }
@@ -95,7 +102,7 @@ public class VisionGearDropOff extends CommandGroup
                 break;
                 
             case BACK:
-                drive.set(.5, 0, 0, -1);  // TODO update AutoDrive after we add that ability to autodrive
+                drive.set(0, -.5, 0, -1);  // TODO update AutoDrive after we add that ability to autodrive
                 
                 if(Timer.getFPGATimestamp() - backTime > 1)
                 {
@@ -114,11 +121,18 @@ public class VisionGearDropOff extends CommandGroup
         SmartDashboard.putNumber("VisionGearY", valueY);
         SmartDashboard.putNumber("VisionGearX", valueX);
         SmartDashboard.putNumber("VisionWidth", visionWidth);
+        SmartDashboard.putBoolean("GearFound", camera.getIsFound());
     }
 
     protected boolean isFinished() 
     {
         return state == STATE.END;
+        
+    }
+    
+    protected void end()
+    {
+        //Robot.driveSubsystem.setFieldRelative(startingFieldRelative);
     }
     
     double getRotationalSpeed()
