@@ -133,9 +133,17 @@ public class SwerveWheel
         error = anglePID.error;
         
         //SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
+        if (desiredVector.getMag() > MINIMUM_SPEED)
+        {
+            angleManager.set(anglePID.getMotorSpeed() * angleMaxSpeed);  // Control the wheel angle.
+        }
+        else
+        {
+            // Too slow, do nothing
+            anglePID.resetIntegral();
+            angleManager.set(0);
+        }
         
-        angleManager.set(anglePID.getMotorSpeed() * angleMaxSpeed);  // Control the wheel angle.
-
         //SmartDashboard.putNumber(name + ".angle.des", setpoint);
         //SmartDashboard.putNumber(name + ".angle", current);
         SmartDashboard.putNumber(name + ".angle.err", error);

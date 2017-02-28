@@ -49,20 +49,18 @@ public class Up extends Command
             }
             else
             {
-                Robot.climberSubsystem.setSpeed(0);
-            }
-
-            if(DriverStation.getInstance().getMatchTime() < 30
-                    && 
-                    DriverStation.getInstance().getMatchTime() >29
-                    && !(DriverStation.getInstance().isAutonomous()))
-            {
-                Robot.climberSubsystem.setSpeed(.5);
-            }
-            else
-            {
-                Robot.climberSubsystem.setSpeed(0);
-
+//                if(DriverStation.getInstance().getMatchTime() < 30
+//                        && 
+//                        DriverStation.getInstance().getMatchTime() >29
+//                        && !(DriverStation.getInstance().isAutonomous()))
+//                {
+//                    Robot.climberSubsystem.setSpeed(.5);
+//                }
+//                else
+//                {
+                   Robot.climberSubsystem.setSpeed(0);
+//    
+//                }
             }
             
         }
@@ -88,7 +86,7 @@ public class Up extends Command
         }
         else if (mode == MODE.DOWN)
         {
-            Robot.climberSubsystem.setSpeed(-.2);
+            //Robot.climberSubsystem.setSpeed(-.2);
         }
         else
         {

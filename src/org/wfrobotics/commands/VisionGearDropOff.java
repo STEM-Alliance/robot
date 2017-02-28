@@ -1,25 +1,32 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.PIDController;
+import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.subsystems.Camera.TargetData;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionGearDropOff extends CommandGroup 
 {     
-    final static double HEXAGON_ANGLE = 30;  // All corners are 120 on the interior, therefore the sides we want are 30 degrees past straight ahead
-    private enum STATE {APPROACH, WAIT_FOR_HUMAN, BACKOUT};
+    public enum STATE { START, GO, BACK, END};
+    
+    private STATE state;
     
     private GearDetection camera;
     private AutoDrive drive;
     private PIDController pid;
     private double heading;
-    private STATE state;
+
+    private double backTime;
     
     public VisionGearDropOff() 
     {
-        pid = new PIDController(1.6, 0.0015, 0.0001, .5);
+        pid = new PIDController(1.1, 0.0015, 0.0001, .5);
         camera = new GearDetection(GearDetection.MODE.GETDATA);
         drive = new AutoDrive(0, 0, 0, 0, 999);
         
@@ -31,58 +38,90 @@ public class VisionGearDropOff extends CommandGroup
     {
         double robotHeading = Robot.driveSubsystem.getLastHeading();
         
-        // Angle to snap to, surrounding each spring, generous on the sides. 
-        // Ex: Spring at 30 degrees, technically range could be 15-45 degrees, allow 15-135 since this is the outside spring
-        if (robotHeading < HEXAGON_ANGLE * 3 && robotHeading > HEXAGON_ANGLE * .5)
+        if (robotHeading < 67.5 && robotHeading > 22.5)  
         {
-            heading = HEXAGON_ANGLE;  // Snap to left spring
+            heading = 45;  // Snap to left spring
         }
-        else if (robotHeading > -HEXAGON_ANGLE * 3 && robotHeading < -HEXAGON_ANGLE * .5)  
+        else if (robotHeading > -67.5 && robotHeading < -22.5)  
         {
-            heading = -HEXAGON_ANGLE;  // Snap to right spring
+            heading = -45;  // Snap to right spring
         }
         else
         {
             heading = 0;
         }
-        state = STATE.APPROACH;
+        state = STATE.GO;
     }
-    
     protected void execute()
     {
-        double valueX = 0;
+        double distanceFromCenter = camera.getDistanceFromCenter();
+        double visionWidth = camera.getFullWidth();
         double valueY = 0;
+        double valueX = 0;
         
-        if (state == STATE.APPROACH)
+        Utilities.PrintCommand("VisionGearDetect", this, heading + "  " + state.toString());
+        
+        switch(state)
         {
-            double distanceFromCenter = camera.getDistanceFromCenter();
+            case START:
+                break;
+                
+            case GO:
+                if(camera.getIsFound())
+                {
+                    valueY = pid.update(distanceFromCenter);
+                
+                    if(Math.abs(distanceFromCenter) < .3)
+                    {
+                        valueX = Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .3, -.55, -.2);
+                        
+                    }
+                    if(Math.abs(distanceFromCenter) < .05)
+                    {
+                        pid.resetError();
+                    }
+                    
+                    if(visionWidth > 15)
+                    {
+                        //drive.set(valueX, valueY, getRotationalSpeed, heading);  // TODO update AutoDrive after we add that ability to autodrive
+                        drive.set(valueX, valueY, 0, -1);  // TODO update AutoDrive after we add that ability to autodrive
+                    }
+                    else
+                    {
+                        state = STATE.BACK;
+                        backTime = Timer.getFPGATimestamp();
+                    }
+                }
+                break;
+                
+            case BACK:
+                drive.set(.5, 0, 0, -1);  // TODO update AutoDrive after we add that ability to autodrive
+                
+                if(Timer.getFPGATimestamp() - backTime > 1)
+                {
+                    state = STATE.END;
+                }
+                break;
+                
+            case END:
+                break;
             
-            if(camera.getIsFound())
-            {
-                valueY = pid.update(distanceFromCenter);
-            }
-            
-            if(Math.abs(distanceFromCenter) < .15)
-            {
-                valueX = -.4;
-            }
-            
-            // TODO apply rotational speed and heading to become parallel to spring
-            // TODO If we get a SPRING_IN_GEAR sensor, convert this into a approach-wait-retry state machine
-        }
-        else if (state == STATE.WAIT_FOR_HUMAN)
-        {
-            // Not supported yet; we just do STATE.APPROACH
-        }
-        else if (state == STATE.BACKOUT)
-        {
-            // Not supported yet; we just do STATE.APPROACH
+            default:
+                break;
         }
         
-        drive.set(valueX, valueY, 0, -1);  // TODO update AutoDrive after we add that ability to autodrive
+        SmartDashboard.putNumber("GearDistanceX", distanceFromCenter);
+        SmartDashboard.putNumber("VisionGearY", valueY);
+        SmartDashboard.putNumber("VisionGearX", valueX);
+        SmartDashboard.putNumber("VisionWidth", visionWidth);
+    }
+
+    protected boolean isFinished() 
+    {
+        return state == STATE.END;
     }
     
-    private double getRotationalSpeed()
+    double getRotationalSpeed()
     {
         double headingError = heading - Robot.driveSubsystem.getLastHeading();
         double speed = 0;
