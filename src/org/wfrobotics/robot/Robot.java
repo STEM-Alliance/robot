@@ -41,7 +41,7 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
                 break;
             case GEAR:
-                autonomousCommand = new AutoGear(autonomousStartPosition);
+                autonomousCommand = new VisionGearDropOff();//AutoGear(autonomousStartPosition);
                 break;
             default:
                 autonomousCommand = new AutoDrive();
@@ -59,6 +59,9 @@ public class Robot extends SampleRobot
             {
             case SHOOT:
                 startAngle = 180;
+                break;
+            case GEAR:
+                startAngle = 90;
                 break;
             default:
                 startAngle = 0;
@@ -85,7 +88,6 @@ public class Robot extends SampleRobot
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;    
     double startAngle = 0;
-    SendableChooser<Double> angleChooser;
     static POSITION_ROTARY autonomousStartPosition;
     
     boolean gyroInitialZero = false;
@@ -111,14 +113,8 @@ public class Robot extends SampleRobot
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE); // TODO pick gear/shoot as the default autonomous command
         autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
         autoChooser.addObject("Auto Shoot", AUTO_COMMAND.SHOOT);
+        autoChooser.addObject("Auto Gear", AUTO_COMMAND.GEAR);
         SmartDashboard.putData("Auto Mode", autoChooser);
-        
-        angleChooser = new SendableChooser<Double>();
-        angleChooser.addDefault("0", 0.0);
-        angleChooser.addObject("-90", -90.0);
-        angleChooser.addObject("90", 90.0);
-        angleChooser.addObject("180", 180.0);
-        SmartDashboard.putData("Starting Angle", angleChooser);
     }
 
     public void operatorControl()
@@ -127,6 +123,7 @@ public class Robot extends SampleRobot
         
         while (isOperatorControl() && isEnabled())
         {
+            driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
             Scheduler.getInstance().run();
         }
@@ -147,6 +144,7 @@ public class Robot extends SampleRobot
         
         while (isAutonomous() && isEnabled())
         {
+            driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
             Scheduler.getInstance().run();
         }
@@ -158,6 +156,10 @@ public class Robot extends SampleRobot
         {
             autonomousStartPosition = getRotaryStartingPosition();
             disabledDoGyro();
+            
+            AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
+            SmartDashboard.putNumber("StartingAngle", command.getGryoOffset());
+            
             driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
                    
@@ -175,15 +177,6 @@ public class Robot extends SampleRobot
     
     private void disabledDoGyro()
     {
-//        if(OI.xboxDrive.getStartButton())
-//        {
-//            Gyro.getInstance().zeroYaw();
-//        }
-//        else
-        {
-            //Gyro.getInstance().setZero(angleChooser.getSelected());
-        }
-        
         // It takes some time before the gyro initializes so we have to wait before we can actually zero the first time
         if(!gyroInitialZero)
         {
@@ -195,7 +188,7 @@ public class Robot extends SampleRobot
         }
         else
         {
-            Gyro.getInstance().zeroYaw();
+            //Gyro.getInstance().zeroYaw();
         }
     }
     

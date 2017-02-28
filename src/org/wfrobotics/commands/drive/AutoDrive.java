@@ -85,12 +85,15 @@ public class AutoDrive extends Command
         vector = new Vector(speedX, speedY);
         rotate = speedR;
         heading = angle;
+        
         setTimeout(timeout);
     }
     
     protected void initialize()
     {
+
         
+        Robot.driveSubsystem.driveWithHeading(new Vector(), 0, heading);
         //TODO Use a PID loop here if this isn't good enough
     }
 
@@ -138,7 +141,7 @@ public class AutoDrive extends Command
      * @param speedX Magnitude to move right (positive) and left (negative). (Range: -1 to 1)
      * @param speedY Magnitude to move forward (positive) and backward (negative). (Range: -1 to 1)
      * @param speedR Magnitude to turn clockwise (positive) or counterclockwise (negative) while driving. (Range: -1 to 1, Zero: Means don't spin)
-     * @param angle Angle to turn the robot to a field relative angle while driving (Range: -180 to 180, Units: Degrees)
+     * @param angle Angle to turn the robot to a field relative angle while driving (Range: 0 to 360, -1 is disable, Units: Degrees)
      */
     public void set(double speedX, double speedY, double speedR, double angle)
     {
