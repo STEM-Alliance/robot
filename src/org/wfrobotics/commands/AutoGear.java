@@ -64,7 +64,7 @@ public class AutoGear extends CommandGroup
         config = Config.getConfig(startPosition);
 
         scoreGear();
-        postGearAutonomous(POST_GEAR_AUTONOMOUS.GET_GEAR);
+        postGearAutonomous(POST_GEAR_AUTONOMOUS.NONE);
     }
 
     private void scoreGear()
