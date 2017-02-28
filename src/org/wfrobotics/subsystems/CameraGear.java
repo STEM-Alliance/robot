@@ -39,6 +39,7 @@ public class CameraGear extends Camera
         double xPercent = 0;
         
         SmartDashboard.putNumber("GearTargets", data.size());
+        
         if(data.size() == LOOKING_FOR_COUNT)
         {
             xAverage = (data.get(0).x + data.get(1).x)/2.0;

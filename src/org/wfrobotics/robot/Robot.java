@@ -41,7 +41,7 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
                 break;
             case GEAR:
-                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.DEAD_RECKONING);
+                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.VISION);
                 break;
             default:
                 autonomousCommand = new AutoDrive();
@@ -51,7 +51,7 @@ public class Robot extends SampleRobot
             return autonomousCommand;
         }
         
-        public double getGryoOffset()
+        public double getGyroOffset()
         {
             double startAngle;
             
@@ -137,8 +137,8 @@ public class Robot extends SampleRobot
         autonomousCommand = command.getCommand();
         
         // Zero the Gyro based on starting orientation of the selected autonomous mode
-        Gyro.getInstance().zeroYaw(command.getGryoOffset());
-        Robot.driveSubsystem.setLastHeading(command.getGryoOffset());
+        Gyro.getInstance().zeroYaw(command.getGyroOffset());
+        //Robot.driveSubsystem.setLastHeading(command.getGyroOffset());
         
         // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();
@@ -159,7 +159,7 @@ public class Robot extends SampleRobot
             disabledDoGyro();
             
             AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
-            SmartDashboard.putNumber("StartingAngle", command.getGryoOffset());
+            SmartDashboard.putNumber("StartingAngle", command.getGyroOffset());
             
             driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());

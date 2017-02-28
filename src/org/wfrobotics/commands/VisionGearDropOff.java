@@ -22,7 +22,7 @@ public class VisionGearDropOff extends CommandGroup
     private GearDetection camera;
     private AutoDrive drive;
     private PIDController pid;
-    private double heading;
+    private double heading = -1;
 
     private double stateTime;
 

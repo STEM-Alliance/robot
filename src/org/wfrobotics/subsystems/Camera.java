@@ -79,6 +79,10 @@ public abstract class Camera extends Subsystem {
                 data.add(d);
             }
         }
+        else
+        {
+            data.clear();
+        }
     }
 //    public TargetData getData()
 //    {
