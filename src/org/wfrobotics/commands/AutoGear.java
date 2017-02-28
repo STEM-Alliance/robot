@@ -47,7 +47,7 @@ public class AutoGear extends CommandGroup
         }            
     }
 
-    private enum POST_GEAR_AUTONOMOUS {GET_GEAR, RECKONING_SHOOT, VISION_SHOOT};
+    private enum POST_GEAR_AUTONOMOUS {NONE, GET_GEAR, RECKONING_SHOOT, VISION_SHOOT};
     public enum MODE {DEAD_RECKONING, VISION};
 
     private final POSITION_ROTARY startPosition;
@@ -59,6 +59,7 @@ public class AutoGear extends CommandGroup
     {
         this.startPosition = startPosition;
         this.mode = mode;
+        
         signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1;  // X driving based on alliance for mirrored field
         config = Config.getConfig(startPosition);
 
@@ -69,6 +70,7 @@ public class AutoGear extends CommandGroup
     private void scoreGear()
     {
         addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
+        
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
             addSequential(new AutoDrive(signX * config.approachSpringX,       // Towards the airship
@@ -76,15 +78,18 @@ public class AutoGear extends CommandGroup
                                         signX * .5, config.angleSpring, 1));
         }
         
-        if (mode == MODE.DEAD_RECKONING)  // In front of the gear; drive into the spring
+        switch(mode)
         {
-            addSequential(new AutoDrive(signX * config.approachSpringX, 
-                          Math.abs(config.approachSpringX),
-                          signX * .5, config.angleSpring, 1));
-        }
-        else if (mode == MODE.VISION)
-        {
-            addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
+            case DEAD_RECKONING:  // In front of the gear; drive into the spring
+                addSequential(new AutoDrive(signX * config.approachSpringX, 
+                              Math.abs(config.approachSpringX),
+                              signX * .5, config.angleSpring, 1));
+                break;
+            case VISION:
+                addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
+                break;
+            default:
+                break;
         }
     }
 
@@ -97,20 +102,31 @@ public class AutoGear extends CommandGroup
 
         if (mode == MODE.VISION)
         {
-            if (autoType == POST_GEAR_AUTONOMOUS.GET_GEAR)
+            switch(autoType)
             {
-                // TODO Get to the outside of airship (based on starting position) so you can go straight forwards towards the loading station but not over the line
-                addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, .5));
+                case GET_GEAR:
+                    // TODO Get to the outside of airship (based on starting position) so you can go straight forwards towards the loading station but not over the line
+                    addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, .5));
+                    break;
+                    
+                case RECKONING_SHOOT:
+                    // TODO Get to the boiler vision shoot position
+                    addParallel( new Rev(Rev.MODE.SHOOT));
+                    
+                case VISION_SHOOT:
+                    // TODO Get to the boiler reckoning shoot position
+                    addSequential(new VisionShoot());
+                    break;
+                    
+                case NONE:
+                default:
+                    break;
             }
-            else if (autoType == POST_GEAR_AUTONOMOUS.VISION_SHOOT)
+            if (autoType == POST_GEAR_AUTONOMOUS.VISION_SHOOT)
             {
-                // TODO Get to the boiler reckoning shoot position
-                addSequential(new VisionShoot());
             }
             else if (autoType == POST_GEAR_AUTONOMOUS.RECKONING_SHOOT)
             {
-                // TODO Get to the boiler vision shoot position
-                addParallel( new Rev(Rev.MODE.SHOOT));
             }
         }
     }
