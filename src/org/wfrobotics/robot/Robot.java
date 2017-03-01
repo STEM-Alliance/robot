@@ -23,7 +23,7 @@ public class Robot extends SampleRobot
         NONE,
         DRIVE,
         SHOOT,
-        GEAR;
+        GEAR, GEAR_DR;
         
         public Command getCommand()
         {
@@ -43,6 +43,9 @@ public class Robot extends SampleRobot
             case GEAR:
                 autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.VISION);
                 break;
+            case GEAR_DR:
+                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.DEAD_RECKONING);
+                break;
             default:
                 autonomousCommand = new AutoDrive();
                 break;
@@ -60,6 +63,7 @@ public class Robot extends SampleRobot
             case SHOOT:
                 startAngle = 180;
                 break;
+            case GEAR_DR:
             case GEAR:
                 startAngle = 90;
                 break;
@@ -113,7 +117,8 @@ public class Robot extends SampleRobot
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE); // TODO pick gear/shoot as the default autonomous command
         autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
         autoChooser.addObject("Auto Shoot", AUTO_COMMAND.SHOOT);
-        autoChooser.addObject("Auto Gear", AUTO_COMMAND.GEAR);
+        autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR);
+        autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
     }
 
@@ -138,7 +143,7 @@ public class Robot extends SampleRobot
         
         // Zero the Gyro based on starting orientation of the selected autonomous mode
         Gyro.getInstance().zeroYaw(command.getGyroOffset());
-        //Robot.driveSubsystem.setLastHeading(command.getGyroOffset());
+        Robot.driveSubsystem.setLastHeading(command.getGyroOffset());
         
         // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();
