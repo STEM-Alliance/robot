@@ -15,7 +15,7 @@ public class Constants
    public static final double SHOOTER_READY_SHOOT_SPEED = 3400;  // Ideal speed for shooter to shoot balls
    //public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
    public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM = 100;  // Ideal tolerance of RPMs for safely shooting the balls
-   public static final int SHOOTER_READY_CONSECUTIVE_SAMPLES = 10; // How many times through the command to be "reved"
+   public static final int SHOOTER_READY_CONSECUTIVE_SAMPLES = 0; // How many times through the command to be "reved"
    public static final double SHOOTER_TRIGGER_SPEED_DROP = SHOOTER_READY_SHOOT_SPEED * 0.05 * 0.5 ; // Speed for the unjamming gate (
    
    
