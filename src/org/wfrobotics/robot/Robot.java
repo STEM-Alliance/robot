@@ -82,18 +82,19 @@ public class Robot extends SampleRobot
         }
     }
     
-    public enum POSITION_ROTARY {SIDE_BOILER, CENTER, SIDE_LOADING_STATION};
+    public enum POSITION_ROTARY {SIDE_BOILER, CENTER, SIDE_LOADING_STATION};    
     
-    public static Climber climberSubsystem;
     public static SwerveDriveSteamworks driveSubsystem;
-    public static Intake intakeSubsystem;
-    public static Shooter shooterSubsystem;
+    public static Auger augerSubsystem;
+    public static Climber climberSubsystem;
+    public static DashboardView dashboardView;
+    public static Intake intakeSubsystem;    
     public static OI oi;
     public static Led ledSubsystem;
-    public static Auger augerSubsystem;
+    //public static Lifter lifterSubsystem;
+    public static Shooter shooterSubsystem;
     public static CameraShooter targetingSubsystem;
-    public static CameraGear targetGearSubsystem;
-    public static DashboardView dashboardView;
+    public static CameraGear targetGearSubsystem;    
     
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;    
@@ -108,14 +109,15 @@ public class Robot extends SampleRobot
     public void robotInit() 
     {
         driveSubsystem = new SwerveDriveSteamworks();
-        targetGearSubsystem = new CameraGear();
         augerSubsystem = new Auger();
+        targetGearSubsystem = new CameraGear();
+        targetingSubsystem = new CameraShooter();
         climberSubsystem = new Climber();
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();
         ledSubsystem = new Led();
+        //lifterSubsystem = new Lifter();
         shooterSubsystem = new Shooter();
-        targetingSubsystem = new CameraShooter();
 
         oi = new OI();
         autoChooser = new SendableChooser<AUTO_COMMAND>();
