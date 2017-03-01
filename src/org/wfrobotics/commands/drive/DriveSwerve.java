@@ -3,6 +3,7 @@ package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
+import org.wfrobotics.controller.Panel;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
@@ -155,11 +156,18 @@ public class DriveSwerve extends Command
                 break;
         }
         
-        if (AUTO_SHIFT_ENABLE)
+        if(OI.panel.getButton(Panel.BUTTON.YELLOW_T))
         {
-            Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > AUTO_SHIFT_TIME && speedRobot.getMag() > AUTO_SHIFT_SPEED;
+            Robot.driveSubsystem.driveWithHeading(speedRobot, speedRotation, 180);
         }
-        Robot.driveSubsystem.driveVector(speedRobot, speedRotation);
+        else
+        {
+            if (AUTO_SHIFT_ENABLE)
+            {
+                Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > AUTO_SHIFT_TIME && speedRobot.getMag() > AUTO_SHIFT_SPEED;
+            }
+            Robot.driveSubsystem.driveVector(speedRobot, speedRotation);
+        }
     }
 
     protected boolean isFinished() 

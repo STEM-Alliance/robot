@@ -42,6 +42,11 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         {
             return heading == HEADING_IGNORE;
         }
+        
+        public ChassisVector clone()
+        {
+            return new ChassisVector(velocity, spin, heading);
+        }
     }
     
     public class SwerveConfiguration
@@ -126,8 +131,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     {
         ChassisVector cv = new ChassisVector(Velocity.clone(), Rotation, Heading);
 
-        cv.spin = ApplySpinMode(cv);
-        cv.velocity = applyVelocityMode(cv);
+        cv.spin = ApplySpinMode(cv.clone());
+        cv.velocity = applyVelocityMode(cv.clone());
 
         printDash();
         
@@ -153,7 +158,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             {
                 // Set the rotation using a PID controller based on current robot heading and new desired heading
                 Error = Utilities.wrapToRange(cv.heading - m_gyro.getYaw(), -180, 180);
-                cv.spin = m_chassisAngleController.update(Error);
+                cv.spin = m_chassisAngleController.update(-Error);
             }
             m_lastHeading = cv.heading;
         }

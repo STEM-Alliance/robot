@@ -21,7 +21,7 @@ public class OI
 {
     static Xbox xboxDrive = new Xbox(0);
     static Xbox xboxMan = new Xbox(1);
-    static Panel panel = new Panel(2);
+    public static Panel panel = new Panel(2);
     
 
     Button buttonDriveLB = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
@@ -66,7 +66,7 @@ public class OI
         buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
         buttonPanelYellowBottom.toggleWhenPressed(new VisionGearDropOff());
         
-        buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
+        //buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
         
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));

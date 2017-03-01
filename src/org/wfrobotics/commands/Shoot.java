@@ -16,6 +16,17 @@ public class Shoot extends CommandGroup
         addSequential(new Conveyor(feedMode));
     }
     
+    public Shoot(Conveyor.MODE feedMode, double timeout)
+    {
+        addSequential(new Rev(Rev.MODE.RAMP, .75));  // Make sure we are at speed before the next step
+        addParallel(new Rev(Rev.MODE.SHOOT));
+        SmartDashboard.putString("ConveyorMode", feedMode.toString());
+        
+        addSequential(new Conveyor(feedMode));
+        
+        setTimeout(timeout);
+    }
+    
     // TODO DRL in execute, we could unjam if our sensor has not detected a ball shot after some time
     
     protected void end()
@@ -29,5 +40,10 @@ public class Shoot extends CommandGroup
     protected void interrupted()
     {
         end();
+    }
+    
+    protected boolean isFinished()
+    {
+        return isTimedOut();
     }
 }
