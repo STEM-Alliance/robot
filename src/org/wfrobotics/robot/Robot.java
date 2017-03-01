@@ -22,7 +22,7 @@ public class Robot extends SampleRobot
     {
         NONE,
         DRIVE,
-        SHOOT,
+        SHOOT, SHOOT_THEN_DRIVE,
         GEAR, GEAR_DR;
         
         public Command getCommand()
@@ -37,6 +37,8 @@ public class Robot extends SampleRobot
             case SHOOT:
                 autonomousCommand = new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING);
                 break;
+            case SHOOT_THEN_DRIVE:
+                autonomousCommand = new AutoShoot();
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
                 break;
@@ -62,6 +64,9 @@ public class Robot extends SampleRobot
             {
             case SHOOT:
                 startAngle = 180;
+                break;
+            case SHOOT_THEN_DRIVE:
+                startAngle = -99;
                 break;
             case GEAR_DR:
             case GEAR:
@@ -116,6 +121,8 @@ public class Robot extends SampleRobot
 
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE); // TODO pick gear/shoot as the default autonomous command
         autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
+        autoChooser.addObject("Auto Shoot (NOT WORKING YET)", AUTO_COMMAND.SHOOT);
+        autoChooser.addObject("Auto Shoot (in place then drive)", AUTO_COMMAND.SHOOT_THEN_DRIVE);
         autoChooser.addObject("Auto Shoot", AUTO_COMMAND.SHOOT);
         autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR);
         autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
