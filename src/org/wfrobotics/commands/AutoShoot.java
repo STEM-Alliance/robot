@@ -10,6 +10,15 @@ public class AutoShoot extends CommandGroup
 {
     public enum MODE_DRIVE {DEAD_RECKONING_MIDPOINT, DEAD_RECKONING_HOPPER, LIGHT_SENSOR};
     public enum MODE_SHOOT {DEAD_RECKONING, VISION};
+    
+    /**
+     * Dead reckoning. Shoot from starting position, then drive past the line.
+     */
+    public AutoShoot()
+    {
+        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS));
+        addSequential(new AutoDrive(0, .5, 0, -1, 2));
+    }
 
     public AutoShoot(MODE_DRIVE drive, MODE_SHOOT shoot)
     {
