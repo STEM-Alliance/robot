@@ -125,4 +125,46 @@ public class VisionGearDropOff extends CommandGroup
 
         return speed;
     }
+    
+    /**
+     * Assume we are parallel to the spring (no rotation)
+     * @param inView
+     * @param distanceFromCenter
+     * @param visionWidth
+     * @return
+     */
+    private boolean SimpleExecute(boolean inView, double distanceFromCenter, double visionWidth)
+    {
+        double errorBadX = .1;
+        double errorBadY = 15;
+        double PIDXInput = 0;
+        double PIDXOutput;
+        double speedX;
+        double speedY = 0;
+        boolean done = false;
+        
+        if (!inView)
+        {
+            done = true;  // Never in view. We can't do this :(
+        }
+        else if(Math.abs(distanceFromCenter) > errorBadX)  // Fix X this round
+        {
+            PIDXInput = pidX.update(distanceFromCenter);
+        }
+        else if (visionWidth < errorBadY)  // Fix Y this round
+        {
+            speedY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.55, -.2);
+        }
+        else
+        {
+            done = true;  // We lost the target. We probably scored!
+        }
+        
+        PIDXOutput = pidX.update(PIDXInput);
+        speedX = (PIDXInput == 0) ? 0 : PIDXOutput;
+        
+        drive.set(speedX, speedY, 0, -1);
+        
+        return done;
+    }
 }
