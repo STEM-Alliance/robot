@@ -194,6 +194,8 @@ public class Robot extends SampleRobot
         }
         else
         {
+            if(OI.xboxDrive.getStartButton())
+                Gyro.getInstance().zeroYaw();
             //Gyro.getInstance().zeroYaw();
         }
     }
