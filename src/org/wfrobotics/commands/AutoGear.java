@@ -30,7 +30,7 @@ public class AutoGear extends CommandGroup
             // Assume values are Red Alliance (boiler on your right)
             if (startingPosition == POSITION_ROTARY.CENTER)
             {
-                return new Config(3, 0, 0, 0);
+                return new Config(1.8, 0, 0, 0);
             }
             else if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
             {
@@ -64,12 +64,14 @@ public class AutoGear extends CommandGroup
         config = Config.getConfig(startPosition);
 
         scoreGear();
-        postGearAutonomous(POST_GEAR_AUTONOMOUS.NONE);
+        //postGearAutonomous(POST_GEAR_AUTONOMOUS.NONE);
     }
 
     private void scoreGear()
     {
-        addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
+        //addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
+        
+        addSequential(new AutoDrive(0,.7,0,-1,config.timeApproachAirship));
         
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
@@ -80,10 +82,17 @@ public class AutoGear extends CommandGroup
         
         switch(mode)
         {
-            case DEAD_RECKONING:  // In front of the gear; drive into the spring
-                addSequential(new AutoDrive(signX * config.approachSpringX, 
-                              Math.abs(config.approachSpringX),
-                              signX * .5, config.angleSpring, 1));
+            case DEAD_RECKONING:
+                if(startPosition == POSITION_ROTARY.CENTER)
+                {
+                    addSequential(new AutoDrive(0,.5,0,-1,config.timeApproachAirship));
+                }
+                else
+                {
+                    addSequential(new AutoDrive(signX * config.approachSpringX, 
+                                  Math.abs(config.approachSpringX),
+                                  signX * .5, config.angleSpring, 1));
+                }
                 break;
             case VISION:
                 addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
