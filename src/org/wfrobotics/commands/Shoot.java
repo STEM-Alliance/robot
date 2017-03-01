@@ -9,7 +9,7 @@ public class Shoot extends CommandGroup
 {
     public Shoot(Conveyor.MODE feedMode)
     {
-        addSequential(new Rev(Rev.MODE.RAMP, .5));  // Make sure we are at speed before the next step
+        addSequential(new Rev(Rev.MODE.RAMP, .75));  // Make sure we are at speed before the next step
         addParallel(new Rev(Rev.MODE.SHOOT));
         SmartDashboard.putString("ConveyorMode", feedMode.toString());
         
