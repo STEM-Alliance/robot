@@ -156,18 +156,11 @@ public class DriveSwerve extends Command
                 break;
         }
         
-        if(OI.panel.getButton(Panel.BUTTON.YELLOW_T))
+        if (AUTO_SHIFT_ENABLE)
         {
-            Robot.driveSubsystem.driveWithHeading(speedRobot, speedRotation, 180);
+            Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > AUTO_SHIFT_TIME && speedRobot.getMag() > AUTO_SHIFT_SPEED;
         }
-        else
-        {
-            if (AUTO_SHIFT_ENABLE)
-            {
-                Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > AUTO_SHIFT_TIME && speedRobot.getMag() > AUTO_SHIFT_SPEED;
-            }
-            Robot.driveSubsystem.driveVector(speedRobot, speedRotation);
-        }
+        Robot.driveSubsystem.driveVector(speedRobot, speedRotation);
     }
 
     protected boolean isFinished() 

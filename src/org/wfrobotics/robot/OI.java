@@ -66,7 +66,7 @@ public class OI
         buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
         buttonPanelYellowBottom.toggleWhenPressed(new VisionGearDropOff());
         
-        //buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
+        buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
         
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
