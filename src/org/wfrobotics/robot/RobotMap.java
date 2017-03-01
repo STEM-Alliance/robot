@@ -31,7 +31,10 @@ public class RobotMap
    
     public static final int CAN_LIGHT[] = {30 , 31 };
     
-    public static final int AUGER_MOTOR = 10; //Change if necessary and config 
-
-
+    public static final int AUGER_MOTOR = 10; //Change if necessary and config
+    
+    public static final int LIFTER_MOTOR = 26;
+    public static final int LIFTER_SENSOR_TOP = 5;
+    public static final int LIFTER_SENSOR_BOTTOM = 6;
+    public static final int LIFTER_SENSOR_GEAR = 7;
 }
