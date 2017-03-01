@@ -59,6 +59,8 @@ public class Robot extends SampleRobot
         
         public double getGyroOffset()
         {
+            int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1; // X driving based on alliance for mirrored field
+            
             double startAngle;
             
             switch(this)
@@ -67,7 +69,7 @@ public class Robot extends SampleRobot
                 startAngle = 180;
                 break;
             case SHOOT_THEN_DRIVE:
-                startAngle = -99;
+                startAngle = signX * 99;
                 break;
             case GEAR_DR:
             case GEAR:
@@ -174,6 +176,8 @@ public class Robot extends SampleRobot
             
             AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
             SmartDashboard.putNumber("StartingAngle", command.getGyroOffset());
+            SmartDashboard.putBoolean("TeamRed", DriverStation.getInstance().getAlliance() == Alliance.Red);
+            SmartDashboard.putNumber("TeamLocation", DriverStation.getInstance().getLocation());
             
             driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
