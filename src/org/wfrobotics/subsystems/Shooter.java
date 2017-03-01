@@ -88,6 +88,12 @@ public class Shooter extends Subsystem
         setDefaultCommand(new Rev(Rev.MODE.OFF));
     }
 
+    public void forceOff()
+    {
+        motorT.set(0);
+        motorB.set(0);
+    }
+    
     /**
      * Test to see if the top motor has REVed to a certain speed then starts to spin the bottom flywheel to get it up to speed
      * @param rpm to set flywheels to

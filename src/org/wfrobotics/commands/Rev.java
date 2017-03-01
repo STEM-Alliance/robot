@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Rev extends Command
 {
-    public enum MODE {SHOOT, RAMP, OFF};
+    public enum MODE {SHOOT, RAMP, OFF, FORCE_OFF};
     
     private final MODE mode;
     private int consecutiveSamplesAtSpeed;
@@ -58,6 +58,10 @@ public class Rev extends Command
             {
                 consecutiveSamplesAtSpeed = 0;
             }
+        }
+        else if(mode == MODE.FORCE_OFF)
+        {
+            Robot.shooterSubsystem.forceOff();
         }
         else
         {

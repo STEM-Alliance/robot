@@ -39,6 +39,7 @@ public class Robot extends SampleRobot
                 break;
             case SHOOT_THEN_DRIVE:
                 autonomousCommand = new AutoShoot();
+                break;
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
                 break;
@@ -123,7 +124,6 @@ public class Robot extends SampleRobot
         autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
         autoChooser.addObject("Auto Shoot (NOT WORKING YET)", AUTO_COMMAND.SHOOT);
         autoChooser.addObject("Auto Shoot (in place then drive)", AUTO_COMMAND.SHOOT_THEN_DRIVE);
-        autoChooser.addObject("Auto Shoot", AUTO_COMMAND.SHOOT);
         autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR);
         autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
