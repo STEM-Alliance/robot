@@ -7,12 +7,15 @@ import edu.wpi.first.wpilibj.command.Command;
 public class Lift extends Command 
 {
     public final double TIMEOUT_NO_GEAR = 1;
+    public final double SAMPLES_UNTIL_LIFT = 5;
     
     public double timeLastSensed;
+    public double samplesWithGear;
     
     public Lift()
     {
         requires(Robot.lifterSubsystem);
+        samplesWithGear = 0;
     }
     
     @Override
@@ -24,15 +27,17 @@ public class Lift extends Command
     @Override
     protected void execute()
     {
-        boolean direction = true;
+        boolean direction;
+        double now = timeSinceInitialized();
         
         if (Robot.lifterSubsystem.hasGear())
         {
-            timeLastSensed = timeSinceInitialized();
+            direction = (++samplesWithGear > SAMPLES_UNTIL_LIFT);  // How many cycles have we had a gear?
+            timeLastSensed = now;
         }
-        else if (timeSinceInitialized() - timeLastSensed> TIMEOUT_NO_GEAR)
+        else
         {
-            direction = false;
+            direction = now - timeLastSensed > TIMEOUT_NO_GEAR;  // How long since we had a gear?
         }
         
         Robot.lifterSubsystem.set(direction);

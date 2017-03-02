@@ -78,8 +78,8 @@ public class Shooter extends Subsystem
 
     public Shooter()
     {
-        motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .2, .00015, .001, 0, .01, true);
-        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .12, .0002, .001, 0, .01, false);
+        motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .045, 0, 0, .027, .01, true);
+        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .1, .0002, .001, 0, .01, false);
     }
 
     @Override
