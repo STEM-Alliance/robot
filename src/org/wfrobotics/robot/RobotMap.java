@@ -33,7 +33,5 @@ public class RobotMap
     public static final int AUGER_MOTOR = 10; //Change if necessary and config
     
     public static final int LIFTER_MOTOR = 23;  // Previously 23 was the left intake
-    public static final int LIFTER_SENSOR_TOP = 5;
-    public static final int LIFTER_SENSOR_BOTTOM = 6;
-    public static final int LIFTER_SENSOR_GEAR = 7;
+    public static final int LIFTER_SENSOR_GEAR = 5;
 }

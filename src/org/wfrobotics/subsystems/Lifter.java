@@ -15,19 +15,16 @@ public class Lifter extends Subsystem
     private final double MOTOR_SPEED = 1;
     
     private final CANTalon motor;
-    private final DigitalInput senseTop;
-    private final DigitalInput senseBottom;
     private final DigitalInput senseGear;
-    
-    private POSITION stateLast;
     
     public Lifter()
     {        
         motor = new CANTalon(RobotMap.LIFTER_MOTOR);
-        senseTop = new DigitalInput(RobotMap.LIFTER_SENSOR_TOP);
-        senseBottom = new DigitalInput(RobotMap.LIFTER_SENSOR_BOTTOM);
+        motor.ConfigFwdLimitSwitchNormallyOpen(true);
+        motor.ConfigRevLimitSwitchNormallyOpen(false);
+        motor.enableLimitSwitch(true, true);
+        motor.enableBrakeMode(true);
         senseGear = new DigitalInput(RobotMap.LIFTER_SENSOR_GEAR);
-        stateLast = POSITION.MOVING;
     }
 
     @Override
@@ -43,32 +40,24 @@ public class Lifter extends Subsystem
     
     public void set(boolean goToTop)
     {
-        double motorSpeed = 0;
+        double motorSpeed = 0;  // Set to zero when not moving so brake engages
         POSITION stateCurrent = get();
-        
-        if (stateCurrent != stateLast)  // Switched states, change the brake
-        {
-            boolean setBrake = (stateCurrent == POSITION.TOP || stateCurrent == POSITION.BOTTOM);
-            
-            motor.enableBrakeMode(setBrake);
-        }
         
         if (stateCurrent == POSITION.MOVING)
         {
             motorSpeed = (goToTop) ? MOTOR_SPEED : -MOTOR_SPEED;
         }
         
-        stateLast = stateCurrent;
         motor.set(motorSpeed);
     }
     
     private POSITION get()
     {
-        if (senseTop.get())
+        if (motor.isFwdLimitSwitchClosed())
         {
             return POSITION.TOP;
         }
-        else if (senseBottom.get())
+        else if (motor.isRevLimitSwitchClosed())
         {
             return POSITION.BOTTOM;
         }
