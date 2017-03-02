@@ -1,13 +1,14 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.commands.ShooterDetection;
+import org.wfrobotics.vision.NetworkTableCamera;
 
 /**
  * Provides information used to shoot the ball.
  * This subsystem translates pictures into data that commands can use to correct how they are aiming.
  *
  */
-public class CameraShooter extends Camera 
+public class CameraShooter extends NetworkTableCamera 
 {   
 
     public CameraShooter()

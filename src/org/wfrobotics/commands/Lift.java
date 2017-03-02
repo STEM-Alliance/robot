@@ -1,18 +1,41 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.robot.Robot;
+
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Lift extends Command {
-
+public class Lift extends Command 
+{
+    public final double TIMEOUT_NO_GEAR = 1;
+    
+    public double timeLastSensed;
+    
     public Lift()
     {
-        //requires(Robot.lifterSubsystem);
+        requires(Robot.lifterSubsystem);
+    }
+    
+    @Override
+    protected void initialize()
+    {
+        timeLastSensed = timeSinceInitialized() - TIMEOUT_NO_GEAR;  // Start in the down state
     }
     
     @Override
     protected void execute()
     {
-        // TODO get the gear state, call set for the motor, move the lifter down if it's not had a gear for a durration of time //Robot.lifterSubsystem.set(goToTop);
+        boolean direction = true;
+        
+        if (Robot.lifterSubsystem.hasGear())
+        {
+            timeLastSensed = timeSinceInitialized();
+        }
+        else if (timeSinceInitialized() - timeLastSensed> TIMEOUT_NO_GEAR)
+        {
+            direction = false;
+        }
+        
+        Robot.lifterSubsystem.set(direction);
     }
 
     @Override

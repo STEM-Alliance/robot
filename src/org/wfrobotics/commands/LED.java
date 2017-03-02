@@ -24,7 +24,6 @@ public class LED extends Command
         
         this.hardware = hardware;
         this.mode = mode;
-
     }
     
     public LED(HARDWARE hardware, MODE mode, double timeout)
@@ -47,8 +46,9 @@ public class LED extends Command
 
     @Override
     protected void execute()
-    {   
+    {
         SmartDashboard.putString("LED Mode", mode.name());
+        
         if (mode == MODE.OFF)
         {
             Robot.ledSubsystem.setOn(hardware, false);

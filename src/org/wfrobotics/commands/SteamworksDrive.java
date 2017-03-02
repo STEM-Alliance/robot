@@ -13,111 +13,58 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SteamworksDrive extends CommandGroup 
 {  
     private IntakeSetup intake;
-    private LED leds;
-    
-    private double intakeStartL;
-    private double intakeStartR;
-    
+
+    private double intakeLastOn;
+
     public SteamworksDrive()
     {   
-        intake = new IntakeSetup(false, false);
-        leds = new LED(Led.HARDWARE.TOP, LED.MODE.OFF);
-        
+        intake = new IntakeSetup(false);
+
         addParallel(intake);
-        addParallel(leds);
         addSequential(new DriveSwerve(DriveSwerve.MODE.FUSION));
-    }
-   
+    }   
 
     protected void execute()
     {
-        setIntakes();
-        setLEDs();
-    }
-    
-    protected void end() 
-    {
-        Robot.intakeSubsystem.setSpeed(0, 0);
-        Robot.ledSubsystem.setOn(Led.HARDWARE.ALL, false);
-    }
-    
-    protected void interrupted()
-    {
-        end();
-    }
-    
-    public void setIntakes()
-    {
         double angleDifference = Robot.driveSubsystem.getLastVector().getAngle();
         double vectorMag = Robot.driveSubsystem.getLastVector().getMag();
-        boolean onRight;
-        boolean onLeft;
-        
+        boolean intakeOn;
+
         angleDifference = -(angleDifference - 90);
         angleDifference = Utilities.wrapToRange(angleDifference, -180, 180);
-       
+
         // Restart the intake timers whenever we move in that direction
-        if(Math.abs(vectorMag) > .1)
-        {
-            if(angleDifference  < -Constants.INTAKE_OFF_ANGLE &&
-               angleDifference  > (-180 + Constants.INTAKE_OFF_ANGLE))
-            {
-                intakeStartL = Timer.getFPGATimestamp();
-            }
-            
-            if (angleDifference > Constants.INTAKE_OFF_ANGLE &&
+        if(Math.abs(vectorMag) > .1 &&
+                angleDifference > Constants.INTAKE_OFF_ANGLE &&
                 angleDifference  < (180 - Constants.INTAKE_OFF_ANGLE))
-            {
-                intakeStartR = Timer.getFPGATimestamp();
-            }            
-        }
-        
-        // Keep the intakes for a while after we stop moving in that direction
-        onLeft = (Timer.getFPGATimestamp() - intakeStartL) < Constants.INTAKE_OFF_TIMEOUT;
-        onRight = (Timer.getFPGATimestamp() - intakeStartR) < Constants.INTAKE_OFF_TIMEOUT;
-        
-        if(OI.buttonPanelBlackBottom.get())
         {
-            onRight = true;
+            intakeLastOn = Timer.getFPGATimestamp();
         }
-        if(OI.buttonPanelBlackTop.get())
+
+        if(OI.buttonPanelBlackBottom.get() || OI.buttonManY.get())
         {
-            onLeft = true;
-        }
-        
-        if(OI.buttonManY.get())
-        {
-            onRight = true;
-        }
-        if(OI.buttonManY.get())
-        {
-            onLeft = true;
-        }
-        printDash(angleDifference, onRight, onLeft);
-        
-        intake.set(onLeft, onRight);
-    }
-    
-    public void setLEDs()
-    {
-        if (Robot.driveSubsystem.isSpringInGear())
-        {
-            leds.set(LED.MODE.SOLID);
-        }
-        else if (Robot.driveSubsystem.isGearStored())
-        {
-            leds.set(LED.MODE.BLINK);
+            intakeOn = true;
         }
         else
         {
-            leds.set(LED.MODE.OFF);
+            // Keep the intakes for a while after we stop moving in that direction
+            intakeOn = (Timer.getFPGATimestamp() - intakeLastOn) < Constants.INTAKE_OFF_TIMEOUT;
         }
+        
+        SmartDashboard.putNumber("angleDifference", angleDifference);
+        SmartDashboard.putBoolean("intakeOn", intakeOn);
+
+        intake.set(intakeOn);
     }
 
-    public void printDash(double angleDifference, boolean right, boolean left)
+    protected void end() 
     {
-        SmartDashboard.putNumber("angleDifference", angleDifference);
-        SmartDashboard.putBoolean("intakeonright", right);
-        SmartDashboard.putBoolean("intakeonleft", left);
+        Robot.intakeSubsystem.setSpeed(0);
+        Robot.ledSubsystem.setOn(Led.HARDWARE.ALL, false);
+    }
+
+    protected void interrupted()
+    {
+        end();
     }
 }

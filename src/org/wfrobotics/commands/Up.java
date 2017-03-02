@@ -14,84 +14,53 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Up extends Command
 {
-    public enum MODE {CLIMB, DOWN, OFF};
-    
-    private double time;
+    public enum MODE {CLIMB, DOWN, VARIABLE_SPEED};
+
+    private final double DEADBAND_TRIGGER = .1; 
+
+    private double timeDoneClimbing;
     private MODE mode;
-    
-    
+
     public Up(MODE mode)
     {
         requires(Robot.climberSubsystem);
-        
+
         this.mode = mode;
-    }
-    
-    @Override
-    protected void initialize()
-    {
-        
     }
 
     @Override
     protected void execute()
     {
+        double speed = 0;
+        
         Utilities.PrintCommand("Up", this, mode.toString());
-        if(mode == MODE.OFF)
+        if(mode == MODE.VARIABLE_SPEED)
         {
-            double up = OI.getClimbSpeedUp();
+            speed = OI.getClimbSpeedUp();
 
-            SmartDashboard.putNumber("ClimbSpeed", up);
-            
-            if(up > .1)
+            if(speed < DEADBAND_TRIGGER)
             {
-                Robot.climberSubsystem.setSpeed(up);
+                double timeRemaining = DriverStation.getInstance().getMatchTime();
+
+                speed = (timeRemaining < 30 && timeRemaining > 26) ? 1 : 0;
             }
-            else
-            {
-//                if(DriverStation.getInstance().getMatchTime() < 30
-//                        && 
-//                        DriverStation.getInstance().getMatchTime() >29
-//                        && !(DriverStation.getInstance().isAutonomous()))
-//                {
-//                    Robot.climberSubsystem.setSpeed(.5);
-//                }
-//                else
-//                {
-                   Robot.climberSubsystem.setSpeed(0);
-//    
-//                }
-            }
-            
         }
         else if (mode == MODE.CLIMB)
         {
+            speed = Constants.CLIMBER_CLIMB_SPEED;
+            
             if (!Robot.climberSubsystem.isAtTop())
             {
-                time = timeSinceInitialized();
-                
-                Robot.climberSubsystem.setSpeed(.5);
-            }
-            else if(mode == MODE.DOWN)
-            {
-                if(timeSinceInitialized() - time < Constants.CLIMBER_CLIMB_TIME_AFTER_TOP_REACHED)
-                {
-                    Robot.climberSubsystem.setSpeed(1);
-                }
-                else
-                {
-                    mode = MODE.OFF;
-                }
+                timeDoneClimbing = timeSinceInitialized();
             }
         }
         else if (mode == MODE.DOWN)
         {
-            //Robot.climberSubsystem.setSpeed(-.2);
+            speed = -1;
         }
-        else
-        {
-            Robot.climberSubsystem.setSpeed(0);
-        }
+
+        SmartDashboard.putNumber("ClimbSpeed", speed);
+        Robot.climberSubsystem.setSpeed(speed);
     }
 
     @Override
@@ -99,24 +68,11 @@ public class Up extends Command
     {
         if(this.mode == MODE.CLIMB)
         {
-            return Robot.climberSubsystem.isAtTop();
+            return timeSinceInitialized() - timeDoneClimbing > Constants.CLIMBER_CLIMB_TIME_AFTER_TOP_REACHED;
         }
         else
         {
             return false;
         }
-    }
-
-    @Override
-    protected void end()
-    {
-        //Not sure if we should turn off the motor; Robot might fall?
-            // no it wont we have a ratchet to keep that from happening
-    }
-
-    @Override
-    protected void interrupted()
-    {
-
     }
 }
