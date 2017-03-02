@@ -23,7 +23,7 @@ public class RobotMap
     public static final int SHOOTER_MOTOR_SRX = 21;
     public static final int FEEDER_MOTOR_SRX = 25; //Change if necessary and config 
 
-    public static final int INTAKE_MOTOR_SRX = 22;
+    public static final int INTAKE_MOTOR_SRX = 23;
     
     public static final int CLIMBER_MOTOR_SRX = 24;
     public static final int CLIMBER_SENSOR_DIGITAL = 0;
@@ -32,6 +32,6 @@ public class RobotMap
     
     public static final int AUGER_MOTOR = 10; //Change if necessary and config
     
-    public static final int LIFTER_MOTOR = 23;  // Previously 23 was the left intake
+    public static final int LIFTER_MOTOR = 22;  // Previously 23 was the left intake
     public static final int LIFTER_SENSOR_GEAR = 5;
 }

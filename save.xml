@@ -1,5 +1,22 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="821" y="686"/>
+		<property name="Buffer Size (samples)" value="50"/>
+	</widget>
+	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="422" y="693"/>
+		<property name="Buffer Size (samples)" value="50"/>
+	</widget>
+	<widget field="Intake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="763"/>
+	</widget>
+	<widget field="intakeOn" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="717"/>
+	</widget>
+	<widget field="Starting Angle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="0" y="593"/>
+	</widget>
 	<widget field="TeamLocation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
 		<location x="643" y="68"/>
 		<width>114</width>
@@ -92,12 +109,6 @@
 	</widget>
 	<widget field="AugerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="464" y="374"/>
-	</widget>
-	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="687" y="513"/>
-	</widget>
-	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="688" y="490"/>
 	</widget>
 	<widget field="ShooterReady" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="772" y="0"/>
@@ -315,5 +326,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Starting Angle"/>
 </xml>
