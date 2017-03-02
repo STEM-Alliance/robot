@@ -1,14 +1,12 @@
-package org.wfrobotics.subsystems;
+package org.wfrobotics.vision;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import org.wfrobotics.vision.TargetTable;
-
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-public abstract class Camera extends Subsystem {
 
+public abstract class NetworkTableCamera extends Subsystem 
+{
     public class TargetData 
     {
         public TargetData(double x, double y, double w, double h)
@@ -19,8 +17,7 @@ public abstract class Camera extends Subsystem {
         public double x = 0;
         public double y = 0;
         public double width = 0;
-        public double height = 0;
-        
+        public double height = 0;        
     }
 
     public static final Comparator<TargetData> AreaCompare = new Comparator<TargetData>()
@@ -30,6 +27,7 @@ public abstract class Camera extends Subsystem {
         {
             double a1 = o1.width*o1.height;
             double a2 = o2.width*o2.height;
+            
             if (a1  > a2)
             {
                 return 1;
@@ -46,20 +44,15 @@ public abstract class Camera extends Subsystem {
     };
     
     protected TargetTable table; 
-    ArrayList<TargetData> data;
+    protected ArrayList<TargetData> data;
 
-    
-    public Camera(String tableKey)
+    public NetworkTableCamera(String tableKey)
     {
         table = new TargetTable(tableKey);
-        data = new ArrayList<Camera.TargetData>();
+        data = new ArrayList<NetworkTableCamera.TargetData>();
     }
 
-    @Override
-    protected void initDefaultCommand()
-    {
-        // TODO Auto-generated method stub
-    }
+    protected abstract void initDefaultCommand();
     
     protected void getUpdatedData()
     {
@@ -84,14 +77,4 @@ public abstract class Camera extends Subsystem {
             data.clear();
         }
     }
-//    public TargetData getData()
-//    {
-//        
-//        data.Yaw = table.getNumber("yaw", 0);
-//        data.Pitch = table.getNumber("pitch", 0);
-//        data.Depth = table.getNumber("depth", 0);
-//        data.InView = table.getBoolean("yaw", false);
-//        return data;
-//        
-//    }
 }

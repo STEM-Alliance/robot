@@ -2,7 +2,7 @@ package org.wfrobotics.subsystems;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.GearDetection;
-import org.wfrobotics.commands.drive.DriveSwerve;
+import org.wfrobotics.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * This subsystem translates pictures into data that commands can use to correct how they are aiming.
  *
  */
-public class CameraGear extends Camera 
-{
-    private final int LOOKING_FOR_COUNT = 2;
+public class CameraGear extends NetworkTableCamera 
+{    
+    private final int DESIRED_TARGETS = 2;  // Reflective detectable targets
 
     public double DistanceFromCenter = 0;
     public double FullWidth = 0;
@@ -33,14 +33,14 @@ public class CameraGear extends Camera
     
     public void run()
     {
-        getUpdatedData();
-        
         double xAverage = 0;
         double xPercent = 0;
         
+        getUpdatedData();
+        
         SmartDashboard.putNumber("GearTargets", data.size());
         
-        if(data.size() == LOOKING_FOR_COUNT)
+        if(data.size() == DESIRED_TARGETS)
         {
             xAverage = (data.get(0).x + data.get(1).x)/2.0;
             xPercent = xAverage / table.imageWidth;
@@ -69,7 +69,6 @@ public class CameraGear extends Camera
             FullWidth = 0;
             InView = false;
         }
-
         
         //TODO?
 //        if(data.size() > LOOKING_FOR_COUNT)

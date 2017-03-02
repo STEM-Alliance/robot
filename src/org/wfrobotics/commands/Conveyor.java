@@ -55,9 +55,6 @@ public class Conveyor extends Command
         }
         else 
         {
-//            double nextPeriod = timeStartPeriod + Constants.AUGER_UNJAM_PERIOD;
-//            double nextUnjam = nextPeriod * (1 - Constants.AUGER_UNJAM_DUTYCYCLE);
-//            double now = timeSinceInitialized();
             double speed = (unjamming) ? Constants.AUGER_UNJAM_SPEED:Constants.AUGER_SPEED;
 
             SmartDashboard.putNumber("AugerSpeed", speed);

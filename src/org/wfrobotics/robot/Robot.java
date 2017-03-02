@@ -93,7 +93,8 @@ public class Robot extends SampleRobot
     public static Intake intakeSubsystem;    
     public static OI oi;
     public static Led ledSubsystem;
-    //public static Lifter lifterSubsystem;
+    
+    public static Lifter lifterSubsystem;
     public static Shooter shooterSubsystem;
     public static CameraShooter targetingSubsystem;
     public static CameraGear targetGearSubsystem;    
@@ -118,7 +119,7 @@ public class Robot extends SampleRobot
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();
         ledSubsystem = new Led();
-        //lifterSubsystem = new Lifter();
+        lifterSubsystem = new Lifter();
         shooterSubsystem = new Shooter();
 
         oi = new OI();
