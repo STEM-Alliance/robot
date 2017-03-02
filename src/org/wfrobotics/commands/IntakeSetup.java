@@ -3,6 +3,7 @@ package org.wfrobotics.commands;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSetup extends Command
 {
@@ -24,6 +25,7 @@ public class IntakeSetup extends Command
     {
         double speed = (onDesired) ? 1 : 0;
 
+        SmartDashboard.putBoolean("Intake", onDesired);
         Robot.intakeSubsystem.setSpeed(speed);
     }
 

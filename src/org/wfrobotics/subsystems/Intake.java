@@ -14,6 +14,9 @@ public class Intake extends Subsystem
     public Intake()
     {
         motor = new CANTalon(RobotMap.INTAKE_MOTOR_SRX);
+        motor.setInverted(true);
+        motor.enable();
+        motor.enableLimitSwitch(false, false);
     }
 
     @Override
