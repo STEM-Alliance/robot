@@ -80,8 +80,8 @@ public class OI
         buttonPanelGreenTop.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
         buttonPanelGreenBottom.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
         
-        buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
-        buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.OFF));
+        buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
+        buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
         
         //buttonDriveRB.toggleWhenPressed(new VisionShoot());
         
