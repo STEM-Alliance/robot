@@ -79,7 +79,7 @@ public class Shooter extends Subsystem
     public Shooter()
     {
         motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .1, .0001, .00, .0, .01, true);
-        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .1, .0001, .00, 0, .01, false);
+        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .11, .00015, .00, 0, .01, false);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class Shooter extends Subsystem
             motorB.set(0);
 
             // Bottom flywheel is below a threshold before turning off the top one
-            if (motorB.atSpeed(100))
+            //if (motorB.atSpeed(100))
             {
                 motorT.set(0);
             }
