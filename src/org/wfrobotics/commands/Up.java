@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Up extends Command
 {
-    public enum MODE {CLIMB, DOWN, VARIABLE_SPEED};
+    public enum MODE {AUTOCLIMB, OFF, CLIMB, DOWN, VARIABLE_SPEED};
 
     private final double DEADBAND_TRIGGER = .1; 
 
@@ -34,7 +34,17 @@ public class Up extends Command
         double speed = 0;
         
         Utilities.PrintCommand("Up", this, mode.toString());
-        if(mode == MODE.VARIABLE_SPEED)
+        if(mode == MODE.AUTOCLIMB)
+        {
+            double timeRemaining = DriverStation.getInstance().getMatchTime();
+            
+            speed = (timeRemaining < 30) ? Constants.CLIMBER_CLIMB_SPEED : 0;
+        }        
+        else if (mode == MODE.OFF)
+        {
+            speed = 0;
+        }
+        else if (mode == MODE.VARIABLE_SPEED)
         {
             speed = OI.getClimbSpeedUp();
 
