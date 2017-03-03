@@ -22,7 +22,12 @@ public class SteamworksDrive extends CommandGroup
 
         addParallel(intake);
         addSequential(new DriveSwerve(DriveSwerve.MODE.FUSION));
-    }   
+    }
+    
+    protected void initialized()
+    {
+        Robot.driveSubsystem.setGearHopper(true);
+    }
 
     protected void execute()
     {
