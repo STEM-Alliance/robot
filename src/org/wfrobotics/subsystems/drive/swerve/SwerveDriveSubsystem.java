@@ -60,6 +60,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         private final double AUTO_ROTATION_MIN = .1;  // this will hopefully prevent locking the wheels when slowing down
         private final double HEADING_TIMEOUT = .6;
     }
+    
+    private enum MODE_ANGLE {SPIN, ANGLE};
+    private MODE_ANGLE lastMode;
 
     public static final double HEADING_IGNORE = -1;
 
@@ -129,6 +132,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public Vector[] driveWithHeading(Vector Velocity, double Rotation, double Heading)
     {
+        SmartDashboard.putNumber("SWERVE SPIN", Rotation);
         ChassisVector cv = new ChassisVector(Velocity.clone(), Rotation, Heading);
 
         cv.spin = ApplySpinMode(cv.clone());
@@ -168,6 +172,11 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             {
                 // Spinning
                 SmartDashboard.putString("Drive Mode", "Spinning");
+                
+                if (lastMode != MODE_ANGLE.SPIN)
+                {
+                    m_chassisAngleController.resetError();   
+                }
 
                 // Just take the rotation value from the controller
                 m_lastHeading = m_gyro.getYaw();
@@ -176,12 +185,23 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                 m_lastHeadingTimestamp = Timer.getFPGATimestamp();
 
                 m_gyroLast = m_gyro.getYaw();
+                
+                // Keep feeding the PID so when we switch to maintain angle, I is update to date
+                Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
+                m_chassisAngleController.update(Error);
 
                 // Square rotation value to give it more control at lower values but keep the same sign since a negative squared is positive
                 cv.spin = Math.signum(cv.spin) * Math.pow(cv.spin, 2);
+
+                lastMode = MODE_ANGLE.SPIN;
             }
             else // maintain angle
             {
+                if (lastMode != MODE_ANGLE.ANGLE)
+                {
+                    m_chassisAngleController.resetError();   
+                }
+                
                 // Delay the stay at angle to prevent snapback
                 if((Timer.getFPGATimestamp() - m_lastHeadingTimestamp) > configSwerve.HEADING_TIMEOUT)
                 {
@@ -203,10 +223,12 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                             cv.spin = tempRotation;
                         }
                     }
+
+                    lastMode = MODE_ANGLE.ANGLE;
                 }
                 else
                 {
-                    m_chassisAngleController.resetError();
+//                    m_chassisAngleController.resetError();
                     m_lastHeading = m_gyro.getYaw(); // Save off the latest heading until the timeout
                 }
             }
