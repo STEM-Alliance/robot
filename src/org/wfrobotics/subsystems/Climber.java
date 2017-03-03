@@ -23,7 +23,7 @@ public class Climber extends Subsystem
     @Override
     protected void initDefaultCommand()
     {
-         setDefaultCommand(new Up(Up.MODE.VARIABLE_SPEED));
+         setDefaultCommand(new Up(Up.MODE.AUTOCLIMB));
     }
 
     /**
