@@ -113,6 +113,7 @@ public class WheelManager implements Runnable
         SmartDashboard.putNumber("Drive R", robot.spin);
 
         WheelsScaled = scaleWheelVectors(robot);
+        
         for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
             WheelsActual[i] = wheels[i].setDesired(WheelsScaled[i], gear, brake);

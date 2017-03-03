@@ -146,4 +146,9 @@ public class Shooter extends Subsystem
         SmartDashboard.putNumber("FlywheelTopSpeedActual", motorT.get());
         SmartDashboard.putNumber("FlywheelBottomSpeedActual", motorB.get());
     }
+
+    public boolean isRunning()
+    {
+        return Math.abs(speedDesired) > 10;
+    }
 }

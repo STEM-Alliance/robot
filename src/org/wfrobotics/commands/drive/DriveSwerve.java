@@ -38,7 +38,7 @@ public class DriveSwerve extends Command
 
     protected void initialize()
     {
-        startFusionPosition = -OI.DriveSwerveOI.getFusionDrive_Rotation();
+        //startFusionPosition = -OI.DriveSwerveOI.getFusionDrive_Rotation();
         highVelocityStart = timeSinceInitialized();
     }
 
@@ -62,8 +62,13 @@ public class DriveSwerve extends Command
                 
                 Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
                 
+                if(Robot.shooterSubsystem.isRunning())
+                {
+                    Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = 1;
+                }
+                
                 speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
-                speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation() -OI.DriveSwerveOI.getFusionDrive_Rotation() + startFusionPosition;
+                speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation() -OI.DriveSwerveOI.getFusionDrive_Rotation();// + startFusionPosition;
                 
                 SmartDashboard.putNumber("Dpad", dpad);
 
@@ -71,9 +76,19 @@ public class DriveSwerve extends Command
                 {
                     if (dpad != -1)
                     {
-                        speedRobot.setMagAngle(.5, -(dpad-90));
-                        speedRotation *= .5;
-    
+
+                        if(!Robot.shooterSubsystem.isRunning())
+                        {
+                            
+                            speedRobot.setMagAngle(.65, -(dpad-90));
+                            speedRotation *= .5;
+                        }
+                        else
+                        {
+                            speedRobot.setMagAngle(.4, -(dpad-90));
+                            speedRotation *= 1;
+                        }
+                        
                         if(dpadPrev == -1)
                         {
                             //we need to save off the field relative
