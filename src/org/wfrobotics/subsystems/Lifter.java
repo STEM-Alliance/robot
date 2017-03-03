@@ -23,9 +23,8 @@ public class Lifter extends Subsystem
         motor = new CANTalon(RobotMap.LIFTER_MOTOR);
         motor.ConfigFwdLimitSwitchNormallyOpen(true);
         motor.ConfigRevLimitSwitchNormallyOpen(true);
-        motor.enableLimitSwitch(true, true);
+        motor.enableLimitSwitch(false, false);
         motor.enableBrakeMode(true);
-        //motor.setInverted(true);
         senseGear = new DigitalInput(RobotMap.LIFTER_SENSOR_GEAR);
     }
 
@@ -37,7 +36,10 @@ public class Lifter extends Subsystem
     
     public boolean hasGear()
     {
-        return !senseGear.get();
+        boolean hasGear = !senseGear.get();
+        
+        SmartDashboard.putBoolean("LifterGear", hasGear);
+        return hasGear;
     }
     
     public void set(boolean goToTop)
@@ -57,7 +59,7 @@ public class Lifter extends Subsystem
 //        {
 //            motorSpeed = (goToTop) ? MOTOR_SPEED : -MOTOR_SPEED;
 //        }
-        
+        SmartDashboard.putNumber("LifterSpeed", motorSpeed);
         motor.set(motorSpeed);
     }
     
@@ -67,17 +69,17 @@ public class Lifter extends Subsystem
         
         if (motor.isFwdLimitSwitchClosed())
         {
-            p = POSITION.TOP;
+            p = POSITION.BOTTOM;
         }
         else if (motor.isRevLimitSwitchClosed())
         {
-            p = POSITION.BOTTOM;
+            p = POSITION.TOP;
         }
         else
         {
             p = POSITION.MOVING;
         }
-//        SmartDashboard.putString("LifterState", value)
+        SmartDashboard.putString("LifterState", p.toString());
         return p;
     }
 }
