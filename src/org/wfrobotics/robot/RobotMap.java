@@ -19,6 +19,7 @@ public class RobotMap
     public static final int CAN_SWERVE_ANGLE_TALONS[] = { 2, 3, 6, 7};
     public static final int PWM_SWERVE_SHIFT_SERVOS[] = { 0, 1, 2, 3 };
     public static final int DIO_SWERVE_CAL[] = {1,2,3,4};
+    public static final int PWM_SERVO_GEAR_INTAKE = 4;
 
     public static final int SHOOTER_MOTOR_SRX = 21;
     public static final int FEEDER_MOTOR_SRX = 25; //Change if necessary and config 
