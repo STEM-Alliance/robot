@@ -11,25 +11,42 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * I envision this command being smart enough that it knows if feeding the shooter (and feeder) is okay
  */
 public class Conveyor extends Command
-{
+{   
     public enum MODE {CONTINUOUS, UNJAM, ON_HOLD, OFF};
 
     private final MODE mode;
+    private final double speedFeed;
+    private final double speedUnjam;
+    
     private double timeStartPeriod;
     private boolean unjamming;
 
     public Conveyor(MODE mode)
     {
-        requires(Robot.augerSubsystem);
-
-        this.mode = mode;
+        this(mode, Constants.AUGER_SPEED, Constants.AUGER_UNJAM_SPEED);
     }
 
     public Conveyor(MODE mode, double timeout)
     {
+        this(mode, Constants.AUGER_SPEED, Constants.AUGER_UNJAM_SPEED, timeout);
+    }
+    
+    public Conveyor(MODE mode, double speedFeed, double speedUnjam)
+    {
         requires(Robot.augerSubsystem);
 
         this.mode = mode;
+        this.speedFeed = speedFeed;
+        this.speedUnjam = speedUnjam;
+    }
+
+    public Conveyor(MODE mode, double speedFeed, double speedUnjam, double timeout)
+    {
+        requires(Robot.augerSubsystem);
+
+        this.mode = mode;
+        this.speedFeed = speedFeed;
+        this.speedUnjam = speedUnjam;    
         setTimeout(timeout);
     }
 
@@ -47,15 +64,15 @@ public class Conveyor extends Command
         }
         else if(mode == MODE.UNJAM)
         {
-            Robot.augerSubsystem.setSpeed(Constants.AUGER_UNJAM_SPEED);
+            Robot.augerSubsystem.setSpeed(speedUnjam);
         }
         else if(mode == MODE.ON_HOLD)
         {
-            Robot.augerSubsystem.setSpeed(Constants.AUGER_SPEED - OI.getAugerSpeedAdjust()*.2);
+            Robot.augerSubsystem.setSpeed(speedFeed - OI.getAugerSpeedAdjust()*.2);
         }
         else 
         {
-            double speed = (unjamming) ? Constants.AUGER_UNJAM_SPEED:Constants.AUGER_SPEED;
+            double speed = (unjamming) ? speedUnjam : speedFeed;
 
             SmartDashboard.putNumber("AugerSpeed", speed);
             Robot.augerSubsystem.setSpeed(speed);

@@ -16,15 +16,16 @@ public class AutoShoot extends CommandGroup
      */
     public AutoShoot()
     {
-        int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1; // X driving based on alliance for mirrored field
+        int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1 : -1; // X driving based on alliance for mirrored field
         
         addParallel(new AutoDrive(0, 0, 0, 6));
         addParallel(new IntakeSetup(true));
-        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, 6));
+        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6));
         addParallel(new Shoot(Conveyor.MODE.OFF));
         addParallel(new Rev(Rev.MODE.FORCE_OFF));
         addParallel(new IntakeSetup(false));
-        addSequential(new AutoDrive(signX * .65, 1, 0, 180, 3.8));
+        addSequential(new AutoDrive(signX * .65, 1, 0, 180, 4.3));
+        addSequential(new AutoDrive(0, -.75, 0, -1, .25));
         addSequential(new AutoDrive(0, 0, 0, -1, 2));
     }
 
