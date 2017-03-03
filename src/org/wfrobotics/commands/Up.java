@@ -56,7 +56,7 @@ public class Up extends Command
         }
         else if (mode == MODE.DOWN)
         {
-            speed = -1;
+            //speed = -1;
         }
 
         SmartDashboard.putNumber("ClimbSpeed", speed);

@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Climber extends Subsystem
 {
     private CANTalon motor;
-    private DigitalInput sensor;
+    //private DigitalInput sensor;
     
     public Climber()
     {
         motor = new CANTalon(RobotMap.CLIMBER_MOTOR_SRX);
-        sensor = new DigitalInput(RobotMap.CLIMBER_SENSOR_DIGITAL);
+        //sensor = new DigitalInput(RobotMap.CLIMBER_SENSOR_DIGITAL);
     }
     
     @Override

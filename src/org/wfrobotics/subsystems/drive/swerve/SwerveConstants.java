@@ -49,9 +49,9 @@ public class SwerveConstants {
      * Array of values for shifting gears, low then high values
      */
     public static final int[] SHIFTER_VALS[] = { { 120, 60 }, 
-                                                 { 70, 130 },
-                                                 { 130, 60 }, 
-                                                 { 10, 80 } };
+                                                 { 10, 100 },
+                                                 { 150, 60 }, 
+                                                 { 15, 150 } };
 
     public static final boolean SHIFTER_DEFAULT_HIGH = false;
 
