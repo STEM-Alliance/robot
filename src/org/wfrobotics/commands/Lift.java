@@ -37,7 +37,7 @@ public class Lift extends Command
         }
         else
         {
-            direction = now - timeLastSensed > TIMEOUT_NO_GEAR;  // How long since we had a gear?
+            direction = now - timeLastSensed < TIMEOUT_NO_GEAR;  // How long since we had a gear?
         }
         
         Robot.lifterSubsystem.set(direction);

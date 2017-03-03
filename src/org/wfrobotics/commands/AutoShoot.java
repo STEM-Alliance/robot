@@ -25,8 +25,9 @@ public class AutoShoot extends CommandGroup
         addParallel(new Rev(Rev.MODE.FORCE_OFF));
         addParallel(new IntakeSetup(false));
         addSequential(new AutoDrive(signX * .65, 1, 0, 180, 4.3));
-        addSequential(new AutoDrive(0, -.75, 0, -1, .25));
-        addSequential(new AutoDrive(0, 0, 0, -1, 2));
+        addSequential(new AutoDrive(0, -1, 0, -1, .75));
+        addParallel(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 9));
+        addSequential(new AutoDrive(0, 0, 0, -1, 9));
     }
 
     public AutoShoot(MODE_DRIVE drive, MODE_SHOOT shoot)

@@ -7,14 +7,14 @@ package org.wfrobotics.commands;
  */
 public class Constants 
 {
-   public static final double AUTONOMOUS_TIME_DRIVE_MODE = 3;
-   public static final double AUTONOMOUS_DRIVE_SPEED = .5;
+   public static final double AUTONOMOUS_TIME_DRIVE_MODE = 5;
+   public static final double AUTONOMOUS_DRIVE_SPEED = .8;
    public static final double AUTONOMOUS_TURN_SPEED = .5;
    public static final double AUTONOMOUS_TURN_TOLERANCE = .1;
    
    public static final double SHOOTER_READY_SHOOT_SPEED = 3700;  // Ideal speed for shooter to shoot balls
    //public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
-   public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM = 100;  // Ideal tolerance of RPMs for safely shooting the balls
+   public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM = 1500;  // Ideal tolerance of RPMs for safely shooting the balls
    public static final int SHOOTER_READY_CONSECUTIVE_SAMPLES = 10; // How many times through the command to be "reved"
    public static final double SHOOTER_TRIGGER_SPEED_DROP = SHOOTER_READY_SHOOT_SPEED * 0.05 * 0.5 ; // Speed for the unjamming gate (
    

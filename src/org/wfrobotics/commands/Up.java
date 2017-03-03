@@ -38,7 +38,10 @@ public class Up extends Command
         {
             double timeRemaining = DriverStation.getInstance().getMatchTime();
             
-            speed = (timeRemaining < 30) ? Constants.CLIMBER_CLIMB_SPEED : 0;
+            if(timeRemaining < 30 && !DriverStation.getInstance().isAutonomous())
+            {
+                speed = Constants.CLIMBER_CLIMB_SPEED;
+            }
         }        
         else if (mode == MODE.OFF)
         {
@@ -50,9 +53,7 @@ public class Up extends Command
 
             if(speed < DEADBAND_TRIGGER)
             {
-                double timeRemaining = DriverStation.getInstance().getMatchTime();
-
-                speed = (timeRemaining < 30 && timeRemaining > 26) ? 1 : 0;
+               speed = 0;
             }
         }
         else if (mode == MODE.CLIMB)
