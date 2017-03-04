@@ -76,7 +76,8 @@ public class DriveSwerve extends Command
                 {
                     if (dpad != -1)
                     {
-
+                        Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = 0;
+                        
                         if(!Robot.shooterSubsystem.isRunning())
                         {
                             

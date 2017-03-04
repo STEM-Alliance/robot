@@ -14,20 +14,37 @@ public class AutoShoot extends CommandGroup
     /**
      * Dead reckoning. Shoot from starting position, then drive past the line.
      */
-    public AutoShoot()
+    public AutoShoot(boolean original)
     {
-        int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1 : -1; // X driving based on alliance for mirrored field
         
-        addParallel(new AutoDrive(0, 0, 0, 6));
-        addParallel(new IntakeSetup(true));
-        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6));
-        addParallel(new Shoot(Conveyor.MODE.OFF));
-        addParallel(new Rev(Rev.MODE.FORCE_OFF));
-        addParallel(new IntakeSetup(false));
-        addSequential(new AutoDrive(signX * .65, 1, 0, 180, 4.3));
-        addSequential(new AutoDrive(0, -1, 0, -1, .75));
-        addParallel(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 9));
-        addSequential(new AutoDrive(0, 0, 0, -1, 9));
+        int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1 : -1; // X driving based on alliance for mirrored field
+        if(original)
+        {
+            addParallel(new AutoDrive(0, 0, 0, 5.5)); // GOOD
+            addParallel(new IntakeSetup(true)); // GOOD
+            addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6)); // GOOD
+            addParallel(new Shoot(Conveyor.MODE.OFF)); // GOOD
+            addParallel(new Rev(Rev.MODE.FORCE_OFF)); // GOOD
+            addParallel(new IntakeSetup(false)); // GOOD
+            addSequential(new AutoDrive(signX * .65, 1, 0, 180, 4.3));  // GOOD
+            addSequential(new AutoDrive(signX * -.65, -.65, 0, -1, .33));  // Get off wall - NEED TESTING
+            addSequential(new AutoDrive(0, -.65, 0, -1, .33));  // Get in front of hopper - NEED TESTING
+            addSequential(new AutoDrive(.65, 180 + signX * 9, .1, .33));  // Aim at the boiler - NEED TESTING
+            addParallel(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 9)); // GOOD
+            addSequential(new AutoDrive(0, 0, 0, -1, 9)); // GOOD
+        }
+        else
+        {
+            addParallel(new AutoDrive(0, 0, 0, 6));
+            addParallel(new IntakeSetup(true));
+            addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6));
+            addParallel(new Shoot(Conveyor.MODE.OFF));
+            addParallel(new Rev(Rev.MODE.FORCE_OFF));
+            addParallel(new IntakeSetup(false));
+            addSequential(new AutoDrive(signX * .45, .75, 0, 0, 2));
+            addSequential(new AutoDrive(0,.55, 0, 0, 2));
+            addSequential(new AutoDrive(0, 0, 0, 0, 9));
+        }
     }
 
     public AutoShoot(MODE_DRIVE drive, MODE_SHOOT shoot)

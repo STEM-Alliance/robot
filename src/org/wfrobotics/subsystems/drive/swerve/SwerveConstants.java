@@ -51,7 +51,7 @@ public class SwerveConstants {
     public static final int[] SHIFTER_VALS[] = { { 120, 60 }, 
                                                  { 10, 100 },
                                                  { 150, 60 }, 
-                                                 { 15, 150 } };
+                                                 { 30, 150 } };
 
     public static final boolean SHIFTER_DEFAULT_HIGH = false;
 
