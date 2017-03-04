@@ -22,8 +22,8 @@ public class Robot extends SampleRobot
     {
         NONE,
         DRIVE,
-        SHOOT, SHOOT_THEN_DRIVE,
-        GEAR, GEAR_DR;
+        SHOOT, SHOOT_THEN_DRIVE, SHOOT_CROSS_HG,
+        GEAR, GEAR_DR, DRIVE_HG;
         
         public Command getCommand()
         {
@@ -38,10 +38,16 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING);
                 break;
             case SHOOT_THEN_DRIVE:
-                autonomousCommand = new AutoShoot();
+                autonomousCommand = new AutoShoot(true);
+                break;
+            case SHOOT_CROSS_HG:
+                autonomousCommand = new AutoShoot(false);
                 break;
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
+                break;
+            case DRIVE_HG:
+                autonomousCommand = new AutoDrive(0,.65, 0, 4);
                 break;
             case GEAR:
                 autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.VISION);
@@ -69,6 +75,7 @@ public class Robot extends SampleRobot
                 startAngle = 180;
                 break;
             case SHOOT_THEN_DRIVE:
+            case SHOOT_CROSS_HG:
                 startAngle = signX * 99;
                 break;
             case GEAR_DR:
@@ -126,9 +133,11 @@ public class Robot extends SampleRobot
         autoChooser = new SendableChooser<AUTO_COMMAND>();
 
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE); // TODO pick gear/shoot as the default autonomous command
-        autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
-        autoChooser.addObject("Auto Shoot (NOT WORKING YET)", AUTO_COMMAND.SHOOT);
-        autoChooser.addObject("Auto Shoot (in place then drive)", AUTO_COMMAND.SHOOT_THEN_DRIVE);
+        //autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
+        autoChooser.addObject("Auto Forward  HIGH GEAR", AUTO_COMMAND.DRIVE_HG);
+        //autoChooser.addObject("Auto Shoot (NOT WORKING YET)", AUTO_COMMAND.SHOOT);
+        autoChooser.addObject("Auto Shoot then Hopper", AUTO_COMMAND.SHOOT_THEN_DRIVE);
+        autoChooser.addObject("Auto Shoot then Cross", AUTO_COMMAND.SHOOT_CROSS_HG);
         autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR);
         autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);

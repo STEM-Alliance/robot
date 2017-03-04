@@ -1,5 +1,18 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="LifterGear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="237" y="779"/>
+	</widget>
+	<widget field="LifterSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="238" y="757"/>
+		<height>22</height>
+	</widget>
+	<widget field="LifterState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="239" y="735"/>
+	</widget>
+	<widget field="SWERVE SPIN" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="21" y="809"/>
+	</widget>
 	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
 		<location x="821" y="686"/>
 		<property name="Buffer Size (samples)" value="50"/>
@@ -66,10 +79,10 @@
 		<location x="0" y="1016"/>
 	</widget>
 	<widget field="Autonomous Starting Position" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="673" y="201"/>
+		<location x="672" y="149"/>
 	</widget>
 	<widget field="StartingAngle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="765" y="174"/>
+		<location x="764" y="124"/>
 	</widget>
 	<widget field="percent" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="901"/>
@@ -105,7 +118,7 @@
 		<location x="0" y="351"/>
 	</widget>
 	<widget field="Auto Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="742" y="260"/>
+		<location x="745" y="208"/>
 	</widget>
 	<widget field="AugerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="464" y="374"/>
@@ -206,7 +219,7 @@
 		<width>95</width>
 	</widget>
 	<widget field="Battery" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="1612" y="658"/>
+		<location x="660" y="417"/>
 		<width>282</width>
 		<height>267</height>
 		<property name="Buffer Size (samples)" value="500"/>
@@ -296,7 +309,7 @@
 		<location x="451" y="579"/>
 	</widget>
 	<widget field="Gyro" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="818" y="233"/>
+		<location x="810" y="174"/>
 	</widget>
 	<widget field="Wheel3.angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="435" y="694"/>
