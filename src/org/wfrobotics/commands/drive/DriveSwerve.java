@@ -3,9 +3,6 @@ package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.controller.Panel;
-import org.wfrobotics.hardware.Gyro;
-import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
@@ -22,7 +19,6 @@ public class DriveSwerve extends Command
     private final double AUTO_SHIFT_SPEED = .5;
     
     private final MODE mode;
-    private double startFusionPosition;  // FUSION mode adds dial rotation minus it's start position (relative rotation) to driver rotation (absolute rotation)
     private double highVelocityStart;
 
     private double dpadPrev = -1;
@@ -38,13 +34,12 @@ public class DriveSwerve extends Command
 
     protected void initialize()
     {
-        //startFusionPosition = -OI.DriveSwerveOI.getFusionDrive_Rotation();
         highVelocityStart = timeSinceInitialized();
     }
 
     protected void execute() 
     {
-        double dpad = OI.DriveSwerveOI.getDpad();
+        double dpad = Robot.oi.swerveOI.getDpad();
         Vector speedRobot;
         double speedRotation;
 
@@ -53,22 +48,22 @@ public class DriveSwerve extends Command
         switch(mode)
         {
             case HALO:
-                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
+                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
     
-                speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
-                speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation();
+                speedRobot = Robot.oi.swerveOI.getHaloDrive_Velocity();
+                speedRotation = -Robot.oi.swerveOI.getHaloDrive_Rotation();
                 break;
             case FUSION:
                 
-                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
+                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
                 
                 if(Robot.shooterSubsystem.isRunning())
                 {
                     Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = 1;
                 }
                 
-                speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
-                speedRotation = -OI.DriveSwerveOI.getHaloDrive_Rotation() -OI.DriveSwerveOI.getFusionDrive_Rotation();// + startFusionPosition;
+                speedRobot = Robot.oi.swerveOI.getHaloDrive_Velocity();
+                speedRotation = -Robot.oi.swerveOI.getHaloDrive_Rotation() -Robot.oi.swerveOI.getFusionDrive_Rotation();// + startFusionPosition;
                 
                 SmartDashboard.putNumber("Dpad", dpad);
 
@@ -127,7 +122,7 @@ public class DriveSwerve extends Command
                 //    ((SwerveDriveSubsystem)Robot.driveSubsystem).gyroZero();
                 //}
                 
-                ((SwerveDriveSubsystem)Robot.driveSubsystem).wheelManager.config.crawlModeMagnitude = OI.DriveSwerveOI.getCrawlSpeed();
+                ((SwerveDriveSubsystem)Robot.driveSubsystem).wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
                 
                 
                 if (dpad != -1)
@@ -139,7 +134,7 @@ public class DriveSwerve extends Command
                     Robot.driveSubsystem.setFieldRelative(false);
                     
                     speedRobot = drive;
-                    speedRotation = OI.DriveSwerveOI.getHaloDrive_Rotation();
+                    speedRotation = Robot.oi.swerveOI.getHaloDrive_Rotation();
                     //TODO fix this nonsense
                     ///OI.DriveSwerveOI.getHaloDrive_Heading45());
                 }
@@ -147,8 +142,8 @@ public class DriveSwerve extends Command
                 {
                     //Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
                     
-                    speedRobot = OI.DriveSwerveOI.getHaloDrive_Velocity();
-                    speedRotation = OI.DriveSwerveOI.getHaloDrive_Rotation();
+                    speedRobot = Robot.oi.swerveOI.getHaloDrive_Velocity();
+                    speedRotation = Robot.oi.swerveOI.getHaloDrive_Rotation();
                     //TODO fix this nonsense
                     ///OI.DriveSwerveOI.getHaloDrive_Heading45());
                 }
@@ -157,7 +152,7 @@ public class DriveSwerve extends Command
             case ANGLE:
                 //Robot.driveSubsystem.setFieldRelative(OI.DriveSwerveOI.getFieldRelative());
                 
-                speedRobot = OI.DriveSwerveOI.getAngleDrive_Velocity();
+                speedRobot = Robot.oi.swerveOI.getAngleDrive_Velocity();
                 speedRotation = 0;
                 //TODO: handle the heading nonsense 
                 // OI.DriveSwerveOI.getAngleDrive_Heading()

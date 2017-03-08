@@ -54,7 +54,7 @@ public class AutoShoot extends CommandGroup
             }
             else if (mode == MODE_DRIVE.LIGHT_SENSOR)
             {
-                addSequential(new AutoLineDrive(signX * .5, signX * .5, 0, -1, 15));  // Drive to end of the line, based on sensor
+                addSequential(new AutoDrive(signX * .5, signX * .5, 0, -1, 15));  // Drive to end of the line, based on sensor
             }
             addSequential (new AutoDrive (signX*.5, 0, signX * 0, .25));   // Sideways to get off wall X
             addSequential (new AutoDrive (signX * 0, -.5, signX * 0, .5)); // Backwards to the hopper load position Y
