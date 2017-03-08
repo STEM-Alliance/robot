@@ -2,7 +2,6 @@
 package org.wfrobotics.commands.drive;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -34,9 +33,9 @@ public class DriveTank extends Command
        
         if (mode == MODE.TANK)
         {
-            double adjust = OI.DriveTankOI.getThrottleSpeedAdjust();
-            left = OI.DriveTankOI.getL() * adjust;
-            right = OI.DriveTankOI.getR() * adjust;
+            double adjust = Robot.oi.tankOI.getThrottleSpeedAdjust();
+            left = Robot.oi.tankOI.getL() * adjust;
+            right = Robot.oi.tankOI.getR() * adjust;
     
             if(backward)
             {
@@ -60,9 +59,9 @@ public class DriveTank extends Command
         }
         else if (mode == MODE.ARCADE)
         {
-            double adjust = OI.DriveArcadeOI.getThrottleSpeedAdjust();
-            double y = OI.DriveArcadeOI.getThrottle();
-            double x = OI.DriveArcadeOI.getTurn() * .8;
+            double adjust = Robot.oi.arcadeOI.getThrottleSpeedAdjust();
+            double y = Robot.oi.arcadeOI.getThrottle();
+            double x = Robot.oi.arcadeOI.getTurn() * .8;
             left = y;  // Default value as if forward/backwards
             right = y;  // Default value as if forward/backwards
             

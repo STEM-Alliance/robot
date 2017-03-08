@@ -1,12 +1,14 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.Vector;
 import org.wfrobotics.commands.*;
 import org.wfrobotics.commands.drive.*;
 import org.wfrobotics.controller.*;
-import org.wfrobotics.controller.Panel.BUTTON;
 import org.wfrobotics.controller.Panel.COLOR;
+import org.wfrobotics.robot.driveoi.Arcade.*;
+import org.wfrobotics.robot.driveoi.Tank.*;
+import org.wfrobotics.robot.driveoi.Swerve.*;
+import org.wfrobotics.robot.driveoi.Mecanum.*;
 import org.wfrobotics.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -19,9 +21,17 @@ import edu.wpi.first.wpilibj.buttons.Button;
  */
 public class OI 
 {
+    private final static double CLIMB_DEADBAND = .2;
+    
     static Xbox xboxDrive = new Xbox(0);
     static Xbox xboxMan = new Xbox(1);
     public static Panel panel = new Panel(2);
+    
+    
+    public final TankOI tankOI = new TankXbox(xboxDrive);
+    public final ArcadeOI arcadeOI = new ArcadeXbox(xboxDrive);
+    public final MecanumOI mecanumOI = new MecanumXBox(xboxDrive);
+    public final SwerveOI swerveOI = new SwerveXBox(xboxDrive, xboxMan, panel);
     
 
     Button buttonDriveLB = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
@@ -90,214 +100,22 @@ public class OI
 //      buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
     }
     
-    private static double AdjustClimb(double value)
-    {
-        if(value < .2)
-        {
-            value = 0;
-        }
-        else
-        {
-            value = Utilities.scaleToRange(value, .2, 1, 0, 1);
-        }
-        
-        return value;
-    }
-    
     public static double getClimbSpeedUp()
     {
-        return AdjustClimb(xboxMan.getTriggerAxis(Hand.kRight));
+        double raw = xboxMan.getTriggerAxis(Hand.kRight);
+        double adjusted = 0;
+        
+        if(raw > CLIMB_DEADBAND)
+        {
+            adjusted = Utilities.scaleToRange(raw, CLIMB_DEADBAND, 1, 0, 1);
+        }
+        
+        return adjusted;
     }
 
     public static double getAugerSpeedAdjust()
     {   
         return xboxMan.getTriggerAxis(Hand.kLeft);
-    }
-    
-    public static class DriveTankOI
-    {
-        public static double getL()
-        {
-            return xboxDrive.getY(Hand.kLeft);
-        }
-        
-        public static double getR()
-        {
-            return xboxDrive.getY(Hand.kRight);        
-        }
-        
-        public static double getThrottleSpeedAdjust()
-        {
-            return 0.5 + .5 * xboxDrive.getTriggerAxis(Hand.kLeft);
-        }
-    }
-    
-    public static class DriveArcadeOI
-    {
-        public static double getThrottle()
-        {
-            return xboxDrive.getY(Hand.kLeft);
-        }
-        
-        public static double getTurn()
-        {
-            return xboxDrive.getX(Hand.kLeft);
-        }
-        
-        public static double getThrottleSpeedAdjust()
-        {
-            return 0.5 + .5 * xboxDrive.getTriggerAxis(Hand.kLeft);
-        }
-    }
-    
-    public static class DriveMecanumOI
-    {
-        public static double getY()
-        {
-            return xboxDrive.getY(Hand.kLeft);
-        }
-
-        public static double getX()
-        {
-            return xboxDrive.getX(Hand.kLeft);
-        }
-        
-        public static double getRotation()
-        {
-            return xboxDrive.getX(Hand.kRight);
-        }
-    }
-    
-    
-    public static class DriveSwerveOI
-    {
-        private static final double DEADBAND = 0.2;
-
-        /**
-         * Get the Rotation value of the joystick for Halo Drive
-         * 
-         * @return The Rotation value of the joystick.
-         */
-        public static double getHaloDrive_Rotation()
-        {
-            double value = 0;
-        
-            value = xboxDrive.getAxis(Xbox.AXIS.RIGHT_X);
-        
-            if (Math.abs(value) < DEADBAND)
-            {
-                value = 0;
-            }
-            return value;
-        }
-
-        /**
-         * Get the {@link Vector} (mag & angle) of the velocity joystick for Halo
-         * Drive
-         * 
-         * @return The vector of the joystick.
-         */
-        public static Vector getHaloDrive_Velocity()
-        {
-            Vector value = xboxDrive.getVector(Hand.kLeft);
-        
-            if (value.getMag() < DEADBAND)
-            {
-                value.setMag(0);
-            }
-        
-            return value;
-        }
-
-        public static double getHaloDrive_Heading45()
-        {
-            return -1;
-        }
-        
-        /**
-         * Get the heading/angle in degrees for Angle Drive
-         * 
-         * @return The angle in degrees of the joystick.
-         */
-        public static double getAngleDrive_Heading()
-        {
-            double Angle = -1;
-            
-            if (xboxDrive.getMagnitude(Hand.kRight) > 0.65)
-            {
-                Angle = xboxDrive.getDirectionDegrees(Hand.kRight);
-            }
-        
-            return Angle;
-        }
-
-        /**
-         * Get the rotation for Angle Drive
-         * 
-         * @return The rotation rate in rad/s.
-         */
-        public static double getAngleDrive_Rotation()
-        {
-            double Rotation = 0;
-            int dpad = getDpad();
-            
-            if (dpad == 90)
-            {
-                Rotation = .75;
-            }
-            else if (dpad == 270)
-            {
-                Rotation = -.75;
-            }
-            return Rotation;
-        }
-
-        /**
-         * Get the {@link Vector} (mag & angle) of the velocity joystick for Angle
-         * Drive
-         * 
-         * @return The vector of the joystick.
-         */
-        public static Vector getAngleDrive_Velocity()
-        {
-            Vector value = xboxDrive.getVector(Hand.kLeft);
-        
-            if (value.getMag() < DEADBAND)
-            {
-                value.setMag(0);
-            }
-            return value;
-        }
-
-        public static double getCrawlSpeed()
-        {
-            return xboxDrive.getTriggerAxis(Hand.kLeft);
-        }
-        
-        public static int getDpad()
-        {
-            return xboxDrive.getPOV(0);
-        }
-        
-        public static double[] getPanelKnobs()
-        {
-            return new double[] {
-                            panel.getTopDial(Hand.kLeft) * 180.0,
-                            panel.getTopDial(Hand.kRight) * 180.0,
-                            panel.getBottomDial(Hand.kLeft) * 180.0,
-                            panel.getBottomDial(Hand.kRight) * 180.0, 
-                    };
-        }
-
-        public static boolean getPanelSave()
-        {
-            return panel.getButton(BUTTON.SWITCH_L) && panel.getButton(BUTTON.SWITCH_R);
-        }
-
-        public static double getFusionDrive_Rotation()
-        {
-            return xboxMan.getX(Hand.kRight);
-        }
     }
     
     public static void setDriveRumble(XboxController.RumbleType type, float value)
