@@ -16,8 +16,6 @@ public class GearDetection extends Command
     
     private final MODE mode;
     
-    private double lastDistanceFromCenter;
-    
     public GearDetection(MODE mode)
     {
         requires(Robot.targetGearSubsystem);
