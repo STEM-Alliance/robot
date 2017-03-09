@@ -75,11 +75,12 @@ public class Shooter extends Subsystem
     private final ShooterMotor motorB;
 
     private double speedDesired;
+    private int counts = 0;
 
     public Shooter()
     {
-        motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .1, .0001, .00, .0, .01, true);
-        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .11, .00015, .00, 0, .01, false);
+        motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .11, .0001, .00, .0, .01, true);
+        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .1, .00018, .00, 0, .01, false);
     }
 
     @Override
@@ -110,12 +111,12 @@ public class Shooter extends Subsystem
         if (rpm != 0)
         {
             motorT.set(rpm);
-
+            motorB.set(rpm);
+            
             if(motorT.atSpeed(tolerance))
             {
-                motorB.set(rpm);
 
-                if(motorB.atSpeed(tolerance*2))
+                if(motorB.atSpeed(tolerance*1.5))
                 {
                     atSpeed = true;
                 }
@@ -132,7 +133,17 @@ public class Shooter extends Subsystem
             }
         }
 
-        return atSpeed;
+
+        if(atSpeed)
+        {
+            counts++;
+        }
+        else
+        {
+            counts = 0;
+        }
+        
+        return atSpeed && counts > 50;
     }
 
     public boolean inTolerance(double tolerance)

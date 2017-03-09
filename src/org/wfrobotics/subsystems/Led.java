@@ -29,6 +29,8 @@ public class Led extends Subsystem
     {
         top = new CANLight(RobotMap.CAN_LIGHT[0]);
         side = new CANLight(RobotMap.CAN_LIGHT[1]);
+        
+        flashGreen(HARDWARE.ALL);
     }  
 
     @Override
@@ -36,7 +38,23 @@ public class Led extends Subsystem
     {
         setDefaultCommand(new LED(HARDWARE.ALL, LED.MODE.OFF));
     }
-
+    
+    public void flashGreen(HARDWARE hardware)
+    {
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+        {
+            top.writeRegister(6, .7, 0, 255, 0);
+            top.writeRegister(7, .7, 100, 103, 0);
+            top.cycle(6, 7);
+        }
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+        {
+            side.writeRegister(6, .7, 0, 255, 0);
+            side.writeRegister(7, .7, 100, 103, 0);
+            side.cycle(6, 7);
+        }
+    }
+    
     /*
      * blink(time, which strip)
      * setOn (bool, strip)
@@ -61,19 +79,21 @@ public class Led extends Subsystem
         SmartDashboard.putBoolean("LED is on", on);        
     }
 
-    public void blink(HARDWARE hardware, double blinkLength)
+    //@Deprecated
+    public void blinkRed(HARDWARE hardware, double blinkLength)
     {
-        top.writeRegister(0, blinkLength, 0, 255, 0);  
-        top.writeRegister(1, blinkLength, 255, 103, 0);
-        
         if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
         {
-            top.fade(0, 1);
+            top.writeRegister(0, blinkLength, 255, 0, 0);  
+            top.writeRegister(1, blinkLength, 0, 0, 0);
+            top.cycle(0, 1);
         }
 
-        if(hardware == HARDWARE.SIDE)
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
         {       
-            top.cycle(0, 1);
+            side.writeRegister(0, blinkLength, 255, 0, 0);  
+            side.writeRegister(1, blinkLength, 0, 0, 0);
+            side.cycle(0, 1);
         }
     }
 

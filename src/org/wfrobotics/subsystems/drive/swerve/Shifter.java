@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 /** Swerve Drive Shifter that shifts each Swerve Wheel */
 public class Shifter
 {
-    //private final Servo shifter;
+    private final Servo shifter;
     private final int angleH;
     private final int angleL;
     private boolean gearLastState;
@@ -15,7 +15,7 @@ public class Shifter
     
     public Shifter(int servoPin, int servoAngleLowGear, int servoAngleHighGear)
     {
-        //shifter = new Servo(servoPin);
+        shifter = new Servo(servoPin);
         angleL = servoAngleLowGear;
         angleH = servoAngleHighGear;
         gearLastState = false;
@@ -31,7 +31,7 @@ public class Shifter
     {
         int angle = (useHighGear) ? angleH:angleL;
         
-        //shifter.setAngle(angle);
+        shifter.setAngle(angle);
         
         // Only start a transition if we are changing
         // Important: This allows the caller to set the shifter repeatedly and not be indefinitely transitioning in the getter()
