@@ -17,6 +17,8 @@ public class LED extends Command
     
     private final HARDWARE hardware;
     private MODE mode;
+    public double timeBlink;
+    public double blinkDuration;
     
     public LED(HARDWARE hardware, MODE mode)
     {
@@ -34,14 +36,34 @@ public class LED extends Command
         this.mode = mode;
         setTimeout(timeout);
     }
+    public LED(HARDWARE hardware, MODE mode, double blinkDuration , double timeout)
+    {
+        requires(Robot.ledSubsystem);
+        
+        this.hardware = hardware;
+        this.mode = mode;
+        setTimeout(timeout);
+    }
     
     @Override
     protected void initialize()
     {
         if (mode == MODE.BLINK)
         {
-            Robot.ledSubsystem.blink(hardware, .7);
+//            if (timeSinceInitialized() - timeBlink < blinkDuration)
+//            {
+//                if(timeSinceInitialized() % 2 == 0)
+//                {
+//                    Robot.ledSubsystem.setOnColor(Led.HARDWARE.ALL, true, 0, 255, 0);
+//                }
+//                else 
+//                {
+//                    Robot.ledSubsystem.setOnColor(Led.HARDWARE.ALL, false, 0, 255, 0);
+//                }
+//            }
+            Robot.ledSubsystem.blinkRed(hardware, .07);
         }
+        timeBlink = timeSinceInitialized();
     }
 
     @Override
@@ -51,7 +73,8 @@ public class LED extends Command
         
         if (mode == MODE.OFF)
         {
-            Robot.ledSubsystem.setOn(hardware, false);
+            //Robot.ledSubsystem.setOn(hardware, false);
+            Robot.ledSubsystem.flashGreen(hardware);
         }
         else if (mode == MODE.SOLID)
         {
@@ -62,7 +85,7 @@ public class LED extends Command
     @Override
     protected boolean isFinished()
     {
-        return false;//isTimedOut();  // TODO delete this comment or remove timeout from constructor
+        return isTimedOut();
     }
 
     @Override

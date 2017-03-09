@@ -8,6 +8,7 @@ import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Panel.BUTTON;
 import org.wfrobotics.controller.Panel.COLOR;
 import org.wfrobotics.subsystems.Intake;
+import org.wfrobotics.subsystems.Led;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
@@ -49,8 +50,8 @@ public class OI
     Button buttonPanelGreenBottom = new PanelButton(panel, Panel.BUTTON.GREEN_B);
     
     // used for manual intake DO NOT USE OTHERWISE
-    public static Button buttonPanelBlackTop = new PanelButton(panel, Panel.BUTTON.BLACK_B);
-    public static Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_T);
+    public static Button buttonPanelBlackTop = new PanelButton(panel, Panel.BUTTON.BLACK_T);
+    public static Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_B);
     public static Button buttonManX= new XboxButton (xboxMan, Xbox.BUTTON.X);
     public static Button buttonManY= new XboxButton (xboxMan, Xbox.BUTTON.Y);
     
@@ -79,6 +80,8 @@ public class OI
         buttonManLB.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
         buttonPanelGreenTop.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
         buttonPanelGreenBottom.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
+        
+        buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));

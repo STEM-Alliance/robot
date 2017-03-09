@@ -12,7 +12,7 @@ public class Climb extends CommandGroup
     {
         if (mode == MODE.OFF)
         {
-            addParallel(new LED(Led.HARDWARE.ALL, LED.MODE.BLINK));
+            addParallel(new LED(Led.HARDWARE.SIDE, LED.MODE.OFF));
             addSequential(new Up(Up.MODE.VARIABLE_SPEED));
         }
         else if (mode == MODE.CLIMB)

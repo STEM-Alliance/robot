@@ -133,8 +133,8 @@ public class Robot extends SampleRobot
         autoChooser = new SendableChooser<AUTO_COMMAND>();
 
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE); // TODO pick gear/shoot as the default autonomous command
-        //autoChooser.addObject("Auto Forward", AUTO_COMMAND.DRIVE);
-        autoChooser.addObject("Auto Forward  HIGH GEAR", AUTO_COMMAND.DRIVE_HG);
+        autoChooser.addObject("Auto Forward (LOW GEAR)", AUTO_COMMAND.DRIVE);
+        autoChooser.addObject("Auto Forward  (HIGH GEAR)", AUTO_COMMAND.DRIVE_HG);
         //autoChooser.addObject("Auto Shoot (NOT WORKING YET)", AUTO_COMMAND.SHOOT);
         autoChooser.addObject("Auto Shoot then Hopper", AUTO_COMMAND.SHOOT_THEN_DRIVE);
         autoChooser.addObject("Auto Shoot then Cross", AUTO_COMMAND.SHOOT_CROSS_HG);
