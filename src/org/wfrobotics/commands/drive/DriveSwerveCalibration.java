@@ -6,7 +6,6 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.controller.Panel.COLOR;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -64,8 +63,8 @@ public class DriveSwerveCalibration extends Command
                 break;
                 
             case PANEL:
-                double values[] = OI.DriveSwerveOI.getPanelKnobs();
-                boolean save = OI.DriveSwerveOI.getPanelSave();
+                double values[] = Robot.oi.swerveOI.getPanelKnobs();
+                boolean save = Robot.oi.swerveOI.getPanelSave();
                 
                 COLOR leds[];
                 
@@ -92,8 +91,8 @@ public class DriveSwerveCalibration extends Command
                 int i = ((Integer) testWheelChooser.getSelected()).intValue();
 
                 //SmartDashboard.putNumber("Test Wheel", i);
-                SmartDashboard.putNumber("Vel Ang", OI.DriveSwerveOI.getHaloDrive_Velocity().getAngle());
-                SmartDashboard.putNumber("Vel Mag", OI.DriveSwerveOI.getHaloDrive_Velocity().getMag());
+                SmartDashboard.putNumber("Vel Ang", Robot.oi.swerveOI.getHaloDrive_Velocity().getAngle());
+                SmartDashboard.putNumber("Vel Mag", Robot.oi.swerveOI.getHaloDrive_Velocity().getMag());
                 
 //                Vector WheelActual = ((SwerveDriveSubsystem)Robot.driveSubsystem).getWheel(i).setDesired(
 //                        OI.DriveSwerveOI.getHaloDrive_Velocity(),
