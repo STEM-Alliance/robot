@@ -25,6 +25,7 @@ public class Lifter extends Subsystem
         motor.ConfigRevLimitSwitchNormallyOpen(true);
         motor.enableLimitSwitch(false, false);
         motor.enableBrakeMode(true);
+        // TODO DRL Set soft limits before the hardware limit sensors, then remove software to limit motor speed, just set it
         senseGear = new DigitalInput(RobotMap.LIFTER_SENSOR_GEAR);
     }
 

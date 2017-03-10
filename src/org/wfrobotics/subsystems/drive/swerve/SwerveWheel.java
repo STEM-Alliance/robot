@@ -36,8 +36,6 @@ public class SwerveWheel
     
     /** Max speed the rotation can spin, relative to motor maximum */
     private double angleMaxSpeed = -.7;
-    /** Special angle PID controller */
-    private SwerveAngleController anglePID;
 
     /** Minimum speed, used for dead band */ 
     protected static final double MINIMUM_SPEED = 0.1;
@@ -64,8 +62,7 @@ public class SwerveWheel
         driveLastChangeTime = Timer.getFPGATimestamp();
         //driveMotor.setCurrentLimit(5);
 
-        angleManager = new WheelAngleManager(RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
-        anglePID = new SwerveAngleController(name + ".ctl");
+        angleManager = new WheelAngleManager(name + ".ctl", RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
 
         //angleCalSensor = new DigitalInput(RobotMap.DIO_SWERVE_CAL[number]);
 
@@ -129,18 +126,18 @@ public class SwerveWheel
         double setpoint = desiredVector.getAngle();
         double current = angleManager.getAnglePotAdjusted();
         
-        anglePID.update(setpoint, current);
-        error = anglePID.error;
+        angleManager.update(setpoint, current);
+        error = angleManager.error;
         
         //SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
         if (desiredVector.getMag() > MINIMUM_SPEED)
         {
-            angleManager.set(anglePID.getMotorSpeed() * angleMaxSpeed);  // Control the wheel angle.
+            angleManager.set(angleManager.getSpeed() * angleMaxSpeed);  // Control the wheel angle.
         }
         else
         {
             // Too slow, do nothing
-            anglePID.resetIntegral();
+            angleManager.resetIntegral();
             angleManager.set(0);
         }
         
@@ -148,7 +145,7 @@ public class SwerveWheel
         //SmartDashboard.putNumber(name + ".angle", current);
         SmartDashboard.putNumber(name + ".angle.err", error);
 
-        return anglePID.isReverseMotor();
+        return angleManager.isReverseMotor();
     }
 
     /**
