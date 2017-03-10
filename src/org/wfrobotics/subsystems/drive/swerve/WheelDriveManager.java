@@ -14,8 +14,8 @@ public class WheelDriveManager
     {
         driveMotor = new CANTalon(talonIndex);
 
-        driveMotor.setVoltageRampRate(30);
-        //driveMotor.setCurrentLimit(5);
+        driveMotor.setVoltageRampRate(30);  // TODO DRL try setting voltage range instead so you get a step function
+        //driveMotor.setCurrentLimit(5);  // TODO DRL we should try to add this back in
         driveMotor.ConfigFwdLimitSwitchNormallyOpen(true);
         driveMotor.ConfigRevLimitSwitchNormallyOpen(true);
         driveMotor.enableForwardSoftLimit(false);
