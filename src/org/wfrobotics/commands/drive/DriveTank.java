@@ -59,28 +59,28 @@ public class DriveTank extends Command
         }
         else if (mode == MODE.ARCADE)
         {
-            double adjust = Robot.oi.arcadeOI.getThrottleSpeedAdjust();
-            double y = Robot.oi.arcadeOI.getThrottle();
-            double x = Robot.oi.arcadeOI.getTurn() * .8;
-            left = y;  // Default value as if forward/backwards
-            right = y;  // Default value as if forward/backwards
-            
-            Utilities.PrintCommand("Drive", this);
-            
+//            double adjust = Robot.oi.arcadeOI.getThrottleSpeedAdjust();
+//            double y = Robot.oi.arcadeOI.getThrottle();
+//            double x = Robot.oi.arcadeOI.getTurn() * .8;
+//            left = y;  // Default value as if forward/backwards
+//            right = y;  // Default value as if forward/backwards
+//            
+//            Utilities.PrintCommand("Drive", this);
+//            
             // this doesn't work
-//            // Determine if we are instead going left/right
+            // Determine if we are instead going left/right
 //            if (Math.abs(x) > Math.abs(y))
 //            {
 //                double direction = Math.signum(x);  // Going Right = 1, Going Left = -1
 //                
 //                speedL = x * direction;
 //                speedR = -x * direction;
-//            }
-            
-            left = y + x;
-            right = y - x;
-            left = limit(left) * adjust;
-            right = limit(right) * adjust;
+//              }
+//            
+//            left = y + x;
+//            right = y - x;
+//            left = limit(left) * adjust;
+//            right = limit(right) * adjust;
         }
 
         Robot.driveSubsystem.driveTank(right, left);
