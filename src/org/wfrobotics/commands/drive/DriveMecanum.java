@@ -16,7 +16,7 @@ public class DriveMecanum extends Command
 
     protected void execute() 
     {        
-        Robot.driveSubsystem.driveXY(-Robot.oi.mecanumOI.getX()*0.7, Robot.oi.mecanumOI.getY()*0.7, -Robot.oi.mecanumOI.getRotation()*0.7);
+        //Robot.driveSubsystem.driveXY(-Robot.oi.mecanumOI.getX()*0.7, Robot.oi.mecanumOI.getY()*0.7, -Robot.oi.mecanumOI.getRotation()*0.7);
     }
 
     protected boolean isFinished() 
