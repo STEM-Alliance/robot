@@ -15,10 +15,10 @@ import org.wfrobotics.controller.Panel.COLOR;
 import org.wfrobotics.controller.PanelButton;
 import org.wfrobotics.controller.Xbox;
 import org.wfrobotics.controller.XboxButton;
-import org.wfrobotics.robot.driveoi.SwerveOI;
-import org.wfrobotics.robot.driveoi.SwerveXBox;
-import org.wfrobotics.robot.driveoi.TankOI;
-import org.wfrobotics.robot.driveoi.TankXbox;
+import org.wfrobotics.robot.driveoi.Arcade.*;
+import org.wfrobotics.robot.driveoi.Mecanum.*;
+import org.wfrobotics.robot.driveoi.Swerve.*;
+import org.wfrobotics.robot.driveoi.Tank.*;
 import org.wfrobotics.subsystems.Led;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -39,8 +39,8 @@ public class OI
     
     
     public final TankOI tankOI = new TankXbox(xboxDrive);
-    //public final ArcadeOI arcadeOI = new ArcadeXbox(xboxDrive);
-    //public final MecanumOI mecanumOI = new MecanumXBox(xboxDrive);
+    public final ArcadeOI arcadeOI = new ArcadeXbox(xboxDrive);
+    public final MecanumOI mecanumOI = new MecanumXBox(xboxDrive);
     public final SwerveOI swerveOI = new SwerveXBox(xboxDrive, xboxMan, panel);
     
 

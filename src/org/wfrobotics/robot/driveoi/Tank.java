@@ -4,7 +4,16 @@ import org.wfrobotics.controller.Xbox;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
-    public class TankXbox implements TankOI
+public class Tank
+{
+    public interface TankOI
+    {
+        public double getL();
+        public double getR();
+        public double getThrottleSpeedAdjust();
+    }     
+
+    public static class TankXbox implements TankOI
     {
         private final Xbox controller;
         
@@ -28,3 +37,4 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
             return 0.5 + .5 * controller.getTriggerAxis(Hand.kLeft);
         }
     }
+}

@@ -43,8 +43,7 @@ public class SwerveWheel
     private double lastUpdateTime = 0;
 
     /**
-     * Set up a swerve wheel using controllers/objects,
-     * using an SRX input for angle
+     * Set up a swerve wheel using controllers/objects, using an SRX input for angle
      * @param Number
      */
     public SwerveWheel(int Number)
@@ -62,7 +61,7 @@ public class SwerveWheel
         driveLastChangeTime = Timer.getFPGATimestamp();
         //driveMotor.setCurrentLimit(5);
 
-        angleManager = new WheelAngleManager(name + ".ctl", RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
+        angleManager = new WheelAngleManager(name + ".ctl", RobotMap.CAN_SWERVE_ANGLE_TALONS[number], SwerveConstants.ANGLE_MOTOR_INVERT[number]);
 
         //angleCalSensor = new DigitalInput(RobotMap.DIO_SWERVE_CAL[number]);
 
@@ -111,39 +110,19 @@ public class SwerveWheel
     }
 
     /**
-     * Update the angle motor based on the desired angle Called from
-     * updateTask()
-     * 
+     * Update the angle motor based on the desired angle Called from updateTask()
      * @return Whether the drive motor should run in the opposite direction
      */
     private boolean updateAngleMotor()
     {
-        double error;
+        double setpoint;
         
         updateAngleOffset();
+        angleManager.updatePID();
         updateMaxRotationSpeed();
 
-        double setpoint = desiredVector.getAngle();
-        double current = angleManager.getAnglePotAdjusted();
-        
-        angleManager.update(setpoint, current);
-        error = angleManager.error;
-        
-        //SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
-        if (desiredVector.getMag() > MINIMUM_SPEED)
-        {
-            angleManager.set(angleManager.getSpeed() * angleMaxSpeed);  // Control the wheel angle.
-        }
-        else
-        {
-            // Too slow, do nothing
-            angleManager.resetIntegral();
-            angleManager.set(0);
-        }
-        
-        //SmartDashboard.putNumber(name + ".angle.des", setpoint);
-        //SmartDashboard.putNumber(name + ".angle", current);
-        SmartDashboard.putNumber(name + ".angle.err", error);
+        setpoint = desiredVector.getAngle();        
+        angleManager.setPosition(setpoint);
 
         return angleManager.isReverseMotor();
     }
@@ -232,7 +211,7 @@ public class SwerveWheel
         //double savedAngle = Preferences.getInstance().getDouble("Wheel_Orientation_" + number,
         //        SwerveConstants.ANGLE_OFFSET[number]);
         
-        angleManager.setPotOffset(angleOffset);
+        angleManager.setOffset(angleOffset);
     }
     
     /**
@@ -250,14 +229,7 @@ public class SwerveWheel
 
     protected void updateMaxRotationSpeed()
     {
-        angleMaxSpeed = Preferences.getInstance()
-                .getDouble("maxRotationSpeed", angleMaxSpeed);
-    }
-
-    public void free()
-    {
-        //try { gearShifter.free(); } catch (AllocationException e) {}
-        angleManager.free();
+        angleMaxSpeed = Preferences.getInstance().getDouble("maxRotationSpeed", angleMaxSpeed);
     }
 
     public void printDash()

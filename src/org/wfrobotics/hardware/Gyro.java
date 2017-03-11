@@ -55,7 +55,7 @@ public class Gyro {
      */
     public static Gyro getInstance()
     {
-        return getInstance(PORT.SERIAL_MXP);
+        return getInstance(PORT.SPI_MXP);
     }
     
     /**

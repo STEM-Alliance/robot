@@ -280,12 +280,4 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         SmartDashboard.putBoolean("Gyro Enabled", configSwerve.gyroEnable);
         SmartDashboard.putBoolean("High Gear", configSwerve.gearHigh);
     }
-
-    /**
-     * For unit testing
-     */
-    public void free()
-    {
-        wheelManager.free();
-    }    
 }

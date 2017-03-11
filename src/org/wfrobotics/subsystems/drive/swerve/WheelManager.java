@@ -190,17 +190,6 @@ public class WheelManager implements Runnable
     }
 
     /**
-     * For unit testing
-     */
-    public void free()
-    {
-        for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
-        {
-            wheels[i].free();
-        }
-    }
-
-    /**
      * Scale each wheel vector set to within range. Values are scaled down relative to the fastest wheel.
      * @param robot
      * @return Scaled vectors to command the wheels with
