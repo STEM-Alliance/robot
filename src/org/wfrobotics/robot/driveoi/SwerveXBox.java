@@ -1,28 +1,21 @@
 package org.wfrobotics.robot.driveoi;
 
+import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
+import org.wfrobotics.commands.Conveyor;
+import org.wfrobotics.commands.Rev;
+import org.wfrobotics.commands.Shoot;
+import org.wfrobotics.commands.drive.DriveConfig;
 import org.wfrobotics.controller.Panel;
-import org.wfrobotics.controller.Xbox;
 import org.wfrobotics.controller.Panel.BUTTON;
+import org.wfrobotics.controller.Xbox;
+import org.wfrobotics.controller.XboxButton;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
-public class Swerve
-{
-    public interface SwerveOI
-    {
-        public double getHaloDrive_Rotation();
-        public Vector getHaloDrive_Velocity();
-        public double getAngleDrive_Heading();
-        public double getAngleDrive_Rotation();
-        public Vector getAngleDrive_Velocity();
-        public double getCrawlSpeed();
-        public int getDpad();
-        public double[] getPanelKnobs();
-        public boolean getPanelSave();
-        public double getFusionDrive_Rotation();
-    }
-    
     public class SwerveXBox implements SwerveOI
     {
         private static final double DEADBAND = 0.2;
@@ -31,12 +24,34 @@ public class Swerve
         private final Xbox driver2;
         private final Panel panel;
         
+        Button buttonDriveShift;
+        Button buttonDriveVisionShoot;
+        Button buttonDriveSmartShoot;
+        Button buttonDriveDumbShoot;
+        Button buttonDriveFieldRelative;
+        Button buttonDriveSetGyro;
+        
         public SwerveXBox(Xbox driver1, Xbox driver2, Panel panel)
         {
             this.driver1 = driver1;
             this.driver2 = driver2;
             this.panel = panel;
+            
+            buttonDriveSmartShoot = new XboxButton(driver1, Xbox.BUTTON.B);
+            buttonDriveDumbShoot = new XboxButton(driver1, Xbox.BUTTON.A);
+            buttonDriveVisionShoot= new XboxButton(driver1, Xbox.BUTTON.RB);
+            buttonDriveShift= new XboxButton(driver1, Xbox.BUTTON.LB);
+            buttonDriveFieldRelative= new XboxButton(driver1, Xbox.BUTTON.BACK);
+            buttonDriveSetGyro = new XboxButton(driver1, Xbox.BUTTON.START);
+
+            //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
+            buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
+            buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
+            buttonDriveShift.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
+            buttonDriveFieldRelative.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
+            buttonDriveSetGyro.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
         }
+        
 
         /**
          * Get the Rotation value of the joystick for Halo Drive
@@ -159,4 +174,4 @@ public class Swerve
             return driver2.getX(Hand.kRight);
         }
     }
-}
+   

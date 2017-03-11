@@ -1,15 +1,24 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.commands.*;
-import org.wfrobotics.commands.drive.*;
-import org.wfrobotics.controller.*;
+import org.wfrobotics.commands.Conveyor;
+import org.wfrobotics.commands.LED;
+import org.wfrobotics.commands.Rev;
+import org.wfrobotics.commands.Shoot;
+import org.wfrobotics.commands.Up;
+import org.wfrobotics.commands.VisionGearDropOff;
+import org.wfrobotics.commands.drive.DriveConfig;
+import org.wfrobotics.commands.drive.DriveSwerve;
+import org.wfrobotics.commands.drive.DriveSwerveCalibration;
+import org.wfrobotics.controller.Panel;
 import org.wfrobotics.controller.Panel.COLOR;
-import org.wfrobotics.robot.driveoi.Arcade.*;
-import org.wfrobotics.robot.driveoi.Tank.*;
-import org.wfrobotics.robot.driveoi.Swerve.*;
-import org.wfrobotics.robot.driveoi.Mecanum.*;
-import org.wfrobotics.subsystems.Intake;
+import org.wfrobotics.controller.PanelButton;
+import org.wfrobotics.controller.Xbox;
+import org.wfrobotics.controller.XboxButton;
+import org.wfrobotics.robot.driveoi.SwerveOI;
+import org.wfrobotics.robot.driveoi.SwerveXBox;
+import org.wfrobotics.robot.driveoi.TankOI;
+import org.wfrobotics.robot.driveoi.TankXbox;
 import org.wfrobotics.subsystems.Led;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -30,8 +39,8 @@ public class OI
     
     
     public final TankOI tankOI = new TankXbox(xboxDrive);
-    public final ArcadeOI arcadeOI = new ArcadeXbox(xboxDrive);
-    public final MecanumOI mecanumOI = new MecanumXBox(xboxDrive);
+    //public final ArcadeOI arcadeOI = new ArcadeXbox(xboxDrive);
+    //public final MecanumOI mecanumOI = new MecanumXBox(xboxDrive);
     public final SwerveOI swerveOI = new SwerveXBox(xboxDrive, xboxMan, panel);
     
 
