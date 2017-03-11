@@ -36,23 +36,23 @@ public class Led extends Subsystem
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new LED(HARDWARE.ALL, LED.MODE.OFF));
+//        setDefaultCommand(new LED(HARDWARE.ALL, LED.MODE.OFF));
     }
     
     public void flashGreen(HARDWARE hardware)
     {
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-        {
-            top.writeRegister(6, .7, 0, 255, 0);
-            top.writeRegister(7, .7, 100, 103, 0);
-            top.cycle(6, 7);
-        }
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-        {
-            side.writeRegister(6, .7, 0, 255, 0);
-            side.writeRegister(7, .7, 100, 103, 0);
-            side.cycle(6, 7);
-        }
+//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+//        {
+//            top.writeRegister(6, .7, 0, 255, 0);
+//            top.writeRegister(7, .7, 100, 103, 0);
+//            top.cycle(6, 7);
+//        }
+//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+//        {
+//            side.writeRegister(6, .7, 0, 255, 0);
+//            side.writeRegister(7, .7, 100, 103, 0);
+//            side.cycle(6, 7);
+//        }
     }
     
     /*
@@ -63,57 +63,57 @@ public class Led extends Subsystem
      */
     public void setOn(HARDWARE hardware, boolean on)
     {
-        int r = 0;
-        int g = (on) ? 255:0;
-        int b = 0;
-
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-        {
-            top.showRGB(r, g, b);
-        }
-
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-        {
-            side.showRGB(r, g, b);  
-        }
-        SmartDashboard.putBoolean("LED is on", on);        
+//        int r = 0;
+//        int g = (on) ? 255:0;
+//        int b = 0;
+//
+//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+//        {
+//            top.showRGB(r, g, b);
+//        }
+//
+//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+//        {
+//            side.showRGB(r, g, b);  
+//        }
+//        SmartDashboard.putBoolean("LED is on", on);        
     }
 
     //@Deprecated
     public void blinkRed(HARDWARE hardware, double blinkLength)
     {
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-        {
-            top.writeRegister(0, blinkLength, 255, 0, 0);  
-            top.writeRegister(1, blinkLength, 0, 0, 0);
-            top.cycle(0, 1);
-        }
-
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-        {       
-            side.writeRegister(0, blinkLength, 255, 0, 0);  
-            side.writeRegister(1, blinkLength, 0, 0, 0);
-            side.cycle(0, 1);
-        }
+//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+//        {
+//            top.writeRegister(0, blinkLength, 255, 0, 0);  
+//            top.writeRegister(1, blinkLength, 0, 0, 0);
+//            top.cycle(0, 1);
+//        }
+//
+//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+//        {       
+//            side.writeRegister(0, blinkLength, 255, 0, 0);  
+//            side.writeRegister(1, blinkLength, 0, 0, 0);
+//            side.cycle(0, 1);
+//        }
     }
 
     public void setOnColor(HARDWARE hardware, boolean on, int r, int g, int b)
     {
-        if (!on)
-        {
-            r = 0;
-            g = 0;
-            b = 0;
-        }
-
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-        {
-            top.showRGB(r, g, b);
-        }
-
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-        {
-            side.showRGB(r, g, b);
-        }
+//        if (!on)
+//        {
+//            r = 0;
+//            g = 0;
+//            b = 0;
+//        }
+//
+//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+//        {
+//            top.showRGB(r, g, b);
+//        }
+//
+//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+//        {
+//            side.showRGB(r, g, b);
+//        }
     }
 }

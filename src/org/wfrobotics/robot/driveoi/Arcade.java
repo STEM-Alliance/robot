@@ -13,7 +13,7 @@ public class Arcade
         public double getThrottleSpeedAdjust();
     }
     
-    public class ArcadeXbox implements ArcadeOI
+    public static class ArcadeXbox implements ArcadeOI
     {
         private final Xbox controller;
         

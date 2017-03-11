@@ -45,6 +45,8 @@ public class SwerveConstants {
     public static final double ANGLE_PID_I = 0.0000075; // higher values cause jitter
     public static final double ANGLE_PID_D = 0.0001; // ? who knows
     
+    public static final boolean[] ANGLE_MOTOR_INVERT = {true, true, true, true};
+    
     /**
      * Array of values for shifting gears, low then high values
      */
