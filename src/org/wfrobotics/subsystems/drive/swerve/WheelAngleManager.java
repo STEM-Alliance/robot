@@ -14,7 +14,8 @@ public class WheelAngleManager
     private static final double HalfCircleCounts = 4096/2;
     private static final double HalfCircleDegrees = 180;
     private static final double CountsPerDegree = 4096/360;
-    private final double ANGLE_SW_DEADBAND = 10;  // Make this the fastest wheels angle error while not moving
+    /** While not moving, wheels angle error small enough to save and use a cached angle**/
+    private final double ANGLE_SW_DEADBAND = 4096 * .02;
     
     private final CANTalon talon;
     /** Invert the angle motor and sensor to swap left/right */
@@ -24,7 +25,7 @@ public class WheelAngleManager
 
     private double offset = 0;
     private boolean reverseMotor = false;
-    private boolean inCachedMode = false;
+    private boolean usingCachedAngle = false;
     private double cachedAngle = 0;
     
     public WheelAngleManager(String name, int talonAddress, boolean invert)
@@ -38,7 +39,7 @@ public class WheelAngleManager
         talon.enableReverseSoftLimit(false);
         talon.enableBrakeMode(false);
         talon.configNominalOutputVoltage(0, 0);
-        talon.configPeakOutputVoltage(11, -11);
+        talon.configPeakOutputVoltage(11, -11);  // Almost as good as setVoltageRampRate, transcients are brief - mainly when switching 180 degrees
         //angleMotor.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_50Ms);
         //angleMotor.SetVelocityMeasurementWindow(32);type name = new type();
         
@@ -50,42 +51,37 @@ public class WheelAngleManager
         talon.setInverted(invert);
         talon.setAllowableClosedLoopErr(0);
         talon.enableControl();
-        talon.set(getCurrentAngle());
+        talon.set(talon.getPosition());
     }
     
-    public void setStationary()
-    {
-        talon.changeControlMode(TalonControlMode.PercentVbus);
-        talon.set(0);
-    }
-    
-    public void setPosition(double desiredDegrees, boolean stationary)
+    public void setPosition(double desiredDegrees, boolean maintainCurrentAngle)
     {        
       double desiredCounts = desiredDegrees * CountsPerDegree + offset;
       double error;
       double commanded = -1;
+      double countsCurrent = Utilities.wrapToRange(talon.getPosition(), -HalfCircleCounts, HalfCircleCounts);
       
-      talon.changeControlMode(TalonControlMode.Position);
-      error = Utilities.wrapToRange(desiredCounts - talon.getPosition(), -HalfCircleCounts, HalfCircleCounts);
+      error = Utilities.wrapToRange(desiredCounts - countsCurrent, -HalfCircleCounts, HalfCircleCounts);
       
       if (Math.abs(error) < ANGLE_SW_DEADBAND ||
-          (stationary && inCachedMode == false))
+          (maintainCurrentAngle && !usingCachedAngle))
       {
           cachedAngle = talon.getPosition();
-          inCachedMode = true;
+          usingCachedAngle = true;
       }
-      else if (!stationary)
+      else if (!maintainCurrentAngle)
       {
-          inCachedMode = false;
+          usingCachedAngle = false;
       }
       
-      if (inCachedMode)
+      if (usingCachedAngle)
       {
           commanded = cachedAngle;
+          applySmartReverse(cachedAngle, error, countsCurrent);  // Must always update reverse boolean, even while using cache 
       }
       else
       {
-          commanded = applySmartReverse(desiredCounts, error);
+          commanded = applySmartReverse(desiredCounts, error, countsCurrent);
       }
         
       talon.set(commanded);
@@ -93,11 +89,12 @@ public class WheelAngleManager
       if(DEBUG)
       {
           SmartDashboard.putNumber(name + ".get", talon.getPosition());
-          SmartDashboard.putNumber(name + ".Desired", desiredDegrees);
+          SmartDashboard.putNumber(name + ".Desired", desiredCounts);
 //          SmartDashboard.putNumber(name + ".SensorValue", sensorValue);
 //          SmartDashboard.putNumber(name + ".Error", error);
           SmartDashboard.putNumber(name + ".Cached", cachedAngle);
           SmartDashboard.putNumber(name + ".Commanded", commanded / CountsPerDegree);
+          SmartDashboard.putNumber(name + ".CommandedCounts", commanded);
           SmartDashboard.putNumber(name + ".angle.err", talon.getClosedLoopError() & 0xFFF);
       }
     }
@@ -108,14 +105,9 @@ public class WheelAngleManager
         return Utilities.wrapToRange((talon.getPosition() + offset) / CountsPerDegree, 360);
     }
     
-    public double getError()
-    {
-        return talon.getError();
-    }
-    
     public double getAnglePotAdjusted()
     {
-        double invert = angleInverted ? -1 : 1;
+        double invert = reverseMotor ? -1 : 1;
         double position = getCurrentAngle();
         
         return Utilities.round(Utilities.wrapToRange(invert * position, -HalfCircleDegrees, HalfCircleDegrees), 2);
@@ -152,16 +144,18 @@ public class WheelAngleManager
     
     /**
      * Calculate the error from the current reading and desired position, determine if motor reversal is needed
-     * @param setPoint desired position
+     * @param desired angle you want
      * @param error 
+     * @param current angle you are at
      * @return 
      */
-    private double applySmartReverse(double setPoint, double error)
+    private double applySmartReverse(double desired, double error, double current)
     {
-        double reversedMotorError = Utilities.wrapToRange(setPoint + HalfCircleCounts, -HalfCircleCounts, HalfCircleCounts);
+        double reverseAngle = Utilities.wrapToRange(desired + HalfCircleCounts, -HalfCircleCounts, HalfCircleCounts);
+        double reverseError = Utilities.wrapToRange(reverseAngle - current, -HalfCircleCounts, HalfCircleCounts);
         
-        reverseMotor = Math.abs(reversedMotorError) < Math.abs(error);
+        reverseMotor = Math.abs(reverseError) < Math.abs(error);
 
-        return (reverseMotor) ? Utilities.wrapToRange(setPoint + HalfCircleCounts, -HalfCircleCounts, HalfCircleCounts) : setPoint;
+        return (reverseMotor) ? reverseAngle : desired;
     }
 }

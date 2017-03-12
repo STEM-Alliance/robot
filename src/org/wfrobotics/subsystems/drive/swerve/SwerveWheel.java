@@ -115,21 +115,11 @@ public class SwerveWheel
      */
     private boolean updateAngleMotor()
     {
-        double setpoint;
-        
         updateAngleOffset();
         angleManager.updatePID();
         updateMaxRotationSpeed();
 
-        if (desiredVector.getMag() < .1)
-        {
-            angleManager.setPosition(0, true);
-        }
-        else
-        {
-            setpoint = desiredVector.getAngle();
-            angleManager.setPosition(setpoint, false);
-        }
+        angleManager.setPosition(desiredVector.getAngle(), desiredVector.getMag() < .1);
 
         return angleManager.isReverseMotor();
     }
