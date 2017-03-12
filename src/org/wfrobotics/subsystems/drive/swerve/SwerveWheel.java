@@ -69,7 +69,9 @@ public class SwerveWheel
 
         //angleCalSensor = new DigitalInput(RobotMap.DIO_SWERVE_CAL[number]);
 
-        shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number], SwerveConstants.SHIFTER_VALS[number][0], SwerveConstants.SHIFTER_VALS[number][1]);
+        shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[number], 
+                              SwerveConstants.SHIFTER_VALS[number], 
+                              SwerveConstants.SHIFTER_INVERSE[number]);
         desiredGear = false;
         
         lastUpdateTime = Timer.getFPGATimestamp();
