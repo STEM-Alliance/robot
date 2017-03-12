@@ -108,7 +108,7 @@ public class Gyro {
     public double getYaw()
     {
         double angle = navxMXP.getYaw() - zeroVal;
-        angle = Utilities.wrapToRange(angle, -180, 180);
+        angle = -Utilities.wrapToRange(angle, -180, 180);
         return angle;
     }
     
