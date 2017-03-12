@@ -47,6 +47,12 @@ public class WheelAngleManager
         talon.changeControlMode(TalonControlMode.Position);
         talon.setPID(SwerveConstants.ANGLE_PID_P, SwerveConstants.ANGLE_PID_I, SwerveConstants.ANGLE_PID_D,
                           0, 0, 10, 0);
+        
+        talon.enableZeroSensorPositionOnForwardLimit(false);
+        talon.enableZeroSensorPositionOnIndex(false, true);
+        talon.enableZeroSensorPositionOnIndex(false, false);
+        talon.enableZeroSensorPositionOnReverseLimit(false);
+        
         //talon.reverseSensor(invert);
         talon.setInverted(invert);
         talon.setAllowableClosedLoopErr(0);
@@ -56,7 +62,7 @@ public class WheelAngleManager
     
     public void setPosition(double desiredDegrees, boolean maintainCurrentAngle)
     {        
-      double desiredCounts = desiredDegrees * CountsPerDegree + offset;
+      double desiredCounts = Utilities.wrapToRange(desiredDegrees * CountsPerDegree + offset, 0, 2*HalfCircleCounts);
       double error;
       double commanded = -1;
       double countsCurrent = Utilities.wrapToRange(talon.getPosition(), -HalfCircleCounts, HalfCircleCounts);
@@ -77,11 +83,12 @@ public class WheelAngleManager
       if (usingCachedAngle)
       {
           commanded = cachedAngle;
-          applySmartReverse(cachedAngle, error, countsCurrent);  // Must always update reverse boolean, even while using cache 
+          //applySmartReverse(cachedAngle, error, countsCurrent);  // Must always update reverse boolean, even while using cache 
       }
       else
       {
-          commanded = applySmartReverse(desiredCounts, error, countsCurrent);
+          //commanded = applySmartReverse(desiredCounts, error, countsCurrent);'
+          commanded = desiredCounts;
       }
         
       talon.set(commanded);
@@ -95,6 +102,7 @@ public class WheelAngleManager
           SmartDashboard.putNumber(name + ".Cached", cachedAngle);
           SmartDashboard.putNumber(name + ".Commanded", commanded / CountsPerDegree);
           SmartDashboard.putNumber(name + ".CommandedCounts", commanded);
+          SmartDashboard.putBoolean(name + ".Reverse", reverseMotor);
           SmartDashboard.putNumber(name + ".angle.err", talon.getClosedLoopError() & 0xFFF);
       }
     }
@@ -147,15 +155,35 @@ public class WheelAngleManager
      * @param desired angle you want
      * @param error 
      * @param current angle you are at
-     * @return 
+     * @return Offset to add to desired angle
      */
     private double applySmartReverse(double desired, double error, double current)
     {
+        // error = Utilities.wrapToRange(desiredCounts - countsCurrent, -HalfCircleCounts, HalfCircleCounts);
         double reverseAngle = Utilities.wrapToRange(desired + HalfCircleCounts, -HalfCircleCounts, HalfCircleCounts);
         double reverseError = Utilities.wrapToRange(reverseAngle - current, -HalfCircleCounts, HalfCircleCounts);
+        double offsetNoSignChange = 0;
+        double bestAngle = desired;
         
-        reverseMotor = Math.abs(reverseError) < Math.abs(error);
-
-        return (reverseMotor) ? reverseAngle : desired;
+//        reverseMotor = Math.abs(reverseError) < Math.abs(error);
+        reverseMotor = Math.abs(error) > HalfCircleCounts / 2;
+        bestAngle = (reverseMotor) ? reverseAngle : desired;
+        
+//        // Fix issue where Mag Encoder doesn't command on shortest path when the angle's sign flips
+//        if (bestAngle < 0 || bestAngle > HalfCircleCounts)
+//        {
+//            SmartDashboard.putBoolean(name + ".WheelApplyOffset", true);
+//            offsetNoSignChange = HalfCircleCounts + bestAngle;
+//            bestAngle = Utilities.wrapToRange(desired + offsetNoSignChange, -HalfCircleCounts, HalfCircleCounts);
+//        }
+//        else
+//        {
+//            SmartDashboard.putBoolean(name + ".WheelApplyOffset", false);
+//        }
+        
+        return Utilities.wrapToRange(bestAngle, 0, 2*HalfCircleCounts);
+        //return offsetNoSignChange;
+        //return (reverseMotor) ? reverseAngle : desired;
+        
     }
 }
