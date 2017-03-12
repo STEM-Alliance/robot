@@ -14,7 +14,7 @@ public class WheelAngleManager
     private static final double HalfCircleCounts = 4096/2;
     private static final double HalfCircleDegrees = 180;
     private static final double CountsPerDegree = 4096/360;
-    private final double MINIMUM_ANGLE_ERROR = 5;
+    private final double ANGLE_SW_DEADBAND = 10;  // Make this the fastest wheels angle error while not moving
     
     private final CANTalon talon;
     /** Invert the angle motor and sensor to swap left/right */
@@ -23,7 +23,7 @@ public class WheelAngleManager
     private static final boolean DEBUG = true;
 
     private double offset = 0;
-    private boolean reverseMotor;
+    private boolean reverseMotor = false;
     
     public WheelAngleManager(String name, int talonAddress, boolean invert)
     {
@@ -39,7 +39,7 @@ public class WheelAngleManager
         //angleMotor.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_50Ms);
         //angleMotor.SetVelocityMeasurementWindow(32);type name = new type();
         
-        talon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        talon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
         talon.changeControlMode(TalonControlMode.Position);
         talon.setPID(SwerveConstants.ANGLE_PID_P, SwerveConstants.ANGLE_PID_I, SwerveConstants.ANGLE_PID_D,
                           0, 0, 10, 0);
@@ -47,23 +47,34 @@ public class WheelAngleManager
         talon.setInverted(invert);
     }
     
-    public void setPosition(double desiredDegrees)
+    public void setStationary()
     {
+        talon.changeControlMode(TalonControlMode.PercentVbus);
+        talon.set(0);
+    }
+    
+    public void setPosition(double desiredDegrees, boolean stationary)
+    {        
       double desiredCounts = desiredDegrees * CountsPerDegree + offset;
-      double error = Utilities.wrapToRange(desiredCounts -  getCurrentAngle(), -HalfCircleCounts, HalfCircleCounts);
-      double commanded;
+      double error;
+      double commanded = -1;
       
-//      if (error < MINIMUM_ANGLE_ERROR)
-//      {   
-//          commanded = talon.get();
-//          //resetIntegral();  // Very close, clear accumulated (I) so we don't move
-//      }
-//      else
-      {
-          commanded = desiredCounts;//applySmartReverse(desiredCounts, error);
+      talon.changeControlMode(TalonControlMode.Position);
+      error = Utilities.wrapToRange(desiredCounts - talon.get(), -HalfCircleCounts, HalfCircleCounts);
+      
+      if (Math.abs(error) < ANGLE_SW_DEADBAND || stationary)
+      {   
+          //commanded = Utilities.wrapToRange(talon.get(), 0, 4096);
+          talon.changeControlMode(TalonControlMode.PercentVbus);
+          talon.set(0);
+          //resetIntegral();  // Very close, clear accumulated (I) so we don't move
       }
-      
-      talon.set(commanded);//Pos:1580319
+      else
+      {
+          commanded = applySmartReverse(desiredCounts, error);
+          talon.changeControlMode(TalonControlMode.Position);
+          talon.set(commanded);
+      }      
         
       if(DEBUG)
       {
@@ -77,17 +88,17 @@ public class WheelAngleManager
       }
     }
     
-    private double getCurrentAngle()
+    public double getCurrentAngle()
     {
         //return Utilities.wrapToRange(talon.getEncPosition() / CountsPerDegree, 360);
-        return Utilities.wrapToRange(talon.get() / CountsPerDegree, 360);
+        return Utilities.wrapToRange((talon.get() + offset) / CountsPerDegree, 360);
     }
     
     public double getError()
     {
         return talon.getError();
     }
-
+    
     public double getAnglePotAdjusted()
     {
         double invert = angleInverted ? -1 : 1;
@@ -133,10 +144,10 @@ public class WheelAngleManager
      */
     private double applySmartReverse(double setPoint, double error)
     {
-        double reversedMotorError = Utilities.wrapToRange(error + HalfCircleCounts, -HalfCircleCounts, HalfCircleCounts);
+        double reversedMotorError = Utilities.wrapToRange(setPoint + HalfCircleCounts, -HalfCircleCounts, HalfCircleCounts);
         
         reverseMotor = Math.abs(reversedMotorError) < Math.abs(error);
 
-        return (reverseMotor) ? Utilities.wrapToRange(setPoint - HalfCircleCounts, -HalfCircleCounts, HalfCircleCounts) : setPoint;
+        return (reverseMotor) ? Utilities.wrapToRange(setPoint + HalfCircleCounts, -HalfCircleCounts, HalfCircleCounts) : setPoint;
     }
 }
