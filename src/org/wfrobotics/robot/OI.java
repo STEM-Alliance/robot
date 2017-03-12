@@ -22,6 +22,7 @@ import org.wfrobotics.robot.driveoi.Tank.*;
 import org.wfrobotics.subsystems.Led;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 
@@ -34,6 +35,7 @@ public class OI
     private final static double CLIMB_DEADBAND = .2;
     
     static Xbox xboxDrive = new Xbox(0);
+    static Joystick joystickDrive = new Joystick(0);
     static Xbox xboxMan = new Xbox(1);
     public static Panel panel = new Panel(2);
     
@@ -42,11 +44,12 @@ public class OI
     public final ArcadeOI arcadeOI = new ArcadeXbox(xboxDrive);
     public final MecanumOI mecanumOI = new MecanumXBox(xboxDrive);
     public final SwerveOI swerveOI = new SwerveXBox(xboxDrive, xboxMan, panel);
+    //public final SwerveOI swerveOI = new SwerveJoyStick(joystickDrive, xboxMan, panel);
     
 
-    Button buttonDriveLB = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
-    Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.BUTTON.BACK);
-    Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.BUTTON.START);
+//    Button buttonDriveLB = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
+//    Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.BUTTON.BACK);
+//    Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.BUTTON.START);
 
     Button buttonPanelSwitchL = new PanelButton(panel, Panel.BUTTON.SWITCH_L);
     Button buttonPanelSwitchR = new PanelButton(panel, Panel.BUTTON.SWITCH_R);
@@ -58,11 +61,11 @@ public class OI
     Button buttonManLB = new XboxButton(xboxMan, Xbox.BUTTON.LB);
     Button buttonManRB = new XboxButton(xboxMan, Xbox.BUTTON.RB);
     
-    Button buttonDriveX = new XboxButton(xboxDrive, Xbox.BUTTON.X);
-    Button buttonDriveY = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
-    Button buttonDriveB = new XboxButton(xboxDrive, Xbox.BUTTON.B);
-    Button buttonDriveA = new XboxButton(xboxDrive, Xbox.BUTTON.A);
-    Button buttonDriveRB = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
+//    Button buttonDriveX = new XboxButton(xboxDrive, Xbox.BUTTON.X);
+//    Button buttonDriveY = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
+//    Button buttonDriveB = new XboxButton(xboxDrive, Xbox.BUTTON.B);
+//    Button buttonDriveA = new XboxButton(xboxDrive, Xbox.BUTTON.A);
+//    Button buttonDriveRB = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
     Button buttonPanelYellowTop = new PanelButton(panel, Panel.BUTTON.YELLOW_T);
     Button buttonPanelYellowBottom = new PanelButton(panel, Panel.BUTTON.YELLOW_B);
     Button buttonPanelGreenTop = new PanelButton(panel, Panel.BUTTON.GREEN_T);
@@ -81,9 +84,9 @@ public class OI
     
     public OI()
     {        
-        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
-        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
-        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
+//        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
+//        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
+//        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
         buttonPanelYellowBottom.toggleWhenPressed(new VisionGearDropOff());
         
         buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
@@ -91,8 +94,8 @@ public class OI
         buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
         buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
 
-        buttonDriveA.whileHeld(new Rev(Rev.MODE.SHOOT));
-        buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
+//        buttonDriveA.whileHeld(new Rev(Rev.MODE.SHOOT));
+//        buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
         //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
 
         buttonManRB.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
