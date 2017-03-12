@@ -7,17 +7,17 @@ import edu.wpi.first.wpilibj.Timer;
 public class Shifter
 {
     private final Servo shifter;
-    private final int angleH;
-    private final int angleL;
+    private final int angleMid;
     private boolean gearLastState;
     private boolean gearLastRequested;
     private double timeLastRequested;
+    private boolean invert;
     
-    public Shifter(int servoPin, int servoAngleLowGear, int servoAngleHighGear)
+    public Shifter(int servoPin, int servoAngle, boolean invert)
     {
         shifter = new Servo(servoPin);
-        angleL = servoAngleLowGear;
-        angleH = servoAngleHighGear;
+        angleMid = servoAngle;
+        this.invert = invert;
         gearLastState = false;
         gearLastRequested = false;
         timeLastRequested = Timer.getFPGATimestamp() - SwerveConstants.SHIFTER_SHIFT_TIME;  // Start fully in this gear
@@ -29,8 +29,17 @@ public class Shifter
      */
     public void setGear(boolean useHighGear)
     {
-        int angle = (useHighGear) ? angleH:angleL;
         
+        int angle = angleMid;
+        
+        if(invert)
+        {
+            angle += useHighGear ? SwerveConstants.SHIFTER_RANGE/2.0 : -SwerveConstants.SHIFTER_RANGE/2.0;
+        }
+        else
+        {
+            angle += useHighGear ? -SwerveConstants.SHIFTER_RANGE/2.0 : SwerveConstants.SHIFTER_RANGE/2.0;
+        }
         shifter.setAngle(angle);
         
         // Only start a transition if we are changing
