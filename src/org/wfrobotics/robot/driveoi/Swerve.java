@@ -191,7 +191,7 @@ public class Swerve
         }
     }
     
-    public class SwerveJoyStick implements SwerveOI
+    public static class SwerveJoyStick implements SwerveOI
     {
 
         private static final double DEADBAND = 0.2;
