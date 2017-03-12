@@ -1,5 +1,12 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="822" y="832"/>
+	</widget>
+	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="439" y="746"/>
+		<height>22</height>
+	</widget>
 	<widget field="LifterGear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="237" y="779"/>
 	</widget>
@@ -13,19 +20,11 @@
 	<widget field="SWERVE SPIN" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="21" y="809"/>
 	</widget>
-	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="821" y="686"/>
-		<property name="Buffer Size (samples)" value="50"/>
-	</widget>
-	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="422" y="693"/>
-		<property name="Buffer Size (samples)" value="50"/>
-	</widget>
 	<widget field="Intake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="763"/>
+		<location x="179" y="858"/>
 	</widget>
 	<widget field="intakeOn" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="717"/>
+		<location x="185" y="885"/>
 	</widget>
 	<widget field="Starting Angle" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="0" y="593"/>
@@ -105,17 +104,11 @@
 	<widget field="TargetsFound" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1322" y="762"/>
 	</widget>
-	<widget field="ClimbSpeedDown" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="520"/>
-	</widget>
 	<widget field="ClimbSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="497"/>
+		<location x="711" y="480"/>
 	</widget>
 	<widget field="Up Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="740" y="544"/>
-	</widget>
-	<widget field="CLRampRate0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="351"/>
+		<location x="1239" y="823"/>
 	</widget>
 	<widget field="Auto Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="745" y="208"/>
@@ -193,7 +186,7 @@
 		<width>195</width>
 	</widget>
 	<widget field="Conveyer Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="518" y="231"/>
+		<location x="503" y="216"/>
 		<width>192</width>
 	</widget>
 	<widget field="Shooter Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -219,7 +212,7 @@
 		<width>95</width>
 	</widget>
 	<widget field="Battery" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="660" y="417"/>
+		<location x="1622" y="718"/>
 		<width>282</width>
 		<height>267</height>
 		<property name="Buffer Size (samples)" value="500"/>
@@ -339,4 +332,6 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="ClimbSpeedDown"/>
+	<hidden field="CLRampRate0"/>
 </xml>

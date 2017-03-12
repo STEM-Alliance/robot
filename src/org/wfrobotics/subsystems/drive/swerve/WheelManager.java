@@ -204,7 +204,7 @@ public class WheelManager implements Runnable
         for (int i = 0; i < SwerveConstants.WHEEL_COUNT; i++)
         {
             WheelsUnscaled[i] = new Vector(robot.velocity.getX() - robot.spin * wheels[i].position.getY(),
-                    -robot.velocity.getY() + robot.spin * wheels[i].position.getX());
+                    -(robot.velocity.getY() + robot.spin * wheels[i].position.getX()));
 
             if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
             {
