@@ -14,8 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Lifter extends Subsystem
 {
     private final boolean DEBUG = true;
-    private final double TOP = 1;
-    private final double BOTTOM = 0;
+    private final double SOFTWARE_LIMIT_MARGIN = .05;
+    private final double TOP_LIMIT = .6;
+    private final double BOTTOM_LIMIT = .4;
+    private final double TOP = TOP_LIMIT - SOFTWARE_LIMIT_MARGIN;
+    private final double BOTTOM = BOTTOM_LIMIT + SOFTWARE_LIMIT_MARGIN;
     private final double P = .3;
     private final double I = .001;
     
@@ -38,7 +41,7 @@ public class Lifter extends Subsystem
         
         motor.enableForwardSoftLimit(true);
         motor.enableReverseSoftLimit(true);
-        motor.enableLimitSwitch(false, false);
+        motor.enableLimitSwitch(true, true);
         motor.enableBrakeMode(true);
         motor.enableControl();
         motor.set(motor.getPosition());  // Recommended for closed loop control
