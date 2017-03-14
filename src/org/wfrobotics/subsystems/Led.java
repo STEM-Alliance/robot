@@ -1,6 +1,7 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.commands.LED;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotMap;
 
 import com.mindsensors.CANLight;
@@ -99,21 +100,43 @@ public class Led extends Subsystem
 
     public void setOnColor(HARDWARE hardware, boolean on, int r, int g, int b)
     {
-//        if (!on)
-//        {
-//            r = 0;
-//            g = 0;
-//            b = 0;
-//        }
-//
-//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-//        {
-//            top.showRGB(r, g, b);
-//        }
-//
-//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-//        {
-//            side.showRGB(r, g, b);
-//        }
+        if (!on)
+        {
+            r = 0;
+            g = 0;
+            b = 0;
+        }
+
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+        {
+            top.showRGB(r, g, b);
+        }
+
+        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+        {
+            side.showRGB(r, g, b);
+        }
+    }
+        public void fadeColor(HARDWARE hardware, double time, boolean on, int r, int g, int b, int r2, int g2, int b2)
+        {
+            if (!on)
+            {
+                r = 0;
+                g = 0;
+                b = 0;
+                top.writeRegister(4, time, r, g, b);
+                top.writeRegister(5, time, r2, g2, b2);
+            }
+
+            if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+            {
+                
+                top.fade(4, 5);
+            }
+
+            if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+            {
+                top.fade(4, 5);
+            }
     }
 }
