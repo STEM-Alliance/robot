@@ -1,5 +1,7 @@
 package org.wfrobotics.subsystems.drive.swerve;
 
+import org.wfrobotics.robot.Robot;
+
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -34,7 +36,10 @@ public class Shifter
         
         if(invert)
         {
+            if (Robot.driveSubsystem.getLastVector().getMag() != 0)
+            {
             angle += useHighGear ? SwerveConstants.SHIFTER_RANGE/2.0 : -SwerveConstants.SHIFTER_RANGE/2.0;
+            }
         }
         else
         {

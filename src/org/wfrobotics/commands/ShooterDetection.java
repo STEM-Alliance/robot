@@ -39,4 +39,19 @@ public class ShooterDetection extends Command
     {
         // TODO make some getters for the command group to call for data
     }
+    public double getDistanceFromCenter()
+    {
+        return Robot.targetingSubsystem.DistanceFromCenter;
+    }
+    
+    public boolean getIsFound()
+    {
+        return Robot.targetingSubsystem.InView;
+    }
+
+    public double getFullWidth()
+    {
+        return Robot.targetingSubsystem.FullWidth;
+    }
+
 }

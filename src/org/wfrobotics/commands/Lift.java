@@ -1,6 +1,7 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.subsystems.Led.HARDWARE;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -34,6 +35,7 @@ public class Lift extends Command
         {
             direction = (++samplesWithGear > SAMPLES_UNTIL_LIFT);  // How many cycles have we had a gear?
             timeLastSensed = now;
+            Robot.ledSubsystem.fadeColor(HARDWARE.TOP, .5, true, 0, 0xfff, 0, 255, 103, 0);
         }
         else
         {
