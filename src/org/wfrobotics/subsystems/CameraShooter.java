@@ -1,7 +1,7 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.commands.ShooterDetection;
+import org.wfrobotics.commands.DetectShooter;
 import org.wfrobotics.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,13 +22,13 @@ public class CameraShooter extends NetworkTableCamera
 
     public CameraShooter()
     {
-        super("Target");
+        super("Target", 1);
     }
     
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new ShooterDetection(ShooterDetection.MODE.OFF));
+        setDefaultCommand(new DetectShooter(DetectShooter.MODE.OFF));
     }
     
 
@@ -63,10 +63,5 @@ public class CameraShooter extends NetworkTableCamera
             FullWidth = 0;
             InView = false;
         }
-    }
-    public double DistanceToTarget()
-    {
-        //return (Constants.TargetHeightIn * Constants.FocalLengthIn) / data.Pitch;
-        return 0;
     }
 }

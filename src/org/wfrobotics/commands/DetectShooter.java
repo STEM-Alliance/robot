@@ -5,42 +5,39 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- * Set robot LEDs
- * This command sets the highly visible LEDs mounted on the robot
- * Useful for communication of events to driver or human player, or flaunting after we do something awesome
- */
-public class GearDetection extends Command
+public class DetectShooter extends Command 
 {
     public enum MODE {GETDATA, OFF};
-    
+
     private final MODE mode;
-    
-    public GearDetection(MODE mode)
+
+    public DetectShooter(MODE mode)
     {
-        requires(Robot.targetGearSubsystem);
+        requires(Robot.targetShooterSubsystem);
         
         this.mode = mode;
     }
+
     
-    @Override
     protected void initialize()
     {
-        Robot.targetGearSubsystem.enable(0);
-    }
-
-    @Override
-    protected void execute()
-    {
-        Utilities.PrintCommand("CameraGear", this, mode.toString());
-    
         if (mode == MODE.GETDATA)
         {
-            
-            Robot.targetGearSubsystem.run();
+            Robot.targetShooterSubsystem.enable();
         }
     }
     
+    @Override
+    protected void execute()
+    {
+        Utilities.PrintCommand("CameraShooter", this, mode.toString());
+        
+        if (mode == MODE.GETDATA)
+        {
+            Robot.targetShooterSubsystem.run();
+        }
+    }
+
     @Override
     protected boolean isFinished()
     {
@@ -50,27 +47,32 @@ public class GearDetection extends Command
     @Override
     protected void end()
     {
-        
+        Robot.targetShooterSubsystem.disable();
     }
-
+    
     @Override
     protected void interrupted()
     {
         end();
     }
     
+    public void get()
+    {
+        // TODO make some getters for the command group to call for data
+    }
+    
     public double getDistanceFromCenter()
     {
-        return Robot.targetGearSubsystem.DistanceFromCenter;
+        return Robot.targetShooterSubsystem.DistanceFromCenter;
     }
     
     public boolean getIsFound()
     {
-        return Robot.targetGearSubsystem.InView;
+        return Robot.targetShooterSubsystem.InView;
     }
 
     public double getFullWidth()
     {
-        return Robot.targetGearSubsystem.FullWidth;
+        return Robot.targetShooterSubsystem.FullWidth;
     }
 }
