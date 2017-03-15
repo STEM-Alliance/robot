@@ -1,7 +1,7 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.commands.GearDetection;
+import org.wfrobotics.commands.DetectGear;
 import org.wfrobotics.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,13 +23,13 @@ public class CameraGear extends NetworkTableCamera
 
     public CameraGear()
     {
-        super("Target");
+        super("Target", 0);
     }
     
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new GearDetection(GearDetection.MODE.OFF));
+        setDefaultCommand(new DetectGear(DetectGear.MODE.OFF));
     }
     
     public void run()

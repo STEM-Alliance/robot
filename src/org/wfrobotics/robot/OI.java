@@ -2,11 +2,11 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.Conveyor;
-import org.wfrobotics.commands.GearDetection;
+import org.wfrobotics.commands.DetectGear;
 import org.wfrobotics.commands.LED;
 import org.wfrobotics.commands.Rev;
 import org.wfrobotics.commands.Shoot;
-import org.wfrobotics.commands.ShooterDetection;
+import org.wfrobotics.commands.DetectShooter;
 import org.wfrobotics.commands.Up;
 import org.wfrobotics.commands.VisionGearDropOff;
 import org.wfrobotics.commands.VisionShoot;

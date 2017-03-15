@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionShoot extends CommandGroup 
 {    
-    private ShooterDetection camera;
+    private DetectShooter camera;
     private AutoDrive rotate;
     private PIDController pidRotate;
 
@@ -19,7 +19,7 @@ public class VisionShoot extends CommandGroup
     public VisionShoot() 
     {
         pidRotate = new PIDController(.8, 0.025, 0.0001, .5);
-        camera = new ShooterDetection(ShooterDetection.MODE.GETDATA);
+        camera = new DetectShooter(DetectShooter.MODE.GETDATA);
         rotate = new AutoDrive(0, -1, 999); //TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
         
         addParallel(camera);

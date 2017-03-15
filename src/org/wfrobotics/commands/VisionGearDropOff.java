@@ -13,7 +13,7 @@ public class VisionGearDropOff extends CommandGroup
 {
     final static double HEXAGON_ANGLE = 30;  // All corners are 120 on the interior, therefore the sides we want are 30 degrees past straight ahead
 
-    private GearDetection camera;
+    private DetectGear camera;
     private AutoDrive drive;
     private PIDController pidX;
     private double heading = -1;
@@ -23,7 +23,7 @@ public class VisionGearDropOff extends CommandGroup
     public VisionGearDropOff() 
     {
         pidX = new PIDController(.8, 0.025, 0.0001, .5);
-        camera = new GearDetection(GearDetection.MODE.GETDATA);
+        camera = new DetectGear(DetectGear.MODE.GETDATA);
         drive = new AutoDrive(0, 0, 0, -1, 999);
 
         addParallel(camera);

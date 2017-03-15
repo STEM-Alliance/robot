@@ -48,8 +48,12 @@ public abstract class NetworkTableCamera extends Subsystem
     protected TargetTable table; 
     protected ArrayList<TargetData> data;
 
-    public NetworkTableCamera(String tableKey)
+    private final int SOURCE_DEFAULT = 0;
+    private int source;
+
+    public NetworkTableCamera(String tableKey, int source)
     {
+        this.source = source;
         sourceTable = NetworkTable.getTable("GRIP");
         table = new TargetTable(tableKey);
         data = new ArrayList<NetworkTableCamera.TargetData>();
@@ -81,8 +85,13 @@ public abstract class NetworkTableCamera extends Subsystem
         }
     }
     
-    public void enable(int source)
+    public void enable()
     {
         sourceTable.putNumber("CameraSource", source);
+    }
+    
+    public void disable()
+    {
+        sourceTable.putNumber("CameraSource", SOURCE_DEFAULT);
     }
 }
