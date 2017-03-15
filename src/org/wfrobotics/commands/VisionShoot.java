@@ -20,7 +20,7 @@ public class VisionShoot extends CommandGroup
     {
         pidRotate = new PIDController(.8, 0.025, 0.0001, .5);
         camera = new ShooterDetection(ShooterDetection.MODE.GETDATA);
-        rotate = new AutoDrive(0, 0, 999); //TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
+        rotate = new AutoDrive(0, -1, 999); //TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
         
         addParallel(camera);
         addSequential(rotate);
@@ -38,7 +38,7 @@ public class VisionShoot extends CommandGroup
             SmartDashboard.putNumber("ShooterCenter", distanceFromCenter);
 
             // so get an estimate speed to line us up
-            valueAngle = pidRotate.update(distanceFromCenter);
+            valueAngle = -pidRotate.update(distanceFromCenter);
 
             if(Math.abs(distanceFromCenter) < .1)
             {
@@ -62,6 +62,7 @@ public class VisionShoot extends CommandGroup
                 // we're either at the target
                 // or something went wrong
                 done = true;
+                rotate.set(new Vector(0, 0), 0, -1);
             }
         }
         else
