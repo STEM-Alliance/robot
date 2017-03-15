@@ -6,62 +6,55 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.AutoDrive;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionShoot extends CommandGroup 
 {    
     private ShooterDetection camera;
     private AutoDrive rotate;
-    private PIDController pidX;
+    private PIDController pidRotate;
 
     private boolean done;
     
     public VisionShoot() 
     {
+        pidRotate = new PIDController(.8, 0.025, 0.0001, .5);
         camera = new ShooterDetection(ShooterDetection.MODE.GETDATA);
-        rotate = new AutoDrive(0, 0, 999); //TODO: make this rotate correctly
-        pidX = new PIDController(.8, 0.025, 0.0001, .5);
+        rotate = new AutoDrive(0, 0, 999); //TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
         
         addParallel(camera);
-        addSequential(rotate); // TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
+        addSequential(rotate);
     }
     
     protected void execute()
     {
         double distanceFromCenter = camera.getDistanceFromCenter();
         double visionWidth = camera.getFullWidth();
-        double valueY = 0;
         double valueAngle = 0;
 
         if(camera.getIsFound())
         {
             // we think we've found at least one target
+            SmartDashboard.putNumber("ShooterCenter", distanceFromCenter);
 
             // so get an estimate speed to line us up
-            valueAngle = pidX.update(distanceFromCenter);
-
-            // then if we're somewhat lined up
-            if(Math.abs(distanceFromCenter) < .25)
-            {
-                // start approaching slowly
-                valueY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.55, -.2);
-            }
+            valueAngle = pidRotate.update(distanceFromCenter);
 
             if(Math.abs(distanceFromCenter) < .1)
             {
                 // if we started really far away from center, 
                 // this will then reduce that overshoot
                 // maybe
-                pidX.resetError();  // DRL I'd remove this. This makes tuning your PID exponentially harder and if tuned correctly you wont oscillate much anyway. You can't remove all oscillation.
+                //pidRotate.resetError();
             }
 
             // we can still see a target
             if(visionWidth > 15)
             {
-                Vector vector = new Vector(0, valueY);
-
+                SmartDashboard.putNumber("ShooterAngle", valueAngle);
                 //TODO this only works for the front facing spring
                 // address field heading here
-                rotate.set(vector, valueAngle, -1);
+                rotate.set(new Vector(0, 0), valueAngle, -1);
             }
             else
             {
@@ -75,7 +68,6 @@ public class VisionShoot extends CommandGroup
         {
             done = true;
         }
-        // TODO: make This work as a shoot command, not as gear
     }
 }
 

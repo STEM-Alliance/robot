@@ -103,7 +103,7 @@ public class Robot extends SampleRobot
     
     public static Lifter lifterSubsystem;
     public static Shooter shooterSubsystem;
-    public static CameraShooter targetingSubsystem;
+    public static CameraShooter targetShooterSubsystem;
     public static CameraGear targetGearSubsystem;    
     
     Command autonomousCommand;
@@ -121,7 +121,7 @@ public class Robot extends SampleRobot
         driveSubsystem = new SwerveDriveSteamworks();
         augerSubsystem = new Auger();
         targetGearSubsystem = new CameraGear();
-        targetingSubsystem = new CameraShooter();
+        targetShooterSubsystem = new CameraShooter();
         climberSubsystem = new Climber();
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();
