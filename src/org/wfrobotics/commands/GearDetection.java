@@ -26,6 +26,7 @@ public class GearDetection extends Command
     @Override
     protected void initialize()
     {
+        Robot.targetGearSubsystem.enable(0);
     }
 
     @Override

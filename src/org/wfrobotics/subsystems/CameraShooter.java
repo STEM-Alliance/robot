@@ -22,7 +22,7 @@ public class CameraShooter extends NetworkTableCamera
 
     public CameraShooter()
     {
-        super("Shooter");
+        super("Target");
     }
     
     @Override
@@ -39,27 +39,20 @@ public class CameraShooter extends NetworkTableCamera
         
         getUpdatedData();
         
-        SmartDashboard.putNumber("GearTargets", data.size());
+        SmartDashboard.putNumber("ShooterTargets", data.size());
         
         if(data.size() == DESIRED_TARGETS)
         {
             xAverage = (data.get(0).x + data.get(1).x)/2.0;
             xPercent = xAverage / table.imageWidth;
             DistanceFromCenter = Utilities.scaleToRange(xPercent, 0, 1, -1, 1);
+            FullWidth = Math.max(data.get(0).width, data.get(1).width);
             InView = true;
             
-            if(data.get(1).x > data.get(0).x)
-            {
-                FullWidth = (data.get(1).x + data.get(1).width/2) - (data.get(0).x - data.get(0).width/2);
-            }
-            else
-            {
-                FullWidth = (data.get(0).x + data.get(0).width/2) - (data.get(1).x - data.get(1).width/2);
-            }
         }
         else if (data.size() == 1)
         {
-            SmartDashboard.putNumber("percent", data.get(0).x / table.imageWidth);
+            //SmartDashboard.putNumber("percent", data.get(0).x / table.imageWidth);
             DistanceFromCenter = Utilities.scaleToRange(data.get(0).x / table.imageWidth, 0.0, 1.0, -1.0, 1.0);
             FullWidth = data.get(0).width;
             InView = true;
