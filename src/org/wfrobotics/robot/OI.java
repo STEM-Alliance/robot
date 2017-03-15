@@ -2,11 +2,14 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.Conveyor;
+import org.wfrobotics.commands.GearDetection;
 import org.wfrobotics.commands.LED;
 import org.wfrobotics.commands.Rev;
 import org.wfrobotics.commands.Shoot;
+import org.wfrobotics.commands.ShooterDetection;
 import org.wfrobotics.commands.Up;
 import org.wfrobotics.commands.VisionGearDropOff;
+import org.wfrobotics.commands.VisionShoot;
 import org.wfrobotics.commands.drive.DriveConfig;
 import org.wfrobotics.commands.drive.DriveSwerve;
 import org.wfrobotics.commands.drive.DriveSwerveCalibration;
@@ -88,6 +91,10 @@ public class OI
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
 //        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
         buttonPanelYellowBottom.toggleWhenPressed(new VisionGearDropOff());
+        buttonPanelBlackBottom.toggleWhenPressed(new VisionShoot());
+        //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
+        //buttonPanelYellowBottom.toggleWhenPressed(new GearDetection(GearDetection.MODE.GETDATA));
+        //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));
         
         buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
         
@@ -103,7 +110,7 @@ public class OI
         buttonPanelGreenTop.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
         buttonPanelGreenBottom.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
         
-        buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
+        //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));

@@ -61,7 +61,7 @@ public class VisionGearDropOff extends CommandGroup
                 // if we started really far away from center, 
                 // this will then reduce that overshoot
                 // maybe
-                pidX.resetError();  // DRL I'd remove this. This makes tuning your PID exponentially harder and if tuned correctly you wont oscillate much anyway. You can't remove all oscillation.
+                pidX.resetError();
             }
 
             // we can still see a target

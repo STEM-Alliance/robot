@@ -5,6 +5,7 @@ import org.wfrobotics.commands.GearDetection;
 import org.wfrobotics.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.networktables.*;
 
 
 /**
@@ -22,7 +23,7 @@ public class CameraGear extends NetworkTableCamera
 
     public CameraGear()
     {
-        super("Gear");
+        super("Target");
     }
     
     @Override
@@ -58,7 +59,7 @@ public class CameraGear extends NetworkTableCamera
         }
         else if (data.size() == 1)
         {
-            SmartDashboard.putNumber("percent", data.get(0).x / table.imageWidth);
+            //SmartDashboard.putNumber("percent", data.get(0).x / table.imageWidth);
             DistanceFromCenter = Utilities.scaleToRange(data.get(0).x / table.imageWidth, 0.0, 1.0, -1.0, 1.0);
             FullWidth = data.get(0).width;
             InView = true;
