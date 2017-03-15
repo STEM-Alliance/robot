@@ -33,18 +33,19 @@ public class Shifter
     {
         
         int angle = angleMid;
-        
+
+        //if (Robot.driveSubsystem.getLastVector().getMag() != 0)
+        //{
         if(invert)
         {
-            if (Robot.driveSubsystem.getLastVector().getMag() != 0)
-            {
             angle += useHighGear ? SwerveConstants.SHIFTER_RANGE/2.0 : -SwerveConstants.SHIFTER_RANGE/2.0;
-            }
+           
         }
         else
         {
             angle += useHighGear ? -SwerveConstants.SHIFTER_RANGE/2.0 : SwerveConstants.SHIFTER_RANGE/2.0;
         }
+        //}
         shifter.setAngle(angle);
         
         // Only start a transition if we are changing

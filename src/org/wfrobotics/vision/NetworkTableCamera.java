@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 public abstract class NetworkTableCamera extends Subsystem 
 {
@@ -43,11 +44,13 @@ public abstract class NetworkTableCamera extends Subsystem
         }
     };
     
+    protected NetworkTable sourceTable;
     protected TargetTable table; 
     protected ArrayList<TargetData> data;
 
     public NetworkTableCamera(String tableKey)
     {
+        sourceTable = NetworkTable.getTable("GRIP");
         table = new TargetTable(tableKey);
         data = new ArrayList<NetworkTableCamera.TargetData>();
     }
@@ -76,5 +79,10 @@ public abstract class NetworkTableCamera extends Subsystem
         {
             data.clear();
         }
+    }
+    
+    public void enable(int source)
+    {
+        sourceTable.putNumber("CameraSource", source);
     }
 }

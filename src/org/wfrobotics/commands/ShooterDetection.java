@@ -13,9 +13,15 @@ public class ShooterDetection extends Command
 
     public ShooterDetection(MODE mode)
     {
-        requires(Robot.targetingSubsystem);
+        requires(Robot.targetShooterSubsystem);
         
         this.mode = mode;
+    }
+
+    
+    protected void initialize()
+    {
+        Robot.targetShooterSubsystem.enable(1);
     }
     
     @Override
@@ -25,7 +31,7 @@ public class ShooterDetection extends Command
         
         if (mode == MODE.GETDATA)
         {            
-            Robot.targetingSubsystem.run();
+            Robot.targetShooterSubsystem.run();
         }
     }
 
@@ -41,17 +47,23 @@ public class ShooterDetection extends Command
     }
     public double getDistanceFromCenter()
     {
-        return Robot.targetingSubsystem.DistanceFromCenter;
+        return Robot.targetShooterSubsystem.DistanceFromCenter;
     }
     
     public boolean getIsFound()
     {
-        return Robot.targetingSubsystem.InView;
+        return Robot.targetShooterSubsystem.InView;
     }
 
     public double getFullWidth()
     {
-        return Robot.targetingSubsystem.FullWidth;
+        return Robot.targetShooterSubsystem.FullWidth;
+    }
+
+    public void enable()
+    {
+        // TODO Auto-generated method stub
+        
     }
 
 }
