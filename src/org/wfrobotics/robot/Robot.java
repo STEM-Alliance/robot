@@ -126,7 +126,7 @@ public class Robot extends SampleRobot
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();
         ledSubsystem = new Led();
-        lifterSubsystem = new Lifter();
+        lifterSubsystem = new Lifter(true);
         shooterSubsystem = new Shooter();
 
         oi = new OI();
@@ -181,6 +181,7 @@ public class Robot extends SampleRobot
     {
         while (isDisabled())
         {
+            lifterSubsystem.disabled();
             autonomousStartPosition = getRotaryStartingPosition();
             disabledDoGyro();
             

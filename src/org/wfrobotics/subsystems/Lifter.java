@@ -2,36 +2,37 @@ package org.wfrobotics.subsystems;
 
 import org.wfrobotics.commands.Lift;
 import org.wfrobotics.robot.RobotMap;
+import org.wfrobotics.subsystems.drive.swerve.SwerveConstants;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Lifter extends Subsystem
 {
     private final boolean DEBUG = true;
-    private final double SOFTWARE_LIMIT_MARGIN = .05;
-    private final double TOP_LIMIT = .6;
-    private final double BOTTOM_LIMIT = .4;
-    private final double TOP = TOP_LIMIT - SOFTWARE_LIMIT_MARGIN;
-    private final double BOTTOM = BOTTOM_LIMIT + SOFTWARE_LIMIT_MARGIN;
-    private final double P = .3;
-    private final double I = .001;
+    private final double TOP_LIMIT = .0775;
+    private final double BOTTOM_LIMIT = 50;
+    private double TOP = -.095;
+    private double BOTTOM = .095;
+    private final double P = .25;
+    private final double I = 0.001;
     
     private final CANTalon motor;
     private final DigitalInput senseGear;
     
-    public Lifter()
+    public Lifter(boolean reverseSensor)
     {        
         motor = new CANTalon(RobotMap.LIFTER_MOTOR);
         motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
         motor.changeControlMode(TalonControlMode.Position);
-        motor.setForwardSoftLimit(TOP);
-        motor.setReverseSoftLimit(BOTTOM);
+        motor.setForwardSoftLimit(TOP_LIMIT);
+        motor.setReverseSoftLimit(BOTTOM_LIMIT);
         motor.configNominalOutputVoltage(0, 0);
         motor.configPeakOutputVoltage(11, -11);
         motor.ConfigFwdLimitSwitchNormallyOpen(true);
@@ -39,12 +40,16 @@ public class Lifter extends Subsystem
         motor.setPID(P, I, 0, 0, 0, 10, 0);
         motor.setAllowableClosedLoopErr(0);
         
-        motor.enableForwardSoftLimit(true);
-        motor.enableReverseSoftLimit(true);
+        motor.enableForwardSoftLimit(false);
+        motor.enableReverseSoftLimit(false);
         motor.enableLimitSwitch(true, true);
+        motor.reverseOutput(true);
+        motor.setInverted(false);
+        motor.reverseSensor(true);
+        
         motor.enableBrakeMode(true);
         motor.enableControl();
-        motor.set(motor.getPosition());  // Recommended for closed loop control
+        motor.set(motor.getPosition());  // Recommended for closed loop control        
         
         senseGear = new DigitalInput(RobotMap.LIFTER_SENSOR_GEAR);
     }
@@ -53,6 +58,16 @@ public class Lifter extends Subsystem
     protected void initDefaultCommand()
     {
         setDefaultCommand(new Lift());
+    }
+    
+    public void disabled()
+    {
+        motor.setP(Preferences.getInstance().getDouble("LifterPID_P", SwerveConstants.CHASSIS_PID_P));
+        motor.setI(Preferences.getInstance().getDouble("LifterPID_I", SwerveConstants.CHASSIS_PID_I));
+        TOP = Preferences.getInstance().getDouble("LifterTop", TOP);
+        BOTTOM = Preferences.getInstance().getDouble("LifterBot", BOTTOM);   
+//      motor.setForwardSoftLimit(Preferences.getInstance().getDouble("LifterTopL", TOP_LIMIT));
+//      motor.setReverseSoftLimit(Preferences.getInstance().getDouble("LifterBottomL", BOTTOM_LIMIT));    
     }
     
     public boolean hasGear()
