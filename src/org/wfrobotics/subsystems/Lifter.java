@@ -100,11 +100,11 @@ public class Lifter extends Subsystem
         String position;
         double angle = motor.getPosition();
         
-        if (Math.abs(angle - TOP) < .02 || motor.isFwdLimitSwitchClosed())
+        if (Math.abs(angle - TOP) < .02 || motor.isRevLimitSwitchClosed())
         {
             position = "Top";
         }
-        else if (Math.abs(angle - BOTTOM) < .02 || motor.isRevLimitSwitchClosed())
+        else if (Math.abs(angle - BOTTOM) < .02 || motor.isFwdLimitSwitchClosed())
         {
             position = "Bottom";
         }
@@ -115,5 +115,11 @@ public class Lifter extends Subsystem
         
         SmartDashboard.putString("LifterState", position);
         SmartDashboard.putNumber("LifterAngle", angle);
+    }
+
+    public boolean atBottom()
+    {
+        // TODO Auto-generated method stub
+        return Math.abs(motor.getPosition() - BOTTOM) < .02 || motor.isFwdLimitSwitchClosed();
     }
 }

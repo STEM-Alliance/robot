@@ -47,6 +47,7 @@ public class Swerve
         Button buttonDriveFieldRelative;
         Button buttonDriveSetGyro;
         
+        
         public SwerveXBox(Xbox driver1, Xbox driver2, Panel panel)
         {
             this.driver1 = driver1;
@@ -59,6 +60,7 @@ public class Swerve
             buttonDriveShift= new XboxButton(driver1, Xbox.BUTTON.LB);
             buttonDriveFieldRelative= new XboxButton(driver1, Xbox.BUTTON.BACK);
             buttonDriveSetGyro = new XboxButton(driver1, Xbox.BUTTON.START);
+           
 
             //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
             buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));

@@ -12,10 +12,16 @@ public class Lift extends Command
     public double timeLastSensed;
     public double samplesWithGear;
     
+    public  boolean isManualDown = false;
+    
     public Lift()
     {
         requires(Robot.lifterSubsystem);
         samplesWithGear = 0;
+    }
+    public Lift(boolean doYouWantItToGoDownManualy)
+    {
+        this.isManualDown = doYouWantItToGoDownManualy;
     }
     
     @Override
@@ -27,25 +33,41 @@ public class Lift extends Command
     @Override
     protected void execute()
     {
-        boolean direction;
-        double now = timeSinceInitialized();
-        
-        if (Robot.lifterSubsystem.hasGear())
+        if ( isManualDown == false)
         {
-            direction = (++samplesWithGear > SAMPLES_UNTIL_LIFT);  // How many cycles have we had a gear?
-            timeLastSensed = now;
+            boolean direction;
+            double now = timeSinceInitialized();
+            
+            if (Robot.lifterSubsystem.hasGear())
+            {
+                direction = (++samplesWithGear > SAMPLES_UNTIL_LIFT);  // How many cycles have we had a gear?
+                timeLastSensed = now;
+            }
+            else
+            {
+                direction = now - timeLastSensed < TIMEOUT_NO_GEAR;  // How long since we had a gear?
+            }
+            
+            Robot.lifterSubsystem.set(direction);
         }
-        else
-        {
-            direction = now - timeLastSensed < TIMEOUT_NO_GEAR;  // How long since we had a gear?
+        else 
+        {   
+            Robot.lifterSubsystem.set(false);
+            
         }
-        
-        Robot.lifterSubsystem.set(direction);
     }
+    
 
     @Override
     protected boolean isFinished()
     {
-        return false;
+        if(isManualDown)
+        {
+            return Robot.lifterSubsystem.atBottom();
+        }
+        else
+        {
+            return false;
+        }
     }
 }
