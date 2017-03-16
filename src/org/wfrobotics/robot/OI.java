@@ -4,6 +4,7 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.Conveyor;
 import org.wfrobotics.commands.DetectGear;
 import org.wfrobotics.commands.LED;
+import org.wfrobotics.commands.Lift;
 import org.wfrobotics.commands.Rev;
 import org.wfrobotics.commands.Shoot;
 import org.wfrobotics.commands.DetectShooter;
@@ -23,6 +24,7 @@ import org.wfrobotics.robot.driveoi.Mecanum.*;
 import org.wfrobotics.robot.driveoi.Swerve.*;
 import org.wfrobotics.robot.driveoi.Tank.*;
 import org.wfrobotics.subsystems.Led;
+import org.wfrobotics.subsystems.Lifter;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -74,6 +76,8 @@ public class OI
     Button buttonPanelGreenTop = new PanelButton(panel, Panel.BUTTON.GREEN_T);
     Button buttonPanelGreenBottom = new PanelButton(panel, Panel.BUTTON.GREEN_B);
     
+    Button buttonManual = new XboxButton(xboxMan, Xbox.BUTTON.A);
+    
     // used for manual intake DO NOT USE OTHERWISE
     public static Button buttonPanelBlackTop = new PanelButton(panel, Panel.BUTTON.BLACK_T);
     public static Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_B);
@@ -87,6 +91,9 @@ public class OI
     
     public OI()
     {        
+        
+        buttonManual.whenPressed(new Lift(true));;
+        
 //        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
 //        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
@@ -104,7 +111,7 @@ public class OI
 //        buttonDriveA.whileHeld(new Rev(Rev.MODE.SHOOT));
 //        buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
         //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
-
+        
         buttonManRB.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
         buttonManLB.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
         buttonPanelGreenTop.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
