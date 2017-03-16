@@ -1,5 +1,14 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="ShooterAngle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="350"/>
+	</widget>
+	<widget field="ShooterCenter" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="242" y="411"/>
+	</widget>
+	<widget field="ShooterTargets" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="248" y="357"/>
+	</widget>
 	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="822" y="832"/>
 	</widget>
@@ -8,14 +17,14 @@
 		<height>22</height>
 	</widget>
 	<widget field="LifterGear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="237" y="779"/>
+		<location x="1440" y="765"/>
 	</widget>
 	<widget field="LifterSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="238" y="757"/>
+		<location x="1440" y="743"/>
 		<height>22</height>
 	</widget>
 	<widget field="LifterState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="239" y="735"/>
+		<location x="1439" y="720"/>
 	</widget>
 	<widget field="SWERVE SPIN" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="21" y="809"/>
@@ -57,7 +66,8 @@
 		<location x="837" y="686"/>
 	</widget>
 	<widget field="CameraShooter Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="740"/>
+		<location x="173" y="383"/>
+		<width>285</width>
 	</widget>
 	<widget field="GearFound" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="773" y="778"/>
@@ -90,7 +100,7 @@
 		<location x="0" y="855"/>
 	</widget>
 	<widget field="CameraGear Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1224" y="712"/>
+		<location x="962" y="797"/>
 		<width>271</width>
 		<height>23</height>
 	</widget>
@@ -102,7 +112,7 @@
 		<location x="0" y="786"/>
 	</widget>
 	<widget field="TargetsFound" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1322" y="762"/>
+		<location x="1090" y="775"/>
 	</widget>
 	<widget field="ClimbSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="711" y="480"/>
@@ -288,7 +298,7 @@
 		<width>215</width>
 	</widget>
 	<widget field="Drive Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="137" y="421"/>
+		<location x="131" y="462"/>
 		<width>335</width>
 	</widget>
 	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
@@ -332,6 +342,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="ClimbSpeedDown"/>
-	<hidden field="CLRampRate0"/>
 </xml>
