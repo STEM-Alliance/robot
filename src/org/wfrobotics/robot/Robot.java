@@ -1,4 +1,3 @@
-
 package org.wfrobotics.robot;
 
 import org.wfrobotics.commands.*;
@@ -18,22 +17,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends SampleRobot 
 {
+    public static final double START_ANGLE_SHOOT = 99;
+    public static final double START_ANGLE_GEAR_ONLY = 90;
+    
+    public enum POSITION_ROTARY {SIDE_BOILER, CENTER, SIDE_LOADING_STATION};
+    
     public enum AUTO_COMMAND
     {
         NONE,
         DRIVE,
         SHOOT, SHOOT_THEN_HOPPER, SHOOT_THEN_GEAR,
-        GEAR, GEAR_DR, DRIVE_HG;
+        GEAR_VISION, GEAR_DR, DRIVE_HG;
         
-        public Command getCommand()
+        public Command getCommand(POSITION_ROTARY startingPosition)
         {
             Command autonomousCommand;
             
             switch(this)
             {
-            case NONE:
-                autonomousCommand = new AutoDrive();
-                break;
             case SHOOT:
                 autonomousCommand = new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING);
                 break;
@@ -41,20 +42,21 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoShoot();
                 break;
             case SHOOT_THEN_GEAR:
-                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.VISION, true);
+                autonomousCommand = new AutoGear(startingPosition, AutoGear.MODE.VISION, true);
                 break;
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
                 break;
             case DRIVE_HG:
-                autonomousCommand = new AutoDrive(0,.65, 0, 4);
+                autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED*.75, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE*.75);
                 break;
-            case GEAR:
-                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.VISION, false);
+            case GEAR_VISION:
+                autonomousCommand = new AutoGear(startingPosition, AutoGear.MODE.VISION, false);
                 break;
             case GEAR_DR:
-                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.DEAD_RECKONING, false);
+                autonomousCommand = new AutoGear(startingPosition, AutoGear.MODE.DEAD_RECKONING, false);
                 break;
+            case NONE:
             default:
                 autonomousCommand = new AutoDrive();
                 break;
@@ -63,7 +65,7 @@ public class Robot extends SampleRobot
             return autonomousCommand;
         }
         
-        public double getGyroOffset()
+        public double getGyroOffset(POSITION_ROTARY startingPosition)
         {
             int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1; // X driving based on alliance for mirrored field
             
@@ -76,11 +78,20 @@ public class Robot extends SampleRobot
                 break;
             case SHOOT_THEN_HOPPER:
             case SHOOT_THEN_GEAR:
-                startAngle = signX * 99;
+                startAngle = signX * START_ANGLE_SHOOT;
                 break;
             case GEAR_DR:
-            case GEAR:
-                startAngle = 90;
+//                if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
+//                {
+//                    startAngle = signX * START_ANGLE_SHOOT;                 
+//                }
+//                else
+//                {
+//                    startAngle = START_ANGLE_GEAR_ONLY;
+//                }
+//                break;
+            case GEAR_VISION:
+                startAngle = START_ANGLE_GEAR_ONLY;
                 break;
             default:
                 startAngle = 0;
@@ -89,9 +100,7 @@ public class Robot extends SampleRobot
             
             return startAngle;
         }
-    }
-    
-    public enum POSITION_ROTARY {SIDE_BOILER, CENTER, SIDE_LOADING_STATION};    
+    } 
     
     public static SwerveDriveSteamworks driveSubsystem;
     public static Auger augerSubsystem;
@@ -138,7 +147,7 @@ public class Robot extends SampleRobot
         //autoChooser.addObject("Auto Shoot (NOT WORKING YET)", AUTO_COMMAND.SHOOT);
         autoChooser.addObject("Auto Shoot then Hopper", AUTO_COMMAND.SHOOT_THEN_HOPPER);
         autoChooser.addObject("Auto Shoot then Gear", AUTO_COMMAND.SHOOT_THEN_GEAR);
-        autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR);
+        autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR_VISION);
         autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
     }
@@ -160,11 +169,11 @@ public class Robot extends SampleRobot
         //autonomousCommand = (Command) autoChooser.getSelected();
         AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
         
-        autonomousCommand = command.getCommand();
+        autonomousCommand = command.getCommand(autonomousStartPosition);
         
         // Zero the Gyro based on starting orientation of the selected autonomous mode
-        Gyro.getInstance().zeroYaw(command.getGyroOffset());
-        Robot.driveSubsystem.setLastHeading(command.getGyroOffset());
+        Gyro.getInstance().zeroYaw(command.getGyroOffset(autonomousStartPosition));
+        Robot.driveSubsystem.setLastHeading(command.getGyroOffset(autonomousStartPosition));
         
         // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();
@@ -186,9 +195,8 @@ public class Robot extends SampleRobot
             disabledDoGyro();
             
             AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
-            SmartDashboard.putNumber("StartingAngle", command.getGyroOffset());
+            SmartDashboard.putNumber("StartingAngle", command.getGyroOffset(autonomousStartPosition));
             SmartDashboard.putBoolean("TeamRed", DriverStation.getInstance().getAlliance() == Alliance.Red);
-            SmartDashboard.putNumber("TeamLocation", DriverStation.getInstance().getLocation());
             
             driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());

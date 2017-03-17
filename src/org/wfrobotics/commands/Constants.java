@@ -7,8 +7,8 @@ package org.wfrobotics.commands;
  */
 public class Constants 
 {
-   public static final double AUTONOMOUS_TIME_DRIVE_MODE = 5;
-   public static final double AUTONOMOUS_DRIVE_SPEED = .8;
+   public static final double AUTONOMOUS_TIME_DRIVE_MODE = 4;
+   public static final double AUTONOMOUS_DRIVE_SPEED = .6;
    public static final double AUTONOMOUS_TURN_SPEED = .5;
    public static final double AUTONOMOUS_TURN_TOLERANCE = .1;
    

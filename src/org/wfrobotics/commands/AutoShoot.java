@@ -5,7 +5,6 @@ import org.wfrobotics.commands.drive.AutoDrive;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class AutoShoot extends CommandGroup 
 {

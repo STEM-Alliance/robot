@@ -4,6 +4,7 @@ import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -30,7 +31,7 @@ public class AutoGear extends CommandGroup
             // Assume values are Red Alliance (boiler on your right)
             if (startingPosition == POSITION_ROTARY.CENTER)
             {
-                return new Config(1.8, 0, 0, 0);
+                return new Config(2.1, 0, 0, 0);
             }
             else if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
             {
@@ -68,7 +69,7 @@ public class AutoGear extends CommandGroup
             shoot();
         }
         
-        driveToSpring(shootFirst);
+        driveToSpring(shootFirst);  // Done for: 
         
         scoreGear();
         //postGearAutonomous(POST_GEAR_AUTONOMOUS.NONE);
@@ -87,21 +88,23 @@ public class AutoGear extends CommandGroup
     
     private void driveToSpring(boolean shootFirst)
     {
+        //Preferences.getInstance().get
         if (shootFirst)
         {
-            addSequential(new AutoDrive(0, 1, 0, signX * 33, 2.05));
+            addSequential(new AutoDrive(0, .6, 0, signX * 33, 1.5));
         }
         else
         {
-            addSequential(new AutoDrive(0, 1, 0, -1, 2.05));   
+            addSequential(new AutoDrive(0, .6, 0, -1, 1.5));
         }
+        addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
     }
 
     private void scoreGear()
     {
         //addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
         
-        addSequential(new AutoDrive(0,.7,0,-1,config.timeApproachAirship));
+        //addSequential(new AutoDrive(0,.75,0,-1,config.timeApproachAirship));
         
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
@@ -126,6 +129,9 @@ public class AutoGear extends CommandGroup
                 break;
             case VISION:
                 addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
+                addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
+                addSequential(new Lift(false));
+                addSequential(new AutoDrive(-.4, 0, 0, -1, 1));  // Don't coast GOOD
                 break;
             default:
                 break;
