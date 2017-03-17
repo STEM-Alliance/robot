@@ -5,46 +5,39 @@ import org.wfrobotics.commands.drive.AutoDrive;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class AutoShoot extends CommandGroup 
 {
     public enum MODE_DRIVE {DEAD_RECKONING_MIDPOINT, DEAD_RECKONING_HOPPER, LIGHT_SENSOR};
     public enum MODE_SHOOT {DEAD_RECKONING, VISION};
     
+    private final double ANGLE_WALL_IMPACT = 175;
+    private final double HOPPER_SHOOT_TIME = 15;
+    
     /**
      * Dead reckoning. Shoot from starting position, then drive past the line.
      */
-    public AutoShoot(boolean original)
-    {
-        
+    public AutoShoot()
+    {        
         int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1 : -1; // X driving based on alliance for mirrored field
-        if(original)
-        {
-            addParallel(new AutoDrive(0, 0, 0, 5.5)); // GOOD
-            addParallel(new IntakeSetup(true)); // GOOD
-            addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6)); // GOOD
-            addParallel(new Shoot(Conveyor.MODE.OFF)); // GOOD
-            addParallel(new Rev(Rev.MODE.FORCE_OFF)); // GOOD
-            addParallel(new IntakeSetup(false)); // GOOD
-            addSequential(new AutoDrive(signX * .65, 1, 0, 180, 4.3));  // GOOD
-            addSequential(new AutoDrive(signX * -.65, -.65, 0, -1, .33));  // Get off wall - NEED TESTING
-            addSequential(new AutoDrive(0, -.65, 0, -1, .33));  // Get in front of hopper - NEED TESTING
-            addSequential(new AutoDrive(.65, 180 + signX * 9, .1, .33));  // Aim at the boiler - NEED TESTING
-            addParallel(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 9)); // GOOD
-            addSequential(new AutoDrive(0, 0, 0, -1, 9)); // GOOD
-        }
-        else
-        {
-            addParallel(new AutoDrive(0, 0, 0, 6));
-            addParallel(new IntakeSetup(true));
-            addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6));
-            addParallel(new Shoot(Conveyor.MODE.OFF));
-            addParallel(new Rev(Rev.MODE.FORCE_OFF));
-            addParallel(new IntakeSetup(false));
-            addSequential(new AutoDrive(signX * .45, .75, 0, 0, 2));
-            addSequential(new AutoDrive(0,.55, 0, 0, 2));
-            addSequential(new AutoDrive(0, 0, 0, 0, 9));
-        }
+        
+        addParallel(new AutoDrive(0, 0, 0, 5.5)); // GOOD
+        addParallel(new IntakeSetup(true)); // GOOD
+        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6)); // GOOD
+        addParallel(new Shoot(Conveyor.MODE.OFF)); // GOOD
+        addParallel(new Rev(Rev.MODE.FORCE_OFF)); // GOOD
+        addParallel(new IntakeSetup(false)); // GOOD
+        addSequential(new AutoDrive(signX * .65, 1, 0, ANGLE_WALL_IMPACT, 2.05));  // GOOD
+        addSequential(new AutoDrive(signX * 1, 0, 0, ANGLE_WALL_IMPACT, .6));  // GOOD
+//        addParallel(new Rev(Rev.MODE.RAMP)); // Wind-up shooter - NEED TESTING
+        addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
+//      addParallel(new Rev(Rev.MODE.RAMP)); // Wind-up shooter - NEED TESTING
+        addSequential(new AutoDrive(signX * -.5, 0, 0, ANGLE_WALL_IMPACT, .5));  // Get off wall - NEED TESTING
+        addParallel(new IntakeSetup(true)); // GOOD
+        addParallel(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, HOPPER_SHOOT_TIME)); // GOOD
+        addSequential(new AutoDrive(0, 0, 0, -1, HOPPER_SHOOT_TIME)); // Catch balls - GOOD
+        addSequential(new AutoDrive(0, 0, 0, -1, 15)); // Excess autonomous for safety - GOOD
     }
 
     public AutoShoot(MODE_DRIVE drive, MODE_SHOOT shoot)

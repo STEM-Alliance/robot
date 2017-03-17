@@ -55,7 +55,7 @@ public class AutoGear extends CommandGroup
     private final int signX;
     private final Config config;
 
-    public  AutoGear(POSITION_ROTARY startPosition, MODE mode)
+    public  AutoGear(POSITION_ROTARY startPosition, MODE mode, boolean shootFirst)
     {
         this.startPosition = startPosition;
         this.mode = mode;
@@ -63,8 +63,38 @@ public class AutoGear extends CommandGroup
         signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1;  // X driving based on alliance for mirrored field
         config = Config.getConfig(startPosition);
 
+        if (shootFirst)
+        {
+            shoot();
+        }
+        
+        driveToSpring(shootFirst);
+        
         scoreGear();
         //postGearAutonomous(POST_GEAR_AUTONOMOUS.NONE);
+    }
+    
+    private void shoot()
+    {
+        addParallel(new AutoDrive(0, 0, 0, 5.5));
+        addParallel(new IntakeSetup(true));
+        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6));
+        addParallel(new Shoot(Conveyor.MODE.OFF));
+        addParallel(new Rev(Rev.MODE.FORCE_OFF));
+        addParallel(new IntakeSetup(false));
+        addSequential(new AutoDrive(0, 0, 0, -1, .1));
+    }
+    
+    private void driveToSpring(boolean shootFirst)
+    {
+        if (shootFirst)
+        {
+            addSequential(new AutoDrive(0, 1, 0, signX * 33, 2.05));
+        }
+        else
+        {
+            addSequential(new AutoDrive(0, 1, 0, -1, 2.05));   
+        }
     }
 
     private void scoreGear()
