@@ -22,7 +22,7 @@ public class Robot extends SampleRobot
     {
         NONE,
         DRIVE,
-        SHOOT, SHOOT_THEN_DRIVE, SHOOT_CROSS_HG,
+        SHOOT, SHOOT_THEN_HOPPER, SHOOT_THEN_GEAR,
         GEAR, GEAR_DR, DRIVE_HG;
         
         public Command getCommand()
@@ -37,11 +37,11 @@ public class Robot extends SampleRobot
             case SHOOT:
                 autonomousCommand = new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING);
                 break;
-            case SHOOT_THEN_DRIVE:
-                autonomousCommand = new AutoShoot(true);
+            case SHOOT_THEN_HOPPER:
+                autonomousCommand = new AutoShoot();
                 break;
-            case SHOOT_CROSS_HG:
-                autonomousCommand = new AutoShoot(false);
+            case SHOOT_THEN_GEAR:
+                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.VISION, true);
                 break;
             case DRIVE:
                 autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
@@ -50,10 +50,10 @@ public class Robot extends SampleRobot
                 autonomousCommand = new AutoDrive(0,.65, 0, 4);
                 break;
             case GEAR:
-                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.VISION);
+                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.VISION, false);
                 break;
             case GEAR_DR:
-                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.DEAD_RECKONING);
+                autonomousCommand = new AutoGear(autonomousStartPosition, AutoGear.MODE.DEAD_RECKONING, false);
                 break;
             default:
                 autonomousCommand = new AutoDrive();
@@ -74,8 +74,8 @@ public class Robot extends SampleRobot
             case SHOOT:
                 startAngle = 180;
                 break;
-            case SHOOT_THEN_DRIVE:
-            case SHOOT_CROSS_HG:
+            case SHOOT_THEN_HOPPER:
+            case SHOOT_THEN_GEAR:
                 startAngle = signX * 99;
                 break;
             case GEAR_DR:
@@ -136,8 +136,8 @@ public class Robot extends SampleRobot
         autoChooser.addObject("Auto Forward (LOW GEAR)", AUTO_COMMAND.DRIVE);
         autoChooser.addObject("Auto Forward  (HIGH GEAR)", AUTO_COMMAND.DRIVE_HG);
         //autoChooser.addObject("Auto Shoot (NOT WORKING YET)", AUTO_COMMAND.SHOOT);
-        autoChooser.addObject("Auto Shoot then Hopper", AUTO_COMMAND.SHOOT_THEN_DRIVE);
-        autoChooser.addObject("Auto Shoot then Cross", AUTO_COMMAND.SHOOT_CROSS_HG);
+        autoChooser.addObject("Auto Shoot then Hopper", AUTO_COMMAND.SHOOT_THEN_HOPPER);
+        autoChooser.addObject("Auto Shoot then Gear", AUTO_COMMAND.SHOOT_THEN_GEAR);
         autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR);
         autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
