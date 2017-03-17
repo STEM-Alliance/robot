@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Lifter extends Subsystem
 {
     private final boolean DEBUG = true;
-    private final double TOP_LIMIT = .0775;
-    private final double BOTTOM_LIMIT = 50;
-    private double TOP = -.095;
-    private double BOTTOM = .095;
-    private final double P = .25;
-    private final double I = 0.001;
+//    private final double TOP_LIMIT = .0775;
+//    private final double BOTTOM_LIMIT = 50;
+    private double TOP = -684;
+    private double BOTTOM = -885;
+    private final double P = 1.1;
+    private final double I = 0.011;
     
     private final CANTalon motor;
     private final DigitalInput senseGear;
@@ -29,10 +29,10 @@ public class Lifter extends Subsystem
     public Lifter(boolean reverseSensor)
     {        
         motor = new CANTalon(RobotMap.LIFTER_MOTOR);
-        motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+        motor.setFeedbackDevice(FeedbackDevice.AnalogPot);
         motor.changeControlMode(TalonControlMode.Position);
-        motor.setForwardSoftLimit(TOP_LIMIT);
-        motor.setReverseSoftLimit(BOTTOM_LIMIT);
+//        motor.setForwardSoftLimit(TOP_LIMIT);
+//        motor.setReverseSoftLimit(BOTTOM_LIMIT);
         motor.configNominalOutputVoltage(0, 0);
         motor.configPeakOutputVoltage(11, -11);
         motor.ConfigFwdLimitSwitchNormallyOpen(true);
@@ -62,12 +62,15 @@ public class Lifter extends Subsystem
     
     public void disabled()
     {
+        motor.disableControl();
         motor.setP(Preferences.getInstance().getDouble("LifterPID_P", SwerveConstants.CHASSIS_PID_P));
         motor.setI(Preferences.getInstance().getDouble("LifterPID_I", SwerveConstants.CHASSIS_PID_I));
         TOP = Preferences.getInstance().getDouble("LifterTop", TOP);
         BOTTOM = Preferences.getInstance().getDouble("LifterBot", BOTTOM);   
 //      motor.setForwardSoftLimit(Preferences.getInstance().getDouble("LifterTopL", TOP_LIMIT));
 //      motor.setReverseSoftLimit(Preferences.getInstance().getDouble("LifterBottomL", BOTTOM_LIMIT));    
+        motor.enableControl();
+        motor.set(motor.getPosition());  // Recommended for closed loop control        
     }
     
     public boolean hasGear()
@@ -92,6 +95,11 @@ public class Lifter extends Subsystem
             printDash();
         }
         
+        if (Math.abs(desired - motor.getPosition()) < 10)
+        {
+            motor.ClearIaccum();  // Prevent I wind-up when close enough
+        }
+        
         motor.set(desired);
     }
     
@@ -100,11 +108,11 @@ public class Lifter extends Subsystem
         String position;
         double angle = motor.getPosition();
         
-        if (Math.abs(angle - TOP) < .02 || motor.isRevLimitSwitchClosed())
+        if (Math.abs(angle - TOP) < 10 || motor.isRevLimitSwitchClosed())
         {
             position = "Top";
         }
-        else if (Math.abs(angle - BOTTOM) < .02 || motor.isFwdLimitSwitchClosed())
+        else if (Math.abs(angle - BOTTOM) < 10 || motor.isFwdLimitSwitchClosed())
         {
             position = "Bottom";
         }
@@ -119,7 +127,11 @@ public class Lifter extends Subsystem
 
     public boolean atBottom()
     {
-        // TODO Auto-generated method stub
         return Math.abs(motor.getPosition() - BOTTOM) < .02 || motor.isFwdLimitSwitchClosed();
+    }
+
+    public boolean atTop()
+    {
+        return Math.abs(motor.getPosition() - TOP) < .02 || motor.isRevLimitSwitchClosed();
     }
 }

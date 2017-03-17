@@ -14,6 +14,7 @@ public class DriveSwerve extends Command
     public enum MODE {HALO, FUSION, COMBO, ANGLE, STOP}
     
     private boolean DPAD_MOVEMENT_ENABLE = true;
+    private final double DPAD_MOVEMENT_SPEED = .45;
     private boolean AUTO_SHIFT_ENABLE = false;
     private final double AUTO_SHIFT_TIME = 1;
     private final double AUTO_SHIFT_SPEED = .5;
@@ -75,13 +76,12 @@ public class DriveSwerve extends Command
                         
                         if(!Robot.shooterSubsystem.isRunning())
                         {
-                            
-                            speedRobot.setMagAngle(.65, -(dpad-90));
+                            speedRobot.setMagAngle(DPAD_MOVEMENT_SPEED, -(dpad-90));
                             speedRotation *= .5;
                         }
                         else
                         {
-                            speedRobot.setMagAngle(.4, -(dpad-90));
+                            speedRobot.setMagAngle(DPAD_MOVEMENT_SPEED*.75, -(dpad-90));
                             speedRotation *= 1;
                         }
                         

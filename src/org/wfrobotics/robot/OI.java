@@ -19,6 +19,7 @@ import org.wfrobotics.controller.Panel.COLOR;
 import org.wfrobotics.controller.PanelButton;
 import org.wfrobotics.controller.Xbox;
 import org.wfrobotics.controller.XboxButton;
+import org.wfrobotics.controller.XboxTriggerButton;
 import org.wfrobotics.robot.driveoi.Arcade.*;
 import org.wfrobotics.robot.driveoi.Mecanum.*;
 import org.wfrobotics.robot.driveoi.Swerve.*;
@@ -39,9 +40,9 @@ public class OI
 {
     private final static double CLIMB_DEADBAND = .2;
     
-    static Xbox xboxDrive = new Xbox(0);
-    static Joystick joystickDrive = new Joystick(0);
-    static Xbox xboxMan = new Xbox(1);
+    public static Xbox xboxDrive = new Xbox(0);
+    public static Joystick joystickDrive = new Joystick(0);
+    public static Xbox xboxMan = new Xbox(1);
     public static Panel panel = new Panel(2);
     
     
@@ -65,7 +66,7 @@ public class OI
 
     Button buttonManLB = new XboxButton(xboxMan, Xbox.BUTTON.LB);
     Button buttonManRB = new XboxButton(xboxMan, Xbox.BUTTON.RB);
-    
+  
 //    Button buttonDriveX = new XboxButton(xboxDrive, Xbox.BUTTON.X);
 //    Button buttonDriveY = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
 //    Button buttonDriveB = new XboxButton(xboxDrive, Xbox.BUTTON.B);
@@ -75,12 +76,14 @@ public class OI
     Button buttonPanelYellowBottom = new PanelButton(panel, Panel.BUTTON.YELLOW_B);
     Button buttonPanelGreenTop = new PanelButton(panel, Panel.BUTTON.GREEN_T);
     Button buttonPanelGreenBottom = new PanelButton(panel, Panel.BUTTON.GREEN_B);
-    
-    Button buttonManual = new XboxButton(xboxMan, Xbox.BUTTON.A);
+
+    Button buttonManualLiftDown = new XboxTriggerButton(xboxMan, Hand.kRight, .25);
+    Button buttonManualLiftUp = new XboxButton(xboxMan, Xbox.BUTTON.B);
     
     // used for manual intake DO NOT USE OTHERWISE
     public static Button buttonPanelBlackTop = new PanelButton(panel, Panel.BUTTON.BLACK_T);
     public static Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_B);
+    
     public static Button buttonManX= new XboxButton (xboxMan, Xbox.BUTTON.X);
     public static Button buttonManY= new XboxButton (xboxMan, Xbox.BUTTON.Y);
     
@@ -90,16 +93,14 @@ public class OI
 
     
     public OI()
-    {        
-        
-        buttonManual.whenPressed(new Lift(true));;
+    {
+        buttonManualLiftDown.whileHeld(new Lift(true));
         
 //        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
 //        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
         buttonPanelYellowBottom.toggleWhenPressed(new VisionGearDropOff());
         buttonPanelBlackBottom.toggleWhenPressed(new VisionShoot());
-        //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         //buttonPanelYellowBottom.toggleWhenPressed(new GearDetection(GearDetection.MODE.GETDATA));
         //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));
         
@@ -114,13 +115,15 @@ public class OI
         
         buttonManRB.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
         buttonManLB.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
-        buttonPanelGreenTop.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
-        buttonPanelGreenBottom.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
+       
+        buttonPanelGreenTop.whileHeld(new Rev(Rev.MODE.SHOOT));
+        //buttonPanelGreenBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         
         //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
+        
         
         //buttonDriveRB.toggleWhenPressed(new VisionShoot());
         
@@ -131,7 +134,7 @@ public class OI
     
     public static double getClimbSpeedUp()
     {
-        double raw = xboxMan.getTriggerAxis(Hand.kRight);
+        double raw = xboxMan.getTriggerAxis(Hand.kLeft);
         double adjusted = 0;
         
         if(raw > CLIMB_DEADBAND)
@@ -150,6 +153,11 @@ public class OI
     public static void setDriveRumble(XboxController.RumbleType type, float value)
     {
         xboxDrive.setRumble(type, value);
+    }
+    
+    public static void setManRumble(XboxController.RumbleType type, float value)
+    {
+        xboxMan.setRumble(type, value);
     }
 
     public static void setPanelLEDs(Hand hand, COLOR LED1, COLOR LED2, COLOR LED3, COLOR LED4)
