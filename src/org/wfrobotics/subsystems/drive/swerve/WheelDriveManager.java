@@ -24,15 +24,6 @@ public class WheelDriveManager
         driveMotor.configNominalOutputVoltage(SwerveWheel.MINIMUM_SPEED, -SwerveWheel.MINIMUM_SPEED);  // Hardware deadband in closed-loop modes
         //driveMotor.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_50Ms);
         //driveMotor.SetVelocityMeasurementWindow(32);
-//      7.8.2. Recommended Procedure
-//        // TODO DRL test nondefault values (these are defaults) driveMotor.SetVelocityMeasurementPeriod(VelocityMeasurementPeriod.Period_100Ms);
-//        // TODO DRL test nondefault values (these are defaults) driveMotor.SetVelocityMeasurementWindow(64);
-//        15.1. How many Talons can we use?
-//        16.23. How fast can I control just ONE Talon SRX?
-//        16.24. Expected symptoms when there is excessive signal reflection.
-//        7.6 for complete instructions on testing Slave/Follower Talons setup.
-//        16.31.4. Drive (Master) Talon manually
-//        16.31.5. Re-enable Closed-Loop
         
         {
             driveMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
