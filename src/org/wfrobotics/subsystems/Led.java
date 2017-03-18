@@ -1,142 +1,85 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.commands.LED;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotMap;
 
 import com.mindsensors.CANLight;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+//http://mindsensors.com/largefiles/CANLight/CANLight_Demo.java      
 public class Led extends Subsystem 
 {
-    //    http://mindsensors.com/largefiles/CANLight/CANLight_Demo.java    
-    //    public static final Color Black = new Color(0, 0, 0);
-    //    public static final Color Red = new Color(0xfff, 0, 0);
-    //    public static final Color Yellow = new Color(255, 103, 0);
-    //    public static final Color Green = new Color(0, 0xfff, 0);
-    //    public static final Color Cyan = new Color(0, 0xfff, 0xfff);
-    //    public static final Color Blue = new Color(0, 0, 0xfff);
-    //    public static final Color Magenta = new Color(0xfff, 0, 0xfff);
-    //    public static final Color White = new Color(0xfff, 0xfff, 0xfff);
-    //    public static final Color Orange = new Color(0xfff, 0x666, 0x000)
-    public enum HARDWARE {TOP, SIDE, ALL};
-
-    private CANLight top;
-    private CANLight side;
-
-    public Led()
+    private class LedControler
     {
-        top = new CANLight(RobotMap.CAN_LIGHT[0]);
-        side = new CANLight(RobotMap.CAN_LIGHT[1]);
+        private CANLight ledLights; 
         
-        flashGreen(HARDWARE.ALL);
-    }  
-
-    @Override
-    protected void initDefaultCommand()
-    {
-//        setDefaultCommand(new LED(HARDWARE.ALL, LED.MODE.OFF));
+        public LedControler(int CANid)
+        {            
+            ledLights = new CANLight(CANid);
+        }
+        
+        public void writeReg(int index, double time, int r, int g, int b)
+        {
+            ledLights.writeRegister(index, time, r, g, b);
+        }
+        public void solid(int index, double time, int r, int g, int b)
+        {
+            ledLights.writeRegister(index, time, r, g, b);
+            ledLights.showRegister(index);
+        }
+        public void fade(int idx1, int idx2)
+        {
+            ledLights.fade(idx1, idx2);
+        }
+        public void flashGreen()
+        {  
+            ledLights.writeRegister(6, .7, 0, 255, 0);
+            ledLights.writeRegister(7, .7, 100, 103, 0);
+            ledLights.cycle(6, 7);
+        }
+        public void fadeBtwnColors(double time, int index1, int index2, int r, int g, int b, int r2, int g2, int b2)
+        { 
+                ledLights.writeRegister(index1, time, r, g, b);
+                ledLights.writeRegister(index2, time, r2, g2, b2);
+          
+                ledLights.fade(4, 5);          
+        }
+        public void off()
+        {
+            ledLights.showRGB(0, 0, 0);
+        }
     }
+   
+    LedControler top;
+        
+        public Led()
+        {
+            top = new LedControler(RobotMap.CAN_LIGHT[0]);
+            top.flashGreen();
+        }  
+        protected void initDefaultCommand()
+        {
+            setDefaultCommand(new LED(LED.MODE.OFF));
     
-    public void flashGreen(HARDWARE hardware)
-    {
-//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-//        {
-//            top.writeRegister(6, .7, 0, 255, 0);
-//            top.writeRegister(7, .7, 100, 103, 0);
-//            top.cycle(6, 7);
-//        }
-//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-//        {
-//            side.writeRegister(6, .7, 0, 255, 0);
-//            side.writeRegister(7, .7, 100, 103, 0);
-//            side.cycle(6, 7);
-//        }
-    }
-    
-    /*
-     * blink(time, which strip)
-     * setOn (bool, strip)
-     * setOnColor (bool, strip, R, G, B,[or color if we go that way]) 
-     * blinkColor(time, strip, R, G, B, [or color]     
-     */
-    public void setOn(HARDWARE hardware, boolean on)
-    {
-//        int r = 0;
-//        int g = (on) ? 255:0;
-//        int b = 0;
-//
-//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-//        {
-//            top.showRGB(r, g, b);
-//        }
-//
-//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-//        {
-//            side.showRGB(r, g, b);  
-//        }
-//        SmartDashboard.putBoolean("LED is on", on);        
-    }
-
-    //@Deprecated
-    public void blinkRed(HARDWARE hardware, double blinkLength)
-    {
-//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-//        {
-//            top.writeRegister(0, blinkLength, 255, 0, 0);  
-//            top.writeRegister(1, blinkLength, 0, 0, 0);
-//            top.cycle(0, 1);
-//        }
-//
-//        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-//        {       
-//            side.writeRegister(0, blinkLength, 255, 0, 0);  
-//            side.writeRegister(1, blinkLength, 0, 0, 0);
-//            side.cycle(0, 1);
-//        }
-    }
-
-    public void setOnColor(HARDWARE hardware, boolean on, int r, int g, int b)
-    {
-        if (!on)
-        {
-            r = 0;
-            g = 0;
-            b = 0;
+        }   
+        public void blinkRed(double blinkLength)
+        {   
+            top.writeReg(4, blinkLength, 255, 0, 0);
+            top.writeReg(5, blinkLength, 0, 0, 0);
+            top.fade(4, 5);      
         }
-
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
+        public void fadebtwColors(double time, int index1, int index2, int r,int g, int b, int r2, int g2, int b2)
         {
-            top.showRGB(r, g, b);
+            top.fadeBtwnColors(time, index1, index2, r, g, b, r2, g2, b2);
         }
-
-        if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
+        public void solid(double time, int index, int r, int g, int b )
         {
-            side.showRGB(r, g, b);
+            top.solid(index,time, r, g, b);
         }
-    }
-        public void fadeColor(HARDWARE hardware, double time, boolean on, int r, int g, int b, int r2, int g2, int b2)
+        public void off()
         {
-            if (!on)
-            {
-                r = 0;
-                g = 0;
-                b = 0;
-                top.writeRegister(4, time, r, g, b);
-                top.writeRegister(5, time, r2, g2, b2);
-            }
-
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.TOP)
-            {
-                
-                top.fade(4, 5);
-            }
-
-            if(hardware == HARDWARE.ALL || hardware == HARDWARE.SIDE)
-            {
-                top.fade(4, 5);
-            }
-    }
+            top.off();
+        }
 }
+

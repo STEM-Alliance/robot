@@ -1,10 +1,11 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.Led.HARDWARE;
+import org.wfrobotics.subsystems.Led;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import jdk.nashorn.internal.objects.annotations.Function;
 
 /**
  * Set robot LEDs
@@ -15,70 +16,44 @@ public class LED extends Command
 {
     public enum MODE { BLINK, SOLID, OFF};
     
-    private final HARDWARE hardware;
     private MODE mode;
-    public double timeBlink;
-    public double blinkDuration;
     
-    public LED(HARDWARE hardware, MODE mode)
+    public LED(MODE mode)
     {
         requires(Robot.ledSubsystem);
         
-        this.hardware = hardware;
         this.mode = mode;
-    }
-    
-    public LED(HARDWARE hardware, MODE mode, double timeout)
+    }  
+    public LED(MODE mode, double timeout)
     {
         requires(Robot.ledSubsystem);
         
-        this.hardware = hardware;
-        this.mode = mode;
-        setTimeout(timeout);
-    }
-    public LED(HARDWARE hardware, MODE mode, double blinkDuration , double timeout)
-    {
-        requires(Robot.ledSubsystem);
-        
-        this.hardware = hardware;
         this.mode = mode;
         setTimeout(timeout);
     }
     
     @Override
     protected void initialize()
-    {
-        if (mode == MODE.BLINK)
-        {
-//            if (timeSinceInitialized() - timeBlink < blinkDuration)
-//            {
-//                if(timeSinceInitialized() % 2 == 0)
-//                {
-//                    Robot.ledSubsystem.setOnColor(Led.HARDWARE.ALL, true, 0, 255, 0);
-//                }
-//                else 
-//                {
-//                    Robot.ledSubsystem.setOnColor(Led.HARDWARE.ALL, false, 0, 255, 0);
-//                }
-//            }
-            Robot.ledSubsystem.blinkRed(hardware, .07);
-        }
-        timeBlink = timeSinceInitialized();
+    {           
+  
     }
 
     @Override
     protected void execute()
     {
-        SmartDashboard.putString("LED Mode", mode.name());
+        SmartDashboard.putString("LED Mode", mode.toString());
         
         if (mode == MODE.OFF)
         {
-            //Robot.ledSubsystem.setOn(hardware, false);
-            Robot.ledSubsystem.flashGreen(hardware);
+            Robot.ledSubsystem.fadebtwColors(0.7, 0, 1,     0, 255, 66,            0, 255, 0);
+        }
+        if (mode == MODE.BLINK)
+        {
+            Robot.ledSubsystem.blinkRed(1);
         }
         else if (mode == MODE.SOLID)
         {
-            Robot.ledSubsystem.setOn(hardware, true);
+            Robot.ledSubsystem.solid(0.7, 3, 0, 255, 66);
         }      
     }
     
@@ -91,7 +66,7 @@ public class LED extends Command
     @Override
     protected void end()
     {
-        Robot.ledSubsystem.setOn(hardware, false);
+        Robot.ledSubsystem.off();
     }
 
     @Override
