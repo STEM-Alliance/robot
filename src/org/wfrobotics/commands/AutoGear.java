@@ -77,6 +77,7 @@ public class AutoGear extends CommandGroup
     
     private void shoot()
     {
+        addParallel(new Lift());
         addParallel(new AutoDrive(0, 0, 0, 5.5));
         addParallel(new IntakeSetup(true));
         addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6));
@@ -88,14 +89,15 @@ public class AutoGear extends CommandGroup
     
     private void driveToSpring(boolean shootFirst)
     {
+        addParallel(new Lift());
         //Preferences.getInstance().get
         if (shootFirst)
         {
-            addSequential(new AutoDrive(0, .6, 0, signX * 33, 1.5));
+            addSequential(new AutoDrive(0, 1, 0, signX * 33, 1.2));
         }
         else
         {
-            addSequential(new AutoDrive(0, .6, 0, -1, 1.5));
+            addSequential(new AutoDrive(0, 1, 0, 90, 1.2));
         }
         addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
     }
@@ -129,9 +131,10 @@ public class AutoGear extends CommandGroup
                 break;
             case VISION:
                 addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
-                addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
-                addSequential(new Lift(false));
-                addSequential(new AutoDrive(-.4, 0, 0, -1, 1));  // Don't coast GOOD
+                addSequential(new AutoDrive(0, 0, 0, -1, .5));
+                addParallel(new Lift(true));
+                addSequential(new AutoDrive(0, -.4, 0, -1, 1));  // Don't coast GOOD
+                addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
                 break;
             default:
                 break;
