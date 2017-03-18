@@ -275,4 +275,10 @@ public class SwerveWheel
     {
         return Preferences.getInstance().getDouble("Wheel_Orientation_" + number, SwerveConstants.ANGLE_OFFSET[number]);
     }
+    
+    public void setTalonCal(int mode, double raw)
+    {
+        driveManager.setProfile(mode);
+        driveManager.set(raw);
+    }
 }

@@ -180,6 +180,14 @@ public class WheelManager implements Runnable
         }
         return cals;
     }
+    
+    public synchronized void setTalonCal(int mode, double raw)
+    {
+        for(int index = 0; index < SwerveConstants.WHEEL_COUNT; index++)
+        {
+            wheels[index].setTalonCal(mode, raw);
+        }
+    }
 
     public void printDash()
     {

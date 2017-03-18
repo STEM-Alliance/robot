@@ -63,4 +63,9 @@ public class WheelDriveManager
     {
         return driveMotor.getCloseLoopRampRate();
     }
+    
+    public void setProfile(int profile)
+    {
+        driveMotor.setProfile(profile);
+    }
 }
