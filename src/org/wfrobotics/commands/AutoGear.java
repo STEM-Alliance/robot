@@ -93,11 +93,11 @@ public class AutoGear extends CommandGroup
         //Preferences.getInstance().get
         if (shootFirst)
         {
-            addSequential(new AutoDrive(0, 1, 0, signX * 33, 1.2));
+            addSequential(new AutoDrive(0, 1, 0, signX * 33, 1.15));
         }
         else
         {
-            addSequential(new AutoDrive(0, 1, 0, 90, 1.2));
+            addSequential(new AutoDrive(0, 1, 0, 90, 1.15));
         }
         addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
     }
