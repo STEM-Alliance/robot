@@ -22,7 +22,7 @@ public class VisionGearDropOff extends CommandGroup
 
     public VisionGearDropOff() 
     {
-        pidX = new PIDController(.5, 0.025, 0.0001, .4);
+        pidX = new PIDController(.5, 0.015, 0, .4);
         camera = new DetectGear(DetectGear.MODE.GETDATA);
         drive = new AutoDrive(0, 0, 0, -1, 999);
 
@@ -50,18 +50,18 @@ public class VisionGearDropOff extends CommandGroup
             valueX = pidX.update(distanceFromCenter);
 
             // then if we're somewhat lined up
-            if(Math.abs(distanceFromCenter) < .25)
+            if(Math.abs(distanceFromCenter) < .325)
             {
                 // start approaching slowly
                 valueY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.4, -.1);
             }
 
-            if(Math.abs(distanceFromCenter) < .1)
+            if(Math.abs(distanceFromCenter) < .05)
             {
                 // if we started really far away from center, 
                 // this will then reduce that overshoot
                 // maybe
-                pidX.resetError();
+                //pidX.resetError();
             }
 
             // we can still see a target
