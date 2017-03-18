@@ -8,6 +8,7 @@ import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.*;
+import org.wfrobotics.commands.drive.cal.WheelDrive.AutoCalibratable;
 import org.wfrobotics.subsystems.drive.DriveSubsystem;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -18,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Swerve chassis implementation 
  * @author Team 4818 WFRobotics
  */
-public class SwerveDriveSubsystem extends DriveSubsystem 
+public class SwerveDriveSubsystem extends DriveSubsystem implements AutoCalibratable
 {
     public class ChassisVector
     {
@@ -279,5 +280,10 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
         SmartDashboard.putBoolean("Gyro Enabled", configSwerve.gyroEnable);
         SmartDashboard.putBoolean("High Gear", configSwerve.gearHigh);
+    }
+
+    public void setTalonCal(int mode, double raw)
+    {
+        this.wheelManager.setTalonCal(mode, raw);
     }
 }
