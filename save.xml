@@ -1,5 +1,20 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="VisionWidth" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="1065" y="261"/>
+		<property name="Buffer Size (samples)" value="200"/>
+	</widget>
+	<widget field="LifterGear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1741" y="19"/>
+		<width>148</width>
+		<height>101</height>
+	</widget>
+	<widget field="LifterAngle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1542" y="46"/>
+	</widget>
+	<widget field="LifterDesired" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1537" y="80"/>
+	</widget>
 	<widget field="ShooterAngle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="350"/>
 	</widget>
@@ -16,15 +31,12 @@
 		<location x="439" y="746"/>
 		<height>22</height>
 	</widget>
-	<widget field="LifterGear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1440" y="765"/>
-	</widget>
 	<widget field="LifterSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1440" y="743"/>
+		<location x="938" y="884"/>
 		<height>22</height>
 	</widget>
 	<widget field="LifterState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1439" y="720"/>
+		<location x="1545" y="15"/>
 	</widget>
 	<widget field="SWERVE SPIN" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="21" y="809"/>
@@ -49,9 +61,6 @@
 		<height>36</height>
 		<property name="Color to show when true" value="255.0.0.255"/>
 		<property name="Color to show when false" value="0.0.255.255"/>
-	</widget>
-	<widget field="VisionWidth" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1023" y="711"/>
 	</widget>
 	<widget field="GearTargets" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1028" y="745"/>
@@ -153,7 +162,7 @@
 		<width>92</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
-		<location x="975" y="2"/>
+		<location x="975" y="1"/>
 		<width>956</width>
 		<height>715</height>
 		<property name="Camera Choice" value=""/>
@@ -335,7 +344,7 @@
 		<width>32</width>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
-		<location x="4" y="-2"/>
+		<location x="2" y="0"/>
 		<width>488</width>
 		<height>351</height>
 	</static-widget>
