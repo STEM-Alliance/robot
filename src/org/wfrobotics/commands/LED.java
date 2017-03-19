@@ -1,82 +1,63 @@
 package org.wfrobotics.commands;
 
+import java.util.ArrayList;
+
+import org.wfrobotics.hardware.led.LEDs.Color;
+import org.wfrobotics.hardware.led.LEDs.Effect;
+import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.Led;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import jdk.nashorn.internal.objects.annotations.Function;
 
 /**
- * Set robot LEDs
- * This command sets the highly visible LEDs mounted on the robot
- * Useful for communication of events to driver or human player, or flaunting after we do something awesome
+ * This command lets you easily cycle through different LED effects for testing purposes
  */
 public class LED extends Command
 {
-    public enum MODE { BLINK, SOLID, OFF};
+    private ArrayList<Effect> effects;
+    private static int nextIndex; // Because this is static, the value will persist between different commands being kicked off. Another way to do this is passing an Effect to the Command's constructor.
     
-    private MODE mode;
-    
-    public LED(MODE mode)
-    {
-        requires(Robot.ledSubsystem);
+    public LED()
+    {   
+        Color[] fadeColors = {new Color(0, 255, 66), new Color(0, 255, 0)}; // Dark Greenish to Lime?
         
-        this.mode = mode;
-    }  
-    public LED(MODE mode, double timeout)
-    {
-        requires(Robot.ledSubsystem);
+        effects = new ArrayList<Effect>();
         
-        this.mode = mode;
-        setTimeout(timeout);
+        effects.add(new Effect(EFFECT_TYPE.BLINK, new Color(255, 0 , 0), 1));  // Blink Red
+        effects.add(new Effect(EFFECT_TYPE.SOLID, new Color(0, 255, 66), .7)); // Solid Dark Greenish
+        effects.add(new Effect(EFFECT_TYPE.FADE, fadeColors, .7));
+        
+        nextIndex = 0;
     }
     
     @Override
     protected void initialize()
-    {           
-  
-    }
-
-    @Override
-    protected void execute()
     {
-        SmartDashboard.putString("LED Mode", mode.toString());
+        Effect effect = effects.get(next());
         
-        if (mode == MODE.OFF)
-        {
-            Robot.ledSubsystem.fadebtwColors(0.7, 0, 1,     0, 255, 66,            0, 255, 0);
-        }
-        if (mode == MODE.BLINK)
-        {
-            Robot.ledSubsystem.blinkRed(1);
-        }
-        else if (mode == MODE.SOLID)
-        {
-            Robot.ledSubsystem.solid(0.7, 3, 0, 255, 66);
-        }      
+        SmartDashboard.putString("LED Effect Mode", effect.type.toString());   
+    
+        Robot.leds.set(effect);
     }
     
     @Override
     protected boolean isFinished()
     {
-        return isTimedOut();
+        return true;
     }
-
-    @Override
-    protected void end()
+    
+    private int next()
     {
-        Robot.ledSubsystem.off();
-    }
-
-    @Override
-    protected void interrupted()
-    {
-        end();
-    }
-
-    public void set(MODE mode)
-    {
-        this.mode = mode;
+        int result = nextIndex++;
+        
+        SmartDashboard.putNumber("LED Effect Index", result);
+        
+        if (nextIndex > effects.size())
+        {
+            nextIndex = 0;
+        }
+        
+        return result;
     }
 }
