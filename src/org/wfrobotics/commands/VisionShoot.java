@@ -4,6 +4,10 @@ import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.hardware.led.LEDs;
+import org.wfrobotics.hardware.led.LEDs.Effect;
+import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
+import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +28,11 @@ public class VisionShoot extends CommandGroup
         
         addParallel(camera);
         addSequential(rotate);
+    }
+    
+    protected void initialize()
+    {
+        Robot.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
     }
     
     protected void execute()

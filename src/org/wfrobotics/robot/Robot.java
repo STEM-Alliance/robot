@@ -3,6 +3,12 @@ package org.wfrobotics.robot;
 import org.wfrobotics.commands.*;
 import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.hardware.Gyro;
+import org.wfrobotics.hardware.led.LEDs.Color;
+import org.wfrobotics.hardware.led.LEDs.Effect;
+import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
+import org.wfrobotics.hardware.led.LEDs.LEDController;
+import org.wfrobotics.hardware.led.LEDs;
+import org.wfrobotics.hardware.led.MindsensorCANLight;
 import org.wfrobotics.subsystems.*;
 import org.wfrobotics.vision.DashboardView;
 
@@ -106,9 +112,9 @@ public class Robot extends SampleRobot
     public static Auger augerSubsystem;
     public static Climber climberSubsystem;
     public static DashboardView dashboardView;
-    public static Intake intakeSubsystem;    
+    public static Intake intakeSubsystem;
+    public static LEDController leds;
     public static OI oi;
-    public static Led ledSubsystem;
     
     public static Lifter lifterSubsystem;
     public static Shooter shooterSubsystem;
@@ -134,11 +140,12 @@ public class Robot extends SampleRobot
         climberSubsystem = new Climber();
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();
-        ledSubsystem = new Led();
         lifterSubsystem = new Lifter(true);
         shooterSubsystem = new Shooter();
 
         oi = new OI();
+        leds = new MindsensorCANLight(RobotMap.CAN_LIGHT[0]);
+        
         autoChooser = new SendableChooser<AUTO_COMMAND>();
 
         autoChooser.addDefault("Auto None", AUTO_COMMAND.NONE); // TODO pick gear/shoot as the default autonomous command
@@ -154,7 +161,11 @@ public class Robot extends SampleRobot
 
     public void operatorControl()
     {
+        Color[] colors = {LEDs.GREEN, LEDs.YELLOW, LEDs.GREEN, LEDs.WHITE};
+        
         if (autonomousCommand != null) autonomousCommand.cancel();
+        
+        leds.set(new Effect(EFFECT_TYPE.FADE, colors, 4));
         
         while (isOperatorControl() && isEnabled())
         {
@@ -166,7 +177,8 @@ public class Robot extends SampleRobot
     
     public void autonomous()
     {
-        //autonomousCommand = (Command) autoChooser.getSelected();
+        DriverStation.Alliance team = DriverStation.getInstance().getAlliance();   
+        Color color = (team == DriverStation.Alliance.Red) ? LEDs.RED : LEDs.BLUE;
         AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
         
         autonomousCommand = command.getCommand(autonomousStartPosition);
@@ -174,6 +186,8 @@ public class Robot extends SampleRobot
         // Zero the Gyro based on starting orientation of the selected autonomous mode
         Gyro.getInstance().zeroYaw(command.getGyroOffset(autonomousStartPosition));
         Robot.driveSubsystem.setLastHeading(command.getGyroOffset(autonomousStartPosition));
+        
+        Robot.leds.set(new Effect(EFFECT_TYPE.SOLID, color, .5));
         
         // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();
@@ -188,6 +202,10 @@ public class Robot extends SampleRobot
     
     public void disabled()
     {
+        Color[] colors = {LEDs.GREEN, LEDs.YELLOW, LEDs.GREEN, LEDs.WHITE};
+        
+        leds.set(new Effect(EFFECT_TYPE.FADE, colors, 4));
+        
         while (isDisabled())
         {
             lifterSubsystem.disabled();

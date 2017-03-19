@@ -4,7 +4,6 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.drive.DriveSwerve;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.subsystems.Led;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -65,7 +64,6 @@ public class SteamworksDrive extends CommandGroup
     protected void end() 
     {
         Robot.intakeSubsystem.setSpeed(0);
-        Robot.ledSubsystem.setOn(Led.HARDWARE.ALL, false);
     }
 
     protected void interrupted()
