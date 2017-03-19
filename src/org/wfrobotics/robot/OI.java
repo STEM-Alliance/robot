@@ -94,7 +94,7 @@ public class OI
     
     public OI()
     {
-        buttonManualLiftDown.whileHeld(new Lift(true));
+        buttonManualLiftDown.whileHeld(new Lift(Lift.MODE.DOWN));
         
 //        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));

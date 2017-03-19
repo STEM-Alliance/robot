@@ -96,10 +96,10 @@ public class AutoGear extends CommandGroup
     
     private void shoot()
     {
-        addParallel(new Lift());
-        addParallel(new AutoDrive(0, 0, 0, 5.5));
+        addParallel(new Lift(Lift.MODE.UP));
+        addParallel(new AutoDrive(0, 0, 0, 5));
         addParallel(new IntakeSetup(true));
-        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6));
+        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 5));
         addParallel(new Shoot(Conveyor.MODE.OFF));
         addParallel(new Rev(Rev.MODE.FORCE_OFF));
         addParallel(new IntakeSetup(false));
@@ -112,7 +112,7 @@ public class AutoGear extends CommandGroup
         //Preferences.getInstance().get
         if (shootFirst)
         {
-            addSequential(new AutoDrive(0, 1, 0, signX * 33, 1.15));
+            addSequential(new AutoDrive(0, .8, 0, -1, 1.3));
         }
         else
         {
@@ -129,7 +129,7 @@ public class AutoGear extends CommandGroup
         
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
-            addSequential(new AutoDrive(0, .8, 0, 90, .25));
+            addSequential(new AutoDrive(0, .8, 0, -1, .25));
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
@@ -156,7 +156,7 @@ public class AutoGear extends CommandGroup
             case VISION:
                 addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
                 addSequential(new AutoDrive(0, 0, 0, -1, .5));
-                addParallel(new Lift(true));
+                addParallel(new Lift(Lift.MODE.DOWN));
                 if(startPosition == POSITION_ROTARY.CENTER)
                 {
                     addSequential(new AutoDrive(0, -.4, 0, -1, 1));
