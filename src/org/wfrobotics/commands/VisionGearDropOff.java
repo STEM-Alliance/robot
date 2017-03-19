@@ -22,7 +22,7 @@ public class VisionGearDropOff extends CommandGroup
 
     public VisionGearDropOff() 
     {
-        pidX = new PIDController(.5, 0.015, 0, .4);
+        pidX = new PIDController(.4, 0.015, 0, .3);
         camera = new DetectGear(DetectGear.MODE.GETDATA);
         drive = new AutoDrive(0, 0, 0, -1, 999);
 
