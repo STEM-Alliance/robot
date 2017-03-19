@@ -82,16 +82,15 @@ public class AutoGear extends CommandGroup
         
         signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1;  // X driving based on alliance for mirrored field
         config = Config.getConfig(startPosition);
-
+        
         if (shootFirst)
         {
             shoot();
         }
         
-        driveToSpring(shootFirst);  // Done for: 
+        driveToSpring(shootFirst);
         
-        scoreGear();
-        //postGearAutonomous(POST_GEAR_AUTONOMOUS.NONE);
+        scoreGear(shootFirst);
     }
     
     private void shoot()
@@ -112,7 +111,7 @@ public class AutoGear extends CommandGroup
         //Preferences.getInstance().get
         if (shootFirst)
         {
-            addSequential(new AutoDrive(0, .8, 0, -1, 1.3));
+            addSequential(new AutoDrive(0, .7, 0, -1, 1.75));
         }
         else
         {
@@ -121,7 +120,7 @@ public class AutoGear extends CommandGroup
         addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
     }
 
-    private void scoreGear()
+    private void scoreGear(boolean shootFirst)
     {
         //addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
         
@@ -129,9 +128,16 @@ public class AutoGear extends CommandGroup
         
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
-            addSequential(new AutoDrive(0, .8, 0, -1, .25));
+            if(shootFirst)
+            {
+                addSequential(new AutoDrive(0, .8, 0, config.angleSpring, .25));
+            }
+            else
+            {
+                addSequential(new AutoDrive(0, .8, 0, -1, .25));
+            }
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
-            addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1));  // Don't coast GOOD
+            addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1.25));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
             addSequential(new AutoDrive(config.approachSpringX,       // Towards the airship
                                         Math.abs(config.approachSpringX),     // Always forwards with X magnitude
