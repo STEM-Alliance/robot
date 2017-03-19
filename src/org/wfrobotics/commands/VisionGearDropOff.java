@@ -18,12 +18,13 @@ public class VisionGearDropOff extends CommandGroup
     private AutoDrive drive;
     private PIDController pidX;
     private double heading = -1;
+    private boolean fieldRelative = true;
 
     private boolean done;
 
     public VisionGearDropOff() 
     {
-        pidX = new PIDController(2.5, 0.125, 0, .45);
+        pidX = new PIDController(2.5, 0.125, 0, .35);
         camera = new DetectGear(DetectGear.MODE.GETDATA);
         drive = new AutoDrive(0, 0, 0, -1, 999);
 
@@ -33,6 +34,8 @@ public class VisionGearDropOff extends CommandGroup
 
     protected void initialize()
     {
+        fieldRelative = Robot.driveSubsystem.getFieldRelative();
+        Robot.driveSubsystem.setFieldRelative(false);
         done = false;
     }
 
@@ -51,10 +54,15 @@ public class VisionGearDropOff extends CommandGroup
             valueX = pidX.update(distanceFromCenter);
 
             // then if we're somewhat lined up
-            if(Math.abs(distanceFromCenter) < .325)
+            if(Math.abs(distanceFromCenter) < .25)
             {
                 // start approaching slowly
-                //valueY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.4, -.1);
+                //valueY = Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.4, -.1);
+                valueY = -.33;
+            }
+            else
+            {
+                valueY = -.33;
             }
 
             if(Math.abs(distanceFromCenter) < .05)
@@ -69,11 +77,7 @@ public class VisionGearDropOff extends CommandGroup
             if(visionWidth > 15 && visionWidth < 335)
             {
                 Vector vector = new Vector(valueY, valueX);
-                //vector.setAngle(vector.getAngle() - Gyro.getInstance().getYaw());
                 
-                Robot.driveSubsystem.setFieldRelative(false);
-                //TODO this only works for the front facing spring
-                // address field heading here
                 drive.set(vector, 0, -1);
             }
             else
@@ -104,8 +108,7 @@ public class VisionGearDropOff extends CommandGroup
 
     protected void end()
     {
-
-        Robot.driveSubsystem.setFieldRelative(true);
+        Robot.driveSubsystem.setFieldRelative(fieldRelative);
     }
 
     protected void interrupted()
