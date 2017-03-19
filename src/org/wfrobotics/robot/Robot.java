@@ -155,7 +155,7 @@ public class Robot extends SampleRobot
         autoChooser.addObject("Auto Shoot then Hopper", AUTO_COMMAND.SHOOT_THEN_HOPPER);
         autoChooser.addObject("Auto Shoot then Gear", AUTO_COMMAND.SHOOT_THEN_GEAR);
         autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR_VISION);
-        autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
+        //autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
     }
 

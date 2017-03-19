@@ -21,7 +21,7 @@ public class WheelDriveManager
         driveMotor.enableForwardSoftLimit(false);
         driveMotor.enableReverseSoftLimit(false);
         driveMotor.enableBrakeMode(false);
-        driveMotor.configNominalOutputVoltage(SwerveWheel.MINIMUM_SPEED, -SwerveWheel.MINIMUM_SPEED);  // Hardware deadband in closed-loop modes
+        driveMotor.configNominalOutputVoltage(0, 0);  // Hardware deadband in closed-loop modes
         //driveMotor.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_50Ms);
         //driveMotor.SetVelocityMeasurementWindow(32);
 //      7.8.2. Recommended Procedure

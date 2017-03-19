@@ -8,6 +8,7 @@ import org.wfrobotics.commands.Lift;
 import org.wfrobotics.commands.Rev;
 import org.wfrobotics.commands.Shoot;
 import org.wfrobotics.commands.DetectShooter;
+import org.wfrobotics.commands.IntakeSetup;
 import org.wfrobotics.commands.Up;
 import org.wfrobotics.commands.VisionGearDropOff;
 import org.wfrobotics.commands.VisionShoot;
@@ -93,7 +94,7 @@ public class OI
     
     public OI()
     {
-        buttonManualLiftDown.whileHeld(new Lift(true));
+        buttonManualLiftDown.whileHeld(new Lift(Lift.MODE.DOWN));
         
 //        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
@@ -119,7 +120,7 @@ public class OI
         //buttonPanelGreenBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         
         //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
-        
+        //buttonPanelBlackTop.whileHeld(new IntakeSetup(true));
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
         

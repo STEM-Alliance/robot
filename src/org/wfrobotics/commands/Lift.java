@@ -11,22 +11,25 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class Lift extends Command 
 {
+    public enum MODE { AUTOMATIC, DOWN, UP };
     public final double TIMEOUT_NO_GEAR = 1;
     public final double TIMEOUT_RUMBLE = 1;
     public final double SAMPLES_UNTIL_LIFT = 5;
-    public final boolean isManual;
+    
+    public MODE mode = MODE.AUTOMATIC;
     
     public double timeLastSensed;
     public double samplesWithGear;
     
     public Lift()
     {
-        this(false);
+        this(MODE.AUTOMATIC);
     }
-    public Lift(boolean manual)
+    
+    public Lift(MODE mode)
     {        
         requires(Robot.lifterSubsystem);
-        isManual = manual;
+        this.mode = mode;
         samplesWithGear = 0;
     }
     
@@ -48,9 +51,9 @@ public class Lift extends Command
         float rumble;
         double now = timeSinceInitialized();
 
-        if (isManual)
+        if (mode != MODE.AUTOMATIC)
         {
-            direction = false;
+            direction = mode == MODE.UP;
             rumble = (Robot.lifterSubsystem.hasGear()) ? 1 : 0;
         }
         else
