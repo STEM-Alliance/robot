@@ -1,7 +1,7 @@
 <xml version="1.0">
 <dashboard>
 	<widget field="VisionWidth" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="1065" y="261"/>
+		<location x="411" y="822"/>
 		<property name="Buffer Size (samples)" value="200"/>
 	</widget>
 	<widget field="LifterGear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
