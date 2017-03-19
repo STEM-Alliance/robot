@@ -77,4 +77,20 @@ public class DetectGear extends Command
     {
         return Robot.targetGearSubsystem.FullWidth;
     }
+
+    public double getTargetDesiredWidth()
+    {
+        if(Robot.targetGearSubsystem.TargetCount == Robot.targetGearSubsystem.DESIRED_TARGETS)
+        {
+            return 350;
+        }
+        else if(Robot.targetGearSubsystem.TargetCount == 1)
+        {
+            return 70;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 }
