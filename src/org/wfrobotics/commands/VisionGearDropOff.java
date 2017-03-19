@@ -58,11 +58,11 @@ public class VisionGearDropOff extends CommandGroup
             {
                 // start approaching slowly
                 //valueY = Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.4, -.1);
-                valueY = -.33;
+                valueY = -.315;
             }
             else
             {
-                valueY = -.33;
+                valueY = -.315;
             }
 
             if(Math.abs(distanceFromCenter) < .05)
