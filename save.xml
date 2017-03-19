@@ -1,8 +1,16 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="VisionWidth" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="411" y="822"/>
-		<property name="Buffer Size (samples)" value="200"/>
+	<widget field="VisionWidth" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1394" y="793"/>
+	</widget>
+	<widget field="VisionGearX" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1401" y="770"/>
+	</widget>
+	<widget field="VisionGearY" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1391" y="745"/>
+	</widget>
+	<widget field="GearDistanceX" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1381" y="719"/>
 	</widget>
 	<widget field="LifterGear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="1741" y="19"/>
@@ -64,15 +72,6 @@
 	</widget>
 	<widget field="GearTargets" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1028" y="745"/>
-	</widget>
-	<widget field="VisionGearX" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1021" y="683"/>
-	</widget>
-	<widget field="GearDistanceX" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="825" y="708"/>
-	</widget>
-	<widget field="VisionGearY" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="837" y="686"/>
 	</widget>
 	<widget field="CameraShooter Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="173" y="383"/>
@@ -162,7 +161,7 @@
 		<width>92</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
-		<location x="975" y="1"/>
+		<location x="941" y="23"/>
 		<width>956</width>
 		<height>715</height>
 		<property name="Camera Choice" value=""/>

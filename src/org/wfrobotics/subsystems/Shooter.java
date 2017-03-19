@@ -80,7 +80,7 @@ public class Shooter extends Subsystem
     public Shooter()
     {
         motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .11, .0001, .00, .0, .01, true);
-        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .1, .00018, .00, 0, .01, false);
+        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .11, .00025, .00, 0, .01, false);
     }
 
     @Override
@@ -110,10 +110,10 @@ public class Shooter extends Subsystem
 
         if (rpm != 0)
         {
-            motorT.set(rpm);
+            //motorT.set(rpm);
             motorB.set(rpm);
             
-            if(motorT.atSpeed(tolerance))
+            //if(motorT.atSpeed(tolerance))
             {
 
                 if(motorB.atSpeed(tolerance*1.5))
@@ -129,7 +129,7 @@ public class Shooter extends Subsystem
             // Bottom flywheel is below a threshold before turning off the top one
             //if (motorB.atSpeed(100))
             {
-                motorT.set(0);
+                //motorT.set(0);
             }
         }
 
@@ -148,7 +148,7 @@ public class Shooter extends Subsystem
 
     public boolean inTolerance(double tolerance)
     {
-        return motorT.atSpeed(tolerance) && motorB.atSpeed((tolerance*2));
+        return /*motorT.atSpeed(tolerance) &&*/ motorB.atSpeed((tolerance*2));
     }
 
     public void printDash()
