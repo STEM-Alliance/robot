@@ -36,7 +36,7 @@ public class Lift extends Command
     @Override
     protected void initialize()
     {
-        if (isManual)
+        if (mode != MODE.AUTOMATIC)
         {
             Robot.leds.set(new Effect(EFFECT_TYPE.SOLID, LEDs.ORANGE, 1));
         }
@@ -87,7 +87,7 @@ public class Lift extends Command
     
     protected void end()
     {
-        if (isManual)
+        if (mode != MODE.AUTOMATIC)
         {
             Robot.leds.set(new Effect(EFFECT_TYPE.SOLID, LEDs.GREEN, 1));
         }
