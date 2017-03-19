@@ -17,6 +17,7 @@ public class AutoDrive extends Command
     protected double rotate;
     protected double heading;
     protected double headingTolerance = 0;
+    private boolean endEarly = false;
     
     /**
      * Drive Off
@@ -105,22 +106,41 @@ public class AutoDrive extends Command
             Robot.driveSubsystem.driveWithHeading(vector.clone(), rotate, heading);
         }
     }
+    
+    public void endEarly()
+    {
+        endEarly  = true;
+    }
 
     protected boolean isFinished()
     {
         boolean done;
         
-        if (mode == MODE.DRIVE || mode == MODE.OFF)
+        if(!endEarly)
         {
-            done = isTimedOut();
-        }
-        else if (mode == MODE.TURN)
-        {
-            done = Math.abs(heading - Robot.driveSubsystem.getLastHeading()) < headingTolerance;
+            if (mode == MODE.DRIVE || mode == MODE.OFF)
+            {
+                done = isTimedOut();
+            }
+            else if (mode == MODE.TURN)
+            {
+                if(heading != -1)
+                {
+                    done = Math.abs(heading - Robot.driveSubsystem.getLastHeading()) < headingTolerance;
+                }
+                else
+                {
+                    done = false;
+                }
+            }
+            else
+            {
+                done = false;
+            }
         }
         else
         {
-            done = false;
+            done = true;
         }
         
         return done;
@@ -133,7 +153,7 @@ public class AutoDrive extends Command
 
     protected void interrupted()
     {
-        
+        end();
     }
     
     /**
