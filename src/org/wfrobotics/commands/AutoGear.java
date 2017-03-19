@@ -1,6 +1,7 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.commands.drive.DriveConfig;
 import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,17 +34,35 @@ public class AutoGear extends CommandGroup
             {
                 return new Config(2.1, 0, 0, 0);
             }
-            else if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
+            else if(DriverStation.getInstance().getAlliance() == Alliance.Red)
             {
-                return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.5, -VisionGearDropOff.HEXAGON_ANGLE);
-            }
-            else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
-            {
-                return new Config(5, -VisionGearDropOff.HEXAGON_ANGLE, .5, VisionGearDropOff.HEXAGON_ANGLE);
+                if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
+                {
+                    return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.5, -VisionGearDropOff.HEXAGON_ANGLE);
+                }
+                else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
+                {
+                    return new Config(5, 180-VisionGearDropOff.HEXAGON_ANGLE, .5, VisionGearDropOff.HEXAGON_ANGLE);
+                }
+                else
+                {
+                    return new Config(0, 0, 0, 0);
+                }
             }
             else
             {
-                return new Config(0, 0, 0, 0);
+                if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
+                {
+                    return new Config(5, 180 - VisionGearDropOff.HEXAGON_ANGLE, .5, -VisionGearDropOff.HEXAGON_ANGLE);
+                }
+                else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
+                {
+                    return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.5, VisionGearDropOff.HEXAGON_ANGLE);
+                }
+                else
+                {
+                    return new Config(0, 0, 0, 0);
+                }
             }
         }            
     }
@@ -53,7 +72,7 @@ public class AutoGear extends CommandGroup
 
     private final POSITION_ROTARY startPosition;
     private final MODE mode;
-    private final int signX;
+    private int signX;
     private final Config config;
 
     public  AutoGear(POSITION_ROTARY startPosition, MODE mode, boolean shootFirst)
@@ -97,7 +116,7 @@ public class AutoGear extends CommandGroup
         }
         else
         {
-            addSequential(new AutoDrive(0, 1, 0, 90, 1.15));
+            addSequential(new AutoDrive(0, .8, 0, 90, 1.3));
         }
         addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
     }
@@ -110,9 +129,10 @@ public class AutoGear extends CommandGroup
         
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
-            addSequential(new AutoDrive(signX * config.approachSpringX,       // Towards the airship
+            addSequential(new AutoDrive(0, .8, 0, 90, .35));
+            addSequential(new AutoDrive(config.approachSpringX,       // Towards the airship
                                         Math.abs(config.approachSpringX),     // Always forwards with X magnitude
-                                        signX * .5, config.angleSpring, 1));
+                                        0, config.angleSpring, 1));
         }
         
         switch(mode)
@@ -133,8 +153,11 @@ public class AutoGear extends CommandGroup
                 addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
                 addSequential(new AutoDrive(0, 0, 0, -1, .5));
                 addParallel(new Lift(true));
-                addSequential(new AutoDrive(0, -.4, 0, -1, 1));  // Don't coast GOOD
-                addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
+                if(startPosition == POSITION_ROTARY.CENTER)
+                {
+                    addSequential(new AutoDrive(0, -.4, 0, -1, 1));  // Don't coast GOOD
+                    addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
+                }
                 break;
             default:
                 break;
