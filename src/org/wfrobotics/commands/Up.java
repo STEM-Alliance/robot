@@ -1,6 +1,10 @@
 package org.wfrobotics.commands;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.hardware.led.LEDs;
+import org.wfrobotics.hardware.led.LEDs.Color;
+import org.wfrobotics.hardware.led.LEDs.Effect;
+import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 
@@ -26,6 +30,15 @@ public class Up extends Command
         requires(Robot.climberSubsystem);
 
         this.mode = mode;
+    }
+    
+    protected void initialize()
+    {
+        DriverStation.Alliance team = DriverStation.getInstance().getAlliance();
+        
+        Color color = (team == DriverStation.Alliance.Red) ? LEDs.RED : LEDs.BLUE;
+        
+        Robot.leds.set(new Effect(EFFECT_TYPE.BLINK, color, .5));
     }
 
     @Override

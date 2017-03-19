@@ -1,5 +1,8 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.hardware.led.LEDs;
+import org.wfrobotics.hardware.led.LEDs.Effect;
+import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
 
@@ -30,6 +33,11 @@ public class Lift extends Command
     @Override
     protected void initialize()
     {
+        if (isManual)
+        {
+            Robot.leds.set(new Effect(EFFECT_TYPE.SOLID, LEDs.ORANGE, 1));
+        }
+        
         timeLastSensed = timeSinceInitialized() - TIMEOUT_NO_GEAR;  // Start in the down state
     }
     
@@ -67,11 +75,23 @@ public class Lift extends Command
         
         Robot.lifterSubsystem.set(direction);
     }
-    
 
     @Override
     protected boolean isFinished()
     {
         return false;
+    }
+    
+    protected void end()
+    {
+        if (isManual)
+        {
+            Robot.leds.set(new Effect(EFFECT_TYPE.SOLID, LEDs.GREEN, 1));
+        }
+    }
+    
+    protected void interrupted()
+    {
+        end();
     }
 }

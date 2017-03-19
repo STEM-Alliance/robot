@@ -3,7 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.Conveyor;
 import org.wfrobotics.commands.DetectGear;
-import org.wfrobotics.commands.LED;
+import org.wfrobotics.commands.LEDTest;
 import org.wfrobotics.commands.Lift;
 import org.wfrobotics.commands.Rev;
 import org.wfrobotics.commands.Shoot;
@@ -24,7 +24,6 @@ import org.wfrobotics.robot.driveoi.Arcade.*;
 import org.wfrobotics.robot.driveoi.Mecanum.*;
 import org.wfrobotics.robot.driveoi.Swerve.*;
 import org.wfrobotics.robot.driveoi.Tank.*;
-import org.wfrobotics.subsystems.Led;
 import org.wfrobotics.subsystems.Lifter;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;

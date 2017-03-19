@@ -1,5 +1,8 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.hardware.led.LEDs;
+import org.wfrobotics.hardware.led.LEDs.Effect;
+import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
