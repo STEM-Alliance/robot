@@ -2,7 +2,6 @@ package org.wfrobotics.subsystems;
 
 import org.wfrobotics.commands.Lift;
 import org.wfrobotics.robot.RobotMap;
-import org.wfrobotics.subsystems.drive.swerve.SwerveConstants;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
@@ -20,8 +19,9 @@ public class Lifter extends Subsystem
 //    private final double BOTTOM_LIMIT = 50;
     private double TOP = -684;
     private double BOTTOM = -885;
-    private final double P = 1.1;
-    private final double I = 0.011;
+    private final double P = 1;
+    private final double I = 0.07;
+    private final double F = 0;
     
     private final CANTalon motor;
     private final DigitalInput senseGear;
@@ -34,10 +34,10 @@ public class Lifter extends Subsystem
 //        motor.setForwardSoftLimit(TOP_LIMIT);
 //        motor.setReverseSoftLimit(BOTTOM_LIMIT);
         motor.configNominalOutputVoltage(0, 0);
-        motor.configPeakOutputVoltage(11, -11);
+        motor.configPeakOutputVoltage(12, -12);
         motor.ConfigFwdLimitSwitchNormallyOpen(true);
         motor.ConfigRevLimitSwitchNormallyOpen(true);
-        motor.setPID(P, I, 0, 0, 0, 10, 0);
+        motor.setPID(P, I, 0, F, 0, 100, 0);
         motor.setAllowableClosedLoopErr(0);
         
         motor.enableForwardSoftLimit(false);
@@ -47,7 +47,7 @@ public class Lifter extends Subsystem
         motor.setInverted(false);
         motor.reverseSensor(true);
         
-        motor.enableBrakeMode(true);
+        motor.enableBrakeMode(false);
         motor.enableControl();
         motor.set(motor.getPosition());  // Recommended for closed loop control        
         
@@ -63,15 +63,18 @@ public class Lifter extends Subsystem
     public void disabled()
     {
         motor.disableControl();
-        motor.setP(Preferences.getInstance().getDouble("LifterPID_P", SwerveConstants.CHASSIS_PID_P));
-        motor.setI(Preferences.getInstance().getDouble("LifterPID_I", SwerveConstants.CHASSIS_PID_I));
+        motor.setP(Preferences.getInstance().getDouble("LifterPID_P", P));
+        motor.setI(Preferences.getInstance().getDouble("LifterPID_I", I));
+        motor.setF(Preferences.getInstance().getDouble("LifterPID_F", F));
         TOP = Preferences.getInstance().getDouble("LifterTop", TOP);
         BOTTOM = Preferences.getInstance().getDouble("LifterBot", BOTTOM);   
 //      motor.setForwardSoftLimit(Preferences.getInstance().getDouble("LifterTopL", TOP_LIMIT));
 //      motor.setReverseSoftLimit(Preferences.getInstance().getDouble("LifterBottomL", BOTTOM_LIMIT));    
         motor.enableControl();
         motor.set(motor.getPosition());  // Recommended for closed loop control        
-    }
+
+        SmartDashboard.putNumber("LifterAngle", motor.getPosition());
+        }
     
     public boolean hasGear()
     {

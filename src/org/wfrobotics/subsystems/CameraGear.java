@@ -15,8 +15,9 @@ import edu.wpi.first.wpilibj.networktables.*;
  */
 public class CameraGear extends NetworkTableCamera 
 {    
-    private final int DESIRED_TARGETS = 2;  // Reflective detectable targets
+    public final int DESIRED_TARGETS = 2;  // Reflective detectable targets
 
+    public int TargetCount = 0;
     public double DistanceFromCenter = 0;
     public double FullWidth = 0;
     public boolean InView = false;
@@ -39,9 +40,10 @@ public class CameraGear extends NetworkTableCamera
         
         getUpdatedData();
         
-        SmartDashboard.putNumber("GearTargets", data.size());
+        TargetCount = data.size();
+        SmartDashboard.putNumber("GearTargets", TargetCount);
         
-        if(data.size() == DESIRED_TARGETS)
+        if(TargetCount == DESIRED_TARGETS)
         {
             xAverage = (data.get(0).x + data.get(1).x)/2.0;
             xPercent = xAverage / table.imageWidth;
@@ -57,12 +59,12 @@ public class CameraGear extends NetworkTableCamera
                 FullWidth = (data.get(0).x + data.get(0).width/2) - (data.get(1).x - data.get(1).width/2);
             }
         }
-        else if (data.size() == 1)
+        else if (TargetCount == 1)
         {
             //SmartDashboard.putNumber("percent", data.get(0).x / table.imageWidth);
             DistanceFromCenter = Utilities.scaleToRange(data.get(0).x / table.imageWidth, 0.0, 1.0, -1.0, 1.0);
             FullWidth = data.get(0).width;
-            InView = true;
+            InView = false;
         }
         else
         {
