@@ -21,10 +21,11 @@ public class VisionShoot extends CommandGroup
 
     private boolean done;
     private double startTime = 0;
+    private double atAngleTime = 0;
     
     public VisionShoot() 
     {
-        pidRotate = new PIDController(3, 0.003, 0.000, .35);
+        pidRotate = new PIDController(2, 0.0002, 0.000, .4);
         camera = new DetectShooter(DetectShooter.MODE.GETDATA);
         rotate = new AutoDrive(0, -1, 5); //TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
         
@@ -38,10 +39,12 @@ public class VisionShoot extends CommandGroup
         
         startTime = Timer.getFPGATimestamp();
         Robot.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        pidRotate.resetError();
     }
     
     protected void execute()
     {
+        
         double distanceFromCenter = camera.getDistanceFromCenter();
         double visionWidth = camera.getFullWidth();
         double valueAngle = 0;
@@ -64,8 +67,21 @@ public class VisionShoot extends CommandGroup
                     //pidRotate.resetError();
                 }
     
-                // we can still see a target & we're not pointing at the target
-                if(visionWidth > 15 && Math.abs(distanceFromCenter) > .05)
+                // try and see if we've been at the target for long enough
+                if(Math.abs(distanceFromCenter) < .1)
+                {
+                    if(Timer.getFPGATimestamp() - atAngleTime > .5)
+                    {
+                        done = true;
+                    }
+                }
+                else
+                {
+                    atAngleTime = Timer.getFPGATimestamp();
+                }
+                
+                // we can still see a target
+                if(visionWidth > 15)
                 {
                     SmartDashboard.putNumber("ShooterAngle", valueAngle);
                     //TODO this only works for the front facing spring
@@ -91,6 +107,12 @@ public class VisionShoot extends CommandGroup
             // timeout after 4 seconds of waiting for the camera to switch
             done = true;
         }
+        else
+        {
+            rotate.set(new Vector(0, 0), 0, -1);
+        }
+        
+        Utilities.PrintCommand("VisionShoot", this, distanceFromCenter + " " + done);
     }
     
     protected boolean isFinished() 

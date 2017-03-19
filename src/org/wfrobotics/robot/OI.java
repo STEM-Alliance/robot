@@ -100,7 +100,7 @@ public class OI
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
 //        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
         buttonPanelYellowBottom.toggleWhenPressed(new VisionGearDropOff());
-        buttonPanelBlackBottom.toggleWhenPressed(new VisionShoot());
+        buttonPanelBlackBottom.whenPressed(new VisionShoot());
         //buttonPanelYellowBottom.toggleWhenPressed(new GearDetection(GearDetection.MODE.GETDATA));
         //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));
         
