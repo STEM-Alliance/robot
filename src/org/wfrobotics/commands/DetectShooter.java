@@ -70,6 +70,11 @@ public class DetectShooter extends Command
     {
         return Robot.targetShooterSubsystem.InView;
     }
+    
+    public boolean getIsEnabled()
+    {
+        return Robot.targetShooterSubsystem.isEnabled();
+    }
 
     public double getFullWidth()
     {

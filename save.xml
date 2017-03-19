@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="472" y="788"/>
+	</widget>
+	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="52" y="738"/>
+	</widget>
 	<widget field="VisionWidth" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1394" y="793"/>
 	</widget>
@@ -24,20 +30,13 @@
 		<location x="1537" y="80"/>
 	</widget>
 	<widget field="ShooterAngle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="350"/>
+		<location x="1091" y="5"/>
 	</widget>
 	<widget field="ShooterCenter" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="242" y="411"/>
 	</widget>
 	<widget field="ShooterTargets" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="248" y="357"/>
-	</widget>
-	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="822" y="832"/>
-	</widget>
-	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="439" y="746"/>
-		<height>22</height>
 	</widget>
 	<widget field="LifterSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="938" y="884"/>
@@ -146,7 +145,7 @@
 		<location x="496" y="244"/>
 	</widget>
 	<widget field="SpeedDesired" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="456" y="456"/>
+		<location x="509" y="462"/>
 	</widget>
 	<widget field="TopSpeedDiff" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="454" y="431"/>

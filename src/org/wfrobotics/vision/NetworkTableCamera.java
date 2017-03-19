@@ -90,6 +90,11 @@ public abstract class NetworkTableCamera extends Subsystem
         sourceTable.putNumber("CameraSource", source);
     }
     
+    public boolean isEnabled()
+    {
+        return table.cameraSource == source;
+    }
+    
     public void disable()
     {
         sourceTable.putNumber("CameraSource", SOURCE_DEFAULT);

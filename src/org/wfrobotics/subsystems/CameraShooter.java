@@ -55,7 +55,7 @@ public class CameraShooter extends NetworkTableCamera
             //SmartDashboard.putNumber("percent", data.get(0).x / table.imageWidth);
             DistanceFromCenter = Utilities.scaleToRange(data.get(0).x / table.imageWidth, 0.0, 1.0, -1.0, 1.0);
             FullWidth = data.get(0).width;
-            InView = true;
+            InView = false;
         }
         else
         {

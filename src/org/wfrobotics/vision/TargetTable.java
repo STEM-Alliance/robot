@@ -20,6 +20,10 @@ public class TargetTable {
     public double[] solidity = {0};
     public double[] area = {0};
     
+    public double cameraSource = 0;
+    public double fps = 0;
+    public double timestamp = 0;
+    
     public int targetsFound = 0;
     
     public TargetTable(String name)
@@ -35,6 +39,10 @@ public class TargetTable {
         width = table.getNumberArray("width", width);
         solidity = table.getNumberArray("solidity", solidity);
         area = table.getNumberArray("area", area);
+        
+        cameraSource = table.getNumber("CameraSource", cameraSource);
+        fps = table.getNumber("fps", fps);
+        timestamp = table.getNumber("timestamp", timestamp);
         
         targetsFound = Math.min(x.length, Math.min(y.length, Math.min(height.length, width.length)));
         SmartDashboard.putNumber("TargetsFound", targetsFound);
