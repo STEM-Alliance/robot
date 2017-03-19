@@ -38,11 +38,11 @@ public class AutoGear extends CommandGroup
             {
                 if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
                 {
-                    return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.5, -VisionGearDropOff.HEXAGON_ANGLE);
+                    return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.4, -VisionGearDropOff.HEXAGON_ANGLE);
                 }
                 else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
                 {
-                    return new Config(5, 180-VisionGearDropOff.HEXAGON_ANGLE, .5, VisionGearDropOff.HEXAGON_ANGLE);
+                    return new Config(5, 180-VisionGearDropOff.HEXAGON_ANGLE, .4, VisionGearDropOff.HEXAGON_ANGLE);
                 }
                 else
                 {
@@ -53,11 +53,11 @@ public class AutoGear extends CommandGroup
             {
                 if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
                 {
-                    return new Config(5, 180 - VisionGearDropOff.HEXAGON_ANGLE, .5, -VisionGearDropOff.HEXAGON_ANGLE);
+                    return new Config(5, 180 - VisionGearDropOff.HEXAGON_ANGLE, .4, -VisionGearDropOff.HEXAGON_ANGLE);
                 }
                 else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
                 {
-                    return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.5, VisionGearDropOff.HEXAGON_ANGLE);
+                    return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.4, VisionGearDropOff.HEXAGON_ANGLE);
                 }
                 else
                 {
@@ -82,24 +82,23 @@ public class AutoGear extends CommandGroup
         
         signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1:-1;  // X driving based on alliance for mirrored field
         config = Config.getConfig(startPosition);
-
+        
         if (shootFirst)
         {
             shoot();
         }
         
-        driveToSpring(shootFirst);  // Done for: 
+        driveToSpring(shootFirst);
         
-        scoreGear();
-        //postGearAutonomous(POST_GEAR_AUTONOMOUS.NONE);
+        scoreGear(shootFirst);
     }
     
     private void shoot()
     {
-        addParallel(new Lift());
-        addParallel(new AutoDrive(0, 0, 0, 5.5));
+        addParallel(new Lift(Lift.MODE.UP));
+        addParallel(new AutoDrive(0, 0, 0, 5));
         addParallel(new IntakeSetup(true));
-        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 6));
+        addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 5));
         addParallel(new Shoot(Conveyor.MODE.OFF));
         addParallel(new Rev(Rev.MODE.FORCE_OFF));
         addParallel(new IntakeSetup(false));
@@ -112,7 +111,7 @@ public class AutoGear extends CommandGroup
         //Preferences.getInstance().get
         if (shootFirst)
         {
-            addSequential(new AutoDrive(0, 1, 0, signX * 33, 1.15));
+            addSequential(new AutoDrive(0, .7, 0, -1, 1.75));
         }
         else
         {
@@ -121,7 +120,7 @@ public class AutoGear extends CommandGroup
         addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
     }
 
-    private void scoreGear()
+    private void scoreGear(boolean shootFirst)
     {
         //addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
         
@@ -129,10 +128,21 @@ public class AutoGear extends CommandGroup
         
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
-            addSequential(new AutoDrive(0, .8, 0, 90, .35));
+            if(shootFirst)
+            {
+                addSequential(new AutoDrive(0, .8, 0, config.angleSpring, .25));
+            }
+            else
+            {
+                addSequential(new AutoDrive(0, .8, 0, -1, .25));
+            }
+            addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
+            addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1.25));  // Don't coast GOOD
+            addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
             addSequential(new AutoDrive(config.approachSpringX,       // Towards the airship
                                         Math.abs(config.approachSpringX),     // Always forwards with X magnitude
-                                        0, config.angleSpring, 1));
+                                        0, config.angleSpring, .75));
+            addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
         }
         
         switch(mode)
@@ -152,10 +162,17 @@ public class AutoGear extends CommandGroup
             case VISION:
                 addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
                 addSequential(new AutoDrive(0, 0, 0, -1, .5));
-                addParallel(new Lift(true));
+                addParallel(new Lift(Lift.MODE.DOWN));
                 if(startPosition == POSITION_ROTARY.CENTER)
                 {
-                    addSequential(new AutoDrive(0, -.4, 0, -1, 1));  // Don't coast GOOD
+                    addSequential(new AutoDrive(0, -.4, 0, -1, 1));
+                    addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
+                }
+                else
+                {
+                    addSequential(new AutoDrive(-config.approachSpringX,       // away from the airship
+                                                -Math.abs(config.approachSpringX),     // Always away with X magnitude
+                                                0, config.angleSpring, 1));
                     addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
                 }
                 break;

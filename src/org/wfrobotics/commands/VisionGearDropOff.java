@@ -4,6 +4,7 @@ import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.hardware.led.LEDs;
 import org.wfrobotics.hardware.led.LEDs.Effect;
 import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
@@ -20,12 +21,13 @@ public class VisionGearDropOff extends CommandGroup
     private AutoDrive drive;
     private PIDController pidX;
     private double heading = -1;
+    private boolean fieldRelative = true;
 
     private boolean done;
 
     public VisionGearDropOff() 
     {
-        pidX = new PIDController(.4, 0.015, 0, .3);
+        pidX = new PIDController(2.5, 0.125, 0, .35);
         camera = new DetectGear(DetectGear.MODE.GETDATA);
         drive = new AutoDrive(0, 0, 0, -1, 999);
 
@@ -36,6 +38,8 @@ public class VisionGearDropOff extends CommandGroup
     protected void initialize()
     {
         Robot.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        fieldRelative = Robot.driveSubsystem.getFieldRelative();
+        Robot.driveSubsystem.setFieldRelative(false);
         done = false;
     }
 
@@ -54,10 +58,15 @@ public class VisionGearDropOff extends CommandGroup
             valueX = pidX.update(distanceFromCenter);
 
             // then if we're somewhat lined up
-            if(Math.abs(distanceFromCenter) < .325)
+            if(Math.abs(distanceFromCenter) < .25)
             {
                 // start approaching slowly
-                valueY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.4, -.1);
+                //valueY = Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.4, -.1);
+                valueY = -.315;
+            }
+            else
+            {
+                valueY = -.315;
             }
 
             if(Math.abs(distanceFromCenter) < .05)
@@ -65,16 +74,14 @@ public class VisionGearDropOff extends CommandGroup
                 // if we started really far away from center, 
                 // this will then reduce that overshoot
                 // maybe
-                //pidX.resetError();
+                pidX.resetError();
             }
 
             // we can still see a target
             if(visionWidth > 15 && visionWidth < 335)
             {
-                Vector vector = new Vector(valueX, valueY);
-
-                //TODO this only works for the front facing spring
-                // address field heading here
+                Vector vector = new Vector(valueY, valueX);
+                
                 drive.set(vector, 0, -1);
             }
             else
@@ -92,10 +99,10 @@ public class VisionGearDropOff extends CommandGroup
 
         Utilities.PrintCommand("VisionGearDetect", this, camera.getIsFound() + "");
         SmartDashboard.putNumber("GearDistanceX", distanceFromCenter);
-        SmartDashboard.putNumber("VisionGearY", valueY);
-        SmartDashboard.putNumber("VisionGearX", valueX);
         SmartDashboard.putNumber("VisionWidth", visionWidth);
         SmartDashboard.putBoolean("GearFound", camera.getIsFound());
+        SmartDashboard.putNumber("VisionGearY", valueY);
+        SmartDashboard.putNumber("VisionGearX", valueX);
     }
 
     protected boolean isFinished() 
@@ -105,7 +112,7 @@ public class VisionGearDropOff extends CommandGroup
 
     protected void end()
     {
-
+        Robot.driveSubsystem.setFieldRelative(fieldRelative);
     }
 
     protected void interrupted()

@@ -38,6 +38,7 @@ public class WheelAngleManager
         //angleMotor.setStatusFrameRateMs(StatusFrameRate.Feedback, 10);
         angleMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
         angleMotor.changeControlMode(TalonControlMode.PercentVbus);
+        angleMotor.configNominalOutputVoltage(0, 0);
         //angleMotor.setPosition(angleMotor.getPosition());
     }
     
