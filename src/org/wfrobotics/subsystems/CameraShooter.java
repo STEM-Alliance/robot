@@ -64,4 +64,13 @@ public class CameraShooter extends NetworkTableCamera
             InView = false;
         }
     }
+    
+    public void disable()
+    {
+        super.disable();
+        
+        DistanceFromCenter = 0;
+        FullWidth = 0;
+        InView = false;
+    }
 }
