@@ -38,11 +38,11 @@ public class AutoGear extends CommandGroup
             {
                 if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
                 {
-                    return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.4, -VisionGearDropOff.HEXAGON_ANGLE);
+                    return new Config(5, VisionGear.HEXAGON_ANGLE, -.4, -VisionGear.HEXAGON_ANGLE);
                 }
                 else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
                 {
-                    return new Config(5, 180-VisionGearDropOff.HEXAGON_ANGLE, .4, VisionGearDropOff.HEXAGON_ANGLE);
+                    return new Config(5, 180-VisionGear.HEXAGON_ANGLE, .4, VisionGear.HEXAGON_ANGLE);
                 }
                 else
                 {
@@ -53,11 +53,11 @@ public class AutoGear extends CommandGroup
             {
                 if(startingPosition == POSITION_ROTARY.SIDE_BOILER)
                 {
-                    return new Config(5, 180 - VisionGearDropOff.HEXAGON_ANGLE, .4, -VisionGearDropOff.HEXAGON_ANGLE);
+                    return new Config(5, 180 - VisionGear.HEXAGON_ANGLE, .4, -VisionGear.HEXAGON_ANGLE);
                 }
                 else if(startingPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
                 {
-                    return new Config(5, VisionGearDropOff.HEXAGON_ANGLE, -.4, VisionGearDropOff.HEXAGON_ANGLE);
+                    return new Config(5, VisionGear.HEXAGON_ANGLE, -.4, VisionGear.HEXAGON_ANGLE);
                 }
                 else
                 {
@@ -95,10 +95,13 @@ public class AutoGear extends CommandGroup
     
     private void shoot()
     {
+        // enable the lift, intake, and shoot
         addParallel(new Lift(Lift.MODE.UP));
         addParallel(new AutoDrive(0, 0, 0, 5));
         addParallel(new IntakeSetup(true));
         addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Constants.AUGER_SPEED * .8, Constants.AUGER_UNJAM_SPEED, 5));
+        
+        // kill all the above
         addParallel(new Shoot(Conveyor.MODE.OFF));
         addParallel(new Rev(Rev.MODE.FORCE_OFF));
         addParallel(new IntakeSetup(false));
@@ -107,16 +110,20 @@ public class AutoGear extends CommandGroup
     
     private void driveToSpring(boolean shootFirst)
     {
+        // make sure we're still lifting
         addParallel(new Lift());
-        //Preferences.getInstance().get
+        
         if (shootFirst)
         {
+            // if we're shooting, we need to keep our heading for a bit first to not ram the wall
             addSequential(new AutoDrive(0, .7, 0, -1, 1.75));
         }
         else
         {
+            // otherwise maintain the 90 degree angle
             addSequential(new AutoDrive(0, .8, 0, 90, 1.3));
         }
+        
         addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
     }
 
@@ -125,20 +132,27 @@ public class AutoGear extends CommandGroup
         //addSequential(new AutoDrive(signX * 0, .5, signX * .5, config.angleSpring, config.timeApproachAirship));  // Drive forwards, turning towards the airship's spring
         
         //addSequential(new AutoDrive(0,.75,0,-1,config.timeApproachAirship));
-        
+
+        // do the sides
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
             if(shootFirst)
             {
+                // we have to start pre-spinning to the spring angle
                 addSequential(new AutoDrive(0, .8, 0, config.angleSpring, .25));
             }
             else
             {
                 addSequential(new AutoDrive(0, .8, 0, -1, .25));
             }
+            
+            
+            // turn to the spring
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1.25));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
+            
+            // approach the spring
             addSequential(new AutoDrive(config.approachSpringX,       // Towards the airship
                                         Math.abs(config.approachSpringX),     // Always forwards with X magnitude
                                         0, config.angleSpring, .75));
@@ -159,9 +173,16 @@ public class AutoGear extends CommandGroup
                                   signX * .5, config.angleSpring, 1));
                 }
                 break;
+                
             case VISION:
-                addSequential(new VisionGearDropOff());  // In front of the gear; score it with vision
+                // this could potentially be replaced with VisionGearDropAndBackup
+                
+                addSequential(new VisionGear());  // In front of the gear; score it with vision
+                
+                // wait a half sec
                 addSequential(new AutoDrive(0, 0, 0, -1, .5));
+                
+                // now drop it and back up
                 addParallel(new Lift(Lift.MODE.DOWN));
                 if(startPosition == POSITION_ROTARY.CENTER)
                 {

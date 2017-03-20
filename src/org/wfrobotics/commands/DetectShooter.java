@@ -68,7 +68,7 @@ public class DetectShooter extends Command
     
     public boolean getIsFound()
     {
-        return Robot.targetShooterSubsystem.InView;
+        return Robot.targetShooterSubsystem.InView && Robot.targetShooterSubsystem.isEnabled();
     }
     
     public boolean getIsEnabled()
