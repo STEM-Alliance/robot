@@ -38,6 +38,7 @@ public class VisionShoot extends CommandGroup
         done = false;
         
         startTime = Timer.getFPGATimestamp();
+        atAngleTime = Timer.getFPGATimestamp();
         Robot.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
         pidRotate.resetError();
     }
@@ -122,6 +123,7 @@ public class VisionShoot extends CommandGroup
 
     protected void end()
     {
+        camera.endEarly();
         rotate.endEarly();
     }
 
