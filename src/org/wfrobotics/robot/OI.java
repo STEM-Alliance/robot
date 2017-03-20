@@ -10,7 +10,8 @@ import org.wfrobotics.commands.Shoot;
 import org.wfrobotics.commands.DetectShooter;
 import org.wfrobotics.commands.IntakeSetup;
 import org.wfrobotics.commands.Up;
-import org.wfrobotics.commands.VisionGearDropOff;
+import org.wfrobotics.commands.VisionGear;
+import org.wfrobotics.commands.VisionGearDropAndBackup;
 import org.wfrobotics.commands.VisionShoot;
 import org.wfrobotics.commands.drive.DriveConfig;
 import org.wfrobotics.commands.drive.DriveSwerve;
@@ -82,7 +83,7 @@ public class OI
     
     // used for manual intake DO NOT USE OTHERWISE
     public static Button buttonPanelBlackTop = new PanelButton(panel, Panel.BUTTON.BLACK_T);
-    public static Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_B);
+    Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_B);
     
     public static Button buttonManX= new XboxButton (xboxMan, Xbox.BUTTON.X);
     public static Button buttonManY= new XboxButton (xboxMan, Xbox.BUTTON.Y);
@@ -99,7 +100,7 @@ public class OI
 //        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
 //        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
-        buttonPanelYellowBottom.toggleWhenPressed(new VisionGearDropOff());
+        buttonPanelYellowBottom.whenPressed(new VisionGearDropAndBackup());
         buttonPanelBlackBottom.whenPressed(new VisionShoot());
         //buttonPanelYellowBottom.toggleWhenPressed(new GearDetection(GearDetection.MODE.GETDATA));
         //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));

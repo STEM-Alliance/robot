@@ -6,7 +6,9 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoDrive extends Command
 {
@@ -92,15 +94,16 @@ public class AutoDrive extends Command
     
     protected void initialize()
     {
-
-        
         Robot.driveSubsystem.driveWithHeading(new Vector(), 0, heading);
         //TODO Use a PID loop here if this isn't good enough
     }
 
     protected void execute() 
     {
-        Utilities.PrintCommand("Drive", this, "" + vector.getMag() + " " +vector.getAngle() + " " + heading);
+        Utilities.PrintCommand("Drive", this, mode.toString() + " M" + Utilities.round(vector.getMag(), 2) 
+                                                              + " A" + Utilities.round(vector.getAngle(), 2)
+                                                              + " H" + heading 
+                                                              + " R" + Utilities.round(rotate, 2));
         if (mode != MODE.OFF)
         {
             Robot.driveSubsystem.driveWithHeading(vector.clone(), rotate, heading);
@@ -143,6 +146,7 @@ public class AutoDrive extends Command
             done = true;
         }
         
+        SmartDashboard.putBoolean("AutoIsFinished", done);
         return done;
     }
     
