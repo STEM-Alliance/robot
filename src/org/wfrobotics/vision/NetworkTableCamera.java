@@ -65,7 +65,7 @@ public abstract class NetworkTableCamera extends Subsystem
     {
         table.update();
         
-        if(table.targetsFound > 0)
+        if(table.targetsFound > 0 && isEnabled())
         {
             data.clear();
             
@@ -98,5 +98,6 @@ public abstract class NetworkTableCamera extends Subsystem
     public void disable()
     {
         sourceTable.putNumber("CameraSource", SOURCE_DEFAULT);
+        data.clear();
     }
 }

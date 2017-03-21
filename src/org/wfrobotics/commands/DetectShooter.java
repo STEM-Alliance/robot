@@ -9,6 +9,7 @@ public class DetectShooter extends Command
 {
     public enum MODE {GETDATA, OFF};
 
+    boolean endEarly = false;
     private final MODE mode;
 
     public DetectShooter(MODE mode)
@@ -21,6 +22,7 @@ public class DetectShooter extends Command
     
     protected void initialize()
     {
+        endEarly = false;
         if (mode == MODE.GETDATA)
         {
             Robot.targetShooterSubsystem.enable();
@@ -41,7 +43,7 @@ public class DetectShooter extends Command
     @Override
     protected boolean isFinished()
     {
-        return false;
+        return endEarly;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class DetectShooter extends Command
     
     public boolean getIsFound()
     {
-        return Robot.targetShooterSubsystem.InView;
+        return Robot.targetShooterSubsystem.InView && Robot.targetShooterSubsystem.isEnabled();
     }
     
     public boolean getIsEnabled()
@@ -79,5 +81,11 @@ public class DetectShooter extends Command
     public double getFullWidth()
     {
         return Robot.targetShooterSubsystem.FullWidth;
+    }
+
+
+    public void endEarly()
+    {
+        endEarly = true;
     }
 }

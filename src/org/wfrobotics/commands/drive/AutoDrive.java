@@ -6,11 +6,13 @@ import org.wfrobotics.Vector;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.subsystems.drive.swerve.SwerveDriveSubsystem;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoDrive extends Command
 {
-    protected enum MODE {DRIVE, TURN, OFF}
+    protected enum MODE {DRIVE, HEADING, TURN, OFF}
     
     protected final MODE mode;
     protected Vector vector;
@@ -30,6 +32,7 @@ public class AutoDrive extends Command
         this.vector = new Vector(0, 0);
         this.rotate = 0;
         this.heading = SwerveDriveSubsystem.HEADING_IGNORE;
+        endEarly = false;
     }
 
     /**
@@ -49,6 +52,7 @@ public class AutoDrive extends Command
         rotate = speedR;
         heading = SwerveDriveSubsystem.HEADING_IGNORE;
         setTimeout(timeout);
+        endEarly = false;
     }
     
     /**
@@ -62,11 +66,23 @@ public class AutoDrive extends Command
     public AutoDrive(double speedR, double angle, double tolerance)
     {
         requires(Robot.driveSubsystem);
-        this.mode = MODE.TURN;
+        this.mode = MODE.HEADING;
         vector = new Vector(0, 0);
         rotate = speedR;
         heading = angle; 
         headingTolerance = tolerance;
+        endEarly = false;
+    }
+
+    public AutoDrive(double speedR)
+    {
+        requires(Robot.driveSubsystem);
+        this.mode = MODE.TURN;
+        vector = new Vector(0, 0);
+        rotate = speedR;
+        heading = -1; 
+        headingTolerance = 0;
+        endEarly = false;
     }
     
     /**
@@ -86,21 +102,24 @@ public class AutoDrive extends Command
         vector = new Vector(speedX, speedY);
         rotate = speedR;
         heading = angle;
-        
+
+        endEarly = false;
         setTimeout(timeout);
     }
     
     protected void initialize()
     {
-
-        
         Robot.driveSubsystem.driveWithHeading(new Vector(), 0, heading);
+        endEarly = false;
         //TODO Use a PID loop here if this isn't good enough
     }
 
     protected void execute() 
     {
-        Utilities.PrintCommand("Drive", this, "" + vector.getMag() + " " +vector.getAngle() + " " + heading);
+        Utilities.PrintCommand("Drive", this, mode.toString() + " M" + Utilities.round(vector.getMag(), 2) 
+                                                              + " A" + Utilities.round(vector.getAngle(), 2)
+                                                              + " H" + heading 
+                                                              + " R" + Utilities.round(rotate, 2));
         if (mode != MODE.OFF)
         {
             Robot.driveSubsystem.driveWithHeading(vector.clone(), rotate, heading);
@@ -122,7 +141,7 @@ public class AutoDrive extends Command
             {
                 done = isTimedOut();
             }
-            else if (mode == MODE.TURN)
+            else if (mode == MODE.HEADING)
             {
                 if(heading != -1)
                 {
@@ -143,6 +162,7 @@ public class AutoDrive extends Command
             done = true;
         }
         
+        SmartDashboard.putBoolean("AutoIsFinished", done);
         return done;
     }
     
