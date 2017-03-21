@@ -9,6 +9,7 @@ import org.wfrobotics.hardware.led.LEDs.Effect;
 import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.robot.Robot;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -17,15 +18,13 @@ public class VisionGearPivot extends CommandGroup
     private DetectGear camera;
     private AutoDrive drive;
     private PIDController pid;
-    private boolean fieldRelative = true;
 
     private boolean done;
     
     public VisionGearPivot()
-        {
-        pid = new PIDController(2.5, 0.125, 0, .35);
+    {
         camera = new DetectGear(DetectGear.MODE.GETDATA);
-        drive = new AutoDrive(0, 0, 0, -1, 999);
+        drive = new AutoDrive(0);
 
         addParallel(camera);
         addSequential(drive);
@@ -33,31 +32,28 @@ public class VisionGearPivot extends CommandGroup
 
     protected void initialize()
     {
+        double p = Preferences.getInstance().getDouble("PivotP", 1.8);
+        double i = Preferences.getInstance().getDouble("PivotI", 0);
+        double d = Preferences.getInstance().getDouble("PivotD", 10);
+        pid = new PIDController(p, i, d, .35);
         Robot.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
-        fieldRelative = Robot.driveSubsystem.getFieldRelative();
-        Robot.driveSubsystem.setFieldRelative(false);
         done = false;
     }
 
     protected void execute()
     {
         double distanceFromCenter = camera.getDistanceFromCenter();
-        double speedR;
+        double errorX;
 
-        if(camera.getIsFound())
+        if(!camera.getIsFound())
         {
             done = true;
             return;
         }
-
-        if(Math.abs(distanceFromCenter) < 15)
-        {
-            pid.resetError();
-        }
         
-        speedR = pid.update(distanceFromCenter);
+        errorX = -pid.update(distanceFromCenter);
         
-        drive.set(0, 0, speedR, -1);
+        drive.set(0, 0, errorX, -1);
 
         Utilities.PrintCommand("VisionGearDetect", this, camera.getIsFound() + "");
         SmartDashboard.putNumber("GearDistanceX", distanceFromCenter);
@@ -66,15 +62,15 @@ public class VisionGearPivot extends CommandGroup
 
     protected boolean isFinished() 
     {
-        double width = camera.getFullWidth();
+        double distanceFromCenter = camera.getDistanceFromCenter();
         
-        SmartDashboard.putNumber("VisionWidth", width);
-        return done || Math.abs(width) < 15;
+        SmartDashboard.putNumber("VisionWidth", distanceFromCenter);
+        return done || !camera.getIsFound() || Math.abs(distanceFromCenter) < .125;
     }
 
     protected void end()
     {
-        Robot.driveSubsystem.setFieldRelative(fieldRelative);
+        drive.endEarly();
     }
 
     protected void interrupted()

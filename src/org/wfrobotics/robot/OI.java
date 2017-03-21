@@ -12,6 +12,8 @@ import org.wfrobotics.commands.IntakeSetup;
 import org.wfrobotics.commands.Up;
 import org.wfrobotics.commands.VisionGear;
 import org.wfrobotics.commands.VisionGearDropAndBackup;
+import org.wfrobotics.commands.VisionGearPivot;
+import org.wfrobotics.commands.VisionGearStrafe;
 import org.wfrobotics.commands.VisionShoot;
 import org.wfrobotics.commands.drive.DriveConfig;
 import org.wfrobotics.commands.drive.DriveSwerve;
@@ -123,8 +125,8 @@ public class OI
         //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         //buttonPanelBlackTop.whileHeld(new IntakeSetup(true));
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
-        buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
-        
+        //buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
+        buttonPanelWhiteBottom.whileHeld(new VisionGearStrafe());
         
         //buttonDriveRB.toggleWhenPressed(new VisionShoot());
         

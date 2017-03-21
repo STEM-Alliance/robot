@@ -2,6 +2,8 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.commands.drive.DriveConfig;
+import org.wfrobotics.commands.drive.DriveConfig.MODE;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -133,7 +135,6 @@ public class AutoGear extends CommandGroup
         
         //addSequential(new AutoDrive(0,.75,0,-1,config.timeApproachAirship));
 
-        // do the sides
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
             if(shootFirst)
@@ -143,7 +144,7 @@ public class AutoGear extends CommandGroup
             }
             else
             {
-                addSequential(new AutoDrive(0, .8, 0, -1, .25));
+                addSequential(new AutoDrive(0, .8, 0, -1, .275));
             }
             
             
@@ -151,6 +152,17 @@ public class AutoGear extends CommandGroup
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1.25));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
+
+        }
+            
+            addSequential(new VisionGearStrafe());
+            addSequential(new VisionGearPivot());
+            addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
+        if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
+        {
+            boolean fieldRelative = Robot.driveSubsystem.getFieldRelative();
+            addSequential(new AutoDrive(0, .3, 0, -1, 0.1));  // Wheels forward, we messed it up pivoting
+            addSequential(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE, fieldRelative));
             
             // approach the spring
             addSequential(new AutoDrive(config.approachSpringX,       // Towards the airship
