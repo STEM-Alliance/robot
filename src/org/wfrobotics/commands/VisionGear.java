@@ -13,7 +13,7 @@ import org.wfrobotics.robot.Robot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class VisionGearDropOff extends CommandGroup 
+public class VisionGear extends CommandGroup 
 {
     final static double HEXAGON_ANGLE = 30;  // All corners are 120 on the interior, therefore the sides we want are 30 degrees past straight ahead
 
@@ -25,7 +25,7 @@ public class VisionGearDropOff extends CommandGroup
 
     private boolean done;
 
-    public VisionGearDropOff() 
+    public VisionGear() 
     {
         pidX = new PIDController(2.5, 0.125, 0, .35);
         camera = new DetectGear(DetectGear.MODE.GETDATA);

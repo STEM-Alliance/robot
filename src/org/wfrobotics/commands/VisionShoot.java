@@ -24,9 +24,9 @@ public class VisionShoot extends CommandGroup
     
     public VisionShoot() 
     {
-        pidRotate = new PIDController(2, 0.0002, 0.000, .4);
+        pidRotate = new PIDController(2, 0.0002, 0.0001, .4);
         camera = new DetectShooter(DetectShooter.MODE.GETDATA);
-        rotate = new AutoDrive(0, -1, 5); //TODO Create a new constructor for updating, rather than one that does nothing with a big timeout
+        rotate = new AutoDrive(0);
         
         addParallel(camera);
         addSequential(rotate);
@@ -54,7 +54,9 @@ public class VisionShoot extends CommandGroup
             doVisionDrive();
         }
         
-        Utilities.PrintCommand("VisionShoot", this, distanceFromCenter + " " + done);
+        Utilities.PrintCommand("VisionShoot", this, Utilities.round(distanceFromCenter,2) 
+                                                    + " " + rotate.isRunning() 
+                                                    + " " + done + " " + isCameraReady());
     }
     
     protected boolean isFinished() 
@@ -64,6 +66,7 @@ public class VisionShoot extends CommandGroup
 
     protected void end()
     {
+        camera.endEarly();
         rotate.endEarly();
     }
 
@@ -127,7 +130,6 @@ public class VisionShoot extends CommandGroup
         // we can still see a target
         if(visionWidth > 15)
         {
-            SmartDashboard.putNumber("ShooterAngle", valueAngle);
             setPointAngle = valueAngle;
             //TODO this only works for the front facing spring address field heading here            
         }
@@ -137,7 +139,8 @@ public class VisionShoot extends CommandGroup
             done = true;
             setPointAngle = 0;
         }
-        
+
+        SmartDashboard.putNumber("ShooterAngle", setPointAngle);
         rotate.set(new Vector(0, 0), setPointAngle, -1);
     }
 }
