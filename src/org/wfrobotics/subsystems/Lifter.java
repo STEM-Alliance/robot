@@ -17,10 +17,11 @@ public class Lifter extends Subsystem
     private final boolean DEBUG = true;
 //    private final double TOP_LIMIT = .0775;
 //    private final double BOTTOM_LIMIT = 50;
-    private double TOP = -684;
-    private double BOTTOM = -885;
-    private final double P = 1;
-    private final double I = 0.07;
+    private double TOP = -520;
+    private double BOTTOM = -730;
+    private final double P = 5;
+    private final double I = 0.0005;
+    private final double D = 0;
     private final double F = 0;
     
     private final CANTalon motor;
@@ -37,7 +38,7 @@ public class Lifter extends Subsystem
         motor.configPeakOutputVoltage(12, -12);
         motor.ConfigFwdLimitSwitchNormallyOpen(true);
         motor.ConfigRevLimitSwitchNormallyOpen(true);
-        motor.setPID(P, I, 0, F, 0, 100, 0);
+        motor.setPID(P, I, D, F, 0, 120, 0);
         motor.setAllowableClosedLoopErr(0);
         
         motor.enableForwardSoftLimit(false);
@@ -65,7 +66,7 @@ public class Lifter extends Subsystem
         motor.disableControl();
         motor.setP(Preferences.getInstance().getDouble("LifterPID_P", P));
         motor.setI(Preferences.getInstance().getDouble("LifterPID_I", I));
-        motor.setF(Preferences.getInstance().getDouble("LifterPID_F", F));
+        motor.setD(Preferences.getInstance().getDouble("LifterPID_D", D));
         TOP = Preferences.getInstance().getDouble("LifterTop", TOP);
         BOTTOM = Preferences.getInstance().getDouble("LifterBot", BOTTOM);   
 //      motor.setForwardSoftLimit(Preferences.getInstance().getDouble("LifterTopL", TOP_LIMIT));
@@ -126,6 +127,8 @@ public class Lifter extends Subsystem
         
         SmartDashboard.putString("LifterState", position);
         SmartDashboard.putNumber("LifterAngle", angle);
+        SmartDashboard.putNumber("LifterError", motor.getClosedLoopError());
+        SmartDashboard.putNumber("LifterIAccum", motor.GetIaccum());
     }
 
     public boolean atBottom()

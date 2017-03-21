@@ -195,6 +195,11 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                         // heading and new desired heading
                         Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
                         double tempRotation = m_chassisAngleController.update(Error);
+                        
+                        if(Math.abs(Error) < 2)
+                        {
+                            m_chassisAngleController.resetError();
+                        }
 
                         // Add a deadband to hopefully help with wheel lock after stopping
                         SmartDashboard.putNumber("MaintainRotation", tempRotation);
