@@ -1,7 +1,8 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.commands.DetectShooter;
+import org.wfrobotics.commands.vision.VisionDetect;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,28 +10,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * Provides information used to shoot the ball.
  * This subsystem translates pictures into data that commands can use to correct how they are aiming.
- *
  */
 public class CameraShooter extends NetworkTableCamera 
-{   
-    private final int DESIRED_TARGETS = 2;  // Reflective detectable targets
-
-    public double DistanceFromCenter = 0;
-    public double FullWidth = 0;
-    public boolean InView = false;
-
-
+{
     public CameraShooter()
     {
-        super("Target", 1);
+        super("Target", 1, 2);
     }
     
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new DetectShooter(DetectShooter.MODE.OFF));
-    }
-    
+        setDefaultCommand(new VisionDetect(Robot.targetShooterSubsystem, VisionDetect.MODE.OFF));
+    }    
 
     public void run()
     {
@@ -63,14 +55,5 @@ public class CameraShooter extends NetworkTableCamera
             FullWidth = 0;
             InView = false;
         }
-    }
-    
-    public void disable()
-    {
-        super.disable();
-        
-        DistanceFromCenter = 0;
-        FullWidth = 0;
-        InView = false;
     }
 }

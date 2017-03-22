@@ -2,12 +2,11 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.commands.drive.DriveConfig;
-import org.wfrobotics.commands.drive.DriveConfig.MODE;
+import org.wfrobotics.commands.vision.VisionPivot;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -156,7 +155,7 @@ public class AutoGear extends CommandGroup
         }
             
             addSequential(new VisionGearStrafe());
-            addSequential(new VisionGearPivot());
+            addSequential(new VisionPivot(Robot.targetGearSubsystem, Robot.leds, new VisionPivot.Config(1.8, 0, 10, .35, .125, true, true)));
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {

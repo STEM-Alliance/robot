@@ -3,6 +3,8 @@ package org.wfrobotics.commands;
 import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.commands.vision.VisionDetect;
+import org.wfrobotics.commands.vision.VisionDetect.MODE;
 import org.wfrobotics.hardware.led.LEDs;
 import org.wfrobotics.hardware.led.LEDs.Effect;
 import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
@@ -14,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionGearStrafe extends CommandGroup 
 {
-    private DetectGear camera;
+    private VisionDetect camera;
     private AutoDrive drive;
     private PIDController pid;
 
@@ -22,7 +24,7 @@ public class VisionGearStrafe extends CommandGroup
     
     public VisionGearStrafe()
     {
-        camera = new DetectGear(DetectGear.MODE.GETDATA);
+        camera = new VisionDetect(Robot.targetGearSubsystem, VisionDetect.MODE.GETDATA);
         drive = new AutoDrive(0);
 
         addParallel(camera);

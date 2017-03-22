@@ -4,6 +4,7 @@ import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.commands.vision.VisionDetect;
 import org.wfrobotics.hardware.led.LEDs;
 import org.wfrobotics.hardware.led.LEDs.Effect;
 import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
@@ -14,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionShoot extends CommandGroup 
 {    
-    private DetectShooter camera;
+    private VisionDetect camera;
     private AutoDrive rotate;
     private PIDController pidRotate;
 
@@ -25,7 +26,7 @@ public class VisionShoot extends CommandGroup
     public VisionShoot() 
     {
         pidRotate = new PIDController(2, 0.0002, 0.0001, .4);
-        camera = new DetectShooter(DetectShooter.MODE.GETDATA);
+        camera = new VisionDetect(Robot.targetShooterSubsystem, VisionDetect.MODE.GETDATA);
         rotate = new AutoDrive(0);
         
         addParallel(camera);
@@ -66,7 +67,7 @@ public class VisionShoot extends CommandGroup
 
     protected void end()
     {
-        camera.endEarly();
+        //camera.endEarly();
         rotate.endEarly();
     }
 

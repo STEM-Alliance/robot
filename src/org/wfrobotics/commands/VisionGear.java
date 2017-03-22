@@ -4,6 +4,8 @@ import org.wfrobotics.PIDController;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.commands.vision.VisionDetect;
+import org.wfrobotics.commands.vision.VisionDetect.MODE;
 import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.hardware.led.LEDs;
 import org.wfrobotics.hardware.led.LEDs.Effect;
@@ -17,7 +19,7 @@ public class VisionGear extends CommandGroup
 {
     final static double HEXAGON_ANGLE = 30;  // All corners are 120 on the interior, therefore the sides we want are 30 degrees past straight ahead
 
-    private DetectGear camera;
+    private VisionDetect camera;
     private AutoDrive drive;
     private PIDController pidX;
     private double heading = -1;
@@ -27,8 +29,8 @@ public class VisionGear extends CommandGroup
 
     public VisionGear() 
     {
+        camera = new VisionDetect(Robot.targetGearSubsystem, VisionDetect.MODE.GETDATA);
         pidX = new PIDController(2.5, 0.125, 0, .35);
-        camera = new DetectGear(DetectGear.MODE.GETDATA);
         drive = new AutoDrive(0, 0, 0, -1, 999);
 
         addParallel(camera);
