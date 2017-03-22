@@ -1,9 +1,12 @@
 package org.wfrobotics.commands;
 
+import org.wfrobotics.commands.vision.VisionPivot;
+import org.wfrobotics.commands.vision.VisionStrafe;
+import org.wfrobotics.robot.Robot;
+
 /**
- * Constant values to be shared by commands. 
- * Constants should be reusable values, meaning they are useful across multiple commands.
- *
+ * Constant values to be shared by commands
+ * Constants should be reusable values, meaning they are useful across multiple commands
  */
 public class Constants 
 {
@@ -12,12 +15,14 @@ public class Constants
    public static final double AUTONOMOUS_TURN_SPEED = .5;
    public static final double AUTONOMOUS_TURN_TOLERANCE = .1;
    
+   public static final VisionPivot.Config GEAR_VISION_PIVOT_CONFIG = new VisionPivot.Config(Robot.targetGearSubsystem, Robot.leds, 1.8, 0, 10, .35, .125, true, true);
+   public static final VisionStrafe.Config GEAR_VISION_STRAFE_CONFIG = new VisionStrafe.Config(Robot.targetGearSubsystem, Robot.leds, 1.85, .0001, 10, .6, .2, false, true); 
+   
    public static final double SHOOTER_READY_SHOOT_SPEED = 4300;  // Ideal speed for shooter to shoot balls
    //public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls
    public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM = 1500;  // Ideal tolerance of RPMs for safely shooting the balls
    public static final int SHOOTER_READY_CONSECUTIVE_SAMPLES = 10; // How many times through the command to be "reved"
    public static final double SHOOTER_TRIGGER_SPEED_DROP = SHOOTER_READY_SHOOT_SPEED * 0.05 * 0.5 ; // Speed for the unjamming gate (
-   
    
    public static final double AUGER_UNJAM_SPEED = -0.3;
    public static final double AUGER_SPEED = 0.45;  // Ideal for giving balls to shooter while shooter maintains speed (above min shooter recovery time)
@@ -36,5 +41,4 @@ public class Constants
    public static final double FOCAL_LENGTH_IN = TEST_TARGET_HEIGHT_PIXEL * TEST_TARGET_DISTANCE_IN / TARGET_HEIGHT_IN;
    public static final double OPTIMAL_SHOOTING_DISTANCE = 0;
    public static final double OPTIMAL_GEAR_DROP_OFF_DISTANCE = 0;
-
 }
