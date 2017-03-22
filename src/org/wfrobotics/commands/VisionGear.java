@@ -5,8 +5,6 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.commands.vision.VisionDetect;
-import org.wfrobotics.commands.vision.VisionDetect.MODE;
-import org.wfrobotics.hardware.Gyro;
 import org.wfrobotics.hardware.led.LEDs;
 import org.wfrobotics.hardware.led.LEDs.Effect;
 import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
@@ -22,7 +20,6 @@ public class VisionGear extends CommandGroup
     private VisionDetect camera;
     private AutoDrive drive;
     private PIDController pidX;
-    private double heading = -1;
     private boolean fieldRelative = true;
 
     private boolean done;
@@ -49,60 +46,43 @@ public class VisionGear extends CommandGroup
     {
         double distanceFromCenter = camera.getDistanceFromCenter();
         double visionWidth = camera.getFullWidth();
-        double valueY = 0;
+        double valueY = -.315;
         double valueX = 0;
+        boolean found = camera.getIsFound();
+        
+        SmartDashboard.putBoolean("GearFound", found);
 
-        if(camera.getIsFound())
+        if(!found)
         {
-            // we think we've found at least one target
+            done = true;
+            return;
+        }
+        
+        // we think we've found at least one target, so get an estimate speed to line us up
+        valueX = pidX.update(distanceFromCenter);
 
-            // so get an estimate speed to line us up
-            valueX = pidX.update(distanceFromCenter);
+        if(Math.abs(distanceFromCenter) < .05)
+        {
+            // if we started really far away from center, this will then reduce that overshoot maybe
+            pidX.resetError();
+        }
 
-            // then if we're somewhat lined up
-            if(Math.abs(distanceFromCenter) < .25)
-            {
-                // start approaching slowly
-                //valueY = Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.4, -.1);
-                valueY = -.315;
-            }
-            else
-            {
-                valueY = -.315;
-            }
-
-            if(Math.abs(distanceFromCenter) < .05)
-            {
-                // if we started really far away from center, 
-                // this will then reduce that overshoot
-                // maybe
-                pidX.resetError();
-            }
-
-            // we can still see a target
-            if(visionWidth > 15 && visionWidth < 335)
-            {
-                Vector vector = new Vector(valueY, valueX);
-                
-                drive.set(vector, 0, -1);
-            }
-            else
-            {
-                // if the detected target width is less than 15, 
-                // we're either at the target
-                // or something went wrong
-                done = true;
-            }
+        // we can still see a target
+        if(visionWidth > 15 && visionWidth < 335)
+        {
+            Vector vector = new Vector(valueY, valueX);
+            
+            drive.set(vector, 0, -1);
         }
         else
         {
+            // if the detected target width is less than 15, we're either at the target or something went wrong
             done = true;
         }
 
         Utilities.PrintCommand("VisionGearDetect", this, camera.getIsFound() + "");
         SmartDashboard.putNumber("GearDistanceX", distanceFromCenter);
         SmartDashboard.putNumber("VisionWidth", visionWidth);
-        SmartDashboard.putBoolean("GearFound", camera.getIsFound());
         SmartDashboard.putNumber("VisionGearY", valueY);
         SmartDashboard.putNumber("VisionGearX", valueX);
     }
@@ -115,68 +95,11 @@ public class VisionGear extends CommandGroup
     protected void end()
     {
         Robot.driveSubsystem.setFieldRelative(fieldRelative);
+        Robot.leds.set(Robot.defaultLEDEffect);
     }
 
     protected void interrupted()
     {
         end();
-    }
-
-    double getRotationalSpeed()
-    {
-        double headingError = heading - Robot.driveSubsystem.getLastHeading();
-        double speed = 0;
-
-        if (Math.abs(headingError) > 5)  // 
-        {
-            double signR = Math.signum(headingError);
-            double speedR = (heading == 0) ? 0 : .2;
-
-            speed = signR * speedR;
-        }
-
-        return speed;
-    }
-    
-    /**
-     * Assume we are parallel to the spring (no rotation)
-     * @param inView
-     * @param distanceFromCenter
-     * @param visionWidth
-     * @return
-     */
-    private boolean SimpleExecute(boolean inView, double distanceFromCenter, double visionWidth)
-    {
-        double errorBadX = .1;
-        double errorBadY = 15;
-        double PIDXInput = 0;
-        double PIDXOutput;
-        double speedX;
-        double speedY = 0;
-        boolean done = false;
-        
-        if (!inView)
-        {
-            done = true;  // Never in view. We can't do this :(
-        }
-        else if(Math.abs(distanceFromCenter) > errorBadX)  // Fix X this round
-        {
-            PIDXInput = pidX.update(distanceFromCenter);
-        }
-        else if (visionWidth < errorBadY)  // Fix Y this round
-        {
-            speedY = -Utilities.scaleToRange(Math.abs(distanceFromCenter), 0, .4, -.55, -.2);
-        }
-        else
-        {
-            done = true;  // We lost the target. We probably scored!
-        }
-        
-        PIDXOutput = pidX.update(PIDXInput);
-        speedX = (PIDXInput == 0) ? 0 : PIDXOutput;
-        
-        drive.set(speedX, speedY, 0, -1);
-        
-        return done;
     }
 }
