@@ -44,31 +44,39 @@ public abstract class NetworkTableCamera extends Subsystem
         }
     };
     
-    protected NetworkTable sourceTable;
-    protected TargetTable table; 
-    protected ArrayList<TargetData> data;
-
+    public final int DESIRED_TARGETS;  // Reflective things to sense
     private final int SOURCE_DEFAULT = 0;
-    private int source;
+    private final int source;
+    
+    protected final NetworkTable sourceTable;
+    protected final TargetTable table;
+    
+    protected ArrayList<TargetData> data;
+    public int TargetCount = 0;
+    public double DistanceFromCenter = 0;
+    public double FullWidth = 0;
+    public boolean InView = false;
 
-    public NetworkTableCamera(String tableKey, int source)
+    public NetworkTableCamera(String tableKey, int source, int desiredTargets)
     {
         this.source = source;
         sourceTable = NetworkTable.getTable("GRIP");
         table = new TargetTable(tableKey);
         data = new ArrayList<NetworkTableCamera.TargetData>();
+        DESIRED_TARGETS = desiredTargets;
     }
 
-    protected abstract void initDefaultCommand();
+    protected abstract void initDefaultCommand();   
+    
+    public abstract void run();
     
     protected void getUpdatedData()
     {
         table.update();
+        data.clear();
         
         if(table.targetsFound > 0 && isEnabled())
         {
-            data.clear();
-            
             for(int i = 0; i < table.targetsFound; i++)
             {
                 TargetData d = new TargetData(
@@ -78,10 +86,6 @@ public abstract class NetworkTableCamera extends Subsystem
                         table.height[i]);
                 data.add(d);
             }
-        }
-        else
-        {
-            data.clear();
         }
     }
     
@@ -99,5 +103,9 @@ public abstract class NetworkTableCamera extends Subsystem
     {
         sourceTable.putNumber("CameraSource", SOURCE_DEFAULT);
         data.clear();
-    }
+
+        DistanceFromCenter = 0;
+        FullWidth = 0;
+        InView = false;
+    } 
 }

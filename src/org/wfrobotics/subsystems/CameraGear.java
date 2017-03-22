@@ -1,12 +1,11 @@
 package org.wfrobotics.subsystems;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.commands.DetectGear;
+import org.wfrobotics.commands.vision.VisionDetect;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.networktables.*;
-
 
 /**
  * Provides information used to shoot the ball.
@@ -14,23 +13,16 @@ import edu.wpi.first.wpilibj.networktables.*;
  *
  */
 public class CameraGear extends NetworkTableCamera 
-{    
-    public final int DESIRED_TARGETS = 2;  // Reflective detectable targets
-
-    public int TargetCount = 0;
-    public double DistanceFromCenter = 0;
-    public double FullWidth = 0;
-    public boolean InView = false;
-
+{
     public CameraGear()
     {
-        super("Target", 0);
+        super("Target", 0, 2);
     }
     
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new DetectGear(DetectGear.MODE.OFF));
+        setDefaultCommand(new VisionDetect(Robot.targetGearSubsystem, VisionDetect.MODE.OFF));
     }
     
     public void run()
@@ -72,12 +64,5 @@ public class CameraGear extends NetworkTableCamera
             FullWidth = 0;
             InView = false;
         }
-        
-        //TODO?
-//        if(data.size() > LOOKING_FOR_COUNT)
-//        {
-//            data.sort(Camera.AreaCompare);
-//            
-//        }
     }
 }

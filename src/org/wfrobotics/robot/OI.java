@@ -1,34 +1,14 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.commands.Conveyor;
-import org.wfrobotics.commands.DetectGear;
-import org.wfrobotics.commands.LEDTest;
-import org.wfrobotics.commands.Lift;
-import org.wfrobotics.commands.Rev;
-import org.wfrobotics.commands.Shoot;
-import org.wfrobotics.commands.DetectShooter;
-import org.wfrobotics.commands.IntakeSetup;
-import org.wfrobotics.commands.Up;
-import org.wfrobotics.commands.VisionGear;
-import org.wfrobotics.commands.VisionGearDropAndBackup;
-import org.wfrobotics.commands.VisionGearPivot;
-import org.wfrobotics.commands.VisionGearStrafe;
-import org.wfrobotics.commands.VisionShoot;
-import org.wfrobotics.commands.drive.DriveConfig;
-import org.wfrobotics.commands.drive.DriveSwerve;
-import org.wfrobotics.commands.drive.DriveSwerveCalibration;
-import org.wfrobotics.controller.Panel;
+import org.wfrobotics.commands.*;
+import org.wfrobotics.commands.drive.*;
+import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Panel.COLOR;
-import org.wfrobotics.controller.PanelButton;
-import org.wfrobotics.controller.Xbox;
-import org.wfrobotics.controller.XboxButton;
-import org.wfrobotics.controller.XboxTriggerButton;
 import org.wfrobotics.robot.driveoi.Arcade.*;
 import org.wfrobotics.robot.driveoi.Mecanum.*;
 import org.wfrobotics.robot.driveoi.Swerve.*;
 import org.wfrobotics.robot.driveoi.Tank.*;
-import org.wfrobotics.subsystems.Lifter;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
