@@ -22,15 +22,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends SampleRobot 
-{    
+{
     public static SwerveDriveSteamworks driveSubsystem;
     public static Auger augerSubsystem;
     public static Climber climberSubsystem;
     public static DashboardView dashboardView;
     public static Intake intakeSubsystem;
     public static LEDController leds;
-    public static OI oi;
-    
+    public static OI oi;    
     public static Lifter lifterSubsystem;
     public static Shooter shooterSubsystem;
     public static CameraShooter targetShooterSubsystem;
@@ -42,12 +41,15 @@ public class Robot extends SampleRobot
     static POSITION_ROTARY autonomousStartPosition;
     
     boolean gyroInitialZero = false;
+    public static Effect defaultLEDEffect;
     
     /**
      * This function is run when the robot is first started up and should be used for any initialization code
      */
     public void robotInit() 
     {
+        Color[] defaultColors = {LEDs.GREEN, LEDs.YELLOW, LEDs.GREEN, LEDs.WHITE};
+        
         driveSubsystem = new SwerveDriveSteamworks();
         augerSubsystem = new Auger();
         targetGearSubsystem = new CameraGear();
@@ -72,15 +74,15 @@ public class Robot extends SampleRobot
         autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR_VISION);
         //autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
+        
+        defaultLEDEffect = new Effect(EFFECT_TYPE.FADE, defaultColors, 4);
     }
 
     public void operatorControl()
     {
-        Color[] colors = {LEDs.GREEN, LEDs.YELLOW, LEDs.GREEN, LEDs.WHITE};
-        
         if (autonomousCommand != null) autonomousCommand.cancel();
         
-        leds.set(new Effect(EFFECT_TYPE.FADE, colors, 4));
+        leds.set(defaultLEDEffect);
         
         while (isOperatorControl() && isEnabled())
         {

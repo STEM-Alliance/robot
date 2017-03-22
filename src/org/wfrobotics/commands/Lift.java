@@ -99,7 +99,7 @@ public class Lift extends Command
     {
         if (mode != MODE.AUTOMATIC)
         {
-            Robot.leds.set(new Effect(EFFECT_TYPE.SOLID, LEDs.GREEN, 1));
+            Robot.leds.set(Robot.defaultLEDEffect);
             OI.xboxMan.setRumble(RumbleType.kLeftRumble, 0);
             OI.xboxMan.setRumble(RumbleType.kRightRumble, 0);
             OI.xboxDrive.setRumble(RumbleType.kLeftRumble, 0);
