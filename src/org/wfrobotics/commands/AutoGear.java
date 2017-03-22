@@ -3,6 +3,7 @@ package org.wfrobotics.commands;
 import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.commands.drive.DriveConfig;
 import org.wfrobotics.commands.vision.VisionPivot;
+import org.wfrobotics.commands.vision.VisionStrafe;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
@@ -146,17 +147,16 @@ public class AutoGear extends CommandGroup
                 addSequential(new AutoDrive(0, .8, 0, -1, .275));
             }
             
-            
             // turn to the spring
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1.25));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
-
         }
-            
-            addSequential(new VisionGearStrafe());
-            addSequential(new VisionPivot(Robot.targetGearSubsystem, Robot.leds, new VisionPivot.Config(1.8, 0, 10, .35, .125, true, true)));
-            addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
+
+        addSequential(new VisionStrafe(Constants.GEAR_VISION_STRAFE_CONFIG));
+        addSequential(new VisionPivot(Constants.GEAR_VISION_PIVOT_CONFIG));
+        addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
+
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
             boolean fieldRelative = Robot.driveSubsystem.getFieldRelative();

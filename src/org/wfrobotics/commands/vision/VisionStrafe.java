@@ -5,15 +5,15 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.hardware.led.LEDs;
 import org.wfrobotics.hardware.led.LEDs.Effect;
-import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.hardware.led.LEDs.LEDController;
+import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class VisionPivot extends CommandGroup
+public class VisionStrafe extends CommandGroup 
 {
     public static class Config
     {
@@ -47,7 +47,7 @@ public class VisionPivot extends CommandGroup
 
     private PIDController pid;
     
-    public VisionPivot(Config config)
+    public VisionStrafe(Config config)
     {
         camera = new VisionDetect(config.camera, VisionDetect.MODE.GETDATA);
         drive = new AutoDrive(0);
@@ -70,7 +70,7 @@ public class VisionPivot extends CommandGroup
 
     protected void execute()
     {
-        double error = camera.getDistanceFromCenter() * config.invertError;
+        double error = -camera.getDistanceFromCenter() * config.invertError;
         double pidOutput;
 
         if(!camera.getIsFound())
@@ -78,8 +78,9 @@ public class VisionPivot extends CommandGroup
             return;
         }
         
-        pidOutput = pid.update(error);
-        drive.set(0, 0, pidOutput, -1);
+        pidOutput = -pid.update(error);
+        
+        drive.set(0, pidOutput, 0, -1);
 
         if (config.debug)
         {

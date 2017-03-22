@@ -3,6 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.commands.*;
 import org.wfrobotics.commands.drive.*;
+import org.wfrobotics.commands.vision.VisionStrafe;
 import org.wfrobotics.controller.*;
 import org.wfrobotics.controller.Panel.COLOR;
 import org.wfrobotics.robot.driveoi.Arcade.*;
@@ -106,7 +107,7 @@ public class OI
         //buttonPanelBlackTop.whileHeld(new IntakeSetup(true));
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         //buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
-        buttonPanelWhiteBottom.whileHeld(new VisionGearStrafe());
+        buttonPanelWhiteBottom.whileHeld(new VisionStrafe(Constants.GEAR_VISION_STRAFE_CONFIG));
         
         //buttonDriveRB.toggleWhenPressed(new VisionShoot());
         
