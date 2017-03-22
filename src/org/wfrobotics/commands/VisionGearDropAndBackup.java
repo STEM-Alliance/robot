@@ -4,17 +4,11 @@ import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.commands.drive.DriveConfig;
 import org.wfrobotics.commands.drive.DriveConfig.MODE;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class VisionGearDropAndBackup extends CommandGroup
 {
-
     public VisionGearDropAndBackup()
     {
         boolean fieldRelative = Robot.driveSubsystem.getFieldRelative();
@@ -35,7 +29,6 @@ public class VisionGearDropAndBackup extends CommandGroup
         
         addSequential(new DriveConfig(MODE.FIELD_RELATIVE, fieldRelative));
         
-        addSequential(new AutoDrive(0, 0, 0, -1, .1));  // Don't coast GOOD
-        
+        addSequential(new AutoDrive(0, 0, 0, -1, .1));  // Don't coast GOOD        
     }
 }
