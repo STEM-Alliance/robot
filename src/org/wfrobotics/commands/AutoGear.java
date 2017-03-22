@@ -4,8 +4,8 @@ import org.wfrobotics.commands.drive.AutoDrive;
 import org.wfrobotics.commands.drive.DriveConfig;
 import org.wfrobotics.commands.vision.VisionPivot;
 import org.wfrobotics.commands.vision.VisionStrafe;
+import org.wfrobotics.robot.Autonomous.POSITION_ROTARY;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.Robot.POSITION_ROTARY;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
