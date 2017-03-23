@@ -14,11 +14,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Lifter extends Subsystem
 {
+    public static enum POSITION {TOP, TRANSPORT, BOTTOM}
+    
     private final boolean DEBUG = true;
 //    private final double TOP_LIMIT = .0775;
 //    private final double BOTTOM_LIMIT = 50;
-    private double TOP = -520;
-    private double BOTTOM = -730;
+    private double SETPOINT_TOP = -520;
+    private double SETPOINT_TRANSPORT = -650;
+    private double SETPOINT_BOTTOM = -730;
     private final double P = 5;
     private final double I = 0.0005;
     private final double D = 0;
@@ -67,8 +70,9 @@ public class Lifter extends Subsystem
         motor.setP(Preferences.getInstance().getDouble("LifterPID_P", P));
         motor.setI(Preferences.getInstance().getDouble("LifterPID_I", I));
         motor.setD(Preferences.getInstance().getDouble("LifterPID_D", D));
-        TOP = Preferences.getInstance().getDouble("LifterTop", TOP);
-        BOTTOM = Preferences.getInstance().getDouble("LifterBot", BOTTOM);   
+        SETPOINT_TOP = Preferences.getInstance().getDouble("LifterTop", SETPOINT_TOP);
+        SETPOINT_TRANSPORT = Preferences.getInstance().getDouble("LifterTransport", SETPOINT_TRANSPORT);
+        SETPOINT_BOTTOM = Preferences.getInstance().getDouble("LifterBot", SETPOINT_BOTTOM);
 //      motor.setForwardSoftLimit(Preferences.getInstance().getDouble("LifterTopL", TOP_LIMIT));
 //      motor.setReverseSoftLimit(Preferences.getInstance().getDouble("LifterBottomL", BOTTOM_LIMIT));    
         motor.enableControl();
@@ -89,9 +93,23 @@ public class Lifter extends Subsystem
         return hasGear;
     }
     
-    public void set(boolean goToTop)
+    public void set(POSITION position)
     {
-        double desired = (goToTop) ? TOP : BOTTOM;
+        double desired; 
+
+        switch(position)
+        {
+            case TOP:
+                desired = SETPOINT_TOP;
+                break;
+            case TRANSPORT:
+                desired = SETPOINT_TRANSPORT;
+                break;
+            case BOTTOM:
+            default:
+                desired = SETPOINT_BOTTOM;
+                break;
+        }
         
         if (DEBUG)
         {
@@ -99,7 +117,7 @@ public class Lifter extends Subsystem
             printDash();
         }
         
-        if (Math.abs(desired - motor.getPosition()) < 10)
+        if (Math.abs(desired - motor.getPosition()) < 5)
         {
             motor.ClearIaccum();  // Prevent I wind-up when close enough
         }
@@ -112,11 +130,15 @@ public class Lifter extends Subsystem
         String position;
         double angle = motor.getPosition();
         
-        if (Math.abs(angle - TOP) < 10 || motor.isRevLimitSwitchClosed())
+        if (Math.abs(angle - SETPOINT_TOP) < 10 || motor.isRevLimitSwitchClosed())
         {
             position = "Top";
         }
-        else if (Math.abs(angle - BOTTOM) < 10 || motor.isFwdLimitSwitchClosed())
+        else if (Math.abs(angle - SETPOINT_TRANSPORT) < 10)
+        {
+            position = "Transport";
+        }
+        else if (Math.abs(angle - SETPOINT_BOTTOM) < 10 || motor.isFwdLimitSwitchClosed())
         {
             position = "Bottom";
         }
@@ -133,11 +155,16 @@ public class Lifter extends Subsystem
 
     public boolean atBottom()
     {
-        return Math.abs(motor.getPosition() - BOTTOM) < .02 || motor.isFwdLimitSwitchClosed();
+        return Math.abs(motor.getPosition() - SETPOINT_BOTTOM) < .02 || motor.isFwdLimitSwitchClosed();
+    }
+    
+    public boolean atTransport()
+    {
+        return Math.abs(motor.getPosition() - SETPOINT_TRANSPORT) < .02;
     }
 
     public boolean atTop()
     {
-        return Math.abs(motor.getPosition() - TOP) < .02 || motor.isRevLimitSwitchClosed();
+        return Math.abs(motor.getPosition() - SETPOINT_TOP) < .02 || motor.isRevLimitSwitchClosed();
     }
 }
