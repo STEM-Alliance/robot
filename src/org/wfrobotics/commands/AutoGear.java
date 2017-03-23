@@ -153,8 +153,8 @@ public class AutoGear extends CommandGroup
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
         }
 
-        addSequential(new VisionStrafe(Constants.GEAR_VISION_STRAFE_CONFIG));
-        addSequential(new VisionPivot(Constants.GEAR_VISION_PIVOT_CONFIG));
+        addSequential(new VisionStrafe(Robot.targetGearSubsystem, Robot.leds, Constants.GEAR_VISION_STRAFE_CONFIG));
+        addSequential(new VisionPivot(Robot.targetGearSubsystem, Robot.leds, Constants.GEAR_VISION_PIVOT_CONFIG));
         addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
 
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
