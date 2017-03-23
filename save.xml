@@ -1,13 +1,29 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="LifterError" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="563" y="743"/>
+	</widget>
+	<widget field="VisionWidth" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="913" y="730"/>
+	</widget>
+	<widget field="LifterIAccum" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="764" y="739"/>
+	</widget>
+	<widget field="SwerveCommand" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="520"/>
+	</widget>
+	<widget field="AutoIsFinished" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="497"/>
+	</widget>
+	<widget field="VisionShoot Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="95" y="352"/>
+		<width>366</width>
+	</widget>
 	<widget field="FlywheelBottomSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="472" y="788"/>
 	</widget>
 	<widget field="FlywheelTopSpeedActual" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="52" y="738"/>
-	</widget>
-	<widget field="VisionWidth" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1394" y="793"/>
 	</widget>
 	<widget field="VisionGearX" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1401" y="770"/>
@@ -33,10 +49,10 @@
 		<location x="1091" y="5"/>
 	</widget>
 	<widget field="ShooterCenter" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="242" y="411"/>
+		<location x="1088" y="51"/>
 	</widget>
 	<widget field="ShooterTargets" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="248" y="357"/>
+		<location x="1092" y="26"/>
 	</widget>
 	<widget field="LifterSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="938" y="884"/>
@@ -126,6 +142,7 @@
 	</widget>
 	<widget field="Up Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1239" y="823"/>
+		<width>258</width>
 	</widget>
 	<widget field="Auto Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="745" y="208"/>
@@ -342,7 +359,7 @@
 		<width>32</width>
 	</static-widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.RobotPreferences">
-		<location x="2" y="0"/>
+		<location x="9" y="-1"/>
 		<width>488</width>
 		<height>351</height>
 	</static-widget>
