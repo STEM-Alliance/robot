@@ -2,7 +2,6 @@ package org.wfrobotics.commands;
 
 import org.wfrobotics.commands.vision.VisionPivot;
 import org.wfrobotics.commands.vision.VisionStrafe;
-import org.wfrobotics.robot.Robot;
 
 /**
  * Constant values to be shared by commands
@@ -15,8 +14,8 @@ public class Constants
    public static final double AUTONOMOUS_TURN_SPEED = .5;
    public static final double AUTONOMOUS_TURN_TOLERANCE = .1;
    
-   public static final VisionPivot.Config GEAR_VISION_PIVOT_CONFIG = new VisionPivot.Config(Robot.targetGearSubsystem, Robot.leds, 1.8, 0, 10, .35, .125, true, true);
-   public static final VisionStrafe.Config GEAR_VISION_STRAFE_CONFIG = new VisionStrafe.Config(Robot.targetGearSubsystem, Robot.leds, 1.85, .0001, 10, .6, .2, false, true); 
+   public static final VisionPivot.Config GEAR_VISION_PIVOT_CONFIG = new VisionPivot.Config(1.8, 0, 10, .35, .125, true, true);
+   public static final VisionStrafe.Config GEAR_VISION_STRAFE_CONFIG = new VisionStrafe.Config(1.85, .0001, 10, .6, .2, false, true); 
    
    public static final double SHOOTER_READY_SHOOT_SPEED = 4300;  // Ideal speed for shooter to shoot balls
    //public static final double SHOOTER_READY_SHOOT_SPEED_TOLERANCE = .1;  // Ideal tolerance of RPMs for safely shooting the balls

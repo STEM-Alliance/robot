@@ -107,7 +107,7 @@ public class OI
         //buttonPanelBlackTop.whileHeld(new IntakeSetup(true));
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         //buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
-        buttonPanelWhiteBottom.whileHeld(new VisionStrafe(Constants.GEAR_VISION_STRAFE_CONFIG));
+        buttonPanelWhiteBottom.whileHeld(new VisionStrafe(Robot.targetGearSubsystem, Robot.leds, Constants.GEAR_VISION_STRAFE_CONFIG));
         
         //buttonDriveRB.toggleWhenPressed(new VisionShoot());
         
