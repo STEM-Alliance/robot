@@ -17,8 +17,6 @@ public class VisionStrafe extends CommandGroup
 {
     public static class Config
     {
-        public final NetworkTableCamera camera;
-        public final LEDController leds;
         public double p;
         public double i;
         public double d;
@@ -27,10 +25,8 @@ public class VisionStrafe extends CommandGroup
         public double invertError;
         public boolean debug;
         
-        public Config(NetworkTableCamera camera, LEDController leds, double p, double i, double d,  double maxOut, double deadband, boolean invertError, boolean debug)
+        public Config(double p, double i, double d,  double maxOut, double deadband, boolean invertError, boolean debug)
         {
-            this.camera = camera;
-            this.leds = leds;
             this.p = p;
             this.i = i;
             this.d = d;
@@ -43,17 +39,19 @@ public class VisionStrafe extends CommandGroup
     
     private final VisionDetect camera;
     private final AutoDrive drive;
+    private final LEDController leds;
     private final Config config;
 
     private PIDController pid;
     
-    public VisionStrafe(Config config)
+    public VisionStrafe(NetworkTableCamera camera, LEDController leds, Config config)
     {
-        camera = new VisionDetect(config.camera, VisionDetect.MODE.GETDATA);
+        this.camera = new VisionDetect(camera, VisionDetect.MODE.GETDATA);
         drive = new AutoDrive(0);
+        this.leds = leds;
         this.config = config;
         
-        addParallel(camera);
+        addParallel(this.camera);
         addSequential(drive);
     }
 
@@ -64,7 +62,7 @@ public class VisionStrafe extends CommandGroup
         config.d = Preferences.getInstance().getDouble(getName() + "D", config.d);
         config.max = Preferences.getInstance().getDouble(getName() + "Max", config.max);
 
-        config.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
         pid = new PIDController(config.p, config.i, config.d, config.max);
     }
 
