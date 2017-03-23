@@ -5,6 +5,7 @@ import org.wfrobotics.hardware.led.LEDs.Effect;
 import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.robot.OI;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.subsystems.Lifter.POSITION;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.command.Command;
@@ -47,26 +48,26 @@ public class Lift extends Command
     @Override
     protected void execute()
     {
-        boolean direction;
+        POSITION direction;
         float rumble;
         double now = timeSinceInitialized();
 
         if (mode != MODE.AUTOMATIC)
         {
-            direction = mode == MODE.UP;
+            direction = (mode == MODE.UP) ? POSITION.TOP : POSITION.BOTTOM;
             rumble = (Robot.lifterSubsystem.hasGear()) ? 1 : 0;
         }
         else
         {       
             if (Robot.lifterSubsystem.hasGear())
             {
-                direction = (++samplesWithGear > SAMPLES_UNTIL_LIFT);  // How many cycles have we had a gear?
+                direction = (++samplesWithGear > SAMPLES_UNTIL_LIFT) ? POSITION.TOP : POSITION.TRANSPORT;  // How many cycles have we had a gear?
                 rumble = (now - timeLastSensed > TIMEOUT_RUMBLE) ? 1 : 0;
                 timeLastSensed = now;
             }
             else
             {
-                direction = now - timeLastSensed < TIMEOUT_NO_GEAR;  // How long since we had a gear?
+                direction = (now - timeLastSensed < TIMEOUT_NO_GEAR) ? POSITION.TOP : POSITION.TRANSPORT;  // How long since we had a gear?
                 rumble = (now - timeLastSensed < TIMEOUT_RUMBLE) ? 1 : 0;
             }
         }
@@ -87,7 +88,7 @@ public class Lift extends Command
             case AUTOMATIC:
                 return false;
             case DOWN:
-                return Robot.lifterSubsystem.atBottom();
+                return (mode == MODE.AUTOMATIC) ? Robot.lifterSubsystem.atTransport() : Robot.lifterSubsystem.atBottom();
             case UP:
                 return Robot.lifterSubsystem.atTop();
             default:

@@ -62,6 +62,7 @@ public class Robot extends SampleRobot
 
         oi = new OI();
         leds = new MindsensorCANLight(RobotMap.CAN_LIGHT[0]);
+        leds.enable(false); // TODO Remove this when we have LEDs on the robot!!!
         
         autoChooser = new SendableChooser<AUTO_COMMAND>();
 
