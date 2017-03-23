@@ -23,7 +23,7 @@ public class SwerveWheel
     private Vector actualVector;
 
     private final WheelDriveManager driveManager;
-    private final WheelAngleManager angleManager;
+    private final WheelAngleManagerMagPot angleManager;
     private final Shifter shifter;
     
     private Vector desiredVector;
@@ -64,7 +64,7 @@ public class SwerveWheel
         driveLastChangeTime = Timer.getFPGATimestamp();
         //driveMotor.setCurrentLimit(5);
 
-        angleManager = new WheelAngleManager(RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
+        angleManager = new WheelAngleManagerMagPot(RobotMap.CAN_SWERVE_ANGLE_TALONS[number]);
         anglePID = new SwerveAngleController(name + ".ctl");
 
         //angleCalSensor = new DigitalInput(RobotMap.DIO_SWERVE_CAL[number]);

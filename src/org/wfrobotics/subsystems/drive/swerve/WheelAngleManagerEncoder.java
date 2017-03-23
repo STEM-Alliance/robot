@@ -1,15 +1,13 @@
 package org.wfrobotics.subsystems.drive.swerve;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.hardware.MagnetoPot;
-import org.wfrobotics.hardware.MagnetoPotSRX;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
 
-public class WheelAngleManager 
+public class WheelAngleManagerEncoder 
 {
     private static final double CountsPerDegree = 4096.0/360.0;
     
@@ -19,9 +17,7 @@ public class WheelAngleManager
     
     private double angleOffset = 0;
     
-    
-    
-    public WheelAngleManager(int talonAddress)
+    public WheelAngleManagerEncoder(int talonAddress)
     {
         angleMotor = new CANTalon(talonAddress);
         //angleMotor.setVoltageRampRate(30);
@@ -38,7 +34,6 @@ public class WheelAngleManager
         //angleMotor.setStatusFrameRateMs(StatusFrameRate.Feedback, 10);
         angleMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
         angleMotor.changeControlMode(TalonControlMode.PercentVbus);
-        angleMotor.configNominalOutputVoltage(0, 0);
         //angleMotor.setPosition(angleMotor.getPosition());
     }
     

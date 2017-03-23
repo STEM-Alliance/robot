@@ -50,7 +50,7 @@ public class SwerveConstants {
     /**
      * Array of values for shifting gears, low then high values
      */
-    public static final int[] SHIFTER_VALS = { 90, 90, 80, 63};
+    public static final int[] SHIFTER_VALS = { 100, 80, 90, 120};
     public static final boolean[] SHIFTER_INVERSE = {false, true, false, true};
     public static final int SHIFTER_RANGE = 55;
 
