@@ -15,11 +15,13 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Auger extends Subsystem {
 
     private CANTalon m_motor; 
-    
+    private CANTalon m_motorFeeder;
     public Auger() 
     {
         m_motor = new CANTalon(RobotMap.AUGER_MOTOR);
         m_motor.setInverted(true);  //is this needed?
+
+        m_motorFeeder = new CANTalon(RobotMap.NEW_FEEDER_MOTOR_SRX);
     }
     
     @Override
@@ -35,5 +37,6 @@ public class Auger extends Subsystem {
     public void setSpeed (double rpm)
     {
         m_motor.set(rpm);
+        m_motorFeeder.set(rpm);
     }
 }

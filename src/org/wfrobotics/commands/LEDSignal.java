@@ -16,7 +16,7 @@ public class LEDSignal extends Command
     
     protected void initialize()
     {
-        Robot.leds.set(new Effect(EFFECT_TYPE.BLINK, LEDs.RED, .5));
+        Robot.leds.set(new Effect(EFFECT_TYPE.BLINK, LEDs.RED, .15));
     }
     
     protected boolean isFinished()

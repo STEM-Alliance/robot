@@ -80,7 +80,7 @@ public class Shooter extends Subsystem
     public Shooter()
     {
         //motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .11, .0001, .00, .0, .01, true);
-        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .11, .00025, .00, 0, .01, false);
+        motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .4, .0001, .00, 0, .01, false);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class Shooter extends Subsystem
             //if(motorT.atSpeed(tolerance))
             {
 
-                if(motorB.atSpeed(tolerance*1.5))
+                if(motorB.atSpeed(tolerance))
                 {
                     atSpeed = true;
                 }
