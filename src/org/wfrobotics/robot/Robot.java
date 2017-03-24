@@ -42,14 +42,15 @@ public class Robot extends SampleRobot
     
     boolean gyroInitialZero = false;
     public static Effect defaultLEDEffect;
+    public static Effect teamLEDEffect;
     
     /**
      * This function is run when the robot is first started up and should be used for any initialization code
      */
     public void robotInit() 
     {
-        Color[] defaultColors = {LEDs.GREEN, LEDs.YELLOW, LEDs.GREEN, LEDs.WHITE};
-        
+        Color[] defaultColors = {LEDs.DARK_GREEN, LEDs.LIME, LEDs.YELLOW};
+//        
         driveSubsystem = new SwerveDriveSteamworks();
         augerSubsystem = new Auger();
         targetShooterSubsystem = new CameraShooter();
@@ -77,7 +78,7 @@ public class Robot extends SampleRobot
         //autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
         
-        defaultLEDEffect = new Effect(EFFECT_TYPE.FADE, defaultColors, 4);
+        defaultLEDEffect = new Effect(EFFECT_TYPE.FADE, defaultColors, 1);
     }
 
     public void operatorControl()
@@ -97,7 +98,9 @@ public class Robot extends SampleRobot
     public void autonomous()
     {
         DriverStation.Alliance team = DriverStation.getInstance().getAlliance();
-        Color color = (team == DriverStation.Alliance.Red) ? LEDs.RED : LEDs.BLUE;
+        Color[] colorsRed = {LEDs.RED , LEDs.MAROON};
+        Color[] colorsBlue = {LEDs.BLUE, LEDs.CYAN};
+        Color[] teamDefaultColors = (team == DriverStation.Alliance.Red) ? colorsRed : colorsBlue;
         AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
         
         autonomousCommand = command.getCommand(autonomousStartPosition);
@@ -106,7 +109,7 @@ public class Robot extends SampleRobot
         Gyro.getInstance().zeroYaw(command.getGyroOffset(autonomousStartPosition));
         Robot.driveSubsystem.setLastHeading(command.getGyroOffset(autonomousStartPosition));
         
-        Robot.leds.set(new Effect(EFFECT_TYPE.SOLID, color, .5));
+        Robot.leds.set(new Effect(EFFECT_TYPE.CYCLE, teamDefaultColors, 1));
         
         // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();
@@ -121,10 +124,8 @@ public class Robot extends SampleRobot
     
     public void disabled()
     {
-        Color[] colors = {LEDs.GREEN, LEDs.YELLOW, LEDs.GREEN, LEDs.WHITE};
-        
         //leds.set(new Effect(EFFECT_TYPE.FADE, colors, 4));
-        leds.set(EFFECT_TYPE.BLINK, colors, 1);
+        leds.set(defaultLEDEffect);
         
         while (isDisabled())
         {

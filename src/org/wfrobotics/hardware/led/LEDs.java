@@ -16,6 +16,7 @@ public class LEDs
     
     public static final Color BLACK = new Color(0, 0, 0);
     public static final Color RED = new Color(255, 0, 0);
+    public static final Color MAROON = new Color(128, 0, 0);
     public static final Color SALMON = new Color (250, 128, 114);
     public static final Color ORANGE = new Color(255, 69, 0);
     public static final Color YELLOW = new Color(255, 255, 0);

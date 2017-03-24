@@ -42,10 +42,10 @@ public class MindsensorCANLight implements LEDController
         switch (type)
         {
             case CYCLE:
-                controller.cycle(0, colors.length);
+                controller.cycle(0, colors.length - 1);
                 break;
             case FADE:
-                controller.fade(0, colors.length);
+                controller.fade(0, colors.length - 1);
                 break;
             case BLINK:
                 controller.flash(0);
