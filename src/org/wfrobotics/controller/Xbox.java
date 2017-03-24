@@ -224,6 +224,11 @@ public class Xbox extends XboxController {
         }
     }
     
+    public boolean getJoystickButton(Hand hand)
+    {
+        return super.getStickButton(hand);
+    }
+    
     private double scaleForDeadband(double value)
     {
         double abs = Math.abs(value);
