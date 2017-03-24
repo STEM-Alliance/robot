@@ -1,19 +1,22 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="ConveyorMode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="920" y="858"/>
+	</widget>
 	<widget field="Autonomous Starting Position" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="224" y="64"/>
+		<location x="112" y="64"/>
 		<width>400</width>
 		<height>48</height>
 		<property name="Font Size" value="24"/>
 	</widget>
 	<widget field="StartingAngle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="464" y="144"/>
+		<location x="352" y="144"/>
 		<width>160</width>
 		<height>47</height>
 		<property name="Font Size" value="24"/>
 	</widget>
 	<widget field="Gyro" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="512" y="208"/>
+		<location x="400" y="208"/>
 		<width>112</width>
 		<height>61</height>
 		<property name="Font Size" value="24"/>
@@ -72,15 +75,15 @@
 		<location x="1404" y="873"/>
 	</widget>
 	<widget field="LifterGear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="720" y="16"/>
+		<location x="528" y="16"/>
 		<width>136</width>
 		<height>64</height>
 	</widget>
 	<widget field="LifterAngle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="607" y="458"/>
+		<location x="496" y="570"/>
 	</widget>
 	<widget field="LifterDesired" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="596" y="490"/>
+		<location x="500" y="608"/>
 	</widget>
 	<widget field="ShooterAngle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="511" y="720"/>
@@ -96,7 +99,7 @@
 		<height>22</height>
 	</widget>
 	<widget field="LifterState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="608" y="432"/>
+		<location x="497" y="544"/>
 	</widget>
 	<widget field="Intake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="941" y="933"/>
@@ -108,13 +111,13 @@
 		<location x="0" y="593"/>
 	</widget>
 	<widget field="TeamLocation" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
-		<location x="496" y="0"/>
+		<location x="320" y="0"/>
 		<width>128</width>
 		<height>48</height>
 		<property name="Font Size" value="24"/>
 	</widget>
 	<widget field="TeamRed" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="342" y="6"/>
+		<location x="176" y="6"/>
 		<width>122</width>
 		<height>42</height>
 		<property name="Color to show when true" value="255.0.0.255"/>
@@ -169,7 +172,7 @@
 		<width>258</width>
 	</widget>
 	<widget field="Auto Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="208" y="128"/>
+		<location x="81" y="128"/>
 	</widget>
 	<widget field="AugerSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="925" y="880"/>
@@ -183,8 +186,8 @@
 		<width>128</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
-		<location x="944" y="5"/>
-		<width>956</width>
+		<location x="736" y="5"/>
+		<width>1164</width>
 		<height>715</height>
 		<property name="Camera Choice" value=""/>
 	</static-widget>
@@ -193,7 +196,7 @@
 		<width>171</width>
 	</widget>
 	<widget field="Rotation Error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="689" y="600"/>
+		<location x="497" y="477"/>
 	</widget>
 	<widget field="Drive R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="9" y="799"/>
@@ -208,7 +211,7 @@
 		<width>151</width>
 	</widget>
 	<widget field="BottomSpeedReached" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="720" y="336"/>
+		<location x="528" y="336"/>
 		<width>208</width>
 		<height>64</height>
 	</widget>
@@ -234,12 +237,12 @@
 		<height>22</height>
 	</widget>
 	<widget field="Gyro Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="720" y="176"/>
+		<location x="528" y="176"/>
 		<width>156</width>
 		<height>64</height>
 	</widget>
 	<widget field="FieldRelative" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="720" y="256"/>
+		<location x="528" y="256"/>
 		<width>154</width>
 		<height>64</height>
 	</widget>
@@ -248,7 +251,7 @@
 		<width>72</width>
 	</widget>
 	<widget field="High Gear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="720" y="96"/>
+		<location x="528" y="96"/>
 		<width>137</width>
 		<height>64</height>
 	</widget>
@@ -316,18 +319,18 @@
 		<width>186</width>
 	</widget>
 	<widget field="Drive Mode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="715" y="666"/>
+		<location x="512" y="640"/>
 		<width>215</width>
 	</widget>
 	<widget field="Drive Sub" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="559" y="644"/>
+		<location x="113" y="336"/>
 		<width>335</width>
 	</widget>
 	<widget field="Auto mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
 		<location x="1144" y="85"/>
 	</widget>
 	<widget field="Last Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="685" y="566"/>
+		<location x="496" y="506"/>
 	</widget>
 	<widget field="Wheel3.angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="189" y="938"/>
@@ -346,7 +349,7 @@
 		<width>149</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.ConnectionIndicator">
-		<location x="256" y="0"/>
+		<location x="128" y="0"/>
 		<width>32</width>
 		<height>32</height>
 	</static-widget>
@@ -358,22 +361,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Done"/>
-	<hidden field="intakeonleft"/>
-	<hidden field="FlywheelTopSpeedActual"/>
-	<hidden field="intakeonright"/>
-	<hidden field="Wheel2.speed.motor"/>
-	<hidden field="ShooterReady"/>
-	<hidden field="percent"/>
-	<hidden field="Wheel0.speed.motor"/>
-	<hidden field="Wheel1.speed.motor"/>
-	<hidden field="TopSpeedReached"/>
-	<hidden field="SWERVE SPIN"/>
-	<hidden field="Dpad"/>
-	<hidden field="Conveyer Sub"/>
-	<hidden field="ConveyorMode"/>
-	<hidden field="VisionPivotDetect Sub"/>
-	<hidden field="Wheel3.speed.motor"/>
-	<hidden field="ClimberDistance"/>
-	<hidden field="UnJamTime"/>
 </xml>
