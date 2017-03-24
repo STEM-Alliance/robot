@@ -72,6 +72,9 @@ public class OI
     public static Button buttonManX= new XboxButton (xboxMan, Xbox.BUTTON.X);
     public static Button buttonManY= new XboxButton (xboxMan, Xbox.BUTTON.Y);
     
+    public static Button buttonManDpadUp = new XboxDpadButton(xboxMan, 0);
+    public static Button buttonManJoystickL = new XboxJoystickButton(xboxMan, Hand.kLeft);
+    
 //  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
 //  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
 //  Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
@@ -79,7 +82,9 @@ public class OI
     
     public OI()
     {
+        buttonManDpadUp.whileHeld(new Lift(Lift.MODE.UP));
         buttonManualLiftDown.whileHeld(new Lift(Lift.MODE.DOWN));
+        buttonManJoystickL.whenPressed(new LEDSignal(3));
         
 //        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
