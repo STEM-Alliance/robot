@@ -20,7 +20,7 @@ public abstract class DriveSubsystem extends Subsystem {
         
         // Setup gyro
         try {
-            m_gyro = Gyro.getInstance();
+            //m_gyro = Gyro.getInstance();
         } catch (RuntimeException ex ) {
             DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
         }
@@ -40,7 +40,9 @@ public abstract class DriveSubsystem extends Subsystem {
     /**
      * Zero the yaw of the {@link Gyro}
      */
-    public void gyroZero() { m_gyro.zeroYaw(); m_lastHeading = 0; }
+    public void gyroZero() { //m_gyro.zeroYaw(); m_lastHeading = 0;
+        
+    }
 
     /**
      * Set the {@link Gyro} to use a new zero value

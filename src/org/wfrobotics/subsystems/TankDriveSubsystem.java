@@ -9,6 +9,7 @@ import org.wfrobotics.robot.RobotMap;
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TankDriveSubsystem extends DriveSubsystem 
@@ -17,7 +18,7 @@ public class TankDriveSubsystem extends DriveSubsystem
 
     // order is {Front, Middle, Back}
     //          {bogie, bogie, fixed}
-    private CANTalon motorsL[] = new CANTalon[RobotMap.CAN_TANK_TALONS_LEFT.length];
+    private Talon motorsL[] = new Talon[RobotMap.CAN_TANK_TALONS_LEFT.length];
     private CANTalon motorsR[] = new CANTalon[RobotMap.CAN_TANK_TALONS_RIGHT.length];
     
     private double m_lastHeading;
@@ -35,7 +36,7 @@ public class TankDriveSubsystem extends DriveSubsystem
         // set up left side motors
         for (int i = 0; i < motorsL.length; i++)
         {
-            motorsL[i] = new CANTalon(RobotMap.CAN_TANK_TALONS_LEFT[i]);
+            motorsL[i] = new Talon(RobotMap.CAN_TANK_TALONS_LEFT[i]);
             motorsL[i].setInverted(true);
         }
         
@@ -80,15 +81,15 @@ public class TankDriveSubsystem extends DriveSubsystem
     {
         printDash();
 
-        for (int index = 0; index < motorsL.length; index++)
-        {
-            motorsL[index].enableBrakeMode(m_brake);
-        }
-        
-        for (int index = 0; index < motorsR.length; index++)
-        {
-            motorsR[index].enableBrakeMode(m_brake);
-        }
+//        for (int index = 0; index < motorsL.length; index++)
+//        {
+//            motorsL[index].enableBrakeMode(m_brake);
+//        }
+//        
+//        for (int index = 0; index < motorsR.length; index++)
+//        {
+//            motorsR[index].enableBrakeMode(m_brake);
+//        }
         
         right = scaleForDeadband(right);
         right = Math.min(Math.max(right, -1), 1);  // ensure value between -1 and 1
@@ -135,11 +136,11 @@ public class TankDriveSubsystem extends DriveSubsystem
     @Override
     public void printDash()
     {
-        super.printDash();
+        //super.printDash();
         
-        SmartDashboard.putNumber("Desired Heading", m_lastHeading);
+        //`SmartDashboard.putNumber("Desired Heading", m_lastHeading);
 
-        SmartDashboard.putString("RobotPositionInfo", m_gyro.getYaw() +"," + motorsL[0].get()  +"," + motorsR[0].get());
+        //SmartDashboard.putString("RobotPositionInfo", m_gyro.getYaw() +"," + motorsL[0].get()  +"," + motorsR[0].get());
 
     }
 
@@ -171,58 +172,59 @@ public class TankDriveSubsystem extends DriveSubsystem
      */
     public boolean turnToAngle(double angle, boolean singleSide, boolean forward)
     {
-        double output = 0;
-        double error = Utilities.wrapToRange(angle - m_gyro.getYaw(), -180, 180);
-        
-        updatePID();
-        
-        if(Math.abs(error) > HEADING_TOLERANCE)
-        {
-            // get the suggested motor output
-            output = headingPID.update(error);
-            
-            // tell it to turn
-            if(error < 3 && singleSide)
-            {
-                //TODO need brake mode enabled?
-                
-                // small error, so only try and turn one side
-                if(output > 0)
-                {
-                    // spin clockwise
-                    if(forward)
-                        // set left side forward, not right
-                        driveTank(0,output);
-                    else
-                        // set right side backward, not left
-                        driveTank(-output,0);
-                }
-                else
-                {
-                    // spin counter clockwise
-                    if(forward)
-                        // set right side forward, not left
-                        driveTank(-output,0);
-                    else
-                        // set left side backward, not right
-                        driveTank(0,output);
-                }
-            }
-            else
-            {
-                driveTank(-output,output);
-            }
-        }
-        else
-        {
-            driveTank(0,0);
-        }
-        
-        // save off angle in case you need to use it
-        m_lastHeading = angle;
-        
-        // we're done if we're at the angle, and we're no longer turning
-        return Math.abs(error) < HEADING_TOLERANCE;// && Math.abs(output) < .1;
+//        double output = 0;
+//        double error = Utilities.wrapToRange(angle - m_gyro.getYaw(), -180, 180);
+//        
+//        updatePID();
+//        
+//        if(Math.abs(error) > HEADING_TOLERANCE)
+//        {
+//            // get the suggested motor output
+//            output = headingPID.update(error);
+//            
+//            // tell it to turn
+//            if(error < 3 && singleSide)
+//            {
+//                //TODO need brake mode enabled?
+//                
+//                // small error, so only try and turn one side
+//                if(output > 0)
+//                {
+//                    // spin clockwise
+//                    if(forward)
+//                        // set left side forward, not right
+//                        driveTank(0,output);
+//                    else
+//                        // set right side backward, not left
+//                        driveTank(-output,0);
+//                }
+//                else
+//                {
+//                    // spin counter clockwise
+//                    if(forward)
+//                        // set right side forward, not left
+//                        driveTank(-output,0);
+//                    else
+//                        // set left side backward, not right
+//                        driveTank(0,output);
+//                }
+//            }
+//            else
+//            {
+//                driveTank(-output,output);
+//            }
+//        }
+//        else
+//        {
+//            driveTank(0,0);
+//        }
+//        
+//        // save off angle in case you need to use it
+//        m_lastHeading = angle;
+//        
+//        // we're done if we're at the angle, and we're no longer turning
+//        return Math.abs(error) < HEADING_TOLERANCE;// && Math.abs(output) < .1;
+        return false;
     }
     
     /**
