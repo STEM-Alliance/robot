@@ -68,7 +68,7 @@ public class VisionStrafe extends CommandGroup
 
     protected void execute()
     {
-        double error = -camera.getDistanceFromCenter() * config.invertError;
+        double error = camera.getDistanceFromCenter() * config.invertError;
         double pidOutput;
 
         if(!camera.getIsFound())
@@ -76,7 +76,7 @@ public class VisionStrafe extends CommandGroup
             return;
         }
         
-        pidOutput = -pid.update(error);
+        pidOutput = pid.update(error);
         
         drive.set(0, pidOutput, 0, -1);
 

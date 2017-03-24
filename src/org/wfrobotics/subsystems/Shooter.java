@@ -71,7 +71,7 @@ public class Shooter extends Subsystem
         }
     }
 
-    private final ShooterMotor motorT;
+    //private final ShooterMotor motorT;
     private final ShooterMotor motorB;
 
     private double speedDesired;
@@ -79,7 +79,7 @@ public class Shooter extends Subsystem
 
     public Shooter()
     {
-        motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .11, .0001, .00, .0, .01, true);
+        //motorT = new ShooterMotor("Top", RobotMap.SHOOTER_MOTOR_SRX, .11, .0001, .00, .0, .01, true);
         motorB = new ShooterMotor("Bottom", RobotMap.FEEDER_MOTOR_SRX, .11, .00025, .00, 0, .01, false);
     }
 
@@ -91,7 +91,7 @@ public class Shooter extends Subsystem
 
     public void forceOff()
     {
-        motorT.set(0);
+        //motorT.set(0);
         motorB.set(0);
     }
     
@@ -154,7 +154,7 @@ public class Shooter extends Subsystem
     public void printDash()
     {
         SmartDashboard.putNumber("ShooterSpeedDesired", speedDesired);
-        SmartDashboard.putNumber("FlywheelTopSpeedActual", motorT.get());
+        //SmartDashboard.putNumber("FlywheelTopSpeedActual", motorT.get());
         SmartDashboard.putNumber("FlywheelBottomSpeedActual", motorB.get());
     }
 

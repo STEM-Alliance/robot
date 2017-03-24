@@ -87,11 +87,19 @@ public abstract class NetworkTableCamera extends Subsystem
                 data.add(d);
             }
         }
+        else
+        {
+            data.clear();
+        }
     }
     
     public void enable()
     {
         sourceTable.putNumber("CameraSource", source);
+
+        DistanceFromCenter = 0;
+        FullWidth = 0;
+        InView = false;
     }
     
     public boolean isEnabled()
