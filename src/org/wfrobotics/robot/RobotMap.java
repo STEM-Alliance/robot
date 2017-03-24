@@ -21,7 +21,7 @@ public class RobotMap
     //public static final int DIO_SWERVE_CAL[] = {1,2,3,4};
     public static final int PWM_SERVO_GEAR_INTAKE = 4;
 
-    public static final int SHOOTER_MOTOR_SRX = 21;
+    public static final int NEW_FEEDER_MOTOR_SRX = 21;
     public static final int FEEDER_MOTOR_SRX = 25; //Change if necessary and config 
 
     public static final int INTAKE_MOTOR_SRX = 23;
