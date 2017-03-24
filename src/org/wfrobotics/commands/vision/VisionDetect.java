@@ -4,6 +4,7 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionDetect extends Command 
 {
@@ -71,6 +72,8 @@ public class VisionDetect extends Command
 
     public boolean getIsFound()
     {
+        SmartDashboard.putBoolean("getIsFound", camera.InView);
+        
         return camera.InView;
     }
 

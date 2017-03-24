@@ -52,15 +52,16 @@ public class Robot extends SampleRobot
         
         driveSubsystem = new SwerveDriveSteamworks();
         augerSubsystem = new Auger();
-        targetGearSubsystem = new CameraGear();
         targetShooterSubsystem = new CameraShooter();
+        targetGearSubsystem = new CameraGear();
+        
         climberSubsystem = new Climber();
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();
         lifterSubsystem = new Lifter(true);
         shooterSubsystem = new Shooter();
-        leds = new MindsensorCANLight(RobotMap.CAN_LIGHT[0]);
-        leds.enable(false); // TODO Remove this when we have LEDs on the robot!!!
+        leds = new MindsensorCANLight(RobotMap.CAN_LIGHT);
+        //leds.enable(false); // TODO Remove this when we have LEDs on the robot!!!
 
         oi = new OI();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
         
@@ -122,7 +123,8 @@ public class Robot extends SampleRobot
     {
         Color[] colors = {LEDs.GREEN, LEDs.YELLOW, LEDs.GREEN, LEDs.WHITE};
         
-        leds.set(new Effect(EFFECT_TYPE.FADE, colors, 4));
+        //leds.set(new Effect(EFFECT_TYPE.FADE, colors, 4));
+        leds.set(EFFECT_TYPE.BLINK, colors, 1);
         
         while (isDisabled())
         {

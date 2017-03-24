@@ -90,8 +90,11 @@ public class VisionPivot extends CommandGroup
     protected boolean isFinished() 
     {
         double error = camera.getDistanceFromCenter();
+        boolean done = !camera.getIsFound() || Math.abs(error) < config.deadband;
         
-        return !camera.getIsFound() || Math.abs(error) < config.deadband;
+        SmartDashboard.putBoolean("Done", done);
+        
+        return done;
     }
 
     protected void end()

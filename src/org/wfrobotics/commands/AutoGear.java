@@ -34,7 +34,7 @@ public class AutoGear extends CommandGroup
             // Assume values are Red Alliance (boiler on your right)
             if (startingPosition == POSITION_ROTARY.CENTER)
             {
-                return new Config(2.1, 0, 0, 0);
+                return new Config(1.65, 0, 0, 0);
             }
             else if(DriverStation.getInstance().getAlliance() == Alliance.Red)
             {
@@ -123,7 +123,7 @@ public class AutoGear extends CommandGroup
         else
         {
             // otherwise maintain the 90 degree angle
-            addSequential(new AutoDrive(0, .8, 0, 90, 1.3));
+            addSequential(new AutoDrive(0, .8, 0, 90, 1));
         }
         
         addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
@@ -144,7 +144,7 @@ public class AutoGear extends CommandGroup
             }
             else
             {
-                addSequential(new AutoDrive(0, .8, 0, -1, .275));
+                addSequential(new AutoDrive(0, .8, 0, -1, .35));
             }
             
             // turn to the spring
@@ -153,15 +153,18 @@ public class AutoGear extends CommandGroup
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
         }
 
+        boolean fieldRelative = Robot.driveSubsystem.getFieldRelative();
+        addSequential(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE, false));
+        
         addSequential(new VisionStrafe(Robot.targetGearSubsystem, Robot.leds, Constants.GEAR_VISION_STRAFE_CONFIG));
         addSequential(new VisionPivot(Robot.targetGearSubsystem, Robot.leds, Constants.GEAR_VISION_PIVOT_CONFIG));
         addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
 
+        addSequential(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE, fieldRelative));
+        
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
-            boolean fieldRelative = Robot.driveSubsystem.getFieldRelative();
             addSequential(new AutoDrive(0, .3, 0, -1, 0.1));  // Wheels forward, we messed it up pivoting
-            addSequential(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE, fieldRelative));
             
             // approach the spring
             addSequential(new AutoDrive(config.approachSpringX,       // Towards the airship
@@ -169,6 +172,7 @@ public class AutoGear extends CommandGroup
                                         0, config.angleSpring, .75));
             addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
         }
+
         
         switch(mode)
         {
@@ -187,26 +191,26 @@ public class AutoGear extends CommandGroup
                 
             case VISION:
                 // this could potentially be replaced with VisionGearDropAndBackup
-                
-                addSequential(new VisionGear());  // In front of the gear; score it with vision
-                
-                // wait a half sec
-                addSequential(new AutoDrive(0, 0, 0, -1, .5));
-                
-                // now drop it and back up
-                addParallel(new Lift(Lift.MODE.DOWN));
-                if(startPosition == POSITION_ROTARY.CENTER)
-                {
-                    addSequential(new AutoDrive(0, -.4, 0, -1, 1));
-                    addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
-                }
-                else
-                {
-                    addSequential(new AutoDrive(-config.approachSpringX,       // away from the airship
-                                                -Math.abs(config.approachSpringX),     // Always away with X magnitude
-                                                0, config.angleSpring, 1));
-                    addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
-                }
+                addSequential(new VisionGearDropAndBackup());
+//                addSequential(new VisionGear());  // In front of the gear; score it with vision
+//                
+//                // wait a half sec
+//                addSequential(new AutoDrive(0, 0, 0, -1, .5));
+//                
+//                // now drop it and back up
+//                addParallel(new Lift(Lift.MODE.DOWN));
+//                if(startPosition == POSITION_ROTARY.CENTER)
+//                {
+//                    addSequential(new AutoDrive(0, -.4, 0, -1, 1));
+//                    addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
+//                }
+//                else
+//                {
+//                    addSequential(new AutoDrive(-config.approachSpringX,       // away from the airship
+//                                                -Math.abs(config.approachSpringX),     // Always away with X magnitude
+//                                                0, config.angleSpring, 1));
+//                    addSequential(new AutoDrive(0, 0, 0, -1, 1));  // Don't coast GOOD
+//                }
                 break;
             default:
                 break;
