@@ -4,8 +4,6 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public class WheelDriveManager 
 {
     private CANTalon driveMotor;
@@ -37,10 +35,10 @@ public class WheelDriveManager
         {
             driveMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
             driveMotor.changeControlMode(TalonControlMode.Speed);
-            driveMotor.setPID(SwerveConstants.DRIVE_PID_P,
-                              SwerveConstants.DRIVE_PID_I,
-                              SwerveConstants.DRIVE_PID_D,
-                              SwerveConstants.DRIVE_PID_F,
+            driveMotor.setPID(Constants.DRIVE_P,
+                              Constants.DRIVE_I,
+                              Constants.DRIVE_D,
+                              Constants.DRIVE_F,
                               0,
                               10,
                               0);

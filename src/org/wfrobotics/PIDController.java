@@ -4,34 +4,27 @@ import edu.wpi.first.wpilibj.Timer;
 
 /**
  * A basic PID controller for use with the Swerve drive
- * 
  * @author Team 4818 WFRobotics
- *
  */
-public final class PIDController {
-    // Heuristic to clear out the integral after being disabled.
-    private static final double MaxTimestampDiff = 1.0;
+public final class PIDController 
+{
+    private static final double MaxTimestampDiff = 1.0; // Heuristic to clear out the integral after being disabled.
 
-    // Configuration.
     private double m_P;
     private double m_I;
     private double m_D;
-
     private double m_MaxOutput;
     private double m_MinOutput;
+    private boolean preStageClamp = true;
 
-    // State.
     private double integral;
     private double prevTime;
     private double lastError;
     private double totalError;
 
-    private boolean preStageClamp = true;
-
-
+    
     /**
      * Create a new instance of the PIController
-     * 
      * @param p proportional component
      * @param i integral component, 0 to disable
      * @param d derivative component, 0 to disable
@@ -44,7 +37,6 @@ public final class PIDController {
     
     /**
      * Create a new instance of the PIController
-     * 
      * @param p proportional component
      * @param i integral component, 0 to disable
      * @param d derivative component, 0 to disable
@@ -65,7 +57,6 @@ public final class PIDController {
     
     /**
      * Update the PIController using the setpoint and the sensor reading
-     * 
      * @param setpoint desired setpoint
      * @param sensor reading from the sensor
      * @param timestamp current time
@@ -78,7 +69,6 @@ public final class PIDController {
     
     /**
      * Update the PIController using the new error
-     * 
      * @param error new error to use for calculations
      * @return new calculated output, clamped to max output range
      */
@@ -121,7 +111,7 @@ public final class PIDController {
         double clampedVal = proportional + integral + derivative;
         clampedVal = Utilities.clampToRange(clampedVal, m_MaxOutput);
         
-        // make sure it's more than the specified minimum
+        // Make sure it's more than the specified minimum
         if(Math.abs(clampedVal) > .01)
         {
             if(Math.abs(clampedVal) < m_MinOutput)
@@ -170,7 +160,6 @@ public final class PIDController {
     public void setMax(double max)
     {
         this.m_MaxOutput = max;
-        
     }
     
     public void setMin(double min)

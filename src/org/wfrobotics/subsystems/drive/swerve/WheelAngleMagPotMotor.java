@@ -1,23 +1,21 @@
 package org.wfrobotics.subsystems.drive.swerve;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.hardware.MagnetoPot;
+import org.wfrobotics.hardware.MagnetoPotSRX;
 
 import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
-import com.ctre.CANTalon.TalonControlMode;
 
+import edu.wpi.first.wpilibj.util.AllocationException;
 
-public class WheelAngleManagerEncoder 
+public class WheelAngleMagPotMotor implements WheelAngleMotor
 {
-    private static final double CountsPerDegree = 4096.0/360.0;
-    
     private CANTalon angleMotor;
+    private MagnetoPot anglePot;
     /** Invert the angle motor and sensor to swap left/right */
-    private boolean angleInverted = false;
+    private boolean angleInverted = true;
     
-    private double angleOffset = 0;
-    
-    public WheelAngleManagerEncoder(int talonAddress)
+    public WheelAngleMagPotMotor(int talonAddress)
     {
         angleMotor = new CANTalon(talonAddress);
         //angleMotor.setVoltageRampRate(30);
@@ -28,43 +26,34 @@ public class WheelAngleManagerEncoder
         angleMotor.enableForwardSoftLimit(false);
         angleMotor.enableReverseSoftLimit(false);
         angleMotor.enableBrakeMode(false);
+        //angleMotor.configNominalOutputVoltage(SwerveWheel.MINIMUM_SPEED, -SwerveWheel.MINIMUM_SPEED);  // Hardware deadband in closed-loop modes
         //angleMotor.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_50Ms);
         //angleMotor.SetVelocityMeasurementWindow(32);
-
-        //angleMotor.setStatusFrameRateMs(StatusFrameRate.Feedback, 10);
-        angleMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-        angleMotor.changeControlMode(TalonControlMode.PercentVbus);
-        //angleMotor.setPosition(angleMotor.getPosition());
+        
+        anglePot = new MagnetoPotSRX(angleMotor, 360);
     }
     
     public void set(double speed)
     {
-        double invert = angleInverted ? 1 : -1;
+        double invert = angleInverted ? -1 : 1;
         angleMotor.set(invert * speed);
     }
 
     public double getAnglePotAdjusted()
     {
-        double invert = angleInverted ? -1 : 1;
+        double invert = angleInverted ? 1 : -1;
         
-        return Utilities.round(invert * getSensor(), 2);
+        return Utilities.round(Utilities.wrapToRange(invert * anglePot.get(),-180,180),2);
     }
     
     public void setPotOffset(double offset)
     {
-        angleOffset = offset;
-    }
-    
-    private double getSensor()
-    {
-        double degrees = angleMotor.getPosition() * 360.0;
-        
-        return Utilities.wrapToRange(degrees - angleOffset, -180, 180);
+        anglePot.setOffset(offset);
     }
     
     public double debugGetPotRaw()
     {
-        return 0;//anglePot.getRawInput();
+        return anglePot.getRawInput();
     }
     
     /**
@@ -72,6 +61,6 @@ public class WheelAngleManagerEncoder
      */
     public void free()
     {
-        //try { anglePot.free(); } catch (AllocationException e) {}
+        try { anglePot.free(); } catch (AllocationException e) {}
     }
 }

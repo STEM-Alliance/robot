@@ -1,28 +1,30 @@
 package org.wfrobotics.subsystems.drive.swerve;
 
-import org.wfrobotics.robot.Robot;
-
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 
 /** Swerve Drive Shifter that shifts each Swerve Wheel */
 public class Shifter
 {
+    private final int TOP;
+    private final int BOTTOM;
+    
     private final Servo shifter;
-    private final int angleMid;
+
     private boolean gearLastState;
     private boolean gearLastRequested;
     private double timeLastRequested;
-    private boolean invert;
     
-    public Shifter(int servoPin, int servoAngle, boolean invert)
+    public Shifter(int servoPin, int angleMidway, int angleRange, boolean invert)
     {
+        int halfRange = (invert) ? -angleRange / 2 : angleRange / 2;
+        
         shifter = new Servo(servoPin);
-        angleMid = servoAngle;
-        this.invert = invert;
+        TOP = angleMidway + halfRange;
+        BOTTOM = angleMidway - halfRange;
         gearLastState = false;
         gearLastRequested = false;
-        timeLastRequested = Timer.getFPGATimestamp() - SwerveConstants.SHIFTER_SHIFT_TIME;  // Start fully in this gear
+        timeLastRequested = Timer.getFPGATimestamp() - Constants.SHIFTER_SHIFT_TIME;  // Start fully in this gear
     }
     
     /**
@@ -31,22 +33,7 @@ public class Shifter
      */
     public void setGear(boolean useHighGear)
     {
-        
-        int angle = angleMid;
-
-        //if (Robot.driveSubsystem.getLastVector().getMag() != 0)
-        //{
-        if(invert)
-        {
-            angle += useHighGear ? SwerveConstants.SHIFTER_RANGE/2.0 : -SwerveConstants.SHIFTER_RANGE/2.0;
-           
-        }
-        else
-        {
-            angle += useHighGear ? -SwerveConstants.SHIFTER_RANGE/2.0 : SwerveConstants.SHIFTER_RANGE/2.0;
-        }
-        //}
-        shifter.setAngle(angle);
+        shifter.setAngle((useHighGear) ? TOP : BOTTOM);
         
         // Only start a transition if we are changing
         // Important: This allows the caller to set the shifter repeatedly and not be indefinitely transitioning in the getter()
@@ -64,7 +51,7 @@ public class Shifter
      */
     public boolean isHighGear()
     {
-        if (Timer.getFPGATimestamp() - timeLastRequested > SwerveConstants.SHIFTER_SHIFT_TIME)
+        if (Timer.getFPGATimestamp() - timeLastRequested > Constants.SHIFTER_SHIFT_TIME)
         {
             gearLastState = gearLastRequested;
         }
