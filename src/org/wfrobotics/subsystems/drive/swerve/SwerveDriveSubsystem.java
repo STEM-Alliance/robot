@@ -80,9 +80,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         super(true);  // set it into field relative by default
         
         configSwerve = new SwerveConfiguration();
-        m_chassisAngleController = new PIDController(SwerveConstants.CHASSIS_PID_P,
-                                                     SwerveConstants.CHASSIS_PID_I,
-                                                     SwerveConstants.CHASSIS_PID_D,
+        m_chassisAngleController = new PIDController(Constants.CHASSIS_P,
+                                                     Constants.CHASSIS_I,
+                                                     Constants.CHASSIS_D,
                                                      1.0);
         
         scheduler = Executors.newScheduledThreadPool(1);
@@ -143,9 +143,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     {
         double Error = 0;
 
-        m_chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", SwerveConstants.CHASSIS_PID_P));
-        m_chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", SwerveConstants.CHASSIS_PID_I));
-        m_chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", SwerveConstants.CHASSIS_PID_D));
+        m_chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Constants.CHASSIS_P));
+        m_chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Constants.CHASSIS_I));
+        m_chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Constants.CHASSIS_D));
 
         // Determine which drive mode to use between
         if (!cv.ignoreHeading())
