@@ -4,7 +4,7 @@ import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
-public class WheelDriveManager 
+public class WheelDriveManager
 {
     private CANTalon driveMotor;
     
@@ -32,18 +32,16 @@ public class WheelDriveManager
 //        16.31.4. Drive (Master) Talon manually
 //        16.31.5. Re-enable Closed-Loop
         
-        {
-            driveMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-            driveMotor.changeControlMode(TalonControlMode.Speed);
-            driveMotor.setPID(Constants.DRIVE_P,
-                              Constants.DRIVE_I,
-                              Constants.DRIVE_D,
-                              Constants.DRIVE_F,
-                              0,
-                              10,
-                              0);
-            driveMotor.reverseSensor(true);
-        }
+        driveMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        driveMotor.changeControlMode(TalonControlMode.Speed);
+        driveMotor.setPID(Constants.DRIVE_P,
+                          Constants.DRIVE_I,
+                          Constants.DRIVE_D,
+                          Constants.DRIVE_F,
+                          0,
+                          10,
+                          0);
+        driveMotor.reverseSensor(true);
     }
     
     public double get()
@@ -59,15 +57,5 @@ public class WheelDriveManager
     public void setBrake(boolean enable)
     {
         driveMotor.enableBrakeMode(enable);
-    }
-    
-    public void setVoltageRampRate(double rate)
-    {
-        driveMotor.setVoltageRampRate(rate);
-    }
-
-    public double debugGetCloseLoopRampRate()
-    {
-        return driveMotor.getCloseLoopRampRate();
     }
 }
