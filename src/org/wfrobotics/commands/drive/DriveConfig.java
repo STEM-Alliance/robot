@@ -41,7 +41,7 @@ public class DriveConfig extends Command
                 Robot.driveSubsystem.setFieldRelative(manual ? enable : !Robot.driveSubsystem.getFieldRelative());
                 break;
             case GYRO_ZERO:
-                Robot.driveSubsystem.gyroZero();
+                Robot.driveSubsystem.zeroGyro();
                 break;
             case GYRO_DISABLE:
                 Robot.driveSubsystem.configSwerve.gyroEnable = manual ? enable : !Robot.driveSubsystem.configSwerve.gyroEnable;

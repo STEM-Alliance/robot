@@ -98,10 +98,10 @@ public class WheelManager implements Runnable
         Vector[] WheelsActual = new Vector[Constants.WHEEL_COUNT];
 
         robot = applyClampVelocity(robot);
-        robot = (config.ENABLE_SQUARE_MAGNITUDE) ? applyMagnitudeSquare(robot):robot;
-        robot = (config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(robot):robot;  
-        robot = (config.ENABLE_CRAWL_MODE) ? applyCrawlMode(robot):robot;
-        robot = (config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(robot):robot;
+        robot = (config.ENABLE_SQUARE_MAGNITUDE) ? applyMagnitudeSquare(robot) : robot;
+        robot = (config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(robot) : robot;  
+        robot = (config.ENABLE_CRAWL_MODE) ? applyCrawlMode(robot) : robot;
+        robot = (config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(robot) : robot;
         lastVelocity = robot.velocity;
 
         SmartDashboard.putNumber("Drive X", robot.velocity.getX());
@@ -122,13 +122,13 @@ public class WheelManager implements Runnable
         return WheelsActual;
     }
     
-    public double getVelocityLimit(double MaxWantedVeloc)
+    public double getVelocityLimit(double MaxWantedVelocity)
     {
         config.velocityMaxAvailable = Preferences.getInstance().getDouble("MAX_ROBOT_VELOCITY", config.velocityMaxAvailable);
         double velocityRatio = 1;
 
         // Determine ratio to scale all wheel velocities by
-        velocityRatio = config.velocityMaxAvailable / MaxWantedVeloc;
+        velocityRatio = config.velocityMaxAvailable / MaxWantedVelocity;
 
         velocityRatio = (velocityRatio > 1) ? 1:velocityRatio;
 
@@ -147,12 +147,11 @@ public class WheelManager implements Runnable
 
     /**
      * Do a full wheel calibration, adjusting the angles by the specified values, and save the values for use
-     * @param speed speed value to test against, 0-1
-     * @param values array of values, -180 to 180, to adjust the wheel angle offsets
+     * @param speed Speed value to test against (range: 0 to 1)
+     * @param values Array of values to adjust the wheel angle offsets (range: -180 to 180)
      */
     public synchronized void doFullWheelCalibration(double speed, double values[], boolean save)
     {
-
         Vector vector = Vector.NewFromMagAngle(speed, 0);
 
         for(int i = 0; i < Constants.WHEEL_COUNT; i++)
@@ -212,7 +211,6 @@ public class WheelManager implements Runnable
 
         for (int i = 0; i < Constants.WHEEL_COUNT; i++)
         {
-            // Scale values for each wheel
             WheelsScaled[i] = Vector.NewFromMagAngle(WheelsUnscaled[i].getMag() * VelocityRatio, WheelsUnscaled[i].getAngle());
         }
 
@@ -296,20 +294,18 @@ public class WheelManager implements Runnable
      */
     private RobotCommand applyAccelerationLimit(RobotCommand robot)
     {
-        double TimeDelta = Timer.getFPGATimestamp() - lastVelocityTimestamp;
-        lastVelocityTimestamp = Timer.getFPGATimestamp();
-
-        // Get the difference between last velocity and this velocity
+        double now = Timer.getFPGATimestamp();
+        double dt = now - lastVelocityTimestamp;
         Vector delta = robot.velocity.subtract(lastVelocity);
+        
+        lastVelocityTimestamp = now;
 
-        // Grab the max acceleration value from the dash
         config.accelerationMax = Preferences.getInstance().getDouble("MAX_ACCELERATION", config.accelerationMax);
 
-        // Determine if we are accelerating/decelerating too slow
-        if (Math.abs(delta.getMag()) > config.accelerationMax * TimeDelta)
+        // Accelerating/decelerating too slow? Slow down
+        if (Math.abs(delta.getMag()) > config.accelerationMax * dt)
         {
-            // if we are, slow that down by the MaxAcceleration value
-            delta.setMag(config.accelerationMax * TimeDelta);
+            delta.setMag(config.accelerationMax * dt);
             robot.velocity = lastVelocity.add(delta);
         }
 

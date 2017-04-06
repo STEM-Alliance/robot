@@ -22,9 +22,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 {
     public class ChassisVector
     {
-        Vector velocity;
-        double spin;
-        double heading;
+        Vector velocity;  // Direction
+        double spin;      // Twist while moving
+        double heading;   // Angle to track
 
         public ChassisVector(Vector velocity,  double rotationalSpeed, double heading)
         {
@@ -69,21 +69,15 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     private ScheduledExecutorService scheduler;
     public WheelManager wheelManager;
 
-    private double m_lastHeadingTimestamp;  // this is used to address the counter spinning/snapback
+    private double m_lastHeadingTimestamp;  // Addresses counter spinning/snapback
     double m_gyroLast;
 
-    /**
-     * sets up individual wheels and their positions relative to robot center
-     */
     public SwerveDriveSubsystem()
     {        
         super(true);  // set it into field relative by default
         
         configSwerve = new SwerveConfiguration();
-        m_chassisAngleController = new PIDController(Constants.CHASSIS_P,
-                                                     Constants.CHASSIS_I,
-                                                     Constants.CHASSIS_D,
-                                                     1.0);
+        m_chassisAngleController = new PIDController(Constants.CHASSIS_P, Constants.CHASSIS_I, Constants.CHASSIS_D, 1.0);
         
         scheduler = Executors.newScheduledThreadPool(1);
         wheelManager = new WheelManager();
@@ -103,28 +97,16 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     }
 
     @Override
-    public void driveVector(double magnitude, double angle, double rotation)
-    {
-        driveVector(Vector.NewFromMagAngle(magnitude, angle), rotation);
-    }
-
-    @Override
     public void driveVector(Vector velocity, double rotation)
     {
         driveWithHeading(velocity, rotation, HEADING_IGNORE);
     }
 
-    @Override
-    public void driveXY(double x, double y, double rotation)
-    {
-        driveWithHeading(new Vector(x,y), rotation, HEADING_IGNORE);
-    }
-
     /**
      * Main drive update function, allows for xy movement, yaw rotation, and turn to angle/heading
-     * @param Velocity {@link Vector} of xy movement of robot
-     * @param Rotation robot's rotational movement, -1 to 1 rad/s
-     * @param Heading 0-360 of angle to turn to, -1 if not in use
+     * @param Velocity Direction the robot should move
+     * @param Rotation How fast to spin while moving (range: -1 to 1)
+     * @param Heading Auto-goto this angle (range: 0-360, -1 to disable)
      * @return actual wheel readings
      */
     public Vector[] driveWithHeading(Vector Velocity, double Rotation, double Heading)
@@ -147,14 +129,11 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         m_chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Constants.CHASSIS_I));
         m_chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Constants.CHASSIS_D));
 
-        // Determine which drive mode to use between
-        if (!cv.ignoreHeading())
+        if (!cv.ignoreHeading())  // Goto Heading Mode
         {
-            // Rotate to angle
             SmartDashboard.putString("Drive Mode", "Rotate To Heading");
 
-            // This should snap us to a specific angle
-            if(configSwerve.gyroEnable)
+            if(configSwerve.gyroEnable) // Snap to angle
             {
                 // Set the rotation using a PID controller based on current robot heading and new desired heading
                 Error = Utilities.wrapToRange(cv.heading - m_gyro.getYaw(), -180, 180);
@@ -162,58 +141,51 @@ public class SwerveDriveSubsystem extends DriveSubsystem
             }
             m_lastHeading = cv.heading;
         }
-        else 
+        else if (Math.abs(cv.spin) > .1)  // Free Spin Mode
         {
-            if (Math.abs(cv.spin) > .1)
+            SmartDashboard.putString("Drive Mode", "Spinning");
+
+            // Just take the rotation value from the controller
+            m_lastHeading = m_gyro.getYaw();
+
+            
+            m_lastHeadingTimestamp = Timer.getFPGATimestamp();  // Save off timestamp to counter snapback
+
+            m_gyroLast = m_gyro.getYaw();
+
+            // Square rotation value to give it more control at lower values but keep the same sign since a negative squared is positive
+            cv.spin = Math.signum(cv.spin) * Math.pow(cv.spin, 2);
+        }
+        else  // Maintain Current Heading Mode
+        {
+            // Delay the stay at angle to prevent snapback
+            if((Timer.getFPGATimestamp() - m_lastHeadingTimestamp) > configSwerve.HEADING_TIMEOUT)
             {
-                // Spinning
-                SmartDashboard.putString("Drive Mode", "Spinning");
+                SmartDashboard.putString("Drive Mode", "Stay At Angle");
 
-                // Just take the rotation value from the controller
-                m_lastHeading = m_gyro.getYaw();
-
-                // Save off timestamp to counter snapback
-                m_lastHeadingTimestamp = Timer.getFPGATimestamp();
-
-                m_gyroLast = m_gyro.getYaw();
-
-                // Square rotation value to give it more control at lower values but keep the same sign since a negative squared is positive
-                cv.spin = Math.signum(cv.spin) * Math.pow(cv.spin, 2);
-            }
-            else // maintain angle
-            {
-                // Delay the stay at angle to prevent snapback
-                if((Timer.getFPGATimestamp() - m_lastHeadingTimestamp) > configSwerve.HEADING_TIMEOUT)
+                if(configSwerve.gyroEnable)
                 {
-                    SmartDashboard.putString("Drive Mode", "Stay At Angle");
-
-                    if(configSwerve.gyroEnable)
+                    // Set the rotation using a PID controller based on current robot heading and new desired heading
+                    Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
+                    double tempRotation = m_chassisAngleController.update(Error);
+                    
+                    if(Math.abs(Error) < 2)  // TODO: Seems incorrect
                     {
-                        // This should keep us facing the same direction
+                        m_chassisAngleController.resetError();
+                    }
 
-                        // Set the rotation using a PID controller based on current robot
-                        // heading and new desired heading
-                        Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
-                        double tempRotation = m_chassisAngleController.update(Error);
-                        
-                        if(Math.abs(Error) < 2)
-                        {
-                            m_chassisAngleController.resetError();
-                        }
-
-                        // Add a deadband to hopefully help with wheel lock after stopping
-                        SmartDashboard.putNumber("MaintainRotation", tempRotation);
-                        if(Math.abs(tempRotation) > configSwerve.AUTO_ROTATION_MIN)
-                        {
-                            cv.spin = tempRotation;
-                        }
+                    // Add a deadband to hopefully help with wheel lock after stopping
+                    SmartDashboard.putNumber("MaintainRotation", tempRotation);
+                    if(Math.abs(tempRotation) > configSwerve.AUTO_ROTATION_MIN)
+                    {
+                        cv.spin = tempRotation;
                     }
                 }
-                else
-                {
-                    m_chassisAngleController.resetError();
-                    m_lastHeading = m_gyro.getYaw(); // Save off the latest heading until the timeout
-                }
+            }
+            else
+            {
+                m_chassisAngleController.resetError();
+                m_lastHeading = m_gyro.getYaw(); // Save off the latest heading until the timeout
             }
         }
 
@@ -261,8 +233,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     }
 
     /**
-     * Do a full wheel calibration, adjusting the angles by the specified values,
-     * and save the values for use
+     * Do a full wheel calibration, adjusting the angles by the specified values, and save the values for use
      * @param speed speed value to test against, 0-1
      * @param values array of values, -180 to 180, to adjust the wheel angle offsets
      */
