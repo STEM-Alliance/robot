@@ -128,7 +128,7 @@ public class SwerveWheel
         double driveMotorSpeed = desiredVector.getMag();
         double driveMotorOutput = 0;
 
-        // Reverse the output if the angle PID can take advantage of rotational symmetry
+        // Reverse the output if the angle PID says that is the shortest path
         driveMotorSpeed = (reverse) ? -driveMotorSpeed : driveMotorSpeed;
         
         // Limit ramp rate, prevents voltage drops and brownouts
@@ -164,7 +164,7 @@ public class SwerveWheel
             //SmartDashboard.putNumber("SpeedOutput" + number, driveMotorSpeed);
 
             // Limit to 0 - max
-            double speedDiff = Math.min(Math.abs(driveMotorSpeed-speedCurrent), Constants.DRIVE_SPEED_MAX);
+            double speedDiff = Math.min(Math.abs(driveMotorSpeed - speedCurrent), Constants.DRIVE_SPEED_MAX);
                         
             // Linearly scale the speed difference to the ramp range, //TODO should it be linear?
             double rampValue = Utilities.scaleToRange(speedDiff, 0, Constants.DRIVE_SPEED_MAX, Constants.DRIVE_RAMP_HIGH, Constants.DRIVE_RAMP_LOW); // output range

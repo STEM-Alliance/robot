@@ -96,4 +96,9 @@ public class HerdVector
     {
         return new HerdVector(this.mag * mag, this.angle);
     }
+    
+    public HerdVector cross(HerdVector b)
+    {
+        return new HerdVector(this.mag * b.getMag(), this.getAngle() + b.getAngle());
+    }
 }
