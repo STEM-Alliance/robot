@@ -6,10 +6,29 @@ import org.wfrobotics.subsystems.drive.swerve.WheelManager.RobotCommand;
 
 public class Tests
 {
+    static final double width = 4;
+    static final double depth = 3;
+    static Vector robotV = new Vector(.3, .5);
+    static final double robotS = .75;
+    
+    static double maxWheelMagnitudeLast;
+    static HerdVector wheelBR;
+    static HerdVector wheelFR;
+    static HerdVector wheelFL;
+    static HerdVector wheelBL;
+    static HerdVector rBR;
+    static HerdVector rFR;
+    static HerdVector rFL;
+    static HerdVector rBL;
+    
     public static void main(String[] args)
     {
-        debugFastTrig();
-        debugHerdVector();
+        FastTrig.cos(359);  // FastTrig init cache
+        //debugFastTrig();
+        //debugHerdVector();
+        debugOldChassisToWheelVectors();
+        debugNewChassisToWheelVectors();
+        debugWheelVectorsToChassis();
     }
         
     public static void debugHerdVector()
@@ -97,44 +116,12 @@ public class Tests
         System.out.println(a = a.add(b));
         System.out.println(a.add(b));
         System.out.println();
-        
-        // Cartesian Wheel Vectors
-//        double CHASSIS_WIDTH = 24.75;
-        double CHASSIS_WIDTH = 4;
-//        double CHASSIS_DEPTH = 14.25;
-        double CHASSIS_DEPTH = 3;
-        double CHASSIS_SCALE = Math.sqrt(CHASSIS_WIDTH * CHASSIS_WIDTH + CHASSIS_DEPTH * CHASSIS_DEPTH);
-        
-        double[][] POSITIONS = {
-                { -CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE }, // front left
-                { CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE }, // front right
-                { CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE }, // back right
-                { -CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE } }; // back left
-        Vector[] positions = new Vector[4];
-        Vector robotVector = new Vector(1,2);
-        double spin = 1;
-        RobotCommand robotCommand = new RobotCommand(robotVector, spin);
-        System.out.format("Robot Command (%.2f, %.2f, %.2f)\n", robotCommand.velocity.getMag(), robotCommand.velocity.getAngle(), robotCommand.spin);
-        System.out.format("Robot Width: %.2f, Depth: %.2f\n\n", CHASSIS_WIDTH, CHASSIS_DEPTH);
-        for (int index = 0; index < Constants.WHEEL_COUNT; index++)
-        {
-            positions[index] = new Vector(POSITIONS[index]);
-            System.out.format("Old position %d: (%.2f, %.2f)\n", index, positions[index].getMag(), positions[index].getAngle());
-        }
-        
-        start = System.nanoTime();
-        Vector[] scaled = oldScaleWheelVectors(robotCommand, positions);
-
-        System.out.println("Wheel Calcs Cartesian: " + ((System.nanoTime() - start)/1000) + " ns");        
-        for (int index = 0; index < scaled.length; index++)
-        {
-            System.out.format("Old wheel %d: (%.2f, %.2f)\n", index, scaled[index].getMag(), scaled[index].getAngle());
-        }
-        System.out.println();
-        
-        // Polar Wheel Positions
-        double offsetX = CHASSIS_WIDTH;
-        double offsetY = CHASSIS_DEPTH;
+    }
+     
+    public static void debugNewChassisToWheelVectors()
+    {
+        double offsetX = width;
+        double offsetY = depth;
         
         HerdVector rBR = new HerdVector(Math.sqrt(offsetX * offsetX + offsetY * offsetY), Math.atan2(offsetY, -offsetX) * 180 / Math.PI);
         HerdVector rFR = new HerdVector(Math.sqrt(offsetX * offsetX + offsetY * offsetY), Math.atan2(offsetY, offsetX) * 180 / Math.PI);
@@ -151,35 +138,19 @@ public class Tests
         System.out.println("New position FR: " + rFR);
         System.out.println("New position FL: " + rFL);
         System.out.println("New position BL: " + rBL);
-        
-        // New Wheel Vectors
-        HerdVector r = new HerdVector(robotVector.getMag(), robotVector.getAngle());
-        
-        start = System.nanoTime();
-        
-        // w x r
-        HerdVector wXBR = new HerdVector(spin * rBR.getMag(), rBR.getAngle() + 90);
-        HerdVector wXFR = new HerdVector(spin * rFR.getMag(), rFR.getAngle() + 90);
-        HerdVector wXFL = new HerdVector(spin * rFL.getMag(), rFL.getAngle() + 90);
-        HerdVector wXBL = new HerdVector(spin * rBL.getMag(), rBL.getAngle() + 90);
-        
-//        System.out.println("bR X w: " + bRcrossW);
-//        System.out.println("fR X w: " + fRcrossW);
-//        System.out.println("fL X w: " + fLcrossW);
-//        System.out.println("bL X w: " + bLcrossW);
-//
-//        System.out.format("bR X w X: %.2f Y: %.2f\n", bRcrossW.getX(), bRcrossW.getY());
-//        System.out.format("fR X w X: %.2f Y: %.2f\n", fRcrossW.getX(), fRcrossW.getY());
-//        System.out.format("fL X w X: %.2f Y: %.2f\n", fLcrossW.getX(), fLcrossW.getY());
-//        System.out.format("bL X w X: %.2f Y: %.2f\n", bLcrossW.getX(), bLcrossW.getY());
-        
+
+        HerdVector v = new HerdVector(robotV.getMag(), robotV.getAngle());
+//        double spin = robotS;
+        HerdVector w = new  HerdVector(robotS, 90);
+        long start = System.nanoTime();
+                
         // v + w x r
-        HerdVector wheelBR = r.add(wXBR);
-        HerdVector wheelFR = r.add(wXFR);
-        HerdVector wheelFL = r.add(wXFL);
-        HerdVector wheelBL = r.add(wXBL);
+        HerdVector wheelBR = v.add(w.cross(rBR));
+        HerdVector wheelFR = v.add(w.cross(rFR));
+        HerdVector wheelFL = v.add(w.cross(rFL));
+        HerdVector wheelBL = v.add(w.cross(rBL));
         
-        double maxMag = wheelBR.getMag();        
+        double maxMag = wheelBR.getMag();
         maxMag = (wheelFR.getMag() > maxMag) ? wheelFR.getMag(): maxMag;
         maxMag = (wheelFL.getMag() > maxMag) ? wheelFL.getMag(): maxMag;
         maxMag = (wheelBL.getMag() > maxMag) ? wheelBL.getMag(): maxMag;
@@ -190,6 +161,11 @@ public class Tests
             wheelFR = wheelFR.scale(1 / maxMag);
             wheelFL = wheelFL.scale(1 / maxMag);
             wheelBL = wheelBL.scale(1 / maxMag);
+            Tests.maxWheelMagnitudeLast = maxMag;
+        }
+        else
+        {
+            Tests.maxWheelMagnitudeLast = 1;
         }
         
         // Mirroring Y is purely to match our old swerve. Seems like an extra step beyond what math says we need
@@ -198,11 +174,116 @@ public class Tests
         wheelFL = new HerdVector(wheelFL.getMag(), -wheelFL.getAngle());
         wheelBL = new HerdVector(wheelBL.getMag(), -wheelBL.getAngle());
         
-        System.out.println("Wheel Calcs Polar: " + ((System.nanoTime() - start)/1000) + " ns");
-        System.out.println("New Wheel BR: " + wheelBR);
-        System.out.println("New Wheel FR: " + wheelFR);
-        System.out.println("New Wheel FL: " + wheelFL);
-        System.out.println("New Wheel BL: " + wheelBL);
+        double end = System.nanoTime();
+        
+        System.out.println("Mirrored BR: " + wheelBR);
+        System.out.println("Mirrored FR: " + wheelFR);
+        System.out.println("Mirrored FL: " + wheelFL);
+        System.out.println("Mirrored BL: " + wheelBL);
+        System.out.println("Wheel Calcs: " + ((end - start)/1000) + " ns");
+        System.out.println("-------------------------------");
+        
+        Tests.wheelBR = wheelBR;
+        Tests.wheelFR = wheelFR;
+        Tests.wheelFL = wheelFL;
+        Tests.wheelBL = wheelBL;
+        Tests.rBR = rBR;
+        Tests.rFR = rFR;
+        Tests.rFL = rFL;
+        Tests.rBL = rBL;
+    }
+     
+    public static void debugWheelVectorsToChassis()
+    {
+        double maxMag = maxWheelMagnitudeLast;
+        double start = System.nanoTime();
+        
+        // Undo Mirror
+        HerdVector reconstructWheelBR = new HerdVector(wheelBR.getMag(), -wheelBR.getAngle());
+        HerdVector reconstructWheelFR = new HerdVector(wheelFR.getMag(), -wheelFR.getAngle());
+        HerdVector reconstructWheelFL = new HerdVector(wheelFL.getMag(), -wheelFL.getAngle());
+        HerdVector reconstructWheelBL = new HerdVector(wheelBL.getMag(), -wheelBL.getAngle());
+
+//        System.out.println("UnMirrored BR: " + reconstructWheelBR);
+//        System.out.println("UnMirrored FR: " + reconstructWheelFR);
+//        System.out.println("UnMirrored FL: " + reconstructWheelFL);
+//        System.out.println("UnMirrored BL: " + reconstructWheelBL);
+        
+        // Undo scale
+        reconstructWheelBR = reconstructWheelBR.scale(maxMag);
+        reconstructWheelFR = reconstructWheelFR.scale(maxMag);
+        reconstructWheelFL = reconstructWheelFL.scale(maxMag);
+        reconstructWheelBL = reconstructWheelBL.scale(maxMag);
+
+        // v + w x r
+//        System.out.println("Unscaled BR: " + reconstructWheelBR);
+//        System.out.println("Unscaled FR: " + reconstructWheelFR);
+//        System.out.println("Unscaled FL: " + reconstructWheelFL);
+//        System.out.println("Unscaled BL: " + reconstructWheelBL);
+        
+        // Summing the wheel vectors, the w x r's components cancel, leaving the chassis command scaled by four
+        HerdVector frankenstein = new HerdVector(reconstructWheelBR);
+        frankenstein = frankenstein.add(reconstructWheelFR);
+        frankenstein = frankenstein.add(reconstructWheelFL);
+        frankenstein = frankenstein.add(reconstructWheelBL);
+        frankenstein = frankenstein.scale(.25);
+        
+        double end = System.nanoTime();
+        
+//        // w x r
+//        HerdVector reconstructWxBR = reconstructWheelBR.sub(v);
+//        HerdVector reconstructWxFR = reconstructWheelFR.sub(v);
+//        HerdVector reconstructWxFL = reconstructWheelFL.sub(v);
+//        HerdVector reconstructWxBL = reconstructWheelBL.sub(v);
+//        
+//        System.out.println("Reconstruct BR: " + reconstructWxBR);
+//        System.out.println("Reconstruct FR: " + reconstructWxFR);
+//        System.out.println("Reconstruct FL: " + reconstructWxFL);
+//        System.out.println("Reconstruct BL: " + reconstructWxBL);
+        
+        HerdVector wXr = reconstructWheelBR.scale(maxMag);
+        wXr = reconstructWheelBR.sub(frankenstein);
+        
+        System.out.println("Reconstructing Robot Command");
+        System.out.format("Robot Command (%.2f, %.2f, %.2f)\n", frankenstein.getMag(), frankenstein.getAngle(), wXr.getMag());
+        System.out.println("Wheel Calcs: " + ((end - start)/1000) + " ns");
+    }
+    
+    public static void debugOldChassisToWheelVectors()
+    {        
+        // Cartesian Wheel Vectors
+        double CHASSIS_WIDTH = width;
+        double CHASSIS_DEPTH = depth;
+        double CHASSIS_SCALE = Math.sqrt(CHASSIS_WIDTH * CHASSIS_WIDTH + CHASSIS_DEPTH * CHASSIS_DEPTH);
+        
+        double[][] POSITIONS = {
+                { -CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE }, // front left
+                { CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE }, // front right
+                { CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE }, // back right
+                { -CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE } }; // back left
+        Vector[] positions = new Vector[4];
+        double spin = robotS;
+        RobotCommand robotCommand = new RobotCommand(robotV, spin);
+        System.out.format("Robot Command (%.2f, %.2f, %.2f)\n", robotCommand.velocity.getMag(), robotCommand.velocity.getAngle(), robotCommand.spin);
+        System.out.format("Robot Width: %.2f, Depth: %.2f\n", CHASSIS_WIDTH, CHASSIS_DEPTH);
+        System.out.println("-------------------------------");
+        
+        for (int index = 0; index < Constants.WHEEL_COUNT; index++)
+        {
+            positions[index] = new Vector(POSITIONS[index]);
+            System.out.format("Old position %d: (%.2f, %.2f)\n", index, positions[index].getMag(), positions[index].getAngle());
+        }
+        
+        long start = System.nanoTime();
+        Vector[] scaled = oldScaleWheelVectors(robotCommand, positions);
+
+        double end = System.nanoTime();   
+        for (int index = 0; index < scaled.length; index++)
+        {
+            System.out.format("Old wheel %d: (%.2f, %.2f)\n", index, scaled[index].getMag(), scaled[index].getAngle());
+        }
+        System.out.println("Wheel Calcs: " + ((end - start)/1000) + " ns");
+        System.out.println("-------------------------------");
     }
     
     private static Vector[] oldScaleWheelVectors(RobotCommand robot, Vector[] positions)
@@ -233,7 +314,6 @@ public class Tests
         }
 
         return WheelsScaled;
-//        return WheelsUnscaled;
     }
     
     public static double oldGetVelocityLimit(double MaxWantedVeloc)

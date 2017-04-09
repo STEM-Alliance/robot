@@ -33,13 +33,11 @@ public class WheelManager implements Runnable
         private final boolean ENABLE_ROTATION_LIMIT = true;
 
         private double accelerationMax = 6; // Smaller is slower acceleration
-        
         /**
          * Amount to scale back speeds (range: 0 (min - no crawl) to 1 (max - basically don't move))
          * This should get set from the controller/command
          */
         public double crawlModeMagnitude = 0.0;
-        
         private double rotationAdjustMin = .3;
         private double velocityMaxAvailable = 1;
     }

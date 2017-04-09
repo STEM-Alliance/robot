@@ -64,20 +64,20 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     public static final double HEADING_IGNORE = -1;
 
     public SwerveConfiguration configSwerve;
-    private PIDController m_chassisAngleController;
+    private PIDController chassisAngleController;
     
     private ScheduledExecutorService scheduler;
     public WheelManager wheelManager;
 
-    private double m_lastHeadingTimestamp;  // Addresses counter spinning/snapback
-    double m_gyroLast;
+    private double lastHeadingTimestamp;  // Addresses counter spinning/snapback
+    double lastGyro;
 
     public SwerveDriveSubsystem()
     {        
         super(true);  // set it into field relative by default
         
         configSwerve = new SwerveConfiguration();
-        m_chassisAngleController = new PIDController(Constants.CHASSIS_P, Constants.CHASSIS_I, Constants.CHASSIS_D, 1.0);
+        chassisAngleController = new PIDController(Constants.CHASSIS_P, Constants.CHASSIS_I, Constants.CHASSIS_D, 1.0);
         
         scheduler = Executors.newScheduledThreadPool(1);
         wheelManager = new WheelManager();
@@ -91,10 +91,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
     }
 
     @Override
-    public void driveTank(double right, double left)
-    {
-        //TODO?
-    }
+    public void driveTank(double right, double left) { }
 
     @Override
     public void driveVector(Vector velocity, double rotation)
@@ -111,106 +108,98 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public Vector[] driveWithHeading(Vector Velocity, double Rotation, double Heading)
     {
-        ChassisVector cv = new ChassisVector(Velocity.clone(), Rotation, Heading);
+        ChassisVector command = new ChassisVector(Velocity.clone(), Rotation, Heading);
 
-        cv.spin = ApplySpinMode(cv.clone());
-        cv.velocity = applyVelocityMode(cv.clone());
-
+        ApplySpinMode(command);      // Pass by reference
+        applyVelocityMode(command);  // Pass by reference
         printDash();
         
-        return wheelManager.setWheelVectors(cv.velocity, cv.spin, configSwerve.gearHigh, m_brake);
+        return wheelManager.setWheelVectors(command.velocity, command.spin, configSwerve.gearHigh, m_brake);
     }
     
-    private double ApplySpinMode(ChassisVector cv)
+    private void ApplySpinMode(ChassisVector command)
     {
-        double Error = 0;
+        double error = 0;
+        String driveMode;
 
-        m_chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Constants.CHASSIS_P));
-        m_chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Constants.CHASSIS_I));
-        m_chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Constants.CHASSIS_D));
+        chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Constants.CHASSIS_P));
+        chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Constants.CHASSIS_I));
+        chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Constants.CHASSIS_D));
 
-        if (!cv.ignoreHeading())  // Goto Heading Mode
+        if (!command.ignoreHeading())
         {
-            SmartDashboard.putString("Drive Mode", "Rotate To Heading");
+            driveMode = "Snap To Angle";
 
-            if(configSwerve.gyroEnable) // Snap to angle
+            if(configSwerve.gyroEnable)
             {
-                // Set the rotation using a PID controller based on current robot heading and new desired heading
-                Error = Utilities.wrapToRange(cv.heading - m_gyro.getYaw(), -180, 180);
-                cv.spin = m_chassisAngleController.update(-Error);
+                error = Utilities.wrapToRange(command.heading - m_gyro.getYaw(), -180, 180);
+                command.spin = chassisAngleController.update(-error);
             }
-            m_lastHeading = cv.heading;
+            m_lastHeading = command.heading;
         }
-        else if (Math.abs(cv.spin) > .1)  // Free Spin Mode
+        else if (Math.abs(command.spin) > .1)
         {
-            SmartDashboard.putString("Drive Mode", "Spinning");
+            driveMode = "Rotate Angle";
 
-            // Just take the rotation value from the controller
             m_lastHeading = m_gyro.getYaw();
-
-            
-            m_lastHeadingTimestamp = Timer.getFPGATimestamp();  // Save off timestamp to counter snapback
-
-            m_gyroLast = m_gyro.getYaw();
+            lastHeadingTimestamp = Timer.getFPGATimestamp();  // Save off timestamp to counter snapback
+            lastGyro = m_gyro.getYaw();
 
             // Square rotation value to give it more control at lower values but keep the same sign since a negative squared is positive
-            cv.spin = Math.signum(cv.spin) * Math.pow(cv.spin, 2);
+            // TODO Does this improve anything or add complexity because we scale rotation elsewhere?
+            command.spin = Math.signum(command.spin) * Math.pow(command.spin, 2);
         }
-        else  // Maintain Current Heading Mode
+        else
         {
+            driveMode = "Maintain Angle";
+            
             // Delay the stay at angle to prevent snapback
-            if((Timer.getFPGATimestamp() - m_lastHeadingTimestamp) > configSwerve.HEADING_TIMEOUT)
+            if((Timer.getFPGATimestamp() - lastHeadingTimestamp) > configSwerve.HEADING_TIMEOUT)
             {
-                SmartDashboard.putString("Drive Mode", "Stay At Angle");
-
                 if(configSwerve.gyroEnable)
                 {
                     // Set the rotation using a PID controller based on current robot heading and new desired heading
-                    Error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
-                    double tempRotation = m_chassisAngleController.update(Error);
+                    error = -Utilities.wrapToRange(m_lastHeading - m_gyro.getYaw(), -180, 180);
+                    double tempRotation = chassisAngleController.update(error);  // TODO why does sign differ from snap to angle?
                     
-                    if(Math.abs(Error) < 2)  // TODO: Seems incorrect
+                    if(Math.abs(error) < 2)  // TODO: Seems incorrect
                     {
-                        m_chassisAngleController.resetError();
+                        chassisAngleController.resetError();
                     }
 
-                    // Add a deadband to hopefully help with wheel lock after stopping
+                    // Add a deadband to hopefully help with wheel lock after stopping 
                     SmartDashboard.putNumber("MaintainRotation", tempRotation);
-                    if(Math.abs(tempRotation) > configSwerve.AUTO_ROTATION_MIN)
+                    if(Math.abs(tempRotation) > configSwerve.AUTO_ROTATION_MIN)// TODO remove unless this does anything more than talon nominal voltage
                     {
-                        cv.spin = tempRotation;
+                        command.spin = tempRotation;
                     }
                 }
             }
             else
             {
-                m_chassisAngleController.resetError();
+                chassisAngleController.resetError();
                 m_lastHeading = m_gyro.getYaw(); // Save off the latest heading until the timeout
             }
         }
 
-        SmartDashboard.putNumber("Rotation Error", Error);
-        
-        return cv.spin;
+        SmartDashboard.putString("Drive Mode", driveMode);
+        SmartDashboard.putNumber("Rotation Error", error);
     }
     
-    protected Vector applyVelocityMode(ChassisVector cv)
+    protected void applyVelocityMode(ChassisVector command)
     {
-        SmartDashboard.putNumber("Velocity X", cv.velocity.getX());
-        SmartDashboard.putNumber("Velocity Y", cv.velocity.getY());
-        SmartDashboard.putNumber("Rotation", cv.spin);
+        SmartDashboard.putNumber("Velocity X", command.velocity.getX());
+        SmartDashboard.putNumber("Velocity Y", command.velocity.getY());
+        SmartDashboard.putNumber("Rotation", command.spin);
 
-        // If we're relative to the field, we need to adjust the movement vector based on the gyro heading
+        // If we're relative to the field, adjust the movement vector based on the gyro heading
         if (m_fieldRelative)
         {
-            double AdjustedAngle = cv.velocity.getAngle() + m_gyro.getYaw();
+            double AdjustedAngle = command.velocity.getAngle() + m_gyro.getYaw();
             
-            AdjustedAngle = Utilities.wrapToRange(AdjustedAngle, -180, 180);
-                    
-            cv.velocity.setAngle(AdjustedAngle);
+            AdjustedAngle = Utilities.wrapToRange(AdjustedAngle, -180, 180);                    
+            command.velocity.setAngle(AdjustedAngle);
         }
-
-        return cv.velocity;
     }
 
     /**
