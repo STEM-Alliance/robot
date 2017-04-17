@@ -5,6 +5,7 @@
  */
 package org.wfrobotics;
 
+
 /**
  * Auto calculate angle and magnitude/angular velocity/distance from x and y
  * values

@@ -1,9 +1,10 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.commands.AutoGear;
-import org.wfrobotics.commands.AutoShoot;
-import org.wfrobotics.commands.Constants;
-import org.wfrobotics.commands.drive.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.AutoDrive;
+import org.wfrobotics.robot.commands.AutoGear;
+import org.wfrobotics.robot.commands.AutoShoot;
+import org.wfrobotics.robot.config.Commands;
+import org.wfrobotics.robot.config.IO;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -40,10 +41,10 @@ public class Autonomous
                 autonomousCommand = new AutoGear(startingPosition, AutoGear.MODE.VISION, true);
                 break;
             case DRIVE:
-                autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE);
+                autonomousCommand = new AutoDrive(0,Commands.AUTONOMOUS_DRIVE_SPEED, 0, Commands.AUTONOMOUS_TIME_DRIVE_MODE);
                 break;
             case DRIVE_HG:
-                autonomousCommand = new AutoDrive(0,Constants.AUTONOMOUS_DRIVE_SPEED*.75, 0, Constants.AUTONOMOUS_TIME_DRIVE_MODE*.75);
+                autonomousCommand = new AutoDrive(0,Commands.AUTONOMOUS_DRIVE_SPEED*.75, 0, Commands.AUTONOMOUS_TIME_DRIVE_MODE*.75);
                 break;
             case GEAR_VISION:
                 autonomousCommand = new AutoGear(startingPosition, AutoGear.MODE.VISION, false);
@@ -103,7 +104,7 @@ public class Autonomous
      */
     public static POSITION_ROTARY getRotaryStartingPosition()
     {
-        int dial = OI.panel.getRotary();
+        int dial = IO.panel.getRotary();
         Alliance alliance = DriverStation.getInstance().getAlliance();
         String displayValue;
         POSITION_ROTARY position;

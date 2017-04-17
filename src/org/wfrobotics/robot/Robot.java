@@ -1,16 +1,25 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.hardware.Gyro;
-import org.wfrobotics.hardware.led.LEDs.Color;
-import org.wfrobotics.hardware.led.LEDs.Effect;
-import org.wfrobotics.hardware.led.LEDs.Effect.EFFECT_TYPE;
-import org.wfrobotics.hardware.led.LEDs.LEDController;
-import org.wfrobotics.hardware.led.LEDs;
-import org.wfrobotics.hardware.led.MindsensorCANLight;
+import org.wfrobotics.reuse.hardware.led.LEDs.Color;
+import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
+import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
+import org.wfrobotics.reuse.hardware.led.LEDs.LEDController;
+import org.wfrobotics.reuse.hardware.led.LEDs;
+import org.wfrobotics.reuse.hardware.led.MindsensorCANLight;
+import org.wfrobotics.reuse.hardware.Gyro;
+import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.robot.Autonomous.AUTO_COMMAND;
 import org.wfrobotics.robot.Autonomous.POSITION_ROTARY;
-import org.wfrobotics.subsystems.*;
-import org.wfrobotics.vision.DashboardView;
+import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.robot.config.RobotMap;
+import org.wfrobotics.robot.subsystems.Auger;
+import org.wfrobotics.robot.subsystems.CameraGear;
+import org.wfrobotics.robot.subsystems.CameraShooter;
+import org.wfrobotics.robot.subsystems.Climber;
+import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.Lifter;
+import org.wfrobotics.robot.subsystems.Shooter;
+import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -29,7 +38,7 @@ public class Robot extends SampleRobot
     public static DashboardView dashboardView;
     public static Intake intakeSubsystem;
     public static LEDController leds;
-    public static OI oi;
+    public static IO oi;
     public static Lifter lifterSubsystem;
     public static Shooter shooterSubsystem;
     public static CameraShooter targetShooterSubsystem;
@@ -64,7 +73,7 @@ public class Robot extends SampleRobot
         leds = new MindsensorCANLight(RobotMap.CAN_LIGHT);
         //leds.enable(false); // TODO Remove this when we have LEDs on the robot!!!
 
-        oi = new OI();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
+        oi = new IO();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
         
         autoChooser = new SendableChooser<AUTO_COMMAND>();
 
@@ -165,7 +174,7 @@ public class Robot extends SampleRobot
         }
         else
         {
-            if(OI.xboxDrive.getStartButton())
+            if(IO.xboxDrive.getStartButton())
                 Gyro.getInstance().zeroYaw();
             //Gyro.getInstance().zeroYaw();
         }
