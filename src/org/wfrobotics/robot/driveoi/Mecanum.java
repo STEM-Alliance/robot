@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.driveoi;
 
-import org.wfrobotics.controller.Xbox;
+import org.wfrobotics.reuse.controller.Xbox;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 

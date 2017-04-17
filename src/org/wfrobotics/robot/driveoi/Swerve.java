@@ -2,14 +2,14 @@ package org.wfrobotics.robot.driveoi;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.commands.Conveyor;
-import org.wfrobotics.commands.Rev;
-import org.wfrobotics.commands.Shoot;
-import org.wfrobotics.commands.drive.DriveConfig;
-import org.wfrobotics.controller.Panel;
-import org.wfrobotics.controller.Panel.BUTTON;
-import org.wfrobotics.controller.Xbox;
-import org.wfrobotics.controller.XboxButton;
+import org.wfrobotics.reuse.commands.drive.DriveConfig;
+import org.wfrobotics.reuse.controller.Panel;
+import org.wfrobotics.reuse.controller.Xbox;
+import org.wfrobotics.reuse.controller.XboxButton;
+import org.wfrobotics.reuse.controller.Panel.BUTTON;
+import org.wfrobotics.robot.commands.Conveyor;
+import org.wfrobotics.robot.commands.Rev;
+import org.wfrobotics.robot.commands.Shoot;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
