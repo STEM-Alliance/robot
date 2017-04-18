@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.subsystems;
 
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.hardware.Gyro;
+import org.wfrobotics.reuse.hardware.sensors.Gyro;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;

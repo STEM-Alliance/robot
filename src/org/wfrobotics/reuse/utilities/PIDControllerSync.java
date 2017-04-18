@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse;
+package org.wfrobotics.reuse.utilities;
 
 import edu.wpi.first.wpilibj.util.BoundaryException;
 
@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.util.BoundaryException;
  * Does all computation synchronously (i.e. the calculate() function must be
  * called by the user from his own thread)
  */
-public class SynchronousPID {
+public class PIDControllerSync {
     private double m_P; // factor for "proportional" control
     private double m_I; // factor for "integral" control
     private double m_D; // factor for "derivative" control
@@ -33,7 +33,7 @@ public class SynchronousPID {
                                      // then treat error for the proportional
                                      // term as 0
 
-    public SynchronousPID() {
+    public PIDControllerSync() {
     }
 
     /**
@@ -46,7 +46,7 @@ public class SynchronousPID {
      * @param Kd
      *            the derivative coefficient
      */
-    public SynchronousPID(double Kp, double Ki, double Kd) {
+    public PIDControllerSync(double Kp, double Ki, double Kd) {
         m_P = Kp;
         m_I = Ki;
         m_D = Kd;

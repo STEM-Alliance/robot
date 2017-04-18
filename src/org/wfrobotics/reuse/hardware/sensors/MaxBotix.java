@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.wfrobotics.reuse.hardware;
+package org.wfrobotics.reuse.hardware.sensors;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.PIDSource;

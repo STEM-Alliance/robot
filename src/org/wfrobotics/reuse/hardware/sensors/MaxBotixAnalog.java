@@ -1,18 +1,13 @@
-package org.wfrobotics.reuse.hardware;
+package org.wfrobotics.reuse.hardware.sensors;
 
-import edu.wpi.first.wpilibj.Counter;
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-public class MaxBotixDigital extends MaxBotix {
-
-    // grabbed from MaxBotix datasheet, 1uS == 1mm
-    private static final double kuS_Per_MM = 1.0;
+public class MaxBotixAnalog extends MaxBotix {
     
-    private Counter m_counter = null;
+    // grabbed from MaxBotix datasheet, 4.88 mV == 5mm
+    private static final double kmV_per_MM = .976;
 
     private double m_oldDistance = 0;
 
@@ -30,13 +25,13 @@ public class MaxBotixDigital extends MaxBotix {
      * @param units
      *            The units returned in either kInches or kMilliMeters
      */
-    public MaxBotixDigital(final int pingChannel, final int echoChannel,
+    public MaxBotixAnalog(final int pingChannel, final int echoChannel,
             Unit units)
     {
         super();
         
         m_pingChannel = new DigitalOutput(pingChannel);
-        m_echoChannel = new DigitalInput(echoChannel);
+        m_echoChannel = new AnalogInput(echoChannel);
         m_allocatedChannels = true;
         m_units = units;
         initialize();
@@ -55,7 +50,7 @@ public class MaxBotixDigital extends MaxBotix {
      *            of time that the echo is high represents the round trip time
      *            of the ping, and the distance.
      */
-    public MaxBotixDigital(final int pingChannel, final int echoChannel)
+    public MaxBotixAnalog(final int pingChannel, final int echoChannel)
     {
         this(pingChannel, echoChannel, Unit.kInches);
     }
@@ -68,12 +63,11 @@ public class MaxBotixDigital extends MaxBotix {
      *            The digital output object that starts the sensor doing a ping.
      *            Requires a 10uS pulse to start.
      * @param echoChannel
-     *            The digital input object that times the return pulse to
-     *            determine the range.
+     *            The analog input object that holds the value
      * @param units
      *            The units returned in either kInches or kMilliMeters
      */
-    public MaxBotixDigital(DigitalOutput pingChannel, DigitalInput echoChannel,
+    public MaxBotixAnalog(DigitalOutput pingChannel, AnalogInput echoChannel,
             Unit units)
     {
         super();
@@ -102,7 +96,7 @@ public class MaxBotixDigital extends MaxBotix {
      *            The digital input object that times the return pulse to
      *            determine the range.
      */
-    public MaxBotixDigital(DigitalOutput pingChannel, DigitalInput echoChannel)
+    public MaxBotixAnalog(DigitalOutput pingChannel, AnalogInput echoChannel)
     {
         this(pingChannel, echoChannel, Unit.kInches);
     }
@@ -116,53 +110,15 @@ public class MaxBotixDigital extends MaxBotix {
      */
     protected synchronized void initialize()
     {
-
-        m_conversionToInches = kuS_Per_S / kuS_Per_MM / kmmPerIn;
-        
-        m_counter = new Counter((DigitalSource) m_echoChannel); // set up
-                                                                // counter for
-                                                                // this sensor
-        m_counter.setMaxPeriod(1.0);
-        m_counter.setSemiPeriodMode(true);
-        m_counter.reset();
-
-        LiveWindow.addSensor("Ultrasonic",
-                ((DigitalInput) m_echoChannel).getChannel(), this);
-        
         super.initialize();
+
+        
+        m_conversionToInches = kmV_Per_V / kmV_per_MM / kmmPerIn;
+
+      //  LiveWindow.addSensor("Ultrasonic",
+        //        ((DigitalInput) m_echoChannel).getChannel(), this);
     }
-
-    /**
-     * Destructor for the ultrasonic sensor. Delete the instance of the
-     * ultrasonic sensor by freeing the allocated digital channels. If the
-     * system was in automatic mode (round robin), then it is stopped, then
-     * started again after this sensor is removed (provided this wasn't the last
-     * sensor).
-     */
-    public synchronized void free()
-    {
-        if (m_counter != null)
-        {
-            m_counter.free();
-            m_counter = null;
-        }
-
-        super.free();
-    }
-
-    /**
-     * Single ping to ultrasonic sensor. Send out a single ping to the
-     * ultrasonic sensor. This only works if automatic (round robin) mode is
-     * disabled. A single ping is sent out, and the counter should count the
-     * semi-period when it comes in. The counter is reset to make the current
-     * value invalid.
-     */
-    public void ping()
-    {
-        m_counter.reset(); // reset the counter to zero (invalid data now)
-        super.ping();
-    }
-
+    
     /**
      * Check if there is a valid range measurement. The ranges are accumulated
      * in a counter that will increment on each edge of the echo (return)
@@ -173,14 +129,7 @@ public class MaxBotixDigital extends MaxBotix {
      */
     public boolean isRangeValid()
     {
-        if(m_counter.get() > 1)
-        {
-            return isRangeValid(m_counter.getPeriod());
-        }
-        else
-        {
-            return false;
-        }
+        return isRangeValid(((AnalogInput)m_echoChannel).getVoltage());
     }
 
     /**
@@ -195,23 +144,12 @@ public class MaxBotixDigital extends MaxBotix {
         if (isRangeValid())
         {
 
-            double currentInches = m_counter.getPeriod() * m_conversionToInches;
+            double currentInches = ((AnalogInput)m_echoChannel).getVoltage() * m_conversionToInches;
 
             m_oldDistance  = currentInches;
         }
         
         return m_oldDistance;
-    }
-
-
-    public void setConversionToInches(double converter)
-    {
-        m_conversionToInches = converter;
-    }
-
-    public void reset()
-    {
-        m_counter.reset();
     }
 
     @Override

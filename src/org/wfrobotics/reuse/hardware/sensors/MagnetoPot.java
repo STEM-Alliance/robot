@@ -1,7 +1,7 @@
-package org.wfrobotics.reuse.hardware;
+package org.wfrobotics.reuse.hardware.sensors;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.CircularBuffer;
+import org.wfrobotics.reuse.utilities.CircularBuffer;
 
 import edu.wpi.first.wpilibj.Timer;
 

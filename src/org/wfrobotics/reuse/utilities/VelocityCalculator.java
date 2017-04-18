@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse;
+package org.wfrobotics.reuse.utilities;
 
 /**
  * A filter that tracks velocity given position readings
