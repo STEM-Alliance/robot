@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 
 // Wraps FIRST code to control a group of pneumatic cylinders
-public class PneumaticSubsystem {
+public class PneumaticSystem {
     private final int ChannelExtend;
     private final int ChannelContract;
     private final int Module;
@@ -34,7 +34,7 @@ public class PneumaticSubsystem {
      * @param timeContract time it takes to contract
      * @param startAction whether to start extended or contracted
      */
-    public PneumaticSubsystem(int[] channels,
+    public PneumaticSystem(int[] channels,
             int module, double timeExtend, double timeContract,
             CYLINDER_ACTION startAction)
     {

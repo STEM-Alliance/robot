@@ -1,6 +1,7 @@
 package org.wfrobotics.reuse.hardware;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.reuse.hardware.sensors.MagnetoPotAnalog;
 
 public class LinearActuatorPot extends LinearActuator {
 

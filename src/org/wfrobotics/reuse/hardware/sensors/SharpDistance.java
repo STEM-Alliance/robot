@@ -1,6 +1,6 @@
-package org.wfrobotics.reuse.hardware;
+package org.wfrobotics.reuse.hardware.sensors;
 
-import org.wfrobotics.reuse.LookupTable;
+import org.wfrobotics.reuse.utilities.LookupTable;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 

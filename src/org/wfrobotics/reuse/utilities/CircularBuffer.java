@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse;
+package org.wfrobotics.reuse.utilities;
 
 public class CircularBuffer extends edu.wpi.first.wpilibj.CircularBuffer
 {

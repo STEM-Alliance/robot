@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse.hardware;
+package org.wfrobotics.reuse.hardware.sensors;
 
 import java.nio.ByteBuffer;
 

@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.PIDController;
+import org.wfrobotics.reuse.utilities.PIDController;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

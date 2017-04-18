@@ -2,12 +2,12 @@ package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.PIDController;
 import org.wfrobotics.reuse.commands.drive.AutoDrive;
 import org.wfrobotics.reuse.commands.vision.VisionDetect;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
+import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
