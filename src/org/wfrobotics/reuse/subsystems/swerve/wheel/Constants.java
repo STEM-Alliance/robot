@@ -1,17 +1,11 @@
-package org.wfrobotics.reuse.subsystems.swerve;
+package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 /**
  * @author Team 4818 WFRobotics
  */
 public class Constants
-{
-    public static final int WHEEL_COUNT = 4;
-    
+{   
     // PID ----------------------------------------------------------------------------------------
-    public static final double CHASSIS_P = .025;
-    public static final double CHASSIS_I = .000005;
-    public static final double CHASSIS_D = 0.002;
-    
     public static final double DRIVE_P = .007;
     public static final double DRIVE_I = .000;
     public static final double DRIVE_D = 0.00;
@@ -22,16 +16,6 @@ public class Constants
     public static final double ANGLE_D = 0.0001;
     
     // PHYSICAL ------------------------------------------------------------------------------------    
-    public static final double CHASSIS_WIDTH = 24.75;
-    public static final double CHASSIS_DEPTH = 28.5;
-    public static final double CHASSIS_SCALE = CHASSIS_DEPTH;// TODO Use a magnitude of 1: Math.sqrt(CHASSIS_WIDTH * CHASSIS_WIDTH + CHASSIS_DEPTH * CHASSIS_DEPTH);
-    
-    public static final double[][] WHEEL_POSITIONS = {
-            {-CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE}, // Front left
-            {CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE}, // Front right
-            {CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE}, // Back right
-            {-CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE}}; // Back left
-    
     public static final double DRIVE_MAX_RPM = 5300; // CIM: ~5300 rpm, MiniCIM: ~5800 rpm
     
     public static final int[] SHIFTER_VALS = { 100, 80, 90, 120};
@@ -51,7 +35,7 @@ public class Constants
      * Value to use for converting raw input (-1 to 1) to speed (in rpm) that the sensor will detect
      */
     public static final double DRIVE_SPEED_MAX = DRIVE_MAX_RPM * DRIVE_EFFICIENCY * SHIFTER_SENSOR_RATIO;
-    public static final double DRIVE_SPEED_CRAWL = .4;
+
     
     public static final double DRIVE_RAMP_LOW = 5;
     public static final double DRIVE_RAMP_HIGH = 30;

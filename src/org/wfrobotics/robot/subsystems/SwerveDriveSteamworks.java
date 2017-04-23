@@ -1,13 +1,13 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.subsystems.swerve.SwerveDriveSubsystem;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.robot.commands.SteamworksDrive;
 import org.wfrobotics.robot.config.RobotMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Servo;
 
-public class SwerveDriveSteamworks extends SwerveDriveSubsystem 
+public class SwerveDriveSteamworks extends SwerveSubsystem 
 {
     private final double ANGLE_GEAR_HOPPER_DEPLOYED = 180;
     private final double ANGLE_GEAR_HOPPER_STARTING = 0;

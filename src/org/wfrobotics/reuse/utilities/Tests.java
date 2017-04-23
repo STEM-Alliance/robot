@@ -3,8 +3,8 @@ package org.wfrobotics.reuse.utilities;
 import java.util.logging.Level;
 
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.subsystems.swerve.Constants;
-import org.wfrobotics.reuse.subsystems.swerve.WheelManager.RobotCommand;
+import org.wfrobotics.reuse.subsystems.swerve.chassis.SwerveChassis.RobotCommand;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.Constants;
 
 public class Tests
 {
@@ -266,13 +266,14 @@ public class Tests
                 { CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE }, // back right
                 { -CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE } }; // back left
         Vector[] positions = new Vector[4];
+        HerdVector velocity = new HerdVector(robotV.getMag(), robotV.getAngle());
         double spin = robotS;
-        RobotCommand robotCommand = new RobotCommand(robotV, spin);
+        RobotCommand robotCommand = new RobotCommand(velocity, spin);
         System.out.format("Robot Command (%.2f, %.2f, %.2f)\n", robotCommand.velocity.getMag(), robotCommand.velocity.getAngle(), robotCommand.spin);
         System.out.format("Robot Width: %.2f, Depth: %.2f\n", CHASSIS_WIDTH, CHASSIS_DEPTH);
         System.out.println("-------------------------------");
 
-        for (int index = 0; index < Constants.WHEEL_COUNT; index++)
+        for (int index = 0; index < 4; index++)
         {
             positions[index] = new Vector(POSITIONS[index]);
             System.out.format("Old position %d: (%.2f, %.2f)\n", index, positions[index].getMag(), positions[index].getAngle());
@@ -292,13 +293,13 @@ public class Tests
 
     private static Vector[] oldScaleWheelVectors(RobotCommand robot, Vector[] positions)
     {
-        Vector[] WheelsUnscaled = new Vector[Constants.WHEEL_COUNT];
-        Vector[] WheelsScaled = new Vector[Constants.WHEEL_COUNT];
+        Vector[] WheelsUnscaled = new Vector[4];
+        Vector[] WheelsScaled = new Vector[4];
         double MaxWantedVeloc = 0;
         double VelocityRatio;
         boolean ENABLE_VELOCITY_LIMIT = true;        
 
-        for (int i = 0; i < Constants.WHEEL_COUNT; i++)
+        for (int i = 0; i < 4; i++)
         {
             WheelsUnscaled[i] = new Vector(robot.velocity.getX() - robot.spin * positions[i].getY(),
                     -(robot.velocity.getY() + robot.spin * positions[i].getX()));
@@ -311,7 +312,7 @@ public class Tests
 
         VelocityRatio = (ENABLE_VELOCITY_LIMIT) ? oldGetVelocityLimit(MaxWantedVeloc):1;
 
-        for (int i = 0; i < Constants.WHEEL_COUNT; i++)
+        for (int i = 0; i < 4; i++)
         {
             // Scale values for each wheel
             WheelsScaled[i] = Vector.NewFromMagAngle(WheelsUnscaled[i].getMag() * VelocityRatio, WheelsUnscaled[i].getAngle());

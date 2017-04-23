@@ -1,14 +1,14 @@
-package org.wfrobotics.reuse.subsystems.swerve;
+package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
-public class WheelDriveManager
+public class DriveMotor
 {
     private CANTalon driveMotor;
     
-    public WheelDriveManager(int talonIndex, boolean enableSpeedSensor)
+    public DriveMotor(int talonIndex, boolean enableSpeedSensor)
     {
         driveMotor = new CANTalon(talonIndex);
 

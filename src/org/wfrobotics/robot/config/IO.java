@@ -3,7 +3,6 @@ package org.wfrobotics.robot.config;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.commands.LEDSignal;
 import org.wfrobotics.reuse.commands.drive.DriveSwerve;
-import org.wfrobotics.reuse.commands.drive.DriveSwerveCalibration;
 import org.wfrobotics.reuse.commands.vision.VisionPivot;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.PanelButton;
@@ -108,9 +107,6 @@ public class IO
         //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));
         
         buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
-        
-        buttonPanelSwitchL.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
-        buttonPanelSwitchR.whileHeld(new DriveSwerveCalibration(DriveSwerveCalibration.MODE.PANEL));
 
 //        buttonDriveA.whileHeld(new Rev(Rev.MODE.SHOOT));
 //        buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));

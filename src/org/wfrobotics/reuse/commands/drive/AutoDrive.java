@@ -3,7 +3,7 @@ package org.wfrobotics.reuse.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.subsystems.swerve.SwerveDriveSubsystem;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -30,7 +30,7 @@ public class AutoDrive extends Command
         this.mode = MODE.OFF;
         this.vector = new Vector(0, 0);
         this.rotate = 0;
-        this.heading = SwerveDriveSubsystem.HEADING_IGNORE;
+        this.heading = SwerveSubsystem.HEADING_IGNORE;
         endEarly = false;
     }
 
@@ -49,7 +49,7 @@ public class AutoDrive extends Command
         this.mode = MODE.DRIVE;
         vector = new Vector(speedX, speedY);
         rotate = speedR;
-        heading = SwerveDriveSubsystem.HEADING_IGNORE;
+        heading = SwerveSubsystem.HEADING_IGNORE;
         setTimeout(timeout);
         endEarly = false;
     }

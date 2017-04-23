@@ -1,22 +1,21 @@
-package org.wfrobotics.reuse.subsystems.swerve;
+package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.PIDController;
 
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Implementation of {@link PIDController} for use with turning swerve wheel modules
  * @author Team 4818 WFRobotics
  */
-public final class WheelAngleController 
+public final class AngleController
 {
-    private static final boolean DEBUG = false;
-    
     private static final double HalfCircle = 180;
     private static final double MaxOut = 1;
 
+    private final HerdLogger log = new HerdLogger(AngleController.class);
     private final String name;
     private final PIDController controller;
 
@@ -24,12 +23,12 @@ public final class WheelAngleController
     private boolean reverseMotor;
     public double error;
 
-    public WheelAngleController()
+    public AngleController()
     {
         this("SwerveAngleController");
     }
 
-    public WheelAngleController(String name)
+    public AngleController(String name)
     {
         this.name = name;
         this.motorSpeed = 0;
@@ -39,6 +38,11 @@ public final class WheelAngleController
                                             Constants.ANGLE_I,
                                             Constants.ANGLE_D,
                                             MaxOut);    
+    }
+    
+    public String toString()
+    {
+        return String.format("(Speed: %.2f, Error: %.2f)", motorSpeed, error);
     }
 
     /**
@@ -81,15 +85,7 @@ public final class WheelAngleController
         error = calcErrorAndReverseNeeded(setPoint, sensorValue);
 
         motorSpeed = this.controller.update(error);
-
-        if(DEBUG)
-        {
-            SmartDashboard.putNumber(name + ".SetPoint", setPoint);
-            SmartDashboard.putNumber(name + ".SensorValue", sensorValue);
-            SmartDashboard.putNumber(name + ".Error", error);
-            SmartDashboard.putBoolean(name + ".Reverse", reverseMotor);
-            SmartDashboard.putNumber(name + ".Output", motorSpeed);
-        }
+        log.debug(name, this);
         
         return motorSpeed;
     }

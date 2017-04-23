@@ -1,5 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
+import org.wfrobotics.reuse.subsystems.swerve.wheel.Constants;
+
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 

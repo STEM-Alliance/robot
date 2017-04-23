@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse.subsystems.swerve;
+package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 import org.wfrobotics.Utilities;
 
@@ -7,7 +7,7 @@ import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
 
-public class WheelAngleEncoderMotor implements WheelAngleMotor
+public class AngleMotorEncoder implements AngleMotor
 {
     private CANTalon angleMotor;
     /** Invert the angle motor and sensor to swap left/right */
@@ -15,7 +15,7 @@ public class WheelAngleEncoderMotor implements WheelAngleMotor
     
     private double angleOffset = 0;
     
-    public WheelAngleEncoderMotor(int talonAddress)
+    public AngleMotorEncoder(int talonAddress)
     {
         angleMotor = new CANTalon(talonAddress);
         //angleMotor.setVoltageRampRate(30);
