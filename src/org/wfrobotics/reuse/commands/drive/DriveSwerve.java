@@ -3,7 +3,7 @@ package org.wfrobotics.reuse.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.subsystems.swerve.SwerveDriveSubsystem;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -126,7 +126,7 @@ public class DriveSwerve extends Command
                 //    ((SwerveDriveSubsystem)Robot.driveSubsystem).gyroZero();
                 //}
                 
-                ((SwerveDriveSubsystem)Robot.driveSubsystem).wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
+                ((SwerveSubsystem)Robot.driveSubsystem).wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
                 
                 
                 if (dpad != -1)

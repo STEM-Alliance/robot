@@ -1,6 +1,6 @@
-package org.wfrobotics.reuse.subsystems.swerve;
+package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-public interface WheelAngleMotor 
+public interface AngleMotor 
 {
     public void set(double speed);
     public double getAnglePotAdjusted();

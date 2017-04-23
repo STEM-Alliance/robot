@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse.subsystems.swerve;
+package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.hardware.sensors.MagnetoPot;
@@ -8,14 +8,14 @@ import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.util.AllocationException;
 
-public class WheelAngleMagPotMotor implements WheelAngleMotor
+public class AngleMotorMagPot implements AngleMotor
 {
     private CANTalon angleMotor;
     private MagnetoPot anglePot;
     /** Invert the angle motor and sensor to swap left/right */
     private boolean angleInverted = true;
     
-    public WheelAngleMagPotMotor(int talonAddress)
+    public AngleMotorMagPot(int talonAddress)
     {
         angleMotor = new CANTalon(talonAddress);
         //angleMotor.setVoltageRampRate(30);

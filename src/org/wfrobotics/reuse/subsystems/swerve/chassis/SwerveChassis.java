@@ -1,30 +1,33 @@
-package org.wfrobotics.reuse.subsystems.swerve;
+package org.wfrobotics.reuse.subsystems.swerve.chassis;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.SwerveWheel;
+import org.wfrobotics.reuse.utilities.HerdVector;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * This class configures, updates, and commands the wheels
+ * This class controls swerve drive at the robot/chassis level
+ * @author Team 4818 WFRobotics
  */
-public class WheelManager implements Runnable
+public class SwerveChassis implements Runnable
 {
     public static class RobotCommand
     {
-        public Vector velocity;
+        public HerdVector velocity;
         public double spin;
 
-        public RobotCommand(Vector velocity,  double rotationalSpeed)
+        public RobotCommand(HerdVector velocity,  double rotationalSpeed)
         {
             this.velocity = velocity;
             this.spin = rotationalSpeed;
         }
     }
 
-    public class WheelConfiguration
+    public class Config
     {
         private final boolean ENABLE_ACCELERATION_LIMIT = true;
         private final boolean ENABLE_CRAWL_MODE = true;
@@ -42,28 +45,28 @@ public class WheelManager implements Runnable
         private double velocityMaxAvailable = 1;
     }
 
-    public WheelConfiguration config;
+    public Config config;
     private SwerveWheel[] wheels;  // TODO test this as static for performance
 
-    private Vector lastVelocity;
+    private HerdVector lastVelocity;
     private double lastVelocityTimestamp;
     
-    Vector requestedRobotVelocity; 
+    HerdVector requestedRobotVelocity; 
     double requestedRobotRotation; 
     boolean requestedGear;
     boolean requestedBrake;
 
-    public WheelManager()
+    public SwerveChassis()
     {
-        config = new WheelConfiguration();
+        config = new Config();
         
         wheels = new SwerveWheel[Constants.WHEEL_COUNT];
         for (int i = 0; i < Constants.WHEEL_COUNT; i++)
         {
-            wheels[i] = new SwerveWheel(i, new Vector(Constants.WHEEL_POSITIONS[i]));
+            wheels[i] = new SwerveWheel(Constants.WHEEL_IDS[i], i, new Vector(Constants.WHEEL_POSITIONS[i]));
         }
 
-        lastVelocity = new Vector(0, 0);
+        lastVelocity = new HerdVector(0, 0);
         lastVelocityTimestamp = Timer.getFPGATimestamp();
     }
     
@@ -73,7 +76,7 @@ public class WheelManager implements Runnable
         setWheelVectors(requestedRobotVelocity, requestedRobotRotation, requestedGear, requestedBrake);
     }
     
-    public synchronized void updateWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
+    public synchronized void updateWheelVectors(HerdVector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
     {
         requestedRobotVelocity = RobotVelocity; 
         requestedRobotRotation = RobotRotation; 
@@ -89,7 +92,7 @@ public class WheelManager implements Runnable
      * @param brake Enable brake mode? True: Yes, False: No
      * @return Array of {@link Vector} of the actual readings from the wheels
      */
-    Vector[] setWheelVectors(Vector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
+    public Vector[] setWheelVectors(HerdVector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
     {
         RobotCommand robot = new RobotCommand(RobotVelocity, RobotRotation);
         Vector[] WheelsScaled;
@@ -120,7 +123,7 @@ public class WheelManager implements Runnable
         return WheelsActual;
     }
     
-    public double getVelocityLimit(double MaxWantedVelocity)
+    private double getVelocityLimit(double MaxWantedVelocity)
     {
         config.velocityMaxAvailable = Preferences.getInstance().getDouble("MAX_ROBOT_VELOCITY", config.velocityMaxAvailable);
         double velocityRatio = 1;
@@ -134,44 +137,12 @@ public class WheelManager implements Runnable
     }
 
     /**
-     * Get the last movement vector of the robot, relative to the robot heading.
-     * the adjustment for field relative mode, if applicable, has already been taken into consideration
-     * @return movement vector relative to the robot heading
+     * Last field relative vector for the whole robot
+     * @return 
      */
-    public Vector getLastVector()
+    public HerdVector getLastVector()
     {
         return lastVelocity;
-    }
-
-    /**
-     * Do a full wheel calibration, adjusting the angles by the specified values, and save the values for use
-     * @param speed Speed value to test against (range: 0 to 1)
-     * @param values Array of values to adjust the wheel angle offsets (range: -180 to 180)
-     */
-    public synchronized void doFullWheelCalibration(double speed, double values[], boolean save)
-    {
-        Vector vector = Vector.NewFromMagAngle(speed, 0);
-
-        for(int i = 0; i < Constants.WHEEL_COUNT; i++)
-        {
-            wheels[i].updateAngleOffset(values[i]);
-            wheels[i].setDesired(vector, false, false);
-
-            if(save)
-            {
-                wheels[i].saveAngleOffset(values[i]);
-            }
-        }
-    }
-
-    public double[] getWheelCalibrations()
-    {
-        double[] cals = new double[Constants.WHEEL_COUNT];
-        for(int i = 0; i < Constants.WHEEL_COUNT; i++)
-        {
-            cals[i] = wheels[i].getAngleOffset();
-        }
-        return cals;
     }
 
     public void printDash()
@@ -215,28 +186,18 @@ public class WheelManager implements Runnable
         return WheelsScaled;
     }
 
-    /**
-     * Set limitations on speed
-     * @param robot
-     * @return
-     */
     private RobotCommand applyClampVelocity(RobotCommand robot)
     {
-        double RobotVelocityClamped = (robot.velocity.getMag() > 1.0) ? 1:robot.velocity.getMag();
+        double RobotVelocityClamped = (robot.velocity.getMag() > 1.0) ? 1 : robot.velocity.getMag();
+        HerdVector clamped = new HerdVector(RobotVelocityClamped, robot.velocity.getAngle());
 
-        robot.velocity.setMag(RobotVelocityClamped);
-
-        return robot;
+        return new RobotCommand(clamped, robot.spin);
     }
 
-    /**
-     * By squaring the magnitude, we get more fine adjustments at low speed but keep the sign since negative squared is positive
-     * @param robot
-     * @return
-     */
-    private RobotCommand applyMagnitudeSquare(RobotCommand robot)
+    private RobotCommand applyMagnitudeSquare(RobotCommand robot)  // Finer control at low speed
     {
-        robot.velocity.setMag(Math.signum(robot.velocity.getMag()) * Math.pow(robot.velocity.getMag(), 2));
+        robot.velocity.scale(robot.velocity);
+
         return robot;
     }
 
@@ -257,28 +218,14 @@ public class WheelManager implements Runnable
         return robot;
     }
 
-    /**
-     * Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
-     * @param robot
-     * @return
-     */
-    private RobotCommand applyCrawlMode(RobotCommand robot)
+    private RobotCommand applyCrawlMode(RobotCommand robot)  // Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
     {
         double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", Constants.DRIVE_SPEED_CRAWL);
-        double scale = 1;
+        double crawlMag = (config.CRAWL_MODE_DEFAULT_HIGH) ? 1 - config.crawlModeMagnitude : config.crawlModeMagnitude;
+        double scalingFactor = Utilities.scaleToRange(crawlMag, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
         
-        if(config.CRAWL_MODE_DEFAULT_HIGH)
-        {
-            scale = Utilities.scaleToRange(1 - config.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
-        }
-        else
-        {
-            scale = Utilities.scaleToRange(config.crawlModeMagnitude, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
-        }
-        
-        // Scale rotation and velocity back up
-        robot.spin *= scale;
-        robot.velocity.setMag(robot.velocity.getMag() * scale);
+        robot.spin *= scalingFactor;
+        robot.velocity.scale(scalingFactor);
 
         return robot;
     }
@@ -294,17 +241,16 @@ public class WheelManager implements Runnable
     {
         double now = Timer.getFPGATimestamp();
         double dt = now - lastVelocityTimestamp;
-        Vector delta = robot.velocity.subtract(lastVelocity);
+        HerdVector delta = robot.velocity.sub(lastVelocity);
         
         lastVelocityTimestamp = now;
-
         config.accelerationMax = Preferences.getInstance().getDouble("MAX_ACCELERATION", config.accelerationMax);
 
-        // Accelerating/decelerating too slow? Slow down
+        // Accelerating/decelerating too fast? Slow down
         if (Math.abs(delta.getMag()) > config.accelerationMax * dt)
         {
-            delta.setMag(config.accelerationMax * dt);
-            robot.velocity = lastVelocity.add(delta);
+            HerdVector correctionFactor = new HerdVector(config.accelerationMax * dt, 0);
+            robot.velocity = lastVelocity.add(correctionFactor);  // TODO We should set, not add?
         }
 
         return robot;

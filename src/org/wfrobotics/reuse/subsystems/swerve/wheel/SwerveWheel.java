@@ -1,7 +1,8 @@
-package org.wfrobotics.reuse.subsystems.swerve;
+package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
+import org.wfrobotics.reuse.subsystems.swerve.Shifter;
 import org.wfrobotics.robot.config.RobotMap;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -21,9 +22,9 @@ public class SwerveWheel
     private final String NAME;
     private final int NUMBER;
 
-    private final WheelDriveManager driveManager;
-    private final WheelAngleMotor angleManager;
-    private final WheelAngleController anglePID;
+    private final DriveMotor driveManager;
+    private final AngleMotor angleManager;
+    private final AngleController anglePID;
     private final Shifter shifter;
     
     private Vector desiredVector;
@@ -35,15 +36,15 @@ public class SwerveWheel
     private double driveLastChangeTime;
     private double lastUpdateTime = 0;
 
-    public SwerveWheel(int Number, Vector position)
+    public SwerveWheel(String name, int Number, Vector position)
     {
-        NAME = "Wheel" + Number;
+        NAME = name;
         this.NUMBER = Number;
         this.POSITION_RELATIVE_TO_CENTER = position;
 
-        driveManager = new WheelDriveManager(RobotMap.CAN_SWERVE_DRIVE_TALONS[NUMBER], Constants.DRIVE_SPEED_SENSOR_ENABLE);
-        angleManager = new WheelAngleMagPotMotor(RobotMap.CAN_SWERVE_ANGLE_TALONS[NUMBER]);
-        anglePID = new WheelAngleController(NAME + ".ctl");
+        driveManager = new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[NUMBER], Constants.DRIVE_SPEED_SENSOR_ENABLE);
+        angleManager = new AngleMotorMagPot(RobotMap.CAN_SWERVE_ANGLE_TALONS[NUMBER]);
+        anglePID = new AngleController(NAME + ".ctl");
         shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[NUMBER], Constants.SHIFTER_VALS[NUMBER],
                               Constants.SHIFTER_RANGE, Constants.SHIFTER_INVERT[NUMBER]);
         
@@ -55,6 +56,11 @@ public class SwerveWheel
         driveLastSpeed = 0;
         driveLastChangeTime = Timer.getFPGATimestamp();
         lastUpdateTime = Timer.getFPGATimestamp();
+    }
+    
+    public String toString()
+    {
+        return NAME;
     }
     
     /**

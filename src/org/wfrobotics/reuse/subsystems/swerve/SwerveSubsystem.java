@@ -8,6 +8,10 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.commands.drive.DriveSwerve;
 import org.wfrobotics.reuse.subsystems.DriveSubsystem;
+import org.wfrobotics.reuse.subsystems.swerve.chassis.Constants;
+import org.wfrobotics.reuse.subsystems.swerve.chassis.SwerveChassis;
+import org.wfrobotics.reuse.utilities.HerdLogger;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -15,64 +19,56 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Swerve chassis implementation 
+ * Swerve chassis implementation
  * @author Team 4818 WFRobotics
  */
-public class SwerveDriveSubsystem extends DriveSubsystem 
-{
-    public class ChassisVector
+public class SwerveSubsystem extends DriveSubsystem
+{    
+    public class ChassisCommand 
     {
-        Vector velocity;  // Direction
+        HerdVector velocity;  // Direction
         double spin;      // Twist while moving
         double heading;   // Angle to track
 
-        public ChassisVector(Vector velocity,  double rotationalSpeed, double heading)
+        public ChassisCommand(HerdVector velocity,  double rotationalSpeed, double heading)
         {
-            this.velocity = velocity;
+            this.velocity = new HerdVector(velocity);
             this.spin = rotationalSpeed;
             this.heading = heading;
         }
 
-        public ChassisVector(Vector velocity,  double rotationalSpeed)
+        public ChassisCommand(HerdVector velocity,  double rotationalSpeed)
         {
-            this(velocity, rotationalSpeed, HEADING_IGNORE);
-        }
-
-        public boolean ignoreHeading()
-        {
-            return heading == HEADING_IGNORE;
+            this(velocity, rotationalSpeed, Double.NEGATIVE_INFINITY);
         }
         
-        public ChassisVector clone()
+        public String toString()
         {
-            return new ChassisVector(velocity, spin, heading);
+            return String.format("(V: %s, R: %.2f, H: %.2", velocity, spin, heading);
         }
     }
     
     public class SwerveConfiguration
     {
-        /**
-         * Sets shifter to high or low gear (True: High gear, False: Low gear)
-         */
-        public boolean gearHigh = false;
+        public boolean gearHigh = false;  // (True: High gear, False: Low gear)
         public boolean gyroEnable = true;
 
         private final double AUTO_ROTATION_MIN = .1;  // this will hopefully prevent locking the wheels when slowing down
         private final double HEADING_TIMEOUT = .6;
     }
-
+    
     public static final double HEADING_IGNORE = -1;
 
+    private HerdLogger log = new HerdLogger(SwerveSubsystem.class);
     public SwerveConfiguration configSwerve;
     private PIDController chassisAngleController;
-    
+    public SwerveChassis wheelManager;
     private ScheduledExecutorService scheduler;
-    public WheelManager wheelManager;
-
+    
     private double lastHeadingTimestamp;  // Addresses counter spinning/snapback
     double lastGyro;
 
-    public SwerveDriveSubsystem()
+    public SwerveSubsystem()
     {        
         super(true);  // set it into field relative by default
         
@@ -80,8 +76,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         chassisAngleController = new PIDController(Constants.CHASSIS_P, Constants.CHASSIS_I, Constants.CHASSIS_D, 1.0);
         
         scheduler = Executors.newScheduledThreadPool(1);
-        wheelManager = new WheelManager();
-        
+        wheelManager = new SwerveChassis();
         scheduler.scheduleAtFixedRate(wheelManager, 1, 5, TimeUnit.MILLISECONDS);
     }
 
@@ -101,32 +96,39 @@ public class SwerveDriveSubsystem extends DriveSubsystem
 
     /**
      * Main drive update function, allows for xy movement, yaw rotation, and turn to angle/heading
-     * @param Velocity Direction the robot should move
-     * @param Rotation How fast to spin while moving (range: -1 to 1)
-     * @param Heading Auto-goto this angle (range: 0-360, -1 to disable)
+     * @param velocity Direction the robot should move
+     * @param rotation How fast to spin while moving (range: -1 to 1)
+     * @param heading Auto-goto this angle (range: anything in degrees, zero is forward, -1 to disable)
      * @return actual wheel readings
      */
-    public Vector[] driveWithHeading(Vector Velocity, double Rotation, double Heading)
+    public Vector[] driveWithHeading(Vector velocity, double rotation, double heading)
     {
-        ChassisVector command = new ChassisVector(Velocity.clone(), Rotation, Heading);
+        HerdVector v = new HerdVector(velocity.getMag(), velocity.getAngle());
+        ChassisCommand command = new ChassisCommand(v, rotation, heading);
 
-        ApplySpinMode(command);      // Pass by reference
-        applyVelocityMode(command);  // Pass by reference
+        chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Constants.CHASSIS_P));
+        chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Constants.CHASSIS_I));
+        chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Constants.CHASSIS_D));
+        
+        ApplySpinMode(command, heading == HEADING_IGNORE); // Pass by reference
+        log.info("Chassis Command", command);
+
+        if (m_fieldRelative)
+        {
+            command.velocity.rotate(m_gyro.getYaw());
+        }
+        
         printDash();
         
         return wheelManager.setWheelVectors(command.velocity, command.spin, configSwerve.gearHigh, m_brake);
     }
     
-    private void ApplySpinMode(ChassisVector command)
+    private void ApplySpinMode(ChassisCommand command, boolean ignoreHeading)
     {
         double error = 0;
         String driveMode;
 
-        chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Constants.CHASSIS_P));
-        chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Constants.CHASSIS_I));
-        chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Constants.CHASSIS_D));
-
-        if (!command.ignoreHeading())
+        if (!ignoreHeading)
         {
             driveMode = "Snap To Angle";
 
@@ -181,25 +183,9 @@ public class SwerveDriveSubsystem extends DriveSubsystem
                 m_lastHeading = m_gyro.getYaw(); // Save off the latest heading until the timeout
             }
         }
-
-        SmartDashboard.putString("Drive Mode", driveMode);
-        SmartDashboard.putNumber("Rotation Error", error);
-    }
-    
-    protected void applyVelocityMode(ChassisVector command)
-    {
-        SmartDashboard.putNumber("Velocity X", command.velocity.getX());
-        SmartDashboard.putNumber("Velocity Y", command.velocity.getY());
-        SmartDashboard.putNumber("Rotation", command.spin);
-
-        // If we're relative to the field, adjust the movement vector based on the gyro heading
-        if (m_fieldRelative)
-        {
-            double AdjustedAngle = command.velocity.getAngle() + m_gyro.getYaw();
-            
-            AdjustedAngle = Utilities.wrapToRange(AdjustedAngle, -180, 180);                    
-            command.velocity.setAngle(AdjustedAngle);
-        }
+        
+        log.info("Drive Mode", driveMode);
+        log.debug("Rotation Error", error);
     }
 
     /**
@@ -218,22 +204,8 @@ public class SwerveDriveSubsystem extends DriveSubsystem
      */
     public Vector getLastVector()
     {
-        return wheelManager.getLastVector();
-    }
-
-    /**
-     * Do a full wheel calibration, adjusting the angles by the specified values, and save the values for use
-     * @param speed speed value to test against, 0-1
-     * @param values array of values, -180 to 180, to adjust the wheel angle offsets
-     */
-    public void fullWheelCalibration(double speed, double values[], boolean save)
-    {
-        wheelManager.doFullWheelCalibration(speed, values, save);
-    }
-
-    public double[] getWheelCalibrations()
-    {
-        return wheelManager.getWheelCalibrations();
+        HerdVector hv = wheelManager.getLastVector();
+        return new Vector(hv.getX(), hv.getY());
     }
     
     @Override
@@ -242,7 +214,7 @@ public class SwerveDriveSubsystem extends DriveSubsystem
         super.printDash();
         wheelManager.printDash();
 
-        SmartDashboard.putBoolean("Gyro Enabled", configSwerve.gyroEnable);
-        SmartDashboard.putBoolean("High Gear", configSwerve.gearHigh);
+        log.info("Gyro Enabled", configSwerve.gyroEnable);
+        log.info("High Gear", configSwerve.gearHigh);
     }
 }
