@@ -31,11 +31,12 @@ public class Constants
     
     public static final double DRIVE_EFFICIENCY = .8;  // Estimate of efficiency of the gearing from motor to sensor TODO
     public static final double SHIFTER_SENSOR_RATIO = 14.0 / 10.0;  // The gear ratio conversion from motor output to sensor
-    /**
-     * Value to use for converting raw input (-1 to 1) to speed (in rpm) that the sensor will detect
-     */
+    
+    /** Max speed the rotation can spin, relative to motor maximum */
+    public static double ANGLE_MAX_SPEED = -.7;
+    /** Value to use for converting raw input (-1 to 1) to speed (in rpm) that the sensor will detect */
     public static final double DRIVE_SPEED_MAX = DRIVE_MAX_RPM * DRIVE_EFFICIENCY * SHIFTER_SENSOR_RATIO;
-
+    public static final double DEADBAND_MINIMUM_SPEED = 0.1;
     
     public static final double DRIVE_RAMP_LOW = 5;
     public static final double DRIVE_RAMP_HIGH = 30;

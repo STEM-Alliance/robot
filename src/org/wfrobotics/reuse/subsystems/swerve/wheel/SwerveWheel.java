@@ -15,16 +15,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SwerveWheel
 {
-    protected static final double DEADBAND_MINIMUM_SPEED = 0.1;
-    /** Max speed the rotation can spin, relative to motor maximum */
-    private double ANGLE_MAX_SPEED = -.7;
     public final Vector POSITION_RELATIVE_TO_CENTER;
     private final String NAME;
     private final int NUMBER;
 
     private final DriveMotor driveManager;
     private final AngleMotor angleManager;
-    private final AngleController anglePID;
     private final Shifter shifter;
     
     private Vector desiredVector;
@@ -43,8 +39,7 @@ public class SwerveWheel
         this.POSITION_RELATIVE_TO_CENTER = position;
 
         driveManager = new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[NUMBER], Constants.DRIVE_SPEED_SENSOR_ENABLE);
-        angleManager = new AngleMotorMagPot(RobotMap.CAN_SWERVE_ANGLE_TALONS[NUMBER]);
-        anglePID = new AngleController(NAME + ".ctl");
+        angleManager = new AngleMotorMagPot(NAME + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[NUMBER]);
         shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[NUMBER], Constants.SHIFTER_VALS[NUMBER],
                               Constants.SHIFTER_RANGE, Constants.SHIFTER_INVERT[NUMBER]);
         
@@ -56,11 +51,6 @@ public class SwerveWheel
         driveLastSpeed = 0;
         driveLastChangeTime = Timer.getFPGATimestamp();
         lastUpdateTime = Timer.getFPGATimestamp();
-    }
-    
-    public String toString()
-    {
-        return NAME;
     }
     
     /**
@@ -77,11 +67,11 @@ public class SwerveWheel
         this.desiredGear = desiredgear;
         this.desiredBrake = desiredBrake;
 
-        reverseDriveMotors = updateAngleMotor();
+        reverseDriveMotors = angleManager.update(desiredVector);
         shifter.setGear(this.desiredGear);
         updateDriveMotor(reverseDriveMotors);
 
-        SmartDashboard.putNumber(NAME+"UpdateRate", Timer.getFPGATimestamp() - lastUpdateTime);
+        SmartDashboard.putNumber(NAME + "UpdateRate", Timer.getFPGATimestamp() - lastUpdateTime);
         lastUpdateTime = Timer.getFPGATimestamp();
 
         return getActual();
@@ -91,42 +81,9 @@ public class SwerveWheel
     {
         double magnitude = (Constants.DRIVE_SPEED_SENSOR_ENABLE) ? driveManager.get()/Constants.DRIVE_SPEED_MAX : desiredVector.getMag();
         
-        actualVector.setMagAngle(magnitude, angleManager.getAnglePotAdjusted());
+        actualVector.setMagAngle(magnitude, angleManager.getDegrees());
         
         return actualVector;
-    }
-
-    /**
-     * Update the angle motor based on the desired angle called from updateTask()
-     * @return Whether the drive motor should run in the opposite direction
-     */
-    private boolean updateAngleMotor()
-    {
-        updateAngleOffset();
-        ANGLE_MAX_SPEED = Preferences.getInstance().getDouble("maxRotationSpeed", ANGLE_MAX_SPEED);
-
-        double setpoint = desiredVector.getAngle();
-        double current = angleManager.getAnglePotAdjusted();
-        
-        anglePID.update(setpoint, current);
-        double error = anglePID.error;
-        
-        //SmartDashboard.putNumber(name+".angle.raw", angleManager.debugGetPotRaw());
-        if (desiredVector.getMag() > DEADBAND_MINIMUM_SPEED)
-        {
-            angleManager.set(anglePID.getMotorSpeed() * ANGLE_MAX_SPEED);
-        }
-        else
-        {
-            anglePID.resetIntegral();
-            angleManager.set(0);
-        }
-        
-        //SmartDashboard.putNumber(name + ".angle.des", setpoint);
-        SmartDashboard.putNumber(NAME + ".angle", current);
-        SmartDashboard.putNumber(NAME + ".angle.err", error);
-
-        return anglePID.isReverseMotor();
     }
 
     private void updateDriveMotor(boolean reverse)
@@ -190,16 +147,6 @@ public class SwerveWheel
 
         //SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
     }
-
-    public void updateAngleOffset()
-    {
-        updateAngleOffset(Preferences.getInstance().getDouble("Wheel_Orientation_" + NUMBER, 0));
-    }
-
-    public void updateAngleOffset(double angleOffset)
-    {
-        angleManager.setPotOffset(angleOffset);
-    }
     
     /**
      * Save the specified value as the angle offset
@@ -215,14 +162,9 @@ public class SwerveWheel
         return Preferences.getInstance().getDouble("Wheel_Orientation_" + NUMBER, 0);
     }
 
-    public void free()
-    {
-        angleManager.free();
-    }
-
     public void printDash()
     {
-        SmartDashboard.putNumber(NAME + ".angle", angleManager.getAnglePotAdjusted());
+        SmartDashboard.putNumber(NAME + ".angle", angleManager.getDegrees());
         SmartDashboard.putNumber("SpeedCurrent" + NUMBER, driveManager.get());
     }
 }
