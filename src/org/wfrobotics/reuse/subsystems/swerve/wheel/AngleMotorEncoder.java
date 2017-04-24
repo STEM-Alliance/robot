@@ -2,73 +2,45 @@ package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 import org.wfrobotics.Utilities;
 
-import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;
 
-
-public class AngleMotorEncoder implements AngleMotor
-{
-    private CANTalon angleMotor;
-    /** Invert the angle motor and sensor to swap left/right */
-    private boolean angleInverted = false;
-    
+public class AngleMotorEncoder extends AngleMotor
+{    
     private double angleOffset = 0;
     
-    public AngleMotorEncoder(int talonAddress)
+    public AngleMotorEncoder(String name, int talonAddress)
     {
-        angleMotor = new CANTalon(talonAddress);
-        //angleMotor.setVoltageRampRate(30);
-        angleMotor.configNominalOutputVoltage(0, 0);
-        angleMotor.configPeakOutputVoltage(11, -11);
-        angleMotor.ConfigFwdLimitSwitchNormallyOpen(true);
-        angleMotor.ConfigRevLimitSwitchNormallyOpen(true);
-        angleMotor.enableForwardSoftLimit(false);
-        angleMotor.enableReverseSoftLimit(false);
-        angleMotor.enableBrakeMode(false);
-        //angleMotor.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_50Ms);
-        //angleMotor.SetVelocityMeasurementWindow(32);
+        super(name, talonAddress);
 
-        //angleMotor.setStatusFrameRateMs(StatusFrameRate.Feedback, 10);
-        angleMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-        angleMotor.changeControlMode(TalonControlMode.PercentVbus);
+        motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+        motor.changeControlMode(TalonControlMode.PercentVbus);
         //angleMotor.setPosition(angleMotor.getPosition());
+        
+        // TODO Set the initial position, switch to relative mode --> Test this, should produce 4x HW closed loop speedup
     }
     
     public void set(double speed)
     {
         double invert = angleInverted ? 1 : -1;
-        angleMotor.set(invert * speed);
+        motor.set(invert * speed);
     }
 
-    public double getAnglePotAdjusted()
+    public double getDegrees()
     {
         double invert = angleInverted ? -1 : 1;
         
-        return Utilities.round(invert * getSensor(), 2);
+        return Utilities.round(invert * getWrappedDegrees(), 2);
     }
     
-    public void setPotOffset(double offset)
+    public void setSensorOffset(double degrees)
     {
-        angleOffset = offset;
+        angleOffset = degrees;
     }
     
-    public double debugGetPotRaw()
+    private double getWrappedDegrees()
     {
-        return 0;//anglePot.getRawInput();
-    }
-    
-    /**
-     * For unit tests until we mock the pot
-     */
-    public void free()
-    {
-        
-    }
-    
-    private double getSensor()
-    {
-        double degrees = angleMotor.getPosition() * 360.0;
+        double degrees = motor.getPosition() * 360.0;
         
         return Utilities.wrapToRange(degrees - angleOffset, -180, 180);
     }

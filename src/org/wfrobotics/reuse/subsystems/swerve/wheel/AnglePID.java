@@ -7,15 +7,15 @@ import org.wfrobotics.reuse.utilities.PIDController;
 import edu.wpi.first.wpilibj.Preferences;
 
 /**
- * Implementation of {@link PIDController} for use with turning swerve wheel modules
+ * Absolute angle motor control PID 
  * @author Team 4818 WFRobotics
  */
-public final class AngleController
+public final class AnglePID
 {
     private static final double HalfCircle = 180;
     private static final double MaxOut = 1;
 
-    private final HerdLogger log = new HerdLogger(AngleController.class);
+    private final HerdLogger log = new HerdLogger(AnglePID.class);
     private final String name;
     private final PIDController controller;
 
@@ -23,21 +23,17 @@ public final class AngleController
     private boolean reverseMotor;
     public double error;
 
-    public AngleController()
+    public AnglePID()
     {
         this("SwerveAngleController");
     }
 
-    public AngleController(String name)
+    public AnglePID(String name)
     {
         this.name = name;
         this.motorSpeed = 0;
         this.reverseMotor = false;
-
-        this.controller = new PIDController(Constants.ANGLE_P, 
-                                            Constants.ANGLE_I,
-                                            Constants.ANGLE_D,
-                                            MaxOut);    
+        this.controller = new PIDController(Constants.ANGLE_P, Constants.ANGLE_I, Constants.ANGLE_D, MaxOut);    
     }
     
     public String toString()
