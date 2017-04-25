@@ -49,8 +49,18 @@ public class DriveMotor
         return driveMotor.getSpeed();
     }
     
-    public void set(double speed)
+    /**
+     * Command the motor by updating it's closed loop desired value
+     * @param setpoint Desired percentage of max speed for motor, Range(-1 to 1)
+     * @param brake Warning: Braking reduces motor responsiveness (True: Enable, False: Disable)
+     */
+    public void set(double setpoint, boolean brake)
     {
+        double speed= setpoint * Constants.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
+        
+        speed = (brake) ? 0 : speed;
+        // TODO Should we reset the PID I accumulation to brake "harder"?
+        
         driveMotor.set(speed);
     }
     
