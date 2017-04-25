@@ -115,7 +115,7 @@ public class SwerveChassis implements Runnable
         
         for (int i = 0; i < Constants.WHEEL_COUNT; i++)
         {
-            WheelsActual[i] = wheels[i].setDesired(WheelsScaled[i], gear, brake);
+            WheelsActual[i] = wheels[i].set(WheelsScaled[i], gear, brake);
         }
 
         printDash();

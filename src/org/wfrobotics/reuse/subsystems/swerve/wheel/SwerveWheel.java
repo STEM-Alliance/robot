@@ -1,11 +1,9 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.subsystems.swerve.Shifter;
 import org.wfrobotics.robot.config.RobotMap;
 
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,12 +22,8 @@ public class SwerveWheel
     private final Shifter shifter;
     
     private Vector desiredVector;
-    private boolean desiredBrake;
-    private boolean desiredGear;
     private Vector actualVector;
     
-    private double driveLastSpeed;
-    private double driveLastChangeTime;
     private double lastUpdateTime = 0;
 
     public SwerveWheel(String name, int Number, Vector position)
@@ -45,31 +39,27 @@ public class SwerveWheel
         
         actualVector = new Vector(0, 0);
         desiredVector = new Vector(0, 0);
-        desiredBrake = false;
-        desiredGear = false;
     
-        driveLastSpeed = 0;
-        driveLastChangeTime = Timer.getFPGATimestamp();
         lastUpdateTime = Timer.getFPGATimestamp();
     }
     
     /**
      * Set the desired wheel vector, auto updates the PID controllers
-     * @param desiredVector Velocity and Rotation of this wheel instance
-     * @param gearHigh True: High, False: Low
+     * @param desired Velocity and Rotation of this wheel
+     * @param gearHigh True: High gear, False: Low gear
+     * @param brake
      * @return Actual vector of wheel (sensor feedback)
      */
-    public Vector setDesired(Vector desiredVector, boolean desiredgear, boolean desiredBrake)
+    public Vector set(Vector desired, boolean gear, boolean brake)
     {
-        boolean reverseDriveMotors;
-        
-        this.desiredVector = desiredVector;
-        this.desiredGear = desiredgear;
-        this.desiredBrake = desiredBrake;
+        this.desiredVector = desired;
 
-        reverseDriveMotors = angleManager.update(desiredVector);
-        shifter.setGear(this.desiredGear);
-        updateDriveMotor(reverseDriveMotors);
+        boolean reverseDrive = angleManager.update(desired);  // TODO Consider moving motor reversal to swerve wheel. Is it a "wheel thing" or "angle motor thing"?
+        shifter.setGear(gear);
+        
+        double driveCommand = (reverseDrive) ? -desired.getMag() : desired.getMag();
+        driveManager.set(driveCommand, brake);
+        //SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
 
         SmartDashboard.putNumber(NAME + "UpdateRate", Timer.getFPGATimestamp() - lastUpdateTime);
         lastUpdateTime = Timer.getFPGATimestamp();
@@ -84,82 +74,6 @@ public class SwerveWheel
         actualVector.setMagAngle(magnitude, angleManager.getDegrees());
         
         return actualVector;
-    }
-
-    private void updateDriveMotor(boolean reverse)
-    {
-        double driveMotorSpeed = desiredVector.getMag();
-        double driveMotorOutput = 0;
-
-        // Reverse the output if the angle PID says that is the shortest path
-        driveMotorSpeed = (reverse) ? -driveMotorSpeed : driveMotorSpeed;
-        
-        // Limit ramp rate, prevents voltage drops and brownouts
-        if(!Constants.DRIVE_SPEED_SENSOR_ENABLE)
-        {
-            // We don't have speed feedback, so brute force it using the desired and the last desired values
-            double diff = Math.abs(driveLastSpeed - driveMotorSpeed);
-            
-            if(diff > .5)
-            {
-                //driveManager.setVoltageRampRate(8);
-                driveLastChangeTime = Timer.getFPGATimestamp();
-                //if(this.number == 0)
-                    //SmartDashboard.putNumber("VoltageRampRate", 8);
-            }
-            else if(diff < .35 && (Timer.getFPGATimestamp() - driveLastChangeTime > .40))
-            {
-                //driveManager.setVoltageRampRate(15);
-                //if(this.number == 0)
-                    //SmartDashboard.putNumber("VoltageRampRate", 15);
-            }
-
-            driveLastSpeed = driveMotorSpeed;
-            driveMotorOutput = driveMotorSpeed;
-        }
-        else
-        {
-            double speedCurrent = driveManager.get();
-
-            //SmartDashboard.putNumber("SpeedCurrent" + number, speedCurrent);
-            //SmartDashboard.putNumber("SpeedInput" + number, driveMotorSpeed);
-            driveMotorSpeed *= Constants.DRIVE_SPEED_MAX;
-            //SmartDashboard.putNumber("SpeedOutput" + number, driveMotorSpeed);
-
-            // Limit to 0 - max
-            double speedDiff = Math.min(Math.abs(driveMotorSpeed - speedCurrent), Constants.DRIVE_SPEED_MAX);
-                        
-            // Linearly scale the speed difference to the ramp range, //TODO should it be linear?
-            double rampValue = Utilities.scaleToRange(speedDiff, 0, Constants.DRIVE_SPEED_MAX, Constants.DRIVE_RAMP_HIGH, Constants.DRIVE_RAMP_LOW); // output range
-
-            //driveMotor.setCloseLoopRampRate(rampValue);
-            //SmartDashboard.putNumber("VoltageRampRate" + number, rampValue);
-            //SmartDashboard.putNumber("SpeedDiff" + number, speedDiff);
-            
-            driveMotorOutput = driveMotorSpeed;
-            driveLastSpeed = driveMotorSpeed;
-        }
-        
-        // If braking is requested
-        driveMotorOutput = (desiredBrake) ? 0 : driveMotorOutput;
-        driveManager.set(driveMotorOutput);
-        // WARNING: Setting brake mode each iteration drastically decreases performance driveManager.setBrake(desiredBrake);
-
-        //SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
-    }
-    
-    /**
-     * Save the specified value as the angle offset
-     * @param value angle offset in degrees
-     */
-    public void saveAngleOffset(double value)
-    {
-        Preferences.getInstance().putDouble("Wheel_Orientation_" + NUMBER, value);
-    }
-    
-    public double getAngleOffset()
-    {
-        return Preferences.getInstance().getDouble("Wheel_Orientation_" + NUMBER, 0);
     }
 
     public void printDash()
