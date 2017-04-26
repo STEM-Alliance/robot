@@ -1,8 +1,8 @@
-package org.wfrobotics.reuse.subsystems.motors;
+package org.wfrobotics.reuse.hardware.motors;
 
 import org.wfrobotics.Utilities;
+import org.wfrobotics.reuse.hardware.motors.config.HerdMotorConfig;
 import org.wfrobotics.reuse.hardware.sensors.MagnetoPotSRX;
-import org.wfrobotics.reuse.subsystems.motors.ConfigMotor.ConfigMotorBulider;
 import org.wfrobotics.reuse.utilities.PIDController;
 
 /**
@@ -14,12 +14,7 @@ public class HerdMotorRotationMagPot extends HerdMotorRotation {
     private PIDController pidController;
     private MagnetoPotSRX magnetoPot;
     
-    public HerdMotorRotationMagPot(ConfigMotorBulider configMotorBuilder)
-    {
-        this(configMotorBuilder.build());
-    }
-    
-    public HerdMotorRotationMagPot(ConfigMotor configMotor)
+    public HerdMotorRotationMagPot(HerdMotorConfig configMotor)
     {
         super(configMotor);
         
@@ -28,7 +23,7 @@ public class HerdMotorRotationMagPot extends HerdMotorRotation {
                                           configMotor.configPID.d,
                                           configMotor.configPID.maxOutput);
         
-        magnetoPot = new MagnetoPotSRX(this);
+        magnetoPot = new MagnetoPotSRX(motor);
     }
 
     @Override

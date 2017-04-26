@@ -1,6 +1,8 @@
-package org.wfrobotics.reuse.subsystems.motors;
+package org.wfrobotics.reuse.hardware.motors;
 
-import org.wfrobotics.reuse.subsystems.motors.ConfigMotor.ConfigMotorBulider;
+import org.wfrobotics.reuse.hardware.motors.config.HerdMotorConfig;
+
+import com.ctre.CANTalon.*;
 
 /**
  * CANTalon motor to be used with a CTRE Magnetic Encoder in speed mode.
@@ -8,30 +10,24 @@ import org.wfrobotics.reuse.subsystems.motors.ConfigMotor.ConfigMotorBulider;
  */
 public class HerdMotorSpeed extends HerdMotor {
 
-
-    public HerdMotorSpeed(ConfigMotorBulider configMotorBuilder)
-    {
-        this(configMotorBuilder.build());
-    }
-    
-    public HerdMotorSpeed(ConfigMotor configMotor)
+    public HerdMotorSpeed(HerdMotorConfig configMotor)
     {
         super(configMotor);
         
-        setPID(configMotor.configPID.p,
-               configMotor.configPID.i,
-               configMotor.configPID.d,
-               configMotor.configPID.f,
-               configMotor.configPID.iZone,
-               configMotor.configPID.rampRate,
-               0);
+        motor.setPID(configMotor.configPID.p,
+                     configMotor.configPID.i,
+                     configMotor.configPID.d,
+                     configMotor.configPID.f,
+                     configMotor.configPID.iZone,
+                     configMotor.configPID.rampRate,
+                     0);
         
-        setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        changeControlMode(TalonControlMode.Speed);
+        motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+        motor.changeControlMode(TalonControlMode.Speed);
 
         //TODO BDP this seems wrong
-        reverseSensor(configMotor.invert);
-        setInverted(configMotor.invert);
+        motor.reverseSensor(configMotor.invert);
+        motor.setInverted(configMotor.invert);
     }
 
     /**
@@ -42,7 +38,7 @@ public class HerdMotorSpeed extends HerdMotor {
     public double get()
     {
         //TODO BDP this seems wrong
-        return getInvertedValue() * getSpeed();
+        return getInvertedValue() * motor.getSpeed();
     }
     
     /**
@@ -60,11 +56,11 @@ public class HerdMotorSpeed extends HerdMotor {
         {
             if (rpm != 0)
             {
-                enable();
+                motor.enable();
             }
             else
             {
-                disable();
+                motor.disable();
             }
         }
         

@@ -1,7 +1,9 @@
-package org.wfrobotics.reuse.subsystems.motors;
+package org.wfrobotics.reuse.hardware.motors;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.subsystems.motors.ConfigMotor.ConfigMotorBulider;
+import org.wfrobotics.reuse.hardware.motors.config.HerdMotorConfig;
+
+import com.ctre.CANTalon.*;
 
 /**
  * CANTalon motor to be used with a CTRE Magnetic Encoder in rotation/angle mode.
@@ -11,29 +13,24 @@ public class HerdMotorRotationEncoder extends HerdMotorRotation {
 
     private double angleOffset = 0;
     
-    public HerdMotorRotationEncoder(ConfigMotorBulider configMotorBuilder)
-    {
-        this(configMotorBuilder.build());
-    }
-    
-    public HerdMotorRotationEncoder(ConfigMotor configMotor)
+    public HerdMotorRotationEncoder(HerdMotorConfig configMotor)
     {
         super(configMotor);
         
-        setPID(configMotor.configPID.p,
-               configMotor.configPID.i,
-               configMotor.configPID.d,
-               configMotor.configPID.f,
-               configMotor.configPID.iZone,
-               configMotor.configPID.rampRate,
-               0);
+        motor.setPID(configMotor.configPID.p,
+                     configMotor.configPID.i,
+                     configMotor.configPID.d,
+                     configMotor.configPID.f,
+                     configMotor.configPID.iZone,
+                     configMotor.configPID.rampRate,
+                     0);
          
-        setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-        changeControlMode(TalonControlMode.Position);
+        motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
+        motor.changeControlMode(TalonControlMode.Position);
         
         //TODO is this right?
-        enableControl();
-        super.set(getPosition());  // Recommended for closed loop control     
+        motor.enableControl();
+        motor.set(motor.getPosition());  // Recommended for closed loop control     
     }
     
     /**
@@ -64,13 +61,13 @@ public class HerdMotorRotationEncoder extends HerdMotorRotation {
     public void set(double angle)
     {
         //TODO this is most likely wrong
-        super.set(angle / 360.0);
+        motor.set(angle / 360.0);
     }
     
 
     private double getSensor()
     {
-        double degrees = getPosition() * 360.0;
+        double degrees = motor.getPosition() * 360.0;
         
         return Utilities.wrapToRange(degrees - angleOffset, -180, 180);
     }
