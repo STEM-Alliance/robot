@@ -1,8 +1,8 @@
 package org.wfrobotics.reuse.subsystems.motor2;
 
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.Motor;
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.PID;
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.Sensor;
+import org.wfrobotics.reuse.hardware.interfaces.Motor;
+import org.wfrobotics.reuse.hardware.interfaces.PID;
+import org.wfrobotics.reuse.hardware.interfaces.Sensor;
 
 /**
  * Controls subsystem motor by sensor feedback

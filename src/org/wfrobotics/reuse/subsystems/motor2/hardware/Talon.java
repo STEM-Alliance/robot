@@ -1,6 +1,6 @@
 package org.wfrobotics.reuse.subsystems.motor2.hardware;
 
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.Motor;
+import org.wfrobotics.reuse.hardware.interfaces.Motor;
 
 public class Talon implements Motor
 {
