@@ -1,6 +1,6 @@
 package org.wfrobotics.reuse.subsystems.motor2.hardware;
 
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.PID;
+import org.wfrobotics.reuse.hardware.interfaces.PID;
 
 import com.ctre.CANTalon;
 
