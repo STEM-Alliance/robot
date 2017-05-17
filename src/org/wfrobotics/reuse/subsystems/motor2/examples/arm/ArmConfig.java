@@ -1,10 +1,10 @@
 package org.wfrobotics.reuse.subsystems.motor2.examples.arm;
 
-import org.wfrobotics.reuse.subsystems.motor2.HerdMotor;
-import org.wfrobotics.reuse.subsystems.motor2.examples.goals.Position;
-import org.wfrobotics.reuse.subsystems.motor2.hardware.SRXMagPot;
-import org.wfrobotics.reuse.subsystems.motor2.hardware.SRXMotor;
-import org.wfrobotics.reuse.subsystems.motor2.hardware.SRXPID;
+import org.wfrobotics.reuse.hardware.motors2.HerdMotor;
+import org.wfrobotics.reuse.hardware.motors2.wrappers.SRXMagPot;
+import org.wfrobotics.reuse.hardware.motors2.wrappers.SRXMotor;
+import org.wfrobotics.reuse.hardware.motors2.wrappers.SRXPID;
+import org.wfrobotics.reuse.subsystems.motor2.goals.Position;
 
 import com.ctre.CANTalon;
 

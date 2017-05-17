@@ -1,6 +1,6 @@
 package org.wfrobotics.reuse.subsystems.motor2.examples.arm;
 
-import org.wfrobotics.reuse.subsystems.motor2.examples.goals.Goal;
+import org.wfrobotics.reuse.subsystems.motor2.goals.Goal;
 
 import com.ctre.CANTalon;
 

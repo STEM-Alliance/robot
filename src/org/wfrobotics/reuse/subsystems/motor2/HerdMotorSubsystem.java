@@ -1,7 +1,7 @@
-package org.wfrobotics.reuse.subsystems.motor2.examples;
+package org.wfrobotics.reuse.subsystems.motor2;
 
-import org.wfrobotics.reuse.subsystems.motor2.HerdMotor;
-import org.wfrobotics.reuse.subsystems.motor2.examples.goals.Goal;
+import org.wfrobotics.reuse.hardware.motors2.HerdMotor;
+import org.wfrobotics.reuse.subsystems.motor2.goals.Goal;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 
 import edu.wpi.first.wpilibj.command.Command;

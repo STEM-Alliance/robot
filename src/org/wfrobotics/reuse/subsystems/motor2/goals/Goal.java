@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse.subsystems.motor2.examples.goals;
+package org.wfrobotics.reuse.subsystems.motor2.goals;
 
 /**
  * Describe what the Herd motor should do. It wants to intelligently move to the setpoint.

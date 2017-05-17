@@ -1,5 +1,6 @@
 package org.wfrobotics.reuse.subsystems.motor2.examples;
 
+import org.wfrobotics.reuse.subsystems.motor2.HerdMotorSubsystem;
 import org.wfrobotics.reuse.subsystems.motor2.examples.arm.ArmConfig;
 import org.wfrobotics.reuse.subsystems.motor2.examples.shooter.ShooterConfig;
 

@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse.subsystems.motor2.examples.goals;
+package org.wfrobotics.reuse.subsystems.motor2.goals;
 
 /**
  * A basic rotational position/location in degrees

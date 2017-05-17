@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.hardware.sensors;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.hardware.interfaces.Sensor;
+import org.wfrobotics.reuse.hardware.motors2.interfaces.Sensor;
 
 /**
  * Class to use a Magnetic Potentiometer like an analog
