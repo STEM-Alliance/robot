@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.subsystems.motor2.hardware;
 
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.ControlType;
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.Sensor;
+import org.wfrobotics.reuse.hardware.interfaces.ControlType;
+import org.wfrobotics.reuse.hardware.interfaces.Sensor;
 
 /**
  * This would be our pot, NOT on an SRX, which implements the sensor interface

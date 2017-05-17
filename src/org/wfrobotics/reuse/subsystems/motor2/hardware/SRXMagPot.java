@@ -1,8 +1,8 @@
 package org.wfrobotics.reuse.subsystems.motor2.hardware;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.ControlType;
-import org.wfrobotics.reuse.subsystems.motor2.interfaces.Sensor;
+import org.wfrobotics.reuse.hardware.interfaces.ControlType;
+import org.wfrobotics.reuse.hardware.interfaces.Sensor;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
