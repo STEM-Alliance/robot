@@ -1,5 +1,7 @@
 package org.wfrobotics.reuse.hardware.sensors;
 
+import org.wfrobotics.reuse.hardware.interfaces.ControlType;
+
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
 /**
@@ -7,8 +9,8 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
  * potentiometer, when it doesn't have the full range of 0 to 1.
  * Created for using the 6127V1A360L.5FS (987-1393-ND on DigiKey)
  */
-public class MagnetoPotAnalog extends MagnetoPot{
-    
+public class MagnetoPotAnalog extends MagnetoPot
+{
     public AnalogPotentiometer m_Analog;
     
     /**
@@ -52,6 +54,13 @@ public class MagnetoPotAnalog extends MagnetoPot{
     public void free()
     {
         m_Analog.free();
+    }
+
+    @Override
+    public void setControlType(ControlType mode)
+    {
+        // TODO Auto-generated method stub
+        
     }
     
 }

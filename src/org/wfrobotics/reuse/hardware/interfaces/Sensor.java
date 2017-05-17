@@ -1,4 +1,4 @@
-package org.wfrobotics.reuse.subsystems.motor2.interfaces;
+package org.wfrobotics.reuse.hardware.interfaces;
 
 /**
  * @author Team 4818 WFRobotics

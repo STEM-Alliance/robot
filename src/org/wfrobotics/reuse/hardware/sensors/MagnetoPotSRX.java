@@ -1,5 +1,7 @@
 package org.wfrobotics.reuse.hardware.sensors;
 
+import org.wfrobotics.reuse.hardware.interfaces.ControlType;
+
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 /**
@@ -8,8 +10,8 @@ import com.ctre.CANTalon.FeedbackDevice;
  * full range of 0 to 1.
  * Created for using the 6127V1A360L.5FS (987-1393-ND on DigiKey)
  */
-public class MagnetoPotSRX extends MagnetoPot {
-    
+public class MagnetoPotSRX extends MagnetoPot 
+{
     public CANTalon m_Talon;
 
     /**
@@ -24,22 +26,22 @@ public class MagnetoPotSRX extends MagnetoPot {
     /**
      * Initialize a new Magnetic Potentiometer through the SRX data port
      * @param talon TalonSRX object
-     * @param fullRange full range to scale output to (360 would give output of 0-360)
+     * @param max full range to scale output to (360 would give output of 0-360)
      */
-    public MagnetoPotSRX(CANTalon talon, double fullRange)
+    public MagnetoPotSRX(CANTalon talon, double max)
     {
-        this(talon, fullRange, 0);
+        this(talon, max, 0);
     }
     
     /**
      * Initialize a new Magnetic Potentiometer through the SRX data port
      * @param talon TalonSRX object
-     * @param fullRange full range to scale output to (360 would give output of 0-360)
-     * @param offset offset to scale output to (180 would give output of 180-360)
+     * @param max full range to scale output to (360 would give output of 0-360)
+     * @param min offset to scale output to (180 would give output of 180-360)
      */
-    public MagnetoPotSRX(CANTalon talon, double fullRange, double offset)
+    public MagnetoPotSRX(CANTalon talon, double max, double min)
     {
-        super(fullRange, offset);
+        super(max, min);
         
         m_Talon = talon;
         m_Talon.setFeedbackDevice(FeedbackDevice.AnalogPot);
@@ -53,6 +55,13 @@ public class MagnetoPotSRX extends MagnetoPot {
     @Override
     public void free()
     {
+        
+    }
+
+    @Override
+    public void setControlType(ControlType mode)
+    {
+        // TODO Auto-generated method stub
         
     }
 }
