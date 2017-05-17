@@ -1,9 +1,13 @@
 package org.wfrobotics.reuse.subsystems.motor2.hardware;
 
+import org.wfrobotics.reuse.subsystems.motor2.interfaces.ControlType;
 import org.wfrobotics.reuse.subsystems.motor2.interfaces.PID;
 
 import com.ctre.CANTalon;
 
+/**
+ * @author Team 4818 WFRobotics
+ */
 public class SRXPID implements PID
 {
     public CANTalon srx;
@@ -20,6 +24,11 @@ public class SRXPID implements PID
         // TODO more defaults
         
         srx.set(0);
+    }
+    
+    public void setControlType(ControlType mode)
+    {
+        // TODO units or whatever?
     }
     
     public void update(double setpoint)

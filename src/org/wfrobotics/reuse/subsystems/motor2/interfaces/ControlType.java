@@ -1,9 +1,11 @@
 package org.wfrobotics.reuse.subsystems.motor2.interfaces;
 
-public enum ClosedLoopType
+/**
+ * @author Team 4818 WFRobotics
+ */
+public enum ControlType
 {
-    VOLTAGE,
-    VOLTAGE_PERCENT,
+    OFF,
     SPEED,
     ROTATION
 }

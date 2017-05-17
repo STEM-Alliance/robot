@@ -1,7 +1,11 @@
 package org.wfrobotics.reuse.subsystems.motor2.hardware;
 
+import org.wfrobotics.reuse.subsystems.motor2.interfaces.ControlType;
 import org.wfrobotics.reuse.subsystems.motor2.interfaces.Motor;
 
+/**
+ * @author Team 4818 WFRobotics
+ */
 public class Talon implements Motor
 {
     public Talon()
@@ -12,6 +16,11 @@ public class Talon implements Motor
     public void set(double desired)
     {
         // TODO Auto-generated method stub
+    }
+    
+    public void setControlType(ControlType mode)
+    {
+        
     }
 
     public void setBrake(boolean enable)

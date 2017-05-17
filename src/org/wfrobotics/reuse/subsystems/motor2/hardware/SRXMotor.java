@@ -1,10 +1,14 @@
 package org.wfrobotics.reuse.subsystems.motor2.hardware;
 
+import org.wfrobotics.reuse.subsystems.motor2.interfaces.ControlType;
 import org.wfrobotics.reuse.subsystems.motor2.interfaces.Motor;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
 
+/**
+ * @author Team 4818 WFRobotics
+ */
 public class SRXMotor implements Motor
 {
     public CANTalon srx;
@@ -14,7 +18,6 @@ public class SRXMotor implements Motor
         srx = hw;
         
         // Defaults
-        srx.changeControlMode(TalonControlMode.PercentVbus);
         srx.configNominalOutputVoltage(0, 0);
         srx.configPeakOutputVoltage(11, 11);
         srx.enableBrakeMode(false);
@@ -29,6 +32,23 @@ public class SRXMotor implements Motor
     public void setBrake(boolean enable)
     {
         srx.enableBrakeMode(enable);
+    }
+    
+    public void setControlType(ControlType mode)
+    {
+        switch (mode)
+        {
+            case ROTATION:
+                srx.changeControlMode(TalonControlMode.Position);
+                break;
+            case SPEED:
+                srx.changeControlMode(TalonControlMode.Speed);
+                break;
+            case OFF:
+            default:
+                srx.changeControlMode(TalonControlMode.PercentVbus);
+                break;  
+        }
     }
     
     public static class Builder
