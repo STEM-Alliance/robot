@@ -1,6 +1,6 @@
 package org.wfrobotics.reuse.hardware.sensors;
 
-import org.wfrobotics.reuse.hardware.interfaces.ControlType;
+import org.wfrobotics.reuse.hardware.motors2.interfaces.ControlType;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 

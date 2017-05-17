@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.subsystems.motor2.examples.arm;
 
 import org.wfrobotics.reuse.subsystems.motor2.examples.ExampleRobot;
-import org.wfrobotics.reuse.subsystems.motor2.examples.goals.Goal;
+import org.wfrobotics.reuse.subsystems.motor2.goals.Goal;
 
 import edu.wpi.first.wpilibj.command.Command;
 

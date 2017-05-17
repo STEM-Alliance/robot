@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.hardware.sensors;
 
-import org.wfrobotics.reuse.hardware.interfaces.ControlType;
-import org.wfrobotics.reuse.hardware.interfaces.Sensor;
+import org.wfrobotics.reuse.hardware.motors2.interfaces.ControlType;
+import org.wfrobotics.reuse.hardware.motors2.interfaces.Sensor;
 
 import com.ctre.CANTalon;
 

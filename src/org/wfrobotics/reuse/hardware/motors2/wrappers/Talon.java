@@ -1,7 +1,7 @@
-package org.wfrobotics.reuse.subsystems.motor2.hardware;
+package org.wfrobotics.reuse.hardware.motors2.wrappers;
 
-import org.wfrobotics.reuse.hardware.interfaces.ControlType;
-import org.wfrobotics.reuse.hardware.interfaces.Motor;
+import org.wfrobotics.reuse.hardware.motors2.interfaces.ControlType;
+import org.wfrobotics.reuse.hardware.motors2.interfaces.Motor;
 
 /**
  * @author Team 4818 WFRobotics
