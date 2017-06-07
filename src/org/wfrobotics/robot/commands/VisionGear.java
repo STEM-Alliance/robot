@@ -37,8 +37,8 @@ public class VisionGear extends CommandGroup
     protected void initialize()
     {
         Robot.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
-        fieldRelative = Robot.driveSubsystem.getFieldRelative();
-        Robot.driveSubsystem.setFieldRelative(false);
+       //fieldRelative = Robot.driveSubsystem.getFieldRelative();
+        //Robot.driveSubsystem.setFieldRelative(false);
         done = false;
     }
 
@@ -94,7 +94,7 @@ public class VisionGear extends CommandGroup
 
     protected void end()
     {
-        Robot.driveSubsystem.setFieldRelative(fieldRelative);
+        //Robot.driveSubsystem.setFieldRelative(fieldRelative);
         Robot.leds.set(Robot.defaultLEDEffect);
     }
 

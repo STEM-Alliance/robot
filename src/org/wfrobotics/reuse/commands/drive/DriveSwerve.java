@@ -59,10 +59,10 @@ public class DriveSwerve extends Command
                 
                 Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
                 
-                if(Robot.shooterSubsystem.isRunning())
-                {
-                    Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = 1;
-                }
+//                if(Robot.shooterSubsystem.isRunning())
+//                {
+//                    Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = 1;
+//                }
                 
                 speedRobot = Robot.oi.swerveOI.getHaloDrive_Velocity();
                 speedRotation = -Robot.oi.swerveOI.getHaloDrive_Rotation() -Robot.oi.swerveOI.getFusionDrive_Rotation();// + startFusionPosition;
@@ -77,12 +77,12 @@ public class DriveSwerve extends Command
                         
                         double speed = Robot.driveSubsystem.configSwerve.gearHigh ? DPAD_MOVEMENT_SPEED_HG : DPAD_MOVEMENT_SPEED_LG;
                         
-                        if(!Robot.shooterSubsystem.isRunning())
-                        {
-                            speedRobot.setMagAngle(speed, -(dpad-90));
-                            speedRotation *= .5;
-                        }
-                        else
+//                        if(!Robot.shooterSubsystem.isRunning())
+//                        {
+//                            speedRobot.setMagAngle(speed, -(dpad-90));
+//                            speedRotation *= .5;
+//                        }
+//                        else
                         {
                             speedRobot.setMagAngle(speed*.75, -(dpad-90));
                             speedRotation *= 1;

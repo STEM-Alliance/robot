@@ -1,8 +1,6 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.commands.drive.AutoDrive;
-import org.wfrobotics.robot.commands.AutoGear;
-import org.wfrobotics.robot.commands.AutoShoot;
 import org.wfrobotics.robot.config.Commands;
 import org.wfrobotics.robot.config.IO;
 
@@ -31,27 +29,7 @@ public class Autonomous
             
             switch(this)
             {
-            case SHOOT:
-                autonomousCommand = new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING);
-                break;
-            case SHOOT_THEN_HOPPER:
-                autonomousCommand = new AutoShoot();
-                break;
-            case SHOOT_THEN_GEAR:
-                autonomousCommand = new AutoGear(startingPosition, AutoGear.MODE.VISION, true);
-                break;
-            case DRIVE:
-                autonomousCommand = new AutoDrive(0,Commands.AUTONOMOUS_DRIVE_SPEED, 0, Commands.AUTONOMOUS_TIME_DRIVE_MODE);
-                break;
-            case DRIVE_HG:
-                autonomousCommand = new AutoDrive(0,Commands.AUTONOMOUS_DRIVE_SPEED*.75, 0, Commands.AUTONOMOUS_TIME_DRIVE_MODE*.75);
-                break;
-            case GEAR_VISION:
-                autonomousCommand = new AutoGear(startingPosition, AutoGear.MODE.VISION, false);
-                break;
-            case GEAR_DR:
-                autonomousCommand = new AutoGear(startingPosition, AutoGear.MODE.DEAD_RECKONING, false);
-                break;
+           
             case NONE:
             default:
                 autonomousCommand = new AutoDrive();
