@@ -13,12 +13,7 @@ import org.wfrobotics.reuse.controller.XboxJoystickButton;
 import org.wfrobotics.reuse.controller.XboxTriggerButton;
 import org.wfrobotics.reuse.controller.Panel.COLOR;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.commands.Conveyor;
-import org.wfrobotics.robot.commands.Lift;
-import org.wfrobotics.robot.commands.Rev;
-import org.wfrobotics.robot.commands.Up;
-import org.wfrobotics.robot.commands.VisionGearDropAndBackup;
-import org.wfrobotics.robot.commands.VisionShoot;
+import org.wfrobotics.robot.commands.*;
 import org.wfrobotics.robot.driveoi.Arcade.*;
 import org.wfrobotics.robot.driveoi.Mecanum.*;
 import org.wfrobotics.robot.driveoi.Swerve.*;
@@ -94,14 +89,14 @@ public class IO
     
     public IO()
     {
-        buttonManDpadUp.whileHeld(new Lift(Lift.MODE.UP));
-        buttonManualLiftDown.whileHeld(new Lift(Lift.MODE.DOWN));
+//        buttonManDpadUp.whileHeld(new Lift(Lift.MODE.UP));
+//        buttonManualLiftDown.whileHeld(new Lift(Lift.MODE.DOWN));
         buttonManJoystickL.whenPressed(new LEDSignal(3));
         
 //        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
 //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
 //        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
-        buttonPanelYellowBottom.whenPressed(new VisionGearDropAndBackup());
+//        buttonPanelYellowBottom.whenPressed(new VisionGearDropAndBackup());
         buttonPanelBlackBottom.whenPressed(new VisionShoot());
         //buttonPanelYellowBottom.toggleWhenPressed(new GearDetection(GearDetection.MODE.GETDATA));
         //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));
@@ -112,15 +107,15 @@ public class IO
 //        buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
         //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
         
-        buttonManRB.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
-        buttonManLB.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
-       
-        buttonPanelGreenTop.whileHeld(new Rev(Rev.MODE.SHOOT));
+//        buttonManRB.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
+//        buttonManLB.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
+//       
+//        buttonPanelGreenTop.whileHeld(new Rev(Rev.MODE.SHOOT));
         //buttonPanelGreenBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         
         //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
         //buttonPanelBlackTop.whileHeld(new IntakeSetup(true));
-        buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
+//        buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         //buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
         buttonPanelWhiteBottom.whileHeld(new VisionPivot(Robot.targetGearSubsystem, Robot.leds, Commands.GEAR_VISION_PIVOT_CONFIG));
         

@@ -12,13 +12,8 @@ import org.wfrobotics.robot.Autonomous.AUTO_COMMAND;
 import org.wfrobotics.robot.Autonomous.POSITION_ROTARY;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotMap;
-import org.wfrobotics.robot.subsystems.Auger;
 import org.wfrobotics.robot.subsystems.CameraGear;
 import org.wfrobotics.robot.subsystems.CameraShooter;
-import org.wfrobotics.robot.subsystems.Climber;
-import org.wfrobotics.robot.subsystems.Intake;
-import org.wfrobotics.robot.subsystems.Lifter;
-import org.wfrobotics.robot.subsystems.Shooter;
 import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,14 +28,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends SampleRobot 
 {
     public static SwerveDriveSteamworks driveSubsystem;
-    public static Auger augerSubsystem;
-    public static Climber climberSubsystem;
     public static DashboardView dashboardView;
-    public static Intake intakeSubsystem;
     public static LEDController leds;
     public static IO oi;
-    public static Lifter lifterSubsystem;
-    public static Shooter shooterSubsystem;
     public static CameraShooter targetShooterSubsystem;
     public static CameraGear targetGearSubsystem;
     
@@ -61,15 +51,10 @@ public class Robot extends SampleRobot
         Color[] defaultColors = {LEDs.DARK_GREEN, LEDs.LIME, LEDs.YELLOW};
 //        
         driveSubsystem = new SwerveDriveSteamworks();
-        augerSubsystem = new Auger();
         targetShooterSubsystem = new CameraShooter();
         targetGearSubsystem = new CameraGear();
         
-        climberSubsystem = new Climber();
         dashboardView = new DashboardView();
-        intakeSubsystem = new Intake();
-        lifterSubsystem = new Lifter(true);
-        shooterSubsystem = new Shooter();
         leds = new MindsensorCANLight(RobotMap.CAN_LIGHT);
         //leds.enable(false); // TODO Remove this when we have LEDs on the robot!!!
 
@@ -138,7 +123,6 @@ public class Robot extends SampleRobot
         
         while (isDisabled())
         {
-            lifterSubsystem.disabled();
             autonomousStartPosition = Autonomous.getRotaryStartingPosition();
             disabledDoGyro();
             

@@ -7,9 +7,6 @@ import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.XboxButton;
 import org.wfrobotics.reuse.controller.Panel.BUTTON;
-import org.wfrobotics.robot.commands.Conveyor;
-import org.wfrobotics.robot.commands.Rev;
-import org.wfrobotics.robot.commands.Shoot;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -63,8 +60,6 @@ public class Swerve
            
 
             //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
-            buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
-            buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
             buttonDriveShift.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
             buttonDriveFieldRelative.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
             buttonDriveSetGyro.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
@@ -224,8 +219,6 @@ public class Swerve
             buttonDriveShift= new JoystickButton(driver1, 1);
 
             //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
-            buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
-            buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
             buttonDriveShift.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
             buttonDriveFieldRelative.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
             buttonDriveSetGyro.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));

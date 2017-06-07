@@ -12,15 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SteamworksDrive extends CommandGroup 
 {  
-    private IntakeSetup intake;
-
     private double intakeLastOn;
 
     public SteamworksDrive()
     {   
-        intake = new IntakeSetup(false);
-
-        addParallel(intake);
+        
         addSequential(new DriveSwerve(DriveSwerve.MODE.FUSION));
     }
     
@@ -59,12 +55,12 @@ public class SteamworksDrive extends CommandGroup
         SmartDashboard.putNumber("angleDifference", angleDifference);
         SmartDashboard.putBoolean("intakeOn", intakeOn);
 
-        intake.set(intakeOn);
+        //intake.set(intakeOn);
     }
 
     protected void end() 
     {
-        Robot.intakeSubsystem.setSpeed(0);
+        //Robot.intakeSubsystem.setSpeed(0);
     }
 
     protected void interrupted()
