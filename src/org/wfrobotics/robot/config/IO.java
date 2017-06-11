@@ -80,51 +80,28 @@ public class IO
     public static Button buttonManY= new XboxButton (xboxMan, Xbox.BUTTON.Y);
     
     public static Button buttonManDpadUp = new XboxDpadButton(xboxMan, 0);
+    
     public static Button buttonManJoystickL = new XboxJoystickButton(xboxMan, Hand.kLeft);
     
-//  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
-//  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
-//  Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
-
     
     public IO()
     {
-//        buttonManDpadUp.whileHeld(new Lift(Lift.MODE.UP));
-//        buttonManualLiftDown.whileHeld(new Lift(Lift.MODE.DOWN));
-        buttonManJoystickL.whenPressed(new LEDSignal(3));
         
-//        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
-//        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
-//        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
-//        buttonPanelYellowBottom.whenPressed(new VisionGearDropAndBackup());
         buttonPanelBlackBottom.whenPressed(new VisionShoot());
-        //buttonPanelYellowBottom.toggleWhenPressed(new GearDetection(GearDetection.MODE.GETDATA));
-        //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));
-        
         buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
 
-//        buttonDriveA.whileHeld(new Rev(Rev.MODE.SHOOT));
-//        buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
-        //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
+
         
-//        buttonManRB.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
-//        buttonManLB.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
-//       
-//        buttonPanelGreenTop.whileHeld(new Rev(Rev.MODE.SHOOT));
-        //buttonPanelGreenBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
-        
-        //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
-        //buttonPanelBlackTop.whileHeld(new IntakeSetup(true));
-//        buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
-        //buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
-        buttonPanelWhiteBottom.whileHeld(new VisionPivot(Robot.targetGearSubsystem, Robot.leds, Commands.GEAR_VISION_PIVOT_CONFIG));
-        
-        //buttonDriveRB.toggleWhenPressed(new VisionShoot());
-        
-//      buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
-//      buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
-//      buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
     }
+    public double getJoyX()
+    {
+       return xboxDrive.getX(Hand.kRight); 
+    }
+    public double getJoyY()
+    {
+        return xboxDrive.getY(Hand.kRight);
+    }
+    
     
     public static double getClimbSpeedUp()
     {

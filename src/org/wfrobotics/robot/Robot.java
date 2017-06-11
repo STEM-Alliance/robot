@@ -13,6 +13,7 @@ import org.wfrobotics.robot.Autonomous.POSITION_ROTARY;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.subsystems.CameraGear;
+import org.wfrobotics.robot.subsystems.CameraServos;
 import org.wfrobotics.robot.subsystems.CameraShooter;
 import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
 
@@ -34,6 +35,8 @@ public class Robot extends SampleRobot
     public static CameraShooter targetShooterSubsystem;
     public static CameraGear targetGearSubsystem;
     
+    public static CameraServos camServoSubsystem;
+    
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;    
     double startAngle = 0;
@@ -49,7 +52,9 @@ public class Robot extends SampleRobot
     public void robotInit() 
     {
         Color[] defaultColors = {LEDs.DARK_GREEN, LEDs.LIME, LEDs.YELLOW};
-//        
+        
+        camServoSubsystem = new CameraServos();
+        
         driveSubsystem = new SwerveDriveSteamworks();
         targetShooterSubsystem = new CameraShooter();
         targetGearSubsystem = new CameraGear();

@@ -1,18 +1,20 @@
 package org.wfrobotics.reuse.commands.vision;
 
-import org.wfrobotics.reuse.controller.XboxJoystickButton;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.subsystems.CameraServos;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class XboxGimbal extends Command {
     
-    CameraServos serX,
-                 serY;
+    CameraServos servoX,
+                 servoY;
     public XboxGimbal()
     {
-        serX = new CameraServos();
-        serY = new CameraServos();
+        requires(Robot.camServoSubsystem);
+      
+        servoX = new CameraServos();
+        servoY = new CameraServos();
     }
     
     @Override
@@ -24,9 +26,10 @@ public class XboxGimbal extends Command {
     protected void execute()
     {
         super.execute();
+        // found in bottom of the Robot IO class 
         
+        Robot.camServoSubsystem.setX(Robot.oi.getJoyX());
+        Robot.camServoSubsystem.setY(Robot.oi.getJoyY());
         
-    }
-    
-
+    }    
 }

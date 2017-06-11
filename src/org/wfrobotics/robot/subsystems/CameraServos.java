@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.commands.vision.XboxGimbal;
 import org.wfrobotics.reuse.subsystems.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.Servo;
@@ -44,8 +45,7 @@ public class CameraServos extends NetworkTableCamera {
  */
     Servo servoX,
           servoY;
-    
-    
+       
     public CameraServos()
     {
         super("Target", 0, 1);
@@ -57,8 +57,7 @@ public class CameraServos extends NetworkTableCamera {
     @Override
     protected void initDefaultCommand()
     {
-        // TODO Auto-generated method stub
-
+        setDefaultCommand(new XboxGimbal());
     }
 
     @Override
@@ -96,11 +95,13 @@ public class CameraServos extends NetworkTableCamera {
     
     public void setX(double val)
     {
-        servoX.set(val);
+        // the Xbox Joystick is -90-90 however the servo movement is 0-180; therefore 90 degree offset?
+        servoX.set(val + 90);
     }
     public void setY(double val)
     {
-        servoY.set(val);
+        // the Xbox Joystick is -90-90 however the servo movement is 0-180; therefore 90 degree offset?
+            servoY.set(val + 90);
     }
 
 }
