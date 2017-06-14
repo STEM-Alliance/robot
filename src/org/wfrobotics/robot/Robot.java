@@ -30,7 +30,7 @@ public class Robot extends SampleRobot
 {
     public static SwerveDriveSteamworks driveSubsystem;
     public static DashboardView dashboardView;
-    public static LEDController leds;
+//    public static LEDController leds;
     public static IO oi;
     public static CameraShooter targetShooterSubsystem;
     public static CameraGear targetGearSubsystem;
@@ -60,7 +60,7 @@ public class Robot extends SampleRobot
         targetGearSubsystem = new CameraGear();
         
         dashboardView = new DashboardView();
-        leds = new MindsensorCANLight(RobotMap.CAN_LIGHT);
+//        leds = new MindsensorCANLight(RobotMap.CAN_LIGHT);
         //leds.enable(false); // TODO Remove this when we have LEDs on the robot!!!
 
         oi = new IO();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
@@ -84,7 +84,7 @@ public class Robot extends SampleRobot
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
         
-        leds.set(defaultLEDEffect);
+//        leds.set(defaultLEDEffect);
         
         while (isOperatorControl() && isEnabled())
         {
@@ -108,7 +108,7 @@ public class Robot extends SampleRobot
         Gyro.getInstance().zeroYaw(command.getGyroOffset(autonomousStartPosition));
         Robot.driveSubsystem.setLastHeading(command.getGyroOffset(autonomousStartPosition));
         
-        Robot.leds.set(new Effect(EFFECT_TYPE.CYCLE, teamDefaultColors, 1));
+//        Robot.leds.set(new Effect(EFFECT_TYPE.CYCLE, teamDefaultColors, 1));
         
         // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();
@@ -124,7 +124,7 @@ public class Robot extends SampleRobot
     public void disabled()
     {
         //leds.set(new Effect(EFFECT_TYPE.FADE, colors, 4));
-        leds.set(defaultLEDEffect);
+//        leds.set(defaultLEDEffect);
         
         while (isDisabled())
         {

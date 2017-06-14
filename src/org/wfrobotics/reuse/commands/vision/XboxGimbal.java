@@ -7,14 +7,10 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class XboxGimbal extends Command {
     
-    CameraServos servoX,
-                 servoY;
     public XboxGimbal()
     {
         requires(Robot.camServoSubsystem);
       
-        servoX = new CameraServos();
-        servoY = new CameraServos();
     }
     
     @Override

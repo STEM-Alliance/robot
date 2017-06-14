@@ -50,8 +50,8 @@ public class CameraServos extends NetworkTableCamera {
     {
         super("Target", 0, 1);
         
-        servoX = new Servo(7);
-        servoY = new Servo(8);
+        servoX = new Servo(8);
+        servoY = new Servo(9);
     }
     
     @Override
@@ -64,20 +64,20 @@ public class CameraServos extends NetworkTableCamera {
     public void run()
     {
         
-        getUpdatedData();
+//        getUpdatedData();
         
-        TargetCount = data.size();
-        SmartDashboard.putNumber("GearTargets", TargetCount);
+//        TargetCount = data.size();
+//        SmartDashboard.putNumber("GearTargets", TargetCount);
         
         if(TargetCount == 1)
         {
-            TargetData validData = data.get(0);
+//            TargetData validData = data.get(0);
             //validData.
             
         }
-        servoX.set(xCalc());
-        xCalc();
-        yCalc();
+//        servoX.set(xCalc());
+//        xCalc();
+//        yCalc();
         
     }
     public double xCalc()
