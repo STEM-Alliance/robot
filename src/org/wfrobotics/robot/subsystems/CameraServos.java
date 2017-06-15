@@ -50,8 +50,8 @@ public class CameraServos extends NetworkTableCamera {
     {
         super("Target", 0, 1);
         
-        servoX = new Servo(8);
-        servoY = new Servo(9);
+        servoX = new Servo(7);
+        servoY = new Servo(6);
     }
     
     @Override
@@ -96,12 +96,12 @@ public class CameraServos extends NetworkTableCamera {
     public void setX(double val)
     {
         // the Xbox Joystick is -90-90 however the servo movement is 0-180; therefore 90 degree offset?
-        servoX.set(val + 90);
+        servoX.set(val + 0.5);
     }
     public void setY(double val)
     {
         // the Xbox Joystick is -90-90 however the servo movement is 0-180; therefore 90 degree offset?
-            servoY.set(val + 90);
+            servoY.set(val + 0.5);
     }
 
 }

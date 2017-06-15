@@ -95,11 +95,11 @@ public class IO
     }
     public double getJoyX()
     {
-       return xboxDrive.getX(Hand.kRight); 
+       return xboxDrive.getX(Hand.kLeft); 
     }
     public double getJoyY()
     {
-        return xboxDrive.getY(Hand.kRight);
+        return xboxDrive.getY(Hand.kLeft);
     }
     
     
