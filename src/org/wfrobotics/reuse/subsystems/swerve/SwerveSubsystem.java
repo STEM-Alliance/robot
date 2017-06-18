@@ -44,7 +44,7 @@ public class SwerveSubsystem extends DriveSubsystem
         
         public String toString()
         {
-            return String.format("(V: %s, R: %.2f, H: %.2", velocity, spin, heading);
+            return String.format("V: %s, R: %.2f, H: %.2f", velocity, spin, heading);
         }
     }
     

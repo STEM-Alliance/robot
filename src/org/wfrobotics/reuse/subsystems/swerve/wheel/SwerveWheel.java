@@ -20,40 +20,28 @@ public class SwerveWheel
     private final DriveMotor driveManager;
     private final AngleMotor angleManager;
     private final Shifter shifter;
-    
-    private Vector desiredVector;
-    private Vector actualVector;
-    
-    private double lastUpdateTime = 0;
 
-    public SwerveWheel(String name, int Number, Vector position)
+    public SwerveWheel(String name, int number, Vector position)
     {
         NAME = name;
-        this.NUMBER = Number;
+        this.NUMBER = number;
         this.POSITION_RELATIVE_TO_CENTER = position;
 
         driveManager = new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[NUMBER], Constants.DRIVE_SPEED_SENSOR_ENABLE);
         angleManager = new AngleMotorMagPot(NAME + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[NUMBER]);
         shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[NUMBER], Constants.SHIFTER_VALS[NUMBER],
                               Constants.SHIFTER_RANGE, Constants.SHIFTER_INVERT[NUMBER]);
-        
-        actualVector = new Vector(0, 0);
-        desiredVector = new Vector(0, 0);
-    
-        lastUpdateTime = Timer.getFPGATimestamp();
     }
     
     /**
      * Set the desired wheel vector, auto updates the PID controllers
      * @param desired Velocity and Rotation of this wheel
      * @param gearHigh True: High gear, False: Low gear
-     * @param brake
+     * @param brake Enable brake mode?
      * @return Actual vector of wheel (sensor feedback)
      */
     public Vector set(Vector desired, boolean gear, boolean brake)
     {
-        this.desiredVector = desired;
-
         boolean reverseDrive = angleManager.update(desired);  // TODO Consider moving motor reversal to swerve wheel. Is it a "wheel thing" or "angle motor thing"?
         shifter.setGear(gear);
         
@@ -61,19 +49,14 @@ public class SwerveWheel
         driveManager.set(driveCommand, brake);
         //SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
 
-        SmartDashboard.putNumber(NAME + "UpdateRate", Timer.getFPGATimestamp() - lastUpdateTime);
-        lastUpdateTime = Timer.getFPGATimestamp();
-
-        return getActual();
+        return getActual(desired);
     }
 
-    public Vector getActual()
+    public Vector getActual(Vector desiredVector)
     {
         double magnitude = (Constants.DRIVE_SPEED_SENSOR_ENABLE) ? driveManager.get()/Constants.DRIVE_SPEED_MAX : desiredVector.getMag();
-        
-        actualVector.setMagAngle(magnitude, angleManager.getDegrees());
-        
-        return actualVector;
+
+        return Vector.NewFromMagAngle(magnitude, angleManager.getDegrees());
     }
 
     public void printDash()
@@ -81,4 +64,4 @@ public class SwerveWheel
         SmartDashboard.putNumber(NAME + ".angle", angleManager.getDegrees());
         SmartDashboard.putNumber("SpeedCurrent" + NUMBER, driveManager.get());
     }
-}
+}        
