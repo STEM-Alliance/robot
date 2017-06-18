@@ -48,7 +48,7 @@ public abstract class AngleMotor
     
     public String toString()
     {
-        return String.format("(A: %.2f\u00b0, E: %.2f\u00b0)", getDegrees(), anglePID.error);
+        return String.format("A: %.2f\u00b0, E: %.2f\u00b0", getDegrees(), anglePID.error);
     }
     
     /**

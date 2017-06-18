@@ -30,7 +30,7 @@ public class SwerveChassis implements Runnable
     public class Config
     {
         private final boolean ENABLE_ACCELERATION_LIMIT = true;
-        private final boolean ENABLE_CRAWL_MODE = true;
+        private final boolean CRAWL_MODE_ENABLE = true;
         private final boolean CRAWL_MODE_DEFAULT_HIGH = true;
         private final boolean ENABLE_SQUARE_MAGNITUDE = true;
         private final boolean ENABLE_ROTATION_LIMIT = true;
@@ -50,9 +50,10 @@ public class SwerveChassis implements Runnable
 
     private HerdVector lastVelocity;
     private double lastVelocityTimestamp;
+    private double debugLastUpdate;  // Measure thread loop period
     
-    HerdVector requestedRobotVelocity; 
-    double requestedRobotRotation; 
+    HerdVector requestedRobotVelocity;
+    double requestedRobotRotation;
     boolean requestedGear;
     boolean requestedBrake;
 
@@ -68,40 +69,45 @@ public class SwerveChassis implements Runnable
 
         lastVelocity = new HerdVector(0, 0);
         lastVelocityTimestamp = Timer.getFPGATimestamp();
+        debugLastUpdate = Timer.getFPGATimestamp();
     }
     
     @Override  // Entry point for running this class as a runnable/thread
     public void run()
     {
         setWheelVectors(requestedRobotVelocity, requestedRobotRotation, requestedGear, requestedBrake);
+        printDash();
+
+        SmartDashboard.putNumber("SwerveUpdateRate", Timer.getFPGATimestamp() - debugLastUpdate);
+        debugLastUpdate = Timer.getFPGATimestamp();
     }
     
-    public synchronized void updateWheelVectors(HerdVector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
+    public synchronized void updateWheelVectors(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
     {
-        requestedRobotVelocity = RobotVelocity; 
-        requestedRobotRotation = RobotRotation; 
+        requestedRobotVelocity = robotVelocity; 
+        requestedRobotRotation = robotRotation; 
         requestedGear = gear;
         requestedBrake = brake;
     }
 
     /**
      * Scale the wheel vectors based on max available velocity, adjust for rotation rate, then set/update the desired vectors individual wheels
-     * @param RobotVelocity Robot's velocity using {@link Vector} type; max speed is 1.0
-     * @param RobotRotation Robot's rotational movement; max rotation speed is -1 or 1
+     * @param robotVelocity Robot's velocity using {@link Vector} type; max speed is 1.0
+     * @param robotRotation Robot's rotational movement; max rotation speed is -1 or 1
      * @param gear Which gear should the shifter use? True: High, False: Low
      * @param brake Enable brake mode? True: Yes, False: No
      * @return Array of {@link Vector} of the actual readings from the wheels
      */
-    public Vector[] setWheelVectors(HerdVector RobotVelocity, double RobotRotation, boolean gear, boolean brake)
+    public Vector[] setWheelVectors(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
     {
-        RobotCommand robot = new RobotCommand(RobotVelocity, RobotRotation);
+        RobotCommand robot = new RobotCommand(robotVelocity, robotRotation);
         Vector[] WheelsScaled;
         Vector[] WheelsActual = new Vector[Constants.WHEEL_COUNT];
 
         robot = applyClampVelocity(robot);
         robot = (config.ENABLE_SQUARE_MAGNITUDE) ? applyMagnitudeSquare(robot) : robot;
         robot = (config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(robot) : robot;  
-        robot = (config.ENABLE_CRAWL_MODE) ? applyCrawlMode(robot) : robot;
+        robot = (config.CRAWL_MODE_ENABLE) ? applyCrawlMode(robot) : robot;
         robot = (config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(robot) : robot;
         lastVelocity = robot.velocity;
 
@@ -117,8 +123,6 @@ public class SwerveChassis implements Runnable
         {
             WheelsActual[i] = wheels[i].set(WheelsScaled[i], gear, brake);
         }
-
-        printDash();
 
         return WheelsActual;
     }
