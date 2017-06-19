@@ -1,10 +1,8 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.subsystems.swerve.Shifter;
-import org.wfrobotics.robot.config.RobotMap;
+import org.wfrobotics.reuse.utilities.HerdVector;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -13,55 +11,53 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class SwerveWheel
 {
-    public final Vector POSITION_RELATIVE_TO_CENTER;
     private final String NAME;
-    private final int NUMBER;
+    private final int NUMBER;  // TODO decouple and nuke
 
-    private final DriveMotor driveManager;
-    private final AngleMotor angleManager;
+    private final DriveMotor driveMotor;
+    private final AngleMotor angleMotor;
     private final Shifter shifter;
 
-    public SwerveWheel(String name, int number, Vector position)
+    public SwerveWheel(String name, int addressDrive, int addressAngle, int addressShift, int number)
     {
         NAME = name;
         this.NUMBER = number;
-        this.POSITION_RELATIVE_TO_CENTER = position;
 
-        driveManager = new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[NUMBER], Constants.DRIVE_SPEED_SENSOR_ENABLE);
-        angleManager = new AngleMotorMagPot(NAME + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[NUMBER]);
-        shifter = new Shifter(RobotMap.PWM_SWERVE_SHIFT_SERVOS[NUMBER], Constants.SHIFTER_VALS[NUMBER],
-                              Constants.SHIFTER_RANGE, Constants.SHIFTER_INVERT[NUMBER]);
+        driveMotor = new DriveMotor(addressDrive, Config.DRIVE_SPEED_SENSOR_ENABLE);
+        angleMotor = new AngleMotorMagPot(NAME + ".Angle", addressAngle);
+        shifter = new Shifter(addressShift, Config.SHIFTER_VALS[NUMBER], Config.SHIFTER_RANGE, Config.SHIFTER_INVERT[NUMBER]);
     }
+    
+    // TODO nice toString()?
     
     /**
      * Set the desired wheel vector, auto updates the PID controllers
      * @param desired Velocity and Rotation of this wheel
      * @param gearHigh True: High gear, False: Low gear
      * @param brake Enable brake mode?
-     * @return Actual vector of wheel (sensor feedback)
      */
-    public Vector set(Vector desired, boolean gear, boolean brake)
+    public void set(HerdVector desired, boolean gear, boolean brake)
     {
-        boolean reverseDrive = angleManager.update(desired);  // TODO Consider moving motor reversal to swerve wheel. Is it a "wheel thing" or "angle motor thing"?
+        boolean reverseDrive = angleMotor.update(desired);  // TODO Consider moving motor reversal to swerve wheel. Is it a "wheel thing" or "angle motor thing"?
         shifter.setGear(gear);
         
         double driveCommand = (reverseDrive) ? -desired.getMag() : desired.getMag();
-        driveManager.set(driveCommand, brake);
+        driveMotor.set(driveCommand, brake);
         //SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
-
-        return getActual(desired);
     }
 
-    public Vector getActual(Vector desiredVector)
+    // TODO Delete until we have interpolation from feedback?
+    public HerdVector getActual(HerdVector desiredVector)
     {
-        double magnitude = (Constants.DRIVE_SPEED_SENSOR_ENABLE) ? driveManager.get()/Constants.DRIVE_SPEED_MAX : desiredVector.getMag();
+        double magnitude = (Config.DRIVE_SPEED_SENSOR_ENABLE) ? driveMotor.get()/Config.DRIVE_SPEED_MAX : desiredVector.getMag();
 
-        return Vector.NewFromMagAngle(magnitude, angleManager.getDegrees());
+        return new HerdVector(magnitude, angleMotor.getDegrees());
     }
 
+    // TODO remove
     public void printDash()
     {
-        SmartDashboard.putNumber(NAME + ".angle", angleManager.getDegrees());
-        SmartDashboard.putNumber("SpeedCurrent" + NUMBER, driveManager.get());
+        SmartDashboard.putNumber(NAME + ".angle", angleMotor.getDegrees());
+        SmartDashboard.putNumber("SpeedCurrent" + NUMBER, driveMotor.get());
     }
 }        

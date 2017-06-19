@@ -3,7 +3,7 @@ package org.wfrobotics.reuse.commands.drive;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
+import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -50,18 +50,18 @@ public class DriveSwerve extends Command
         switch(mode)
         {
             case HALO:
-                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
+                Config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
     
                 speedRobot = Robot.oi.swerveOI.getHaloDrive_Velocity();
                 speedRotation = -Robot.oi.swerveOI.getHaloDrive_Rotation();
                 break;
             case FUSION:
                 
-                Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
+                Config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
                 
                 if(Robot.shooterSubsystem.isRunning())
                 {
-                    Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = 1;
+                    Config.crawlModeMagnitude = 1;
                 }
                 
                 speedRobot = Robot.oi.swerveOI.getHaloDrive_Velocity();
@@ -73,7 +73,7 @@ public class DriveSwerve extends Command
                 {
                     if (dpad != -1)
                     {
-                        Robot.driveSubsystem.wheelManager.config.crawlModeMagnitude = 0;
+                        Config.crawlModeMagnitude = 0;
                         
                         double speed = Robot.driveSubsystem.configSwerve.gearHigh ? DPAD_MOVEMENT_SPEED_HG : DPAD_MOVEMENT_SPEED_LG;
                         
@@ -126,7 +126,7 @@ public class DriveSwerve extends Command
                 //    ((SwerveDriveSubsystem)Robot.driveSubsystem).gyroZero();
                 //}
                 
-                ((SwerveSubsystem)Robot.driveSubsystem).wheelManager.config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
+                Config.crawlModeMagnitude = Robot.oi.swerveOI.getCrawlSpeed();
                 
                 
                 if (dpad != -1)

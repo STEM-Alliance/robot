@@ -1,6 +1,6 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
-import org.wfrobotics.reuse.subsystems.swerve.wheel.Constants;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.Config;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
@@ -26,7 +26,7 @@ public class Shifter
         BOTTOM = angleMidway - halfRange;
         gearLastState = false;
         gearLastRequested = false;
-        timeLastRequested = Timer.getFPGATimestamp() - Constants.SHIFTER_SHIFT_TIME;  // Start fully in this gear
+        timeLastRequested = Timer.getFPGATimestamp() - Config.SHIFTER_SHIFT_TIME;  // Start fully in this gear
     }
     
     /**
@@ -53,7 +53,7 @@ public class Shifter
      */
     public boolean isHighGear()
     {
-        if (Timer.getFPGATimestamp() - timeLastRequested > Constants.SHIFTER_SHIFT_TIME)
+        if (Timer.getFPGATimestamp() - timeLastRequested > Config.SHIFTER_SHIFT_TIME)
         {
             gearLastState = gearLastRequested;
         }
