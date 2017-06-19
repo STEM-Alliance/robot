@@ -8,7 +8,7 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.commands.drive.DriveSwerve;
 import org.wfrobotics.reuse.subsystems.DriveSubsystem;
-import org.wfrobotics.reuse.subsystems.swerve.chassis.Constants;
+import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
 import org.wfrobotics.reuse.subsystems.swerve.chassis.SwerveChassis;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Swerve chassis implementation
+ * Swerve Drive implementation
  * @author Team 4818 WFRobotics
  */
 public class SwerveSubsystem extends DriveSubsystem
@@ -27,8 +27,8 @@ public class SwerveSubsystem extends DriveSubsystem
     public class ChassisCommand 
     {
         HerdVector velocity;  // Direction
-        double spin;      // Twist while moving
-        double heading;   // Angle to track
+        double spin;          // Twist while moving
+        double heading;       // Angle to track
 
         public ChassisCommand(HerdVector velocity,  double rotationalSpeed, double heading)
         {
@@ -44,7 +44,7 @@ public class SwerveSubsystem extends DriveSubsystem
         
         public String toString()
         {
-            return String.format("V: %s, R: %.2f, H: %.2f", velocity, spin, heading);
+            return String.format("V: %s, W: %.2f, H: %.2f", velocity, spin, heading);
         }
     }
     
@@ -73,7 +73,7 @@ public class SwerveSubsystem extends DriveSubsystem
         super(true);  // set it into field relative by default
         
         configSwerve = new SwerveConfiguration();
-        chassisAngleController = new PIDController(Constants.CHASSIS_P, Constants.CHASSIS_I, Constants.CHASSIS_D, 1.0);
+        chassisAngleController = new PIDController(Config.CHASSIS_P, Config.CHASSIS_I, Config.CHASSIS_D, 1.0);
         
         scheduler = Executors.newScheduledThreadPool(1);
         wheelManager = new SwerveChassis();
@@ -101,14 +101,14 @@ public class SwerveSubsystem extends DriveSubsystem
      * @param heading Auto-goto this angle (range: anything in degrees, zero is forward, -1 to disable)
      * @return actual wheel readings
      */
-    public Vector[] driveWithHeading(Vector velocity, double rotation, double heading)
+    public void driveWithHeading(Vector velocity, double rotation, double heading)
     {
         HerdVector v = new HerdVector(velocity.getMag(), velocity.getAngle());
         ChassisCommand command = new ChassisCommand(v, rotation, heading);
 
-        chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Constants.CHASSIS_P));
-        chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Constants.CHASSIS_I));
-        chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Constants.CHASSIS_D));
+        chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Config.CHASSIS_P));
+        chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Config.CHASSIS_I));
+        chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
         
         ApplySpinMode(command, heading == HEADING_IGNORE); // Pass by reference
         log.info("Chassis Command", command);
@@ -120,7 +120,7 @@ public class SwerveSubsystem extends DriveSubsystem
         
         printDash();
         
-        return wheelManager.setWheelVectors(command.velocity, command.spin, configSwerve.gearHigh, m_brake);
+        wheelManager.setWheelVectors(command.velocity, command.spin, configSwerve.gearHigh, m_brake);
     }
     
     private void ApplySpinMode(ChassisCommand command, boolean ignoreHeading)

@@ -34,10 +34,10 @@ public class DriveMotor
         
         driveMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
         driveMotor.changeControlMode(TalonControlMode.Speed);
-        driveMotor.setPID(Constants.DRIVE_P,
-                          Constants.DRIVE_I,
-                          Constants.DRIVE_D,
-                          Constants.DRIVE_F,
+        driveMotor.setPID(Config.DRIVE_P,
+                          Config.DRIVE_I,
+                          Config.DRIVE_D,
+                          Config.DRIVE_F,
                           0,
                           10,
                           0);
@@ -56,7 +56,7 @@ public class DriveMotor
      */
     public void set(double setpoint, boolean brake)
     {
-        double speed= setpoint * Constants.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
+        double speed= setpoint * Config.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
         
         speed = (brake) ? 0 : speed;
         // TODO Should we reset the PID I accumulation to brake "harder"?

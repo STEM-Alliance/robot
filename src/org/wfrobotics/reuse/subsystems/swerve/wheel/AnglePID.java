@@ -33,7 +33,7 @@ public final class AnglePID
         this.name = name;
         this.motorSpeed = 0;
         this.reverseMotor = false;
-        this.controller = new PIDController(Constants.ANGLE_P, Constants.ANGLE_I, Constants.ANGLE_D, MaxOut);    
+        this.controller = new PIDController(Config.ANGLE_P, Config.ANGLE_I, Config.ANGLE_D, MaxOut);    
     }
     
     public String toString()
@@ -88,9 +88,9 @@ public final class AnglePID
 
     private void updatePID()
     {
-        controller.setP(Preferences.getInstance().getDouble("WheelAnglePID_P", Constants.ANGLE_P));
-        controller.setI(Preferences.getInstance().getDouble("WheelAnglePID_I", Constants.ANGLE_I));
-        controller.setD(Preferences.getInstance().getDouble("WheelAnglePID_D", Constants.ANGLE_D));
+        controller.setP(Preferences.getInstance().getDouble("WheelAnglePID_P", Config.ANGLE_P));
+        controller.setI(Preferences.getInstance().getDouble("WheelAnglePID_I", Config.ANGLE_I));
+        controller.setD(Preferences.getInstance().getDouble("WheelAnglePID_D", Config.ANGLE_D));
     }
 
     /**

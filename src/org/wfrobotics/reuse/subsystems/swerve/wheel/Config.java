@@ -3,7 +3,7 @@ package org.wfrobotics.reuse.subsystems.swerve.wheel;
 /**
  * @author Team 4818 WFRobotics
  */
-public class Constants
+public class Config
 {   
     // PID ----------------------------------------------------------------------------------------
     public static final double DRIVE_P = .007;
@@ -15,13 +15,13 @@ public class Constants
     public static final double ANGLE_I = 0.0000075;
     public static final double ANGLE_D = 0.0001;
     
-    // PHYSICAL ------------------------------------------------------------------------------------    
+    // PHYSICAL ------------------------------------------------------------------------------------
     public static final double DRIVE_MAX_RPM = 5300; // CIM: ~5300 rpm, MiniCIM: ~5800 rpm
     
     public static final int[] SHIFTER_VALS = { 100, 80, 90, 120};
     public static final int SHIFTER_RANGE = 55;
 
-    // CONFIG --------------------------------------------------------------------------------------    
+    // CONFIG --------------------------------------------------------------------------------------
     public static final boolean[] ANGLE_MOTOR_INVERT = {true, true, true, true};
     public static final boolean[] SHIFTER_INVERT = {true, false, true, false};
     public static final boolean DRIVE_SPEED_SENSOR_ENABLE = true;

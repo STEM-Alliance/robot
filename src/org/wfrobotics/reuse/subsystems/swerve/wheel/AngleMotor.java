@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.utilities.HerdLogger;
+import org.wfrobotics.reuse.utilities.HerdVector;
 
 import com.ctre.CANTalon;
 
@@ -55,17 +55,17 @@ public abstract class AngleMotor
      * Update the angle motor based on the desired angle called from updateTask()
      * @return Whether the drive motor should run in the opposite direction
      */
-    public boolean update(Vector desired)
+    public boolean update(HerdVector desired)
     {
         double angleOffset = Preferences.getInstance().getDouble(NAME + ".Offset", 0);
         
         setSensorOffset(angleOffset);
         
-        if (desired.getMag() > Constants.DEADBAND_MINIMUM_SPEED)
+        if (desired.getMag() > Config.DEADBAND_MINIMUM_SPEED)
         {
             double setpoint = desired.getAngle();
             double current = getDegrees();
-            double angleMaxSpeed = Preferences.getInstance().getDouble("maxRotationSpeed", Constants.ANGLE_MAX_SPEED);
+            double angleMaxSpeed = Preferences.getInstance().getDouble("maxRotationSpeed", Config.ANGLE_MAX_SPEED);
             
             anglePID.update(setpoint, current);
             set(anglePID.getMotorSpeed() * angleMaxSpeed);
