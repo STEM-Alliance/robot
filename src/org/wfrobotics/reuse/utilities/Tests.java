@@ -3,8 +3,7 @@ package org.wfrobotics.reuse.utilities;
 import java.util.logging.Level;
 
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.subsystems.swerve.chassis.SwerveChassis.RobotCommand;
-import org.wfrobotics.reuse.subsystems.swerve.wheel.Constants;
+import org.wfrobotics.reuse.subsystems.swerve.chassis.ChassisSignal;
 
 public class Tests
 {
@@ -268,7 +267,7 @@ public class Tests
         Vector[] positions = new Vector[4];
         HerdVector velocity = new HerdVector(robotV.getMag(), robotV.getAngle());
         double spin = robotS;
-        RobotCommand robotCommand = new RobotCommand(velocity, spin);
+        ChassisSignal robotCommand = new ChassisSignal(velocity, spin);
         System.out.format("Robot Command (%.2f, %.2f, %.2f)\n", robotCommand.velocity.getMag(), robotCommand.velocity.getAngle(), robotCommand.spin);
         System.out.format("Robot Width: %.2f, Depth: %.2f\n", CHASSIS_WIDTH, CHASSIS_DEPTH);
         System.out.println("-------------------------------");
@@ -291,7 +290,7 @@ public class Tests
         System.out.println("-------------------------------");
     }
 
-    private static Vector[] oldScaleWheelVectors(RobotCommand robot, Vector[] positions)
+    private static Vector[] oldScaleWheelVectors(ChassisSignal robot, Vector[] positions)
     {
         Vector[] WheelsUnscaled = new Vector[4];
         Vector[] WheelsScaled = new Vector[4];

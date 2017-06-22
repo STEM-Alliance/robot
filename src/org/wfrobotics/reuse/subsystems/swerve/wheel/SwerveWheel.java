@@ -1,9 +1,8 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 import org.wfrobotics.reuse.subsystems.swerve.Shifter;
+import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Handle motor outputs and feedback for an individual swerve wheel
@@ -14,6 +13,7 @@ public class SwerveWheel
     private final String NAME;
     private final int NUMBER;  // TODO decouple and nuke
 
+    private HerdLogger log = new HerdLogger(AngleMotor.class);
     private final DriveMotor driveMotor;
     private final AngleMotor angleMotor;
     private final Shifter shifter;
@@ -28,7 +28,10 @@ public class SwerveWheel
         shifter = new Shifter(addressShift, Config.SHIFTER_VALS[NUMBER], Config.SHIFTER_RANGE, Config.SHIFTER_INVERT[NUMBER]);
     }
     
-    // TODO nice toString()?
+    public String toString()
+    {
+        return String.format("%.2f, %.2f\u00b0", driveMotor.get(), angleMotor.getDegrees());
+    }
     
     /**
      * Set the desired wheel vector, auto updates the PID controllers
@@ -43,21 +46,6 @@ public class SwerveWheel
         
         double driveCommand = (reverseDrive) ? -desired.getMag() : desired.getMag();
         driveMotor.set(driveCommand, brake);
-        //SmartDashboard.putNumber(name + ".speed.motor", driveMotorOutput);
-    }
-
-    // TODO Delete until we have interpolation from feedback?
-    public HerdVector getActual(HerdVector desiredVector)
-    {
-        double magnitude = (Config.DRIVE_SPEED_SENSOR_ENABLE) ? driveMotor.get()/Config.DRIVE_SPEED_MAX : desiredVector.getMag();
-
-        return new HerdVector(magnitude, angleMotor.getDegrees());
-    }
-
-    // TODO remove
-    public void printDash()
-    {
-        SmartDashboard.putNumber(NAME + ".angle", angleMotor.getDegrees());
-        SmartDashboard.putNumber("SpeedCurrent" + NUMBER, driveMotor.get());
+        log.debug(NAME, this);
     }
 }        
