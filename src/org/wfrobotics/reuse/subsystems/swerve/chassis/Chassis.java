@@ -13,26 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * This class controls swerve drive at the robot/chassis level
  * @author Team 4818 WFRobotics
  */
-public class SwerveChassis implements Runnable
+public class Chassis implements Runnable
 {
-    // TODO its own file, rename to something better?
-    public static class RobotCommand
-    {
-        public HerdVector velocity;  // The whole chassis should move based on this
-        public double spin;          // The whole chassis should rotate while moving based on this
-
-        public RobotCommand(HerdVector velocity,  double rotationalSpeed)
-        {
-            this.velocity = velocity;
-            this.spin = rotationalSpeed;
-        }
-        
-        public String toString()
-        {
-            return String.format("V: %s, W: %.2f", velocity, spin);
-        }
-    }
-
     // TODO HerdLogger?
     private SwerveWheel[] wheels;  // TODO test this as static for performance
 
@@ -40,6 +22,7 @@ public class SwerveChassis implements Runnable
     private double lastVelocityTimestamp;
     private double debugLastUpdate;  // Measure thread loop period
     
+    // Thread control
     HerdVector requestedRobotVelocity;
     double requestedRobotRotation;
     boolean requestedGear;
@@ -47,7 +30,7 @@ public class SwerveChassis implements Runnable
     
     double maxWheelMagnitudeLast;  // TODO use in interpolation of distance traveled autonomous routines
 
-    public SwerveChassis()
+    public Chassis()
     {
         wheels = new SwerveWheel[Config.WHEEL_COUNT];
         wheels[0] = new SwerveWheel("WheelBR", RobotMap.CAN_SWERVE_DRIVE_TALONS[0], RobotMap.CAN_SWERVE_ANGLE_TALONS[0], RobotMap.PWM_SWERVE_SHIFT_SERVOS[0], 0);
@@ -67,7 +50,6 @@ public class SwerveChassis implements Runnable
     public void run()
     {
         setWheelVectors(requestedRobotVelocity, requestedRobotRotation, requestedGear, requestedBrake);
-        printDash();
 
         SmartDashboard.putNumber("SwerveUpdateRate", Timer.getFPGATimestamp() - debugLastUpdate);
         debugLastUpdate = Timer.getFPGATimestamp();
@@ -86,7 +68,7 @@ public class SwerveChassis implements Runnable
      */
     public void setWheelVectors(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
     {
-        RobotCommand command = new RobotCommand(robotVelocity, robotRotation);
+        ChassisSignal command = new ChassisSignal(robotVelocity, robotRotation);
         HerdVector[] WheelsScaled;
 
         command = applyClampVelocity(command);
@@ -115,16 +97,7 @@ public class SwerveChassis implements Runnable
         return lastVelocity;
     }
 
-    // TODO remove
-    public void printDash()
-    {
-        for(int i = 0; i < Config.WHEEL_COUNT; i++)
-        {
-            wheels[i].printDash();
-        }
-    }
-
-    private HerdVector[] chassisToWheelCommands(RobotCommand robot)
+    private HerdVector[] chassisToWheelCommands(ChassisSignal robot)
     {
         HerdVector[] wheelCommands = new HerdVector[Config.WHEEL_COUNT];
         HerdVector v = new HerdVector(robot.velocity);
@@ -166,15 +139,15 @@ public class SwerveChassis implements Runnable
         return wheelCommands;
     }
 
-    private RobotCommand applyClampVelocity(RobotCommand robot)
+    private ChassisSignal applyClampVelocity(ChassisSignal robot)
     {
         double RobotVelocityClamped = (robot.velocity.getMag() > 1.0) ? 1 : robot.velocity.getMag();
         HerdVector clamped = new HerdVector(RobotVelocityClamped, robot.velocity.getAngle());
 
-        return new RobotCommand(clamped, robot.spin);
+        return new ChassisSignal(clamped, robot.spin);
     }
 
-    private RobotCommand applyMagnitudeSquare(RobotCommand robot)  // Finer control at low speed
+    private ChassisSignal applyMagnitudeSquare(ChassisSignal robot)  // Finer control at low speed
     {
         robot.velocity.scale(robot.velocity);
 
@@ -182,7 +155,7 @@ public class SwerveChassis implements Runnable
     }
 
     //Limit before slowing speed so it runs using the original values set limitations on rotation, so if driving full speed it doesn't take priority
-    private RobotCommand applyRotationLimit(RobotCommand robot)
+    private ChassisSignal applyRotationLimit(ChassisSignal robot)
     {
         Config.rotationAdjustMin = Preferences.getInstance().getDouble("DRIVE_MIN_ROTATION", Config.rotationAdjustMin);
         double RotationAdjust = Math.min(1 - robot.velocity.getMag() + Config.rotationAdjustMin, 1);
@@ -194,7 +167,7 @@ public class SwerveChassis implements Runnable
         return robot;
     }
 
-    private RobotCommand applyCrawlMode(RobotCommand robot)  // Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
+    private ChassisSignal applyCrawlMode(ChassisSignal robot)  // Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
     {
         double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", Config.DRIVE_SPEED_CRAWL);
         double crawlMag = (Config.CRAWL_MODE_DEFAULT_HIGH) ? 1 - Config.crawlModeMagnitude : Config.crawlModeMagnitude;
@@ -209,7 +182,7 @@ public class SwerveChassis implements Runnable
     // Returns the velocity restricted by the maximum acceleration
     // A low MAX_ACCELERATION value will slow the speed down  more than a high value
     // TODO: this should be replaced by a PID controller, probably... 
-    private RobotCommand applyAccelerationLimit(RobotCommand robot)
+    private ChassisSignal applyAccelerationLimit(ChassisSignal robot)
     {
         double now = Timer.getFPGATimestamp();
         double dt = now - lastVelocityTimestamp;

@@ -32,6 +32,11 @@ public abstract class DriveSubsystem extends Subsystem
         }
     }
     
+    public String toString()
+    {
+        return String.format("Gyro: %.2f, Heading: %.2f, field Relative: %b, Brake: %b", m_gyro.getYaw(), m_lastHeading, m_fieldRelative, m_brake);
+    }
+    
     public void setFieldRelative(boolean enable) { m_fieldRelative = enable; }
     public boolean getFieldRelative() { return m_fieldRelative; }
 
@@ -46,9 +51,6 @@ public abstract class DriveSubsystem extends Subsystem
     
     public void printDash()
     {
-        SmartDashboard.putNumber("Gyro", m_gyro.getYaw());
-        SmartDashboard.putNumber("Last Heading", m_lastHeading);
-        SmartDashboard.putBoolean("FieldRelative", m_fieldRelative);
-        SmartDashboard.putBoolean("Brake", m_brake);
+        SmartDashboard.putString("Drive", this.toString());
     }
 }
