@@ -87,7 +87,7 @@ public class IO
     public IO()
     {
         
-        buttonPanelBlackBottom.whenPressed(new VisionShoot());
+        //buttonPanelBlackBottom.whenPressed(new VisionShoot());
         buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
 
 

@@ -15,6 +15,7 @@ import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.subsystems.CameraGear;
 import org.wfrobotics.robot.subsystems.CameraServos;
 import org.wfrobotics.robot.subsystems.CameraShooter;
+import org.wfrobotics.robot.subsystems.CameraTrack;
 import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,10 +33,11 @@ public class Robot extends SampleRobot
     public static DashboardView dashboardView;
     public static LEDController leds;
     public static IO oi;
-    public static CameraShooter targetShooterSubsystem;
-    public static CameraGear targetGearSubsystem;
-    
+    //public static CameraShooter targetShooterSubsystem;
+    //public static CameraGear targetGearSubsystem;
+
     public static CameraServos camServoSubsystem;
+    public static CameraTrack camTrackSubsystem;
     
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;    
@@ -54,10 +56,11 @@ public class Robot extends SampleRobot
         Color[] defaultColors = {LEDs.DARK_GREEN, LEDs.LIME, LEDs.YELLOW};
         
         camServoSubsystem = new CameraServos();
+        camTrackSubsystem = new CameraTrack();
         
         driveSubsystem = new SwerveDriveSteamworks();
-        targetShooterSubsystem = new CameraShooter();
-        targetGearSubsystem = new CameraGear();
+        //targetShooterSubsystem = new CameraShooter();
+        //targetGearSubsystem = new CameraGear();
         
         dashboardView = new DashboardView();
         leds = new MindsensorCANLight(RobotMap.CAN_LIGHT);
@@ -84,11 +87,11 @@ public class Robot extends SampleRobot
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
         
-        leds.set(defaultLEDEffect);
+        //leds.set(defaultLEDEffect);
         
         while (isOperatorControl() && isEnabled())
         {
-            driveSubsystem.printDash();
+            //driveSubsystem.printDash();
             SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
             Scheduler.getInstance().run();
         }

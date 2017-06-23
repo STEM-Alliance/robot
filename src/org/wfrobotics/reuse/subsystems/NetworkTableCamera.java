@@ -93,6 +93,7 @@ public abstract class NetworkTableCamera extends Subsystem
         {
             data.clear();
         }
+        TargetCount = data.size();
     }
     
     public void enable()

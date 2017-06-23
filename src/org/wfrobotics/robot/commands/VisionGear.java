@@ -26,7 +26,7 @@ public class VisionGear extends CommandGroup
 
     public VisionGear() 
     {
-        camera = new VisionDetect(Robot.targetGearSubsystem, VisionDetect.MODE.GETDATA);
+        //camera = new VisionDetect(Robot.targetGearSubsystem, VisionDetect.MODE.GETDATA);
         pidX = new PIDController(2.5, 0.125, 0, .35);
         drive = new AutoDrive(0, 0, 0, -1, 999);
 
