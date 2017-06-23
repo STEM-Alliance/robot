@@ -26,7 +26,7 @@ public class VisionShoot extends CommandGroup
     public VisionShoot() 
     {
         pidRotate = new PIDController(2, 0.0002, 0.0001, .4);
-        camera = new VisionDetect(Robot.targetShooterSubsystem, VisionDetect.MODE.GETDATA);
+        //camera = new VisionDetect(Robot.targetShooterSubsystem, VisionDetect.MODE.GETDATA);
         rotate = new AutoDrive(0);
         
         addParallel(camera);

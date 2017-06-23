@@ -22,7 +22,7 @@ public class CameraGear extends NetworkTableCamera
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new VisionDetect(Robot.targetGearSubsystem, VisionDetect.MODE.OFF));
+        //setDefaultCommand(new VisionDetect(Robot.targetGearSubsystem, VisionDetect.MODE.OFF));
     }
     
     public void run()
@@ -32,7 +32,6 @@ public class CameraGear extends NetworkTableCamera
         
         getUpdatedData();
         
-        TargetCount = data.size();
         SmartDashboard.putNumber("GearTargets", TargetCount);
         
         if(TargetCount == DESIRED_TARGETS)

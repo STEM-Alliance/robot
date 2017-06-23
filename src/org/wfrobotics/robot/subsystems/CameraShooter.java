@@ -21,7 +21,7 @@ public class CameraShooter extends NetworkTableCamera
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new VisionDetect(Robot.targetShooterSubsystem, VisionDetect.MODE.OFF));
+        //setDefaultCommand(new VisionDetect(Robot.targetShooterSubsystem, VisionDetect.MODE.OFF));
     }    
 
     public void run()

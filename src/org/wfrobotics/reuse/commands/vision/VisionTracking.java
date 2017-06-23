@@ -22,4 +22,9 @@ public class VisionTracking extends CommandGroup {
     {
         
     }
+    
+    protected boolean isFinished()
+    {
+        return false;
+    }
 }

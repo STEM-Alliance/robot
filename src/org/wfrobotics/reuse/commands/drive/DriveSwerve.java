@@ -41,6 +41,7 @@ public class DriveSwerve extends Command
 
     protected void execute() 
     {
+        /*
         double dpad = Robot.oi.swerveOI.getDpad();
         Vector speedRobot;
         double speedRotation;
@@ -175,6 +176,7 @@ public class DriveSwerve extends Command
             Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > AUTO_SHIFT_TIME && speedRobot.getMag() > AUTO_SHIFT_SPEED;
         }
         Robot.driveSubsystem.driveVector(speedRobot, speedRotation);
+        */
     }
 
     protected boolean isFinished() 

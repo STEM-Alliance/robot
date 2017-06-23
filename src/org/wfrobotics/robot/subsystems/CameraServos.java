@@ -3,14 +3,16 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.commands.vision.VisionDetect;
 import org.wfrobotics.reuse.commands.vision.VisionDetect.MODE;
+import org.wfrobotics.reuse.commands.vision.VisionTracking;
 import org.wfrobotics.reuse.commands.vision.XboxGimbal;
 import org.wfrobotics.reuse.subsystems.NetworkTableCamera;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class CameraServos extends NetworkTableCamera {
+public class CameraServos extends Subsystem {
     
 /*
  *      -----The Vision TestBoard Project of summer 2k17!-----
@@ -57,96 +59,21 @@ public class CameraServos extends NetworkTableCamera {
     double lastX = 0.0, 
            lastY = 0.0;
     
+    boolean hasTarget = false;
+    
     public CameraServos()
     {
-        super("Target", 0, 1);
-        
         servoX = new Servo(7);
         servoY = new Servo(6);
-        
-        currentState = State.searching;
         
     }
     
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new VisionDetect(Robot.camServoSubsystem, MODE.GETDATA));
+        //setDefaultCommand(new VisionDetect(Robot.camServoSubsystem, MODE.GETDATA));
+        //setDefaultCommand(new VisionTracking(Robot.camServoSubsystem));
     }
-
-    @Override
-    public void run()
-    {       
-        getUpdatedData();
-        SmartDashboard.putNumber("GearTargets", TargetCount);
-        
-        if (TargetCount == 0)
-        {
-            lookingForTarget();
-            
-            if (currentState != State.searching)
-            {
-                currentState = State.searching;
-            }
-        }
-        if ( TargetCount <= 1)
-        {
-            currentState = State.found;            
-        }
-        
-                
-    }
-    public void moveToTarget()
-    {
-        servoX.set(getXoffset());
-        servoY.set(getYoffset());
-    }
-    public double getXoffset()
-    {
-/*
- * THOUGHT PROSSES:
- * 
- *      the center of the image is 1/2 the width.
- *          Therefore the relative position of the x of the target is the amount that should be corrected for on the x axis?
- *          
- *          repeat for the Y axis servo?
- */
-        TargetData validData = data.get(0);     
-
-        double xoffset = (table.imageWidth / 2 - validData.x);
-        
-        return Utilities.scaleToRange(xoffset, 0.0, 1.0);
-    }
-    public double getYoffset()
-    {
-        TargetData validData = data.get(0);     
- 
-                double Yoffset = (table.imageHeight / 2 - validData.y);
-                
-                return Utilities.scaleToRange(Yoffset, 0.0, 1.0);
-    }
-    public void lookingForTarget()
-    {
-        do{
-            
-                if (lastX <= 1)
-                {
-                    servoX.set(lastX);
-                    lastX += 0.1;
-                }
-                else
-                {
-                    if (lastY <= 1)
-                    {
-                        lastY = 0;
-                    }
-                   lastY = lastY + 0.1;
-                   lastX = 0;
-                   servoY.set(lastY);
-            }
-        }while (currentState == State.searching);
-    }
- 
     public void setX(double val)
     {
         // the Xbox Joystick is -90-90 however the servo movement is 0-180; therefore 90 degree offset?
