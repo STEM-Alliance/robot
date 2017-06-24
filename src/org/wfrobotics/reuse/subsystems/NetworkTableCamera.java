@@ -7,6 +7,7 @@ import org.wfrobotics.TargetTable;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public abstract class NetworkTableCamera extends Subsystem 
 {
@@ -58,7 +59,7 @@ public abstract class NetworkTableCamera extends Subsystem
     public double DistanceFromCenter = 0;
     public double FullWidth = 0;
     public boolean InView = false;
-
+    
     public NetworkTableCamera(String tableKey, int source, int desiredTargets)
     {
         this.source = source;
@@ -93,7 +94,7 @@ public abstract class NetworkTableCamera extends Subsystem
         {
             data.clear();
         }
-        TargetCount = data.size();
+        TargetCount = data.size(); 
     }
     
     public void enable()

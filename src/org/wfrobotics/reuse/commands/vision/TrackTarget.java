@@ -21,17 +21,23 @@ public class TrackTarget extends Command {
     protected void execute()
     {
         super.execute();
-        Utilities.PrintCommand("CameraServo", this);
         
         if ( Robot.camTrackSubsystem.getHasTarget())
         {
-        SmartDashboard.putNumber("Xoffset Value!", Robot.camTrackSubsystem.getXoffset());
-        SmartDashboard.putNumber("Yoffset Value!", Robot.camTrackSubsystem.getYoffset());
+            SmartDashboard.putNumber("Xoffset Value!", Robot.camTrackSubsystem.getXoffset());
+            SmartDashboard.putNumber("Yoffset Value!", Robot.camTrackSubsystem.getYoffset());
 
-        Robot.camServoSubsystem.setX(Robot.camTrackSubsystem.getXoffset());
-        Robot.camServoSubsystem.setY(Robot.camTrackSubsystem.getYoffset());
-            SmartDashboard.putNumber("CameraServoCount", value++);
+            Robot.camServoSubsystem.setX(Robot.camTrackSubsystem.getXoffset());
+            Robot.camServoSubsystem.setY(-(Robot.camTrackSubsystem.getYoffset()));
+            
         }
+        else
+        {
+            Robot.camServoSubsystem.setX(0);
+            Robot.camServoSubsystem.setY(0);
+        }
+        
+        SmartDashboard.putBoolean("TrackTargetBool", Robot.camTrackSubsystem.getHasTarget());
     }
     @Override
     protected boolean isFinished()
