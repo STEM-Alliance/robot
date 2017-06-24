@@ -1,16 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.commands.vision.VisionDetect;
-import org.wfrobotics.reuse.commands.vision.VisionDetect.MODE;
-import org.wfrobotics.reuse.commands.vision.VisionTracking;
-import org.wfrobotics.reuse.commands.vision.XboxGimbal;
-import org.wfrobotics.reuse.subsystems.NetworkTableCamera;
-import org.wfrobotics.robot.Robot;
-
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CameraServos extends Subsystem {
     
@@ -49,16 +40,14 @@ public class CameraServos extends Subsystem {
  * ************** Troy in not responsible in any way for widespread spelling errors.... ***************
  *                  Tip: If you can't read it sound out the word literally out loud!
  */
+    
     Servo servoX,
           servoY;
     
     public enum State { searching, found, locked, off };
         
     public State currentState;
-       
-    double lastX = 0.0, 
-           lastY = 0.0;
-    
+           
     boolean hasTarget = false;
     
     public CameraServos()
@@ -74,14 +63,26 @@ public class CameraServos extends Subsystem {
         //setDefaultCommand(new VisionDetect(Robot.camServoSubsystem, MODE.GETDATA));
         //setDefaultCommand(new VisionTracking(Robot.camServoSubsystem));
     }
+    /**
+     * Sets servo from center as:
+     *      val > 0.5 moves right 
+     *      val < 0.5 moves left
+     *                  
+     * @param val double 0 - 1
+     */
     public void setX(double val)
     {
-        // the Xbox Joystick is -90-90 however the servo movement is 0-180; therefore 90 degree offset?
         servoX.set(val + 0.5);
     }
+    /**
+     * Sets servo from center as:
+     *      val > 0.5 moves right 
+     *      val < 0.5 moves left
+     *                  
+     * @param val double 0 - 1
+     */
     public void setY(double val)
     {
-        // the Xbox Joystick is -90-90 however the servo movement is 0-180; therefore 90 degree offset?
             servoY.set(val + 0.5);
     }
 

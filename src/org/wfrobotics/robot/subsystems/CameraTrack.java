@@ -26,7 +26,7 @@ public class CameraTrack extends NetworkTableCamera {
         super("Target", 0, 1);
         
         currentState = State.searching;
-        
+        this.enable();
     }
     
     @Override
@@ -41,14 +41,15 @@ public class CameraTrack extends NetworkTableCamera {
     {       
         getUpdatedData();
         SmartDashboard.putNumber("ServoTargets", TargetCount);
+        SmartDashboard.putBoolean("hasTarget", hasTarget);
         
         if (TargetCount == 0)
         {
             lookingForTarget();
-            
+            hasTarget = false;
+
             if (currentState != State.searching)
             {
-                hasTarget = false;
                 currentState = State.searching;
             }
         }
@@ -57,7 +58,6 @@ public class CameraTrack extends NetworkTableCamera {
             hasTarget = true;
             currentState = State.found;   
         }
-        
                 
     }
 
@@ -67,14 +67,6 @@ public class CameraTrack extends NetworkTableCamera {
      */
     public double getXoffset()
     {
-/*
- * THOUGHT PROSSES:
- * 
- *      the center of the image is 1/2 the width.
- *          Therefore the relative position of the x of the target is the amount that should be corrected for on the x axis?
- *          
- *          repeat for the Y axis servo?
- */
         TargetData validData = data.get(0);     
 
         double xoffset = ((validData.x - (table.imageWidth / 2)) / (table.imageWidth / 2));
@@ -85,32 +77,33 @@ public class CameraTrack extends NetworkTableCamera {
     {
         TargetData validData = data.get(0);     
  
-                double yoffset = ((validData.y - (table.imageHeight / 2)) / (table.imageHeight / 2));
+        double yoffset = ((validData.y - (table.imageHeight / 2)) / (table.imageHeight / 2));
                 
-                return yoffset;
+        return yoffset;
     }
+   
     public void lookingForTarget()
     {
-        do{
-            
-                if (lastX <= 1)
-                {
-                    //servoX.set(lastX);
-                    lastX += 0.1;
-                }
-                else
-                {
-                    if (lastY <= 1)
-                    {
-                        lastY = 0;
-                    }
-                   lastY = lastY + 0.1;
-                   lastX = 0;
-                   //servoY.set(lastY);
-            }
-        }while (currentState == State.searching);
+//        do{
+//            
+//                if (lastX <= 1)
+//                {
+//                    //servoX.set(lastX);
+//                    lastX += 0.1;
+//                }
+//                else
+//                {
+//                    if (lastY <= 1)
+//                    {
+//                        lastY = 0;
+//                    }
+//                   lastY = lastY + 0.1;
+//                   lastX = 0;
+//                   //servoY.set(lastY);
+//            }
+//        }while (currentState == State.searching);
     }
-    
+   
     public boolean getHasTarget()
     {
         return hasTarget;
