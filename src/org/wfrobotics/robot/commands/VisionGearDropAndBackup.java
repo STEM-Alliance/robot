@@ -1,8 +1,7 @@
 package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.reuse.commands.drive.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.DriveConfig;
-import org.wfrobotics.reuse.commands.drive.DriveConfig.MODE;
+import org.wfrobotics.reuse.commands.driveconfig.FieldRelative;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -19,7 +18,7 @@ public class VisionGearDropAndBackup extends CommandGroup
         addSequential(new AutoDrive(0, 0, 0, -1, .5));
         
         // now drop it and back up
-        addSequential(new DriveConfig(MODE.FIELD_RELATIVE, false));
+        addSequential(new FieldRelative(false));
 
         addParallel(new Lift(Lift.MODE.DOWN));
         addSequential(new AutoDrive(0.2, 0, 0, -1, .75));
@@ -27,7 +26,7 @@ public class VisionGearDropAndBackup extends CommandGroup
         addParallel(new Lift(Lift.MODE.DOWN));
         addSequential(new AutoDrive(.4, 0, 0, -1, .5));
         
-        addSequential(new DriveConfig(MODE.FIELD_RELATIVE, fieldRelative));
+        addSequential(new FieldRelative(fieldRelative));
         
         addSequential(new AutoDrive(0, 0, 0, -1, .1));  // Don't coast GOOD        
     }
