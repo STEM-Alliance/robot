@@ -2,7 +2,9 @@ package org.wfrobotics.robot.driveoi;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.commands.drive.DriveConfig;
+import org.wfrobotics.reuse.commands.driveconfig.FieldRelativeToggle;
+import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
+import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.XboxButton;
@@ -65,9 +67,9 @@ public class Swerve
             //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
             buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
             buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
-            buttonDriveShift.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
-            buttonDriveFieldRelative.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
-            buttonDriveSetGyro.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
+            buttonDriveShift.whenPressed(new ShiftToggle());
+            buttonDriveFieldRelative.whenPressed(new FieldRelativeToggle());
+            buttonDriveSetGyro.whenPressed(new GyroZero());
         }
         
 
@@ -226,9 +228,9 @@ public class Swerve
             //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
             buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
             buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
-            buttonDriveShift.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
-            buttonDriveFieldRelative.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
-            buttonDriveSetGyro.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
+            buttonDriveShift.whenPressed(new ShiftToggle());
+            buttonDriveFieldRelative.whenPressed(new FieldRelativeToggle());
+            buttonDriveSetGyro.whenPressed(new GyroZero());
         }
 
         public double getHaloDrive_Rotation()

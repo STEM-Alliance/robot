@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.reuse.commands.drive.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.DriveConfig;
+import org.wfrobotics.reuse.commands.driveconfig.FieldRelative;
 import org.wfrobotics.reuse.commands.vision.VisionPivot;
 import org.wfrobotics.reuse.commands.vision.VisionStrafe;
 import org.wfrobotics.robot.Autonomous.POSITION_ROTARY;
@@ -155,13 +155,13 @@ public class AutoGear extends CommandGroup
         }
 
         boolean fieldRelative = Robot.driveSubsystem.getFieldRelative();
-        addSequential(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE, false));
+        addSequential(new FieldRelative(false));
         
         addSequential(new VisionStrafe(Robot.targetGearSubsystem, Robot.leds, Commands.GEAR_VISION_STRAFE_CONFIG));
         addSequential(new VisionPivot(Robot.targetGearSubsystem, Robot.leds, Commands.GEAR_VISION_PIVOT_CONFIG));
         addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
 
-        addSequential(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE, fieldRelative));
+        addSequential(new FieldRelative(fieldRelative));
         
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
