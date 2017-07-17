@@ -7,22 +7,24 @@ import java.util.concurrent.TimeUnit;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.commands.drive.DriveSwerve;
-import org.wfrobotics.reuse.subsystems.DriveSubsystem;
+import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
 import org.wfrobotics.reuse.subsystems.swerve.chassis.Chassis;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Swerve Drive implementation
  * @author Team 4818 WFRobotics
  */
-public class SwerveSubsystem extends DriveSubsystem
+public class SwerveSubsystem extends Subsystem
 {
     public class SwerveConfiguration
     {
@@ -43,10 +45,26 @@ public class SwerveSubsystem extends DriveSubsystem
     
     private double lastHeadingTimestamp;  // Addresses counter spinning/snapback
     double lastGyro;
+    
+    protected boolean m_fieldRelative = true;
+    protected boolean m_brake = false;
+    protected Gyro m_gyro;
+    protected double m_lastHeading;
 
     public SwerveSubsystem()
-    {        
-        super(true);  // set it into field relative by default
+    {   
+        try 
+        {
+            m_gyro = Gyro.getInstance();
+        } 
+        catch (RuntimeException ex ) 
+        {
+            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+        }
+        finally
+        {
+            zeroGyro();
+        }
         
         configSwerve = new SwerveConfiguration();
         chassisAngleController = new PIDController(Config.CHASSIS_P, Config.CHASSIS_I, Config.CHASSIS_D, 1.0);
@@ -56,15 +74,16 @@ public class SwerveSubsystem extends DriveSubsystem
         scheduler.scheduleAtFixedRate(wheelManager, 1, 5, TimeUnit.MILLISECONDS);
     }
     
+    public String toString()
+    {
+        return String.format("Gyro: %.2f, Heading: %.2f, field Relative: %b, Brake: %b", m_gyro.getYaw(), m_lastHeading, m_fieldRelative, m_brake);
+    }
+    
     public void initDefaultCommand() 
     {
         setDefaultCommand(new DriveSwerve(DriveSwerve.MODE.HALO));
     }
 
-    @Override
-    public void driveTank(double right, double left) { }
-
-    @Override
     public void driveVector(Vector velocity, double rotation)
     {
         driveWithHeading(velocity, rotation, HEADING_IGNORE);
@@ -184,12 +203,19 @@ public class SwerveSubsystem extends DriveSubsystem
         return new Vector(hv.getX(), hv.getY());
     }
     
-    @Override
     public void printDash()
     {
-        super.printDash();
-
+        log.info("Drive", this);
         log.info("Gyro Enabled", configSwerve.gyroEnable);
         log.info("High Gear", configSwerve.gearHigh);
     }
+    
+    public void setFieldRelative(boolean enable) { m_fieldRelative = enable; }
+    public boolean getFieldRelative() { return m_fieldRelative; }
+
+    public void zeroGyro(float offsetYaw) { m_gyro.setZero(offsetYaw); m_lastHeading = offsetYaw; }
+    public void zeroGyro() { m_gyro.zeroYaw(); m_lastHeading = 0; }
+    
+    public void setBrake(boolean enable) { m_brake = enable; }
+    public boolean getBrake() { return m_brake; }
 }
