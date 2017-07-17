@@ -2,7 +2,7 @@ package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.commands.drive.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.vision.VisionDetect;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;

@@ -1,9 +1,11 @@
 
-package org.wfrobotics.reuse.commands.drive;
+package org.wfrobotics.reuse.commands.drive.swerve;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -174,7 +176,7 @@ public class DriveSwerve extends Command
         {
             Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > AUTO_SHIFT_TIME && speedRobot.getMag() > AUTO_SHIFT_SPEED;
         }
-        Robot.driveSubsystem.driveVector(speedRobot, speedRotation);
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(speedRobot.getMag(), speedRobot.getAngle()), speedRotation));
     }
 
     protected boolean isFinished() 

@@ -56,6 +56,6 @@ public class SwerveDriveSteamworks extends SwerveSubsystem
 
     public void setLastHeading(double gyroOffset)
     {
-        m_lastHeading = gyroOffset;
+        lastHeading = gyroOffset;
     }
 }

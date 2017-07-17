@@ -2,7 +2,7 @@ package org.wfrobotics.robot.config;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.commands.LEDSignal;
-import org.wfrobotics.reuse.commands.drive.DriveSwerve;
+import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.commands.vision.VisionPivot;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.PanelButton;

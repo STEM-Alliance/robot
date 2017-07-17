@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.reuse.commands.drive.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelative;
 import org.wfrobotics.reuse.commands.vision.VisionPivot;
 import org.wfrobotics.reuse.commands.vision.VisionStrafe;

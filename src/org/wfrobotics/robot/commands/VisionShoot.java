@@ -2,7 +2,7 @@ package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.commands.drive.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoTurn;
 import org.wfrobotics.reuse.commands.vision.VisionDetect;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class VisionShoot extends CommandGroup 
 {    
     private VisionDetect camera;
-    private AutoDrive rotate;
+    private AutoTurn rotate;
     private PIDController pidRotate;
 
     private boolean done;
@@ -27,7 +27,7 @@ public class VisionShoot extends CommandGroup
     {
         pidRotate = new PIDController(2, 0.0002, 0.0001, .4);
         camera = new VisionDetect(Robot.targetShooterSubsystem, VisionDetect.MODE.GETDATA);
-        rotate = new AutoDrive(0);
+        rotate = new AutoTurn(0);
         
         addParallel(camera);
         addSequential(rotate);
