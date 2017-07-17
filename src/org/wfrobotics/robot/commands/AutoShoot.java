@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.reuse.commands.drive.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoHeading;
 import org.wfrobotics.robot.config.Commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -71,7 +72,7 @@ public class AutoShoot extends CommandGroup
             addParallel (new Rev(Rev.MODE.RAMP));                          // Rev while catching balls
             addSequential (new AutoDrive (signX * 0, 0, 0, -1, 3));    // Wait to catch some balls
             // TODO Should we shoot from another position?
-            addSequential (new AutoDrive (signX * .3, 180 - signX * 9, .1)); // Rotate to shoot angle, Cero says 9 degrees either side of pointing backwards
+            addSequential (new AutoHeading (signX * .3, 180 - signX * 9, .1)); // Rotate to shoot angle, Cero says 9 degrees either side of pointing backwards
         }
     }
     

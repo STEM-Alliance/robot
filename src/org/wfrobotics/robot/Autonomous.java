@@ -1,6 +1,7 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.reuse.commands.drive.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoOff;
 import org.wfrobotics.robot.commands.AutoGear;
 import org.wfrobotics.robot.commands.AutoShoot;
 import org.wfrobotics.robot.config.Commands;
@@ -54,7 +55,7 @@ public class Autonomous
                 break;
             case NONE:
             default:
-                autonomousCommand = new AutoDrive();
+                autonomousCommand = new AutoOff();
                 break;
             }
             

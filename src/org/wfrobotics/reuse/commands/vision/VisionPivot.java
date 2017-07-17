@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.commands.vision;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.commands.drive.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoTurn;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
@@ -38,7 +38,7 @@ public class VisionPivot extends CommandGroup
     }
     
     private final VisionDetect camera;
-    private final AutoDrive drive;
+    private final AutoTurn drive;
     private final LEDController leds;
     private final Config config;
 
@@ -47,7 +47,7 @@ public class VisionPivot extends CommandGroup
     public VisionPivot(NetworkTableCamera camera, LEDController leds, Config config)
     {
         this.camera = new VisionDetect(camera, VisionDetect.MODE.GETDATA);
-        drive = new AutoDrive(0);
+        drive = new AutoTurn(0);
         this.leds = leds;
         this.config = config;
         
