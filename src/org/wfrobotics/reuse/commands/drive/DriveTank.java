@@ -83,7 +83,7 @@ public class DriveTank extends Command
 //            right = limit(right) * adjust;
         }
 
-        Robot.driveSubsystem.driveTank(right, left);
+        //Robot.driveSubsystem.driveTank(right, left); // TODO Couple to a dedicated tank subsystem
     }
 
     protected boolean isFinished() 
