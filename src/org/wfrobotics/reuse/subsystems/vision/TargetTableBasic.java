@@ -1,17 +1,16 @@
-package org.wfrobotics;
+package org.wfrobotics.reuse.subsystems.vision;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class TargetTable {
-
+/**
+ * Grabs the latest raw data from the Network Table connection
+ */
+public class TargetTableBasic implements TargetTable
+{
     NetworkTable table;
     
     public String name;
-
-    //TODO figure out how to get this automatically
-    public double imageWidth = 640.0;
-    public double imageHeight = 480.0;
     
     public double[] x = {0};
     public double[] y = {0};
@@ -26,7 +25,7 @@ public class TargetTable {
     
     public int targetsFound = 0;
     
-    public TargetTable(String name)
+    public TargetTableBasic(String name)
     {
         table = NetworkTable.getTable("GRIP/" + name);
     }
@@ -47,5 +46,26 @@ public class TargetTable {
         targetsFound = Math.min(x.length, Math.min(y.length, Math.min(height.length, width.length)));
         SmartDashboard.putNumber("TargetsFound", targetsFound);
     }
-
+    
+    public Target getTarget(int i)
+    {
+        Target t = null;
+        
+        if(targetsFound > 0 && targetsFound <= i)
+        {
+            t = new Target(x[i], y[i], width[i], height[i]);
+        }
+        
+        return t;
+    }
+    
+    public int numTargets()
+    {
+        return targetsFound;
+    }
+    
+    public double getcameraID()
+    {
+        return cameraSource;
+    }
 }

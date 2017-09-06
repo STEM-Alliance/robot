@@ -4,6 +4,8 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.commands.drive.swerve.AutoTurn;
 import org.wfrobotics.reuse.commands.vision.VisionDetect;
+import org.wfrobotics.reuse.commands.vision.VisionDisable;
+import org.wfrobotics.reuse.commands.vision.VisionEnable;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
@@ -26,11 +28,13 @@ public class VisionShoot extends CommandGroup
     public VisionShoot() 
     {
         pidRotate = new PIDController(2, 0.0002, 0.0001, .4);
-        camera = new VisionDetect(Robot.targetShooterSubsystem, VisionDetect.MODE.GETDATA);
+        camera = new VisionDetect(Robot.targetShooterSubsystem);
         rotate = new AutoTurn(0);
-        
+
+        addSequential(new VisionEnable(Robot.targetShooterSubsystem));
         addParallel(camera);
         addSequential(rotate);
+        addSequential(new VisionDisable(Robot.targetShooterSubsystem));
     }
     
     protected void initialize()

@@ -1,65 +1,41 @@
 package org.wfrobotics.reuse.commands.vision;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.subsystems.NetworkTableCamera;
+import org.wfrobotics.reuse.subsystems.vision.NetworkTableCamera;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionDetect extends Command 
 {
-    public enum MODE {GETDATA, OFF};
-
     private final NetworkTableCamera camera;
-    private final MODE mode;
-    
-    //boolean endEarly = false;
 
-    public VisionDetect(NetworkTableCamera camera, MODE mode)
+    public VisionDetect(NetworkTableCamera camera)
     {
         requires(camera);
 
         this.camera = camera;
-        this.mode = mode;
-        camera.enable();
     }
 
-    @Override
-    protected void initialize()
-    {
-        //endEarly = false;
-        if (mode == MODE.GETDATA)
-        {
-            camera.enable();
-        }
-    }
-
-    @Override
     protected void execute()
     {
-        Utilities.PrintCommand(camera.getName(), this, mode.toString());
+        String state = (camera.isEnabled()) ? "Enabled" : "Disabled";
+        
+        Utilities.PrintCommand(camera.getName(), this, state);
 
-        if (mode == MODE.GETDATA)
-        {
-            camera.run();
-        }
+        camera.update();
     }
 
-    @Override
     protected boolean isFinished()
     {
         return false;
-
-        //return endEarly;
     }
 
-    @Override
     protected void end()
     {
         camera.disable();
     }
 
-    @Override
     protected void interrupted()
     {
         end();
@@ -67,28 +43,24 @@ public class VisionDetect extends Command
 
     public double getDistanceFromCenter()
     {
-        return camera.DistanceFromCenter;
+        return camera.getDistanceFromCenter();
     }
 
     public boolean getIsFound()
     {
-        SmartDashboard.putBoolean("getIsFound", camera.InView);
+        boolean inView = camera.getInView();
+        SmartDashboard.putBoolean("getIsFound", inView);
         
-        return camera.InView;
+        return inView;
     }
 
     public double getFullWidth()
     {
-        return camera.FullWidth;
+        return camera.getFullWidth();
     }
 
     public boolean getIsEnabled()
     {
         return camera.isEnabled();
     }
-
-//    public void endEarly()
-//    {
-//        endEarly = true;
-//    }
 }
