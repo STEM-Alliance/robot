@@ -17,26 +17,17 @@ public class LEDs
     public static final Color BLACK = new Color(0, 0, 0);
     public static final Color RED = new Color(255, 0, 0);
     public static final Color MAROON = new Color(128, 0, 0);
-    public static final Color SALMON = new Color (250, 128, 114);
     public static final Color ORANGE = new Color(255, 69, 0);
     public static final Color YELLOW = new Color(255, 255, 0);
     public static final Color GOLD = new Color (255, 215, 0);
-    public static final Color GREEN = new Color(0, 128, 0);
     public static final Color LIME = new Color(0, 255, 0);
-    public static final Color LIME_GREEN = new Color(50, 205, 50);
-    public static final Color LIGHT_GREEN = new Color(144, 238, 144);
     public static final Color DARK_GREEN = new Color(0, 100, 0);
-    public static final Color CHARTREUSE = new Color(127, 255, 0);
     public static final Color CYAN = new Color(0, 255, 255);
     public static final Color BLUE = new Color(0, 0, 255);
-    public static final Color MAGENTA = new Color(255, 0, 255);
-    public static final Color PURPLE = new Color(128, 0, 128);
-    public static final Color INDIGO = new Color(75, 0, 130);
-    public static final Color PLUM = new Color(142, 69, 133);
-    public static final Color HOT_PINK = new Color(255, 105, 180);
-    public static final Color PINK = new Color(255, 192, 203);
-    public static final Color WHITE = new Color(255, 255, 255);
-    public static final Color SILVER = new Color(192, 192, 192);
+    
+    public static Color[] COLORS_RED_ALLIANCE = {RED , MAROON};
+    public static Color[] COLORS_BLUE_ALLIANCE = {BLUE, CYAN};
+    public static Color[] COLORS_THE_HERD = {DARK_GREEN, LIME, YELLOW};
     
     public static class Effect
     {

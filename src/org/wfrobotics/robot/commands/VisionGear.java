@@ -4,6 +4,8 @@ import org.wfrobotics.Utilities;
 import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.vision.VisionDetect;
+import org.wfrobotics.reuse.commands.vision.VisionDisable;
+import org.wfrobotics.reuse.commands.vision.VisionEnable;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
@@ -26,12 +28,14 @@ public class VisionGear extends CommandGroup
 
     public VisionGear() 
     {
-        camera = new VisionDetect(Robot.targetGearSubsystem, VisionDetect.MODE.GETDATA);
+        camera = new VisionDetect(Robot.targetGearSubsystem);
         pidX = new PIDController(2.5, 0.125, 0, .35);
         drive = new AutoDrive(0, 0, 0, -1, 999);
 
+        addSequential(new VisionEnable(Robot.targetGearSubsystem));
         addParallel(camera);
         addSequential(drive);
+        addSequential(new VisionDisable(Robot.targetGearSubsystem));
     }
 
     protected void initialize()

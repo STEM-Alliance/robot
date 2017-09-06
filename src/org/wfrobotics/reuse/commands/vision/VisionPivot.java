@@ -6,7 +6,7 @@ import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.reuse.hardware.led.LEDs.LEDController;
-import org.wfrobotics.reuse.subsystems.NetworkTableCamera;
+import org.wfrobotics.reuse.subsystems.vision.NetworkTableCamera;
 import org.wfrobotics.reuse.utilities.PIDController;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -46,13 +46,15 @@ public class VisionPivot extends CommandGroup
     
     public VisionPivot(NetworkTableCamera camera, LEDController leds, Config config)
     {
-        this.camera = new VisionDetect(camera, VisionDetect.MODE.GETDATA);
+        this.camera = new VisionDetect(camera);
         drive = new AutoTurn(0);
         this.leds = leds;
         this.config = config;
         
+        addSequential(new VisionEnable(camera));
         addParallel(this.camera);
         addSequential(drive);
+        addSequential(new VisionDisable(camera));
     }
 
     protected void initialize()

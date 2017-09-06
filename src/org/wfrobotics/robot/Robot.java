@@ -54,12 +54,10 @@ public class Robot extends SampleRobot
     public static Effect teamLEDEffect;
     
     /**
-     * This function is run when the robot is first started up and should be used for any initialization code
+     * This method is run when the robot is first started up and should be used for any initialization code
      */
     public void robotInit() 
     {
-        Color[] defaultColors = {LEDs.DARK_GREEN, LEDs.LIME, LEDs.YELLOW};
-//        
         driveSubsystem = new SwerveDriveSteamworks();
         augerSubsystem = new Auger();
         targetShooterSubsystem = new CameraShooter();
@@ -87,7 +85,7 @@ public class Robot extends SampleRobot
         //autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
         
-        defaultLEDEffect = new Effect(EFFECT_TYPE.FADE, defaultColors, 1);
+        defaultLEDEffect = new Effect(EFFECT_TYPE.FADE, LEDs.COLORS_THE_HERD, 1);
     }
 
     public void operatorControl()
@@ -107,9 +105,7 @@ public class Robot extends SampleRobot
     public void autonomous()
     {
         DriverStation.Alliance team = DriverStation.getInstance().getAlliance();
-        Color[] colorsRed = {LEDs.RED , LEDs.MAROON};
-        Color[] colorsBlue = {LEDs.BLUE, LEDs.CYAN};
-        Color[] teamDefaultColors = (team == DriverStation.Alliance.Red) ? colorsRed : colorsBlue;
+        Color[] teamDefaultColors = (team == DriverStation.Alliance.Red) ? LEDs.COLORS_RED_ALLIANCE : LEDs.COLORS_BLUE_ALLIANCE;
         AUTO_COMMAND command =  (AUTO_COMMAND) autoChooser.getSelected();
         
         autonomousCommand = command.getCommand(autonomousStartPosition);
