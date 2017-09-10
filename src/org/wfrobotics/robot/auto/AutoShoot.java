@@ -1,7 +1,12 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.drive.swerve.AutoHeading;
+import org.wfrobotics.robot.commands.Conveyor;
+import org.wfrobotics.robot.commands.IntakeSetup;
+import org.wfrobotics.robot.commands.Rev;
+import org.wfrobotics.robot.commands.Shoot;
+import org.wfrobotics.robot.commands.Rev.MODE;
 import org.wfrobotics.robot.config.Commands;
 
 import edu.wpi.first.wpilibj.DriverStation;

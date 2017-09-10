@@ -1,8 +1,10 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelative;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.commands.Lift;
+import org.wfrobotics.robot.commands.Lift.MODE;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
