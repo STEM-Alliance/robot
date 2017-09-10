@@ -1,11 +1,17 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelative;
 import org.wfrobotics.reuse.commands.vision.VisionPivot;
 import org.wfrobotics.reuse.commands.vision.VisionStrafe;
-import org.wfrobotics.robot.Autonomous.POSITION_ROTARY;
+import org.wfrobotics.robot.commands.Conveyor;
+import org.wfrobotics.robot.commands.IntakeSetup;
+import org.wfrobotics.robot.commands.Lift;
+import org.wfrobotics.robot.commands.Rev;
+import org.wfrobotics.robot.commands.Shoot;
+import org.wfrobotics.robot.commands.Rev.MODE;
 import org.wfrobotics.robot.config.Commands;
+import org.wfrobotics.robot.config.Autonomous.POSITION_ROTARY;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.DriverStation;

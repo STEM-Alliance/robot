@@ -1,11 +1,9 @@
-package org.wfrobotics.robot;
+package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.drive.swerve.AutoOff;
-import org.wfrobotics.robot.commands.AutoGear;
-import org.wfrobotics.robot.commands.AutoShoot;
-import org.wfrobotics.robot.config.Commands;
-import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.robot.auto.AutoGear;
+import org.wfrobotics.robot.auto.AutoShoot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
