@@ -7,7 +7,10 @@ import java.net.Socket;
 import java.util.logging.Level;
 
 import org.wfrobotics.reuse.utilities.HerdLogger;
+import org.wfrobotics.robot.vision.util.CameraListener;
+import org.wfrobotics.robot.vision.util.VisionMessage;
 
+/** Gets messages from the co-processor, tells anybody registered **/
 public class CameraServer implements Runnable
 {
     private static CameraServer instance;
@@ -39,7 +42,7 @@ public class CameraServer implements Runnable
         try
         {
             OutputStream io = socket.getOutputStream();
-            io.write(m.bytes());
+            io.write(m.toBytes());
         }
         catch (IOException e)
         {

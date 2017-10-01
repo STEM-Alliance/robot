@@ -1,21 +1,27 @@
 package org.wfrobotics.robot.vision;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.vision.messages.VisionUpdate;
+import org.wfrobotics.robot.vision.util.CameraListener;
 
+/** Receives vision messages, tells robot state to interpret them **/
 public class VisionProcessor implements Runnable, CameraListener
 {
     private static VisionProcessor instance;
 
-    public ConcurrentLinkedQueue<String> queue;
+    private RobotState consumer = RobotState.getInstance();
+    private String update;
 
-    public void CameraCallback(String m)
+    public synchronized void CameraCallback(String m)
     {
-        queue.add(m);  // TODO - Do we block long enough to need a queue?
+        if (m.startsWith(VisionUpdate.sGetType()))
+        {
+            update = m;
+        }
     }
 
     public VisionProcessor()
     {
-        queue = new ConcurrentLinkedQueue<String>();
         CameraServer.getInstance().register(this);
         new Thread(this).start();
     }
@@ -28,7 +34,17 @@ public class VisionProcessor implements Runnable, CameraListener
 
     public void run()
     {
-        // TODO - Process camera updates into vision state
-        // TODO - Update robot state when vision state changes
+        VisionUpdate v;
+
+        synchronized (this)
+        {
+            if (update == null)
+            {
+                return;
+            }
+            v = VisionUpdate.fromMessage(update);
+            update = null;
+        }
+        consumer.addVisionUpdate(v);
     }
 }
