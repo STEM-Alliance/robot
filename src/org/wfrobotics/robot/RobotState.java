@@ -10,8 +10,10 @@ public class RobotState
 
     // Delicious thread-safe, formatted state for Commands to feast on as they please
     // ------------- Robot State -------------
+
     public VisionMode visionMode = VisionMode.OFF;
-    // ------------- Robot State -------------
+    public boolean visionInView = false;
+    public double visionError = 1;
 
     protected RobotState() {}
 
@@ -21,44 +23,63 @@ public class RobotState
         return instance;
     }
 
+    public double getVisionError(int mode)
+    {
+        if (!visionInView || mode == VisionMode.OFF.getValue())
+        {
+            return 1;
+        }
+        return visionError;
+    }
+
+    // ------------- State Producers Only -------------
+
     public void addVisionUpdate(VisionUpdate v)
     {
+        if (v.mode != visionMode.getValue())
+        {
+            resetVisionState();
+        }
+
         if (v.mode == VisionMode.SHOOTER.getValue())
         {
-            processShooterUpdate();
+            processShooterUpdate(v);
         }
         else if (v.mode == VisionMode.GEAR.getValue())
         {
-            processGearUpdate();
-        }
-        else if (v.mode == VisionMode.OFF.getValue() && visionMode != VisionMode.OFF)
-        {
-            visionJustTurnedOff();
+            processGearUpdate(v);
         }
     }
 
-    private synchronized void visionJustTurnedOff()
+    private synchronized void resetVisionState()
     {
-        // TODO reset robot state for all vision/camera stuff is off
+        visionInView = false;
+        visionError = 1;
         visionMode = VisionMode.OFF;
     }
 
-    private void processShooterUpdate()
+    private void processShooterUpdate(VisionUpdate v)
     {
-        // TODO determine stuff from update in shooter-specific way
+        boolean targetsInView = v.targets.size() > 1;
+        double newError = 0;  // TODO calc this specific to shooter
+
         synchronized(this)
         {
-            // TODO reset robot state based on what we just determined
+            visionInView = targetsInView;
+            visionError = newError;
             visionMode = VisionMode.SHOOTER;
         }
     }
 
-    private void processGearUpdate()
+    private void processGearUpdate(VisionUpdate v)
     {
-        // TODO determine stuff from update in gear-specific way
+        boolean targetsInView = v.targets.size() > 1;
+        double newError = 0;  // TODO calc this specific to shooter
+
         synchronized(this)
         {
-            // TODO reset robot state based on what we just determined
+            visionInView = targetsInView;
+            visionError = newError;  // TODO calc this specific to shooter
             visionMode = VisionMode.GEAR;
         }
     }
