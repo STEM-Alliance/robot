@@ -37,7 +37,7 @@ public class CameraServer implements Runnable
         listener = consumer;
     }
 
-    public synchronized void send(VisionMessage m)
+    public void send(VisionMessage m)
     {
         try
         {

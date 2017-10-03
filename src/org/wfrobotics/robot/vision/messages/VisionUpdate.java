@@ -1,5 +1,7 @@
 package org.wfrobotics.robot.vision.messages;
 
+import java.util.ArrayList;
+
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.vision.util.TargetInfo;
 import org.wfrobotics.robot.vision.util.VisionMessage;
@@ -8,18 +10,21 @@ import org.wfrobotics.robot.vision.util.VisionMessage;
 public class VisionUpdate extends VisionMessage
 {
     public final int mode;
-    public final TargetInfo target;
+    public final ArrayList<TargetInfo> targets;
 
-    private VisionUpdate(int mode, TargetInfo t)
+    private VisionUpdate(int mode, ArrayList<TargetInfo> targets)
     {
         this.mode = mode;
-        target = t;
+        this.targets = targets;
     }
 
     public static VisionUpdate fromMessage(String s)
     {
         String[] vals = s.split(",");
-        if (s.length() < 6)
+        int coprocessorMode;
+        ArrayList<TargetInfo> targets = new ArrayList<TargetInfo>();
+
+        if (s.length() < 2)
         {
             new HerdLogger(TargetInfo.class).error("Vision", "Malformed message");
         }
@@ -28,17 +33,18 @@ public class VisionUpdate extends VisionMessage
             new HerdLogger(TargetInfo.class).error("Vision", "Not a " + VisionUpdate.class.toString());
         }
 
-        int coprocessorMode = Integer.valueOf(vals[1]);
+        coprocessorMode = Integer.valueOf(vals[1]);
 
-        // TODO do a for loop, assuming remainder of msg are targets
-        // TODO make an arrayList of targets if we need to support > 1
-        double x = Double.valueOf(vals[2]);
-        double y = Double.valueOf(vals[3]);
-        double w = Double.valueOf(vals[4]);
-        double h = Double.valueOf(vals[5]);
-        TargetInfo t = new TargetInfo(x, y, w, h);
+        for (int index = 2; index < s.length() - 3; index += 4)
+        {
+            double x = Double.valueOf(vals[index]);
+            double y = Double.valueOf(vals[index + 1]);
+            double w = Double.valueOf(vals[index + 2]);
+            double h = Double.valueOf(vals[index + 3]);
+            targets.add(new TargetInfo(x, y, w, h));
+        }
 
-        return new VisionUpdate(coprocessorMode, t);
+        return new VisionUpdate(coprocessorMode, targets);
     }
 
     public String getType()
@@ -48,7 +54,7 @@ public class VisionUpdate extends VisionMessage
 
     public String getMessage()
     {
-        return target.toString();
+        return targets.toString();
     }
 
     public static String sGetType()
