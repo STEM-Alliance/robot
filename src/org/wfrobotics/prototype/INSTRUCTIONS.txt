@@ -1,0 +1,115 @@
+---------------------------------
+ How to Prototype your Subsystem
+---------------------------------
+Guide to getting your subsystem's code tested. 
+Change the example as you like. It's only an example!
+When you have everything working well, we can integrate that into our real robot code.
+That doesn't mean you're done. Keep improving your subsystem better!
+
+Fast instructions:
+- Fill out ExampleSubsystem 
+- ExampleForwardCommand 
+- Program it
+- Press X to run ExampleForwardCommand
+
+
+---------------------------------
+            Hardware
+---------------------------------
+Don't start coding first! Trust me, the slow way is the fast way. 
+Start by deciding on what electronic hardware will control our subsystem.
+Get that wired up so that we can always test our software while writing it.
+
+
+---------------------------------
+            Diagram
+---------------------------------
+Make sure to decide how the software will work before writing the code.
+If possible, do this on paper. We can put this in our engineering notebook as a design note!
+
+Decide what operations (Commands) does the Subsystem needs to do. (ex: ArmToTopCommand, ArmToBottomCommand, ArmScoreCommand)
+How (what methods) will the Subsystem let Commands control it? (ex: Robot.arm.setPostition(int height))
+
+
+---------------------------------
+            Subsystem
+---------------------------------
+Okay, let's write the minimum code to make our Subsystem do the one simplest operation possible.
+In ExampleSubsystem, add objects for anything needed to talk to our subsystem's electronics.
+
+For example, create a CANTalonSRX called 'motor'. 
+Make sure to set it up in the constructor. That's the special method with the same name as the class.
+For example, a CANTalonSRX needs the correct CAN address passed to it as a parameter. Otherwise the hardware wont listen to our code!
+
+Now create a method for the Commands to call. 
+For example, setSpeed(int rpm) might call motor.set(rpm) to tell the talon to drive the motor.
+
+Tip:
+Good Subsystems make writing lots commands easy. 
+Try making your Subsystem methods take parameters to let different Commands configure the hardware in different ways with the same method.  
+
+
+---------------------------------
+             Command
+---------------------------------
+Now let's use our Subsystem in different ways. 
+Writing good commands are really the key to writing good code for our subsystem.
+
+You may have noticed ExampleSubsystem setting a 'default' Command.
+That's the command that runs when it's done running all other Commands.
+In our example, that's ExampleOffCommand. It calls our Subsystem's setSpeed method, passing it 0 as the rpm to stop the motor. 
+
+We also probably want a command that happens when we push a button. 
+That's ExampleForwardCommand. Fill it out to call setSpeed(). Or replace this with something for our prototype subsystem.
+
+Next try creating a ExampleBackwardCommand with right click -> copy on ExampleForwardCommand, then right click -> paste. 
+Rename the copy, then modify it to drive the motor backwards.
+
+Tip:
+Good Commands are simple. Simple Commands are easy to get right!
+If you can break one Command into two different ones, probably do it!
+If you need to do something more complex, consider creating CommandGroups.
+CommandGroups can run a set of Commands (ex: ShootGroup might run LoadBall then ShootBall)
+
+
+---------------------------------
+               IO
+---------------------------------
+Let's decide when Commands happen. 
+In IO, up a Button to kick off our Command when it's pressed.
+
+For example, there's already Button called 'X'. It's 'whileHeld' method is configured to start an ExampleForwardCommand.
+Now try switching the 'Y' Button to ExampleBackwardCommand, so we can run both Commands.
+
+Experiment: 
+- For example, try running our Command with the 'whenPressed' button method instead.
+- Or maybe break your Command into two Commands and assign each to a button if that makes more sense.
+
+
+---------------------------------
+             Test it
+---------------------------------
+In the Package Explorer on the left, click 'Robot', which sets it as the project to program.
+At the top, click the green 'Run' circle, which programs the robot with your code.
+
+Test it, make a code improvement, repeat!
+
+Bonus:
+- Consider adding a config file
+- Add logging
+- Simplify your code
+- Add a PID loop
+- Add Commands for autonomous
+
+
+---------------------------------
+           Put on Robot
+---------------------------------
+After our subsystem is put on the real robot, it's going to be harder to get time to test your code on the hardware.
+Before that, test it until it hurts!
+
+Ask the software mentors to make sure the subsystem is reasonably well done.
+Also make sure to work with mechanical to ACTUALLY know it's working great.
+
+Okay, now work with everyone to get it on the robot. 
+Good job. We did it!
