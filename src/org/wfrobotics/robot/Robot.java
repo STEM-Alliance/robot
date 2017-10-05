@@ -9,10 +9,10 @@ import org.wfrobotics.reuse.hardware.led.MindsensorCANLight;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.robot.config.Autonomous;
-import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.Autonomous.AUTO_COMMAND;
 import org.wfrobotics.robot.config.Autonomous.POSITION_ROTARY;
+import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.subsystems.Auger;
 import org.wfrobotics.robot.subsystems.CameraGear;
 import org.wfrobotics.robot.subsystems.CameraShooter;
@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -39,7 +38,7 @@ public class Robot extends SampleRobot
     public static DashboardView dashboardView;
     public static Intake intakeSubsystem;
     public static LEDController leds;
-    public static IO oi;
+    public static IO controls;
     public static Lifter lifterSubsystem;
     public static Shooter shooterSubsystem;
     public static CameraShooter targetShooterSubsystem;
@@ -54,9 +53,6 @@ public class Robot extends SampleRobot
     public static Effect defaultLEDEffect;
     public static Effect teamLEDEffect;
 
-    /**
-     * This method is run when the robot is first started up and should be used for any initialization code
-     */
     public void robotInit()
     {
         driveSubsystem = new SwerveDriveSteamworks();
@@ -72,7 +68,7 @@ public class Robot extends SampleRobot
         leds = new MindsensorCANLight(RobotMap.CAN_LIGHT);
         //leds.enable(false); // TODO Remove this when we have LEDs on the robot!!!
 
-        oi = new IO();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
+        controls = new IO();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
 
         autoChooser = new SendableChooser<AUTO_COMMAND>();
 
@@ -92,7 +88,6 @@ public class Robot extends SampleRobot
     public void operatorControl()
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
-
         leds.set(defaultLEDEffect);
 
         while (isOperatorControl() && isEnabled())
@@ -116,8 +111,6 @@ public class Robot extends SampleRobot
         Robot.driveSubsystem.setLastHeading(command.getGyroOffset(autonomousStartPosition));
 
         Robot.leds.set(new Effect(EFFECT_TYPE.CYCLE, teamDefaultColors, 1));
-
-        // Schedule the autonomous command
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
@@ -130,7 +123,6 @@ public class Robot extends SampleRobot
 
     public void disabled()
     {
-        //leds.set(new Effect(EFFECT_TYPE.FADE, colors, 4));
         leds.set(defaultLEDEffect);
 
         while (isDisabled())
@@ -152,10 +144,7 @@ public class Robot extends SampleRobot
 
     public void test()
     {
-        while (isTest() && isEnabled())
-        {
-            LiveWindow.run();
-        }
+        while (isTest() && isEnabled()) { }
     }
 
     private void disabledDoGyro()
