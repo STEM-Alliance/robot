@@ -1,5 +1,6 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.VisionMode;
 import org.wfrobotics.robot.vision.messages.VisionUpdate;
 
@@ -7,10 +8,10 @@ import org.wfrobotics.robot.vision.messages.VisionUpdate;
 public class RobotState
 {
     private static RobotState instance = null;
+    private HerdVector robotVelocity = new HerdVector(0, 0);
 
-    // Delicious thread-safe, formatted state for Commands to feast on as they please
     // ------------- Robot State -------------
-
+    public double robotHeading = 0;
     public VisionMode visionMode = VisionMode.OFF;
     public boolean visionInView = false;
     public double visionError = 1;
@@ -23,9 +24,14 @@ public class RobotState
         return instance;
     }
 
-    public double getVisionError(int mode)
+    public HerdVector getRobotVelocity()
     {
-        if (!visionInView || mode == VisionMode.OFF.getValue())
+        return new HerdVector(robotVelocity);
+    }
+
+    public double getVisionError()
+    {
+        if (!visionInView)
         {
             return 1;
         }
@@ -33,6 +39,19 @@ public class RobotState
     }
 
     // ------------- State Producers Only -------------
+
+    // TODO should this be a HerdVector?
+    // TODO call this from drive for gryo, eliminate from subsystem last heading members
+    // TODO should we expose the chassisAngleControler error as robotHeadingError for some reason?
+    public synchronized void updateRobotHeading(double fieldRelativeHeading)
+    {
+        robotHeading = fieldRelativeHeading;
+    }
+
+    public synchronized void updateRobotVelocity(HerdVector velocity)
+    {
+        robotVelocity = new HerdVector(velocity);
+    }
 
     public void addVisionUpdate(VisionUpdate v)
     {
@@ -58,6 +77,8 @@ public class RobotState
         visionMode = VisionMode.OFF;
     }
 
+    // TODO confirm target a few times before sensing?
+    // TODO do in robot state, since false positives in commands are always bad
     private void processShooterUpdate(VisionUpdate v)
     {
         boolean targetsInView = v.targets.size() > 1;
