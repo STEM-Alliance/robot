@@ -3,20 +3,28 @@ package org.wfrobotics.reuse.hardware.led;
 import org.wfrobotics.reuse.hardware.led.LEDs.Color;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.LEDController;
+import org.wfrobotics.reuse.utilities.HerdLogger;
 
 import com.mindsensors.CANLight;
 
-import edu.wpi.first.wpilibj.DriverStation;
-
 public class MindsensorCANLight implements LEDController
 {
-    private final CANLight controller; //http://mindsensors.com/largefiles/CANLight/CANLight_Demo.java
-    public boolean enabled; 
+    private HerdLogger log = new HerdLogger(LEDController.class);
+    private CANLight controller; //http://mindsensors.com/largefiles/CANLight/CANLight_Demo.java
+    public boolean enabled;
 
     public MindsensorCANLight(int address)
-    {            
-        controller = new CANLight(address);
-        enabled = true;
+    {
+        try
+        {
+            controller = new CANLight(address);
+            enabled = true;
+        }
+        catch(Exception e)
+        {
+            log.warning("LEDController", "Cannot create CANLight for address " + String.valueOf(address));
+            enabled = false;
+        }
     }
 
     public void set(Effect e)
@@ -29,13 +37,13 @@ public class MindsensorCANLight implements LEDController
         if (!enabled)
         {
             return;
-        }        
+        }
         if (colors.length > 8)
         {
-            DriverStation.reportWarning("CANLight hardware cannot support > 8 colors", true);
+            log.warning("LEDController", "Hardware cannot support > 8 colors");
             return;
-        }        
-        
+        }
+
         for (int index = 0; index < colors.length; index++)
         {
             controller.writeRegister(index, time, colors[index].r, colors[index].g, colors[index].b);
@@ -61,14 +69,10 @@ public class MindsensorCANLight implements LEDController
                 break;
         }
     }
-    
+
     public void enable(boolean enable)
     {
         enabled = enable;
-    }
-    
-    public void off()
-    {
-        controller.showRGB(0, 0, 0);
+        if (enabled == false && controller != null) { controller.showRGB(0, 0, 0); }
     }
 }

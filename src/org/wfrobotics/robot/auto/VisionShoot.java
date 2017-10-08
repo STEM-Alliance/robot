@@ -11,12 +11,13 @@ import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class VisionShoot extends CommandGroup 
-{    
+public class VisionShoot extends CommandGroup
+{
     private VisionDetect camera;
     private AutoTurn rotate;
     private PIDController pidRotate;
@@ -24,8 +25,8 @@ public class VisionShoot extends CommandGroup
     private boolean done;
     private double startTime = 0;
     private double atAngleTime = 0;
-    
-    public VisionShoot() 
+
+    public VisionShoot()
     {
         pidRotate = new PIDController(2, 0.0002, 0.0001, .4);
         camera = new VisionDetect(Robot.targetShooterSubsystem);
@@ -36,16 +37,16 @@ public class VisionShoot extends CommandGroup
         addSequential(rotate);
         addSequential(new VisionDisable(Robot.targetShooterSubsystem));
     }
-    
+
     protected void initialize()
     {
-        done = false;        
+        done = false;
         startTime = timeSinceInitialized();
         atAngleTime = timeSinceInitialized();
-        Robot.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
         pidRotate.resetError();
     }
-    
+
     protected void execute()
     {
         double distanceFromCenter = camera.getDistanceFromCenter();
@@ -58,13 +59,13 @@ public class VisionShoot extends CommandGroup
         {
             doVisionDrive();
         }
-        
-        Utilities.PrintCommand("VisionShoot", this, Utilities.round(distanceFromCenter,2) 
-                                                    + " " + rotate.isRunning() 
-                                                    + " " + done + " " + isCameraReady());
+
+        Utilities.PrintCommand("VisionShoot", this, Utilities.round(distanceFromCenter,2)
+                + " " + rotate.isRunning()
+                + " " + done + " " + isCameraReady());
     }
-    
-    protected boolean isFinished() 
+
+    protected boolean isFinished()
     {
         return done;
     }
@@ -79,7 +80,7 @@ public class VisionShoot extends CommandGroup
     {
         end();
     }
-    
+
     public boolean isCameraReady()
     {
         double now = timeSinceInitialized();
@@ -88,7 +89,7 @@ public class VisionShoot extends CommandGroup
         if (now - startTime < 1 || !camera.getIsEnabled())
         {
             found = false;
-            
+
             if (now - startTime > 4)
             {
                 done = true;
@@ -99,17 +100,17 @@ public class VisionShoot extends CommandGroup
             found = false;
             done = true;
         }
-        
+
         return found;
     }
-    
+
     public void doVisionDrive()
     {
         double distanceFromCenter = camera.getDistanceFromCenter();
         double visionWidth = camera.getFullWidth();
         double valueAngle = 0;
         double setPointAngle;
-        
+
         // we think we've found at least one target
         SmartDashboard.putNumber("ShooterCenter", distanceFromCenter);
 
@@ -131,12 +132,12 @@ public class VisionShoot extends CommandGroup
         {
             done = true;
         }
-        
+
         // we can still see a target
         if(visionWidth > 15)
         {
             setPointAngle = valueAngle;
-            //TODO this only works for the front facing spring address field heading here            
+            //TODO this only works for the front facing spring address field heading here
         }
         else
         {

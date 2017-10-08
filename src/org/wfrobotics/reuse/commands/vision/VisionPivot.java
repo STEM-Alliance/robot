@@ -5,9 +5,9 @@ import org.wfrobotics.reuse.commands.drive.swerve.AutoTurn;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
-import org.wfrobotics.reuse.hardware.led.LEDs.LEDController;
 import org.wfrobotics.reuse.subsystems.vision.NetworkTableCamera;
 import org.wfrobotics.reuse.utilities.PIDController;
+import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -24,33 +24,31 @@ public class VisionPivot extends CommandGroup
         public double deadband;
         public double invertError;
         public boolean debug;
-        
+
         public Config(double p, double i, double d,  double maxOut, double deadband, boolean invertError, boolean debug)
         {
             this.p = p;
             this.i = i;
             this.d = d;
-            this.max = maxOut;
+            max = maxOut;
             this.deadband = deadband;
             this.invertError = (invertError) ? -1 : 1;
             this.debug = debug;
         }
     }
-    
+
     private final VisionDetect camera;
     private final AutoTurn drive;
-    private final LEDController leds;
     private final Config config;
 
     private PIDController pid;
-    
-    public VisionPivot(NetworkTableCamera camera, LEDController leds, Config config)
+
+    public VisionPivot(NetworkTableCamera camera, Config config)
     {
         this.camera = new VisionDetect(camera);
         drive = new AutoTurn(0);
-        this.leds = leds;
         this.config = config;
-        
+
         addSequential(new VisionEnable(camera));
         addParallel(this.camera);
         addSequential(drive);
@@ -64,7 +62,7 @@ public class VisionPivot extends CommandGroup
         config.d = Preferences.getInstance().getDouble(getName() + "D", config.d);
         config.max = Preferences.getInstance().getDouble(getName() + "Max", config.max);
 
-        leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
         pid = new PIDController(config.p, config.i, config.d, config.max);
     }
 
@@ -77,7 +75,7 @@ public class VisionPivot extends CommandGroup
         {
             return;
         }
-        
+
         pidOutput = pid.update(error);
         drive.set(0, 0, pidOutput, -1);
 
@@ -89,13 +87,13 @@ public class VisionPivot extends CommandGroup
         }
     }
 
-    protected boolean isFinished() 
+    protected boolean isFinished()
     {
         double error = camera.getDistanceFromCenter();
         boolean done = !camera.getIsFound() || Math.abs(error) < config.deadband;
-        
+
         SmartDashboard.putBoolean("Done", done);
-        
+
         return done;
     }
 
