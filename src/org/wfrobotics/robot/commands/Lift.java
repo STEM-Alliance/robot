@@ -2,41 +2,42 @@ package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.robot.subsystems.LED;
 import org.wfrobotics.robot.subsystems.Lifter.POSITION;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Lift extends Command 
+public class Lift extends Command
 {
     public enum MODE { AUTOMATIC, DOWN, UP };
     public final double TIMEOUT_NO_GEAR = 1;
     public final double TIMEOUT_RUMBLE = 1;
     public final double SAMPLES_UNTIL_LIFT = 5;
-    
+
     public MODE mode = MODE.AUTOMATIC;
-    
+
     public double timeLastSensed;
     public double samplesWithGear;
-    
+
     public Lift()
     {
         this(MODE.AUTOMATIC);
     }
-    
+
     public Lift(MODE mode)
-    {        
+    {
         requires(Robot.lifterSubsystem);
         this.mode = mode;
         samplesWithGear = 0;
     }
-    
+
     @Override
     protected void initialize()
     {
         timeLastSensed = timeSinceInitialized() - TIMEOUT_NO_GEAR;  // Start in the down state
     }
-    
+
     @Override
     protected void execute()
     {
@@ -50,7 +51,7 @@ public class Lift extends Command
             rumble = (Robot.lifterSubsystem.hasGear()) ? 1 : 0;
         }
         else
-        {       
+        {
             if (Robot.lifterSubsystem.hasGear())
             {
                 direction = (++samplesWithGear > SAMPLES_UNTIL_LIFT) ? POSITION.TOP : POSITION.TRANSPORT;  // How many cycles have we had a gear?
@@ -63,12 +64,12 @@ public class Lift extends Command
                 rumble = (now - timeLastSensed < TIMEOUT_RUMBLE) ? 1 : 0;
             }
         }
-        
+
         IO.xboxMan.setRumble(RumbleType.kLeftRumble, rumble);
         IO.xboxMan.setRumble(RumbleType.kRightRumble, rumble);
         IO.xboxDrive.setRumble(RumbleType.kLeftRumble, rumble);
         IO.xboxDrive.setRumble(RumbleType.kRightRumble, rumble);
-        
+
         Robot.lifterSubsystem.set(direction);
     }
 
@@ -87,19 +88,19 @@ public class Lift extends Command
                 return false;
         }
     }
-    
+
     protected void end()
     {
         if (mode != MODE.AUTOMATIC)
         {
-            Robot.leds.set(Robot.defaultLEDEffect);
+            LED.getInstance().set(LED.defaultLEDEffect);
             IO.xboxMan.setRumble(RumbleType.kLeftRumble, 0);
             IO.xboxMan.setRumble(RumbleType.kRightRumble, 0);
             IO.xboxDrive.setRumble(RumbleType.kLeftRumble, 0);
             IO.xboxDrive.setRumble(RumbleType.kRightRumble, 0);
         }
     }
-    
+
     protected void interrupted()
     {
         end();

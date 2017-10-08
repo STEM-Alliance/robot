@@ -11,11 +11,12 @@ import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class VisionGear extends CommandGroup 
+public class VisionGear extends CommandGroup
 {
     final static double HEXAGON_ANGLE = 30;  // All corners are 120 on the interior, therefore the sides we want are 30 degrees past straight ahead
 
@@ -26,7 +27,7 @@ public class VisionGear extends CommandGroup
 
     private boolean done;
 
-    public VisionGear() 
+    public VisionGear()
     {
         camera = new VisionDetect(Robot.targetGearSubsystem);
         pidX = new PIDController(2.5, 0.125, 0, .35);
@@ -40,7 +41,7 @@ public class VisionGear extends CommandGroup
 
     protected void initialize()
     {
-        Robot.leds.set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
         fieldRelative = Robot.driveSubsystem.getFieldRelative();
         Robot.driveSubsystem.setFieldRelative(false);
         done = false;
@@ -53,7 +54,7 @@ public class VisionGear extends CommandGroup
         double valueY = -.315;
         double valueX = 0;
         boolean found = camera.getIsFound();
-        
+
         SmartDashboard.putBoolean("GearFound", found);
 
         if(!found)
@@ -61,7 +62,7 @@ public class VisionGear extends CommandGroup
             done = true;
             return;
         }
-        
+
         // we think we've found at least one target, so get an estimate speed to line us up
         valueX = pidX.update(distanceFromCenter);
 
@@ -75,7 +76,7 @@ public class VisionGear extends CommandGroup
         if(visionWidth > 15 && visionWidth < 335)
         {
             Vector vector = new Vector(valueY, valueX);
-            
+
             drive.set(vector, 0, -1);
         }
         else
@@ -91,7 +92,7 @@ public class VisionGear extends CommandGroup
         SmartDashboard.putNumber("VisionGearX", valueX);
     }
 
-    protected boolean isFinished() 
+    protected boolean isFinished()
     {
         return done;
     }
@@ -99,7 +100,7 @@ public class VisionGear extends CommandGroup
     protected void end()
     {
         Robot.driveSubsystem.setFieldRelative(fieldRelative);
-        Robot.leds.set(Robot.defaultLEDEffect);
+        LED.getInstance().set(LED.defaultLEDEffect);
     }
 
     protected void interrupted()

@@ -5,19 +5,18 @@ import org.wfrobotics.reuse.hardware.led.LEDs.Color;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.reuse.hardware.led.LEDs.LEDController;
-import org.wfrobotics.reuse.hardware.led.MindsensorCANLight;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.Autonomous.AUTO_COMMAND;
 import org.wfrobotics.robot.config.Autonomous.POSITION_ROTARY;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.subsystems.Auger;
 import org.wfrobotics.robot.subsystems.CameraGear;
 import org.wfrobotics.robot.subsystems.CameraShooter;
 import org.wfrobotics.robot.subsystems.Climber;
 import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.LED;
 import org.wfrobotics.robot.subsystems.Lifter;
 import org.wfrobotics.robot.subsystems.Shooter;
 import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
@@ -30,19 +29,21 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+// TODO iterative robot?
+
 public class Robot extends SampleRobot
 {
+    private LEDController leds;
     public static SwerveDriveSteamworks driveSubsystem;
     public static Auger augerSubsystem;
     public static Climber climberSubsystem;
     public static DashboardView dashboardView;
     public static Intake intakeSubsystem;
-    public static LEDController leds;
-    public static IO controls;
     public static Lifter lifterSubsystem;
     public static Shooter shooterSubsystem;
     public static CameraShooter targetShooterSubsystem;
     public static CameraGear targetGearSubsystem;
+    public static IO controls;
 
     Command autonomousCommand;
     SendableChooser<AUTO_COMMAND> autoChooser;
@@ -50,8 +51,6 @@ public class Robot extends SampleRobot
     static POSITION_ROTARY autonomousStartPosition;
 
     boolean gyroInitialZero = false;
-    public static Effect defaultLEDEffect;
-    public static Effect teamLEDEffect;
 
     public void robotInit()
     {
@@ -59,14 +58,12 @@ public class Robot extends SampleRobot
         augerSubsystem = new Auger();
         targetShooterSubsystem = new CameraShooter();
         targetGearSubsystem = new CameraGear();
-
         climberSubsystem = new Climber();
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();
         lifterSubsystem = new Lifter(true);
         shooterSubsystem = new Shooter();
-        leds = new MindsensorCANLight(RobotMap.CAN_LIGHT);
-        //leds.enable(false); // TODO Remove this when we have LEDs on the robot!!!
+        leds = LED.getInstance();
 
         controls = new IO();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
 
@@ -81,14 +78,12 @@ public class Robot extends SampleRobot
         autoChooser.addObject("Auto Gear Vision", AUTO_COMMAND.GEAR_VISION);
         //autoChooser.addObject("Auto Gear Dead Reckoning", AUTO_COMMAND.GEAR_DR);
         SmartDashboard.putData("Auto Mode", autoChooser);
-
-        defaultLEDEffect = new Effect(EFFECT_TYPE.FADE, LEDs.COLORS_THE_HERD, 1);
     }
 
     public void operatorControl()
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
-        leds.set(defaultLEDEffect);
+        leds.set(LED.defaultLEDEffect);
 
         while (isOperatorControl() && isEnabled())
         {
@@ -110,7 +105,7 @@ public class Robot extends SampleRobot
         Gyro.getInstance().zeroYaw(command.getGyroOffset(autonomousStartPosition));
         Robot.driveSubsystem.setLastHeading(command.getGyroOffset(autonomousStartPosition));
 
-        Robot.leds.set(new Effect(EFFECT_TYPE.CYCLE, teamDefaultColors, 1));
+        leds.set(new Effect(EFFECT_TYPE.CYCLE, teamDefaultColors, 1));
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
@@ -123,7 +118,7 @@ public class Robot extends SampleRobot
 
     public void disabled()
     {
-        leds.set(defaultLEDEffect);
+        leds.set(LED.defaultLEDEffect);
 
         while (isDisabled())
         {
@@ -158,11 +153,9 @@ public class Robot extends SampleRobot
                 gyroInitialZero = true;
             }
         }
-        else
+        else if(IO.xboxDrive.getStartButton())
         {
-            if(IO.xboxDrive.getStartButton())
-                Gyro.getInstance().zeroYaw();
-            //Gyro.getInstance().zeroYaw();
+            Gyro.getInstance().zeroYaw();
         }
     }
 }
