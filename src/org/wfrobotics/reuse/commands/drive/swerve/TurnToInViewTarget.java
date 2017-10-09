@@ -38,6 +38,6 @@ public class TurnToInViewTarget extends Command
 
     protected boolean isFinished()
     {
-        return !state.visionInView || state.robotHeading + state.visionError < tol;
+        return !state.visionInView || Math.abs(state.robotHeading + state.visionError) < tol;
     }
 }
