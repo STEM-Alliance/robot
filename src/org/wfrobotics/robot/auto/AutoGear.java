@@ -1,9 +1,9 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.swerve.TurnToTarget;
+import org.wfrobotics.reuse.commands.drive.swerve.StrafeToInViewTarget;
+import org.wfrobotics.reuse.commands.drive.swerve.TurnToInViewTarget;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelative;
-import org.wfrobotics.reuse.commands.vision.VisionStrafe;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.IntakeSetup;
@@ -14,7 +14,6 @@ import org.wfrobotics.robot.commands.VisionModeDefault;
 import org.wfrobotics.robot.commands.VisionModeGear;
 import org.wfrobotics.robot.config.Autonomous.POSITION_ROTARY;
 import org.wfrobotics.robot.config.Commands;
-import org.wfrobotics.robot.config.VisionMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -165,8 +164,8 @@ public class AutoGear extends CommandGroup
         addSequential(new FieldRelative(false));
 
         addSequential(new VisionModeGear());
-        addSequential(new VisionStrafe(Robot.targetGearSubsystem, Commands.GEAR_VISION_STRAFE_CONFIG));
-        addSequential(new TurnToTarget(VisionMode.GEAR.getValue(), .125));
+        addSequential(new StrafeToInViewTarget(.6, .2));
+        addSequential(new TurnToInViewTarget(.125));
         addSequential(new VisionModeDefault());
         addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
 
