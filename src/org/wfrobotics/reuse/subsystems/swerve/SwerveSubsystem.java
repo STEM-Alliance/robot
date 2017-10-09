@@ -13,11 +13,9 @@ import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.RobotState;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Swerve Drive implementation
@@ -55,7 +53,7 @@ public class SwerveSubsystem extends Subsystem
         }
         catch (RuntimeException ex)
         {
-            DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
+            log.error("Error instantiating navX MXP: " + ex.getMessage(), true);
         }
         finally
         {
@@ -82,21 +80,23 @@ public class SwerveSubsystem extends Subsystem
 
     public void driveWithHeading(SwerveSignal command)
     {
+        SwerveSignal s = new SwerveSignal(command);
+
         chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Config.CHASSIS_P));
         chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Config.CHASSIS_I));
         chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
 
-        ApplySpinMode(command, command.hasHeading()); // Pass by reference
-        log.info("Chassis Command", command);
+        ApplySpinMode(s, s.hasHeading()); // Pass by reference
+        log.info("Chassis Command", s);
 
         if (fieldRelative)
         {
-            command.velocity.rotate(gyro.getYaw());
+            s.velocity.rotate(gyro.getYaw());
         }
 
         printDash();
 
-        wheelManager.setWheelVectors(command.velocity, command.spin, configSwerve.gearHigh, brake);
+        wheelManager.setWheelVectors(s.velocity, s.spin, configSwerve.gearHigh, brake);
     }
 
     private void ApplySpinMode(SwerveSignal command, boolean snapToHeading)
@@ -138,9 +138,8 @@ public class SwerveSubsystem extends Subsystem
             }
             else if(configSwerve.gyroEnable)
             {
-                // Set the rotation using a PID controller based on current robot heading and new desired heading
-                error = -Utilities.wrapToRange(state.robotHeading - gyro.getYaw(), -180, 180);
-                double tempRotation = chassisAngleController.update(error);  // TODO why does sign differ from snap to angle?
+                error = Utilities.wrapToRange(state.robotHeading - gyro.getYaw(), -180, 180);
+                double pidRotation = chassisAngleController.update(-error);
 
                 if(Math.abs(error) < 2)  // TODO: Seems incorrect
                 {
@@ -148,10 +147,10 @@ public class SwerveSubsystem extends Subsystem
                 }
 
                 // Add a deadband to hopefully help with wheel lock after stopping
-                SmartDashboard.putNumber("MaintainRotation", tempRotation);
-                if(Math.abs(tempRotation) > configSwerve.AUTO_ROTATION_MIN)// TODO remove unless this does anything more than talon nominal voltage
+                log.debug("MaintainRotation", pidRotation);
+                if(Math.abs(pidRotation) > configSwerve.AUTO_ROTATION_MIN)// TODO remove unless this does anything more than talon nominal voltage
                 {
-                    command.spin = tempRotation;
+                    command.spin = pidRotation;
                 }
             }
         }
