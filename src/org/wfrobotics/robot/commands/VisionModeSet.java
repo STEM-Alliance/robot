@@ -1,11 +1,11 @@
-package org.wfrobotics.robot.vision.commands;
+package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.vision.CameraServer;
 import org.wfrobotics.robot.vision.messages.CameraMode;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public abstract class SetCameraMode extends InstantCommand
+public abstract class VisionModeSet extends InstantCommand
 {
     public abstract int getMode();
 
