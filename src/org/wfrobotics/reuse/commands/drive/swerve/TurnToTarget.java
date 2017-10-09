@@ -34,7 +34,7 @@ public class TurnToTarget extends TurnToHeading
     {
         if (state.visionInView)
         {
-            return state.getVisionError() < tol;
+            return Math.abs(state.getVisionError()) < tol;
         }
         return super.isFinished();
     }
