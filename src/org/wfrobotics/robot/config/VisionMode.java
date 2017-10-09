@@ -18,4 +18,9 @@ public enum VisionMode
     {
         return value;
     }
+
+    public static VisionMode robotDefault()
+    {
+        return VisionMode.OFF;
+    }
 }

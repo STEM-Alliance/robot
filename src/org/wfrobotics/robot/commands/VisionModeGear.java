@@ -1,8 +1,8 @@
-package org.wfrobotics.robot.vision.commands;
+package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.config.VisionMode;
 
-public class GearMode extends SetCameraMode
+public class VisionModeGear extends VisionModeSet
 {
     public int getMode()
     {

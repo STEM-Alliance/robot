@@ -1,8 +1,8 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.TurnToTarget;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelative;
-import org.wfrobotics.reuse.commands.vision.VisionPivot;
 import org.wfrobotics.reuse.commands.vision.VisionStrafe;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.Conveyor;
@@ -10,8 +10,11 @@ import org.wfrobotics.robot.commands.IntakeSetup;
 import org.wfrobotics.robot.commands.Lift;
 import org.wfrobotics.robot.commands.Rev;
 import org.wfrobotics.robot.commands.Shoot;
+import org.wfrobotics.robot.commands.VisionModeDefault;
+import org.wfrobotics.robot.commands.VisionModeGear;
 import org.wfrobotics.robot.config.Autonomous.POSITION_ROTARY;
 import org.wfrobotics.robot.config.Commands;
+import org.wfrobotics.robot.config.VisionMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -161,8 +164,10 @@ public class AutoGear extends CommandGroup
         boolean fieldRelative = Robot.driveSubsystem.getFieldRelative();
         addSequential(new FieldRelative(false));
 
+        addSequential(new VisionModeGear());
         addSequential(new VisionStrafe(Robot.targetGearSubsystem, Commands.GEAR_VISION_STRAFE_CONFIG));
-        addSequential(new VisionPivot(Robot.targetGearSubsystem, Commands.GEAR_VISION_PIVOT_CONFIG));
+        addSequential(new TurnToTarget(VisionMode.GEAR.getValue(), .125));
+        addSequential(new VisionModeDefault());
         addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
 
         addSequential(new FieldRelative(fieldRelative));
