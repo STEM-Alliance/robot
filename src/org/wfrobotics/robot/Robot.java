@@ -12,8 +12,6 @@ import org.wfrobotics.robot.config.Autonomous.AUTO_COMMAND;
 import org.wfrobotics.robot.config.Autonomous.POSITION_ROTARY;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.Auger;
-import org.wfrobotics.robot.subsystems.CameraGear;
-import org.wfrobotics.robot.subsystems.CameraShooter;
 import org.wfrobotics.robot.subsystems.Climber;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.LED;
@@ -41,8 +39,6 @@ public class Robot extends SampleRobot
     public static Intake intakeSubsystem;
     public static Lifter lifterSubsystem;
     public static Shooter shooterSubsystem;
-    public static CameraShooter targetShooterSubsystem;
-    public static CameraGear targetGearSubsystem;
     public static IO controls;
 
     Command autonomousCommand;
@@ -56,8 +52,6 @@ public class Robot extends SampleRobot
     {
         driveSubsystem = new SwerveDriveSteamworks();
         augerSubsystem = new Auger();
-        targetShooterSubsystem = new CameraShooter();
-        targetGearSubsystem = new CameraGear();
         climberSubsystem = new Climber();
         dashboardView = new DashboardView();
         intakeSubsystem = new Intake();

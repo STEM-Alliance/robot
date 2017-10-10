@@ -3,7 +3,6 @@ package org.wfrobotics.robot.config;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.commands.LEDSignal;
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
-import org.wfrobotics.reuse.commands.vision.VisionPivot;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Panel.COLOR;
 import org.wfrobotics.reuse.controller.PanelButton;
@@ -12,9 +11,8 @@ import org.wfrobotics.reuse.controller.XboxButton;
 import org.wfrobotics.reuse.controller.XboxDpadButton;
 import org.wfrobotics.reuse.controller.XboxJoystickButton;
 import org.wfrobotics.reuse.controller.XboxTriggerButton;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.auto.VisionGearDropAndBackup;
-import org.wfrobotics.robot.auto.VisionShoot;
+import org.wfrobotics.robot.auto.VisionShootAim;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Lift;
 import org.wfrobotics.robot.commands.Rev;
@@ -125,7 +123,6 @@ public class IO
         //buttonPanelBlackTop.whileHeld(new IntakeSetup(true));
         buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
         //buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
-        buttonPanelWhiteBottom.whileHeld(new VisionPivot(Robot.targetGearSubsystem, Commands.GEAR_VISION_PIVOT_CONFIG));
 
         //buttonDriveRB.toggleWhenPressed(new VisionShoot());
 

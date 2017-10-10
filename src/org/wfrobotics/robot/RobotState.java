@@ -15,6 +15,7 @@ public class RobotState
     public VisionMode visionMode = VisionMode.OFF;
     public boolean visionInView = false;
     public double visionError = 1;
+    public double visionWidth = 0;
 
     protected RobotState() {}
 
@@ -40,9 +41,6 @@ public class RobotState
 
     // ------------- State Producers Only -------------
 
-    // TODO should this be a HerdVector?
-    // TODO call this from drive for gryo, eliminate from subsystem last heading members
-    // TODO should we expose the chassisAngleControler error as robotHeadingError for some reason?
     public synchronized void updateRobotHeading(double fieldRelativeHeading)
     {
         robotHeading = fieldRelativeHeading;
@@ -74,20 +72,22 @@ public class RobotState
     {
         visionInView = false;
         visionError = 1;
+        visionWidth = 0;
         visionMode = VisionMode.OFF;
     }
 
-    // TODO confirm target a few times before sensing?
-    // TODO do in robot state, since false positives in commands are always bad
+    // TODO confirm target a few times before sensing? Want here since all commands dislike false positives
     private void processShooterUpdate(VisionUpdate v)
     {
         boolean targetsInView = v.targets.size() > 1;
         double newError = 0;  // TODO calc this specific to shooter
+        double newWidth = 0;  // TODO
 
         synchronized(this)
         {
             visionInView = targetsInView;
             visionError = newError;
+            visionWidth = newWidth;
             visionMode = VisionMode.SHOOTER;
         }
     }
@@ -96,11 +96,13 @@ public class RobotState
     {
         boolean targetsInView = v.targets.size() > 1;
         double newError = 0;  // TODO calc this specific to shooter
+        double newWidth = 0;  // TODO
 
         synchronized(this)
         {
             visionInView = targetsInView;
             visionError = newError;  // TODO calc this specific to shooter
+            visionWidth = newWidth;  // TODO
             visionMode = VisionMode.GEAR;
         }
     }
