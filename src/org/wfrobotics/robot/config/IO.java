@@ -3,6 +3,7 @@ package org.wfrobotics.robot.config;
 import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.commands.LEDSignal;
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
+import org.wfrobotics.reuse.commands.drive.swerve.TurnToInViewTarget;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Panel.COLOR;
 import org.wfrobotics.reuse.controller.PanelButton;
@@ -12,7 +13,6 @@ import org.wfrobotics.reuse.controller.XboxDpadButton;
 import org.wfrobotics.reuse.controller.XboxJoystickButton;
 import org.wfrobotics.reuse.controller.XboxTriggerButton;
 import org.wfrobotics.robot.auto.VisionGearDropAndBackup;
-import org.wfrobotics.robot.auto.VisionShootAim;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Lift;
 import org.wfrobotics.robot.commands.Rev;
@@ -103,7 +103,7 @@ public class IO
         //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
         //        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
         buttonPanelYellowBottom.whenPressed(new VisionGearDropAndBackup());
-        buttonPanelBlackBottom.whenPressed(new VisionShoot());
+        buttonPanelBlackBottom.whenPressed(new TurnToInViewTarget(.1));
         //buttonPanelYellowBottom.toggleWhenPressed(new GearDetection(GearDetection.MODE.GETDATA));
         //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));
 

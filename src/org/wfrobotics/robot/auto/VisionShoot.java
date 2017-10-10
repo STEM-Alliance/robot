@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.auto;
 
+import org.wfrobotics.reuse.commands.drive.swerve.TurnToInViewTarget;
 import org.wfrobotics.robot.commands.VisionModeDefault;
 import org.wfrobotics.robot.commands.VisionModeShooter;
 
@@ -10,7 +11,7 @@ public class VisionShoot extends CommandGroup
     public VisionShoot()
     {
         addSequential(new VisionModeShooter());
-        addSequential(new VisionShootAim());
+        addSequential(new TurnToInViewTarget(.1));
         addSequential(new VisionModeDefault());
     }
 }
