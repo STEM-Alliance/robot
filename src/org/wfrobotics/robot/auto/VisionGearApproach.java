@@ -1,34 +1,34 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.LED;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class VisionGearApproach extends CommandGroup
+public class VisionGearApproach extends Command
 {
     private RobotState state = RobotState.getInstance();
-    private AutoDrive drive;
     private PIDController pidX;
     private boolean fieldRelative = true;
+
+    private SwerveSignal s;
 
     private boolean done;
 
     public VisionGearApproach()
     {
+        requires(Robot.driveSubsystem);
         pidX = new PIDController(2.5, 0.125, 0, .35);
-        drive = new AutoDrive(0, 0, 0, -1, 999);
-
-        addSequential(drive);
+        s = new SwerveSignal(new HerdVector(0, 0), 0, SwerveSignal.HEADING_IGNORE);
     }
 
     protected void initialize()
@@ -67,9 +67,7 @@ public class VisionGearApproach extends CommandGroup
         // we can still see a target
         if(visionWidth > 15 && visionWidth < 335)
         {
-            Vector vector = new Vector(valueY, valueX);
-
-            drive.set(vector, 0, -1);
+            s = new SwerveSignal(new HerdVector(valueY, valueX), 0, SwerveSignal.HEADING_IGNORE);
         }
         else
         {
@@ -82,6 +80,8 @@ public class VisionGearApproach extends CommandGroup
         SmartDashboard.putNumber("VisionWidth", visionWidth);
         SmartDashboard.putNumber("VisionGearY", valueY);
         SmartDashboard.putNumber("VisionGearX", valueX);
+
+        Robot.driveSubsystem.driveWithHeading(s);
     }
 
     protected boolean isFinished()
