@@ -25,7 +25,7 @@ public class Tests
     public static void main(String[] args)
     {
         FastTrig.cos(359);  // FastTrig init cache
-        //debugFastTrig();
+        debugFastTrig();
         //debugHerdVector();
         debugOldChassisToWheelVectors();
         debugNewChassisToWheelVectors();
@@ -237,7 +237,7 @@ public class Tests
         //        HerdVector reconstructWxFR = reconstructWheelFR.sub(v);
         //        HerdVector reconstructWxFL = reconstructWheelFL.sub(v);
         //        HerdVector reconstructWxBL = reconstructWheelBL.sub(v);
-        //        
+        //
         //        System.out.println("Reconstruct BR: " + reconstructWxBR);
         //        System.out.println("Reconstruct FR: " + reconstructWxFR);
         //        System.out.println("Reconstruct FL: " + reconstructWxFL);
@@ -253,7 +253,7 @@ public class Tests
     }
 
     public static void debugOldChassisToWheelVectors()
-    {        
+    {
         // Cartesian Wheel Vectors
         double CHASSIS_WIDTH = width;
         double CHASSIS_DEPTH = depth;
@@ -281,7 +281,7 @@ public class Tests
         long start = System.nanoTime();
         Vector[] scaled = oldScaleWheelVectors(robotCommand, positions);
 
-        double end = System.nanoTime();   
+        double end = System.nanoTime();
         for (int index = 0; index < scaled.length; index++)
         {
             System.out.format("Old wheel %d: (%.2f, %.2f)\n", index, scaled[index].getMag(), scaled[index].getAngle());
@@ -296,7 +296,7 @@ public class Tests
         Vector[] WheelsScaled = new Vector[4];
         double MaxWantedVeloc = 0;
         double VelocityRatio;
-        boolean ENABLE_VELOCITY_LIMIT = true;        
+        boolean ENABLE_VELOCITY_LIMIT = true;
 
         for (int i = 0; i < 4; i++)
         {
@@ -396,13 +396,13 @@ public class Tests
         double start;
         double end;
         HerdVector v = new HerdVector(1, 45);
-        
+
         HerdLogger log = new HerdLogger("WrapperTest");
         log.setLevel(Level.INFO);
         HerdLogger log2 = new HerdLogger(Tests.class);
         log2.setLevel(Level.WARNING);
         HerdLogger log3 = new HerdLogger(Tests.class);
-        
+
         start = System.nanoTime();
         log.debug("test2", 1);
         log.info("test:", .33333);
@@ -410,7 +410,7 @@ public class Tests
         log.warning("test3: ", v);
         end = System.nanoTime();
         System.out.println("Test Duration: " + ((end - start)/1000) + " ns");
-        
+
         start = System.nanoTime();
         log2.debug("test2", 1);
         log2.info("test:", .33333);
@@ -418,7 +418,7 @@ public class Tests
         log2.warning("test3: ", v);
         end = System.nanoTime();
         System.out.println("Test Duration: " + ((end - start)/1000) + " ns");
-        
+
         start = System.nanoTime();
         log3.debug("test2", 1);
         log3.info("test:", .33333);

@@ -2,25 +2,20 @@ package org.wfrobotics.reuse.commands.driveconfig;
 
 import org.wfrobotics.robot.Robot;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class FieldRelative extends Command
+public class FieldRelative extends InstantCommand
 {
-    private boolean request = false;
-    
+    private boolean request;
+
     public FieldRelative(boolean enable)
     {
         requires(Robot.driveSubsystem);
-        this.request = enable;
+        request = enable;
     }
-    
+
     protected void initialize()
     {
         Robot.driveSubsystem.setFieldRelative(request);
-    }
-    
-    protected boolean isFinished()
-    {
-        return true;
     }
 }

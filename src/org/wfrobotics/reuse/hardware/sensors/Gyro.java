@@ -5,36 +5,30 @@ import org.wfrobotics.Utilities;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-
-public class Gyro {
-
+public class Gyro
+{
     public enum PORT
     {
         SERIAL_MXP,
         SERIAL_USB,
         I2C_MXP,
         SPI_MXP;
-        
+
         public AHRS getGyro()
         {
             AHRS gyro;
-            
+
             switch(this)
             {
                 case SPI_MXP:
                     gyro = new AHRS(edu.wpi.first.wpilibj.SPI.Port.kMXP);
                     break;
-                    
                 case I2C_MXP:
                     gyro = new AHRS(edu.wpi.first.wpilibj.I2C.Port.kMXP);
                     break;
-                    
                 case SERIAL_USB:
                     gyro = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kUSB);
                     break;
-                    
                 case SERIAL_MXP:
                 default:
                     gyro = new AHRS(edu.wpi.first.wpilibj.SerialPort.Port.kMXP);
@@ -43,40 +37,21 @@ public class Gyro {
             return gyro;
         }
     }
-    
+
     protected static Gyro instance = null;
     protected static AHRS navxMXP = null;
-   
     protected static double zeroVal = 0;
 
-    /**
-     * get the default instance using the Serial Port
-     * @return
-     */
     public static Gyro getInstance()
     {
-        return getInstance(PORT.SPI_MXP);
-    }
-    
-    /**
-     * get the instance. if it hasn't been created, create it on the specified port
-     * @param port
-     * @return
-     */
-    public static Gyro getInstance(PORT port)
-    {
-        if (instance == null)
-        {
-            instance = new Gyro(port);
-        }
+        if (instance == null) { instance = new Gyro(PORT.SPI_MXP); }
         return instance;
     }
-    
+
     protected Gyro(PORT port)
     {
         navxMXP = port.getGyro();
-        navxMXP.
-        zeroYaw();
+        navxMXP.zeroYaw();
     }
 
     /**
@@ -111,7 +86,6 @@ public class Gyro {
         angle = Utilities.wrapToRange(angle, -180, 180);
         return angle;
     }
-    
 
     /**
      * Sets the user-specified yaw offset to the current yaw value reported by
@@ -122,11 +96,11 @@ public class Gyro {
      */
     public void zeroYaw()
     {
-//        navxMXP.setAngleAdjustment(0);
-//        navxMXP.zeroYaw();
+        //        navxMXP.setAngleAdjustment(0);
+        //        navxMXP.zeroYaw();
         zeroYaw(0);
     }
-    
+
     /**
      * zeroYaw with an offset (compensating for the starting orientation of robot being different from 0 field relative)
      * @param startAngleOffset Field relative angle the robot is turned (range: -180 to 180)
@@ -134,7 +108,7 @@ public class Gyro {
     public void zeroYaw(double startAngleOffset)
     {
         double angle = navxMXP.getYaw();
-        angle = Utilities.wrapToRange(angle, -180, 180);;
+        angle = Utilities.wrapToRange(angle, -180, 180);
         zeroVal = angle - startAngleOffset;
     }
 }

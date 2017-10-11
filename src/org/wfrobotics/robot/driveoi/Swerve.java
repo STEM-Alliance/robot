@@ -6,9 +6,9 @@ import org.wfrobotics.reuse.commands.driveconfig.FieldRelativeToggle;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
 import org.wfrobotics.reuse.controller.Panel;
+import org.wfrobotics.reuse.controller.Panel.BUTTON;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.XboxButton;
-import org.wfrobotics.reuse.controller.Panel.BUTTON;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Rev;
 import org.wfrobotics.robot.commands.Shoot;
@@ -32,37 +32,37 @@ public class Swerve
         public double[] getPanelKnobs();
         public boolean getPanelSave();
         public double getFusionDrive_Rotation();
-    }    
+    }
 
     public static class SwerveXBox implements SwerveOI
     {
         private static final double DEADBAND = 0.2;
-        
+
         private final Xbox driver1;
         private final Xbox driver2;
         private final Panel panel;
-        
+
         Button buttonDriveShift;
         Button buttonDriveVisionShoot;
         Button buttonDriveSmartShoot;
         Button buttonDriveDumbShoot;
         Button buttonDriveFieldRelative;
         Button buttonDriveSetGyro;
-        
-        
+
+
         public SwerveXBox(Xbox driver1, Xbox driver2, Panel panel)
         {
             this.driver1 = driver1;
             this.driver2 = driver2;
             this.panel = panel;
-            
+
             buttonDriveSmartShoot = new XboxButton(driver1, Xbox.BUTTON.B);
             buttonDriveDumbShoot = new XboxButton(driver1, Xbox.BUTTON.A);
             buttonDriveVisionShoot= new XboxButton(driver1, Xbox.BUTTON.RB);
             buttonDriveShift= new XboxButton(driver1, Xbox.BUTTON.LB);
             buttonDriveFieldRelative= new XboxButton(driver1, Xbox.BUTTON.BACK);
             buttonDriveSetGyro = new XboxButton(driver1, Xbox.BUTTON.START);
-           
+
 
             //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
             buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
@@ -71,7 +71,7 @@ public class Swerve
             buttonDriveFieldRelative.whenPressed(new FieldRelativeToggle());
             buttonDriveSetGyro.whenPressed(new GyroZero());
         }
-        
+
 
         /**
          * Get the Rotation value of the joystick for Halo Drive
@@ -81,9 +81,9 @@ public class Swerve
         public double getHaloDrive_Rotation()
         {
             double value = 0;
-        
+
             value = driver1.getAxis(Xbox.AXIS.RIGHT_X);
-        
+
             if (Math.abs(value) < DEADBAND)
             {
                 value = 0;
@@ -100,15 +100,15 @@ public class Swerve
         public Vector getHaloDrive_Velocity()
         {
             Vector value = driver1.getVector(Hand.kLeft);
-        
+
             if (value.getMag() < DEADBAND)
             {
                 value.setMag(0);
             }
-        
+
             return value;
         }
-        
+
         /**
          * Get the heading/angle in degrees for Angle Drive
          * 
@@ -117,12 +117,12 @@ public class Swerve
         public double getAngleDrive_Heading()
         {
             double Angle = -1;
-            
+
             if (driver1.getMagnitude(Hand.kRight) > 0.65)
             {
                 Angle = driver1.getDirectionDegrees(Hand.kRight);
             }
-        
+
             return Angle;
         }
 
@@ -135,7 +135,7 @@ public class Swerve
         {
             double Rotation = 0;
             int dpad = getDpad();
-            
+
             if (dpad == 90)
             {
                 Rotation = .75;
@@ -156,7 +156,7 @@ public class Swerve
         public Vector getAngleDrive_Velocity()
         {
             Vector value = driver1.getVector(Hand.kLeft);
-        
+
             if (value.getMag() < DEADBAND)
             {
                 value.setMag(0);
@@ -168,20 +168,20 @@ public class Swerve
         {
             return driver1.getTriggerAxis(Hand.kLeft);
         }
-        
+
         public int getDpad()
         {
             return driver1.getPOV(0);
         }
-        
+
         public double[] getPanelKnobs()
         {
             return new double[] {
-                            panel.getTopDial(Hand.kLeft) * 180.0,
-                            panel.getTopDial(Hand.kRight) * 180.0,
-                            panel.getBottomDial(Hand.kLeft) * 180.0,
-                            panel.getBottomDial(Hand.kRight) * 180.0, 
-                    };
+                    panel.getTopDial(Hand.kLeft) * 180.0,
+                    panel.getTopDial(Hand.kRight) * 180.0,
+                    panel.getBottomDial(Hand.kLeft) * 180.0,
+                    panel.getBottomDial(Hand.kRight) * 180.0,
+            };
         }
 
         public boolean getPanelSave()
@@ -194,23 +194,23 @@ public class Swerve
             return driver2.getX(Hand.kRight);
         }
     }
-    
+
     public static class SwerveJoyStick implements SwerveOI
     {
 
         private static final double DEADBAND = 0.2;
-        
+
         private final Joystick driver1;
         private final Xbox driver2;
         private final Panel panel;
-        
+
         Button buttonDriveShift;
         Button buttonDriveVisionShoot;
         Button buttonDriveSmartShoot;
         Button buttonDriveDumbShoot;
         Button buttonDriveFieldRelative;
         Button buttonDriveSetGyro;
-        
+
         public SwerveJoyStick(Joystick driver1, Xbox driver2, Panel panel)
         {
             this.driver1 = driver1;
@@ -238,9 +238,9 @@ public class Swerve
             // TODO Auto-generated method stub
 
             double value = 0;
-        
+
             value = driver2.getAxis(Xbox.AXIS.LEFT_X);
-        
+
             if (Math.abs(value) < DEADBAND)
             {
                 value = 0;
@@ -251,13 +251,13 @@ public class Swerve
         public Vector getHaloDrive_Velocity()
         {
             Vector value= new Vector(driver1.getX(), driver1.getY());
-            
-        
+
+
             if (value.getMag() < DEADBAND)
             {
                 value.setMag(0);
             }
-        
+
             return value;
             // TODO Auto-generated method stub
         }
@@ -268,27 +268,20 @@ public class Swerve
             if (driver1.getDirectionDegrees() > 0.65)
             {
                 Angle = driver1.getDirectionDegrees();
-            return Utilities.wrapToRange(Angle + 90, -180, 180);
+                return Utilities.wrapToRange(Angle + 90, -180, 180);
             }
-            else
-            {
             return 0;
-            }
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public double getAngleDrive_Rotation()
         {
-            // TODO Auto-generated method stub
             return 0;
         }
 
         @Override
         public Vector getAngleDrive_Velocity()
         {
-            // TODO Auto-generated method stub
             return null;
         }
 
@@ -296,7 +289,6 @@ public class Swerve
         public double getCrawlSpeed()
         {
             return driver1.getZ();
-        
         }
 
         @Override
@@ -309,11 +301,11 @@ public class Swerve
         public double[] getPanelKnobs()
         {
             return new double[] {
-                            panel.getTopDial(Hand.kLeft) * 180.0,
-                            panel.getTopDial(Hand.kRight) * 180.0,
-                            panel.getBottomDial(Hand.kLeft) * 180.0,
-                            panel.getBottomDial(Hand.kRight) * 180.0, 
-                    };
+                    panel.getTopDial(Hand.kLeft) * 180.0,
+                    panel.getTopDial(Hand.kRight) * 180.0,
+                    panel.getBottomDial(Hand.kLeft) * 180.0,
+                    panel.getBottomDial(Hand.kRight) * 180.0,
+            };
         }
 
         public boolean getPanelSave()
@@ -324,6 +316,6 @@ public class Swerve
         public double getFusionDrive_Rotation()
         {
             return driver2.getX(Hand.kRight);
-        }        
+        }
     }
-}  
+}

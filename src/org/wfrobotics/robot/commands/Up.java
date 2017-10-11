@@ -17,7 +17,7 @@ public class Up extends Command
 {
     public enum MODE {CLIMB, DOWN, VARIABLE_SPEED};
 
-    private final double DEADBAND_TRIGGER = .1; 
+    private final double DEADBAND_TRIGGER = .1;
 
     private double timeDoneClimbing;
     private MODE mode;
@@ -29,11 +29,10 @@ public class Up extends Command
         this.mode = mode;
     }
 
-    @Override
     protected void execute()
     {
         double speed = 0;
-        
+
         Utilities.PrintCommand("Up", this, mode.toString());
         if(mode == MODE.VARIABLE_SPEED)
         {
@@ -49,7 +48,7 @@ public class Up extends Command
         else if (mode == MODE.CLIMB)
         {
             speed = Commands.CLIMBER_CLIMB_SPEED;
-            
+
             if (!Robot.climberSubsystem.isAtTop())
             {
                 timeDoneClimbing = timeSinceInitialized();
@@ -64,16 +63,12 @@ public class Up extends Command
         Robot.climberSubsystem.setSpeed(speed);
     }
 
-    @Override
     protected boolean isFinished()
     {
-        if(this.mode == MODE.CLIMB)
+        if(mode == MODE.CLIMB)
         {
             return timeSinceInitialized() - timeDoneClimbing > Commands.CLIMBER_CLIMB_TIME_AFTER_TOP_REACHED;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 }

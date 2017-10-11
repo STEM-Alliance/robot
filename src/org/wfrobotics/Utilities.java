@@ -119,20 +119,17 @@ public final class Utilities {
      */
     public static final double clampToRange(double value, double min, double max)
     {
-        if (value > min)
+        if (value < min)
         {
-            if (value < max)
-            {
-                return value;
-            }
-            else
-            {
-                return max;
-            }
+            return min;
+        }
+        else if (value < max)
+        {
+            return value;
         }
         else
         {
-            return min;
+            return max;
         }
     }
 

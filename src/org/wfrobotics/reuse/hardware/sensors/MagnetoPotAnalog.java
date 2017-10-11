@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
  * Created for using the 6127V1A360L.5FS (987-1393-ND on DigiKey)
  */
 public class MagnetoPotAnalog extends MagnetoPot{
-    
+
     public AnalogPotentiometer m_Analog;
-    
+
     /**
      * Initialize a new Magnetic Potentiometer
      * @param channel Analog input channel
@@ -39,7 +39,7 @@ public class MagnetoPotAnalog extends MagnetoPot{
     public MagnetoPotAnalog(int channel, double fullRange, double offset)
     {
         super(fullRange, offset);
-        
+
         m_Analog = new AnalogPotentiometer(channel);
     }
 
@@ -47,11 +47,10 @@ public class MagnetoPotAnalog extends MagnetoPot{
     {
         return m_Analog.get();
     }
-    
+
     @Override
     public void free()
     {
         m_Analog.free();
     }
-    
 }
