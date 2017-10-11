@@ -9,6 +9,7 @@ import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Panel.BUTTON;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.XboxButton;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Rev;
 import org.wfrobotics.robot.commands.Shoot;
@@ -23,10 +24,10 @@ public class Swerve
     public interface SwerveOI
     {
         public double getHaloDrive_Rotation();
-        public Vector getHaloDrive_Velocity();
+        public HerdVector getHaloDrive_Velocity();
         public double getAngleDrive_Heading();
         public double getAngleDrive_Rotation();
-        public Vector getAngleDrive_Velocity();
+        public HerdVector getAngleDrive_Velocity();
         public double getCrawlSpeed();
         public int getDpad();
         public double[] getPanelKnobs();
@@ -92,12 +93,12 @@ public class Swerve
         }
 
         /**
-         * Get the {@link Vector} (mag & angle) of the velocity joystick for Halo
+         * Get the {@link HerdVector} (mag & angle) of the velocity joystick for Halo
          * Drive
          * 
          * @return The vector of the joystick.
          */
-        public Vector getHaloDrive_Velocity()
+        public HerdVector getHaloDrive_Velocity()
         {
             Vector value = driver1.getVector(Hand.kLeft);
 
@@ -106,7 +107,7 @@ public class Swerve
                 value.setMag(0);
             }
 
-            return value;
+            return new HerdVector(value.getMag(), value.getAngle());
         }
 
         /**
@@ -148,12 +149,12 @@ public class Swerve
         }
 
         /**
-         * Get the {@link Vector} (mag & angle) of the velocity joystick for Angle
+         * Get the {@link HerdVector} (mag & angle) of the velocity joystick for Angle
          * Drive
          * 
          * @return The vector of the joystick.
          */
-        public Vector getAngleDrive_Velocity()
+        public HerdVector getAngleDrive_Velocity()
         {
             Vector value = driver1.getVector(Hand.kLeft);
 
@@ -161,7 +162,7 @@ public class Swerve
             {
                 value.setMag(0);
             }
-            return value;
+            return new HerdVector(value.getMag(), value.getAngle());
         }
 
         public double getCrawlSpeed()
@@ -248,18 +249,16 @@ public class Swerve
             return value;
         }
 
-        public Vector getHaloDrive_Velocity()
+        public HerdVector getHaloDrive_Velocity()
         {
             Vector value= new Vector(driver1.getX(), driver1.getY());
-
 
             if (value.getMag() < DEADBAND)
             {
                 value.setMag(0);
             }
 
-            return value;
-            // TODO Auto-generated method stub
+            return new HerdVector(value.getMag(), value.getAngle());
         }
 
         public double getAngleDrive_Heading()
@@ -280,7 +279,7 @@ public class Swerve
         }
 
         @Override
-        public Vector getAngleDrive_Velocity()
+        public HerdVector getAngleDrive_Velocity()
         {
             return null;
         }
@@ -294,7 +293,6 @@ public class Swerve
         @Override
         public int getDpad()
         {
-            // TODO Auto-generated method stub
             return 0;
         }
 

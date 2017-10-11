@@ -1,7 +1,6 @@
 
 package org.wfrobotics.reuse.commands.drive;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -24,8 +23,6 @@ public class DriveTank extends Command
     {
         double left = 0;
         double right = 0;
-
-        Utilities.PrintCommand("Drive", this);
 
         if (mode == MODE.TANK)
         {

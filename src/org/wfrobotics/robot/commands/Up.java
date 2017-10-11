@@ -1,13 +1,11 @@
 package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.config.Commands;
 import org.wfrobotics.robot.config.IO;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Controls the climber's motion
@@ -33,7 +31,6 @@ public class Up extends Command
     {
         double speed = 0;
 
-        Utilities.PrintCommand("Up", this, mode.toString());
         if(mode == MODE.VARIABLE_SPEED)
         {
             speed = IO.getClimbSpeedUp();
@@ -59,7 +56,6 @@ public class Up extends Command
             //speed = -1;
         }
 
-        SmartDashboard.putNumber("ClimbSpeed", speed);
         Robot.climberSubsystem.setSpeed(speed);
     }
 
