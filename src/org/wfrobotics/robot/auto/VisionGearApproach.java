@@ -1,10 +1,10 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
+import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.Robot;
@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionGearApproach extends Command
 {
+    private HerdLogger log = new HerdLogger(VisionGearApproach.class);
     private RobotState state = RobotState.getInstance();
     private PIDController pidX;
     private boolean fieldRelative = true;
@@ -75,11 +76,11 @@ public class VisionGearApproach extends Command
             done = true;
         }
 
-        Utilities.PrintCommand("VisionGearDetect", this, state.visionInView + "");
-        SmartDashboard.putNumber("GearDistanceX", distanceFromCenter);
-        SmartDashboard.putNumber("VisionWidth", visionWidth);
-        SmartDashboard.putNumber("VisionGearY", valueY);
-        SmartDashboard.putNumber("VisionGearX", valueX);
+        log.debug("VisionGearDetect", state.visionInView);
+        log.debug("GearDistanceX", distanceFromCenter);
+        log.debug("VisionWidth", visionWidth);
+        log.debug("VisionGearY", valueY);
+        log.debug("VisionGearX", valueX);
 
         Robot.driveSubsystem.driveWithHeading(s);
     }
