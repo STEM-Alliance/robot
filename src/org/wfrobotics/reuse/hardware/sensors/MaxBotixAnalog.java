@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
-public class MaxBotixAnalog extends MaxBotix {
-    
+public class MaxBotixAnalog extends MaxBotix
+{
     // grabbed from MaxBotix datasheet, 4.88 mV == 5mm
     private static final double kmV_per_MM = .976;
 
@@ -29,7 +29,7 @@ public class MaxBotixAnalog extends MaxBotix {
             Unit units)
     {
         super();
-        
+
         m_pingChannel = new DigitalOutput(pingChannel);
         m_echoChannel = new AnalogInput(echoChannel);
         m_allocatedChannels = true;
@@ -71,7 +71,7 @@ public class MaxBotixAnalog extends MaxBotix {
             Unit units)
     {
         super();
-        
+
         if (pingChannel == null || echoChannel == null)
         {
             throw new NullPointerException("Null Channel Provided");
@@ -81,7 +81,6 @@ public class MaxBotixAnalog extends MaxBotix {
         m_echoChannel = echoChannel;
         m_units = units;
         initialize();
-
     }
 
     /**
@@ -112,13 +111,13 @@ public class MaxBotixAnalog extends MaxBotix {
     {
         super.initialize();
 
-        
+
         m_conversionToInches = kmV_Per_V / kmV_per_MM / kmmPerIn;
 
-      //  LiveWindow.addSensor("Ultrasonic",
+        //  LiveWindow.addSensor("Ultrasonic",
         //        ((DigitalInput) m_echoChannel).getChannel(), this);
     }
-    
+
     /**
      * Check if there is a valid range measurement. The ranges are accumulated
      * in a counter that will increment on each edge of the echo (return)
@@ -148,7 +147,7 @@ public class MaxBotixAnalog extends MaxBotix {
 
             m_oldDistance  = currentInches;
         }
-        
+
         return m_oldDistance;
     }
 
@@ -156,7 +155,6 @@ public class MaxBotixAnalog extends MaxBotix {
     public void setPIDSourceType(PIDSourceType pidSource)
     {
         // TODO Auto-generated method stub
-        
     }
 
     @Override

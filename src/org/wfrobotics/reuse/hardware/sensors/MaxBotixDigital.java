@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-public class MaxBotixDigital extends MaxBotix {
-
+public class MaxBotixDigital extends MaxBotix
+{
     // grabbed from MaxBotix datasheet, 1uS == 1mm
     private static final double kuS_Per_MM = 1.0;
-    
+
     private Counter m_counter = null;
 
     private double m_oldDistance = 0;
@@ -34,7 +34,7 @@ public class MaxBotixDigital extends MaxBotix {
             Unit units)
     {
         super();
-        
+
         m_pingChannel = new DigitalOutput(pingChannel);
         m_echoChannel = new DigitalInput(echoChannel);
         m_allocatedChannels = true;
@@ -77,7 +77,7 @@ public class MaxBotixDigital extends MaxBotix {
             Unit units)
     {
         super();
-        
+
         if (pingChannel == null || echoChannel == null)
         {
             throw new NullPointerException("Null Channel Provided");
@@ -118,17 +118,17 @@ public class MaxBotixDigital extends MaxBotix {
     {
 
         m_conversionToInches = kuS_Per_S / kuS_Per_MM / kmmPerIn;
-        
+
         m_counter = new Counter((DigitalSource) m_echoChannel); // set up
-                                                                // counter for
-                                                                // this sensor
+        // counter for
+        // this sensor
         m_counter.setMaxPeriod(1.0);
         m_counter.setSemiPeriodMode(true);
         m_counter.reset();
 
         LiveWindow.addSensor("Ultrasonic",
                 ((DigitalInput) m_echoChannel).getChannel(), this);
-        
+
         super.initialize();
     }
 
@@ -177,10 +177,7 @@ public class MaxBotixDigital extends MaxBotix {
         {
             return isRangeValid(m_counter.getPeriod());
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -194,12 +191,11 @@ public class MaxBotixDigital extends MaxBotix {
     {
         if (isRangeValid())
         {
-
             double currentInches = m_counter.getPeriod() * m_conversionToInches;
 
             m_oldDistance  = currentInches;
         }
-        
+
         return m_oldDistance;
     }
 
@@ -218,7 +214,6 @@ public class MaxBotixDigital extends MaxBotix {
     public void setPIDSourceType(PIDSourceType pidSource)
     {
         // TODO Auto-generated method stub
-        
     }
 
     @Override

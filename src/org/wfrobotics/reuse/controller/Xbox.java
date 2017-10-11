@@ -5,6 +5,8 @@ import org.wfrobotics.Vector;
 
 import edu.wpi.first.wpilibj.XboxController;
 
+// TODO wrap instead of subclass
+
 /**
  * 
  * @author Team 4818 WFRobotics
@@ -19,13 +21,13 @@ public class Xbox extends XboxController {
         RIGHT_TRIGGER(3),
         RIGHT_X(4),
         RIGHT_Y(5);
-        
+
         public final int value;
-        
+
         private AXIS(int value) { this.value = value; }
         public int get() { return value; }
     }
-    
+
     public static enum BUTTON {
         A(1),
         B(2),
@@ -37,7 +39,7 @@ public class Xbox extends XboxController {
         START(8),
         LEFT_STICK(9),
         RIGHT_STICK(10);
-        
+
         private final int value;
 
         private BUTTON(int value) { this.value = value; }
@@ -79,9 +81,10 @@ public class Xbox extends XboxController {
     {
         // we need forward Y to be positive instead of negative
         if(axis == AXIS.LEFT_Y || axis == AXIS.RIGHT_Y)
+        {
             return -getRawAxis(axis.get());
-        else
-            return getRawAxis(axis.get());
+        }
+        return getRawAxis(axis.get());
     }
 
     /**
@@ -100,10 +103,7 @@ public class Xbox extends XboxController {
         {
             return getAxis(AXIS.LEFT_X);
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 
     /**
@@ -122,10 +122,7 @@ public class Xbox extends XboxController {
         {
             return getAxis(AXIS.LEFT_Y);
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 
     /**
@@ -164,7 +161,7 @@ public class Xbox extends XboxController {
         double Angle = Math.toDegrees(getDirectionRadians(hand));
         return Utilities.wrapToRange(Angle + 90, -180, 180);
     }
-    
+
     /**
      * Get the vector formed by the hand
      * @param hand Hand associated with the Joystick
@@ -204,12 +201,9 @@ public class Xbox extends XboxController {
         {
             return getAxis(AXIS.RIGHT_TRIGGER) > 0.6;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
-    
+
     @Override
     public int getPOV(int pov)
     {
@@ -218,21 +212,18 @@ public class Xbox extends XboxController {
         {
             return (int) Utilities.wrapToRange(Angle, 0, 360);
         }
-        else
-        {
-            return -1;
-        }
+        return -1;
     }
-    
+
     public boolean getJoystickButton(Hand hand)
     {
         return super.getStickButton(hand);
     }
-    
+
     private double scaleForDeadband(double value)
     {
         double abs = Math.abs(value);
-        
+
         if (abs < DEADBAND)
         {
             value = 0;
@@ -241,7 +232,7 @@ public class Xbox extends XboxController {
         {
             value = Math.signum(value) * ((abs - DEADBAND) / (1 - DEADBAND));
         }
-        
+
         return value;
     }
 

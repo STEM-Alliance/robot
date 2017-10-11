@@ -1,27 +1,26 @@
 package org.wfrobotics.reuse.controller;
 
-import edu.wpi.first.wpilibj.hal.HAL;
-
 import org.wfrobotics.Utilities;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.hal.HAL;
 
 public class Panel extends XboxController{
 
     public static enum AXIS {
-        DIAL_TOP_L     (0), 
+        DIAL_TOP_L     (0),
         DIAL_TOP_R     (1),
         SLIDER_L       (2),
         SLIDER_R       (3),
         DIAL_BOTTOM_L  (4),
         DIAL_BOTTOM_R  (5);
-        
+
         private final int value;
-        
+
         private AXIS(int value) { this.value = value; }
         public int get() { return value; }
     }
-    
+
     public static enum BUTTON {
         GREEN_B  (1),
         GREEN_T  (2),
@@ -33,9 +32,9 @@ public class Panel extends XboxController{
         BLACK_B  (8),
         BLACK_T  (9),
         SWITCH_R (10);
-        
+
         private final int value;
-        
+
         private BUTTON(int value) { this.value = value; }
         public int get() { return value; }
     }
@@ -46,16 +45,16 @@ public class Panel extends XboxController{
         RED(1),
         BLUE(2),
         GREEN(3);
-        
+
         private final int value;
-        
+
         private COLOR(int value) { this.value = value; }
         public int get() { return value; }
     }
 
     private short m_LEDMsgL;
     private short m_LEDMsgR;
-    
+
     /**
      * Constructor
      * 
@@ -110,7 +109,7 @@ public class Panel extends XboxController{
             return 0;
         }
     }
-    
+
     /**
      * Retrieve value for the top dial
      * 
@@ -132,7 +131,7 @@ public class Panel extends XboxController{
             return 0;
         }
     }
-    
+
     /**
      * Retrieve value for the bottom dial
      * 
@@ -154,7 +153,7 @@ public class Panel extends XboxController{
             return 0;
         }
     }
-    
+
     /**
      * Get Value from a button
      * 
@@ -165,7 +164,7 @@ public class Panel extends XboxController{
     {
         return getRawButton(button.get());
     }
-    
+
     /**
      * Get the Rotary encoder as values from 0-7
      * @return
@@ -177,10 +176,7 @@ public class Panel extends XboxController{
         {
             return (int) Utilities.wrapToRange(Angle, 0, 360) / 45;
         }
-        else
-        {
-            return -1;
-        }
+        return -1;
     }
 
     /**

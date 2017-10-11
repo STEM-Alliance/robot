@@ -11,30 +11,13 @@ public class AutoDrive extends Command
 {
     private final SwerveSignal s;
 
-    /**
-     * Drive Normally
-     * Details: Drive any magnitude and angle. Forward, backwards, sideways, at an angle.
-     * Note: Use this constructor or the turn to angle one for the majority of autonomous driving
-     * @param speedX Magnitude to move right (positive) and left (negative). (Range: -1 to 1)
-     * @param speedY Magnitude to move forward (positive) and backward (negative). (Range: -1 to 1)
-     * @param speedR Magnitude to turn clockwise (positive) or counterclockwise (negative) while driving. (Range: -1 to 1, Zero: Means don't spin)
-     * @param timeout How long before this command finishes (Seconds)
-     */
+    /** Drive, optionally while simultaneously turning at a fixed rate */
     public AutoDrive(double speedX, double speedY, double speedR, double timeout)
     {
         this(speedX, speedY, speedR, SwerveSignal.HEADING_IGNORE, timeout);
     }
 
-    /**
-     * Drive Halo
-     * Details: Drive while simultaneously turning to (and thereafter maintaining) a specific field relative angle.
-     * Note: A.K.A drive like your drive system is legit
-     * @param speedX Magnitude to move right (positive) and left (negative). (Range: -1 to 1)
-     * @param speedY Magnitude to move forward (positive) and backward (negative). (Range: -1 to 1)
-     * @param speedR Magnitude to turn clockwise (positive) or counterclockwise (negative) while driving. (Range: -1 to 1, Zero: Means don't spin)
-     * @param angle Angle to turn the robot to a field relative angle while driving (Range: -180 to 180, Units: Degrees)
-     * @param timeout How long before this command finishes (Seconds)
-     */
+    /** Drive, optionally while simultaneously turning to a specific angle */
     public AutoDrive(double speedX, double speedY, double speedR, double angle, double timeout)
     {
         requires(Robot.driveSubsystem);
@@ -51,4 +34,6 @@ public class AutoDrive extends Command
     {
         return isTimedOut();
     }
+
+    // TODO Set velocity to zero? Seperate AutoDrive and AutoCoast commands?
 }
