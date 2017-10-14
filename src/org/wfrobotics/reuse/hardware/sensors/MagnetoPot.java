@@ -1,9 +1,6 @@
 package org.wfrobotics.reuse.hardware.sensors;
 
 import org.wfrobotics.Utilities;
-import org.wfrobotics.reuse.utilities.CircularBuffer;
-
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Class to use a Magnetic Potentiometer like an analog
@@ -12,139 +9,58 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public abstract class MagnetoPot
 {
-    private double InMin = 0.041; // measured from raw sensor input
-    private double InMax = 0.961; // measured from raw sensor input
+    private double RAW_MIN = 0.041; // measured from raw sensor input
+    private double RAW_MAX = 0.961; // measured from raw sensor input
 
-    private double fullRange;
+    private double max;
+    private double min;
     private double offset;
 
-    private boolean average = false;
-    private CircularBuffer averageBuff;
-    private double averageLastTime = 0;
-    private double lastAverage = 0;
-
-    /**
-     * Initialize a new Magnetic Potentiometer
-     * @param fullRange full range to scale output to (360 would give output of 0-360)
-     * @param offset offset to scale output to (180 would give output of 180-360)
-     */
-    public MagnetoPot(double fullRange, double offset)
+    public MagnetoPot(double max, double min)
     {
-        this.fullRange = fullRange;
-        this.offset = offset;
+        this.max = max;
+        this.min = min;
     }
 
     public abstract double getRawInput();
 
-    protected double getValue()
-    {
-        double val = getRawInput();
-
-        if(average)
-        {
-            if((Timer.getFPGATimestamp() - averageLastTime) > .01)
-            {
-                averageBuff.pushFront(val);
-                averageLastTime = Timer.getFPGATimestamp();
-
-                val = averageBuff.getAverage();
-                lastAverage = val;
-            }
-            else
-            {
-                val = lastAverage;
-            }
-        }
-
-        return val;
-    }
-
     /**
-     * Get the scaled value of the sensor
-     * @return value from offset to fullRange
-     */
-    public double getWithoutOffset()
-    {
-        // convert to 0-1 scale
-        double val = getValue();
-
-        // update the values if needed
-        if (val > InMax)
-        {
-            InMax = val;
-        }
-        if (val < InMin)
-        {
-            InMin = val;
-        }
-
-        // scale it based on the calibration values
-        return Utilities.scaleToRange(val, InMin, InMax, 0, fullRange);
-    }
-
-    /**
-     * Get the scaled value of the sensor
-     * @return value from offset to (offset + fullRange)
+     * Get the value of the sensor
+     * @return value from min to max
      */
     public double get()
     {
-        return getWithoutOffset() + offset;
-    }
-
-    /**
-     * Get the scaled value of the sensor
-     * @return value from 0 to fullRange
-     */
-    public double getWrapped()
-    {
-        return Utilities.wrapToRange(get(), 0, fullRange);
-    }
-
-    /**
-     * Get the raw value of the sensor
-     * @return value from 0 to 1
-     */
-    public double getNormal()
-    {
-        double val = getValue();
+        // convert to 0-1 scale
+        double val = getRawInput();
 
         // update the values if needed
-        if (val > InMax)
+        if (val > RAW_MAX)
         {
-            InMax = val;
+            RAW_MAX = val;
         }
-        if (val < InMin)
+        if (val < RAW_MIN)
         {
-            InMin = val;
+            RAW_MIN = val;
         }
 
         // scale it based on the calibration values
-        return Utilities.scaleToRange(val, InMin, InMax, 0, 1);
+        // TODO BDP this is a terrible way to do this
+        return Utilities.wrapToRange(Utilities.scaleToRange(val, RAW_MIN, RAW_MAX, min, max) + offset, min, max);
     }
 
-    public void setFullRange(double fullRange)
+    public void setMax(double max)
     {
-        this.fullRange = fullRange;
+        this.max = max;
+    }
+
+    public void setMin(double min)
+    {
+        this.min = min;
     }
 
     public void setOffset(double offset)
     {
         this.offset = offset;
-    }
-
-    public void setAverage(boolean average, int size)
-    {
-        this.average = average;
-        averageBuff = new CircularBuffer(size);
-
-        double val = getRawInput();
-
-        for (int i = 0; i < size; i++)
-        {
-            averageBuff.pushFront(val);
-        }
-        lastAverage = val;
-
     }
 
     public abstract void free();
