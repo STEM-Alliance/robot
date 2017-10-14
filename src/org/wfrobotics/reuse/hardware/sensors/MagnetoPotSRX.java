@@ -24,22 +24,22 @@ public class MagnetoPotSRX extends MagnetoPot
     /**
      * Initialize a new Magnetic Potentiometer through the SRX data port
      * @param talon TalonSRX object
-     * @param fullRange full range to scale output to (360 would give output of 0-360)
+     * @param max full range to scale output to (360 would give output of 0-360)
      */
-    public MagnetoPotSRX(CANTalon talon, double fullRange)
+    public MagnetoPotSRX(CANTalon talon, double max)
     {
-        this(talon, fullRange, 0);
+        this(talon, max, 0);
     }
 
     /**
      * Initialize a new Magnetic Potentiometer through the SRX data port
      * @param talon TalonSRX object
-     * @param fullRange full range to scale output to (360 would give output of 0-360)
-     * @param offset offset to scale output to (180 would give output of 180-360)
+     * @param max full range to scale output to (360 would give output of 0-360)
+     * @param min offset to scale output to (180 would give output of 180-360)
      */
-    public MagnetoPotSRX(CANTalon talon, double fullRange, double offset)
+    public MagnetoPotSRX(CANTalon talon, double max, double min)
     {
-        super(fullRange, offset);
+        super(max, min);
 
         m_Talon = talon;
         m_Talon.setFeedbackDevice(FeedbackDevice.AnalogPot);
@@ -50,6 +50,5 @@ public class MagnetoPotSRX extends MagnetoPot
         return m_Talon.getAnalogInRaw() / 1023.0;
     }
 
-    @Override
     public void free() { }
 }
