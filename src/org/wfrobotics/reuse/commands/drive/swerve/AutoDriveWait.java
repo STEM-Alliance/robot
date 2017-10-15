@@ -6,12 +6,10 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- * Drive Off - Stay put until another command uses the drive subsystem
- */
-public class AutoOff extends Command
+/** Stay put until another command uses the drive subsystem */
+public class AutoDriveWait extends Command
 {
-    public AutoOff()
+    public AutoDriveWait()
     {
         requires(Robot.driveSubsystem);
     }
