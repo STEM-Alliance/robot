@@ -1,6 +1,5 @@
 package org.wfrobotics.robot.config;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.commands.LEDSignal;
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.commands.drive.swerve.TurnToInViewTarget;
@@ -10,8 +9,8 @@ import org.wfrobotics.reuse.controller.PanelButton;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.XboxButton;
 import org.wfrobotics.reuse.controller.XboxDpadButton;
-import org.wfrobotics.reuse.controller.XboxJoystickButton;
 import org.wfrobotics.reuse.controller.XboxTriggerButton;
+import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.auto.VisionGearDropAndBackup;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Lift;
@@ -28,7 +27,6 @@ import org.wfrobotics.robot.driveoi.Tank.TankXbox;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 
 // TODO consider list/add()
@@ -86,7 +84,7 @@ public class IO
     public static Button buttonManY= new XboxButton (xboxMan, Xbox.BUTTON.Y);
 
     public static Button buttonManDpadUp = new XboxDpadButton(xboxMan, 0);
-    public static Button buttonManJoystickL = new XboxJoystickButton(xboxMan, Hand.kLeft);
+    public static Button buttonManJoystickL = new XboxButton(xboxMan, Xbox.BUTTON.LEFT_STICK);
 
     //  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
     //  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
@@ -133,7 +131,7 @@ public class IO
 
     public static double getClimbSpeedUp()
     {
-        double raw = xboxMan.getTriggerAxis(Hand.kLeft);
+        double raw = xboxMan.getTrigger(Hand.kLeft);
         double adjusted = 0;
 
         if(raw > CLIMB_DEADBAND)
@@ -146,17 +144,7 @@ public class IO
 
     public static double getAugerSpeedAdjust()
     {
-        return xboxMan.getTriggerAxis(Hand.kLeft);
-    }
-
-    public static void setDriveRumble(XboxController.RumbleType type, float value)
-    {
-        xboxDrive.setRumble(type, value);
-    }
-
-    public static void setManRumble(XboxController.RumbleType type, float value)
-    {
-        xboxMan.setRumble(type, value);
+        return xboxMan.getTrigger(Hand.kLeft);
     }
 
     public static void setPanelLEDs(Hand hand, COLOR LED1, COLOR LED2, COLOR LED3, COLOR LED4)

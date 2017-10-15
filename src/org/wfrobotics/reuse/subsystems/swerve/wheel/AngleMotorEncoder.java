@@ -1,6 +1,6 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.Utilities;
+import org.wfrobotics.reuse.utilities.Utilities;
 
 import com.ctre.CANTalon.FeedbackDevice;
 import com.ctre.CANTalon.TalonControlMode;

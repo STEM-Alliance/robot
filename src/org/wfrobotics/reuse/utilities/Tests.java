@@ -2,14 +2,10 @@ package org.wfrobotics.reuse.utilities;
 
 import java.util.logging.Level;
 
-import org.wfrobotics.Vector;
-import org.wfrobotics.reuse.subsystems.swerve.chassis.ChassisSignal;
-
 public class Tests
 {
     static final double width = 4;
     static final double depth = 3;
-    static Vector robotV = new Vector(.3, .5);
     static final double robotS = .75;
 
     static double maxWheelMagnitudeLast;
@@ -26,8 +22,7 @@ public class Tests
     {
         FastTrig.cos(359);  // FastTrig init cache
         debugFastTrig();
-        //debugHerdVector();
-        debugOldChassisToWheelVectors();
+        debugHerdVector();
         debugNewChassisToWheelVectors();
         debugWheelVectorsToChassis();
         debugLogging();
@@ -37,16 +32,11 @@ public class Tests
     {
         // New Vector: Trig
         HerdVector a = new HerdVector(1, 60);
-        Vector B = Vector.NewFromMagAngle(1, 60);
         long start;
 
         start = System.nanoTime();
         System.out.println("A.X: " + a.getX());
         System.out.println("A.Y: " + a.getY());
-        System.out.println("Durration: " + ((System.nanoTime() - start)/1000) + " ns");
-        start = System.nanoTime();
-        System.out.println("B.X: " + B.getX());
-        System.out.println("B.Y: " + B.getY());
         System.out.println("Durration: " + ((System.nanoTime() - start)/1000) + " ns");
         System.out.println();
 
@@ -141,7 +131,7 @@ public class Tests
         System.out.println("New position FL: " + rFL);
         System.out.println("New position BL: " + rBL);
 
-        HerdVector v = new HerdVector(robotV.getMag(), robotV.getAngle());
+        HerdVector v = new HerdVector(4, 60);
         //        double spin = robotS;
         HerdVector w = new  HerdVector(robotS, 90);
         long start = System.nanoTime();
@@ -250,87 +240,6 @@ public class Tests
         System.out.format("Robot Command (%.2f, %.2f, %.2f)\n", frankenstein.getMag(), frankenstein.getAngle(), wXr.getMag());
         System.out.println("Wheel Calcs: " + ((end - start)/1000) + " ns");
         System.out.println("-------------------------------");
-    }
-
-    public static void debugOldChassisToWheelVectors()
-    {
-        // Cartesian Wheel Vectors
-        double CHASSIS_WIDTH = width;
-        double CHASSIS_DEPTH = depth;
-        double CHASSIS_SCALE = Math.sqrt(CHASSIS_WIDTH * CHASSIS_WIDTH + CHASSIS_DEPTH * CHASSIS_DEPTH);
-
-        double[][] POSITIONS = {
-                { -CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE }, // front left
-                { CHASSIS_WIDTH / CHASSIS_SCALE, CHASSIS_DEPTH / CHASSIS_SCALE }, // front right
-                { CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE }, // back right
-                { -CHASSIS_WIDTH / CHASSIS_SCALE, -CHASSIS_DEPTH / CHASSIS_SCALE } }; // back left
-        Vector[] positions = new Vector[4];
-        HerdVector velocity = new HerdVector(robotV.getMag(), robotV.getAngle());
-        double spin = robotS;
-        ChassisSignal robotCommand = new ChassisSignal(velocity, spin);
-        System.out.format("Robot Command (%.2f, %.2f, %.2f)\n", robotCommand.velocity.getMag(), robotCommand.velocity.getAngle(), robotCommand.spin);
-        System.out.format("Robot Width: %.2f, Depth: %.2f\n", CHASSIS_WIDTH, CHASSIS_DEPTH);
-        System.out.println("-------------------------------");
-
-        for (int index = 0; index < 4; index++)
-        {
-            positions[index] = new Vector(POSITIONS[index]);
-            System.out.format("Old position %d: (%.2f, %.2f)\n", index, positions[index].getMag(), positions[index].getAngle());
-        }
-
-        long start = System.nanoTime();
-        Vector[] scaled = oldScaleWheelVectors(robotCommand, positions);
-
-        double end = System.nanoTime();
-        for (int index = 0; index < scaled.length; index++)
-        {
-            System.out.format("Old wheel %d: (%.2f, %.2f)\n", index, scaled[index].getMag(), scaled[index].getAngle());
-        }
-        System.out.println("Wheel Calcs: " + ((end - start)/1000) + " ns");
-        System.out.println("-------------------------------");
-    }
-
-    private static Vector[] oldScaleWheelVectors(ChassisSignal robot, Vector[] positions)
-    {
-        Vector[] WheelsUnscaled = new Vector[4];
-        Vector[] WheelsScaled = new Vector[4];
-        double MaxWantedVeloc = 0;
-        double VelocityRatio;
-        boolean ENABLE_VELOCITY_LIMIT = true;
-
-        for (int i = 0; i < 4; i++)
-        {
-            WheelsUnscaled[i] = new Vector(robot.velocity.getX() - robot.spin * positions[i].getY(),
-                    -(robot.velocity.getY() + robot.spin * positions[i].getX()));
-
-            if (WheelsUnscaled[i].getMag() >= MaxWantedVeloc)
-            {
-                MaxWantedVeloc = WheelsUnscaled[i].getMag();
-            }
-        }
-
-        VelocityRatio = (ENABLE_VELOCITY_LIMIT) ? oldGetVelocityLimit(MaxWantedVeloc):1;
-
-        for (int i = 0; i < 4; i++)
-        {
-            // Scale values for each wheel
-            WheelsScaled[i] = Vector.NewFromMagAngle(WheelsUnscaled[i].getMag() * VelocityRatio, WheelsUnscaled[i].getAngle());
-        }
-
-        return WheelsScaled;
-    }
-
-    public static double oldGetVelocityLimit(double MaxWantedVeloc)
-    {
-        double velocityMaxAvailable = 1;
-        double velocityRatio = 1;
-
-        // Determine ratio to scale all wheel velocities by
-        velocityRatio = velocityMaxAvailable / MaxWantedVeloc;
-
-        velocityRatio = (velocityRatio > 1) ? 1:velocityRatio;
-
-        return velocityRatio;
     }
 
     public static void debugFastTrig()

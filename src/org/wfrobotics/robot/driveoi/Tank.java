@@ -11,30 +11,30 @@ public class Tank
         public double getL();
         public double getR();
         public double getThrottleSpeedAdjust();
-    }     
+    }
 
     public static class TankXbox implements TankOI
     {
         private final Xbox controller;
-        
+
         public TankXbox(Xbox controller)
         {
             this.controller = controller;
         }
-        
+
         public double getL()
         {
             return controller.getY(Hand.kLeft);
         }
-        
+
         public double getR()
         {
-            return controller.getY(Hand.kRight);        
+            return controller.getY(Hand.kRight);
         }
-        
+
         public double getThrottleSpeedAdjust()
         {
-            return 0.5 + .5 * controller.getTriggerAxis(Hand.kLeft);
+            return 0.5 + .5 * controller.getTrigger(Hand.kLeft);
         }
     }
 }

@@ -1,8 +1,8 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.PIDController;
+import org.wfrobotics.reuse.utilities.Utilities;
 
 import edu.wpi.first.wpilibj.Preferences;
 

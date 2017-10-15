@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.hardware.sensors;
 
 
-import org.wfrobotics.Utilities;
+import org.wfrobotics.reuse.utilities.Utilities;
 
 import com.kauailabs.navx.frc.AHRS;
 

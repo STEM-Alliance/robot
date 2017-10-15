@@ -1,7 +1,5 @@
 package org.wfrobotics.reuse.utilities;
 
-import org.wfrobotics.Utilities;
-
 import edu.wpi.first.wpilibj.Timer;
 
 /**

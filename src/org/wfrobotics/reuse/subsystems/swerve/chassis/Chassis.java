@@ -1,8 +1,8 @@
 package org.wfrobotics.reuse.subsystems.swerve.chassis;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.SwerveWheel;
 import org.wfrobotics.reuse.utilities.HerdVector;
+import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.RobotMap;
 

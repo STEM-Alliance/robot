@@ -1,20 +1,19 @@
 package org.wfrobotics.reuse.controller;
 
-import org.wfrobotics.Utilities;
-import org.wfrobotics.Vector;
+import org.wfrobotics.reuse.utilities.HerdVector;
+import org.wfrobotics.reuse.utilities.Utilities;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 
-// TODO wrap instead of subclass
-
 /**
- * 
  * @author Team 4818 WFRobotics
- *
  */
-public class Xbox extends XboxController {
-
-    public static enum AXIS {
+public class Xbox
+{
+    public static enum AXIS
+    {
         LEFT_X(0),
         LEFT_Y(1),
         LEFT_TRIGGER(2),
@@ -28,7 +27,8 @@ public class Xbox extends XboxController {
         public int get() { return value; }
     }
 
-    public static enum BUTTON {
+    public static enum BUTTON
+    {
         A(1),
         B(2),
         X(3),
@@ -47,177 +47,113 @@ public class Xbox extends XboxController {
     }
 
     private static final double DEADBAND = 0.2;
+    private final XboxController hw;
 
-    /**
-     * Constructor
-     * 
-     * @param port
-     *            USB Port on DriverStation
-     */
-    public Xbox(int port)
+    public Xbox(int driveStationUSBPort)
     {
-        super(port);
+        hw = new XboxController(driveStationUSBPort);
     }
 
     /**
-     * Get Value from an Axis
-     * 
-     * @param axis Axis Number
-     * @return Value from Axis (-1 to 1)
-     */
-    @Override
-    public double getRawAxis(int axis)
-    {
-        return scaleForDeadband(super.getRawAxis(axis));
-    }
-
-    /**
-     * Get Value from an Axis
-     * 
-     * @param axis AxisType
-     * @return
+     * Get value
+     * @param axis type
+     * @return axis value
      */
     public double getAxis(AXIS axis)
     {
-        // we need forward Y to be positive instead of negative
         if(axis == AXIS.LEFT_Y || axis == AXIS.RIGHT_Y)
         {
+            // Want forward Y to be positive instead of negative
             return -getRawAxis(axis.get());
         }
         return getRawAxis(axis.get());
     }
 
     /**
-     * Retrieve value for X axis
-     * 
-     * @param hand Hand associated with the Joystick
-     * @return Value of Axis (-1 to 1)
+     * Get value
+     * @param side joystick side
+     * @return value (-1 to 1)
      */
-    public double getX(Hand hand)
+    public double getX(Hand side)
     {
-        if (hand.value == Hand.kRight.value)
-        {
-            return getAxis(AXIS.RIGHT_X);
-        }
-        else if (hand.value == Hand.kLeft.value)
-        {
-            return getAxis(AXIS.LEFT_X);
-        }
-        return 0;
+        return (side == Hand.kLeft) ? getAxis(AXIS.LEFT_X) : getAxis(AXIS.RIGHT_X);
     }
 
     /**
-     * Retrieve value for Y axis
-     * 
-     * @param hand Hand associated with the Joystick
-     * @return Value of Axis (-1 to 1)
+     * Get value
+     * @param side joystick side
+     * @return value (-1 to 1)
      */
-    public double getY(Hand hand)
+    public double getY(Hand side)
     {
-        if (hand.value == Hand.kRight.value)
-        {
-            return getAxis(AXIS.RIGHT_Y);
-        }
-        else if (hand.value == Hand.kLeft.value)
-        {
-            return getAxis(AXIS.LEFT_Y);
-        }
-        return 0;
+        return (side == Hand.kLeft) ? getAxis(AXIS.LEFT_Y) : getAxis(AXIS.RIGHT_Y);
     }
 
-    /**
-     * Get the magnitude of the direction vector formed by the joystick's
-     * current position relative to its origin
-     * 
-     * @param hand Hand associated with the Joystick
-     * @return the magnitude of the direction vector
-     */
-    public double getMagnitude(Hand hand)
+    public double getMagnitude(Hand side)
     {
-        return Math.sqrt(Math.pow(getX(hand), 2) + Math.pow(getY(hand), 2));
+        double x = getX(side);
+        double y = getY(side);
+        return Math.sqrt(x * x + y * y);
     }
 
-    /**
-     * Get the direction of the vector formed by the joystick and its origin in
-     * radians
-     * 
-     * @param hand Hand associated with the Joystick
-     * @return The direction of the vector in radians
-     */
-    public double getDirectionRadians(Hand hand)
+    public double getAngleDegrees(Hand side)
     {
-        return Math.atan2(getY(hand), getX(hand));
-    }
-
-    /**
-     * Get the direction of the vector formed by the joystick and its origin in
-     * degrees
-     * 
-     * @param hand Hand associated with the Joystick
-     * @return The direction of the vector in degrees
-     */
-    public double getDirectionDegrees(Hand hand)
-    {
-        double Angle = Math.toDegrees(getDirectionRadians(hand));
+        double radians = Math.atan2(getY(side), getX(side));
+        double Angle = Math.toDegrees(radians);
         return Utilities.wrapToRange(Angle + 90, -180, 180);
     }
 
     /**
-     * Get the vector formed by the hand
-     * @param hand Hand associated with the Joystick
-     * @return Vector
-     */
-    public Vector getVector(Hand hand)
-    {
-        return new Vector(getX(hand), getY(hand));
-    }
-
-
-    /**
-     * Get Value from a button
-     * 
-     * @param button Button Type
+     * Magnitude and angle
+     * @param joystick side
      * @return
      */
-    public boolean getButton(BUTTON button)
+    public HerdVector getVector(Hand side)
     {
-        return getRawButton(button.value);
+        double x = getX(side);
+        double y = getY(side);
+        return new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(y, x) * 180 / Math.PI);
     }
 
     /**
-     * Get Trigger Value as Button
-     * 
-     * @param hand Hand associated with button
-     * @return false
+     * Get value
+     * @param side
+     * @return 0 to 1
      */
-    @Override
-    public boolean getTrigger(Hand hand)
+    public double getTrigger(Hand side)
     {
-        if (hand == Hand.kLeft)
-        {
-            return getAxis(AXIS.LEFT_TRIGGER) > 0.6;
-        }
-        else if (hand == Hand.kRight)
-        {
-            return getAxis(AXIS.RIGHT_TRIGGER) > 0.6;
-        }
-        return false;
+        return hw.getTriggerAxis(side);
     }
 
-    @Override
-    public int getPOV(int pov)
+    public boolean getButtonPressed(BUTTON button)
     {
-        int Angle = super.getPOV(pov);
-        if (Angle != -1)
+        return hw.getRawButton(button.value);
+    }
+
+    public boolean getTriggerPressed(Hand side)
+    {
+        return (side == Hand.kLeft) ? getAxis(AXIS.LEFT_TRIGGER) > 0.6 : getAxis(AXIS.RIGHT_TRIGGER) > 0.6;
+    }
+
+    public int getDpad()
+    {
+        int angle = hw.getPOV(0);
+        if (angle != -1)
         {
-            return (int) Utilities.wrapToRange(Angle, 0, 360);
+            return (int) Utilities.wrapToRange(angle, 0, 360);
         }
         return -1;
     }
 
-    public boolean getJoystickButton(Hand hand)
+    public void setRumble(Hand side, double value)
     {
-        return super.getStickButton(hand);
+        RumbleType r = (side == Hand.kLeft) ? RumbleType.kLeftRumble : RumbleType.kRightRumble;
+        hw.setRumble(r, value);
+    }
+
+    private double getRawAxis(int axis)
+    {
+        return scaleForDeadband(hw.getRawAxis(axis));  // -1 to 1
     }
 
     private double scaleForDeadband(double value)
@@ -235,5 +171,4 @@ public class Xbox extends XboxController {
 
         return value;
     }
-
 }

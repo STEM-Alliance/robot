@@ -1,8 +1,8 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.Utilities;
 import org.wfrobotics.reuse.hardware.sensors.MagnetoPot;
 import org.wfrobotics.reuse.hardware.sensors.MagnetoPotSRX;
+import org.wfrobotics.reuse.utilities.Utilities;
 
 public class AngleMotorMagPot extends AngleMotor
 {
