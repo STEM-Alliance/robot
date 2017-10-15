@@ -18,6 +18,6 @@ public class XboxButton extends Button
 
     public boolean get()
     {
-        return hardware.getButton(button);
+        return hardware.getButtonPressed(button);
     }
 }

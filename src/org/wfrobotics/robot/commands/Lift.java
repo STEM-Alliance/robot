@@ -5,7 +5,7 @@ import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.LED;
 import org.wfrobotics.robot.subsystems.Lifter.POSITION;
 
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class Lift extends Command
@@ -65,10 +65,10 @@ public class Lift extends Command
             }
         }
 
-        IO.xboxMan.setRumble(RumbleType.kLeftRumble, rumble);
-        IO.xboxMan.setRumble(RumbleType.kRightRumble, rumble);
-        IO.xboxDrive.setRumble(RumbleType.kLeftRumble, rumble);
-        IO.xboxDrive.setRumble(RumbleType.kRightRumble, rumble);
+        IO.xboxMan.setRumble(Hand.kLeft, rumble);
+        IO.xboxMan.setRumble(Hand.kRight, rumble);
+        IO.xboxDrive.setRumble(Hand.kLeft, rumble);
+        IO.xboxDrive.setRumble(Hand.kRight, rumble);
 
         Robot.lifterSubsystem.set(direction);
     }
@@ -94,10 +94,10 @@ public class Lift extends Command
         if (mode != MODE.AUTOMATIC)
         {
             LED.getInstance().set(LED.defaultLEDEffect);
-            IO.xboxMan.setRumble(RumbleType.kLeftRumble, 0);
-            IO.xboxMan.setRumble(RumbleType.kRightRumble, 0);
-            IO.xboxDrive.setRumble(RumbleType.kLeftRumble, 0);
-            IO.xboxDrive.setRumble(RumbleType.kRightRumble, 0);
+            IO.xboxMan.setRumble(Hand.kLeft, 0);
+            IO.xboxMan.setRumble(Hand.kRight, 0);
+            IO.xboxDrive.setRumble(Hand.kLeft, 0);
+            IO.xboxDrive.setRumble(Hand.kRight, 0);
         }
     }
 

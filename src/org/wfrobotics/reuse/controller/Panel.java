@@ -1,13 +1,15 @@
 package org.wfrobotics.reuse.controller;
 
-import org.wfrobotics.Utilities;
+import org.wfrobotics.reuse.utilities.Utilities;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.hal.HAL;
 
-public class Panel extends XboxController{
-
-    public static enum AXIS {
+public class Panel
+{
+    public static enum AXIS
+    {
         DIAL_TOP_L     (0),
         DIAL_TOP_R     (1),
         SLIDER_L       (2),
@@ -21,7 +23,8 @@ public class Panel extends XboxController{
         public int get() { return value; }
     }
 
-    public static enum BUTTON {
+    public static enum BUTTON
+    {
         GREEN_B  (1),
         GREEN_T  (2),
         YELLOW_B (3),
@@ -52,6 +55,7 @@ public class Panel extends XboxController{
         public int get() { return value; }
     }
 
+    private XboxController hw;
     private short m_LEDMsgL;
     private short m_LEDMsgR;
 
@@ -60,9 +64,9 @@ public class Panel extends XboxController{
      * 
      * @param port USB Port on DriverStation
      */
-    public Panel(int port)
+    public Panel(int driveStationUSBPort)
     {
-        super(port);
+        hw = new XboxController(driveStationUSBPort);
     }
 
     /**
@@ -71,10 +75,9 @@ public class Panel extends XboxController{
      * @param axis Axis Number
      * @return Value from Axis (-1 to 1)
      */
-    @Override
     public double getRawAxis(int axis)
     {
-        return super.getRawAxis(axis);
+        return hw.getRawAxis(axis);
     }
 
     /**
@@ -91,67 +94,34 @@ public class Panel extends XboxController{
     /**
      * Retrieve value for slider
      * 
-     * @param hand Hand associated with the Slider
+     * @param side Hand associated with the Slider
      * @return Value of Axis (-1 to 1)
      */
-    public double getSlider(Hand hand)
+    public double getSlider(Hand side)
     {
-        if (hand.value == Hand.kRight.value)
-        {
-            return getAxis(AXIS.SLIDER_R);
-        }
-        else if (hand.value == Hand.kLeft.value)
-        {
-            return getAxis(AXIS.SLIDER_L);
-        }
-        else
-        {
-            return 0;
-        }
+        return (side.value == Hand.kLeft.value) ? getAxis(AXIS.SLIDER_L) : getAxis(AXIS.SLIDER_R);
     }
 
     /**
      * Retrieve value for the top dial
      * 
-     * @param hand Hand associated with the dial
+     * @param side Hand associated with the dial
      * @return Value of Axis (-1 to 1)
      */
-    public double getTopDial(Hand hand)
+    public double getTopDial(Hand side)
     {
-        if (hand.value == Hand.kRight.value)
-        {
-            return getAxis(AXIS.DIAL_TOP_R);
-        }
-        else if (hand.value == Hand.kLeft.value)
-        {
-            return getAxis(AXIS.DIAL_TOP_L);
-        }
-        else
-        {
-            return 0;
-        }
+        return (side.value == Hand.kLeft.value) ? getAxis(AXIS.DIAL_TOP_L) : getAxis(AXIS.DIAL_TOP_R);
     }
 
     /**
      * Retrieve value for the bottom dial
      * 
-     * @param hand Hand associated with the dial
+     * @param side Hand associated with the dial
      * @return Value of Axis (-1 to 1)
      */
-    public double getBottomDial(Hand hand)
+    public double getBottomDial(Hand side)
     {
-        if (hand.value == Hand.kRight.value)
-        {
-            return getAxis(AXIS.DIAL_BOTTOM_R);
-        }
-        else if (hand.value == Hand.kLeft.value)
-        {
-            return getAxis(AXIS.DIAL_BOTTOM_L);
-        }
-        else
-        {
-            return 0;
-        }
+        return (side.value == Hand.kLeft.value) ? getAxis(AXIS.DIAL_BOTTOM_L) : getAxis(AXIS.DIAL_BOTTOM_R);
     }
 
     /**
@@ -162,7 +132,7 @@ public class Panel extends XboxController{
      */
     public boolean getButton(BUTTON button)
     {
-        return getRawButton(button.get());
+        return hw.getRawButton(button.get());
     }
 
     /**
@@ -171,7 +141,7 @@ public class Panel extends XboxController{
      */
     public int getRotary()
     {
-        int Angle = super.getPOV(0);
+        int Angle = hw.getPOV(0);
         if (Angle != -1)
         {
             return (int) Utilities.wrapToRange(Angle, 0, 360) / 45;
@@ -181,19 +151,19 @@ public class Panel extends XboxController{
 
     /**
      * Set the LEDs on the panel
-     * @param hand
+     * @param side
      * @param LED1
      * @param LED2
      * @param LED3
      * @param LED4
      */
-    public void setLEDs(Hand hand, COLOR LED1, COLOR LED2, COLOR LED3, COLOR LED4)
+    public void setLEDs(Hand side, COLOR LED1, COLOR LED2, COLOR LED3, COLOR LED4)
     {
         // this value might need to be multiplied by 256
-        if(hand == Hand.kLeft)
+        if(side == Hand.kLeft)
             m_LEDMsgL = (short) (LED1.get() << 6 | LED2.get() << 4 | LED3.get() << 2 | LED4.get());
-        if(hand == Hand.kRight)
+        if(side == Hand.kRight)
             m_LEDMsgR = (short) (LED1.get() << 6 | LED2.get() << 4 | LED3.get() << 2 | LED4.get());
-        HAL.setJoystickOutputs((byte) getPort(), 0, m_LEDMsgL, m_LEDMsgR);
+        HAL.setJoystickOutputs((byte) hw.getPort(), 0, m_LEDMsgL, m_LEDMsgR);
     }
 }

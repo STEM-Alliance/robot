@@ -1,7 +1,5 @@
 package org.wfrobotics.robot.driveoi;
 
-import org.wfrobotics.Utilities;
-import org.wfrobotics.Vector;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelativeToggle;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
@@ -10,6 +8,7 @@ import org.wfrobotics.reuse.controller.Panel.BUTTON;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.XboxButton;
 import org.wfrobotics.reuse.utilities.HerdVector;
+import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Rev;
 import org.wfrobotics.robot.commands.Shoot;
@@ -49,7 +48,6 @@ public class Swerve
         Button buttonDriveDumbShoot;
         Button buttonDriveFieldRelative;
         Button buttonDriveSetGyro;
-
 
         public SwerveXBox(Xbox driver1, Xbox driver2, Panel panel)
         {
@@ -100,14 +98,14 @@ public class Swerve
          */
         public HerdVector getHaloDrive_Velocity()
         {
-            Vector value = driver1.getVector(Hand.kLeft);
+            HerdVector v = driver1.getVector(Hand.kLeft);
 
-            if (value.getMag() < DEADBAND)
+            if (v.getMag() < DEADBAND)
             {
-                value.setMag(0);
+                v.scale(0);
             }
 
-            return new HerdVector(value.getMag(), value.getAngle());
+            return v;
         }
 
         /**
@@ -117,14 +115,14 @@ public class Swerve
          */
         public double getAngleDrive_Heading()
         {
-            double Angle = -1;
+            double angle = -1;
 
             if (driver1.getMagnitude(Hand.kRight) > 0.65)
             {
-                Angle = driver1.getDirectionDegrees(Hand.kRight);
+                angle = driver1.getAngleDegrees(Hand.kRight);
             }
 
-            return Angle;
+            return angle;
         }
 
         /**
@@ -134,18 +132,18 @@ public class Swerve
          */
         public double getAngleDrive_Rotation()
         {
-            double Rotation = 0;
+            double rotation = 0;
             int dpad = getDpad();
 
             if (dpad == 90)
             {
-                Rotation = .75;
+                rotation = .75;
             }
             else if (dpad == 270)
             {
-                Rotation = -.75;
+                rotation = -.75;
             }
-            return Rotation;
+            return rotation;
         }
 
         /**
@@ -156,23 +154,23 @@ public class Swerve
          */
         public HerdVector getAngleDrive_Velocity()
         {
-            Vector value = driver1.getVector(Hand.kLeft);
+            HerdVector v = driver1.getVector(Hand.kLeft);
 
-            if (value.getMag() < DEADBAND)
+            if (v.getMag() < DEADBAND)
             {
-                value.setMag(0);
+                v.scale(0);
             }
-            return new HerdVector(value.getMag(), value.getAngle());
+            return v;
         }
 
         public double getCrawlSpeed()
         {
-            return driver1.getTriggerAxis(Hand.kLeft);
+            return driver1.getTrigger(Hand.kLeft);
         }
 
         public int getDpad()
         {
-            return driver1.getPOV(0);
+            return driver1.getDpad();
         }
 
         public double[] getPanelKnobs()
@@ -238,59 +236,57 @@ public class Swerve
         {
             // TODO Auto-generated method stub
 
-            double value = 0;
+            double r = 0;
 
-            value = driver2.getAxis(Xbox.AXIS.LEFT_X);
+            r = driver2.getAxis(Xbox.AXIS.LEFT_X);
 
-            if (Math.abs(value) < DEADBAND)
+            if (Math.abs(r) < DEADBAND)
             {
-                value = 0;
+                r = 0;
             }
-            return value;
+            return r;
         }
 
         public HerdVector getHaloDrive_Velocity()
         {
-            Vector value= new Vector(driver1.getX(), driver1.getY());
+            double x = driver1.getX();
+            double y = driver1.getY();
+            HerdVector v = new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(y, x) * 180 / Math.PI);
 
-            if (value.getMag() < DEADBAND)
+            if (v.getMag() < DEADBAND)
             {
-                value.setMag(0);
+                v.scale(0);
             }
 
-            return new HerdVector(value.getMag(), value.getAngle());
+            return v;
         }
 
         public double getAngleDrive_Heading()
         {
-            double Angle;
+            double angle;
             if (driver1.getDirectionDegrees() > 0.65)
             {
-                Angle = driver1.getDirectionDegrees();
-                return Utilities.wrapToRange(Angle + 90, -180, 180);
+                angle = driver1.getDirectionDegrees();
+                return Utilities.wrapToRange(angle + 90, -180, 180);
             }
             return 0;
         }
 
-        @Override
         public double getAngleDrive_Rotation()
         {
             return 0;
         }
 
-        @Override
         public HerdVector getAngleDrive_Velocity()
         {
             return null;
         }
 
-        @Override
         public double getCrawlSpeed()
         {
             return driver1.getZ();
         }
 
-        @Override
         public int getDpad()
         {
             return 0;

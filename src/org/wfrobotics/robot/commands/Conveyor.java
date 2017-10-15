@@ -12,13 +12,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * I envision this command being smart enough that it knows if feeding the shooter (and feeder) is okay
  */
 public class Conveyor extends Command
-{   
+{
     public enum MODE {CONTINUOUS, UNJAM, ON_HOLD, OFF};
 
     private final MODE mode;
     private final double speedFeed;
     private final double speedUnjam;
-    
+
     private double timeStartPeriod;
     private boolean unjamming;
 
@@ -31,7 +31,7 @@ public class Conveyor extends Command
     {
         this(mode, Commands.AUGER_SPEED, Commands.AUGER_UNJAM_SPEED, timeout);
     }
-    
+
     public Conveyor(MODE mode, double speedFeed, double speedUnjam)
     {
         requires(Robot.augerSubsystem);
@@ -47,7 +47,7 @@ public class Conveyor extends Command
 
         this.mode = mode;
         this.speedFeed = speedFeed;
-        this.speedUnjam = speedUnjam;    
+        this.speedUnjam = speedUnjam;
         setTimeout(timeout);
     }
 
@@ -71,7 +71,7 @@ public class Conveyor extends Command
         {
             Robot.augerSubsystem.setSpeed(speedFeed - IO.getAugerSpeedAdjust()*.2);
         }
-        else 
+        else
         {
             double speed = (unjamming) ? speedUnjam : speedFeed;
 

@@ -10,14 +10,14 @@ public class XboxDpadButton extends Button
 {
     Xbox hardware;
     int angle;
-    
+
     public XboxDpadButton(Xbox hardware, int angle) {
         this.hardware = hardware;
         this.angle = angle;
     }
-    
+
     public boolean get()
     {
-        return hardware.getPOV(0) == angle;
+        return hardware.getDpad() == angle;
     }
 }

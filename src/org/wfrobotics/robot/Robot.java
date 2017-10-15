@@ -1,5 +1,6 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.controller.Xbox.BUTTON;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Color;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
@@ -147,7 +148,7 @@ public class Robot extends SampleRobot
                 gyroInitialZero = true;
             }
         }
-        else if(IO.xboxDrive.getStartButton())
+        else if(IO.xboxDrive.getButtonPressed(BUTTON.START))
         {
             Gyro.getInstance().zeroYaw();
         }
