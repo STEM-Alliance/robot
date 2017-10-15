@@ -178,4 +178,9 @@ public class DriveSwerve extends Command
     {
         return false;
     }
+
+    protected void end()
+    {
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+    }
 }

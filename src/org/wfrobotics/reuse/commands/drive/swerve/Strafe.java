@@ -26,4 +26,9 @@ public class Strafe extends Command
     {
         return isTimedOut();
     }
+
+    protected void end()
+    {
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+    }
 }
