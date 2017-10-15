@@ -33,4 +33,9 @@ public class TurnToHeading extends Command
     {
         return Math.abs(heading - state.robotHeading) < tol;
     }
+
+    protected void end()
+    {
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+    }
 }

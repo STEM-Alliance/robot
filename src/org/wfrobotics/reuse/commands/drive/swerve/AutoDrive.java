@@ -1,4 +1,3 @@
-
 package org.wfrobotics.reuse.commands.drive.swerve;
 
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
@@ -35,5 +34,8 @@ public class AutoDrive extends Command
         return isTimedOut();
     }
 
-    // TODO Set velocity to zero? Seperate AutoDrive and AutoCoast commands?
+    protected void end()
+    {
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+    }
 }

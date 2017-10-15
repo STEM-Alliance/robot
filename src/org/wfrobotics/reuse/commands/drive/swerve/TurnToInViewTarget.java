@@ -40,4 +40,9 @@ public class TurnToInViewTarget extends Command
     {
         return !state.visionInView || Math.abs(state.robotHeading + state.visionError) < tol;
     }
+
+    protected void end()
+    {
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+    }
 }

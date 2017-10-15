@@ -38,4 +38,9 @@ public class StrafeToInViewTarget extends Command
     {
         return !state.visionInView || Math.abs(state.visionError) < tol;
     }
+
+    protected void end()
+    {
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+    }
 }

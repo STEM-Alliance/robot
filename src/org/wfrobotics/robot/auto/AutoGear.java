@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveCoast;
 import org.wfrobotics.reuse.commands.drive.swerve.StrafeToInViewTarget;
 import org.wfrobotics.reuse.commands.drive.swerve.TurnToInViewTarget;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelative;
@@ -106,7 +107,7 @@ public class AutoGear extends CommandGroup
     {
         // enable the lift, intake, and shoot
         addParallel(new Lift(Lift.MODE.UP));
-        addParallel(new AutoDrive(0, 0, 0, 5));
+        addParallel(new AutoDriveCoast(0, 0, 0, 5));
         addParallel(new IntakeSetup(true));
         addSequential(new Shoot(Conveyor.MODE.CONTINUOUS, Commands.AUGER_SPEED * .8, Commands.AUGER_UNJAM_SPEED, 5));
 
@@ -114,7 +115,7 @@ public class AutoGear extends CommandGroup
         addParallel(new Shoot(Conveyor.MODE.OFF));
         addParallel(new Rev(Rev.MODE.FORCE_OFF));
         addParallel(new IntakeSetup(false));
-        addSequential(new AutoDrive(0, 0, 0, -1, .1));
+        addSequential(new AutoDriveCoast(0, 0, 0, -1, .1));
     }
 
     private void driveToSpring(boolean shootFirst)
@@ -132,8 +133,6 @@ public class AutoGear extends CommandGroup
             // otherwise maintain the 90 degree angle
             addSequential(new AutoDrive(0, .8, 0, 90, 1));
         }
-
-        addSequential(new AutoDrive(0, 0, 0, -1, 0));  // Don't coast GOOD
     }
 
     private void scoreGear(boolean shootFirst)
@@ -155,9 +154,7 @@ public class AutoGear extends CommandGroup
             }
 
             // turn to the spring
-            addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
             addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1.25));  // Don't coast GOOD
-            addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
         }
 
         boolean fieldRelative = Robot.driveSubsystem.getFieldRelative();
@@ -167,32 +164,29 @@ public class AutoGear extends CommandGroup
         addSequential(new StrafeToInViewTarget(.6, .2));
         addSequential(new TurnToInViewTarget(.125));
         addSequential(new VisionModeDefault());
-        addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
 
         addSequential(new FieldRelative(fieldRelative));
 
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)  // Drive in front of the spring
         {
-            addSequential(new AutoDrive(0, .3, 0, -1, 0.1));  // Wheels forward, we messed it up pivoting
+            addSequential(new AutoDriveCoast(0, .3, 0, -1, 0.1));  // Wheels forward, we messed it up pivoting
 
             // approach the spring
             addSequential(new AutoDrive(config.approachSpringX,       // Towards the airship
                     Math.abs(config.approachSpringX),     // Always forwards with X magnitude
                     0, config.angleSpring, .75));
-            addSequential(new AutoDrive(0, 0, 0, -1, 0.1));  // Don't coast GOOD
         }
-
 
         switch(mode)
         {
             case DEAD_RECKONING:
                 if(startPosition == POSITION_ROTARY.CENTER)
                 {
-                    addSequential(new AutoDrive(0,.5,0,-1,config.timeApproachAirship));
+                    addSequential(new AutoDriveCoast(0,.5,0,-1,config.timeApproachAirship));
                 }
                 else
                 {
-                    addSequential(new AutoDrive(signX * config.approachSpringX,
+                    addSequential(new AutoDriveCoast(signX * config.approachSpringX,
                             Math.abs(config.approachSpringX),
                             signX * .5, config.angleSpring, 1));
                 }
