@@ -3,13 +3,13 @@ package org.wfrobotics.robot.config;
 import org.wfrobotics.reuse.commands.LEDSignal;
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.commands.drive.swerve.TurnToInViewTarget;
+import org.wfrobotics.reuse.controller.ButtonFactory;
+import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Panel.COLOR;
-import org.wfrobotics.reuse.controller.PanelButton;
 import org.wfrobotics.reuse.controller.Xbox;
-import org.wfrobotics.reuse.controller.XboxButton;
-import org.wfrobotics.reuse.controller.XboxDpadButton;
-import org.wfrobotics.reuse.controller.XboxTriggerButton;
+import org.wfrobotics.reuse.controller.Xbox.BUTTON;
+import org.wfrobotics.reuse.controller.Xbox.DPAD;
 import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.auto.VisionGearDropAndBackup;
 import org.wfrobotics.robot.commands.Conveyor;
@@ -29,109 +29,43 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 
-// TODO consider list/add()
-
 /** Maps controllers to Commands **/
 public class IO
 {
     private final static double CLIMB_DEADBAND = .2;
 
-    public static Xbox xboxDrive = new Xbox(0);
-    public static Joystick joystickDrive = new Joystick(0);
-    public static Xbox xboxMan = new Xbox(1);
-    public static Panel panel = new Panel(2);
+    static Xbox xboxDriver = new Xbox(0);
+    static Joystick joystickDrive = new Joystick(0);
+    static Xbox xboxOperator = new Xbox(1);
+    static Panel panel = new Panel(2);
 
 
-    public final TankOI tankOI = new TankXbox(xboxDrive);
-    public final ArcadeOI arcadeOI = new ArcadeXbox(xboxDrive);
-    public final MecanumOI mecanumOI = new MecanumXBox(xboxDrive);
-    public final SwerveOI swerveOI = new SwerveXBox(xboxDrive, xboxMan, panel);
-    //public final SwerveOI swerveOI = new SwerveJoyStick(joystickDrive, xboxMan, panel);
+    public final TankOI tankOI = new TankXbox(xboxDriver);
+    public final ArcadeOI arcadeOI = new ArcadeXbox(xboxDriver);
+    public final MecanumOI mecanumOI = new MecanumXBox(xboxDriver);
+    public final SwerveOI swerveOI = new SwerveXBox(xboxDriver, xboxOperator, panel);
 
 
-    //    Button buttonDriveLB = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
-    //    Button buttonDriveBack = new XboxButton(xboxDrive, Xbox.BUTTON.BACK);
-    //    Button buttonDriveStart = new XboxButton(xboxDrive, Xbox.BUTTON.START);
+    Button buttonPanelWhiteTop = ButtonFactory.makeButton(panel, Panel.BUTTON.WHITE_T, TRIGGER.WHILE_HELD, new Up(Up.MODE.CLIMB));
 
-    Button buttonPanelSwitchL = new PanelButton(panel, Panel.BUTTON.SWITCH_L);
-    Button buttonPanelSwitchR = new PanelButton(panel, Panel.BUTTON.SWITCH_R);
+    Button buttonManLB = ButtonFactory.makeButton(xboxOperator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.UNJAM));
+    Button buttonManRB = ButtonFactory.makeButton(xboxOperator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.ON_HOLD));
 
-    Button buttonPanelWhiteTop = new PanelButton(panel, Panel.BUTTON.WHITE_T);
-    Button buttonPanelWhiteBottom = new PanelButton(panel, Panel.BUTTON.WHITE_B);
+    Button buttonPanelYellowTop = ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveSwerve(DriveSwerve.MODE.STOP));
+    Button buttonPanelYellowBottom = ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_B, TRIGGER.WHEN_PRESSED, new VisionGearDropAndBackup());
+    Button buttonPanelGreenTop = ButtonFactory.makeButton(panel, Panel.BUTTON.GREEN_T, TRIGGER.WHILE_HELD, new Rev(Rev.MODE.SHOOT));
 
-
-    Button buttonManLB = new XboxButton(xboxMan, Xbox.BUTTON.LB);
-    Button buttonManRB = new XboxButton(xboxMan, Xbox.BUTTON.RB);
-
-    //    Button buttonDriveX = new XboxButton(xboxDrive, Xbox.BUTTON.X);
-    //    Button buttonDriveY = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
-    //    Button buttonDriveB = new XboxButton(xboxDrive, Xbox.BUTTON.B);
-    //    Button buttonDriveA = new XboxButton(xboxDrive, Xbox.BUTTON.A);
-    //    Button buttonDriveRB = new XboxButton(xboxDrive, Xbox.BUTTON.RB);
-    Button buttonPanelYellowTop = new PanelButton(panel, Panel.BUTTON.YELLOW_T);
-    Button buttonPanelYellowBottom = new PanelButton(panel, Panel.BUTTON.YELLOW_B);
-    Button buttonPanelGreenTop = new PanelButton(panel, Panel.BUTTON.GREEN_T);
-    Button buttonPanelGreenBottom = new PanelButton(panel, Panel.BUTTON.GREEN_B);
-
-    Button buttonManualLiftDown = new XboxTriggerButton(xboxMan, Hand.kRight, .25);
-    Button buttonManualLiftUp = new XboxButton(xboxMan, Xbox.BUTTON.B);
+    Button buttonManualLiftDown = ButtonFactory.makeButton(xboxOperator, Hand.kRight, .25, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.DOWN));
 
     // used for manual intake DO NOT USE OTHERWISE
-    public static Button buttonPanelBlackTop = new PanelButton(panel, Panel.BUTTON.BLACK_T);
-    Button buttonPanelBlackBottom = new PanelButton(panel, Panel.BUTTON.BLACK_B);
+    Button buttonPanelBlackBottom = ButtonFactory.makeButton(panel, Panel.BUTTON.BLACK_B, TRIGGER.WHEN_PRESSED, new TurnToInViewTarget(.1));
 
-    public static Button buttonManX= new XboxButton (xboxMan, Xbox.BUTTON.X);
-    public static Button buttonManY= new XboxButton (xboxMan, Xbox.BUTTON.Y);
-
-    public static Button buttonManDpadUp = new XboxDpadButton(xboxMan, 0);
-    public static Button buttonManJoystickL = new XboxButton(xboxMan, Xbox.BUTTON.LEFT_STICK);
-
-    //  Button buttonLEDTest = new XboxButton(xboxDrive, Xbox.BUTTON.LB);
-    //  Button buttonIntakeLeftStart = new XboxButton(xboxDrive, Xbox.BUTTON.X);
-    //  Button buttonIntakeRightStart = new XboxButton(xboxDrive, Xbox.BUTTON.Y);
-
-
-    public IO()
-    {
-        buttonManDpadUp.whileHeld(new Lift(Lift.MODE.UP));
-        buttonManualLiftDown.whileHeld(new Lift(Lift.MODE.DOWN));
-        buttonManJoystickL.whenPressed(new LEDSignal(3));
-
-        //        buttonDriveLB.whenPressed(new DriveConfig(DriveConfig.MODE.HIGH_GEAR));
-        //        buttonDriveBack.whenPressed(new DriveConfig(DriveConfig.MODE.FIELD_RELATIVE));
-        //        buttonDriveStart.whenPressed(new DriveConfig(DriveConfig.MODE.GYRO_ZERO));
-        buttonPanelYellowBottom.whenPressed(new VisionGearDropAndBackup());
-        buttonPanelBlackBottom.whenPressed(new TurnToInViewTarget(.1));
-        //buttonPanelYellowBottom.toggleWhenPressed(new GearDetection(GearDetection.MODE.GETDATA));
-        //buttonPanelBlackBottom.toggleWhenPressed(new ShooterDetection(ShooterDetection.MODE.GETDATA));
-
-        buttonPanelYellowTop.toggleWhenPressed(new DriveSwerve(DriveSwerve.MODE.STOP));
-
-        //        buttonDriveA.whileHeld(new Rev(Rev.MODE.SHOOT));
-        //        buttonDriveB.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
-        //buttonDriveA.toggleWhenPressed(new Conveyor(Conveyor.MODE.OFF));
-
-        buttonManRB.whileHeld(new Conveyor(Conveyor.MODE.ON_HOLD));
-        buttonManLB.whileHeld(new Conveyor(Conveyor.MODE.UNJAM));
-
-        buttonPanelGreenTop.whileHeld(new Rev(Rev.MODE.SHOOT));
-        //buttonPanelGreenBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
-
-        //buttonPanelBlackBottom.whenPressed(new LED(Led.HARDWARE.SIDE, LED.MODE.BLINK, 5));
-        //buttonPanelBlackTop.whileHeld(new IntakeSetup(true));
-        buttonPanelWhiteTop.whileHeld(new Up(Up.MODE.CLIMB));
-        //buttonPanelWhiteBottom.whileHeld(new Up(Up.MODE.VARIABLE_SPEED));
-
-        //buttonDriveRB.toggleWhenPressed(new VisionShoot());
-
-        //      buttonIntakeLeftStart.toggleWhenPressed(new IntakeSetup(false, true));
-        //      buttonIntakeRightStart.toggleWhenPressed(new IntakeSetup(true, false));
-        //      buttonLEDTest.toggleWhenPressed(new LED(HARDWARE.ALL, LED.MODE.BLINK));
-    }
+    public static Button buttonManDpadUp = ButtonFactory.makeButton(xboxOperator, DPAD.UP, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.UP));
+    public static Button buttonManJoystickL = ButtonFactory.makeButton(xboxOperator, BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new LEDSignal(3));
 
     public static double getClimbSpeedUp()
     {
-        double raw = xboxMan.getTrigger(Hand.kLeft);
+        double raw = xboxOperator.getTrigger(Hand.kLeft);
         double adjusted = 0;
 
         if(raw > CLIMB_DEADBAND)
@@ -144,7 +78,17 @@ public class IO
 
     public static double getAugerSpeedAdjust()
     {
-        return xboxMan.getTrigger(Hand.kLeft);
+        return xboxOperator.getTrigger(Hand.kLeft);
+    }
+
+    public static boolean getIntake()
+    {
+        return xboxOperator.getButtonPressed(BUTTON.Y) || panel.getButton(Panel.BUTTON.BLACK_T);
+    }
+
+    public static boolean getZeroGyro()
+    {
+        return IO.xboxDriver.getButtonPressed(BUTTON.START);
     }
 
     public static void setPanelLEDs(Hand hand, COLOR LED1, COLOR LED2, COLOR LED3, COLOR LED4)
@@ -157,5 +101,13 @@ public class IO
         panel.setLEDs(Hand.kLeft, ledsL[0], ledsL[1], ledsL[2], ledsL[3]);
         panel.setLEDs(Hand.kRight, ledsR[0], ledsR[1], ledsR[2], ledsR[3]);
     }
-}
 
+    public static void setLiftRumble(boolean rumble)
+    {
+        float state = (rumble) ? 1 : 0;
+        IO.xboxOperator.setRumble(Hand.kLeft, state);
+        IO.xboxOperator.setRumble(Hand.kRight, state);
+        IO.xboxDriver.setRumble(Hand.kLeft, state);
+        IO.xboxDriver.setRumble(Hand.kRight, state);
+    }
+}

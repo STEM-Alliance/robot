@@ -5,7 +5,6 @@ import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.LED;
 import org.wfrobotics.robot.subsystems.Lifter.POSITION;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class Lift extends Command
@@ -32,48 +31,41 @@ public class Lift extends Command
         samplesWithGear = 0;
     }
 
-    @Override
     protected void initialize()
     {
         timeLastSensed = timeSinceInitialized() - TIMEOUT_NO_GEAR;  // Start in the down state
     }
 
-    @Override
     protected void execute()
     {
         POSITION direction;
-        float rumble;
+        boolean rumble;
         double now = timeSinceInitialized();
 
         if (mode != MODE.AUTOMATIC)
         {
             direction = (mode == MODE.UP) ? POSITION.TOP : POSITION.BOTTOM;
-            rumble = (Robot.lifterSubsystem.hasGear()) ? 1 : 0;
+            rumble = Robot.lifterSubsystem.hasGear();
         }
         else
         {
             if (Robot.lifterSubsystem.hasGear())
             {
                 direction = (++samplesWithGear > SAMPLES_UNTIL_LIFT) ? POSITION.TOP : POSITION.TRANSPORT;  // How many cycles have we had a gear?
-                rumble = (now - timeLastSensed > TIMEOUT_RUMBLE) ? 1 : 0;
+                rumble = now - timeLastSensed > TIMEOUT_RUMBLE;
                 timeLastSensed = now;
             }
             else
             {
                 direction = (now - timeLastSensed < TIMEOUT_NO_GEAR) ? POSITION.TOP : POSITION.TRANSPORT;  // How long since we had a gear?
-                rumble = (now - timeLastSensed < TIMEOUT_RUMBLE) ? 1 : 0;
+                rumble = now - timeLastSensed < TIMEOUT_RUMBLE;
             }
         }
 
-        IO.xboxMan.setRumble(Hand.kLeft, rumble);
-        IO.xboxMan.setRumble(Hand.kRight, rumble);
-        IO.xboxDrive.setRumble(Hand.kLeft, rumble);
-        IO.xboxDrive.setRumble(Hand.kRight, rumble);
-
+        IO.setLiftRumble(rumble);
         Robot.lifterSubsystem.set(direction);
     }
 
-    @Override
     protected boolean isFinished()
     {
         switch(mode)
@@ -94,10 +86,7 @@ public class Lift extends Command
         if (mode != MODE.AUTOMATIC)
         {
             LED.getInstance().set(LED.defaultLEDEffect);
-            IO.xboxMan.setRumble(Hand.kLeft, 0);
-            IO.xboxMan.setRumble(Hand.kRight, 0);
-            IO.xboxDrive.setRumble(Hand.kLeft, 0);
-            IO.xboxDrive.setRumble(Hand.kRight, 0);
+            IO.setLiftRumble(false);
         }
     }
 
