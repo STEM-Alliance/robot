@@ -46,6 +46,24 @@ public class Xbox
         public int get() { return value; }
     }
 
+    public static enum DPAD
+    {
+        NONE(-1),
+        UP(0),
+        UP_RIGHT(45),
+        RIGHT(90),
+        DOWN_RIGHT(135),
+        DOWN(180),
+        DOWN_LEFT(225),
+        LEFT(270),
+        UP_LEFT(315);
+
+        public final int value;
+
+        private DPAD(int value) { this.value = value; }
+        public int get() { return value; }
+    }
+
     private static final double DEADBAND = 0.2;
     private final XboxController hw;
 
@@ -130,6 +148,11 @@ public class Xbox
         return hw.getRawButton(button.value);
     }
 
+    public boolean getButtonPressed(DPAD direction)
+    {
+        return hw.getPOV(0) == direction.get();
+    }
+
     public boolean getTriggerPressed(Hand side)
     {
         return (side == Hand.kLeft) ? getAxis(AXIS.LEFT_TRIGGER) > 0.6 : getAxis(AXIS.RIGHT_TRIGGER) > 0.6;
@@ -137,12 +160,7 @@ public class Xbox
 
     public int getDpad()
     {
-        int angle = hw.getPOV(0);
-        if (angle != -1)
-        {
-            return (int) Utilities.wrapToRange(angle, 0, 360);
-        }
-        return -1;
+        return hw.getPOV(0);
     }
 
     public void setRumble(Hand side, double value)
@@ -168,7 +186,6 @@ public class Xbox
         {
             value = Math.signum(value) * ((abs - DEADBAND) / (1 - DEADBAND));
         }
-
         return value;
     }
 }

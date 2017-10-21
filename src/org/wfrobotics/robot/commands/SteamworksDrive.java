@@ -50,7 +50,7 @@ public class SteamworksDrive extends CommandGroup
             intakeLastOn = Timer.getFPGATimestamp();
         }
 
-        if(IO.buttonPanelBlackTop.get() || IO.buttonManY.get())
+        if(IO.getIntake())
         {
             intakeOn = true;
         }

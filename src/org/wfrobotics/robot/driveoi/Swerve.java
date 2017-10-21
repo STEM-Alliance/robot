@@ -3,10 +3,11 @@ package org.wfrobotics.robot.driveoi;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelativeToggle;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
+import org.wfrobotics.reuse.controller.ButtonFactory;
+import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Panel.BUTTON;
 import org.wfrobotics.reuse.controller.Xbox;
-import org.wfrobotics.reuse.controller.XboxButton;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.commands.Conveyor;
@@ -55,26 +56,15 @@ public class Swerve
             this.driver2 = driver2;
             this.panel = panel;
 
-            buttonDriveSmartShoot = new XboxButton(driver1, Xbox.BUTTON.B);
-            buttonDriveDumbShoot = new XboxButton(driver1, Xbox.BUTTON.A);
-            buttonDriveVisionShoot= new XboxButton(driver1, Xbox.BUTTON.RB);
-            buttonDriveShift= new XboxButton(driver1, Xbox.BUTTON.LB);
-            buttonDriveFieldRelative= new XboxButton(driver1, Xbox.BUTTON.BACK);
-            buttonDriveSetGyro = new XboxButton(driver1, Xbox.BUTTON.START);
-
-
-            //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
-            buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
-            buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
-            buttonDriveShift.whenPressed(new ShiftToggle());
-            buttonDriveFieldRelative.whenPressed(new FieldRelativeToggle());
-            buttonDriveSetGyro.whenPressed(new GyroZero());
+            buttonDriveSmartShoot = ButtonFactory.makeButton(driver1, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new Shoot(Conveyor.MODE.CONTINUOUS));
+            buttonDriveDumbShoot = ButtonFactory.makeButton(driver1, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new Rev(Rev.MODE.SHOOT));
+            buttonDriveShift= ButtonFactory.makeButton(driver1, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new ShiftToggle());
+            buttonDriveFieldRelative= ButtonFactory.makeButton(driver1, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new FieldRelativeToggle());
+            buttonDriveSetGyro = ButtonFactory.makeButton(driver1, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new GyroZero());
         }
-
 
         /**
          * Get the Rotation value of the joystick for Halo Drive
-         * 
          * @return The Rotation value of the joystick.
          */
         public double getHaloDrive_Rotation()
@@ -91,9 +81,7 @@ public class Swerve
         }
 
         /**
-         * Get the {@link HerdVector} (mag & angle) of the velocity joystick for Halo
-         * Drive
-         * 
+         * Get the {@link HerdVector} (mag & angle) of the velocity joystick for Halo Drive
          * @return The vector of the joystick.
          */
         public HerdVector getHaloDrive_Velocity()
@@ -110,7 +98,6 @@ public class Swerve
 
         /**
          * Get the heading/angle in degrees for Angle Drive
-         * 
          * @return The angle in degrees of the joystick.
          */
         public double getAngleDrive_Heading()
@@ -127,7 +114,6 @@ public class Swerve
 
         /**
          * Get the rotation for Angle Drive
-         * 
          * @return The rotation rate in rad/s.
          */
         public double getAngleDrive_Rotation()
@@ -147,9 +133,7 @@ public class Swerve
         }
 
         /**
-         * Get the {@link HerdVector} (mag & angle) of the velocity joystick for Angle
-         * Drive
-         * 
+         * Get the {@link HerdVector} (mag & angle) of the velocity joystick for Angle Drive
          * @return The vector of the joystick.
          */
         public HerdVector getAngleDrive_Velocity()
