@@ -4,10 +4,10 @@ import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /** Stay put until another command uses the drive subsystem */
-public class AutoDriveWait extends Command
+public class AutoDriveWait extends InstantCommand
 {
     public AutoDriveWait()
     {
@@ -17,10 +17,5 @@ public class AutoDriveWait extends Command
     protected void initialize()
     {
         Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
-    }
-
-    protected boolean isFinished()
-    {
-        return true;
     }
 }

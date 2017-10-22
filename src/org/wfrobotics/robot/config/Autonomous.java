@@ -2,6 +2,7 @@ package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveWait;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.auto.AutoGear;
 import org.wfrobotics.robot.auto.AutoShoot;
 
@@ -103,7 +104,7 @@ public class Autonomous
      */
     public static POSITION_ROTARY getRotaryStartingPosition()
     {
-        int dial = IO.panel.getRotary();
+        int dial = Robot.controls.getAutonomousSide();
         Alliance alliance = DriverStation.getInstance().getAlliance();
         String displayValue;
         POSITION_ROTARY position;

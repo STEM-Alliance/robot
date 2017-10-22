@@ -2,7 +2,6 @@ package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.config.Commands;
-import org.wfrobotics.robot.config.IO;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
@@ -33,7 +32,7 @@ public class Up extends Command
 
         if(mode == MODE.VARIABLE_SPEED)
         {
-            speed = IO.getClimbSpeedUp();
+            speed = Robot.controls.getClimbSpeedUp();
 
             if(speed < DEADBAND_TRIGGER)
             {

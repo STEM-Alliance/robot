@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class Arcade
 {
-    public interface ArcadeOI
+    public interface ArcadeIO
     {
         public double getThrottle();
         public double getTurn();
         public double getThrottleSpeedAdjust();
     }
 
-    public static class ArcadeXbox implements ArcadeOI
+    public static class ArcadeXbox implements ArcadeIO
     {
         private final Xbox controller;
 

@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class Tank
 {
-    public interface TankOI
+    public interface TankIO
     {
         public double getL();
         public double getR();
         public double getThrottleSpeedAdjust();
     }
 
-    public static class TankXbox implements TankOI
+    public static class TankXbox implements TankIO
     {
         private final Xbox controller;
 
