@@ -38,6 +38,11 @@ public abstract class ButtonFactory
         return setTrigger(new PanelButton(provider, button), when, action);
     }
 
+    public static Button makeAnyDpadButton(Xbox provider, TRIGGER when, Command action)
+    {
+        return setTrigger(new AnyDpadButton(provider), when, action);
+    }
+
     private static Button setTrigger(Button b, TRIGGER when, Command action)
     {
         switch (when)
@@ -132,4 +137,18 @@ public abstract class ButtonFactory
         }
     }
 
+    private static class AnyDpadButton extends Button
+    {
+        Xbox hardware;
+
+        public AnyDpadButton(Xbox hardware)
+        {
+            this.hardware = hardware;
+        }
+
+        public boolean get()
+        {
+            return hardware.getDpad() != DPAD.NONE.get();
+        }
+    }
 }

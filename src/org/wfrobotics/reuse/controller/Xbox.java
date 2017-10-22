@@ -130,7 +130,7 @@ public class Xbox
     {
         double x = getX(side);
         double y = getY(side);
-        return new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(y, x) * 180 / Math.PI);
+        return new HerdVector(Math.sqrt(x * x + y * y), -Math.atan2(y, x) * 180 / Math.PI);
     }
 
     /**

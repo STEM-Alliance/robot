@@ -19,7 +19,7 @@ public class DriveOff extends Command
 
     protected void initialize()
     {
-        log.debug("Drive", "Halo");
+        log.debug("Drive", "Off");
     }
 
     protected void execute()

@@ -2,6 +2,7 @@ package org.wfrobotics.robot.driveoi;
 
 import java.util.ArrayList;
 
+import org.wfrobotics.reuse.commands.drive.swerve.DriveCrawl;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelativeToggle;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
@@ -13,6 +14,7 @@ import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Rev;
 import org.wfrobotics.robot.commands.Shoot;
+import org.wfrobotics.robot.config.Drive;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -23,12 +25,11 @@ public class Swerve
 {
     public interface SwerveIO
     {
+        public int getCrawlDirection();
         public double getCrawlSpeed();
-        public int getDpad();
         public boolean getGyroZero();
-        public double getHaloDrive_Rotation();
-        public HerdVector getHaloDrive_Velocity();
-        public double getFusionDrive_Rotation();
+        public double getRotation();
+        public HerdVector getVelocity();
     }
 
     public static class SwerveXbox implements SwerveIO
@@ -43,16 +44,13 @@ public class Swerve
         {
             this.driver = driver;
             this.operator = operator;
+            buttons.add(ButtonFactory.makeAnyDpadButton(driver, TRIGGER.WHILE_HELD, new DriveCrawl()));
             buttons.add(ButtonFactory.makeButton(driver, BUTTON.LB, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
             buttons.add(ButtonFactory.makeButton(driver, BUTTON.BACK, TRIGGER.WHEN_PRESSED, new FieldRelativeToggle()));
             buttons.add(ButtonFactory.makeButton(driver, BUTTON.START, TRIGGER.WHEN_PRESSED, new GyroZero()));
         }
 
-        /**
-         * Get the Rotation value of the joystick for Halo Drive
-         * @return The Rotation value of the joystick.
-         */
-        public double getHaloDrive_Rotation()
+        public double getRotation()
         {
             double value = driver.getAxis(Xbox.AXIS.RIGHT_X);
 
@@ -63,11 +61,7 @@ public class Swerve
             return value;
         }
 
-        /**
-         * Get the {@link HerdVector} (mag & angle) of the velocity joystick for Halo Drive
-         * @return The vector of the joystick.
-         */
-        public HerdVector getHaloDrive_Velocity()
+        public HerdVector getVelocity()
         {
             HerdVector v = driver.getVector(Hand.kLeft);
 
@@ -75,22 +69,23 @@ public class Swerve
             {
                 v.scale(0);
             }
+
+            if (Drive.OPERATOR_ROTATE)
+            {
+                v.rotate(-operator.getX(Hand.kRight));
+            }
+
             return v;
+        }
+
+        public int getCrawlDirection()
+        {
+            return driver.getDpad();
         }
 
         public double getCrawlSpeed()
         {
             return driver.getTrigger(Hand.kLeft);
-        }
-
-        public int getDpad()
-        {
-            return driver.getDpad();
-        }
-
-        public double getFusionDrive_Rotation()
-        {
-            return operator.getX(Hand.kRight);
         }
 
         public boolean getGyroZero()
@@ -129,7 +124,7 @@ public class Swerve
             buttonDriveSetGyro.whenPressed(new GyroZero());
         }
 
-        public double getHaloDrive_Rotation()
+        public double getRotation()
         {
             double r = operator.getAxis(Xbox.AXIS.LEFT_X);
 
@@ -140,7 +135,7 @@ public class Swerve
             return r;
         }
 
-        public HerdVector getHaloDrive_Velocity()
+        public HerdVector getVelocity()
         {
             double x = driver.getX();
             double y = driver.getY();
@@ -150,6 +145,12 @@ public class Swerve
             {
                 v.scale(0);
             }
+
+            if (Drive.OPERATOR_ROTATE)
+            {
+                v.rotate(-operator.getX(Hand.kRight));
+            }
+
             return v;
         }
 
@@ -158,14 +159,9 @@ public class Swerve
             return driver.getZ();
         }
 
-        public int getDpad()
+        public int getCrawlDirection()
         {
             return 0;
-        }
-
-        public double getFusionDrive_Rotation()
-        {
-            return operator.getX(Hand.kRight);
         }
 
         public boolean getGyroZero()
