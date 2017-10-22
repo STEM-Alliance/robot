@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.reuse.commands.drive.swerve.DriveFusion;
+import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.Robot;
@@ -23,7 +23,7 @@ public class SteamworksDrive extends CommandGroup
         intake = new IntakeSetup(false);
 
         addParallel(intake);
-        addSequential(new DriveFusion());
+        addSequential(new DriveSwerve());
     }
 
     protected void initialized()
