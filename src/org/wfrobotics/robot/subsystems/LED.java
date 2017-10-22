@@ -8,7 +8,7 @@ import org.wfrobotics.robot.config.RobotMap;
 
 public class LED extends MindsensorCANLight
 {
-    private static LED instance;
+    private static LED instance = null;
 
     public static Effect defaultLEDEffect = new Effect(EFFECT_TYPE.FADE, LEDs.COLORS_THE_HERD, 1);
 

@@ -1,12 +1,11 @@
 package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
+import org.wfrobotics.reuse.commands.drive.swerve.DriveFusion;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.Commands;
-import org.wfrobotics.robot.config.IO;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -24,7 +23,7 @@ public class SteamworksDrive extends CommandGroup
         intake = new IntakeSetup(false);
 
         addParallel(intake);
-        addSequential(new DriveSwerve(DriveSwerve.MODE.FUSION));
+        addSequential(new DriveFusion());
     }
 
     protected void initialized()
@@ -50,7 +49,7 @@ public class SteamworksDrive extends CommandGroup
             intakeLastOn = Timer.getFPGATimestamp();
         }
 
-        if(IO.getIntake())
+        if(Robot.controls.getIntake())
         {
             intakeOn = true;
         }

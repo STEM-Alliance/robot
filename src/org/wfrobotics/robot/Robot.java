@@ -59,7 +59,7 @@ public class Robot extends SampleRobot
         shooterSubsystem = new Shooter();
         leds = LED.getInstance();
 
-        controls = new IO();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
+        controls = IO.getInstance();  // IMPORTANT: Initialize OI after subsystems, so all subsystem parameters passed to commands are initialized
 
         autoChooser = new SendableChooser<AUTO_COMMAND>();
 
@@ -147,7 +147,7 @@ public class Robot extends SampleRobot
                 gyroInitialZero = true;
             }
         }
-        else if(IO.getZeroGyro())
+        else if(controls.swerveIO.getGyroZero())
         {
             Gyro.getInstance().zeroYaw();
         }

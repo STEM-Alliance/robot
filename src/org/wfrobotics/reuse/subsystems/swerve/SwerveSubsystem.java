@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
+import org.wfrobotics.reuse.commands.drive.swerve.DriveHalo;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.subsystems.swerve.chassis.Chassis;
 import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
@@ -75,7 +75,7 @@ public class SwerveSubsystem extends Subsystem
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new DriveSwerve(DriveSwerve.MODE.HALO));
+        setDefaultCommand(new DriveHalo());
     }
 
     public void driveWithHeading(SwerveSignal command)

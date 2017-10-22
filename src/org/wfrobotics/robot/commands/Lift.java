@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.LED;
 import org.wfrobotics.robot.subsystems.Lifter.POSITION;
 
@@ -62,7 +61,7 @@ public class Lift extends Command
             }
         }
 
-        IO.setLiftRumble(rumble);
+        Robot.controls.setRumble(rumble);
         Robot.lifterSubsystem.set(direction);
     }
 
@@ -86,7 +85,7 @@ public class Lift extends Command
         if (mode != MODE.AUTOMATIC)
         {
             LED.getInstance().set(LED.defaultLEDEffect);
-            IO.setLiftRumble(false);
+            Robot.controls.setRumble(false);
         }
     }
 

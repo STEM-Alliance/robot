@@ -1,15 +1,15 @@
 package org.wfrobotics.robot.driveoi;
 
+import java.util.ArrayList;
+
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelativeToggle;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
-import org.wfrobotics.reuse.controller.Panel;
-import org.wfrobotics.reuse.controller.Panel.BUTTON;
 import org.wfrobotics.reuse.controller.Xbox;
+import org.wfrobotics.reuse.controller.Xbox.BUTTON;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Rev;
 import org.wfrobotics.robot.commands.Shoot;
@@ -21,46 +21,31 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class Swerve
 {
-    public interface SwerveOI
+    public interface SwerveIO
     {
-        public double getHaloDrive_Rotation();
-        public HerdVector getHaloDrive_Velocity();
-        public double getAngleDrive_Heading();
-        public double getAngleDrive_Rotation();
-        public HerdVector getAngleDrive_Velocity();
         public double getCrawlSpeed();
         public int getDpad();
-        public double[] getPanelKnobs();
-        public boolean getPanelSave();
+        public boolean getGyroZero();
+        public double getHaloDrive_Rotation();
+        public HerdVector getHaloDrive_Velocity();
         public double getFusionDrive_Rotation();
     }
 
-    public static class SwerveXBox implements SwerveOI
+    public static class SwerveXbox implements SwerveIO
     {
         private static final double DEADBAND = 0.2;
 
-        private final Xbox driver1;
-        private final Xbox driver2;
-        private final Panel panel;
+        protected final Xbox driver;
+        protected final Xbox operator;
+        private final ArrayList<Button> buttons = new ArrayList<Button>();  // Keep buttons instantiated
 
-        Button buttonDriveShift;
-        Button buttonDriveVisionShoot;
-        Button buttonDriveSmartShoot;
-        Button buttonDriveDumbShoot;
-        Button buttonDriveFieldRelative;
-        Button buttonDriveSetGyro;
-
-        public SwerveXBox(Xbox driver1, Xbox driver2, Panel panel)
+        public SwerveXbox(Xbox driver, Xbox operator)
         {
-            this.driver1 = driver1;
-            this.driver2 = driver2;
-            this.panel = panel;
-
-            buttonDriveSmartShoot = ButtonFactory.makeButton(driver1, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new Shoot(Conveyor.MODE.CONTINUOUS));
-            buttonDriveDumbShoot = ButtonFactory.makeButton(driver1, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new Rev(Rev.MODE.SHOOT));
-            buttonDriveShift= ButtonFactory.makeButton(driver1, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new ShiftToggle());
-            buttonDriveFieldRelative= ButtonFactory.makeButton(driver1, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new FieldRelativeToggle());
-            buttonDriveSetGyro = ButtonFactory.makeButton(driver1, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new GyroZero());
+            this.driver = driver;
+            this.operator = operator;
+            buttons.add(ButtonFactory.makeButton(driver, BUTTON.LB, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
+            buttons.add(ButtonFactory.makeButton(driver, BUTTON.BACK, TRIGGER.WHEN_PRESSED, new FieldRelativeToggle()));
+            buttons.add(ButtonFactory.makeButton(driver, BUTTON.START, TRIGGER.WHEN_PRESSED, new GyroZero()));
         }
 
         /**
@@ -69,9 +54,7 @@ public class Swerve
          */
         public double getHaloDrive_Rotation()
         {
-            double value = 0;
-
-            value = driver1.getAxis(Xbox.AXIS.RIGHT_X);
+            double value = driver.getAxis(Xbox.AXIS.RIGHT_X);
 
             if (Math.abs(value) < DEADBAND)
             {
@@ -86,59 +69,7 @@ public class Swerve
          */
         public HerdVector getHaloDrive_Velocity()
         {
-            HerdVector v = driver1.getVector(Hand.kLeft);
-
-            if (v.getMag() < DEADBAND)
-            {
-                v.scale(0);
-            }
-
-            return v;
-        }
-
-        /**
-         * Get the heading/angle in degrees for Angle Drive
-         * @return The angle in degrees of the joystick.
-         */
-        public double getAngleDrive_Heading()
-        {
-            double angle = -1;
-
-            if (driver1.getMagnitude(Hand.kRight) > 0.65)
-            {
-                angle = driver1.getAngleDegrees(Hand.kRight);
-            }
-
-            return angle;
-        }
-
-        /**
-         * Get the rotation for Angle Drive
-         * @return The rotation rate in rad/s.
-         */
-        public double getAngleDrive_Rotation()
-        {
-            double rotation = 0;
-            int dpad = getDpad();
-
-            if (dpad == 90)
-            {
-                rotation = .75;
-            }
-            else if (dpad == 270)
-            {
-                rotation = -.75;
-            }
-            return rotation;
-        }
-
-        /**
-         * Get the {@link HerdVector} (mag & angle) of the velocity joystick for Angle Drive
-         * @return The vector of the joystick.
-         */
-        public HerdVector getAngleDrive_Velocity()
-        {
-            HerdVector v = driver1.getVector(Hand.kLeft);
+            HerdVector v = driver.getVector(Hand.kLeft);
 
             if (v.getMag() < DEADBAND)
             {
@@ -149,66 +80,48 @@ public class Swerve
 
         public double getCrawlSpeed()
         {
-            return driver1.getTrigger(Hand.kLeft);
+            return driver.getTrigger(Hand.kLeft);
         }
 
         public int getDpad()
         {
-            return driver1.getDpad();
-        }
-
-        public double[] getPanelKnobs()
-        {
-            return new double[] {
-                    panel.getTopDial(Hand.kLeft) * 180.0,
-                    panel.getTopDial(Hand.kRight) * 180.0,
-                    panel.getBottomDial(Hand.kLeft) * 180.0,
-                    panel.getBottomDial(Hand.kRight) * 180.0,
-            };
-        }
-
-        public boolean getPanelSave()
-        {
-            return panel.getButton(BUTTON.SWITCH_L) && panel.getButton(BUTTON.SWITCH_R);
+            return driver.getDpad();
         }
 
         public double getFusionDrive_Rotation()
         {
-            return driver2.getX(Hand.kRight);
+            return operator.getX(Hand.kRight);
+        }
+
+        public boolean getGyroZero()
+        {
+            return driver.getButtonPressed(BUTTON.START);
         }
     }
 
-    public static class SwerveJoyStick implements SwerveOI
+    public static class SwerveJoyStick implements SwerveIO
     {
-
         private static final double DEADBAND = 0.2;
 
-        private final Joystick driver1;
-        private final Xbox driver2;
-        private final Panel panel;
-
+        private final Joystick driver;
+        private final Xbox operator;
         Button buttonDriveShift;
-        Button buttonDriveVisionShoot;
         Button buttonDriveSmartShoot;
         Button buttonDriveDumbShoot;
         Button buttonDriveFieldRelative;
         Button buttonDriveSetGyro;
 
-        public SwerveJoyStick(Joystick driver1, Xbox driver2, Panel panel)
+        public SwerveJoyStick(Joystick driver, Xbox operator)
         {
-            this.driver1 = driver1;
-            this.driver2 = driver2;
-            this.panel = panel;
+            this.driver = driver;
+            this.operator = operator;
+            buttonDriveSmartShoot = new JoystickButton(driver, 6);
+            buttonDriveDumbShoot = new JoystickButton(driver, 7);
+            buttonDriveFieldRelative= new JoystickButton(driver, 8);
+            buttonDriveSetGyro = new JoystickButton(driver, 9);
 
-            buttonDriveSmartShoot = new JoystickButton(driver1, 6);
-            buttonDriveDumbShoot = new JoystickButton(driver1, 7);
-            buttonDriveVisionShoot= new JoystickButton(driver1, 11);
-            buttonDriveFieldRelative= new JoystickButton(driver1, 8);
-            buttonDriveSetGyro = new JoystickButton(driver1, 9);
+            buttonDriveShift= new JoystickButton(driver, 1);
 
-            buttonDriveShift= new JoystickButton(driver1, 1);
-
-            //buttonDriveVisionShoot.toggleWhenPressed(new VisionShoot());
             buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
             buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
             buttonDriveShift.whenPressed(new ShiftToggle());
@@ -218,11 +131,7 @@ public class Swerve
 
         public double getHaloDrive_Rotation()
         {
-            // TODO Auto-generated method stub
-
-            double r = 0;
-
-            r = driver2.getAxis(Xbox.AXIS.LEFT_X);
+            double r = operator.getAxis(Xbox.AXIS.LEFT_X);
 
             if (Math.abs(r) < DEADBAND)
             {
@@ -233,42 +142,20 @@ public class Swerve
 
         public HerdVector getHaloDrive_Velocity()
         {
-            double x = driver1.getX();
-            double y = driver1.getY();
+            double x = driver.getX();
+            double y = driver.getY();
             HerdVector v = new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(y, x) * 180 / Math.PI);
 
             if (v.getMag() < DEADBAND)
             {
                 v.scale(0);
             }
-
             return v;
-        }
-
-        public double getAngleDrive_Heading()
-        {
-            double angle;
-            if (driver1.getDirectionDegrees() > 0.65)
-            {
-                angle = driver1.getDirectionDegrees();
-                return Utilities.wrapToRange(angle + 90, -180, 180);
-            }
-            return 0;
-        }
-
-        public double getAngleDrive_Rotation()
-        {
-            return 0;
-        }
-
-        public HerdVector getAngleDrive_Velocity()
-        {
-            return null;
         }
 
         public double getCrawlSpeed()
         {
-            return driver1.getZ();
+            return driver.getZ();
         }
 
         public int getDpad()
@@ -276,24 +163,14 @@ public class Swerve
             return 0;
         }
 
-        public double[] getPanelKnobs()
-        {
-            return new double[] {
-                    panel.getTopDial(Hand.kLeft) * 180.0,
-                    panel.getTopDial(Hand.kRight) * 180.0,
-                    panel.getBottomDial(Hand.kLeft) * 180.0,
-                    panel.getBottomDial(Hand.kRight) * 180.0,
-            };
-        }
-
-        public boolean getPanelSave()
-        {
-            return panel.getButton(BUTTON.SWITCH_L) && panel.getButton(BUTTON.SWITCH_R);
-        }
-
         public double getFusionDrive_Rotation()
         {
-            return driver2.getX(Hand.kRight);
+            return operator.getX(Hand.kRight);
+        }
+
+        public boolean getGyroZero()
+        {
+            return false;
         }
     }
 }

@@ -26,9 +26,9 @@ public class DriveTank extends Command
 
         if (mode == MODE.TANK)
         {
-            double adjust = Robot.controls.tankOI.getThrottleSpeedAdjust();
-            left = Robot.controls.tankOI.getL() * adjust;
-            right = Robot.controls.tankOI.getR() * adjust;
+            double adjust = Robot.controls.tankIO.getThrottleSpeedAdjust();
+            left = Robot.controls.tankIO.getL() * adjust;
+            right = Robot.controls.tankIO.getR() * adjust;
 
             if(backward)
             {

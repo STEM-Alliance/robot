@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class Mecanum 
 {
-    public interface MecanumOI
+    public interface MecanumIO
     {
         public double getX();
         public double getY();
         public double getRotation();
     }
 
-    public static class MecanumXBox implements MecanumOI
+    public static class MecanumXBox implements MecanumIO
     {
         private final Xbox controller;
         

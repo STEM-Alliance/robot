@@ -13,7 +13,7 @@ import org.wfrobotics.robot.vision.util.VisionMessage;
 /** Gets messages from the co-processor, tells anybody registered **/
 public class CameraServer implements Runnable
 {
-    private static CameraServer instance;
+    private static CameraServer instance = null;
 
     private HerdLogger log = new HerdLogger(CameraServer.class);
     private CameraListener listener;

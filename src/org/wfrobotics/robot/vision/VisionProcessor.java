@@ -7,7 +7,7 @@ import org.wfrobotics.robot.vision.util.CameraListener;
 /** Receives vision messages, tells robot state to interpret them **/
 public class VisionProcessor implements Runnable, CameraListener
 {
-    private static VisionProcessor instance;
+    private static VisionProcessor instance = null;
 
     private RobotState consumer = RobotState.getInstance();
     private String update;
