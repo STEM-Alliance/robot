@@ -70,7 +70,7 @@ public class SwerveSubsystem extends Subsystem
 
     public String toString()
     {
-        return String.format("Gyro: %.2f, Heading: %.2f, field Relative: %b, Brake: %b", gyro.getYaw(), state.robotHeading, fieldRelative, brake);
+        return String.format("Heading: %.2f, Field Relative: %b, Brake: %b", state.robotHeading, fieldRelative, brake);
     }
 
     public void initDefaultCommand()
@@ -93,8 +93,6 @@ public class SwerveSubsystem extends Subsystem
         {
             s.velocity.rotate(gyro.getYaw());
         }
-
-        printDash();
 
         wheelManager.setWheelVectors(s.velocity, s.spin, configSwerve.gearHigh, brake);
     }
@@ -157,13 +155,6 @@ public class SwerveSubsystem extends Subsystem
 
         log.info("Drive Mode", driveMode);
         log.debug("Rotation Error", error);
-    }
-
-    public void printDash()
-    {
-        log.info("Drive", this);
-        log.info("Gyro Enabled", configSwerve.gyroEnable);
-        log.info("High Gear", configSwerve.gearHigh);
     }
 
     public void setFieldRelative(boolean enable) { fieldRelative = enable; }
