@@ -96,8 +96,6 @@ public class Gyro
      */
     public void zeroYaw()
     {
-        //        navxMXP.setAngleAdjustment(0);
-        //        navxMXP.zeroYaw();
         zeroYaw(0);
     }
 
