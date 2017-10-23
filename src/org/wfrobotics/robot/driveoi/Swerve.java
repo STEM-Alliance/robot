@@ -27,7 +27,7 @@ public class Swerve
     {
         public int getCrawlDirection();
         public double getCrawlSpeed();
-        public boolean getGyroZero();
+        public boolean getGyroZeroRequested();
         public double getRotation();
         public HerdVector getVelocity();
     }
@@ -88,7 +88,7 @@ public class Swerve
             return driver.getTrigger(Hand.kLeft);
         }
 
-        public boolean getGyroZero()
+        public boolean getGyroZeroRequested()
         {
             return driver.getButtonPressed(BUTTON.START);
         }
@@ -164,7 +164,7 @@ public class Swerve
             return 0;
         }
 
-        public boolean getGyroZero()
+        public boolean getGyroZeroRequested()
         {
             return false;
         }

@@ -100,7 +100,9 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
-        driveSubsystem.printDash();
+        log.info("Drive", driveSubsystem);
+        log.info("Gyro Enable Requested", driveSubsystem.configSwerve.gyroEnable);
+        log.info("High Gear Requested", driveSubsystem.configSwerve.gearHigh);
         log.info("Battery", DriverStation.getInstance().getBatteryVoltage());
     }
 
