@@ -25,6 +25,7 @@ public class ExampleForwardCommand extends Command
     protected void execute()
     {
         // TODO do anything this Command needs to happen REPEATEDLY until it's finished
+        Robot.prototypeSubsystem.setSpeed(.5);
     }
 
     protected boolean isFinished()
