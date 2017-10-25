@@ -87,8 +87,9 @@ public class Robot extends SampleRobot
         {
             lifterSubsystem.reset();
             initOrZeroGyro();
-            log.info("TeamColor", (DriverStation.getInstance().getAlliance() == Alliance.Red) ? "Red" : "Blue");
+
             allPeriodic();
+            log.info("TeamColor", (DriverStation.getInstance().getAlliance() == Alliance.Red) ? "Red" : "Blue");
             Scheduler.getInstance().run();
         }
     }
