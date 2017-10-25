@@ -91,9 +91,7 @@ public class SwerveSubsystem extends Subsystem
         if (command.hasHeading())
         {
             command.spin = chassisAngleController.update(error);
-
             log.info("Drive Mode", "Snap To Angle");
-            state.updateRobotHeading(command.heading);
         }
         else if (Math.abs(command.spin) > ROTATION_MIN)
         {
@@ -102,9 +100,7 @@ public class SwerveSubsystem extends Subsystem
             // Square rotation value to give it more control at lower values but keep the same sign since a negative squared is positive
             // TODO Does this improve anything or add complexity because we scale rotation elsewhere?
             command.spin = Math.signum(command.spin) * Math.pow(command.spin, 2);
-
             log.info("Drive Mode", "Rotate Angle");
-            state.updateRobotHeading(gyro.getYaw());
         }
         else
         {
@@ -129,10 +125,9 @@ public class SwerveSubsystem extends Subsystem
                     command.spin = pidRotation;
                 }
             }
-
             log.info("Drive Mode", "Maintain Angle");
-            state.updateRobotHeading(gyro.getYaw());
         }
+        state.updateRobotHeading(gyro.getYaw());
     }
 
     public void setFieldRelative(boolean enable) { fieldRelative = enable; }

@@ -27,13 +27,12 @@ public class DriveCrawl extends Command
     protected void execute()
     {
         double dpadSpeed = Robot.driveSubsystem.requestHighGear ? Drive.DPAD_MOVEMENT_SPEED_HG : Drive.DPAD_MOVEMENT_SPEED_LG;
-        double dpad = Robot.controls.swerveIO.getCrawlDirection();
-        HerdVector speedRobot = new HerdVector(dpadSpeed, -(dpad-90));
-        HerdVector fieldRelative;
+        HerdVector dpad = Robot.controls.swerveIO.getCrawl();
+        HerdVector speedRobot = new HerdVector(dpadSpeed, dpad.getAngle());
+        HerdVector fieldRelative = speedRobot.rotate(Gyro.getInstance().getYaw());
 
         log.debug("Dpad", dpad);
-        Config.crawlModeMagnitude = Robot.controls.swerveIO.getCrawlSpeed();
-        fieldRelative = speedRobot.rotate(Gyro.getInstance().getYaw());
+        Config.crawlModeMagnitude = dpad.getMag();
 
         Robot.driveSubsystem.driveWithHeading(new SwerveSignal(fieldRelative, 0));
     }
