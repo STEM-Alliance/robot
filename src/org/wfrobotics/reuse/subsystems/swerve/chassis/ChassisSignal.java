@@ -11,9 +11,9 @@ public class ChassisSignal
     public ChassisSignal(HerdVector velocity,  double rotationalSpeed)
     {
         this.velocity = velocity;
-        this.spin = rotationalSpeed;
+        spin = rotationalSpeed;
     }
-    
+
     public String toString()
     {
         return String.format("V: %s, W: %.2f", velocity, spin);
