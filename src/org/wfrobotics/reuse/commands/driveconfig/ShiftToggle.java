@@ -13,6 +13,6 @@ public class ShiftToggle extends InstantCommand
 
     protected void initialize()
     {
-        Robot.driveSubsystem.configSwerve.gearHigh = !Robot.driveSubsystem.configSwerve.gearHigh;
+        Robot.driveSubsystem.requestHighGear = !Robot.driveSubsystem.requestHighGear;
     }
 }

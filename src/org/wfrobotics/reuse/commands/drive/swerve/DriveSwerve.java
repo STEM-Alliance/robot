@@ -37,7 +37,7 @@ public class DriveSwerve extends Command
             {
                 highVelocityStart = timeSinceInitialized();
             }
-            Robot.driveSubsystem.configSwerve.gearHigh = timeSinceInitialized() - highVelocityStart > Drive.AUTO_SHIFT_TIME && speedRobot.getMag() > Drive.AUTO_SHIFT_SPEED;
+            Robot.driveSubsystem.requestHighGear = timeSinceInitialized() - highVelocityStart > Drive.AUTO_SHIFT_TIME && speedRobot.getMag() > Drive.AUTO_SHIFT_SPEED;
         }
 
         Robot.driveSubsystem.driveWithHeading(new SwerveSignal(speedRobot, speedRotation));
