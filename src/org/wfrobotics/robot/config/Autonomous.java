@@ -7,6 +7,7 @@ import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveWait;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoGear;
 import org.wfrobotics.robot.auto.AutoShoot;
 
@@ -66,7 +67,7 @@ public class Autonomous
         }
 
         Gyro.getInstance().zeroYaw(modes[choice].gyroOffset);
-        Robot.driveSubsystem.setLastHeading(modes[choice].gyroOffset);
+        RobotState.getInstance().updateRobotHeading(modes[choice].gyroOffset);
         return modes[choice].maker.get();
     }
 
