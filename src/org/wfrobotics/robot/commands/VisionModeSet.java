@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.robot.vision.CameraServer;
+import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.robot.vision.messages.CameraMode;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;

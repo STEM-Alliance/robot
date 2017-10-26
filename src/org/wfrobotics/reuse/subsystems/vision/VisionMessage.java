@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.vision.util;
+package org.wfrobotics.reuse.subsystems.vision;
 
 /** A message sent to, or received from, the vision co-processor **/
 public abstract class VisionMessage

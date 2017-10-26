@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
  * A basic PID controller for use with the Swerve drive
  * @author Team 4818 WFRobotics
  */
-public final class PIDController 
+public final class PIDController
 {
     private static final double MaxTimestampDiff = 1.0; // Heuristic to clear out the integral after being disabled.
 
@@ -22,7 +22,7 @@ public final class PIDController
     private double lastError;
     private double totalError;
 
-    
+
     /**
      * Create a new instance of the PIController
      * @param p proportional component
@@ -34,7 +34,7 @@ public final class PIDController
     {
         this(p, i, d, maxOutput, 0);
     }
-    
+
     /**
      * Create a new instance of the PIController
      * @param p proportional component
@@ -45,16 +45,16 @@ public final class PIDController
      */
     public PIDController(double p, double i, double d, double maxOutput, double minOutput)
     {
-        this.m_P = p;
-        this.m_I = i;
-        this.m_D = d;
-        this.m_MaxOutput = maxOutput;
-        this.m_MinOutput = minOutput;
+        m_P = p;
+        m_I = i;
+        m_D = d;
+        m_MaxOutput = maxOutput;
+        m_MinOutput = minOutput;
 
-        this.integral = 0;
-        this.prevTime = 0.0f;
+        integral = 0;
+        prevTime = 0.0f;
     }
-    
+
     /**
      * Update the PIController using the setpoint and the sensor reading
      * @param setpoint desired setpoint
@@ -66,7 +66,7 @@ public final class PIDController
     {
         return this.update(setpoint - sensor);
     }
-    
+
     /**
      * Update the PIController using the new error
      * @param error new error to use for calculations
@@ -78,11 +78,11 @@ public final class PIDController
         double currTime = Timer.getFPGATimestamp();
         double timeDiff = currTime - prevTime;
         prevTime = currTime;
-        
+
         // Proportional term.
         double proportional = error * m_P;
         if(preStageClamp) proportional = Utilities.clampToRange(proportional, m_MaxOutput);
-        
+
         double derivative = 0;
         if(timeDiff > 0)
         {
@@ -91,7 +91,7 @@ public final class PIDController
         }
 
         totalError += error;
-        
+
         if (timeDiff <= MaxTimestampDiff)
         {
             // Integrate the proportional term over time.
@@ -104,13 +104,13 @@ public final class PIDController
             integral = 0;
             derivative = 0;
         }
-        
-        this.lastError = error;
+
+        lastError = error;
 
         // Calculate output with coefficients.
         double clampedVal = proportional + integral + derivative;
         clampedVal = Utilities.clampToRange(clampedVal, m_MaxOutput);
-        
+
         // Make sure it's more than the specified minimum
         if(Math.abs(clampedVal) > .01)
         {
@@ -123,7 +123,7 @@ public final class PIDController
         {
             clampedVal = 0;
         }
-        
+
         return clampedVal;
     }
 
@@ -131,49 +131,49 @@ public final class PIDController
     {
         return m_P;
     }
-    
+
     public double getI()
     {
         return m_I;
     }
-    
+
     public double getD()
     {
         return m_D;
     }
-    
+
     public void setP(double P)
     {
-        this.m_P = P;
+        m_P = P;
     }
 
     public void setI(double I)
     {
-        this.m_I = I;
+        m_I = I;
     }
-    
+
     public void setD(double D)
     {
-        this.m_D = D;
+        m_D = D;
     }
 
     public void setMax(double max)
     {
-        this.m_MaxOutput = max;
+        m_MaxOutput = max;
     }
-    
+
     public void setMin(double min)
     {
-        this.m_MinOutput = min;
+        m_MinOutput = min;
     }
-    
+
     public void resetError()
     {
-        this.integral = 0;
-        this.lastError = 0;
-        this.totalError = 0;
+        integral = 0;
+        lastError = 0;
+        totalError = 0;
     }
-    
+
     /**
      * Enable or disable clamping during calculation stages, rather than just the output
      * @param preStageClamp if true, clamp at each calculation step (P, I, D)

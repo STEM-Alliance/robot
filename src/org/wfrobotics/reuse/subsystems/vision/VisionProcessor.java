@@ -1,8 +1,8 @@
-package org.wfrobotics.robot.vision;
+package org.wfrobotics.reuse.subsystems.vision;
 
+import org.wfrobotics.reuse.subsystems.vision.CameraServer.CameraListener;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.vision.messages.VisionUpdate;
-import org.wfrobotics.robot.vision.util.CameraListener;
 
 /** Receives vision messages, tells robot state to interpret them **/
 public class VisionProcessor implements Runnable, CameraListener

@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.vision.util;
+package org.wfrobotics.robot.vision;
 
 /** Rectangle the camera detected **/
 public class TargetInfo
