@@ -1,9 +1,5 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.subsystems.swerve.chassis.Chassis;
@@ -38,8 +34,6 @@ public class SwerveSubsystem extends Subsystem
 
     private PIDController chassisAngleController;
     private Chassis wheelManager;
-    private ScheduledExecutorService scheduler;  // TODO probably don't want a thread?
-
     private double lastHeadingTimestamp;  // Addresses counter spinning/snapback
     private boolean fieldRelative = true;
     private boolean brake = false;
@@ -48,10 +42,8 @@ public class SwerveSubsystem extends Subsystem
     {
         chassisAngleController = new PIDController(Config.CHASSIS_P, Config.CHASSIS_I, Config.CHASSIS_D, 1.0);
 
-        scheduler = Executors.newScheduledThreadPool(1);
         wheelManager = new Chassis();
         zeroGyro();
-        scheduler.scheduleAtFixedRate(wheelManager, 1, 5, TimeUnit.MILLISECONDS);
     }
 
     public String toString()

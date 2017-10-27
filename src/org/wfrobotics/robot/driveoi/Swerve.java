@@ -124,7 +124,7 @@ public class Swerve
         {
             double x = driver.getX();
             double y = driver.getY();
-            HerdVector v = new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(y, x) * 180 / Math.PI);
+            HerdVector v = new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(x, y) * 180 / Math.PI);
 
             if (v.getMag() < DEADBAND)
             {

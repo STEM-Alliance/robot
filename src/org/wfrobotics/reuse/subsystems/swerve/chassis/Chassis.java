@@ -1,6 +1,8 @@
 package org.wfrobotics.reuse.subsystems.swerve.chassis;
 
+import org.wfrobotics.reuse.subsystems.swerve.Shifter;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.SwerveWheel;
+import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.RobotState;
@@ -14,57 +16,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * This class controls swerve drive at the robot/chassis level
  * @author Team 4818 WFRobotics
  */
-public class Chassis implements Runnable
+public class Chassis
 {
     RobotState state = RobotState.getInstance();
-    // TODO HerdLogger?
-    private SwerveWheel[] wheels;  // TODO test this as static for performance
+    HerdLogger log = new HerdLogger(Chassis.class);
+    private SwerveWheel[] wheels = new SwerveWheel[4];  // TODO test this as static for performance
+    private Shifter shifters;
 
     private double lastVelocityTimestamp;
-    private double debugLastUpdate;  // Measure thread loop period
-
-    // Thread control
-    HerdVector requestedRobotVelocity;
-    double requestedRobotRotation;
-    boolean requestedGear;
-    boolean requestedBrake;
 
     double maxWheelMagnitudeLast;  // TODO use in interpolation of distance traveled autonomous routines
 
     public Chassis()
     {
-        wheels = new SwerveWheel[Config.WHEEL_COUNT];
-        wheels[0] = new SwerveWheel("WheelBR", RobotMap.CAN_SWERVE_DRIVE_TALONS[0], RobotMap.CAN_SWERVE_ANGLE_TALONS[0], RobotMap.PWM_SWERVE_SHIFT_SERVOS[0], 0);
-        wheels[1] = new SwerveWheel("WheelFR", RobotMap.CAN_SWERVE_DRIVE_TALONS[1], RobotMap.CAN_SWERVE_ANGLE_TALONS[1], RobotMap.PWM_SWERVE_SHIFT_SERVOS[1], 1);
-        wheels[2] = new SwerveWheel("WheelFL", RobotMap.CAN_SWERVE_DRIVE_TALONS[2], RobotMap.CAN_SWERVE_ANGLE_TALONS[2], RobotMap.PWM_SWERVE_SHIFT_SERVOS[2], 2);
-        wheels[3] = new SwerveWheel("WheelBL", RobotMap.CAN_SWERVE_DRIVE_TALONS[3], RobotMap.CAN_SWERVE_ANGLE_TALONS[3], RobotMap.PWM_SWERVE_SHIFT_SERVOS[3], 3);
+        wheels[0] = new SwerveWheel("WheelBR", RobotMap.CAN_SWERVE_DRIVE_TALONS[0], RobotMap.CAN_SWERVE_ANGLE_TALONS[0]);
+        wheels[1] = new SwerveWheel("WheelFR", RobotMap.CAN_SWERVE_DRIVE_TALONS[1], RobotMap.CAN_SWERVE_ANGLE_TALONS[1]);
+        wheels[2] = new SwerveWheel("WheelFL", RobotMap.CAN_SWERVE_DRIVE_TALONS[2], RobotMap.CAN_SWERVE_ANGLE_TALONS[2]);
+        wheels[3] = new SwerveWheel("WheelBL", RobotMap.CAN_SWERVE_DRIVE_TALONS[3], RobotMap.CAN_SWERVE_ANGLE_TALONS[3]);
+        shifters = new Shifter();
 
         lastVelocityTimestamp = Timer.getFPGATimestamp();
-        debugLastUpdate = Timer.getFPGATimestamp();
     }
 
     // TODO nice toString()?
 
-    // TODO is this actually better off as a thread?
-    public void run()
-    {
-        setWheelVectors(requestedRobotVelocity, requestedRobotRotation, requestedGear, requestedBrake);
-
-        SmartDashboard.putNumber("SwerveUpdateRate", Timer.getFPGATimestamp() - debugLastUpdate);
-        debugLastUpdate = Timer.getFPGATimestamp();
-    }
-
     public synchronized void updateWheelVectors(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
     {
-        requestedRobotVelocity = robotVelocity;
-        requestedRobotRotation = robotRotation;
-        requestedGear = gear;
-        requestedBrake = brake;
+        setWheelVectors(robotVelocity, robotRotation, gear, brake);
+        shifters.setGear(gear);
+        state.updateRobotGear(shifters.isHighGear());
     }
 
-    /**
-     * Scale the wheel vectors based on max available velocity, adjust for rotation rate, then set/update the desired vectors individual wheels
-     */
+    /** Scale the wheel vectors, then set individual wheel hardware */
     public void setWheelVectors(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
     {
         ChassisSignal command = new ChassisSignal(robotVelocity, robotRotation);
@@ -77,19 +60,18 @@ public class Chassis implements Runnable
         command = (Config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(command) : command;
         state.updateRobotVelocity(command.velocity);
 
-        SmartDashboard.putString("Chassis Command", command.toString());
+        log.info("Chassis Command", command.toString());
 
         WheelsScaled = chassisToWheelCommands(command);
-
-        for (int i = 0; i < Config.WHEEL_COUNT; i++)
-        {
-            wheels[i].set(WheelsScaled[i], gear, brake);
-        }
+        wheels[0].set(WheelsScaled[0], brake);
+        wheels[1].set(WheelsScaled[1], brake);
+        wheels[2].set(WheelsScaled[2], brake);
+        wheels[3].set(WheelsScaled[3], brake);
     }
 
     private HerdVector[] chassisToWheelCommands(ChassisSignal robot)
     {
-        HerdVector[] wheelCommands = new HerdVector[Config.WHEEL_COUNT];
+        HerdVector[] wheelCommands = new HerdVector[4];
         HerdVector v = new HerdVector(robot.velocity);
         HerdVector w = new HerdVector(robot.spin, 90);
 
