@@ -5,6 +5,8 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class HerdLogger
 {
     private final Logger delegateLogger;
@@ -62,9 +64,8 @@ public class HerdLogger
                 return;
             }
 
-            System.out.println(record.getMessage() + "" + smartDashFormat[0]);
-            // TODO Swap for real implementation that logs to the dashboard
-            //            SmartDashboard.putString(record.getMessage(), smartDashFormat[0].toString());
+            //System.out.println(record.getMessage() + "" + smartDashFormat[0]);
+            SmartDashboard.putString(record.getMessage(), smartDashFormat[0].toString());
         }
 
         @Override

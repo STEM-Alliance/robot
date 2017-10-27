@@ -18,7 +18,6 @@ public class LED extends MindsensorCANLight
     public LED(int address)
     {
         super(address);
-        enable(true);
     }
 
     public static LED getInstance()
