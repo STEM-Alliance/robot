@@ -80,7 +80,7 @@ public class Swerve
         public HerdVector getCrawl()
         {
             double speed = driver.getTrigger(Hand.kLeft);
-            double angle = -(driver.getDpad() - 90);
+            double angle = driver.getDpad();
             return new HerdVector(speed, angle);
         }
 

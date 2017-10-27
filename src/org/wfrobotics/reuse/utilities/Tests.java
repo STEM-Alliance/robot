@@ -59,6 +59,7 @@ public class Tests
 
         System.out.println("A commanded: " + a);
         System.out.println("A.X commanded: " + a.getX());
+        System.out.println("A.Y commanded: " + a.getY());
         System.out.println("Gyro: " + gyro);
         a = a.rotate(-gyro);
         System.out.println("A rotate to field relative: " + a);
@@ -67,6 +68,16 @@ public class Tests
         System.out.println("A rotate by B: " + a);
         a = a.rotate(-136);
         System.out.println("A rotate by -136: " + a);
+        System.out.println();
+
+        b = new HerdVector(1, -90);
+        System.out.println("B.X commanded: " + b.getX());
+        System.out.println("B.Y commanded: " + b.getY());
+        System.out.println();
+
+        // New Vector: Zero
+        b = new HerdVector(0, 180);
+        System.out.println("(0, 0): " + b);
         System.out.println();
 
         // New Vector: Scale

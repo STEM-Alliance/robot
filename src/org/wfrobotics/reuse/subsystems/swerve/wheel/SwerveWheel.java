@@ -1,8 +1,10 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.reuse.subsystems.swerve.Shifter;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
+import org.wfrobotics.robot.RobotState;
+
+// TODO Move shifters to chassis, does make sense for each to set robot state
 
 /**
  * Handle motor outputs and feedback for an individual swerve wheel
@@ -11,28 +13,26 @@ import org.wfrobotics.reuse.utilities.HerdVector;
 public class SwerveWheel
 {
     private final String NAME;
-    private final int NUMBER;  // TODO decouple and nuke
 
-    private HerdLogger log = new HerdLogger(AngleMotor.class);
+    RobotState state = RobotState.getInstance();
+    HerdLogger log = new HerdLogger(SwerveWheel.class);
+
     private final DriveMotor driveMotor;
     private final AngleMotor angleMotor;
-    private final Shifter shifter;
 
-    public SwerveWheel(String name, int addressDrive, int addressAngle, int addressShift, int number)
+    public SwerveWheel(String name, int addressDrive, int addressAngle)
     {
         NAME = name;
-        this.NUMBER = number;
 
         driveMotor = new DriveMotor(addressDrive, Config.DRIVE_SPEED_SENSOR_ENABLE);
         angleMotor = new AngleMotorMagPot(NAME + ".Angle", addressAngle);
-        shifter = new Shifter(addressShift, Config.SHIFTER_VALS[NUMBER], Config.SHIFTER_RANGE, Config.SHIFTER_INVERT[NUMBER]);
     }
-    
+
     public String toString()
     {
         return String.format("%.2f, %.2f\u00b0", driveMotor.get(), angleMotor.getDegrees());
     }
-    
+
     /**
      * Set the desired wheel vector, auto updates the PID controllers
      * @param desired Velocity and Rotation of this wheel
@@ -42,10 +42,10 @@ public class SwerveWheel
     public void set(HerdVector desired, boolean gear, boolean brake)
     {
         boolean reverseDrive = angleMotor.update(desired);  // TODO Consider moving motor reversal to swerve wheel. Is it a "wheel thing" or "angle motor thing"?
-        shifter.setGear(gear);
-        
+
         double driveCommand = (reverseDrive) ? -desired.getMag() : desired.getMag();
-        driveMotor.set(driveCommand, brake);
+        driveMotor.set(driveCommand);
+        driveMotor.setBrake(brake);
         log.debug(NAME, this);
     }
-}        
+}
