@@ -36,7 +36,7 @@ public class StrafeToInViewTarget extends Command
 
     protected boolean isFinished()
     {
-        return !state.visionInView || Math.abs(state.visionError) < tol;
+        return !state.visionInView || Math.abs(state.getVisionError()) < tol;
     }
 
     protected void end()

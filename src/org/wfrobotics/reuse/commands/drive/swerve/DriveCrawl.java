@@ -27,7 +27,7 @@ public class DriveCrawl extends Command
 
     protected void execute()
     {
-        double dpadSpeed = Robot.driveSubsystem.requestHighGear ? Drive.DPAD_MOVEMENT_SPEED_HG : Drive.DPAD_MOVEMENT_SPEED_LG;
+        double dpadSpeed = state.robotGear ? Drive.DPAD_MOVEMENT_SPEED_HG : Drive.DPAD_MOVEMENT_SPEED_LG;
         HerdVector dpad = Robot.controls.swerveIO.getCrawl();
         HerdVector speedRobot = new HerdVector(dpadSpeed, dpad.getAngle());
         HerdVector fieldRelative = speedRobot.rotate(state.robotHeading);

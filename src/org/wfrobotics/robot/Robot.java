@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class Robot extends SampleRobot
 {
     private HerdLogger log = new HerdLogger(Robot.class);
+    private RobotState state = RobotState.getInstance();
     private LED leds;
     public static SwerveDriveSteamworks driveSubsystem;
     public static Auger augerSubsystem;
@@ -98,7 +99,7 @@ public class Robot extends SampleRobot
     private void allPeriodic()
     {
         log.info("Drive", driveSubsystem);
-        log.info("High Gear Requested", driveSubsystem.requestHighGear);
+        log.info("High Gear", state.robotGear);
         log.info("Battery", DriverStation.getInstance().getBatteryVoltage());
         Scheduler.getInstance().run();
     }
