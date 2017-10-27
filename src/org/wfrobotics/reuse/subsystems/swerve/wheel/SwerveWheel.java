@@ -36,10 +36,9 @@ public class SwerveWheel
     /**
      * Set the desired wheel vector, auto updates the PID controllers
      * @param desired Velocity and Rotation of this wheel
-     * @param gearHigh True: High gear, False: Low gear
      * @param brake Enable brake mode?
      */
-    public void set(HerdVector desired, boolean gear, boolean brake)
+    public void set(HerdVector desired, boolean brake)
     {
         boolean reverseDrive = angleMotor.update(desired);  // TODO Consider moving motor reversal to swerve wheel. Is it a "wheel thing" or "angle motor thing"?
 
