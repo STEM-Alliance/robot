@@ -12,7 +12,7 @@ public class DriveMotor
     private CANTalon driveMotor;
     private boolean brakeEnabled;
 
-    public DriveMotor(int talonIndex, boolean enableSpeedSensor)
+    public DriveMotor(int talonIndex)
     {
         driveMotor = new CANTalon(talonIndex);
         brakeEnabled = false;

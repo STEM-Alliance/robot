@@ -1,6 +1,8 @@
 package org.wfrobotics.reuse.subsystems.swerve.chassis;
 
 import org.wfrobotics.reuse.subsystems.swerve.Shifter;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleMotorMagPot;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.DriveMotor;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.SwerveWheel;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -13,26 +15,26 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * This class controls swerve drive at the robot/chassis level
+ * Controls swerve drive at the robot/chassis level
  * @author Team 4818 WFRobotics
  */
 public class Chassis
 {
     RobotState state = RobotState.getInstance();
     HerdLogger log = new HerdLogger(Chassis.class);
-    private SwerveWheel[] wheels = new SwerveWheel[4];  // TODO test this as static for performance
-    private Shifter shifters;
+
+    private final SwerveWheel[] wheels = new SwerveWheel[4];
+    private final String[] wheelNames = {"WheelBR", "WheelFR", "WheelFL", "WheelBL"};
+    private final Shifter shifters;
 
     private double lastVelocityTimestamp;
 
-    double maxWheelMagnitudeLast;  // TODO use in interpolation of distance traveled autonomous routines
-
     public Chassis()
     {
-        wheels[0] = new SwerveWheel("WheelBR", RobotMap.CAN_SWERVE_DRIVE_TALONS[0], RobotMap.CAN_SWERVE_ANGLE_TALONS[0]);
-        wheels[1] = new SwerveWheel("WheelFR", RobotMap.CAN_SWERVE_DRIVE_TALONS[1], RobotMap.CAN_SWERVE_ANGLE_TALONS[1]);
-        wheels[2] = new SwerveWheel("WheelFL", RobotMap.CAN_SWERVE_DRIVE_TALONS[2], RobotMap.CAN_SWERVE_ANGLE_TALONS[2]);
-        wheels[3] = new SwerveWheel("WheelBL", RobotMap.CAN_SWERVE_DRIVE_TALONS[3], RobotMap.CAN_SWERVE_ANGLE_TALONS[3]);
+        wheels[0] = new SwerveWheel(new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[0]), new AngleMotorMagPot(wheelNames[0] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[0]));
+        wheels[1] = new SwerveWheel(new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[1]), new AngleMotorMagPot(wheelNames[1] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[1]));
+        wheels[2] = new SwerveWheel(new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[2]), new AngleMotorMagPot(wheelNames[2] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[2]));
+        wheels[3] = new SwerveWheel(new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[3]), new AngleMotorMagPot(wheelNames[3] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[3]));
         shifters = new Shifter();
 
         lastVelocityTimestamp = Timer.getFPGATimestamp();
@@ -43,6 +45,11 @@ public class Chassis
     public synchronized void updateWheelVectors(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
     {
         setWheelVectors(robotVelocity, robotRotation, gear, brake);
+        log.info(wheelNames[0], wheels[0]);
+        log.info(wheelNames[1], wheels[1]);
+        log.info(wheelNames[2], wheels[2]);
+        log.info(wheelNames[3], wheels[3]);
+
         shifters.setGear(gear);
         state.updateRobotGear(shifters.isHighGear());
     }
@@ -88,18 +95,10 @@ public class Chassis
         maxMag = (wheelFL.getMag() > maxMag) ? wheelFL.getMag() : maxMag;
         maxMag = (wheelBL.getMag() > maxMag) ? wheelBL.getMag() : maxMag;
 
-        if (maxMag > 1)
-        {
-            wheelBR = wheelBR.scale(1 / maxMag);
-            wheelFR = wheelFR.scale(1 / maxMag);
-            wheelFL = wheelFL.scale(1 / maxMag);
-            wheelBL = wheelBL.scale(1 / maxMag);
-            maxWheelMagnitudeLast = maxMag;
-        }
-        else
-        {
-            maxWheelMagnitudeLast = 1;
-        }
+        wheelBR = wheelBR.scale(1 / maxMag);
+        wheelFR = wheelFR.scale(1 / maxMag);
+        wheelFL = wheelFL.scale(1 / maxMag);
+        wheelBL = wheelBL.scale(1 / maxMag);
 
         // Mirroring Y is purely to match our old swerve. Seems like an extra step beyond what math says we need
         // TODO What's inverted in the real robot such that the Y's need to be mirrored?

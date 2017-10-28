@@ -1,10 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.RobotState;
-
-// TODO Move shifters to chassis, does make sense for each to set robot state
 
 /**
  * Handle motor outputs and feedback for an individual swerve wheel
@@ -12,20 +9,15 @@ import org.wfrobotics.robot.RobotState;
  */
 public class SwerveWheel
 {
-    private final String NAME;
-
     RobotState state = RobotState.getInstance();
-    HerdLogger log = new HerdLogger(SwerveWheel.class);
 
     private final DriveMotor driveMotor;
     private final AngleMotor angleMotor;
 
-    public SwerveWheel(String name, int addressDrive, int addressAngle)
+    public SwerveWheel(DriveMotor motorDrive, AngleMotor motorAngle)
     {
-        NAME = name;
-
-        driveMotor = new DriveMotor(addressDrive, Config.DRIVE_SPEED_SENSOR_ENABLE);
-        angleMotor = new AngleMotorMagPot(NAME + ".Angle", addressAngle);
+        driveMotor = motorDrive;
+        angleMotor = motorAngle;
     }
 
     public String toString()
@@ -45,6 +37,5 @@ public class SwerveWheel
         double driveCommand = (reverseDrive) ? -desired.getMag() : desired.getMag();
         driveMotor.set(driveCommand);
         driveMotor.setBrake(brake);
-        log.debug(NAME, this);
     }
 }

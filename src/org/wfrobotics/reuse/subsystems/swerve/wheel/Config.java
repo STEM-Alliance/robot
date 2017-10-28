@@ -20,7 +20,6 @@ public class Config
 
     // CONFIG --------------------------------------------------------------------------------------
     public static final boolean[] ANGLE_MOTOR_INVERT = {true, true, true, true};
-    public static final boolean DRIVE_SPEED_SENSOR_ENABLE = true;
 
     // CALIBRATION ---------------------------------------------------------------------------------
     public static final double DRIVE_EFFICIENCY = .8;  // Estimate of efficiency of the gearing from motor to sensor TODO
