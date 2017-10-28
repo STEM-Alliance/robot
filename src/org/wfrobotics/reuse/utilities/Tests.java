@@ -2,7 +2,7 @@ package org.wfrobotics.reuse.utilities;
 
 import java.util.logging.Level;
 
-// TODO Use to eliminate mirroring the y in wheels, then delete?
+// TODO retest wheel vectors against old vector
 
 public class Tests
 {
@@ -23,11 +23,29 @@ public class Tests
     public static void main(String[] args)
     {
         FastTrig.cos(359);  // FastTrig init cache
+        printDivider();
+
         debugFastTrig();
+        printDivider();
+
         debugHerdVector();
+        printDivider();
+
         debugNewChassisToWheelVectors();
+        printDivider();
+
         debugWheelVectorsToChassis();
-        debugLogging();
+        printDivider();
+
+        try
+        {
+            debugLogging();
+        }
+        catch (UnsatisfiedLinkError e)
+        {
+            // Not on Robot, change HerdLogger handler to target System.out
+        }
+        printDivider();
     }
 
     public static void debugHerdVector()
@@ -39,7 +57,8 @@ public class Tests
         start = System.nanoTime();
         System.out.println("A.X: " + a.getX());
         System.out.println("A.Y: " + a.getY());
-        System.out.println("Durration: " + ((System.nanoTime() - start)/1000) + " ns");
+        long end = System.nanoTime();
+        System.out.println("Durration: " + ((end - start)/1000) + " ns");
         System.out.println();
 
         // New Vector: Auto-Wrap
@@ -120,7 +139,6 @@ public class Tests
 
         System.out.println(a = a.add(b));
         System.out.println(a.add(b));
-        System.out.println();
     }
 
     public static void debugNewChassisToWheelVectors()
@@ -139,14 +157,15 @@ public class Tests
         rFL = rFL.scale(unitVectorCorrection);
         rBL = rBL.scale(unitVectorCorrection);
 
-        System.out.println("New position BR: " + rBR);
-        System.out.println("New position FR: " + rFR);
-        System.out.println("New position FL: " + rFL);
-        System.out.println("New position BL: " + rBL);
+        System.out.println("Position BR: " + rBR);
+        System.out.println("Position FR: " + rFR);
+        System.out.println("Position FL: " + rFL);
+        System.out.println("Position BL: " + rBL);
 
-        HerdVector v = new HerdVector(4, 60);
+        HerdVector v = new HerdVector(1, 60);
         //        double spin = robotS;
         HerdVector w = new  HerdVector(robotS, 90);
+        System.out.format("\nRobot Command (%.2f, %.2f, %.2f)\n\n", v.getMag(), v.getAngle(), w.getMag());
         long start = System.nanoTime();
 
         // v + w x r
@@ -166,11 +185,11 @@ public class Tests
             wheelFR = wheelFR.scale(1 / maxMag);
             wheelFL = wheelFL.scale(1 / maxMag);
             wheelBL = wheelBL.scale(1 / maxMag);
-            Tests.maxWheelMagnitudeLast = maxMag;
+            Tests.maxWheelMagnitudeLast = 1;
         }
         else
         {
-            Tests.maxWheelMagnitudeLast = 1;
+            Tests.maxWheelMagnitudeLast = maxMag;
         }
 
         // Mirroring Y is purely to match our old swerve. Seems like an extra step beyond what math says we need
@@ -185,8 +204,8 @@ public class Tests
         System.out.println("Mirrored FR: " + wheelFR);
         System.out.println("Mirrored FL: " + wheelFL);
         System.out.println("Mirrored BL: " + wheelBL);
-        System.out.println("Wheel Calcs: " + ((end - start)/1000) + " ns");
-        System.out.println("-------------------------------");
+        System.out.println("\nWheel Calcs: " + ((end - start)/1000) + " ns");
+        //System.out.println("Max Mag Last: " + Tests.maxWheelMagnitudeLast);
 
         Tests.wheelBR = wheelBR;
         Tests.wheelFR = wheelFR;
@@ -252,7 +271,6 @@ public class Tests
         System.out.println("Reconstructing Robot Command");
         System.out.format("Robot Command (%.2f, %.2f, %.2f)\n", frankenstein.getMag(), frankenstein.getAngle(), wXr.getMag());
         System.out.println("Wheel Calcs: " + ((end - start)/1000) + " ns");
-        System.out.println("-------------------------------");
     }
 
     public static void debugFastTrig()
@@ -310,7 +328,6 @@ public class Tests
 
         System.out.println(FastTrig.cos(-30));
         System.out.println(FastTrig.cos(330));
-        System.out.println();
     }
 
     public static void debugLogging()
@@ -348,6 +365,11 @@ public class Tests
         log3.warning("test3: ", v);
         end = System.nanoTime();
         System.out.println("Test Duration: " + ((end - start)/1000) + " ns");
+    }
+
+    public static void printDivider()
+    {
+        System.out.println("-------------------------------\n");
         System.out.println("-------------------------------");
     }
 }
