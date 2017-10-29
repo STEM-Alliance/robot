@@ -24,7 +24,7 @@ public class Chassis
     HerdLogger log = new HerdLogger(Chassis.class);
 
     private final SwerveWheel[] wheels = new SwerveWheel[4];
-    private final String[] wheelNames = {"WheelBR", "WheelFR", "WheelFL", "WheelBL"};
+    private final String[] wheelNames = {"WheelFR", "WheelFL", "WheelBR", "WheelBL"};
     private final Shifter shifters;
 
     private double lastVelocityTimestamp;
@@ -82,30 +82,21 @@ public class Chassis
         HerdVector v = new HerdVector(robot.velocity);
         HerdVector w = new HerdVector(robot.spin, 90);
 
-        // V + W x R
-        // Add a amount (W x R) to each wheel command so the chassis rotates (by W) while moving (in vector V)
-        HerdVector wheelBR = v.add(w.cross(Config.rBR));
+        // v + w x r
         HerdVector wheelFR = v.add(w.cross(Config.rFR));
         HerdVector wheelFL = v.add(w.cross(Config.rFL));
+        HerdVector wheelBR = v.add(w.cross(Config.rBR));
         HerdVector wheelBL = v.add(w.cross(Config.rBL));
 
-        // Scale magnitudes to range 0 - 1 for wheel
-        double maxMag = wheelBR.getMag();
-        maxMag = (wheelFR.getMag() > maxMag) ? wheelFR.getMag() : maxMag;
-        maxMag = (wheelFL.getMag() > maxMag) ? wheelFL.getMag() : maxMag;
-        maxMag = (wheelBL.getMag() > maxMag) ? wheelBL.getMag() : maxMag;
+        double maxMag = wheelFR.getMag();
+        maxMag = (wheelFL.getMag() > maxMag) ? wheelFL.getMag(): maxMag;
+        maxMag = (wheelBR.getMag() > maxMag) ? wheelBR.getMag(): maxMag;
+        maxMag = (wheelBL.getMag() > maxMag) ? wheelBL.getMag(): maxMag;
 
-        wheelBR = wheelBR.scale(1 / maxMag);
-        wheelFR = wheelFR.scale(1 / maxMag);
-        wheelFL = wheelFL.scale(1 / maxMag);
-        wheelBL = wheelBL.scale(1 / maxMag);
-
-        // Mirroring Y is purely to match our old swerve. Seems like an extra step beyond what math says we need
-        // TODO What's inverted in the real robot such that the Y's need to be mirrored?
-        wheelCommands[0] = new HerdVector(wheelBR.getMag(), -wheelBR.getAngle());
-        wheelCommands[1] = new HerdVector(wheelFR.getMag(), -wheelFR.getAngle());
-        wheelCommands[2] = new HerdVector(wheelFL.getMag(), -wheelFL.getAngle());
-        wheelCommands[3] = new HerdVector(wheelBL.getMag(), -wheelBL.getAngle());
+        wheelCommands[0] = wheelFR.scale(1 / maxMag);
+        wheelCommands[1] = wheelFL.scale(1 / maxMag);
+        wheelCommands[2] = wheelBR.scale(1 / maxMag);
+        wheelCommands[3] = wheelBL.scale(1 / maxMag);
 
         return wheelCommands;
     }

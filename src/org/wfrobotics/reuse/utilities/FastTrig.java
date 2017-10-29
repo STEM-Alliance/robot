@@ -1,4 +1,6 @@
 package org.wfrobotics.reuse.utilities;
+
+
 /**
  * Fast, degree-based trigonometry lookup (stay in degrees, faster than the Math lib)
  * @author Team 4818 WFRobotics
@@ -27,7 +29,7 @@ public abstract class FastTrig
         {
             sum += sin(index);
         }
-        System.out.println("Fast trig cache conditioned: " + (sum < .000001));  // Don't optimize me out Java!
+        new HerdLogger("Default").debug("Fast trig cached", sum < .000001);  // Don't optimize me out Java!
     }
 
     public static double sin(double angle)
