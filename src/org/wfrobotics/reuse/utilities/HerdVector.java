@@ -76,7 +76,7 @@ public class HerdVector
         double x = getX() + b.getX();
         double y = getY() + b.getY();
 
-        return new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(y, x) * 180 / Math.PI);
+        return new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(x, y) * 180 / Math.PI);
     }
 
     public HerdVector sub(HerdVector b)

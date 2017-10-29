@@ -42,18 +42,18 @@ public class Config
     // CALCULATIONS --------------------------------------------------------------------------------
     static
     {
-        double offsetX = WIDTH;
-        double offsetY = DEPTH;
+        HerdVector rWidth = new HerdVector(WIDTH, 90);
+        HerdVector rHeight = new HerdVector(DEPTH, 0);
 
-        rBR = new HerdVector(Math.sqrt(offsetX * offsetX + offsetY * offsetY), Math.atan2(offsetY, -offsetX) * 180 / Math.PI);
-        rFR = new HerdVector(Math.sqrt(offsetX * offsetX + offsetY * offsetY), Math.atan2(offsetY, offsetX) * 180 / Math.PI);
-        rFL = new HerdVector(Math.sqrt(offsetX * offsetX + offsetY * offsetY), Math.atan2(-offsetY, offsetX) * 180 / Math.PI);
-        rBL = new HerdVector(Math.sqrt(offsetX * offsetX + offsetY * offsetY), Math.atan2(-offsetY, -offsetX) * 180 / Math.PI);
+        rFR = rWidth.add(rHeight);
+        rBR = rWidth.sub(rHeight);
+        rFL = rWidth.rotate(180).add(rHeight);
+        rBL = rWidth.rotate(180).sub(rHeight);
 
         double unitVectorCorrection = 1 / rBR.getMag();
-        rBR = rBR.scale(unitVectorCorrection);
         rFR = rFR.scale(unitVectorCorrection);
         rFL = rFL.scale(unitVectorCorrection);
+        rBR = rBR.scale(unitVectorCorrection);
         rBL = rBL.scale(unitVectorCorrection);
     }
 }
