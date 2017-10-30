@@ -2,7 +2,6 @@ package org.wfrobotics.reuse.subsystems.swerve.chassis;
 
 import org.wfrobotics.reuse.subsystems.swerve.Shifter;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleMotorMagPot;
-import org.wfrobotics.reuse.subsystems.swerve.wheel.DriveMotor;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.SwerveWheel;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -11,7 +10,6 @@ import org.wfrobotics.robot.config.RobotMap;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Controls swerve drive at the robot/chassis level
@@ -30,10 +28,10 @@ public class Chassis
 
     public Chassis()
     {
-        wheels[0] = new SwerveWheel(new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[0]), new AngleMotorMagPot(wheelNames[0] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[0]));
-        wheels[1] = new SwerveWheel(new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[1]), new AngleMotorMagPot(wheelNames[1] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[1]));
-        wheels[2] = new SwerveWheel(new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[2]), new AngleMotorMagPot(wheelNames[2] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[2]));
-        wheels[3] = new SwerveWheel(new DriveMotor(RobotMap.CAN_SWERVE_DRIVE_TALONS[3]), new AngleMotorMagPot(wheelNames[3] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[3]));
+        wheels[0] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[0], new AngleMotorMagPot(wheelNames[0] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[0]));
+        wheels[1] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[1], new AngleMotorMagPot(wheelNames[1] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[1]));
+        wheels[2] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[2], new AngleMotorMagPot(wheelNames[2] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[2]));
+        wheels[3] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[3], new AngleMotorMagPot(wheelNames[3] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[3]));
         shifters = new Shifter();
 
         lastVelocityTimestamp = Timer.getFPGATimestamp();
@@ -59,8 +57,8 @@ public class Chassis
         ChassisSignal command = new ChassisSignal(robotVelocity, robotRotation);
         HerdVector[] WheelsScaled;
 
-        command = applyClampVelocity(command);
-        command = (Config.ENABLE_SQUARE_MAGNITUDE) ? applyMagnitudeSquare(command) : command;
+        command.velocity = command.velocity.scaleToRange(0, 1);       // Clamp mag - Start with range 0 to 1
+        command.velocity = command.velocity.scale(command.velocity);  // Square mag - Finer control at low speed
         command = (Config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(command) : command;
         command = (Config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(command) : command;
         state.updateRobotVelocity(command.velocity);
@@ -99,21 +97,6 @@ public class Chassis
         return wheelCommands;
     }
 
-    private ChassisSignal applyClampVelocity(ChassisSignal robot)
-    {
-        double RobotVelocityClamped = (robot.velocity.getMag() > 1.0) ? 1 : robot.velocity.getMag();
-        HerdVector clamped = new HerdVector(RobotVelocityClamped, robot.velocity.getAngle());
-
-        return new ChassisSignal(clamped, robot.spin);
-    }
-
-    private ChassisSignal applyMagnitudeSquare(ChassisSignal robot)  // Finer control at low speed
-    {
-        robot.velocity.scale(robot.velocity);
-
-        return robot;
-    }
-
     //Limit before slowing speed so it runs using the original values set limitations on rotation, so if driving full speed it doesn't take priority
     private ChassisSignal applyRotationLimit(ChassisSignal robot)
     {
@@ -122,7 +105,7 @@ public class Chassis
 
         //robot.spin = Utilities.clampToRange(robot.spin, -RotationAdjust, RotationAdjust);
         robot.spin *= RotationAdjust;
-        SmartDashboard.putNumber("SwerveRotationAdjust", RotationAdjust);
+        log.info("SwerveRotationAdjust", RotationAdjust);
 
         return robot;
     }
