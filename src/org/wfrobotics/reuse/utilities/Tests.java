@@ -149,6 +149,17 @@ public class Tests
         b = b.rotate(180);
         System.out.format(a + " cross " + b + " = " + a.cross(b) + "\n");
         System.out.println();
+
+        // Clamp
+        HerdVector c = new HerdVector(.44, 10);
+        double maxDelta = .05;
+        HerdVector last = new HerdVector(.5, 10);
+        double min = last.getMag() - maxDelta;
+        double max = last.getMag() + maxDelta;
+
+        System.out.println(min);
+        System.out.println(max);
+        System.out.println(c.clampToRange(min, max));
     }
 
     public static void debugNewChassisToWheelVectors()

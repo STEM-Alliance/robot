@@ -1,7 +1,6 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
 
-import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
 import org.wfrobotics.robot.config.RobotMap;
 
 import edu.wpi.first.wpilibj.Servo;
