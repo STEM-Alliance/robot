@@ -20,9 +20,9 @@ public class HerdVector
         }
 
         this.mag = m;
-        if (m == 0)
+        if (m == 0 && this.angle == -180)
         {
-            this.angle = 0;  // Postive y-aixs as zero angle special case
+            this.angle = 0;  // Postive y-axis atan2 special case
         }
         else
         {
@@ -107,5 +107,10 @@ public class HerdVector
     public HerdVector cross(HerdVector b)
     {
         return new HerdVector(mag * b.getMag(), getAngle() + b.getAngle());
+    }
+
+    public HerdVector scaleToRange(double min, double max)
+    {
+        return new HerdVector((mag * (max - min)) + min, angle);
     }
 }

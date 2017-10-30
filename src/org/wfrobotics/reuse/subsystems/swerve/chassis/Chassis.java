@@ -6,7 +6,6 @@ import org.wfrobotics.reuse.subsystems.swerve.wheel.DriveMotor;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.SwerveWheel;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.RobotMap;
 
@@ -63,7 +62,6 @@ public class Chassis
         command = applyClampVelocity(command);
         command = (Config.ENABLE_SQUARE_MAGNITUDE) ? applyMagnitudeSquare(command) : command;
         command = (Config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(command) : command;
-        command = (Config.CRAWL_MODE_ENABLE) ? applyCrawlMode(command) : command;
         command = (Config.ENABLE_ACCELERATION_LIMIT) ? applyAccelerationLimit(command) : command;
         state.updateRobotVelocity(command.velocity);
 
@@ -125,18 +123,6 @@ public class Chassis
         //robot.spin = Utilities.clampToRange(robot.spin, -RotationAdjust, RotationAdjust);
         robot.spin *= RotationAdjust;
         SmartDashboard.putNumber("SwerveRotationAdjust", RotationAdjust);
-
-        return robot;
-    }
-
-    private ChassisSignal applyCrawlMode(ChassisSignal robot)  // Scale speed down to max of DRIVE_SPEED_CRAWL, then adjust range back up to 1
-    {
-        double crawlSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", Config.DRIVE_SPEED_CRAWL);
-        double crawlMag = (Config.CRAWL_MODE_DEFAULT_HIGH) ? 1 - Config.crawlModeMagnitude : Config.crawlModeMagnitude;
-        double scalingFactor = Utilities.scaleToRange(crawlMag, 0, 1, crawlSpeed, 1);  // scale m_crawlMode from 0 and 1 to crawlSpeed and 1
-
-        robot.spin *= scalingFactor;
-        robot.velocity.scale(scalingFactor);
 
         return robot;
     }

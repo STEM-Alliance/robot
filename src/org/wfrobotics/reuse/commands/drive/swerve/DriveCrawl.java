@@ -1,19 +1,21 @@
 package org.wfrobotics.reuse.commands.drive.swerve;
 
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
-import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.Drive;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveCrawl extends Command
 {
     RobotState state = RobotState.getInstance();
     HerdLogger log = new HerdLogger(DriveCrawl.class);
+
+    double minSpeed;
 
     public DriveCrawl()
     {
@@ -22,20 +24,19 @@ public class DriveCrawl extends Command
 
     protected void initialize()
     {
-        log.debug("Drive", "Crawl");
+        log.info("Drive Mode", "Crawl");
+        minSpeed = Preferences.getInstance().getDouble("DRIVE_SPEED_CRAWL", Drive.CRAWL_SPEED_MIN);
     }
 
     protected void execute()
     {
-        double dpadSpeed = state.robotGear ? Drive.DPAD_MOVEMENT_SPEED_HG : Drive.DPAD_MOVEMENT_SPEED_LG;
-        HerdVector dpad = Robot.controls.swerveIO.getCrawl();
-        HerdVector speedRobot = new HerdVector(dpadSpeed, dpad.getAngle());
-        HerdVector fieldRelative = speedRobot.rotate(state.robotHeading);
+        double maxSpeed = (state.robotGear) ? Drive.CRAWL_SPEED_MAX_HG : Drive.CRAWL_SPEED_MAX_LG;
+        HerdVector io = Robot.controls.swerveIO.getCrawl();
+        HerdVector v = io.scaleToRange(minSpeed, maxSpeed).rotate(state.robotHeading);
 
-        log.debug("Dpad", dpad);
-        Config.crawlModeMagnitude = dpad.getMag();
-
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(fieldRelative, 0));
+        log.debug("Drive IO", io);
+        log.info("Drive Cmd", v);
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(v, 0));
     }
 
     protected boolean isFinished()
@@ -45,7 +46,6 @@ public class DriveCrawl extends Command
 
     protected void end()
     {
-        Config.crawlModeMagnitude = 0;
         Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
     }
 }
