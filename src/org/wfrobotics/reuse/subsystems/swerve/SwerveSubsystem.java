@@ -2,8 +2,6 @@ package org.wfrobotics.reuse.subsystems.swerve;
 
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
-import org.wfrobotics.reuse.subsystems.swerve.chassis.Chassis;
-import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.reuse.utilities.Utilities;
@@ -72,10 +70,10 @@ public class SwerveSubsystem extends Subsystem
 
         if (fieldRelative)
         {
-            s.velocity.rotate(gyro.getYaw());
+            s.velocity = s.velocity.rotate(gyro.getYaw());
         }
 
-        wheelManager.setWheelVectors(s.velocity, s.spin, requestHighGear, brake);
+        wheelManager.update(s.velocity, s.spin, requestHighGear, brake);
     }
 
     private void ApplySpinMode(SwerveSignal command, double error)

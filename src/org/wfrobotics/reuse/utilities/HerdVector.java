@@ -109,6 +109,19 @@ public class HerdVector
         return new HerdVector(mag * b.getMag(), getAngle() + b.getAngle());
     }
 
+    public HerdVector clampToRange(double min, double max)
+    {
+        if (mag < min)
+        {
+            return new HerdVector(min, angle);
+        }
+        else if (mag > max)
+        {
+            return new HerdVector(max, angle);
+        }
+        return new HerdVector(mag, angle);
+    }
+
     public HerdVector scaleToRange(double min, double max)
     {
         return new HerdVector((mag * (max - min)) + min, angle);

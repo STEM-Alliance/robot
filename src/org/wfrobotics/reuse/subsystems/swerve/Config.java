@@ -1,20 +1,20 @@
-package org.wfrobotics.reuse.subsystems.swerve.chassis;
+package org.wfrobotics.reuse.subsystems.swerve;
 
 import org.wfrobotics.reuse.utilities.HerdVector;
 
-// Move some into robot specific drive config?
+// TODO Move some into robot specific drive config?
 
 public class Config
 {
+    private static final double WIDTH = 24.75;
+    private static final double DEPTH = 28.5;
+
     // PID ----------------------------------------------------------------------------------------
     public static final double CHASSIS_P = .025;
     public static final double CHASSIS_I = .000005;
     public static final double CHASSIS_D = 0.002;
 
     // PHYSICAL ------------------------------------------------------------------------------------
-    public static final double WIDTH = 24.75;
-    public static final double DEPTH = 28.5;
-
     public static HerdVector rBR;
     public static HerdVector rFR;
     public static HerdVector rFL;
@@ -22,16 +22,15 @@ public class Config
 
     public static final int[] SHIFTER_VALS = { 100, 80, 90, 120};
     public static final int SHIFTER_RANGE = 55;
+    public static final double SHIFTER_SHIFT_TIME = 1;  // Seconds for servo to shift, // TODO DRL calibrate/test
 
     // CONFIG --------------------------------------------------------------------------------------
-    public static boolean ENABLE_ACCELERATION_LIMIT = true;
     public static boolean ENABLE_ROTATION_LIMIT = true;
     public static final boolean[] SHIFTER_INVERT = {true, false, true, false};
 
     // CALIBRATION ---------------------------------------------------------------------------------
     public static double accelerationMax = 6; // Smaller is slower acceleration
     public static double rotationAdjustMin = .3;
-    public static final double SHIFTER_SHIFT_TIME = 1;  // Seconds for servo to shift, // TODO DRL calibrate/test
 
     // CALCULATIONS --------------------------------------------------------------------------------
     static
