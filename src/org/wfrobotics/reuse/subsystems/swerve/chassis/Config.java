@@ -25,7 +25,6 @@ public class Config
 
     // CONFIG --------------------------------------------------------------------------------------
     public static boolean ENABLE_ACCELERATION_LIMIT = true;
-    public static boolean ENABLE_SQUARE_MAGNITUDE = true;
     public static boolean ENABLE_ROTATION_LIMIT = true;
     public static final boolean[] SHIFTER_INVERT = {true, false, true, false};
 
