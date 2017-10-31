@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 // TODO Always have heading
-// TODO Drive mode command to remove rotational speed and/or heading?
+// TODO Drive mode - Common drive command by turning snapToHeading into one of two modes
 // TODO remove field relative?
+// TODO routine to test swerve talons
 
 /**
  * Swerve Drive implementation

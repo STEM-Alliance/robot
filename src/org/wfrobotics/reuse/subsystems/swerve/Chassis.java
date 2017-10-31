@@ -38,7 +38,7 @@ public class Chassis
 
     public void update(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
     {
-        HerdVector[] WheelsScaled = applyChassisEffects(robotVelocity, robotRotation, gear);
+        HerdVector[] WheelsScaled = applyChassisEffects(robotVelocity, robotRotation);
 
         wheels[0].set(WheelsScaled[0], brake);
         wheels[1].set(WheelsScaled[1], brake);
@@ -54,7 +54,7 @@ public class Chassis
         state.updateRobotGear(shifters.isHighGear());
     }
 
-    private HerdVector[] applyChassisEffects(HerdVector robotVelocity, double robotRotation, boolean gear)
+    private HerdVector[] applyChassisEffects(HerdVector robotVelocity, double robotRotation)
     {
         double rotateAdjustMin = Preferences.getInstance().getDouble("DRIVE_MIN_ROTATION", Config.rotationAdjustMin);
         double maxAccel = Preferences.getInstance().getDouble("MAX_ACCELERATION", Config.accelerationMax);
