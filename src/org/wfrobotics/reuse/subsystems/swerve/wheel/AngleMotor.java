@@ -26,7 +26,7 @@ public abstract class AngleMotor
     public AngleMotor(String name, int talonAddress)
     {
         NAME = name;
-        anglePID = new AnglePID();
+        anglePID = new AnglePID(Config.ANGLE_P, Config.ANGLE_I, Config.ANGLE_D, 1);
         motor = new CANTalon(talonAddress);
         motor.configNominalOutputVoltage(0, 0);
         motor.configPeakOutputVoltage(11, -11);
@@ -42,27 +42,31 @@ public abstract class AngleMotor
 
     public String toString()
     {
-        return String.format("A: %.2f\u00b0, E: %.2f\u00b0", getDegrees(), anglePID.error);
+        return String.format("A: %.2f\u00b0, E: %.2f\u00b0", getDegrees(), anglePID.errorShortestPath);
     }
 
     /**
      * Update the angle motor based on the desired angle called from updateTask()
      * @return Whether the drive motor should run in the opposite direction
      */
-    public boolean update(HerdVector desired)
+    public boolean update(HerdVector desired, double wheelOffsetCal)
     {
-        double angleOffset = Preferences.getInstance().getDouble(NAME + ".Offset", 0);
-
-        setSensorOffset(angleOffset);
+        setSensorOffset(wheelOffsetCal);
 
         if (desired.getMag() > Config.DEADBAND_MINIMUM_SPEED)
         {
+            double angleMaxSpeed = Preferences.getInstance().getDouble("maxRotationSpeed", Config.ANGLE_MAX_SPEED);
+            double p = Preferences.getInstance().getDouble("WheelAngle_P", Config.ANGLE_P);
+            double i = Preferences.getInstance().getDouble("WheelAngle_I", Config.ANGLE_I);
+            double d = Preferences.getInstance().getDouble("WheelAngle_D", Config.ANGLE_D);
+
             double setpoint = desired.getAngle();
             double current = getDegrees();
-            double angleMaxSpeed = Preferences.getInstance().getDouble("maxRotationSpeed", Config.ANGLE_MAX_SPEED);
+            double pidSpeed;
 
-            anglePID.update(setpoint, current);
-            set(anglePID.getMotorSpeed() * angleMaxSpeed);
+            anglePID.updatePID(p, i, d);
+            pidSpeed = anglePID.update(setpoint, current);
+            set(pidSpeed * angleMaxSpeed);
         }
         else
         {
@@ -71,8 +75,9 @@ public abstract class AngleMotor
         }
 
         log.debug(NAME, this);
+        log.debug("Swerve AnglePID", anglePID);
 
-        return anglePID.isReverseMotor();
+        return anglePID.reverseDriveMotorMoreEfficient();
     }
 
     public void set(double speed)

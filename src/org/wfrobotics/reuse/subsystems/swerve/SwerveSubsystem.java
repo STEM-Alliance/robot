@@ -22,8 +22,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class SwerveSubsystem extends Subsystem
 {
-    public boolean requestHighGear = false;  // (True: High gear, False: Low gear)
-
     private final double ROTATION_MIN = .1;  // this will hopefully prevent locking the wheels when slowing down
     private final double HEADING_TIMEOUT = .6;
 
@@ -34,8 +32,11 @@ public class SwerveSubsystem extends Subsystem
     private PIDController chassisAngleController;
     private Chassis wheelManager;
     private double lastHeadingTimestamp;  // Addresses counter spinning/snapback
-    private boolean fieldRelative = true;
-    private boolean brake = false;
+
+    private boolean requestedBrake = false;
+    private boolean requestedFieldRelative = true;
+    public boolean requestedHighGear = false;  // (True: High gear, False: Low gear)
+
 
     public SwerveSubsystem()
     {
@@ -47,7 +48,7 @@ public class SwerveSubsystem extends Subsystem
 
     public String toString()
     {
-        return String.format("Heading: %.2f, Field Relative: %b, Brake: %b", state.robotHeading, fieldRelative, brake);
+        return String.format("Heading: %.2f, Field Relative: %b, Brake: %b", state.robotHeading, requestedFieldRelative, requestedBrake);
     }
 
     public void initDefaultCommand()
@@ -69,12 +70,12 @@ public class SwerveSubsystem extends Subsystem
         log.debug("Rotation Error", error);
         log.info("Chassis Command", s);
 
-        if (fieldRelative)
+        if (requestedFieldRelative)
         {
             s.velocity = s.velocity.rotate(gyro.getYaw());
         }
 
-        wheelManager.update(s.velocity, s.spin, requestHighGear, brake);
+        wheelManager.update(s.velocity, s.spin, requestedHighGear, requestedBrake);
     }
 
     private void ApplySpinMode(SwerveSignal command, double error)
@@ -121,10 +122,10 @@ public class SwerveSubsystem extends Subsystem
         state.updateRobotHeading(gyro.getYaw());
     }
 
-    public void setFieldRelative(boolean enable) { fieldRelative = enable; }
-    public boolean getFieldRelative() { return fieldRelative; }
+    public void setFieldRelative(boolean enable) { requestedFieldRelative = enable; }
+    public boolean getFieldRelative() { return requestedFieldRelative; }
 
     public void zeroGyro() { gyro.zeroYaw(); state.updateRobotHeading(gyro.getYaw()); }
 
-    public void setBrake(boolean enable) { brake = enable; }
+    public void setBrake(boolean enable) { requestedBrake = enable; }
 }

@@ -40,10 +40,20 @@ public class Chassis
     {
         HerdVector[] WheelsScaled = applyChassisEffects(robotVelocity, robotRotation);
 
-        wheels[0].set(WheelsScaled[0], brake);
-        wheels[1].set(WheelsScaled[1], brake);
-        wheels[2].set(WheelsScaled[2], brake);
-        wheels[3].set(WheelsScaled[3], brake);
+        double angleOffsetCal0 = Preferences.getInstance().getDouble(wheelNames[0] + ".Angle.Offset", 0);
+        double angleOffsetCal1 = Preferences.getInstance().getDouble(wheelNames[1] + ".Angle.Offset", 0);
+        double angleOffsetCal2 = Preferences.getInstance().getDouble(wheelNames[2] + ".Angle.Offset", 0);
+        double angleOffsetCal3 = Preferences.getInstance().getDouble(wheelNames[3] + ".Angle.Offset", 0);
+
+        wheels[0].set(WheelsScaled[0], angleOffsetCal0);
+        wheels[1].set(WheelsScaled[1], angleOffsetCal1);
+        wheels[2].set(WheelsScaled[2], angleOffsetCal2);
+        wheels[3].set(WheelsScaled[3], angleOffsetCal3);
+
+        wheels[0].setBrake(brake);
+        wheels[0].setBrake(brake);
+        wheels[0].setBrake(brake);
+        wheels[0].setBrake(brake);
 
         log.info(wheelNames[0], wheels[0]);
         log.info(wheelNames[1], wheels[1]);

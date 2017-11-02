@@ -37,19 +37,16 @@ public class SwerveWheel
         return String.format("%.2f, %.2f\u00b0", driveMotor.getSpeed(), angleMotor.getDegrees());
     }
 
-    public void set(HerdVector desired, boolean brake)
+    public void set(HerdVector desired, double wheelOffsetCal)
     {
-        boolean reverseDrive = angleMotor.update(desired);  // TODO Consider moving motor reversal to swerve wheel. Is it a "wheel thing" or "angle motor thing"?
-        double speed;
+        boolean reverseDrive = angleMotor.update(desired, wheelOffsetCal);  // TODO Consider moving motor reversal to swerve wheel. Is it a "wheel thing" or "angle motor thing"?
+        double speed = desired.getMag() * Config.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
 
         if (reverseDrive)
         {
-            desired = desired.scale(-1);
+            speed *= -1;
         }
-        speed = desired.getMag() * Config.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
         driveMotor.set(speed);
-
-        setBrake(brake);
     }
 
     public void setBrake(boolean enable)
