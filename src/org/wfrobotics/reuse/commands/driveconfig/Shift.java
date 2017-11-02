@@ -16,6 +16,6 @@ public class Shift extends InstantCommand
 
     protected void initialize()
     {
-        Robot.driveSubsystem.requestHighGear = request;
+        Robot.driveSubsystem.requestedHighGear = request;
     }
 }
