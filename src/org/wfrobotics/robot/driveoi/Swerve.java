@@ -61,11 +61,10 @@ public class Swerve
             return v;
         }
 
-        @SuppressWarnings("unused")
         public double getRotation()
         {
             double w = operator.getAxis(Xbox.AXIS.RIGHT_X);
-            
+
             if (Math.abs(w) < DEADBAND)
             {
                 w = 0;
@@ -75,14 +74,14 @@ public class Swerve
             {
                 return w;
             }
-            
+
             w = driver.getAxis(Xbox.AXIS.RIGHT_X);
-            
+
             if (Math.abs(w) < DEADBAND)
             {
                 w = 0;
             }
-            
+
             return w;
         }
 
