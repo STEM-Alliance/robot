@@ -87,7 +87,7 @@ public class HerdVector
 
     public String toString()
     {
-        return String.format("(%.2f, %.2f\u00b0)", mag, angle);
+        return String.format("(%.2f, %.1f\u00b0)", mag, angle);
     }
 
     public HerdVector add(HerdVector b)

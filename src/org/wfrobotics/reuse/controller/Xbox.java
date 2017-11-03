@@ -80,7 +80,7 @@ public class Xbox
     {
         if(axis == AXIS.LEFT_Y || axis == AXIS.RIGHT_Y)
         {
-            double val = getRawAxis(axis.get());
+            double val = -getRawAxis(axis.get());
             return (val == -0) ? 0 : val;
         }
         return getRawAxis(axis.get());

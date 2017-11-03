@@ -56,9 +56,9 @@ public class Chassis
         wheels[3].set(WheelsScaled[3], angleOffsetCal3);
 
         wheels[0].setBrake(brake);
-        wheels[0].setBrake(brake);
-        wheels[0].setBrake(brake);
-        wheels[0].setBrake(brake);
+        wheels[1].setBrake(brake);
+        wheels[2].setBrake(brake);
+        wheels[3].setBrake(brake);
 
         log.info(wheelNames[0], wheels[0]);
         log.info(wheelNames[1], wheels[1]);
