@@ -34,7 +34,7 @@ public class SwerveWheel
 
     public String toString()
     {
-        return String.format("%.2f, %.2f\u00b0", driveMotor.getSpeed(), angleMotor.getDegrees());
+        return String.format("%.2f, %.1f\u00b0", driveMotor.getSpeed(), angleMotor.getDegrees());
     }
 
     public void set(HerdVector desired, double wheelOffsetCal)

@@ -13,6 +13,12 @@ public class HerdVector
         double m = mag;
         double a = angle;
 
+//        HerdLogger l = new HerdLogger("");
+//        if (m == Double.NaN)
+//        {
+//            l.info("NaN", this);
+//        }
+        
         if (m < 0)
         {
             m = -m;
@@ -20,14 +26,27 @@ public class HerdVector
         }
 
         this.mag = m;
-        if (m == 0 && this.angle == -180)
+        a = ((a + 180 % 360) + 360) % 360 - 180;  // -180 to 180
+
+        if (a == -0)
         {
-            this.angle = 0;  // Postive y-axis atan2 special case
+            a = 0;
         }
-        else
-        {
-            this.angle = ((a + 180 % 360) + 360) % 360 - 180;  // -180 to 180
-        }
+        this.angle = a;
+        
+//        l.info("hv", this);
+//        l.info("hm", m);
+//        l.info("ha", a);
+//        l.info("hmag", this.mag);
+//        l.info("hangle", this.angle);
+//        if (this.mag == Double.NaN)
+//        {
+//            l.info("NaN", this);
+//        }
+//        if (this.angle == -0)
+//        {
+//            l.info("-0", this);
+//        }
     }
 
     public HerdVector(HerdVector clone)

@@ -100,7 +100,7 @@ public class Robot extends SampleRobot
     {
         log.info("Drive", driveSubsystem);
         log.info("High Gear", state.robotGear);
-        log.info("Battery", DriverStation.getInstance().getBatteryVoltage());
+        log.info("Battery", DriverStation.getInstance().getBatteryVoltage());  // TODO .1 battery res
         Scheduler.getInstance().run();
     }
 }

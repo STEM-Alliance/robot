@@ -48,7 +48,7 @@ public class SwerveSubsystem extends Subsystem
 
     public String toString()
     {
-        return String.format("Heading: %.2f, Field Relative: %b, Brake: %b", state.robotHeading, requestedFieldRelative, requestedBrake);
+        return String.format("Heading: %.1f, Field Relative: %b, Brake: %b", state.robotHeading, requestedFieldRelative, requestedBrake);
     }
 
     public void initDefaultCommand()
@@ -67,13 +67,14 @@ public class SwerveSubsystem extends Subsystem
         chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
 
         ApplySpinMode(s, error);
-        log.debug("Rotation Error", error);
-        log.info("Chassis Command", s);
 
         if (requestedFieldRelative)
         {
             s.velocity = s.velocity.rotate(gyro.getYaw());
         }
+
+        log.debug("Rotation Error", error);
+        log.info("Chassis Command", s);
 
         wheelManager.update(s.velocity, s.spin, requestedHighGear, requestedBrake);
     }

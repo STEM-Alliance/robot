@@ -1,7 +1,6 @@
 package org.wfrobotics.reuse.controller;
 
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.reuse.utilities.Utilities;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -81,8 +80,8 @@ public class Xbox
     {
         if(axis == AXIS.LEFT_Y || axis == AXIS.RIGHT_Y)
         {
-            // Want forward Y to be positive instead of negative
-            return -getRawAxis(axis.get());
+            double val = getRawAxis(axis.get());
+            return (val == -0) ? 0 : val;
         }
         return getRawAxis(axis.get());
     }
@@ -105,20 +104,6 @@ public class Xbox
     public double getY(Hand side)
     {
         return (side == Hand.kLeft) ? getAxis(AXIS.LEFT_Y) : getAxis(AXIS.RIGHT_Y);
-    }
-
-    public double getMagnitude(Hand side)
-    {
-        double x = getX(side);
-        double y = getY(side);
-        return Math.sqrt(x * x + y * y);
-    }
-
-    public double getAngleDegrees(Hand side)
-    {
-        double radians = Math.atan2(getY(side), getX(side));
-        double Angle = Math.toDegrees(radians);
-        return Utilities.wrapToRange(Angle + 90, -180, 180);
     }
 
     /**

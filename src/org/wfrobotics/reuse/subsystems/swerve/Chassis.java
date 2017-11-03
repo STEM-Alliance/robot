@@ -45,6 +45,11 @@ public class Chassis
         double angleOffsetCal2 = Preferences.getInstance().getDouble(wheelNames[2] + ".Angle.Offset", 0);
         double angleOffsetCal3 = Preferences.getInstance().getDouble(wheelNames[3] + ".Angle.Offset", 0);
 
+        log.debug("Scaled FR", WheelsScaled[0]);
+        log.debug("Scaled FL", WheelsScaled[1]);
+        log.debug("Scaled BR", WheelsScaled[2]);
+        log.debug("Scaled BL", WheelsScaled[3]);
+        
         wheels[0].set(WheelsScaled[0], angleOffsetCal0);
         wheels[1].set(WheelsScaled[1], angleOffsetCal1);
         wheels[2].set(WheelsScaled[2], angleOffsetCal2);
