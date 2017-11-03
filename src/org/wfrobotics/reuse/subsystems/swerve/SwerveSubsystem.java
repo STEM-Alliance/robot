@@ -59,21 +59,33 @@ public class SwerveSubsystem extends Subsystem
     public void driveWithHeading(SwerveSignal command)
     {
         SwerveSignal s = new SwerveSignal(command);
-        double error = -Utilities.wrapToRange(command.heading - gyro.getYaw(), -180, 180);  // Make herd vector and rotate?
-        // TODO figure out how to remove minus sign, looks wrong
 
         chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Config.CHASSIS_P));
         chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Config.CHASSIS_I));
         chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
 
-        ApplySpinMode(s, error);
-
-        if (requestedFieldRelative)
+//        if (requestedFieldRelative)
+//        {
+//            s.velocity = s.velocity.rotate(-gyro.getYaw());
+//        }
+        
+        double heading;
+        
+        if (command.hasHeading())
         {
-            s.velocity = s.velocity.rotate(gyro.getYaw());
+            heading = command.heading;
         }
+        else
+        {
+            heading = s.velocity.getAngle();
+        }
+        
+        double error = Utilities.wrapToRange(gyro.getYaw() - heading, -180, 180);  // Make herd vector and rotate?
 
         log.debug("Rotation Error", error);
+        
+        ApplySpinMode(s, error);
+
         log.info("Chassis Command", s);
 
         wheelManager.update(s.velocity, s.spin, requestedHighGear, requestedBrake);

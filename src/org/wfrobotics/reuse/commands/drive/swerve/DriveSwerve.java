@@ -5,12 +5,14 @@ import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.Drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveSwerve extends Command
 {
+    RobotState state = RobotState.getInstance();
     HerdLogger log = new HerdLogger(DriveSwerve.class);
 
     private double highVelocityStart;
@@ -41,8 +43,9 @@ public class DriveSwerve extends Command
         }
 
         // TODO Move square mag to here?
-
-        log.info("Drive Input", speedRobot);
+        log.info("Robot Relative", speedRobot);        
+        speedRobot = speedRobot.rotate(-state.robotHeading);  // Field Relative
+        log.info("Field Relative", speedRobot);
         Robot.driveSubsystem.driveWithHeading(new SwerveSignal(speedRobot, speedRotation));
     }
 
