@@ -19,11 +19,12 @@ public class DriveOff extends Command
 
     protected void initialize()
     {
-        log.debug("Drive", "Off");
+        log.info("Drive Mode", "Off");
     }
 
     protected void execute()
     {
+        log.info("Drive Cmd", s.velocity);
         Robot.driveSubsystem.driveWithHeading(s);
     }
 

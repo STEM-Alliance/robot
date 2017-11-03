@@ -1,13 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
-import org.wfrobotics.reuse.subsystems.swerve.chassis.Chassis;
-import org.wfrobotics.reuse.subsystems.swerve.chassis.Config;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.reuse.utilities.Utilities;
@@ -17,60 +11,44 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+// TODO Always have heading
+// TODO Drive mode - Common drive command by turning snapToHeading into one of two modes
+// TODO remove field relative?
+// TODO routine to test swerve talons
+
 /**
  * Swerve Drive implementation
  * @author Team 4818 WFRobotics
  */
 public class SwerveSubsystem extends Subsystem
 {
-    public class SwerveConfiguration
-    {
-        public boolean gearHigh = false;  // (True: High gear, False: Low gear)
-        public boolean gyroEnable = true;
-
-        private final double AUTO_ROTATION_MIN = .1;  // this will hopefully prevent locking the wheels when slowing down
-        private final double HEADING_TIMEOUT = .6;
-    }
+    private final double ROTATION_MIN = .1;  // this will hopefully prevent locking the wheels when slowing down
+    private final double HEADING_TIMEOUT = .6;
 
     RobotState state = RobotState.getInstance();
+    private Gyro gyro = Gyro.getInstance();
     private HerdLogger log = new HerdLogger(SwerveSubsystem.class);
-    public SwerveConfiguration configSwerve;
-    private PIDController chassisAngleController;
-    public Chassis wheelManager;
-    private ScheduledExecutorService scheduler;
 
+    private PIDController chassisAngleController;
+    private Chassis wheelManager;
     private double lastHeadingTimestamp;  // Addresses counter spinning/snapback
 
-    protected boolean fieldRelative = true;
-    protected boolean brake = false;
-    protected Gyro gyro;
+    private boolean requestedBrake = false;
+    private boolean requestedFieldRelative = true;
+    public boolean requestedHighGear = false;  // (True: High gear, False: Low gear)
+
 
     public SwerveSubsystem()
     {
-        try
-        {
-            gyro = Gyro.getInstance();
-        }
-        catch (RuntimeException ex)
-        {
-            log.error("Error instantiating navX MXP: " + ex.getMessage(), true);
-        }
-        finally
-        {
-            zeroGyro();
-        }
-
-        configSwerve = new SwerveConfiguration();
         chassisAngleController = new PIDController(Config.CHASSIS_P, Config.CHASSIS_I, Config.CHASSIS_D, 1.0);
 
-        scheduler = Executors.newScheduledThreadPool(1);
         wheelManager = new Chassis();
-        scheduler.scheduleAtFixedRate(wheelManager, 1, 5, TimeUnit.MILLISECONDS);
+        zeroGyro();
     }
 
     public String toString()
     {
-        return String.format("Heading: %.2f, Field Relative: %b, Brake: %b", state.robotHeading, fieldRelative, brake);
+        return String.format("Heading: %.2f, Field Relative: %b, Brake: %b", state.robotHeading, requestedFieldRelative, requestedBrake);
     }
 
     public void initDefaultCommand()
@@ -81,63 +59,51 @@ public class SwerveSubsystem extends Subsystem
     public void driveWithHeading(SwerveSignal command)
     {
         SwerveSignal s = new SwerveSignal(command);
+        double error = -Utilities.wrapToRange(command.heading - gyro.getYaw(), -180, 180);  // Make herd vector and rotate?
+        // TODO figure out how to remove minus sign, looks wrong
 
         chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Config.CHASSIS_P));
         chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Config.CHASSIS_I));
         chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
 
-        ApplySpinMode(s, s.hasHeading()); // Pass by reference
+        ApplySpinMode(s, error);
+        log.debug("Rotation Error", error);
         log.info("Chassis Command", s);
 
-        if (fieldRelative)
+        if (requestedFieldRelative)
         {
-            s.velocity.rotate(gyro.getYaw());
+            s.velocity = s.velocity.rotate(gyro.getYaw());
         }
 
-        wheelManager.setWheelVectors(s.velocity, s.spin, configSwerve.gearHigh, brake);
+        wheelManager.update(s.velocity, s.spin, requestedHighGear, requestedBrake);
     }
 
-    private void ApplySpinMode(SwerveSignal command, boolean snapToHeading)
+    private void ApplySpinMode(SwerveSignal command, double error)
     {
-        double error = 0;
-        String driveMode;
-
-        if (snapToHeading)
+        if (command.hasHeading())
         {
-            driveMode = "Snap To Angle";
-
-            if(configSwerve.gyroEnable)
-            {
-                error = Utilities.wrapToRange(command.heading - gyro.getYaw(), -180, 180);
-                command.spin = chassisAngleController.update(-error);
-            }
-            state.updateRobotHeading(command.heading);
+            command.spin = chassisAngleController.update(error);
+            log.info("Drive Mode", "Snap To Angle");
         }
-        else if (Math.abs(command.spin) > .1)
+        else if (Math.abs(command.spin) > ROTATION_MIN)
         {
-            driveMode = "Rotate Angle";
-
-            state.updateRobotHeading(gyro.getYaw());
             lastHeadingTimestamp = Timer.getFPGATimestamp();  // Save off timestamp to counter snapback
 
             // Square rotation value to give it more control at lower values but keep the same sign since a negative squared is positive
             // TODO Does this improve anything or add complexity because we scale rotation elsewhere?
             command.spin = Math.signum(command.spin) * Math.pow(command.spin, 2);
+            log.info("Drive Mode", "Rotate Angle");
         }
         else
         {
-            driveMode = "Maintain Angle";
-
             // Delay the stay at angle to prevent snapback
-            if((Timer.getFPGATimestamp() - lastHeadingTimestamp) < configSwerve.HEADING_TIMEOUT)
+            if((Timer.getFPGATimestamp() - lastHeadingTimestamp) < HEADING_TIMEOUT)
             {
                 chassisAngleController.resetError();
-                state.updateRobotHeading(gyro.getYaw()); // Until the timeout
             }
-            else if(configSwerve.gyroEnable)
+            else
             {
-                error = Utilities.wrapToRange(state.robotHeading - gyro.getYaw(), -180, 180);
-                double pidRotation = chassisAngleController.update(-error);
+                double pidRotation = chassisAngleController.update(error);
 
                 if(Math.abs(error) < 2)  // TODO: Seems incorrect
                 {
@@ -146,22 +112,20 @@ public class SwerveSubsystem extends Subsystem
 
                 // Add a deadband to hopefully help with wheel lock after stopping
                 log.debug("MaintainRotation", pidRotation);
-                if(Math.abs(pidRotation) > configSwerve.AUTO_ROTATION_MIN)// TODO remove unless this does anything more than talon nominal voltage
+                if(Math.abs(pidRotation) > ROTATION_MIN)// TODO remove unless this does anything more than talon nominal voltage
                 {
                     command.spin = pidRotation;
                 }
             }
+            log.info("Drive Mode", "Maintain Angle");
         }
-
-        log.info("Drive Mode", driveMode);
-        log.debug("Rotation Error", error);
+        state.updateRobotHeading(gyro.getYaw());
     }
 
-    public void setFieldRelative(boolean enable) { fieldRelative = enable; }
-    public boolean getFieldRelative() { return fieldRelative; }
+    public void setFieldRelative(boolean enable) { requestedFieldRelative = enable; }
+    public boolean getFieldRelative() { return requestedFieldRelative; }
 
-    public void zeroGyro(float offsetYaw) { gyro.setZero(offsetYaw); state.updateRobotHeading(gyro.getYaw()); }
     public void zeroGyro() { gyro.zeroYaw(); state.updateRobotHeading(gyro.getYaw()); }
 
-    public void setBrake(boolean enable) { brake = enable; }
+    public void setBrake(boolean enable) { requestedBrake = enable; }
 }

@@ -1,6 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
-import org.wfrobotics.reuse.subsystems.swerve.wheel.Config;
+
+import org.wfrobotics.robot.config.RobotMap;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
@@ -8,56 +9,55 @@ import edu.wpi.first.wpilibj.Timer;
 /** Swerve Drive Shifter that shifts each Swerve Wheel */
 public class Shifter
 {
-    private final int TOP;
-    private final int BOTTOM;
-    
-    private final Servo shifter;
+    private final int[] TOP = new int[4];
+    private final int[] BOTTOM = new int[4];
 
-    private boolean gearLastState;
-    private boolean gearLastRequested;
-    private double timeLastRequested;
-    
-    public Shifter(int servoPin, int angleMidway, int angleRange, boolean invert)
+    private final Servo[] shifter = new Servo[4];
+
+    private boolean state;
+    private boolean lastRequest;
+    private double timeLastRequest;
+
+    public Shifter()
     {
-        int halfRange = (invert) ? -angleRange / 2 : angleRange / 2;
-        
-        shifter = new Servo(servoPin);
-        TOP = angleMidway + halfRange;
-        BOTTOM = angleMidway - halfRange;
-        gearLastState = false;
-        gearLastRequested = false;
-        timeLastRequested = Timer.getFPGATimestamp() - Config.SHIFTER_SHIFT_TIME;  // Start fully in this gear
+        for (int index = 0; index < 4; index++)
+        {
+            int halfRange = (Config.SHIFTER_INVERT[index]) ? -Config.SHIFTER_RANGE / 2 : Config.SHIFTER_RANGE / 2;
+
+            shifter[index] = new Servo(RobotMap.PWM_SWERVE_SHIFT_SERVOS[index]);
+
+            TOP[index] = Config.SHIFTER_VALS[index] + halfRange;
+            BOTTOM[index] = Config.SHIFTER_VALS[index] - halfRange;
+        }
+
+        state = false;
+        lastRequest = state;
+        timeLastRequest = Timer.getFPGATimestamp() - Config.SHIFTER_SHIFT_TIME;  // Start fully in this gear
     }
-    
-    /**
-     * Shift. Safe to repeatedly call
-     * @param useHighGear True: High gear, False: Low gear 
-     */
+
+    /** Shift. Safe to repeatedly call */
     public void setGear(boolean useHighGear)
     {
-        shifter.setAngle((useHighGear) ? TOP : BOTTOM);
-        
-        // Only start a transition if we are changing
-        // Important: This allows the caller to set the shifter repeatedly and not be indefinitely transitioning in the getter()
-        if(gearLastRequested != useHighGear)
+        shifter[0].setAngle((useHighGear) ? TOP[0] : BOTTOM[0]);
+        shifter[1].setAngle((useHighGear) ? TOP[1] : BOTTOM[1]);
+        shifter[2].setAngle((useHighGear) ? TOP[2] : BOTTOM[2]);
+        shifter[3].setAngle((useHighGear) ? TOP[3] : BOTTOM[3]);
+
+        // Start a transition if actually changing - allows for repeated calls without resetting timer
+        if(lastRequest != useHighGear)
         {
-            gearLastRequested = useHighGear;
-            timeLastRequested = Timer.getFPGATimestamp();
+            lastRequest = useHighGear;
+            timeLastRequest = Timer.getFPGATimestamp();
         }
     }
-    
-    /**
-     * Get the current gear the shifter is in
-     * Note: If we have not fully shifted yet, this returns the last state
-     * @return True: High gear, False: Low gear
-     */
+
+    /** Current gear the shifter is in, determined by last state and time since state transition */
     public boolean isHighGear()
     {
-        if (Timer.getFPGATimestamp() - timeLastRequested > Config.SHIFTER_SHIFT_TIME)
+        if (Timer.getFPGATimestamp() - timeLastRequest > Config.SHIFTER_SHIFT_TIME)
         {
-            gearLastState = gearLastRequested;
+            state = lastRequest;
         }
-        
-        return gearLastState;
+        return state;
     }
 }

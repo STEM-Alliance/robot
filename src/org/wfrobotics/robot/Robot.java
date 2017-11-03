@@ -1,6 +1,7 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
+import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.config.Autonomous;
@@ -13,7 +14,6 @@ import org.wfrobotics.robot.subsystems.LED;
 import org.wfrobotics.robot.subsystems.Lifter;
 import org.wfrobotics.robot.subsystems.Shooter;
 import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
-import org.wfrobotics.robot.vision.CameraServer;
 import org.wfrobotics.robot.vision.messages.CameraMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class Robot extends SampleRobot
 {
     private HerdLogger log = new HerdLogger(Robot.class);
+    private RobotState state = RobotState.getInstance();
     private LED leds;
     public static SwerveDriveSteamworks driveSubsystem;
     public static Auger augerSubsystem;
@@ -36,7 +37,6 @@ public class Robot extends SampleRobot
     public static IO controls;
 
     Command autonomousCommand;
-    boolean gyroHasntBeenZeroed = true;
 
     public void robotInit()
     {
@@ -62,7 +62,6 @@ public class Robot extends SampleRobot
         while (isOperatorControl() && isEnabled())
         {
             allPeriodic();
-            Scheduler.getInstance().run();
         }
     }
 
@@ -75,7 +74,6 @@ public class Robot extends SampleRobot
         while (isAutonomous() && isEnabled())
         {
             allPeriodic();
-            Scheduler.getInstance().run();
         }
     }
 
@@ -86,10 +84,10 @@ public class Robot extends SampleRobot
         while (isDisabled())
         {
             lifterSubsystem.reset();
-            initOrZeroGyro();
+            Gyro.getInstance().zeroYaw();
             log.info("TeamColor", (DriverStation.getInstance().getAlliance() == Alliance.Red) ? "Red" : "Blue");
+
             allPeriodic();
-            Scheduler.getInstance().run();
         }
     }
 
@@ -101,18 +99,8 @@ public class Robot extends SampleRobot
     private void allPeriodic()
     {
         log.info("Drive", driveSubsystem);
-        log.info("Gyro Enable Requested", driveSubsystem.configSwerve.gyroEnable);
-        log.info("High Gear Requested", driveSubsystem.configSwerve.gearHigh);
+        log.info("High Gear", state.robotGear);
         log.info("Battery", DriverStation.getInstance().getBatteryVoltage());
-    }
-
-    private void initOrZeroGyro()
-    {
-        if((gyroHasntBeenZeroed && (Math.abs(Gyro.getInstance().getYaw()) > 0.1)) ||  // It takes some time before the gyro initializes
-                controls.swerveIO.getGyroZeroRequested())                             // User pushing button
-        {
-            Gyro.getInstance().zeroYaw();
-            gyroHasntBeenZeroed = false;
-        }
+        Scheduler.getInstance().run();
     }
 }
