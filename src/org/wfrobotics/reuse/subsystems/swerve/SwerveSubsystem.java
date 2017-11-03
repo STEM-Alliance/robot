@@ -48,7 +48,7 @@ public class SwerveSubsystem extends Subsystem
 
     public String toString()
     {
-        return String.format("Heading: %.1f, Field Relative: %b, Brake: %b", state.robotHeading, requestedFieldRelative, requestedBrake);
+        return String.format("Heading: %.1f, Brake: %b", state.robotHeading, requestedBrake);
     }
 
     public void initDefaultCommand()
@@ -80,7 +80,7 @@ public class SwerveSubsystem extends Subsystem
             heading = s.velocity.getAngle();
         }
         
-        double error = Utilities.wrapToRange(gyro.getYaw() - heading, -180, 180);  // Make herd vector and rotate?
+        double error = Utilities.wrapToRange(heading + gyro.getYaw(), -180, 180);  // Make herd vector and rotate?
 
         log.debug("Rotation Error", error);
         
