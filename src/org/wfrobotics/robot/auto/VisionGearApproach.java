@@ -42,7 +42,7 @@ public class VisionGearApproach extends Command
 
     protected void execute()
     {
-        double distanceFromCenter = state.visionError;
+        double distanceFromCenter = state.getVisionError();
         double visionWidth = state.visionWidth;
         double valueY = -.315;
         double valueX = 0;

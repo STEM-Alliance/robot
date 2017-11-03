@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.vision;
+package org.wfrobotics.reuse.subsystems.vision;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,12 +7,16 @@ import java.net.Socket;
 import java.util.logging.Level;
 
 import org.wfrobotics.reuse.utilities.HerdLogger;
-import org.wfrobotics.robot.vision.util.CameraListener;
-import org.wfrobotics.robot.vision.util.VisionMessage;
 
 /** Gets messages from the co-processor, tells anybody registered **/
 public class CameraServer implements Runnable
 {
+    /** For anybody registering to receive updates from camera server **/
+    public static interface CameraListener
+    {
+        public void CameraCallback(String m);
+    }
+
     private static CameraServer instance = null;
 
     private HerdLogger log = new HerdLogger(CameraServer.class);

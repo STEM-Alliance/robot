@@ -1,23 +1,23 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.utilities.HerdVector;
+import org.wfrobotics.robot.config.Drive;
 import org.wfrobotics.robot.config.VisionMode;
 import org.wfrobotics.robot.vision.messages.VisionUpdate;
+
+// TODO use robotGear in commands
 
 /** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
 public class RobotState
 {
-    private static RobotState instance = null;
-    private HerdVector robotVelocity = new HerdVector(0, 0);
+    // ------------- BEGIN Public State (Read-Only) -------------
 
-    // ------------- Robot State -------------
-    public double robotHeading = 0;
-    public VisionMode visionMode = VisionMode.OFF;
-    public boolean visionInView = false;
-    public double visionError = 1;
-    public double visionWidth = 0;
+    public double robotHeading;
+    public boolean robotGear;  // True: High, False: Low
 
-    protected RobotState() {}
+    public boolean visionInView;
+    public VisionMode visionMode;
+    public double visionWidth;
 
     public static RobotState getInstance()
     {
@@ -39,7 +39,36 @@ public class RobotState
         return visionError;
     }
 
-    // ------------- State Producers Only -------------
+    // ------------- END Public State (Read-Only) -------------
+    // ------------- BEGIN Private -------------
+
+    public enum SHIFT_STATE
+    {
+        HIGH_GEAR,
+        LOW_GEAR,
+    }
+
+    private static RobotState instance = null;
+
+    private HerdVector robotVelocity;
+
+    private double visionError;
+
+    protected RobotState()
+    {
+        robotGear = Drive.SHIFTER_INITIAL_STATE;
+        robotHeading = 0;
+        robotVelocity = new HerdVector(0, 0);
+        resetVisionState();
+    }
+
+    // ------------- END Private -------------
+    // ------------- BEGIN State Producers Only -------------
+
+    public synchronized void updateRobotGear(boolean isHighGear)
+    {
+        robotGear = isHighGear;
+    }
 
     public synchronized void updateRobotHeading(double fieldRelativeHeading)
     {
@@ -106,4 +135,6 @@ public class RobotState
             visionMode = VisionMode.GEAR;
         }
     }
+
+    // ------------- END State Producers Only -------------
 }

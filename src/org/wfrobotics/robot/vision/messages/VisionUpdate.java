@@ -2,9 +2,9 @@ package org.wfrobotics.robot.vision.messages;
 
 import java.util.ArrayList;
 
+import org.wfrobotics.reuse.subsystems.vision.VisionMessage;
 import org.wfrobotics.reuse.utilities.HerdLogger;
-import org.wfrobotics.robot.vision.util.TargetInfo;
-import org.wfrobotics.robot.vision.util.VisionMessage;
+import org.wfrobotics.robot.vision.TargetInfo;
 
 /** Describes vision stuff (ex: rectangles) the camera is detecting **/
 public class VisionUpdate extends VisionMessage

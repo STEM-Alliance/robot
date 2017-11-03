@@ -25,11 +25,10 @@ public class Swerve
 {
     public interface SwerveIO
     {
-        public int getCrawlDirection();
-        public double getCrawlSpeed();
-        public boolean getGyroZeroRequested();
-        public double getRotation();
         public HerdVector getVelocity();
+        public double getRotation();
+        public HerdVector getCrawl();
+        public boolean getGyroZeroRequested();
     }
 
     public static class SwerveXbox implements SwerveIO
@@ -50,17 +49,6 @@ public class Swerve
             buttons.add(ButtonFactory.makeButton(driver, BUTTON.START, TRIGGER.WHEN_PRESSED, new GyroZero()));
         }
 
-        public double getRotation()
-        {
-            double value = driver.getAxis(Xbox.AXIS.RIGHT_X);
-
-            if (Math.abs(value) < DEADBAND)
-            {
-                value = 0;
-            }
-            return value;
-        }
-
         public HerdVector getVelocity()
         {
             HerdVector v = driver.getVector(Hand.kLeft);
@@ -78,14 +66,22 @@ public class Swerve
             return v;
         }
 
-        public int getCrawlDirection()
+        public double getRotation()
         {
-            return driver.getDpad();
+            double value = driver.getAxis(Xbox.AXIS.RIGHT_X);
+
+            if (Math.abs(value) < DEADBAND)
+            {
+                value = 0;
+            }
+            return value;
         }
 
-        public double getCrawlSpeed()
+        public HerdVector getCrawl()
         {
-            return driver.getTrigger(Hand.kLeft);
+            double speed = driver.getTrigger(Hand.kLeft);
+            double angle = driver.getDpad();
+            return new HerdVector(speed, angle);
         }
 
         public boolean getGyroZeroRequested()
@@ -124,22 +120,11 @@ public class Swerve
             buttonDriveSetGyro.whenPressed(new GyroZero());
         }
 
-        public double getRotation()
-        {
-            double r = operator.getAxis(Xbox.AXIS.LEFT_X);
-
-            if (Math.abs(r) < DEADBAND)
-            {
-                r = 0;
-            }
-            return r;
-        }
-
         public HerdVector getVelocity()
         {
             double x = driver.getX();
             double y = driver.getY();
-            HerdVector v = new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(y, x) * 180 / Math.PI);
+            HerdVector v = new HerdVector(Math.sqrt(x * x + y * y), Math.atan2(x, y) * 180 / Math.PI);
 
             if (v.getMag() < DEADBAND)
             {
@@ -154,14 +139,20 @@ public class Swerve
             return v;
         }
 
-        public double getCrawlSpeed()
+        public double getRotation()
         {
-            return driver.getZ();
+            double r = operator.getAxis(Xbox.AXIS.LEFT_X);
+
+            if (Math.abs(r) < DEADBAND)
+            {
+                r = 0;
+            }
+            return r;
         }
 
-        public int getCrawlDirection()
+        public HerdVector getCrawl()
         {
-            return 0;
+            return new HerdVector(driver.getZ(), 0);
         }
 
         public boolean getGyroZeroRequested()

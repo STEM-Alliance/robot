@@ -6,9 +6,9 @@ public class SwerveSignal
 {
     public final static double HEADING_IGNORE = -1;
 
-    HerdVector velocity;    // Direction
-    double spin;            // Twist while moving
-    double heading;         // Angle to track
+    public HerdVector velocity;    // Direction
+    public double spin;            // Twist while moving
+    public double heading;         // Angle to track
 
     public SwerveSignal(HerdVector velocity,  double rotationalSpeed, double heading)
     {

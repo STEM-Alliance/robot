@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.vision.messages;
 
-import org.wfrobotics.robot.vision.util.VisionMessage;
+import org.wfrobotics.reuse.subsystems.vision.VisionMessage;
 
 /** Sets the co-processor's behavior (ex: set camera to use for vision) **/
 public class CameraMode extends VisionMessage
