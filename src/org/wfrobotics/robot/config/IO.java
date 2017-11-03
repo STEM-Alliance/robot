@@ -9,6 +9,7 @@ import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
+import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.controller.Xbox.BUTTON;
 import org.wfrobotics.reuse.controller.Xbox.DPAD;
 import org.wfrobotics.reuse.utilities.Utilities;
@@ -56,7 +57,7 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.UNJAM)));
         robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.RB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.ON_HOLD)));
         robotSpecific.add(ButtonFactory.makeButton(operator, DPAD.UP, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.UP)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Hand.kRight, .25, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.DOWN)));
+        robotSpecific.add(ButtonFactory.makeAxisButton(operator, AXIS.RIGHT_TRIGGER, .25, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.DOWN)));
         robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new LEDSignal(3)));
 
         robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
