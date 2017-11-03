@@ -23,9 +23,15 @@ public abstract class ButtonFactory
         return setTrigger(new XboxButton(provider, button), when, action);
     }
 
-    public static Button makeButton(Xbox provider, Hand side, double thresholdOn, TRIGGER when, Command action)
+    public static Button makeJoystickButton(Xbox provider, Hand side, double thresholdOn, TRIGGER when, Command action)
     {
-        return setTrigger(new XboxTriggerButton(provider, side, thresholdOn), when, action);
+        return setTrigger(new XboxJoystickButton(provider, side, thresholdOn), when, action);
+
+    }
+
+    public static Button makeAxisButton(Xbox provider, AXIS axis, double thresholdOn, TRIGGER when, Command action)
+    {
+        return setTrigger(new XboxAxisButton(provider, axis, thresholdOn), when, action);
     }
 
     public static Button makeButton(Xbox provider, DPAD button, TRIGGER when, Command action)
@@ -117,6 +123,44 @@ public abstract class ButtonFactory
         public boolean get()
         {
             return hardware.getAxis(a) > limit;
+        }
+    }
+
+    private static class XboxJoystickButton extends Button
+    {
+        Xbox hardware;
+        Hand hand;
+        double limit;
+
+        public XboxJoystickButton(Xbox hardware, Hand hand, double thresholdOn)
+        {
+            this.hardware = hardware;
+            this.hand = hand;
+            limit = thresholdOn;
+        }
+
+        public boolean get()
+        {
+            return hardware.getMagnitude(hand) > limit;
+        }
+    }
+
+    private static class XboxAxisButton extends Button
+    {
+        Xbox hardware;
+        AXIS axis;
+        double limit;
+
+        public XboxAxisButton(Xbox hardware, AXIS axis, double thresholdOn)
+        {
+            this.hardware = hardware;
+            this.axis = axis;
+            limit = thresholdOn;
+        }
+
+        public boolean get()
+        {
+            return hardware.getAxis(axis) > limit;
         }
     }
 
