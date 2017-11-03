@@ -19,6 +19,8 @@ public class Tests
     static HerdVector rFL;
     static HerdVector rBL;
 
+    static HerdLogger logS = new HerdLogger("Static Test");
+
     public static void main(String[] args)
     {
         //FastTrig.cos(359);  // FastTrig init cache
@@ -459,12 +461,39 @@ public class Tests
         double end;
         HerdVector v = new HerdVector(1, 45);
 
+        start = System.nanoTime();
+        logS.debug("test2", 1);
+        logS.info("test:", .33333);
+        logS.debug("test3: ", v);
+        logS.warning("test3: ", v);
+        end = System.nanoTime();
+        System.out.println("Test Duration: " + ((end - start)/1000) + " ns");
+
+        System.out.println("Static Loggers:");
+        start = System.nanoTime();
+        HerdLogger.temp("test2", 1);
+        HerdLogger.temp("test:", .33333);
+        HerdLogger.temp("test3: ", v);
+        HerdLogger.temp("test3: ", v);
+        end = System.nanoTime();
+        System.out.println("Test Duration: " + ((end - start)/1000) + " ns");
+
+        start = System.nanoTime();
+        HerdLogger.temp("test2", 1);
+        HerdLogger.temp("test:", .33333);
+        HerdLogger.temp("test3: ", v);
+        HerdLogger.temp("test3: ", v);
+        end = System.nanoTime();
+        System.out.println("Test Duration: " + ((end - start)/1000) + " ns");
+        System.out.println();
+
         HerdLogger log = new HerdLogger("WrapperTest");
         log.setLevel(Level.INFO);
         HerdLogger log2 = new HerdLogger(Tests.class);
         log2.setLevel(Level.WARNING);
         HerdLogger log3 = new HerdLogger(Tests.class);
 
+        System.out.println("Dynamic Loggers:");
         start = System.nanoTime();
         log.debug("test2", 1);
         log.info("test:", .33333);
@@ -488,6 +517,13 @@ public class Tests
         log3.warning("test3: ", v);
         end = System.nanoTime();
         System.out.println("Test Duration: " + ((end - start)/1000) + " ns");
+        System.out.println();
+
+        // Temp Level
+        HerdLogger logTempLevel = new HerdLogger("Testing");
+        logTempLevel.debug("TempLevel:", "Doesn't work");
+        logTempLevel.setLevelTempDebug();
+        logTempLevel.debug("TempLevel:", "Works");
     }
 
     public static void printDivider()

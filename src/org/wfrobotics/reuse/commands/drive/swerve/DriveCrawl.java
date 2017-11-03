@@ -33,12 +33,12 @@ public class DriveCrawl extends Command
         double maxSpeed = (state.robotGear) ? Drive.CRAWL_SPEED_MAX_HG : Drive.CRAWL_SPEED_MAX_LG;
         HerdVector io = Robot.controls.swerveIO.getCrawl();
         HerdVector scaled = io.scaleToRange(minSpeed, maxSpeed);
-        HerdVector v = scaled.rotate(state.robotHeading);
+        HerdVector robotRelative = scaled.rotate(state.robotHeading);
 
         log.debug("Drive IO", io);
+        log.info("Robot Relative", robotRelative);
         log.info("Field Relative", scaled);
-        log.info("Robot Relative", v);
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(v, 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(robotRelative, 0));
     }
 
     protected boolean isFinished()

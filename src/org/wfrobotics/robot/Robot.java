@@ -19,6 +19,7 @@ import org.wfrobotics.robot.vision.messages.CameraMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
@@ -37,6 +38,7 @@ public class Robot extends SampleRobot
     public static IO controls;
 
     Command autonomousCommand;
+    double lastPeriodicTime = 0;
 
     public void robotInit()
     {
@@ -98,9 +100,20 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
+        log.debug("Periodic Time", getPeriodicTime());
         log.info("Drive", driveSubsystem);
         log.info("High Gear", state.robotGear);
-        log.info("Battery", DriverStation.getInstance().getBatteryVoltage());  // TODO .1 battery res
+        log.info("Battery", DriverStation.getInstance().getBatteryVoltage());
+
         Scheduler.getInstance().run();
+    }
+
+    private String getPeriodicTime()
+    {
+        double now = Timer.getFPGATimestamp();
+        String periodicTime = String.format("%.1f ms", now - lastPeriodicTime);
+
+        lastPeriodicTime = now;
+        return periodicTime;
     }
 }

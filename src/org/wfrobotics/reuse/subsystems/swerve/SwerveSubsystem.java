@@ -37,11 +37,9 @@ public class SwerveSubsystem extends Subsystem
     private boolean requestedFieldRelative = true;
     public boolean requestedHighGear = false;  // (True: High gear, False: Low gear)
 
-
     public SwerveSubsystem()
     {
         chassisAngleController = new PIDController(Config.CHASSIS_P, Config.CHASSIS_I, Config.CHASSIS_D, 1.0);
-
         wheelManager = new Chassis();
         zeroGyro();
     }
@@ -59,18 +57,12 @@ public class SwerveSubsystem extends Subsystem
     public void driveWithHeading(SwerveSignal command)
     {
         SwerveSignal s = new SwerveSignal(command);
+        double heading;
 
         chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Config.CHASSIS_P));
         chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Config.CHASSIS_I));
         chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
 
-//        if (requestedFieldRelative)
-//        {
-//            s.velocity = s.velocity.rotate(-gyro.getYaw());
-//        }
-        
-        double heading;
-        
         if (command.hasHeading())
         {
             heading = command.heading;
@@ -79,11 +71,11 @@ public class SwerveSubsystem extends Subsystem
         {
             heading = s.velocity.getAngle();
         }
-        
+
         double error = Utilities.wrapToRange(heading + gyro.getYaw(), -180, 180);  // Make herd vector and rotate?
 
         log.debug("Rotation Error", error);
-        
+
         ApplySpinMode(s, error);
 
         log.info("Chassis Command", s);
