@@ -8,6 +8,7 @@ import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.Preferences;
 
 // TODO Consider owning the specific sensor, rather than subclassing this
+// TODO Try scaling pid output to full range (don't include deadband). Is integral limit - disable when out of range.
 
 /**
  * Controls swerve wheel turning

@@ -7,6 +7,8 @@ import org.wfrobotics.robot.RobotState;
 
 import com.ctre.CANTalon;
 
+// TODO Try scaling pid output of drive motor to full range (don't include deadband). Is integral limit - disable when out of range.
+
 /**
  * Handle motor outputs and feedback for an individual swerve wheel
  * @author Team 4818 WFRobotics
@@ -18,8 +20,6 @@ public class SwerveWheel
     private final AngleMotor angleMotor;
     private final CANTalon driveMotor;
 
-    private boolean brakeEnabled;
-
     public SwerveWheel(int motorDrive, AngleMotor motorAngle)
     {
         angleMotor = motorAngle;
@@ -28,8 +28,6 @@ public class SwerveWheel
         driveMotor.setVoltageRampRate(30);
         driveMotor.setPID(Config.DRIVE_P, Config.DRIVE_I, Config.DRIVE_D, Config.DRIVE_F, 0, 10, 0);
         driveMotor.reverseSensor(true);
-
-        setBrake(false);
     }
 
     public String toString()
@@ -51,10 +49,6 @@ public class SwerveWheel
 
     public void setBrake(boolean enable)
     {
-        if (brakeEnabled != enable)
-        {
-            driveMotor.enableBrakeMode(enable);
-            brakeEnabled = enable;
-        }
+        driveMotor.enableBrakeMode(enable);
     }
 }

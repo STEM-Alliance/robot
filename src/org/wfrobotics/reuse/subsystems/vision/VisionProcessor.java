@@ -1,8 +1,12 @@
 package org.wfrobotics.reuse.subsystems.vision;
 
 import org.wfrobotics.reuse.subsystems.vision.CameraServer.CameraListener;
+import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.vision.messages.VisionUpdate;
+
+// TODO try wait/notify, with volatile flag or Atomic boolean. Need sleep or something in camera too.
+// TODO Could go on future fast task
 
 /** Receives vision messages, tells robot state to interpret them **/
 public class VisionProcessor implements Runnable, CameraListener
@@ -12,7 +16,7 @@ public class VisionProcessor implements Runnable, CameraListener
     private RobotState consumer = RobotState.getInstance();
     private String update;
 
-    public synchronized void CameraCallback(String m)
+    public void CameraCallback(String m)
     {
         if (m.startsWith(VisionUpdate.sGetType()))
         {
@@ -34,17 +38,32 @@ public class VisionProcessor implements Runnable, CameraListener
 
     public void run()
     {
-        VisionUpdate v;
-
-        synchronized (this)
+        while (true)
         {
-            if (update == null)
+            VisionUpdate v = null;
+
+            synchronized (this)
             {
-                return;
+                if (update == null)
+                {
+                    v = VisionUpdate.fromMessage(update);
+                    update = null;
+                }
             }
-            v = VisionUpdate.fromMessage(update);
-            update = null;
+
+            if (v != null)
+            {
+                consumer.addVisionUpdate(v);
+            }
+
+            try
+            {
+                Thread.sleep(20);
+            }
+            catch (InterruptedException e)
+            {
+                new HerdLogger(this.getClass()).debug("Vision Processor", e.getMessage());
+            }
         }
-        consumer.addVisionUpdate(v);
     }
 }

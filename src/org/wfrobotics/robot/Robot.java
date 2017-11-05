@@ -102,8 +102,8 @@ public class Robot extends SampleRobot
     {
         log.debug("Periodic Time", getPeriodicTime());
         log.info("Drive", driveSubsystem);
-        log.info("High Gear", state.robotGear);
         log.info("Battery", DriverStation.getInstance().getBatteryVoltage());
+        state.logState();
 
         Scheduler.getInstance().run();
     }

@@ -25,7 +25,7 @@ public class CameraServer implements Runnable
 
     private CameraServer()
     {
-        socket = new Socket();
+        socket = new Socket();  // TODO This needs to be something implementing iSocket that talks to the roo
         log.setLevel(Level.WARNING);
         new Thread(this).start();
     }
@@ -43,6 +43,12 @@ public class CameraServer implements Runnable
 
     public void send(VisionMessage m)
     {
+        if (socket == null || socket.isClosed())
+        {
+            log.warning("CameraServer", "No socket");
+            return;
+        }
+
         try
         {
             OutputStream io = socket.getOutputStream();
@@ -56,7 +62,12 @@ public class CameraServer implements Runnable
 
     public void run()
     {
-        if (socket == null) { return; }
+        if (socket == null)
+        {
+            log.warning("CameraServer", "No socket");
+            return;
+        }
+
         try
         {
             InputStream io = socket.getInputStream();
@@ -64,16 +75,24 @@ public class CameraServer implements Runnable
             int len;
 
             log.debug("CameraServer", "Connected");
-            while (socket.isConnected() && (len = io.read(buffer)) != -1)
+            while (socket.isConnected() && (len = io.read(buffer)) != -1)  // TODO Assume read returns zero without buffered message. Otherwise change below to buffer up new bytes and parse for end of message char
             {
                 String raw = new String(buffer, 0, len);
                 listener.CameraCallback(raw);
+                try
+                {
+                    Thread.sleep(20);
+                }
+                catch (InterruptedException e)
+                {
+                    log.debug("CameraServer", e.getMessage());
+                }
             }
             log.debug("CameraServer", "Disconnected");
         }
         catch (IOException error)
         {
-            log.error("CameraServer", "Socket unresponsive");
+            log.error("CameraServer", error.getMessage());
         }
         if (socket != null)
         {
@@ -83,7 +102,7 @@ public class CameraServer implements Runnable
             }
             catch (IOException e)
             {
-                log.error("CameraServer", "Socket wont close");
+                log.warning("CameraServer", "Socket wont close");
             }
         }
     }
