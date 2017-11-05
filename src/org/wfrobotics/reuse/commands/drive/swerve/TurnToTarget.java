@@ -24,7 +24,7 @@ public class TurnToTarget extends TurnToHeading
     {
         if (state.visionInView)
         {
-            double targetHeading = state.robotHeading + state.getVisionError();
+            double targetHeading = state.robotHeading + state.visionError;
             s = new SwerveSignal(new HerdVector(0, 0), 0, targetHeading);
         }
         super.execute();
@@ -34,7 +34,7 @@ public class TurnToTarget extends TurnToHeading
     {
         if (state.visionInView)
         {
-            return Math.abs(state.getVisionError()) < tol;
+            return Math.abs(state.visionError) < tol;
         }
         return super.isFinished();
     }

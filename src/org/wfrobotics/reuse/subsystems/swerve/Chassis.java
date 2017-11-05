@@ -10,6 +10,8 @@ import org.wfrobotics.robot.config.RobotMap;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 
+//TODO use two PID, one for each gear
+
 /**
  * Controls swerve drive at the robot/chassis level
  * @author Team 4818 WFRobotics
@@ -23,6 +25,7 @@ public class Chassis
     private final String[] wheelNames = {"WheelFR", "WheelFL", "WheelBR", "WheelBL"};
     private final Shifter shifters;
 
+    private boolean brakeEnabled;
     private double lastVelocityTimestamp;
 
     public Chassis()
@@ -33,6 +36,7 @@ public class Chassis
         wheels[3] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[3], new AngleMotorMagPot(wheelNames[3] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[3]));
         shifters = new Shifter();
 
+        brakeEnabled = false;
         lastVelocityTimestamp = Timer.getFPGATimestamp();
     }
 
@@ -49,16 +53,13 @@ public class Chassis
         log.debug("Scaled FL", WheelsScaled[1]);
         log.debug("Scaled BR", WheelsScaled[2]);
         log.debug("Scaled BL", WheelsScaled[3]);
-        
+
         wheels[0].set(WheelsScaled[0], angleOffsetCal0);
         wheels[1].set(WheelsScaled[1], angleOffsetCal1);
         wheels[2].set(WheelsScaled[2], angleOffsetCal2);
         wheels[3].set(WheelsScaled[3], angleOffsetCal3);
 
-        wheels[0].setBrake(brake);
-        wheels[1].setBrake(brake);
-        wheels[2].setBrake(brake);
-        wheels[3].setBrake(brake);
+        updateBrake(brake);
 
         log.info(wheelNames[0], wheels[0]);
         log.info(wheelNames[1], wheels[1]);
@@ -142,5 +143,17 @@ public class Chassis
         lastVelocityTimestamp = now;
 
         return velocity.clampToRange(min, max);
+    }
+
+    public void updateBrake(boolean enable)
+    {
+        if (brakeEnabled != enable)
+        {
+            wheels[0].setBrake(enable);
+            wheels[1].setBrake(enable);
+            wheels[2].setBrake(enable);
+            wheels[3].setBrake(enable);
+            brakeEnabled = enable;
+        }
     }
 }

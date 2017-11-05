@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 // TODO Drive mode - Common drive command by turning snapToHeading into one of two modes
 // TODO remove field relative?
 // TODO routine to test swerve talons
+// TODO Try scaling pid output to full range (don't include deadband). Is integral limit - disable when out of range.
 
 /**
  * Swerve Drive implementation
@@ -46,7 +47,7 @@ public class SwerveSubsystem extends Subsystem
 
     public String toString()
     {
-        return String.format("Heading: %.1f, Brake: %b", state.robotHeading, requestedBrake);
+        return String.format("Brake: %b", requestedBrake);
     }
 
     public void initDefaultCommand()
