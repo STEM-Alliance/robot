@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+// TODO Recursively log mode/profile of composing commands with newlines, could ask each to print their toString?
+
 public class Autonomous
 {
     static final double DRIVE_SPEED = .6;
@@ -46,8 +48,8 @@ public class Autonomous
 
         return new AutoMode[] {
                 new AutoMode("Auto None", () -> new DriveOff(), 0),
-                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(0, DRIVE_SPEED, 0, TIME_DRIVE_MODE), 0),
-                new AutoMode("Auto Forward  (HIGH GEAR)", () -> new AutoDrive(0, DRIVE_SPEED * .75, 0, TIME_DRIVE_MODE * .75), 0),
+                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(0, DRIVE_SPEED, TIME_DRIVE_MODE), 0),
+                new AutoMode("Auto Forward  (HIGH GEAR)", () -> new AutoDrive(0, DRIVE_SPEED * .75, TIME_DRIVE_MODE * .75), 0),
                 //new AutoMode("Auto Shoot (NOT WORKING YET)", new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING)),
                 new AutoMode("Auto Shoot then Hopper", () -> new AutoShoot(), signX * START_ANGLE_SHOOT),
                 new AutoMode("Auto Shoot then Gear", () -> new AutoGearShootFirst(startingPosition), signX * START_ANGLE_SHOOT),

@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.hal.HAL;
 
+// TODO Move to either parent class of xboxcontroller? Why xboxcontroller?
+
 public class Panel
 {
     public static enum AXIS

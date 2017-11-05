@@ -18,8 +18,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
+// TODO Button for fast turning (rotate priority over velocity)
+// TODO Deadband move to subsystem so we can scale to range at PID?
+
 public class Swerve
 {
+    // TODO can these be common among drive types?
+    // TODO what can move to reuse, maybe with config separated out?
     public interface SwerveIO
     {
         public HerdVector getVelocity();

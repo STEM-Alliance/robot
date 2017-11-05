@@ -18,13 +18,11 @@ public class VisionGearApproach extends Command
     private HerdLogger log = new HerdLogger(VisionGearApproach.class);
     private RobotState state = RobotState.getInstance();
     private PIDController pidX;
-    private SwerveSignal s;
 
     public VisionGearApproach()
     {
         requires(Robot.driveSubsystem);
         pidX = new PIDController(2.5, 0.125, 0, .35);
-        s = new SwerveSignal(new HerdVector(0, 0), 0, SwerveSignal.HEADING_IGNORE);
     }
 
     protected void initialize()
@@ -35,9 +33,9 @@ public class VisionGearApproach extends Command
     protected void execute()
     {
         double distanceFromCenter = state.visionError;
-        double visionWidth = state.visionWidth;
         double valueY = -.315;
         double valueX = 0;
+        SwerveSignal s;
 
         // We think we've found at least one target, so get an estimate speed to line us up
         valueX = pidX.update(distanceFromCenter);
@@ -48,17 +46,11 @@ public class VisionGearApproach extends Command
             pidX.resetError();
         }
 
-        // We can still see a target
-        if(visionWidth > 15 && visionWidth < 335)
-        {
-            HerdVector v = new HerdVector(valueY, valueX);
-            v = v.rotate(-state.robotHeading);  // Field relative
-            s = new SwerveSignal(v, 0, SwerveSignal.HEADING_IGNORE);
-        }
+        HerdVector v = new HerdVector(valueY, valueX);
+        v = v.rotate(-state.robotHeading);  // Field relative
+        s = new SwerveSignal(v, 0, SwerveSignal.HEADING_IGNORE);
 
-        log.info("GearFound", state.visionInView);
         log.debug("GearDistanceX", distanceFromCenter);
-        log.debug("VisionWidth", visionWidth);
         log.debug("VisionGearY", valueY);
         log.debug("VisionGearX", valueX);
 
@@ -71,6 +63,7 @@ public class VisionGearApproach extends Command
         double visionWidth = state.visionWidth;
 
         log.info("GearFound", found);
+        log.debug("VisionWidth", visionWidth);
 
         return !found || visionWidth < 15 || visionWidth > 335;
     }

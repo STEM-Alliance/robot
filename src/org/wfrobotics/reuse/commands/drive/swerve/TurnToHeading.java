@@ -21,7 +21,7 @@ public class TurnToHeading extends Command
         requires(Robot.driveSubsystem);
         heading = headingFieldRelative;
         tol = tolerance;
-        s = new SwerveSignal(new HerdVector(0, 0), 1, heading);
+        s = new SwerveSignal(new HerdVector(0, 0), 0, heading);
     }
 
     protected void execute()
@@ -36,6 +36,6 @@ public class TurnToHeading extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

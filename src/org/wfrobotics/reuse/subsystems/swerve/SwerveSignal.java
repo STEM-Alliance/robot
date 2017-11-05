@@ -22,6 +22,11 @@ public class SwerveSignal
         this(velocity, rotationalSpeed, HEADING_IGNORE);
     }
 
+    public SwerveSignal(HerdVector velocity)
+    {
+        this(velocity, 0, HEADING_IGNORE);
+    }
+
     public SwerveSignal(SwerveSignal clone)
     {
         this(clone.velocity, clone.spin, clone.heading);

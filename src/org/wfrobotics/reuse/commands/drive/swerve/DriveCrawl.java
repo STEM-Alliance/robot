@@ -10,6 +10,7 @@ import org.wfrobotics.robot.config.Drive;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 
+//* Teleop fine control Herd swerve. Control is robot relative. **/
 public class DriveCrawl extends Command
 {
     RobotState state = RobotState.getInstance();
@@ -38,7 +39,7 @@ public class DriveCrawl extends Command
         log.debug("Drive IO", io);
         log.info("Robot Relative", robotRelative);
         log.info("Field Relative", scaled);
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(robotRelative, 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(robotRelative));
     }
 
     protected boolean isFinished()
@@ -48,6 +49,6 @@ public class DriveCrawl extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

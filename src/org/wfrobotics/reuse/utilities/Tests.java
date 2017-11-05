@@ -6,8 +6,7 @@ public class Tests
 {
     static final double width = 4;
     static final double depth = 3;
-    static Vector robotV = Vector.NewFromMagAngle(1, 5);
-    static final double robotS = -.1;
+
 
     static double maxWheelMagnitudeLast;
     static HerdVector wheelBR;
@@ -29,10 +28,17 @@ public class Tests
         //printDivider();
         //debugHerdVector();
         //printDivider();
-        debugOldChassisToWheelVectors();
+
+        Vector robotV = Vector.NewFromMagAngle(1, 5);
+        double robotS = -.1;
+        debugOldChassisToWheelVectors(robotV, robotS);
         printDivider();
-        debugNewChassisToWheelVectors();
+
+        HerdVector v = new HerdVector(robotV.getMag(), robotV.getAngle() + 90);
+        double spin = robotS;
+        debugNewChassisToWheelVectors(v, spin);
         printDivider();
+
         //debugWheelVectorsToChassis();
         //printDivider();
         try
@@ -164,11 +170,9 @@ public class Tests
         System.out.println(c.clampToRange(min, max));
     }
 
-    public static void debugNewChassisToWheelVectors()
+    public static void debugNewChassisToWheelVectors(HerdVector v, double spin)
     {
         double start, end;
-        double spin = robotS;
-        HerdVector v = new HerdVector(robotV.getMag(), robotV.getAngle() + 90);
         HerdVector w = new  HerdVector(spin, 90);
         System.out.format("Command (%.2f, %.2f, %.2f)\n\n", v.getMag(), v.getAngle(), spin);
 
@@ -318,7 +322,7 @@ public class Tests
         System.out.println("Wheel Calcs: " + ((end - start)/1000) + " ns");
     }
 
-    public static void debugOldChassisToWheelVectors()
+    public static void debugOldChassisToWheelVectors(Vector robotV, double robotS)
     {
         double start, end;
         // Cartesian Wheel Vectors
