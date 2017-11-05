@@ -35,7 +35,6 @@ public class SwerveSubsystem extends Subsystem
     private double lastHeadingTimestamp;  // Addresses counter spinning/snapback
 
     private boolean requestedBrake = false;
-    private boolean requestedFieldRelative = true;
     public boolean requestedHighGear = false;  // (True: High gear, False: Low gear)
 
     public SwerveSubsystem()
@@ -127,9 +126,6 @@ public class SwerveSubsystem extends Subsystem
         }
         state.updateRobotHeading(gyro.getYaw());
     }
-
-    public void setFieldRelative(boolean enable) { requestedFieldRelative = enable; }
-    public boolean getFieldRelative() { return requestedFieldRelative; }
 
     public void zeroGyro() { gyro.zeroYaw(); state.updateRobotHeading(gyro.getYaw()); }
 

@@ -12,18 +12,13 @@ import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionGearApproach extends Command
 {
     private HerdLogger log = new HerdLogger(VisionGearApproach.class);
     private RobotState state = RobotState.getInstance();
     private PIDController pidX;
-    private boolean fieldRelative = true;
-
     private SwerveSignal s;
-
-    private boolean done;
 
     public VisionGearApproach()
     {
@@ -35,9 +30,6 @@ public class VisionGearApproach extends Command
     protected void initialize()
     {
         LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
-        fieldRelative = Robot.driveSubsystem.getFieldRelative();
-        Robot.driveSubsystem.setFieldRelative(false);
-        done = false;
     }
 
     protected void execute()
@@ -46,37 +38,25 @@ public class VisionGearApproach extends Command
         double visionWidth = state.visionWidth;
         double valueY = -.315;
         double valueX = 0;
-        boolean found = state.visionInView;
 
-        SmartDashboard.putBoolean("GearFound", found);
-
-        if(!found)
-        {
-            done = true;
-            return;
-        }
-
-        // we think we've found at least one target, so get an estimate speed to line us up
+        // We think we've found at least one target, so get an estimate speed to line us up
         valueX = pidX.update(distanceFromCenter);
 
         if(Math.abs(distanceFromCenter) < .05)
         {
-            // if we started really far away from center, this will then reduce that overshoot maybe
+            // If we started really far away from center, this will then reduce that overshoot maybe
             pidX.resetError();
         }
 
-        // we can still see a target
+        // We can still see a target
         if(visionWidth > 15 && visionWidth < 335)
         {
-            s = new SwerveSignal(new HerdVector(valueY, valueX), 0, SwerveSignal.HEADING_IGNORE);
-        }
-        else
-        {
-            // if the detected target width is less than 15, we're either at the target or something went wrong
-            done = true;
+            HerdVector v = new HerdVector(valueY, valueX);
+            v = v.rotate(-state.robotHeading);  // Field relative
+            s = new SwerveSignal(v, 0, SwerveSignal.HEADING_IGNORE);
         }
 
-        log.debug("VisionGearDetect", state.visionInView);
+        log.info("GearFound", state.visionInView);
         log.debug("GearDistanceX", distanceFromCenter);
         log.debug("VisionWidth", visionWidth);
         log.debug("VisionGearY", valueY);
@@ -87,12 +67,16 @@ public class VisionGearApproach extends Command
 
     protected boolean isFinished()
     {
-        return done;
+        boolean found = state.visionInView;
+        double visionWidth = state.visionWidth;
+
+        log.info("GearFound", found);
+
+        return !found || visionWidth < 15 || visionWidth > 335;
     }
 
     protected void end()
     {
-        Robot.driveSubsystem.setFieldRelative(fieldRelative);
         LED.getInstance().set(LED.defaultLEDEffect);
     }
 

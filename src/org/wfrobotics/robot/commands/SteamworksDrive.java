@@ -2,67 +2,56 @@ package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.Commands;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class SteamworksDrive extends CommandGroup
+public class SteamworksDrive extends DriveSwerve
 {
-    private RobotState state = RobotState.getInstance();
-    private IntakeSetup intake;
+    private final double ANGLE_OFF_MIN = Commands.INTAKE_OFF_ANGLE;
+    private final double ANGLE_OFF_MAX = 180 - Commands.INTAKE_OFF_ANGLE;
+    private final double directionOfIntake = 90;
 
     private double intakeLastOn;
 
     public SteamworksDrive()
     {
-        intake = new IntakeSetup(false);
-
-        addParallel(intake);
-        addSequential(new DriveSwerve());
+        super();
+        requires(Robot.intakeSubsystem);
     }
 
     protected void initialized()
     {
+        super.initialize();
         Robot.driveSubsystem.setGearHopper(true);
+        intakeLastOn = Timer.getFPGATimestamp();
     }
 
     protected void execute()
     {
-        HerdVector lastVelocity = state.getRobotVelocity();
-        double angleDifference = lastVelocity.getAngle();
-        double vectorMag = lastVelocity.getMag();
-        boolean intakeOn;
+        super.execute();
 
-        angleDifference = -(angleDifference - 90);
-        angleDifference = Utilities.wrapToRange(angleDifference, -180, 180);
+        HerdVector lastVelocity = state.getRobotVelocity();
+        double centeredOnIntake = lastVelocity.getAngle() + directionOfIntake;
+        double now = Timer.getFPGATimestamp();
+        double speed = 0;
 
         // Restart the intake timers whenever we move in that direction
-        if(Math.abs(vectorMag) > .1 &&
-                angleDifference > Commands.INTAKE_OFF_ANGLE &&
-                angleDifference  < (180 - Commands.INTAKE_OFF_ANGLE))
+        if(Math.abs(lastVelocity.getMag()) > .1 && centeredOnIntake > ANGLE_OFF_MIN && centeredOnIntake < ANGLE_OFF_MAX)
         {
-            intakeLastOn = Timer.getFPGATimestamp();
+            intakeLastOn = now;
         }
 
-        if(Robot.controls.getIntake())
+        // Keep the intakes for a while after we stop moving in that direction
+        if(Robot.controls.getIntake() || now - intakeLastOn < Commands.INTAKE_OFF_TIMEOUT)
         {
-            intakeOn = true;
-        }
-        else
-        {
-            // Keep the intakes for a while after we stop moving in that direction
-            intakeOn = (Timer.getFPGATimestamp() - intakeLastOn) < Commands.INTAKE_OFF_TIMEOUT;
+            speed = 1;
         }
 
-        SmartDashboard.putNumber("angleDifference", angleDifference);
-        SmartDashboard.putBoolean("intakeOn", intakeOn);
-
-        intake.set(intakeOn);
+        log.debug("angleDifference", centeredOnIntake);
+        log.debug("Intake", speed == 1);
+        Robot.intakeSubsystem.setSpeed(speed);
     }
 
     protected void end()

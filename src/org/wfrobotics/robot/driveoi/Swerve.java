@@ -11,9 +11,6 @@ import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.BUTTON;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.commands.Conveyor;
-import org.wfrobotics.robot.commands.Rev;
-import org.wfrobotics.robot.commands.Shoot;
 import org.wfrobotics.robot.config.Drive;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -105,8 +102,6 @@ public class Swerve
         private final Joystick driver;
         private final Xbox operator;
         Button buttonDriveShift;
-        Button buttonDriveSmartShoot;
-        Button buttonDriveDumbShoot;
         Button buttonDriveFieldRelative;
         Button buttonDriveSetGyro;
 
@@ -114,15 +109,10 @@ public class Swerve
         {
             this.driver = driver;
             this.operator = operator;
-            buttonDriveSmartShoot = new JoystickButton(driver, 6);
-            buttonDriveDumbShoot = new JoystickButton(driver, 7);
             buttonDriveFieldRelative= new JoystickButton(driver, 8);
             buttonDriveSetGyro = new JoystickButton(driver, 9);
-
             buttonDriveShift= new JoystickButton(driver, 1);
 
-            buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
-            buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
             buttonDriveShift.whenPressed(new ShiftToggle());
             buttonDriveFieldRelative.whenPressed(new FieldRelativeToggle());
             buttonDriveSetGyro.whenPressed(new GyroZero());

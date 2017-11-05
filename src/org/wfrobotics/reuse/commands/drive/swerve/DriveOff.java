@@ -7,6 +7,7 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+/** Safety command for drivetrain. Toggle or cancel to quit **/
 public class DriveOff extends Command
 {
     HerdLogger log = new HerdLogger(DriveOff.class);

@@ -6,6 +6,9 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+// TODO Should autodrive switch or optionally have polar?
+// TODO Put field relative as constructor boolean to rotate drive signal here, not as drivetrain mode
+
 public class AutoDrive extends Command
 {
     private final SwerveSignal s;

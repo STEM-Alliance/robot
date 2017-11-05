@@ -8,20 +8,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class IntakeSetup extends Command
 {
     boolean onDesired;
-    
+
     public IntakeSetup(boolean on)
     {
         requires(Robot.intakeSubsystem);
-        
-        this.onDesired = on;
-    }
-    
-    protected void initialize() 
-    {
-        
+
+        onDesired = on;
     }
 
-    protected void execute() 
+    protected void execute()
     {
         double speed = (onDesired) ? 1 : 0;
 
@@ -29,23 +24,23 @@ public class IntakeSetup extends Command
         Robot.intakeSubsystem.setSpeed(speed);
     }
 
-    protected boolean isFinished() 
+    protected boolean isFinished()
     {
         return false;
     }
 
-    protected void end() 
+    protected void end()
     {
         Robot.intakeSubsystem.setSpeed(0);
     }
 
-    protected void interrupted() 
+    protected void interrupted()
     {
         end();
     }
-    
+
     public void set(boolean isOn)
     {
-        this.onDesired = isOn;
+        onDesired = isOn;
     }
 }
