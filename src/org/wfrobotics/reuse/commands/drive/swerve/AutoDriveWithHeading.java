@@ -6,14 +6,15 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Strafe extends Command
+/** Drive while letting swerve simultaneously oversee turning to an angle **/
+public class AutoDriveWithHeading extends Command
 {
-    final SwerveSignal s;
+    protected final SwerveSignal s;
 
-    public Strafe(double xSpeed, double timeout)
+    public AutoDriveWithHeading(double speedX, double speedY, double angle, double timeout)
     {
         requires(Robot.driveSubsystem);
-        s = new SwerveSignal(new HerdVector(xSpeed, 0));
+        s = new SwerveSignal(new SwerveSignal(new HerdVector(speedX, speedY), 0, angle));
         setTimeout(timeout);
     }
 

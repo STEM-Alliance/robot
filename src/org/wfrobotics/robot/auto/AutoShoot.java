@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveCoast;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveWithHeading;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.config.Commands;
 
@@ -28,13 +27,13 @@ public class AutoShoot extends CommandGroup
         addSequential(new AutonomousShoot(Conveyor.MODE.CONTINUOUS, Commands.AUGER_SPEED * .8, Commands.AUGER_UNJAM_SPEED, 6));
 
         // Drive diagonally towards hopper
-        addSequential(new AutoDriveCoast(signX * .65, 1, 0, ANGLE_WALL_IMPACT, 2.05));
+        addSequential(new AutoDriveWithHeading(signX * .65, 1, ANGLE_WALL_IMPACT, 2.05));
 
         // Drive into hopper
-        addSequential(new AutoDrive(signX * 1, 0, 0, ANGLE_WALL_IMPACT, .6));
+        addSequential(new AutoDriveWithHeading(signX * 1, 0, ANGLE_WALL_IMPACT, .6));
 
         // Get off wall
-        addSequential(new AutoDrive(signX * -.5, 0, 0, ANGLE_WALL_IMPACT, .5));
+        addSequential(new AutoDriveWithHeading(signX * -.5, 0, ANGLE_WALL_IMPACT, .5));
 
         // Catch balls
         addSequential(new AutonomousShoot(Conveyor.MODE.CONTINUOUS, Commands.AUGER_SPEED * .8, Commands.AUGER_UNJAM_SPEED, TIME_SHOOT_WHILE_AT_HOPPER));

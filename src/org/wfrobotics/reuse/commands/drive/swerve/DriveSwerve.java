@@ -10,6 +10,7 @@ import org.wfrobotics.robot.config.Drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+/** Teleop standard Herd swerve. Control is field relative. **/
 public class DriveSwerve extends Command
 {
     protected RobotState state = RobotState.getInstance();
@@ -61,6 +62,6 @@ public class DriveSwerve extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

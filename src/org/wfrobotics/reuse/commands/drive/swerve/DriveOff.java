@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriveOff extends Command
 {
     HerdLogger log = new HerdLogger(DriveOff.class);
-    SwerveSignal s = new SwerveSignal(new HerdVector(0, 0), 0);
+    SwerveSignal s = new SwerveSignal(new HerdVector(0, 0));
 
     public DriveOff()
     {

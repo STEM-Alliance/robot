@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveCoast;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveRobotRelative;
 import org.wfrobotics.robot.commands.Lift;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -13,13 +12,13 @@ public class VisionGearDropAndBackup extends CommandGroup
     {
         addSequential(new VisionGear());  // In front of the gear; score it with vision
 
-        addSequential(new WaitCommand(.5));  // Why?
+        addSequential(new WaitCommand(.5));  // Why? Technically should be autodrive until fast loop service drive pids
 
         // now drop it and back up
         addParallel(new Lift(Lift.MODE.DOWN));
-        addSequential(new AutoDriveCoast(0.2, 0, 0, -1, .75));
+        addSequential(new AutoDriveRobotRelative(0.2, 0, .75));
 
         addParallel(new Lift(Lift.MODE.DOWN));
-        addSequential(new AutoDrive(.4, 0, 0, -1, .5));
+        addSequential(new AutoDriveRobotRelative(.4, 0, .5));
     }
 }

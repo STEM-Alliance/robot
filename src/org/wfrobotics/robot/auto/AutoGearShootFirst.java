@@ -2,6 +2,7 @@ package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveCoast;
+import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveWithHeading;
 import org.wfrobotics.robot.commands.Conveyor;
 import org.wfrobotics.robot.commands.Lift;
 import org.wfrobotics.robot.config.Autonomous.POSITION_ROTARY;
@@ -82,21 +83,21 @@ public class AutoGearShootFirst extends CommandGroup
 
         // Drive to spring
         addParallel(new Lift());  // Make sure we're still lifting
-        addSequential(new AutoDrive(0, .7, 0, -1, 1.75));  // keep our heading for a bit first to not ram the wall
+        addSequential(new AutoDrive(0, .7, 1.75));  // keep our heading for a bit first to not ram the wall
 
         // Get to spring
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
         {
-            addSequential(new AutoDrive(0, .8, 0, config.angleSpring, .25));
-            addSequential(new AutoDrive(0, 0, 0, config.angleSpring, 1.25));
+            addSequential(new AutoDriveWithHeading(0, .8, config.angleSpring, .25));
+            addSequential(new AutoDriveWithHeading(0, 0, config.angleSpring, 1.25));
         }
         addSequential(new AlignWithSpring());
 
         // Drive closer to spring
         if(startPosition == POSITION_ROTARY.SIDE_BOILER || startPosition == POSITION_ROTARY.SIDE_LOADING_STATION)
         {
-            addSequential(new AutoDriveCoast(0, .3, 0, -1, 0.1));  // Wheels forward, we messed it up pivoting
-            addSequential(new AutoDrive(config.approachSpringX,  Math.abs(config.approachSpringX), 0, config.angleSpring, .75));
+            addSequential(new AutoDriveCoast(0, .3, 0.1));  // Wheels forward, we messed it up pivoting
+            addSequential(new AutoDriveWithHeading(config.approachSpringX,  Math.abs(config.approachSpringX), config.angleSpring, .75));
         }
 
         // Drive into spring
