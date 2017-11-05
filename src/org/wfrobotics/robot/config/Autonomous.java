@@ -3,12 +3,13 @@ package org.wfrobotics.robot.config;
 import java.util.function.Supplier;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveWait;
+import org.wfrobotics.reuse.commands.drive.swerve.DriveOff;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoGear;
+import org.wfrobotics.robot.auto.AutoGearShootFirst;
 import org.wfrobotics.robot.auto.AutoShoot;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -44,13 +45,13 @@ public class Autonomous
         int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1 : -1; // X driving based on alliance for mirrored field
 
         return new AutoMode[] {
-                new AutoMode("Auto None", () -> new AutoDriveWait(), 0),
+                new AutoMode("Auto None", () -> new DriveOff(), 0),
                 new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(0, DRIVE_SPEED, 0, TIME_DRIVE_MODE), 0),
                 new AutoMode("Auto Forward  (HIGH GEAR)", () -> new AutoDrive(0, DRIVE_SPEED * .75, 0, TIME_DRIVE_MODE * .75), 0),
                 //new AutoMode("Auto Shoot (NOT WORKING YET)", new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING)),
                 new AutoMode("Auto Shoot then Hopper", () -> new AutoShoot(), signX * START_ANGLE_SHOOT),
-                new AutoMode("Auto Shoot then Gear", () -> new AutoGear(startingPosition, AutoGear.MODE.VISION, true), signX * START_ANGLE_SHOOT),
-                new AutoMode("Auto Gear Vision", () -> new AutoGear(startingPosition, AutoGear.MODE.VISION, false), START_ANGLE_GEAR_ONLY),
+                new AutoMode("Auto Shoot then Gear", () -> new AutoGearShootFirst(startingPosition), signX * START_ANGLE_SHOOT),
+                new AutoMode("Auto Gear Vision", () -> new AutoGear(startingPosition, AutoGear.MODE.VISION), START_ANGLE_GEAR_ONLY),
                 //new AutoMode("Auto Gear Dead Reckoning", new AutoGear(startingPosition, AutoGear.MODE.DEAD_RECKONING, false)),
         };
     }

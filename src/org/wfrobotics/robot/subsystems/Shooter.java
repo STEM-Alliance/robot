@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.robot.commands.Rev;
+import org.wfrobotics.robot.commands.RevOff;
 import org.wfrobotics.robot.config.RobotMap;
 
 import com.ctre.CANTalon;
@@ -32,19 +32,19 @@ public class Shooter extends Subsystem
             motor.setPID(p, i, d, f, 0, ramp, 0);  // f is 100% of total feed forward / native counts per 100ms @ 4000rpm
             motor.reverseSensor(invert);
             motor.setInverted(invert);
-            
+
             lastSpeedCommanded = -.000000001;  // Unlikely default last value such that we do something in the first call to set()
         }
-        
+
         public double get()
         {
             return invert * motor.getSpeed();
         }
-        
+
         public void set(double rpm)
         {
             motor.set(rpm);
-            
+
             if (rpm != lastSpeedCommanded)  // Not enabling/disabling each iteration in case this impacts performance
             {
                 if (rpm != 0)
@@ -86,7 +86,7 @@ public class Shooter extends Subsystem
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new Rev(Rev.MODE.OFF));
+        setDefaultCommand(new RevOff());
     }
 
     public void forceOff()
@@ -94,7 +94,7 @@ public class Shooter extends Subsystem
         //motorT.set(0);
         motorB.set(0);
     }
-    
+
     /**
      * Test to see if the top motor has REVed to a certain speed then starts to spin the bottom flywheel to get it up to speed
      * @param rpm to set flywheels to
@@ -112,7 +112,7 @@ public class Shooter extends Subsystem
         {
             //motorT.set(rpm);
             motorB.set(rpm);
-            
+
             //if(motorT.atSpeed(tolerance))
             {
 
@@ -142,7 +142,7 @@ public class Shooter extends Subsystem
         {
             counts = 0;
         }
-        
+
         return atSpeed && counts > 50;
     }
 

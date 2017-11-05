@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Rev extends Command
 {
-    public enum MODE {SHOOT, RAMP, OFF, FORCE_OFF};
+    public enum MODE {SHOOT, RAMP, FORCE_OFF};
 
     private final MODE mode;
     private int consecutiveSamplesAtSpeed;
@@ -21,26 +21,19 @@ public class Rev extends Command
     public Rev(MODE mode)
     {
         requires(Robot.shooterSubsystem);
-
         this.mode = mode;
     }
 
     public Rev(MODE mode, double timeout)
     {
-        requires(Robot.shooterSubsystem);
-
-        this.mode = mode;
+        this(mode);
         consecutiveSamplesAtSpeed = 0;
         setTimeout(timeout);
     }
 
     protected void execute()
     {
-        if (mode == MODE.OFF)
-        {
-            Robot.shooterSubsystem.topThenBottom(0,  Commands.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
-        }
-        else if (mode == MODE.SHOOT || mode == MODE.RAMP)
+        if (mode == MODE.SHOOT || mode == MODE.RAMP)
         {
             Robot.shooterSubsystem.topThenBottom(Commands.SHOOTER_READY_SHOOT_SPEED, Commands.SHOOTER_READY_SHOOT_SPEED_TOLERANCE_RPM);
 
@@ -70,10 +63,5 @@ public class Rev extends Command
             return isTimedOut() || consecutiveSamplesAtSpeed > Commands.SHOOTER_READY_CONSECUTIVE_SAMPLES;
         }
         return isTimedOut();
-    }
-
-    protected void end()
-    {
-        // If you need to shut off the motors, probably create a new command or set the subsystem in your group's end()???
     }
 }

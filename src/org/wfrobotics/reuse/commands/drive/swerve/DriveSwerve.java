@@ -12,8 +12,10 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveSwerve extends Command
 {
-    RobotState state = RobotState.getInstance();
-    HerdLogger log = new HerdLogger(DriveSwerve.class);
+    protected RobotState state = RobotState.getInstance();
+    protected HerdLogger log = new HerdLogger(DriveSwerve.class);
+
+    public static boolean FIELD_RELATIVE = true;  // Toggle with button, need if gyro breaks
 
     private double highVelocityStart;
 
@@ -43,8 +45,11 @@ public class DriveSwerve extends Command
         }
 
         // TODO Move square mag to here?
-        log.info("Robot Relative", speedRobot);        
-        speedRobot = speedRobot.rotate(-state.robotHeading);  // Field Relative
+        log.info("Robot Relative", speedRobot);
+        if (FIELD_RELATIVE)
+        {
+            speedRobot = speedRobot.rotate(-state.robotHeading);
+        }
         log.info("Field Relative", speedRobot);
         Robot.driveSubsystem.driveWithHeading(new SwerveSignal(speedRobot, speedRotation));
     }

@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.robot.commands.Conveyor;
+import org.wfrobotics.robot.commands.ConveyorOff;
 import org.wfrobotics.robot.config.RobotMap;
 
 import com.ctre.CANTalon;
@@ -12,24 +12,23 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * This subsystem controls the flighting/auger that acts as a ball conveyor
  *
  */
-public class Auger extends Subsystem {
-
-    private CANTalon m_motor; 
+public class Auger extends Subsystem
+{
+    private CANTalon m_motor;
     private CANTalon m_motorFeeder;
-    public Auger() 
+    public Auger()
     {
         m_motor = new CANTalon(RobotMap.AUGER_MOTOR);
         m_motor.setInverted(true);  //is this needed?
 
         m_motorFeeder = new CANTalon(RobotMap.NEW_FEEDER_MOTOR_SRX);
     }
-    
-    @Override
+
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new Conveyor(Conveyor.MODE.OFF));
+        setDefaultCommand(new ConveyorOff());
     }
-    
+
     /**
      * control speed of the auger wheels
      * @param rpm speed of the motor
