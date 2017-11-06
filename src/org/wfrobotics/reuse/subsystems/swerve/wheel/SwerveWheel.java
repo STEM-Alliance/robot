@@ -25,7 +25,7 @@ public class SwerveWheel
         angleMotor = motorAngle;
 
         driveMotor = CANTalonFactory.makeSpeedControlTalon(motorDrive, TALON_SENSOR.MAG_ENCODER);
-        driveMotor.setVoltageRampRate(30);
+        driveMotor.setVoltageRampRate(30);  // TODO Needing this probably means our PID is not being used correctly
         driveMotor.setPID(Config.DRIVE_P, Config.DRIVE_I, Config.DRIVE_D, Config.DRIVE_F, 0, 10, 0);
         driveMotor.reverseSensor(true);
     }
