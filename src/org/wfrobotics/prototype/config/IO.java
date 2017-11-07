@@ -8,6 +8,7 @@ import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Xbox;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
 
 /** Maps Buttons to Commands **/
@@ -28,17 +29,17 @@ public class IO
 //    public static Button B = ButtonFactory.makeButton
 //            (controller, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ArmPivotElbow(-.2));
 
-    public static Button RB = ButtonFactory.makeButton
-            (controller, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new ArmPivotHand(-.2));
+    public static Button LT = ButtonFactory.makeAxisButton
+            (controller, Xbox.AXIS.LEFT_TRIGGER, 0, TRIGGER.WHEN_PRESSED, new ArmPivotHand());
 
-    public static Button LB = ButtonFactory.makeButton
-            (controller, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new ArmPivotHand(.2));
+    public static Button RT = ButtonFactory.makeAxisButton
+            (controller, Xbox.AXIS.RIGHT_TRIGGER, 0,  TRIGGER.WHEN_PRESSED, new ArmPivotHand());
 
     public static Button A = ButtonFactory.makeButton
             (controller, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new HandSolenoid(true));
 
     public static Button B = ButtonFactory.makeButton
-            (controller, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new HandSolenoid(true));
+            (controller, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new HandSolenoid(false));
 
     public static Button RightX = ButtonFactory.makeAxisButton
             (controller, Xbox.AXIS.RIGHT_X, .2, TRIGGER.WHEN_PRESSED, new ArmPivotBase());
@@ -64,6 +65,25 @@ public class IO
         if (Math.abs(value) < .2)
         {
             value = 0;
+        }
+        return value;
+    }
+    public double getTriggerRotation()
+    {
+          double value = 0;
+        double negValue = controller.getTrigger(Hand.kLeft);
+        double posValue = controller.getTrigger(Hand.kRight);
+
+        if ((posValue) > 0)
+        {
+            value = posValue;
+        }
+        else
+        {
+            if(negValue > 0)
+            {
+            value = - negValue;
+            }
         }
         return value;
     }
