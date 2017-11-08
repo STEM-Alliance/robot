@@ -10,7 +10,9 @@ import org.wfrobotics.robot.config.RobotMap;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 
-//TODO use two PID, one for each gear
+// TODO use two PID, one for each gear
+// TODO rotation adjust to cap angle pid or something? Value always 1 now
+// TODO tune drive PID (D term), remove chassis accel limit when okay
 
 /**
  * Controls swerve drive at the robot/chassis level
@@ -81,10 +83,11 @@ public class Chassis
         if (velocity.getMag() > 1)
         {
             log.error("Bad Chassis Command", velocity);
-            velocity = velocity.clampToRange(0, 1);             // Clamp mag - Start with range 0 to 1
+            velocity = velocity.clampToRange(0, 1);  // Clamp mag - Start with range 0 to 1
         }
 
-        velocity = velocity.scale(velocity);                    // Square mag - Finer control at low speed
+        // TODO try mag square in input assuming want for DriveSwerve only?
+        //velocity = velocity.scale(velocity);                    // Square mag - Finer control at low speed
         spin = (Config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(velocity, spin, rotateAdjustMin) : spin;
         velocity = applyAccelerationLimit(velocity, maxAccel);  // Cap mag accel - Better traction
         // TODO Scale velocity to range 0 to 1?
@@ -93,6 +96,7 @@ public class Chassis
         log.info("Chassis Final", String.format("V: %s, W: %.2f", velocity, spin));
 
         return chassisToWheelCommands(velocity, spin);
+        //return Tests.debugNewChassisToWheelVectors(velocity, spin);
     }
 
     private HerdVector[] chassisToWheelCommands(HerdVector velocity, double spin)
@@ -112,11 +116,19 @@ public class Chassis
         maxMag = (wheelBR.getMag() > maxMag) ? wheelBR.getMag(): maxMag;
         maxMag = (wheelBL.getMag() > maxMag) ? wheelBL.getMag(): maxMag;
 
-        wheelCommands[0] = wheelFR.scale(1 / maxMag);
-        wheelCommands[1] = wheelFL.scale(1 / maxMag);
-        wheelCommands[2] = wheelBR.scale(1 / maxMag);
-        wheelCommands[3] = wheelBL.scale(1 / maxMag);
-
+        if (maxMag > 1)
+        {
+            wheelFR = wheelFR.scale(1 / maxMag);
+            wheelFL = wheelFL.scale(1 / maxMag);
+            wheelBR = wheelBR.scale(1 / maxMag);
+            wheelBL = wheelBL.scale(1 / maxMag);
+        }
+        
+        wheelCommands[0] = wheelFR;
+        wheelCommands[1] = wheelFL;
+        wheelCommands[2] = wheelBR;
+        wheelCommands[3] = wheelBL;
+        
         return wheelCommands;
     }
 

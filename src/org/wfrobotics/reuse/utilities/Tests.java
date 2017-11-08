@@ -170,7 +170,7 @@ public class Tests
         System.out.println(c.clampToRange(min, max));
     }
 
-    public static void debugNewChassisToWheelVectors(HerdVector v, double spin)
+    public static HerdVector[] debugNewChassisToWheelVectors(HerdVector v, double spin)
     {
         double start, end;
         HerdVector w = new  HerdVector(spin, 90);
@@ -264,6 +264,16 @@ public class Tests
         Tests.wheelFL = wheelFL;
         Tests.wheelBR = wheelBR;
         Tests.wheelBL = wheelBL;
+        
+
+        HerdVector[] wheelCommands = new HerdVector[4];
+        
+        wheelCommands[0] = wheelFR;
+        wheelCommands[1] = wheelFL;
+        wheelCommands[2] = wheelBR;
+        wheelCommands[3] = wheelBL;
+        
+        return wheelCommands;
     }
 
     public static void debugWheelVectorsToChassis()

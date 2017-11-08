@@ -1,5 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
+import java.util.logging.Level;
+
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
@@ -30,7 +32,7 @@ public class SwerveSubsystem extends Subsystem
     private Gyro gyro = Gyro.getInstance();
     private HerdLogger log = new HerdLogger(SwerveSubsystem.class);
 
-    private PIDController chassisAngleController;
+    private PIDController pidHeading;
     private Chassis wheelManager;
     private double lastHeadingTimestamp;  // Addresses counter spinning/snapback
 
@@ -39,9 +41,10 @@ public class SwerveSubsystem extends Subsystem
 
     public SwerveSubsystem()
     {
-        chassisAngleController = new PIDController(Config.CHASSIS_P, Config.CHASSIS_I, Config.CHASSIS_D, 1.0);
+        pidHeading = new PIDController(Config.CHASSIS_P, Config.CHASSIS_I, Config.CHASSIS_D, 1.0);
         wheelManager = new Chassis();
         zeroGyro();
+        log.setLevel(Level.FINE);
     }
 
     public String toString()
@@ -57,37 +60,48 @@ public class SwerveSubsystem extends Subsystem
     public void driveWithHeading(SwerveSignal command)
     {
         SwerveSignal s = new SwerveSignal(command);
-        double heading;
+        double headingErrorWhenFullSpinCommanded = 45;  // TODO how much should spin twist the heading (creates error to influence PID output to yield higher w)
 
-        chassisAngleController.setP(Preferences.getInstance().getDouble("SwervePID_P", Config.CHASSIS_P));
-        chassisAngleController.setI(Preferences.getInstance().getDouble("SwervePID_I", Config.CHASSIS_I));
-        chassisAngleController.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
-
+        HerdLogger.temp("s", command.spin);
+        
+        pidHeading.setP(Preferences.getInstance().getDouble("SwervePID_P", Config.CHASSIS_P));
+        pidHeading.setI(Preferences.getInstance().getDouble("SwervePID_I", Config.CHASSIS_I));
+        pidHeading.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
+        
+        double error;
+        double spin;
+        
         if (command.hasHeading())
         {
-            heading = command.heading;
+            error = Utilities.wrapToRange(command.heading - gyro.getYaw(), -180, 180);  // Make herd vector and rotate?
         }
         else
         {
-            heading = s.velocity.getAngle();
+            // TODO determine how to apply spin all of the time, maybe move to DriveSwerve?
+            error = Utilities.wrapToRange(command.heading - command.spin * headingErrorWhenFullSpinCommanded, -180, 180);  // Make herd vector and rotate?
         }
-
-        double error = Utilities.wrapToRange(heading + gyro.getYaw(), -180, 180);  // Make herd vector and rotate?
+        if (command.spin != 0)
+        {
+            error += command.spin * headingErrorWhenFullSpinCommanded; 
+        }
+        spin = pidHeading.update(error);
+        state.updateRobotHeading(gyro.getYaw());
+ 
+        //ApplySpinMode(s, spin);
 
         log.debug("Rotation Error", error);
-
-        ApplySpinMode(s, error);
-
+        log.debug("Rotation PID", spin);
         log.info("Chassis Command", s);
 
-        wheelManager.update(s.velocity, s.spin, requestedHighGear, requestedBrake);
+        wheelManager.update(s.velocity, spin, requestedHighGear, requestedBrake);
     }
 
-    private void ApplySpinMode(SwerveSignal command, double error)
+    private void ApplySpinMode(SwerveSignal command, double pid)
     {
+        
         if (command.hasHeading())
         {
-            command.spin = chassisAngleController.update(error);
+            command.spin = pid;
             log.info("Drive Mode", "Snap To Angle");
         }
         else if (Math.abs(command.spin) > ROTATION_MIN)
@@ -102,18 +116,18 @@ public class SwerveSubsystem extends Subsystem
         else
         {
             // Delay the stay at angle to prevent snapback
-            if((Timer.getFPGATimestamp() - lastHeadingTimestamp) < HEADING_TIMEOUT)
+//            if((Timer.getFPGATimestamp() - lastHeadingTimestamp) < HEADING_TIMEOUT)
+//            {
+//                chassisAngleController.resetError();
+//            }
+//            else
             {
-                chassisAngleController.resetError();
-            }
-            else
-            {
-                double pidRotation = chassisAngleController.update(error);
+                double pidRotation = pid;
 
-                if(Math.abs(error) < 2)  // TODO: Seems incorrect
-                {
-                    chassisAngleController.resetError();
-                }
+//                if(Math.abs(error) < 2)  // TODO: Seems incorrect
+//                {
+//                    chassisAngleController.resetError();
+//                }
 
                 // Add a deadband to hopefully help with wheel lock after stopping
                 log.debug("MaintainRotation", pidRotation);
@@ -124,7 +138,6 @@ public class SwerveSubsystem extends Subsystem
             }
             log.info("Drive Mode", "Maintain Angle");
         }
-        state.updateRobotHeading(gyro.getYaw());
     }
 
     public void zeroGyro() { gyro.zeroYaw(); state.updateRobotHeading(gyro.getYaw()); }

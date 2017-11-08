@@ -111,7 +111,7 @@ public class Robot extends SampleRobot
     private String getPeriodicTime()
     {
         double now = Timer.getFPGATimestamp();
-        String periodicTime = String.format("%.1f ms", now - lastPeriodicTime);
+        String periodicTime = String.format("%.0f ms", (now - lastPeriodicTime) * 1000);
 
         lastPeriodicTime = now;
         return periodicTime;
