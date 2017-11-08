@@ -51,7 +51,7 @@ public class SteamworksDrive extends DriveSwerve
 
         log.debug("angleDifference", centeredOnIntake);
         log.debug("Intake", speed == 1);
-        Robot.intakeSubsystem.setSpeed(speed);
+        //Robot.intakeSubsystem.setSpeed(speed);
     }
 
     protected void end()

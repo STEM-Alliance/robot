@@ -35,7 +35,8 @@ public class DriveSwerve extends Command
     {
         HerdVector speedRobot = Robot.controls.swerveIO.getVelocity();
         double speedRotation = Robot.controls.swerveIO.getRotation();
-
+        double robotHeading = state.robotHeading;
+        
         if (Drive.AUTO_SHIFT_ENABLE)
         {
             if (speedRobot.getMag() < Drive.AUTO_SHIFT_SPEED)  // Allow high gear to "kick in" after AUTO_SHIFT_SPEED seconds of high speed
@@ -49,10 +50,10 @@ public class DriveSwerve extends Command
         log.info("Robot Relative", speedRobot);
         if (FIELD_RELATIVE)
         {
-            speedRobot = speedRobot.rotate(-state.robotHeading);
+            speedRobot = speedRobot.rotate(-robotHeading);
         }
         log.info("Field Relative", speedRobot);
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(speedRobot, speedRotation));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(speedRobot, speedRotation, robotHeading));
     }
 
     protected boolean isFinished()

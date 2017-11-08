@@ -6,6 +6,11 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ConveyorOff extends Command
 {
+    public ConveyorOff()
+    {
+        requires(Robot.augerSubsystem);
+    }
+    
     protected void initialize()
     {
         Robot.augerSubsystem.setSpeed(0);
