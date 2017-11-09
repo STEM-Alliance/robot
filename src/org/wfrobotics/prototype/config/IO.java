@@ -71,20 +71,23 @@ public class IO
     public double getTriggerRotation()
     {
           double value = 0;
-        double negValue = controller.getTrigger(Hand.kLeft);
-        double posValue = controller.getTrigger(Hand.kRight);
 
-        if ((posValue) > 0)
-        {
-            value = posValue;
-        }
-        else
-        {
-            if(negValue > 0)
-            {
-            value = - negValue;
-            }
-        }
-        return value;
+          double posValue = controller.getTrigger(Hand.kRight);
+          double negValue = controller.getTrigger(Hand.kLeft);
+
+          value = posValue - negValue;
+          return value;
+
+//        if ((posValue) > 0)
+//        {
+//            value = posValue;
+//        }
+//        else
+//        {
+//            if(negValue > 0)
+//            {
+//            value = - negValue;
+//            }
+//        }
     }
 }
