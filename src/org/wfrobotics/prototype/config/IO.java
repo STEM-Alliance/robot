@@ -41,12 +41,32 @@ public class IO
     public static Button B = ButtonFactory.makeButton
             (controller, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new HandSolenoid(false));
 
-    public static Button RightX = ButtonFactory.makeAxisButton
-            (controller, Xbox.AXIS.RIGHT_X, .2, TRIGGER.WHEN_PRESSED, new ArmPivotBase());
+//    public static Button RightX = ButtonFactory.makeAxisButton
+//            (controller, Xbox.AXIS.RIGHT_X, .2, TRIGGER.WHEN_PRESSED, new ArmPivotBase());
+//
+//    public static Button RightY = ButtonFactory.makeAxisButton
+//            (controller, Xbox.AXIS.RIGHT_Y, .2, TRIGGER.WHEN_PRESSED, new ArmPivotElbow());
 
-    public static Button RightY = ButtonFactory.makeAxisButton
-            (controller, Xbox.AXIS.RIGHT_Y, .2, TRIGGER.WHEN_PRESSED, new ArmPivotElbow());
+    public double getLeftJoystick()
+    {
+        double value = controller.getAxis(Xbox.AXIS.LEFT_Y);
 
+        if (Math.abs(value) < .2)
+        {
+            value = 0;
+        }
+        return value;
+    }
+    public double getRightJoystick()
+    {
+        double value = controller.getAxis(Xbox.AXIS.RIGHT_Y);
+
+        if (Math.abs(value) < .2)
+        {
+            value = 0;
+        }
+        return value;
+    }
 
     public double getXRotation()
     {
@@ -58,6 +78,7 @@ public class IO
         }
         return value;
     }
+    
     public double getYRotation()
     {
         double value = controller.getAxis(Xbox.AXIS.RIGHT_Y);
@@ -90,4 +111,5 @@ public class IO
 //            }
 //        }
     }
+    
 }
