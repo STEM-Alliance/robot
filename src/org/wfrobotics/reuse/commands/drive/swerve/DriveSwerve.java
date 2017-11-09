@@ -36,7 +36,7 @@ public class DriveSwerve extends Command
         HerdVector speedRobot = Robot.controls.swerveIO.getVelocity();
         double speedRotation = Robot.controls.swerveIO.getRotation();
         double robotHeading = state.robotHeading;
-        
+
         if (Drive.AUTO_SHIFT_ENABLE)
         {
             if (speedRobot.getMag() < Drive.AUTO_SHIFT_SPEED)  // Allow high gear to "kick in" after AUTO_SHIFT_SPEED seconds of high speed
@@ -46,7 +46,9 @@ public class DriveSwerve extends Command
             Robot.driveSubsystem.requestedHighGear = timeSinceInitialized() - highVelocityStart > Drive.AUTO_SHIFT_TIME && speedRobot.getMag() > Drive.AUTO_SHIFT_SPEED;
         }
 
-        // TODO Move square mag to here?
+        // TODO should mag squared move here? Removed from chassis because all drive commands shouldn't want, just joystick driving, right?
+        //velocity = velocity.scale(velocity);  // Square mag - Finer control at low speed
+
         log.info("Robot Relative", speedRobot);
         if (FIELD_RELATIVE)
         {

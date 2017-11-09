@@ -7,6 +7,7 @@ import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.Preferences;
 
+// TODO Why aren't we updating the PID even when within the deadband?
 // TODO Consider owning the specific sensor, rather than subclassing this
 // TODO Try scaling pid output to full range (don't include deadband). Is integral limit - disable when out of range.
 
@@ -85,11 +86,5 @@ public abstract class AngleMotor
     {
         double invert = angleInverted ? -1 : 1;
         motor.set(invert * speed);
-    }
-
-    protected double round(double d, int res)
-    {
-        int x = (int) Math.pow(10, res);
-        return Math.rint(d * x) / x;
     }
 }

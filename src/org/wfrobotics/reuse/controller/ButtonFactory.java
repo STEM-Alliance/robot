@@ -3,7 +3,6 @@ package org.wfrobotics.reuse.controller;
 import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.controller.Xbox.DPAD;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -21,12 +20,6 @@ public abstract class ButtonFactory
     public static Button makeButton(Xbox provider, Xbox.BUTTON button, TRIGGER when, Command action)
     {
         return setTrigger(new XboxButton(provider, button), when, action);
-    }
-
-    public static Button makeJoystickButton(Xbox provider, Hand side, double thresholdOn, TRIGGER when, Command action)
-    {
-        return setTrigger(new XboxJoystickButton(provider, side, thresholdOn), when, action);
-
     }
 
     public static Button makeAxisButton(Xbox provider, AXIS axis, double thresholdOn, TRIGGER when, Command action)
@@ -104,44 +97,6 @@ public abstract class ButtonFactory
         public boolean get()
         {
             return hardware.getButtonPressed(direction);
-        }
-    }
-
-    private static class XboxTriggerButton extends Button
-    {
-        Xbox hardware;
-        AXIS a;
-        double limit;
-
-        public XboxTriggerButton(Xbox hardware, Hand hand, double thresholdOn)
-        {
-            this.hardware = hardware;
-            a = (hand == Hand.kLeft) ? AXIS.LEFT_TRIGGER : AXIS.RIGHT_TRIGGER;
-            limit = thresholdOn;
-        }
-
-        public boolean get()
-        {
-            return hardware.getAxis(a) > limit;
-        }
-    }
-
-    private static class XboxJoystickButton extends Button
-    {
-        Xbox hardware;
-        Hand hand;
-        double limit;
-
-        public XboxJoystickButton(Xbox hardware, Hand hand, double thresholdOn)
-        {
-            this.hardware = hardware;
-            this.hand = hand;
-            limit = thresholdOn;
-        }
-
-        public boolean get()
-        {
-            return hardware.getMagnitude(hand) > limit;
         }
     }
 
