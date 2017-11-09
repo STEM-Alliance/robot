@@ -28,17 +28,14 @@ public class AngleMotorEncoder extends AngleMotor
     public double getDegrees()
     {
         double invert = angleInverted ? 1 : -1;
-        return round(invert * getWrappedDegrees(), 2);
+        double degrees = motor.getPosition() * 360;
+        double wrappedDegrees = Utilities.wrapToRange(degrees - angleOffset, -180, 180);
+
+        return invert * wrappedDegrees;
     }
 
     public void setSensorOffset(double degrees)
     {
         angleOffset = degrees;
-    }
-
-    private double getWrappedDegrees()
-    {
-        double degrees = motor.getPosition() * 360.0;
-        return Utilities.wrapToRange(degrees - angleOffset, -180, 180);
     }
 }
