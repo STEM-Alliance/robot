@@ -57,7 +57,7 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.UNJAM)));
         robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.RB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.ON_HOLD)));
         robotSpecific.add(ButtonFactory.makeButton(operator, DPAD.UP, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.UP)));
-        robotSpecific.add(ButtonFactory.makeAxisButton(operator, AXIS.RIGHT_TRIGGER, .25, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.DOWN)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, AXIS.RIGHT_TRIGGER, .25, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.DOWN)));
         robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new LEDSignal(3)));
 
         robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
