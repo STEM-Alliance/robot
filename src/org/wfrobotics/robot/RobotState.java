@@ -54,7 +54,7 @@ public class RobotState
 
     public void logState()
     {
-        log.info("Heading", robotHeading);
+        log.info("Heading", prettyHeading());
         log.info("High Gear", robotGear);
     }
 
@@ -127,4 +127,9 @@ public class RobotState
     }
 
     // ------------- END State Producers Only -------------
+    
+    private String prettyHeading()
+    {
+        return String.format("%.1f\u00b0", robotHeading);
+    }
 }
