@@ -1,7 +1,5 @@
 package org.wfrobotics.prototype.config;
 
-import org.wfrobotics.prototype.commands.ArmPivotBase;
-import org.wfrobotics.prototype.commands.ArmPivotElbow;
 import org.wfrobotics.prototype.commands.ArmPivotHand;
 import org.wfrobotics.prototype.commands.HandSolenoid;
 import org.wfrobotics.reuse.controller.ButtonFactory;
@@ -78,7 +76,7 @@ public class IO
         }
         return value;
     }
-    
+
     public double getYRotation()
     {
         double value = controller.getAxis(Xbox.AXIS.RIGHT_Y);
@@ -97,19 +95,8 @@ public class IO
           double negValue = controller.getTrigger(Hand.kLeft);
 
           value = posValue - negValue;
-          return value;
 
-//        if ((posValue) > 0)
-//        {
-//            value = posValue;
-//        }
-//        else
-//        {
-//            if(negValue > 0)
-//            {
-//            value = - negValue;
-//            }
-//        }
+          return value;
     }
-    
+
 }

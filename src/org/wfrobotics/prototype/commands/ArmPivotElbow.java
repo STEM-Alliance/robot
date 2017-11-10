@@ -1,7 +1,7 @@
 package org.wfrobotics.prototype.commands;
 
 import org.wfrobotics.prototype.Robot;
-import org.wfrobotics.prototype.subsystems.ArmSubsystem;
+import org.wfrobotics.reuse.utilities.Utilities;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -11,15 +11,17 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ArmPivotElbow extends Command {
 
     double speed;
-    public ArmPivotElbow() {
+    public ArmPivotElbow()
+    {
+        requires(Robot.armSubsystem);
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
 
     protected void execute()
     {
-        Robot.armSubsystem.spinUntilLimit(ArmSubsystem.isAtTop(),
-                ArmSubsystem.isAtBottom(), (Robot.controls.getYRotation()), ArmSubsystem.elbowMotor);
+        Utilities.spinUntilLimit(Robot.armSubsystem.isAtTop(),
+                Robot.armSubsystem.isAtBottom(), (Robot.controls.getYRotation()), Robot.armSubsystem.elbowMotor);
         //speed may be needed to be multiplied  by a constant
     }
 
