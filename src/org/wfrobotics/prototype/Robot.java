@@ -3,6 +3,7 @@ package org.wfrobotics.prototype;
 import org.wfrobotics.prototype.config.IO;
 import org.wfrobotics.prototype.subsystems.ArmSubsystem;
 import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
+import org.wfrobotics.prototype.subsystems.HandSubsystem;
 import org.wfrobotics.prototype.subsystems.TankSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -14,6 +15,7 @@ public class Robot extends SampleRobot
     public static ExampleSubsystem prototypeSubsystem;
     public static ArmSubsystem armSubsystem;
     public static TankSubsystem tankSubsystem;
+    public static HandSubsystem handSubsystem;
     public static IO controls;
 
     Command autonomousCommand = null;
@@ -23,7 +25,8 @@ public class Robot extends SampleRobot
         prototypeSubsystem = new ExampleSubsystem();
         armSubsystem = new ArmSubsystem();
         tankSubsystem = new TankSubsystem();
-        
+        handSubsystem = new HandSubsystem();
+
         controls = new IO();
     }
 

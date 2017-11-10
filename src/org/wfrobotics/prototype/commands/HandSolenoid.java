@@ -9,20 +9,21 @@ public class HandSolenoid extends Command {
 
     public HandSolenoid(boolean in)
     {
+        requires(Robot.handSubsystem);
 
         this.in = in;
         // TODO Auto-generated constructor stub
     }
     public void initialize()
     {
-        Robot.armSubsystem.moveHand(in);
+        Robot.handSubsystem.moveHand(in);
     }
 
     @Override
     protected boolean isFinished()
     {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
 }
