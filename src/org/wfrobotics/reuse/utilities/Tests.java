@@ -2,11 +2,13 @@ package org.wfrobotics.reuse.utilities;
 
 import java.util.logging.Level;
 
+// TODO cross broken? parallel should have mag zero
+
+/** To enable unit tests: Tests.java->Properties->Run/debug settings->Tests->Edit->Arguments->VM args->-ea */
 public class Tests
 {
     static final double width = 4;
     static final double depth = 3;
-
 
     static double maxWheelMagnitudeLast;
     static HerdVector wheelBR;
@@ -22,12 +24,15 @@ public class Tests
 
     public static void main(String[] args)
     {
-        //FastTrig.cos(359);  // FastTrig init cache
-        //printDivider();
+        FastTrig.cos(359);  // FastTrig init cache
+
         //debugFastTrig();
         //printDivider();
-        //debugHerdVector();
-        //printDivider();
+
+        debugHerdAngle();
+
+        debugHerdVector();
+        printDivider();
 
         Vector robotV = Vector.NewFromMagAngle(1, 5);
         double robotS = -.1;
@@ -52,111 +57,120 @@ public class Tests
         }
     }
 
+    public static void debugHerdAngle()
+    {
+        // Constructor - No wrap
+        assert new HerdAngle(10).getAngle() == 10 : "Positive in valid range failed to stay same angle";
+        assert new HerdAngle(-10).getAngle() == -10 : "Negative in valid range failed to stay same angle";
+
+        // Rotate positive - No wrap
+        assert new HerdAngle(10).rotate(30).getAngle() == 40 : "Positive in failed to rotate positive direction";
+        assert new HerdAngle(-10).rotate(30).getAngle() == 20 : "Negative in failed to rotate positive direction";
+
+        // Rotate negative - No wrap
+        assert new HerdAngle(10).rotate(-30).getAngle() == -20 : "Positive in failed to rotate negative direction";
+        assert new HerdAngle(-10).rotate(-30).getAngle() == -40 : "Negative in failed to rotate negative direction";
+
+        // Constructor - Wrap
+        assert new HerdAngle(190).getAngle() == -170 : "Positive outside valid range failed to wrap angle";
+        assert new HerdAngle(-190).getAngle() == 170 : "Negative outside valid range failed to wrap angle";
+
+        // Rotate positive - Wrap
+        assert new HerdAngle(10).rotate(190).getAngle() == -160 : "Positive in failed to rotate positive and wrap negative";
+        assert new HerdAngle(-10).rotate(210).getAngle() == -160 : "Negative in failed to rotate positive and wrap negative";
+
+        // Rotate negative - Wrap
+        assert new HerdAngle(10).rotate(-210).getAngle() == 160 : "Positive in failed to rotate negative and wrap positive";
+        assert new HerdAngle(-10).rotate(-190).getAngle() == 160 : "Negative in failed to rotate negative and wrap positive";
+
+        // Rotate WrappedAngle
+        assert new HerdAngle(10).rotate(new HerdVector(1, 30)).getAngle() == 40 : "HerdAngle cannot rotate by HerdVector";
+    }
+
     public static void debugHerdVector()
     {
         // New Vector: Trig
-        HerdVector a = new HerdVector(1, 60);
-        Vector B = Vector.NewFromMagAngle(1, 60);
-        long start;
+        HerdVector a;
+        HerdVector b;
+        Vector C;
+        long start, end;
 
+        debugHerdVectorWrappedAngle();
+
+        a = new HerdVector(1, 60);
+        C = Vector.NewFromMagAngle(1, 60);
+
+        double x, y;
         start = System.nanoTime();
-        System.out.println("A.X: " + a.getX());
-        System.out.println("A.Y: " + a.getY());
-        System.out.println("Durration: " + ((System.nanoTime() - start)/1000) + " ns");
+        x = a.getX();
+        y = a.getY();
+        end = System.nanoTime();
+        System.out.println("A.X: " + x);
+        System.out.println("A.Y: " + y);
+        System.out.println("Durration: " + ((end - start)/1000) + " ns");
         start = System.nanoTime();
-        System.out.println("B.X: " + B.getX());
-        System.out.println("B.Y: " + B.getY());
-        System.out.println("Durration: " + ((System.nanoTime() - start)/1000) + " ns");
+        x = C.getX();
+        y = C.getY();
+        end = System.nanoTime();
+        System.out.println("B.X: " + x);
+        System.out.println("B.Y: " + y);
+        System.out.println("Durration: " + ((end - start)/1000) + " ns");
         System.out.println();
 
-        // New Vector: Auto-Wrap
-        System.out.println("(1, 181) -->" + new HerdVector(1, 181));
-        System.out.println("(1, -181) -->" + new HerdVector(1, -181));
-        System.out.println("(1, 361) -->" + new HerdVector(1, 361));
-        System.out.println();
-
-        // New Vector: Auto-Pos-Mag
-        System.out.println("(-1, 181) -->" + new HerdVector(-1, 181));
-        System.out.println("(-1, -181) -->" + new HerdVector(-1, -181));
-        System.out.println("(-1, 361) -->" + new HerdVector(-1, 361));
-        System.out.println();
-
-        // New Vector: Rotate
-        a = new HerdVector(1, 0);
-        HerdVector b = new HerdVector(2, -90);
-        double gyro = -45;
-
-        System.out.println("A commanded: " + a);
-        System.out.println("A.X commanded: " + a.getX());
-        System.out.println("A.Y commanded: " + a.getY());
-        System.out.println("Gyro: " + gyro);
-        a = a.rotate(-gyro);
-        System.out.println("A rotate to field relative: " + a);
-        System.out.println("A.X rotate to field relative: " + a.getX());
-        a = a.rotate(b);
-        System.out.println("A rotate by B: " + a);
-        a = a.rotate(-136);
-        System.out.println("A rotate by -136: " + a);
-        System.out.println();
-
-        b = new HerdVector(1, -90);
-        System.out.println("B.X commanded: " + b.getX());
-        System.out.println("B.Y commanded: " + b.getY());
-        System.out.println();
+        // Constructor: Positive mag
+        assert new HerdVector(-3, 10).getMag() == 3 : "Positive mag on > 1 mag";
+        assert new HerdVector(-1, 10).getMag() == 1 : "Positive mag on 1 mag";
+        assert new HerdVector(-.125, 10).getMag() == .125 : "Positive < 1 mag";
 
         // New Vector: Zero
         b = new HerdVector(0, 180);
         System.out.println("(0, 0): " + b);
         System.out.println();
 
-        // New Vector: Scale
-        a = new HerdVector(1, 0);
-        b = new HerdVector(2, 0);
+        // Scale - By positive
+        assert new HerdVector(2, 30).scale(3).getMag() == 6 : "Scale by bigger positive double failed mag";
+        assert new HerdVector(2, 30).scale(3).getAngle() == 30 : "Scale by bigger positive double failed angle same";
+        assert new HerdVector(2, 30).scale(1).getMag() == 2 : "Scale by double 1 failed mag same";
+        assert new HerdVector(2, 30).scale(1).getAngle() == 30 : "Scale by double 1 failed angle same";
+        assert new HerdVector(2, 30).scale(.125).getMag() == .25 : "Scale by smaller positive double failed mag";
+        assert new HerdVector(2, 30).scale(.125).getAngle() == 30 : "Scale by smaller positive double failed angle same";
 
-        System.out.println("A before scale B: " + a);
-        a = a.scale(b);
-        System.out.println("A after scale B: " + a);
-        a = a.scale(-.25);
-        System.out.println("A after scale mag: " + a);  // TODO DRL Should this produce a negative mag or rotate by 180?!?! Probably the latter?
-        System.out.println();
+        // Scale - By negative
+        assert new HerdVector(2, 30).scale(-3).getMag() == 6 : "Scale by positive double failed mag";
+        assert new HerdVector(2, 30).scale(-3).getAngle() == -150 : "Scale by positive double failed angle flip";
+        assert new HerdVector(2, 30).scale(-1).getMag() == 2 : "Scale by double -1 failed mag";
+        assert new HerdVector(2, 30).scale(-1).getAngle() == -150 : "Scale by double -1 failed angle flip";
+        assert new HerdVector(2, 30).scale(-.125).getMag() == .25 : "Scale by negative double failed mag";
+        assert new HerdVector(2, 30).scale(-.125).getAngle() == -150 : "Scale by negative double failed angle flip";
 
-        // New Vector: Clone, Angle Between
-        a = new HerdVector(1, 0);
-        System.out.println("A before clone mod: " + a);
+        // Clone
+        a = new HerdVector(1, 10);
         b = new HerdVector(a);
-
         b = b.rotate(45);
-        System.out.println("B after clone mod: " + b);
-        System.out.println("A after clone mod: " + a);
-        System.out.println();
-
-        // New Vector: Angle Between
-        a = new HerdVector(1, 179);
-        b = new HerdVector(a);
-
-        System.out.println("Angle A relative to B: " + a.angleRelativeTo(b));
-        System.out.println("Angle A relative to A: " + a.angleRelativeTo(a));
-        b = b.rotate(2);
-        System.out.println("Angle A relative to B: " + a.angleRelativeTo(b));
-        System.out.println("Angle B relative to A: " + b.angleRelativeTo(a));
-        System.out.println();
+        assert a.getAngle() == 10 : "Clone overwrites original";
 
         // Addition
-        a = new HerdVector(1, -135);
-        b = new HerdVector(1, -135);
+        a = new HerdVector(1, 0);
+        b = new HerdVector(1, 90);
 
-        System.out.println(a = a.add(b));
         System.out.println(a.add(b));
         System.out.println();
 
+        assert new HerdVector(1, 135).add(new HerdVector(1, 135)).getMag() == 2 : "Add HerdVector to self not twice mag";
+        assert new HerdVector(1, 135).add(new HerdVector(1, 135)).getAngle() == 135 : "Add HerdVector to self not same angle";
+
         // Cross
-        a = new HerdVector(1, 45);
-        b = new HerdVector(1, -45);
+        a = new HerdVector(2, 0);
+        b = new HerdVector(3, 85);
 
         System.out.format(a + " cross " + b + " = " + a.cross(b) + "\n");
         b = b.rotate(180);
         System.out.format(a + " cross " + b + " = " + a.cross(b) + "\n");
         System.out.println();
+
+        // Cross - Limits
+        //assert new HerdVector(2, 0).cross(new HerdVector(3, 0)).getMag() == 0 : "Cross not zero mag on parallel";
+        assert new HerdVector(2, 0).cross(new HerdVector(3, 90)).getMag() == 6 : "Cross not max mag on orthogonal";
 
         // Clamp
         HerdVector c = new HerdVector(.44, 10);
@@ -168,6 +182,36 @@ public class Tests
         System.out.println(min);
         System.out.println(max);
         System.out.println(c.clampToRange(min, max));
+    }
+
+    public static void debugHerdVectorWrappedAngle()
+    {
+        // Constructor - No wrap
+        assert new HerdVector(1, 10).getAngle() == 10 : "Positive in valid range failed to stay same angle";
+        assert new HerdVector(1, -10).getAngle() == -10 : "Negative in valid range failed to stay same angle";
+
+        // Rotate positive - No wrap
+        assert new HerdVector(1, 10).rotate(30).getAngle() == 40 : "Positive in failed to rotate positive direction";
+        assert new HerdVector(1, -10).rotate(30).getAngle() == 20 : "Negative in failed to rotate positive direction";
+
+        // Rotate negative - No wrap
+        assert new HerdVector(1, 10).rotate(-30).getAngle() == -20 : "Positive in failed to rotate negative direction";
+        assert new HerdVector(1, -10).rotate(-30).getAngle() == -40 : "Negative in failed to rotate negative direction";
+
+        // Constructor - Wrap
+        assert new HerdVector(1, 190).getAngle() == -170 : "Positive outside valid range failed to wrap angle";
+        assert new HerdVector(1, -190).getAngle() == 170 : "Negative outside valid range failed to wrap angle";
+
+        // Rotate positive - Wrap
+        assert new HerdVector(1, 10).rotate(190).getAngle() == -160 : "Positive in failed to rotate positive and wrap negative";
+        assert new HerdVector(1, -10).rotate(210).getAngle() == -160 : "Negative in failed to rotate positive and wrap negative";
+
+        // Rotate negative - Wrap
+        assert new HerdVector(1, 10).rotate(-210).getAngle() == 160 : "Positive in failed to rotate negative and wrap positive";
+        assert new HerdVector(1, -10).rotate(-190).getAngle() == 160 : "Negative in failed to rotate negative and wrap positive";
+
+        // Rotate WrappedAngle
+        assert new HerdVector(1, 30).rotate(new HerdAngle(10)).getAngle() == 40 : "HerdVector cannot rotate by HerdAngle";
     }
 
     public static HerdVector[] debugNewChassisToWheelVectors(HerdVector v, double spin)
@@ -264,15 +308,15 @@ public class Tests
         Tests.wheelFL = wheelFL;
         Tests.wheelBR = wheelBR;
         Tests.wheelBL = wheelBL;
-        
+
 
         HerdVector[] wheelCommands = new HerdVector[4];
-        
+
         wheelCommands[0] = wheelFR;
         wheelCommands[1] = wheelFL;
         wheelCommands[2] = wheelBR;
         wheelCommands[3] = wheelBL;
-        
+
         return wheelCommands;
     }
 
