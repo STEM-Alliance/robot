@@ -39,11 +39,15 @@ public class DriveSwerve extends Command
 
         if (Drive.AUTO_SHIFT_ENABLE)
         {
+            boolean gear;
+
             if (speedRobot.getMag() < Drive.AUTO_SHIFT_SPEED)  // Allow high gear to "kick in" after AUTO_SHIFT_SPEED seconds of high speed
             {
                 highVelocityStart = timeSinceInitialized();
             }
-            Robot.driveSubsystem.requestedHighGear = timeSinceInitialized() - highVelocityStart > Drive.AUTO_SHIFT_TIME && speedRobot.getMag() > Drive.AUTO_SHIFT_SPEED;
+            gear = timeSinceInitialized() - highVelocityStart > Drive.AUTO_SHIFT_TIME && speedRobot.getMag() > Drive.AUTO_SHIFT_SPEED;
+
+            Robot.driveSubsystem.setGear(gear);
         }
 
         // TODO should mag squared move here? Removed from chassis because all drive commands shouldn't want, just joystick driving, right?
