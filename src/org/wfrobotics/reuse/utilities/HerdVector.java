@@ -3,22 +3,16 @@ package org.wfrobotics.reuse.utilities;
 /**
  * @author Team 4818 WFRobotics
  */
-public class HerdVector
+public class HerdVector implements WrappedAngle
 {
-    private double mag;
-    private double angle;
+    private final double mag;
+    private final double angle;
 
     public HerdVector(double mag, double angle)
     {
         double m = mag;
         double a = angle;
 
-//        HerdLogger l = new HerdLogger("");
-//        if (m == Double.NaN)
-//        {
-//            l.info("NaN", this);
-//        }
-        
         if (m < 0)
         {
             m = -m;
@@ -33,20 +27,6 @@ public class HerdVector
             a = 0;
         }
         this.angle = a;
-        
-//        l.info("hv", this);
-//        l.info("hm", m);
-//        l.info("ha", a);
-//        l.info("hmag", this.mag);
-//        l.info("hangle", this.angle);
-//        if (this.mag == Double.NaN)
-//        {
-//            l.info("NaN", this);
-//        }
-//        if (this.angle == -0)
-//        {
-//            l.info("-0", this);
-//        }
     }
 
     public HerdVector(HerdVector clone)
@@ -74,17 +54,6 @@ public class HerdVector
         return mag * FastTrig.cos(angle);  // Positive y-axis as zero angle
     }
 
-    public double angleRelativeTo(HerdVector b)
-    {
-        return angleRelativeTo(b.getAngle());
-    }
-
-    public double angleRelativeTo(double angle)
-    {
-        double diff = this.angle - angle;
-        return ((diff + 180 % 360) + 360) % 360 - 180;  // -180 to 180
-    }
-
     public String toString()
     {
         return String.format("(%.2f, %.1f\u00b0)", mag, angle);
@@ -103,7 +72,7 @@ public class HerdVector
         return add(b.scale(-1));
     }
 
-    public HerdVector rotate(HerdVector b)
+    public HerdVector rotate(WrappedAngle b)
     {
         return rotate(b.getAngle());
     }
@@ -111,11 +80,6 @@ public class HerdVector
     public HerdVector rotate(double angle)
     {
         return new HerdVector(mag, this.angle + angle);
-    }
-
-    public HerdVector scale(HerdVector b)
-    {
-        return scale(b.getMag());
     }
 
     public HerdVector scale(double mag)
