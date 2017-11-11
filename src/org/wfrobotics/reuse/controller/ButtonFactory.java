@@ -3,7 +3,6 @@ package org.wfrobotics.reuse.controller;
 import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.controller.Xbox.DPAD;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -98,25 +97,6 @@ public abstract class ButtonFactory
         public boolean get()
         {
             return hardware.getButtonPressed(direction);
-        }
-    }
-
-    private static class XboxTriggerButton extends Button
-    {
-        Xbox hardware;
-        AXIS a;
-        double limit;
-
-        public XboxTriggerButton(Xbox hardware, Hand hand, double thresholdOn)
-        {
-            this.hardware = hardware;
-            a = (hand == Hand.kLeft) ? AXIS.LEFT_TRIGGER : AXIS.RIGHT_TRIGGER;
-            limit = thresholdOn;
-        }
-
-        public boolean get()
-        {
-            return hardware.getAxis(a) > limit;
         }
     }
 
