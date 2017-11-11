@@ -18,7 +18,8 @@ public class AngleMotorMagPot extends AngleMotor
     public double getDegrees()
     {
         double invert = angleInverted ? 1 : -1;
-        return round(Utilities.wrapToRange(invert * pot.get(), -180, 180), 2);
+
+        return Utilities.wrapToRange(invert * pot.get(), -180, 180);
     }
 
     public void setSensorOffset(double degrees)

@@ -14,6 +14,6 @@ public class ShiftToggle extends InstantCommand
 
     protected void initialize()
     {
-        Robot.driveSubsystem.requestedHighGear = !RobotState.getInstance().robotGear;
+        Robot.driveSubsystem.setGear(!RobotState.getInstance().robotGear);
     }
 }

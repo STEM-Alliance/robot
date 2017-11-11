@@ -25,9 +25,7 @@ public class Chassis
 
     private final SwerveWheel[] wheels = new SwerveWheel[4];
     private final String[] wheelNames = {"WheelFR", "WheelFL", "WheelBR", "WheelBL"};
-    private final Shifter shifters;
 
-    private boolean brakeEnabled;
     private double lastVelocityTimestamp;
 
     public Chassis()
@@ -36,13 +34,11 @@ public class Chassis
         wheels[1] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[1], new AngleMotorMagPot(wheelNames[1] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[1]));
         wheels[2] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[2], new AngleMotorMagPot(wheelNames[2] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[2]));
         wheels[3] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[3], new AngleMotorMagPot(wheelNames[3] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[3]));
-        shifters = new Shifter();
 
-        brakeEnabled = false;
         lastVelocityTimestamp = Timer.getFPGATimestamp();
     }
 
-    public void update(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
+    public void update(HerdVector robotVelocity, double robotRotation)
     {
         HerdVector[] WheelsScaled = applyChassisEffects(robotVelocity, robotRotation);
 
@@ -61,15 +57,10 @@ public class Chassis
         wheels[2].set(WheelsScaled[2], angleOffsetCal2);
         wheels[3].set(WheelsScaled[3], angleOffsetCal3);
 
-        updateBrake(brake);
-
         log.info(wheelNames[0], wheels[0]);
         log.info(wheelNames[1], wheels[1]);
         log.info(wheelNames[2], wheels[2]);
         log.info(wheelNames[3], wheels[3]);
-
-        shifters.setGear(gear);
-        state.updateRobotGear(shifters.isHighGear());
     }
 
     private HerdVector[] applyChassisEffects(HerdVector robotVelocity, double robotRotation)
@@ -82,21 +73,17 @@ public class Chassis
 
         if (velocity.getMag() > 1)
         {
-            log.error("Bad Chassis Command", velocity);
-            velocity = velocity.clampToRange(0, 1);  // Clamp mag - Start with range 0 to 1
+            log.error("Bad Chassis Command?", velocity);
+            velocity = velocity.clampToRange(0, 1);
         }
 
-        // TODO try mag square in input assuming want for DriveSwerve only?
-        //velocity = velocity.scale(velocity);                    // Square mag - Finer control at low speed
         spin = (Config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(velocity, spin, rotateAdjustMin) : spin;
         velocity = applyAccelerationLimit(velocity, maxAccel);  // Cap mag accel - Better traction
-        // TODO Scale velocity to range 0 to 1?
         state.updateRobotVelocity(velocity);
 
         log.info("Chassis Final", String.format("V: %s, W: %.2f", velocity, spin));
 
         return chassisToWheelCommands(velocity, spin);
-        //return Tests.debugNewChassisToWheelVectors(velocity, spin);
     }
 
     private HerdVector[] chassisToWheelCommands(HerdVector velocity, double spin)
@@ -123,12 +110,12 @@ public class Chassis
             wheelBR = wheelBR.scale(1 / maxMag);
             wheelBL = wheelBL.scale(1 / maxMag);
         }
-        
+
         wheelCommands[0] = wheelFR;
         wheelCommands[1] = wheelFL;
         wheelCommands[2] = wheelBR;
         wheelCommands[3] = wheelBL;
-        
+
         return wheelCommands;
     }
 
@@ -159,13 +146,9 @@ public class Chassis
 
     public void updateBrake(boolean enable)
     {
-        if (brakeEnabled != enable)
-        {
-            wheels[0].setBrake(enable);
-            wheels[1].setBrake(enable);
-            wheels[2].setBrake(enable);
-            wheels[3].setBrake(enable);
-            brakeEnabled = enable;
-        }
+        wheels[0].setBrake(enable);
+        wheels[1].setBrake(enable);
+        wheels[2].setBrake(enable);
+        wheels[3].setBrake(enable);
     }
 }
