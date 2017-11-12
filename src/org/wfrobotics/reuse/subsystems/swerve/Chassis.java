@@ -1,6 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
-import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleMotorMagPot;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleMotor;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleMotor.SENSOR;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.SwerveWheel;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -30,10 +31,10 @@ public class Chassis
 
     public Chassis()
     {
-        wheels[0] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[0], new AngleMotorMagPot(wheelNames[0] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[0]));
-        wheels[1] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[1], new AngleMotorMagPot(wheelNames[1] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[1]));
-        wheels[2] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[2], new AngleMotorMagPot(wheelNames[2] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[2]));
-        wheels[3] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[3], new AngleMotorMagPot(wheelNames[3] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[3]));
+        wheels[0] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[0], new AngleMotor(RobotMap.CAN_SWERVE_ANGLE_TALONS[0], SENSOR.MAGPOT));
+        wheels[1] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[1], new AngleMotor(RobotMap.CAN_SWERVE_ANGLE_TALONS[1], SENSOR.MAGPOT));
+        wheels[2] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[2], new AngleMotor(RobotMap.CAN_SWERVE_ANGLE_TALONS[2], SENSOR.MAGPOT));
+        wheels[3] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[3], new AngleMotor(RobotMap.CAN_SWERVE_ANGLE_TALONS[3], SENSOR.MAGPOT));
 
         lastVelocityTimestamp = Timer.getFPGATimestamp();
     }
