@@ -32,13 +32,18 @@ public class HerdAngle implements WrappedAngle
         return String.format("%.1f\u00b0", angle);
     }
 
+    public HerdAngle rotate(double angle)
+    {
+        return new HerdAngle(this.angle + angle);
+    }
+
     public HerdAngle rotate(WrappedAngle b)
     {
         return rotate(b.getAngle());
     }
 
-    public HerdAngle rotate(double angle)
+    public HerdAngle rotateReverse(WrappedAngle b)
     {
-        return new HerdAngle(this.angle + angle);
+        return rotate(-b.getAngle());
     }
 }
