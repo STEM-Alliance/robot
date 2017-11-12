@@ -84,7 +84,10 @@ public class Tests
         assert new HerdAngle(-10).rotate(-190).getAngle() == 160 : "Negative in failed to rotate negative and wrap positive";
 
         // Rotate WrappedAngle
-        assert new HerdAngle(10).rotate(new HerdVector(1, 30)).getAngle() == 40 : "HerdAngle cannot rotate by HerdVector";
+        assert new HerdAngle(10).rotate(new HerdVector(1, 30)).getAngle() == 40 : "HerdAngle cannot rotate by positive HerdVector";
+        assert new HerdAngle(10).rotate(new HerdVector(1, -30)).getAngle() == -20 : "HerdAngle cannot rotate by negative HerdVector";
+        assert new HerdAngle(10).rotateReverse(new HerdVector(1, 30)).getAngle() == -20 : "HerdAngle cannot inverse rotate by positive HerdVector";
+        assert new HerdAngle(10).rotateReverse(new HerdVector(1, -30)).getAngle() == 40 : "HerdAngle cannot inverse rotate by negative HerdVector";
     }
 
     public static void debugHerdVector()
@@ -166,22 +169,15 @@ public class Tests
         System.out.format(a + " cross " + b + " = " + a.cross(b) + "\n");
         b = b.rotate(180);
         System.out.format(a + " cross " + b + " = " + a.cross(b) + "\n");
-        System.out.println();
 
         // Cross - Limits
-        //assert new HerdVector(2, 0).cross(new HerdVector(3, 0)).getMag() == 0 : "Cross not zero mag on parallel";
-        assert new HerdVector(2, 0).cross(new HerdVector(3, 90)).getMag() == 6 : "Cross not max mag on orthogonal";
+        //assert new HerdVector(2, 0).cross(new HerdVector(3, 0)).getMag() == 0 : "Cross zero mag on parallel";
+        assert new HerdVector(2, 0).cross(new HerdVector(3, 90)).getMag() == 6 : "Cross max mag on orthogonal";
 
         // Clamp
-        HerdVector c = new HerdVector(.44, 10);
-        double maxDelta = .05;
-        HerdVector last = new HerdVector(.5, 10);
-        double min = last.getMag() - maxDelta;
-        double max = last.getMag() + maxDelta;
-
-        System.out.println(min);
-        System.out.println(max);
-        System.out.println(c.clampToRange(min, max));
+        assert new HerdVector(.44, 10).clampToRange(.45, .55).getMag() == .45 : "Clamp min";
+        assert new HerdVector(.5, 10).clampToRange(.45, .55).getMag() == .5 : "Clamp unaffected";
+        assert new HerdVector(.56, 10).clampToRange(.45, .55).getMag() == .55 : "Clamp max";
     }
 
     public static void debugHerdVectorWrappedAngle()
@@ -211,7 +207,10 @@ public class Tests
         assert new HerdVector(1, -10).rotate(-190).getAngle() == 160 : "Negative in failed to rotate negative and wrap positive";
 
         // Rotate WrappedAngle
-        assert new HerdVector(1, 30).rotate(new HerdAngle(10)).getAngle() == 40 : "HerdVector cannot rotate by HerdAngle";
+        assert new HerdVector(1, 30).rotate(new HerdAngle(10)).getAngle() == 40 : "HerdVector cannot rotate by positive HerdAngle";
+        assert new HerdVector(1, 30).rotate(new HerdAngle(-10)).getAngle() == 20 : "HerdVector cannot rotate by negative HerdAngle";
+        assert new HerdVector(1, 30).rotateReverse(new HerdAngle(10)).getAngle() == 20 : "HerdVector cannot inverse rotate by positive HerdAngle";
+        assert new HerdVector(1, 30).rotateReverse(new HerdAngle(-10)).getAngle() == 40 : "HerdVector cannot inverse rotate by negative HerdAngle";
     }
 
     public static HerdVector[] debugNewChassisToWheelVectors(HerdVector v, double spin)

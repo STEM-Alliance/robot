@@ -72,14 +72,19 @@ public class HerdVector implements WrappedAngle
         return add(b.scale(-1));
     }
 
+    public HerdVector rotate(double angle)
+    {
+        return new HerdVector(mag, this.angle + angle);
+    }
+
     public HerdVector rotate(WrappedAngle b)
     {
         return rotate(b.getAngle());
     }
 
-    public HerdVector rotate(double angle)
+    public HerdVector rotateReverse(WrappedAngle b)
     {
-        return new HerdVector(mag, this.angle + angle);
+        return rotate(-b.getAngle());
     }
 
     public HerdVector scale(double mag)
