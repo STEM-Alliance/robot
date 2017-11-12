@@ -1,6 +1,6 @@
 package org.wfrobotics.reuse.utilities;
 
-/** Wrapped angles support -180 to 180 degrees, agreeing to "wrap" all other values back into this range automatically */
+/** Wrapped angles support their own range in degrees, agreeing to "wrap" all values back into this range automatically */
 public interface WrappedAngle
 {
     public double getAngle();                           // Degrees
