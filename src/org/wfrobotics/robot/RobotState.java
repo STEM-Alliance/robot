@@ -6,6 +6,8 @@ import org.wfrobotics.robot.config.Drive;
 import org.wfrobotics.robot.config.VisionMode;
 import org.wfrobotics.robot.vision.messages.VisionUpdate;
 
+// TODO Provide robot velocity, have commands reduce motor usage while robot moving and/or moving fast. Then increase drive motor ramp rates.
+
 /** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
 public class RobotState
 {
@@ -127,7 +129,7 @@ public class RobotState
     }
 
     // ------------- END State Producers Only -------------
-    
+
     private String prettyHeading()
     {
         return String.format("%.1f\u00b0", robotHeading);

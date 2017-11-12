@@ -1,6 +1,5 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
@@ -16,7 +15,6 @@ import org.wfrobotics.robot.subsystems.Shooter;
 import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
 import org.wfrobotics.robot.vision.messages.CameraMode;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,8 +23,9 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends SampleRobot
 {
-    private HerdLogger log = new HerdLogger(Robot.class);
-    private RobotState state = RobotState.getInstance();
+    private final HerdLogger log = new HerdLogger(Robot.class);
+    private final Scheduler scheduler = Scheduler.getInstance();
+    private final RobotState state = RobotState.getInstance();
     private LED leds;
     public static SwerveDriveSteamworks driveSubsystem;
     public static Auger augerSubsystem;
@@ -86,8 +85,8 @@ public class Robot extends SampleRobot
         while (isDisabled())
         {
             lifterSubsystem.reset();
-            Gyro.getInstance().zeroYaw();
-            log.info("TeamColor", (DriverStation.getInstance().getAlliance() == Alliance.Red) ? "Red" : "Blue");
+            driveSubsystem.zeroGyro();
+            log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 
             allPeriodic();
         }
@@ -95,19 +94,23 @@ public class Robot extends SampleRobot
 
     public void test()
     {
-        while (isTest() && isEnabled()) { }
+        while (isTest() && isEnabled())
+        {
+            allPeriodic();
+        }
     }
 
     private void allPeriodic()
     {
         log.debug("Periodic Time", getPeriodicTime());
         log.info("Drive", driveSubsystem);
-        log.info("Battery", DriverStation.getInstance().getBatteryVoltage());
+        log.info("Battery", m_ds.getBatteryVoltage());
         state.logState();
 
-        Scheduler.getInstance().run();
+        scheduler.run();
     }
 
+    /** Should be <= 20ms, the rate the driver station pings with IO updates. This assumes using closed loop CANTalon's or sensors/PID are all on our fast service thread to prevent latency */
     private String getPeriodicTime()
     {
         double now = Timer.getFPGATimestamp();

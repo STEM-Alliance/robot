@@ -65,7 +65,7 @@ public final class AnglePID
      * Should the motor be driving in reverse? (180 vs 360 turning)
      * @return true if motor should be reversed
      */
-    public boolean reverseDriveMotorMoreEfficient()
+    public boolean getReverseCloser()
     {
         return reverseMotor;
     }

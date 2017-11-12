@@ -16,7 +16,7 @@ public abstract class CANTalonFactory
 
     public CANTalon makeVoltageControlTalon()
     {
-        return null;
+        return null;  // Not ready yet
     }
 
     public static CANTalon makeSpeedControlTalon(int address, TALON_SENSOR type)
@@ -46,9 +46,10 @@ public abstract class CANTalonFactory
         return t;
     }
 
-    public CANTalon makePositionControlTalon()
+    /** Goes to an angle */
+    public CANTalon makeAngleControlTalon(int address)
     {
-        return null;
+        return null;  // Not ready yet
     }
 
     /** Mirrors its master. Call set() with Master's address **/
@@ -94,6 +95,6 @@ public abstract class CANTalonFactory
         t.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         t.set(0);  // Set set point immediately after mode change
 
-        return null;
+        return null; // Not ready yet
     }
 }

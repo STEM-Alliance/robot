@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class SwerveSubsystem extends Subsystem
 {
+    Preferences prefs = Preferences.getInstance();
     RobotState state = RobotState.getInstance();
     private Gyro gyro = Gyro.getInstance();
     private HerdLogger log = new HerdLogger(SwerveSubsystem.class);
@@ -59,9 +60,9 @@ public class SwerveSubsystem extends Subsystem
         double pidOut;
         double spin;
 
-        pidHeading.setP(Preferences.getInstance().getDouble("SwervePID_P", Config.CHASSIS_P));
-        pidHeading.setI(Preferences.getInstance().getDouble("SwervePID_I", Config.CHASSIS_I));
-        pidHeading.setD(Preferences.getInstance().getDouble("SwervePID_D", Config.CHASSIS_D));
+        pidHeading.setP(prefs.getDouble("SwervePID_P", Config.CHASSIS_P));
+        pidHeading.setI(prefs.getDouble("SwervePID_I", Config.CHASSIS_I));
+        pidHeading.setD(prefs.getDouble("SwervePID_D", Config.CHASSIS_D));
 
         if (command.hasHeading())
         {
