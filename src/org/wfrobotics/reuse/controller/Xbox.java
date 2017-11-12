@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 
 // TODO What should be the low level access types? All herdvector?
 // TODO reduce interface any more?
+// TODO try getDirectionDegrees() & getMagnitude from JoyStick class
 
 /**
  * @author Team 4818 WFRobotics
