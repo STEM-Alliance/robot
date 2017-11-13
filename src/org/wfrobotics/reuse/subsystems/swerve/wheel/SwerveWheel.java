@@ -2,7 +2,8 @@ package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
 import org.wfrobotics.reuse.hardware.CANTalonFactory;
 import org.wfrobotics.reuse.hardware.CANTalonFactory.TALON_SENSOR;
-import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleMotor.SENSOR;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleSensor.AngleProvider;
+import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleSensor.SENSOR;
 import org.wfrobotics.reuse.utilities.HerdVector;
 
 import com.ctre.CANTalon;
@@ -17,7 +18,8 @@ import com.ctre.CANTalon;
 public class SwerveWheel
 {
     private final AnglePID anglePID;
-    private final AngleMotor angleMotor;
+    private final AngleProvider angleSensor;
+    private final CANTalon angleMotor;
     private final CANTalon driveMotor;
 
     private double angleSpeedMax = 1;
@@ -26,16 +28,8 @@ public class SwerveWheel
     public SwerveWheel(int addressDriveMotor, int addressAngleMotor)
     {
         anglePID = new AnglePID(0, 0, 0, 1);
-
-        CANTalon motor = new CANTalon(addressAngleMotor);
-        motor.configNominalOutputVoltage(0, 0);
-        motor.configPeakOutputVoltage(12, -12);
-        motor.ConfigFwdLimitSwitchNormallyOpen(true);
-        motor.ConfigRevLimitSwitchNormallyOpen(true);
-        motor.enableForwardSoftLimit(false);
-        motor.enableReverseSoftLimit(false);
-        motor.enableBrakeMode(false);
-        angleMotor = new AngleMotor(motor, SENSOR.MAGPOT);
+        angleMotor = CANTalonFactory.makeAngleControlTalon(addressAngleMotor);
+        angleSensor = AngleSensor.makeSensor(angleMotor, SENSOR.MAGPOT);
 
         driveMotor = CANTalonFactory.makeSpeedControlTalon(addressDriveMotor, TALON_SENSOR.MAG_ENCODER);
         driveMotor.setPID(Config.DRIVE_P, Config.DRIVE_I, Config.DRIVE_D);
@@ -45,14 +39,14 @@ public class SwerveWheel
 
     public String toString()
     {
-        return String.format("S:%.2f, %s, E: %.0f\u00b0", driveMotor.getSpeed(), angleMotor, anglePID.errorShortestPath);
+        return String.format("S:%.2f, A: %.0f\u00b0, E: %.0f\u00b0", driveMotor.getSpeed(), angleSensor.getAngle().getAngle(), anglePID.errorShortestPath);
     }
 
     public void set(HerdVector desired)
     {
         double driveSpeed = desired.getMag() * Config.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
         double angleSetPoint = desired.rotate(angleOffset).getAngle();
-        double angleCurrent = angleMotor.getDegrees();
+        double angleCurrent = angleSensor.getAngle().getAngle();
         double angleSpeed = anglePID.update(angleSetPoint, angleCurrent) * angleSpeedMax;
 
         if (desired.getMag() < Config.DEADBAND_STOP_TURNING_AT_REST)
