@@ -47,9 +47,19 @@ public abstract class CANTalonFactory
     }
 
     /** Goes to an angle */
-    public CANTalon makeAngleControlTalon(int address)
+    public static CANTalon makeAngleControlTalon(int address)
     {
-        return null;  // Not ready yet
+        CANTalon t = new CANTalon(address);
+
+        t.configNominalOutputVoltage(0, 0);
+        t.configPeakOutputVoltage(12, -12);
+        t.ConfigFwdLimitSwitchNormallyOpen(true);
+        t.ConfigRevLimitSwitchNormallyOpen(true);
+        t.enableForwardSoftLimit(false);
+        t.enableReverseSoftLimit(false);
+        t.enableBrakeMode(false);
+
+        return t;
     }
 
     /** Mirrors its master. Call set() with Master's address **/

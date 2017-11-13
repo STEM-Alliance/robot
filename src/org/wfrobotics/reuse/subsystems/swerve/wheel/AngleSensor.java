@@ -12,7 +12,7 @@ import com.ctre.CANTalon.TalonControlMode;
  * Controls swerve wheel turning
  * @author Team 4818 WFRobotics
  */
-public class AngleMotor
+public abstract class AngleSensor
 {
     public enum SENSOR
     {
@@ -20,49 +20,22 @@ public class AngleMotor
         MAGPOT,
     }
 
-    public interface Angle
+    public interface AngleProvider
     {
         public HerdAngle getAngle();
     }
 
-    private final boolean ANGLE_INVERTED = false;  //Invert the angle motor and sensor to swap left/right
-
-    private final CANTalon motor;
-    private final Angle sensor;
-
-    public AngleMotor(CANTalon motor, SENSOR type)
+    public static AngleProvider makeSensor(CANTalon motor, SENSOR type)
     {
-        this.motor = motor;
-
         if (type == SENSOR.ENCODER)
         {
-            sensor = new AngleMotorEncoder(motor, true);
+            return new AngleMotorEncoder(motor, true);
         }
-        else
-        {
-            sensor = new AngleMotorMagPot(motor, false);
-        }
-    }
-
-    public String toString()
-    {
-        return String.format("A: %.0f\u00b0", sensor.getAngle().getAngle());
-    }
-
-    public double getDegrees()
-    {
-        return sensor.getAngle().getAngle();
-    }
-
-    public void set(double speed)
-    {
-        double invert = ANGLE_INVERTED ? -1 : 1;
-
-        motor.set(invert * speed);
+        return new AngleMotorMagPot(motor, false);
     }
 
     //TODO Use Talon PID for encoder controlled angle motor?
-    private class AngleMotorEncoder implements Angle
+    private static class AngleMotorEncoder implements AngleProvider
     {
         private final double INVERT;  // Flip to swap left and right motors
 
@@ -87,7 +60,7 @@ public class AngleMotor
         }
     }
 
-    private class AngleMotorMagPot implements Angle
+    private static class AngleMotorMagPot implements AngleProvider
     {
         private final double INVERT;  // Flip to swap left and right motors
 
