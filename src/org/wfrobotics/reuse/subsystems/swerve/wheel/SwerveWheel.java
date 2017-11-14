@@ -10,6 +10,7 @@ import com.ctre.CANTalon;
 
 // TODO Try scaling pid output of drive motor to full range (don't include deadband). Is integral limit - disable when out of range.
 // TODO Try scaling pid output of angle motor to full range (don't include deadband). Is integral limit - disable when out of range.
+// TODO Try feedforward on drive speed
 
 /**
  * Handle motor outputs and feedback for an individual swerve wheel
@@ -39,14 +40,14 @@ public class SwerveWheel
 
     public String toString()
     {
-        return String.format("S:%.2f, A: %.0f\u00b0, E: %.0f\u00b0", driveMotor.getSpeed(), angleSensor.getAngle().getAngle(), anglePID.errorShortestPath);
+        return String.format("S:%.2f, A: %.0f\u00b0, E: %.0f\u00b0", driveMotor.getSpeed(), angleSensor.getAngle(), anglePID);
     }
 
     public void set(HerdVector desired)
     {
         double driveSpeed = desired.getMag() * Config.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
         double angleSetPoint = desired.rotate(angleOffset).getAngle();
-        double angleCurrent = angleSensor.getAngle().getAngle();
+        double angleCurrent = angleSensor.getAngle();
         double angleSpeed = anglePID.update(angleSetPoint, angleCurrent) * angleSpeedMax;
 
         if (desired.getMag() < Config.DEADBAND_STOP_TURNING_AT_REST)
@@ -56,7 +57,7 @@ public class SwerveWheel
         }
         angleMotor.set(angleSpeed);
 
-        if (anglePID.getReverseCloser())
+        if (anglePID.isReverseAngleCloser())  // Smart turn 180 degrees at most
         {
             driveSpeed *= -1;
         }
