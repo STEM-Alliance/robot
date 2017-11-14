@@ -22,7 +22,7 @@ public abstract class AngleSensor
 
     public interface AngleProvider
     {
-        public HerdAngle getAngle();
+        public double getAngle();
     }
 
     public static AngleProvider makeSensor(CANTalon motor, SENSOR type)
@@ -52,11 +52,11 @@ public abstract class AngleSensor
             INVERT = (angleInvert) ? -1 : 1;
         }
 
-        public HerdAngle getAngle()
+        public double getAngle()
         {
             HerdAngle wrappedDegrees = new HerdAngle(hardware.getPosition() * 360);
 
-            return new HerdAngle(INVERT * wrappedDegrees.getAngle());
+            return new HerdAngle(INVERT * wrappedDegrees.getAngle()).getAngle();
         }
     }
 
@@ -72,9 +72,9 @@ public abstract class AngleSensor
             INVERT = (angleInvert) ? -1 : 1;
         }
 
-        public HerdAngle getAngle()
+        public double getAngle()
         {
-            return new HerdAngle(INVERT * hardware.get());
+            return new HerdAngle(INVERT * hardware.get()).getAngle();
         }
     }
 }
