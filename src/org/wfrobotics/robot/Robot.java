@@ -5,7 +5,6 @@ import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.VisionMode;
 import org.wfrobotics.robot.subsystems.Auger;
 import org.wfrobotics.robot.subsystems.Climber;
 import org.wfrobotics.robot.subsystems.Intake;
@@ -13,7 +12,6 @@ import org.wfrobotics.robot.subsystems.LED;
 import org.wfrobotics.robot.subsystems.Lifter;
 import org.wfrobotics.robot.subsystems.Shooter;
 import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
-import org.wfrobotics.robot.vision.messages.CameraMode;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -52,7 +50,8 @@ public class Robot extends SampleRobot
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
 
-        CameraServer.getInstance().send(new CameraMode(VisionMode.robotDefault().getValue()));
+        // TODO default config?
+        CameraServer.getInstance();
     }
 
     public void operatorControl()
