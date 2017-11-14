@@ -6,8 +6,6 @@ import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.Drive;
 import org.wfrobotics.robot.config.VisionMode;
 
-// TODO Provide robot velocity, have commands reduce motor usage while robot moving and/or moving fast. Then increase drive motor ramp rates.
-
 /** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
 public class RobotState
 {
@@ -16,7 +14,7 @@ public class RobotState
     public double robotHeading;                        // Angle of robot relative to when gyro was last zeroed
     public boolean robotGear;                          // True: High, False: Low
 
-    public double visionError;                        // Location of target relative to center of camera
+    public double visionError;                         // Location of target relative to center of camera
     public boolean visionInView;                       // If vision determined the criteria for seeing the target(s) is met
     public VisionMode visionMode;                      // What vision co-processor is using it's camera(s) for
     public double visionWidth;                         // How big is the target(s), and therefore how close is it

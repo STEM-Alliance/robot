@@ -1,7 +1,6 @@
 package org.wfrobotics.reuse.hardware.sensors;
 
-
-import org.wfrobotics.reuse.utilities.Utilities;
+import org.wfrobotics.reuse.utilities.HerdAngle;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -9,15 +8,13 @@ import edu.wpi.first.wpilibj.SPI;
 
 // TODO should we use pidGet for swerve heading?
 // TODO should we use callback?
-// TODO pull in initial zero from robot?
-// TODO create child as subsystem singleton like LED?
 
 public class Gyro
 {
     private static Gyro instance = null;
 
     private AHRS navxMXP = null;
-    private double zeroVal = 0;
+    private double zeroAngle = 0;
 
     private Gyro(SPI.Port port)
     {
@@ -31,25 +28,25 @@ public class Gyro
         return instance;
     }
 
-    /** The current yaw value in degrees (-180 to 180) */
+    /** Yaw relative to when last zeroed */
     public double getYaw()
     {
-        double angle = navxMXP.getYaw() - zeroVal;
-        angle = Utilities.wrapToRange(angle, -180, 180);
-        return angle;
+        return new HerdAngle(navxMXP.getYaw() - zeroAngle).getAngle();  // Ex: If we rotated two degrees clockwise from where yaw was zeroed, yaw = ((zero + 2) - zero) = +2 degrees
     }
 
-    /** yaw offset as the current value, subtracted from getYaw() */
+    /** Reset yaw. Future gyro output yaw will be relative to the yaw right now. */
     public void zeroYaw()
     {
-        zeroYaw(0);
+        zeroAngle = new HerdAngle(navxMXP.getYaw()).getAngle();
     }
 
-    /** yaw offset to be subtracted from values */
-    public void zeroYaw(double startAngleOffset)
+    /** Reset yaw with offset. Future gyro output yaw will be relative to (yaw right now less the offset).
+     *  Ex: If offset 90 degrees, use (current - 90 degrees) as "zero".
+     *      Thus getYaw() will initially return (0 - (0 - 90)) = +90 degrees.
+     *      This example could correct the gyro in an autonomous mode where the robot starts facing "to the right".
+     */
+    public void zeroYaw(double robotRelativeAngleAsZero)
     {
-        double angle = navxMXP.getYaw();
-        angle = Utilities.wrapToRange(angle, -180, 180);
-        zeroVal = angle - startAngleOffset;
+        zeroAngle = new HerdAngle(navxMXP.getYaw() - robotRelativeAngleAsZero).getAngle();
     }
 }

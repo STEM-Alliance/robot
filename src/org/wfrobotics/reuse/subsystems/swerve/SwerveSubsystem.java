@@ -2,9 +2,9 @@ package org.wfrobotics.reuse.subsystems.swerve;
 
 import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
+import org.wfrobotics.reuse.utilities.HerdAngle;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.PIDController;
-import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.RobotState;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -56,7 +56,7 @@ public class SwerveSubsystem extends Subsystem
 
     public void driveWithHeading(SwerveSignal command)
     {
-        double error = 0;
+        HerdAngle error = new HerdAngle(0);
         double pidOut;
         double spin;
 
@@ -66,9 +66,9 @@ public class SwerveSubsystem extends Subsystem
 
         if (command.hasHeading())
         {
-            error = Utilities.wrapToRange(command.heading - gyro.getYaw(), -180, 180);  // Make herd vector and rotate?
+            error = command.heading.rotate(-gyro.getYaw());
         }
-        pidOut = pidHeading.update(error);
+        pidOut = pidHeading.update(error.getAngle());
         spin = (command.hasHeading()) ? pidOut : command.spin;
 
         state.updateRobotHeading(gyro.getYaw());
