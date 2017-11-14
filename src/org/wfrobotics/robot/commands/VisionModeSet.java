@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
-import org.wfrobotics.robot.vision.messages.CameraMode;
+import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
@@ -12,6 +12,6 @@ public abstract class VisionModeSet extends InstantCommand
     protected void initialize()
     {
         int mode = getMode();
-        CameraServer.getInstance().send(new CameraMode(mode));
+        CameraServer.getInstance().SetConfig(new VisionMessageConfig(mode));
     }
 }

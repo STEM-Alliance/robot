@@ -1,10 +1,10 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageTargets;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.Drive;
 import org.wfrobotics.robot.config.VisionMode;
-import org.wfrobotics.robot.vision.messages.VisionUpdate;
 
 // TODO Provide robot velocity, have commands reduce motor usage while robot moving and/or moving fast. Then increase drive motor ramp rates.
 
@@ -78,21 +78,22 @@ public class RobotState
         robotVelocity = new HerdVector(velocity);
     }
 
-    public void addVisionUpdate(VisionUpdate v)
+    public void addVisionUpdate(VisionMessageTargets v)
     {
-        if (v.mode != visionMode.getValue())
-        {
-            resetVisionState();
-        }
-
-        if (v.mode == VisionMode.SHOOTER.getValue())
-        {
-            processShooterUpdate(v);
-        }
-        else if (v.mode == VisionMode.GEAR.getValue())
-        {
-            processGearUpdate(v);
-        }
+        // TODO
+//        if (v.mode != visionMode.getValue())
+//        {
+//            resetVisionState();
+//        }
+//
+//        if (v.mode == VisionMode.SHOOTER.getValue())
+//        {
+//            processShooterUpdate(v);
+//        }
+//        else if (v.mode == VisionMode.GEAR.getValue())
+//        {
+//            processGearUpdate(v);
+//        }
     }
 
     private synchronized void resetVisionState()
@@ -104,9 +105,9 @@ public class RobotState
     }
 
     // TODO confirm target a few times before sensing? Want here since all commands dislike false positives
-    private synchronized void processShooterUpdate(VisionUpdate v)
+    private synchronized void processShooterUpdate(VisionMessageTargets v)
     {
-        boolean targetsInView = v.targets.size() > 1;
+        boolean targetsInView = v.Targets.size() > 1;
         double newError = 0;  // TODO calc this specific to shooter
         double newWidth = 0;  // TODO
 
@@ -116,9 +117,9 @@ public class RobotState
         visionMode = VisionMode.SHOOTER;
     }
 
-    private synchronized void processGearUpdate(VisionUpdate v)
+    private synchronized void processGearUpdate(VisionMessageTargets v)
     {
-        boolean targetsInView = v.targets.size() > 1;
+        boolean targetsInView = v.Targets.size() > 1;
         double newError = 0;  // TODO calc this specific to shooter
         double newWidth = 0;  // TODO
 
