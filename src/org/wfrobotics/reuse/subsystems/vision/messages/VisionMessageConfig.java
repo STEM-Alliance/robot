@@ -4,7 +4,7 @@ public class VisionMessageConfig extends VisionMessage
 {
     private final int Version = 1;
     
-    public int Source = 0;
+    public int Source = 2;
     public int Width = 640;
     public int Height = 480;
     public int Exposure = -10;

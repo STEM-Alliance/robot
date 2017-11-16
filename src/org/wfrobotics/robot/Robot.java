@@ -39,14 +39,14 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveSubsystem = new SwerveDriveSteamworks();
-        augerSubsystem = new Auger();
-        climberSubsystem = new Climber();
-        dashboardView = new DashboardView();
-        intakeSubsystem = new Intake();
-        lifterSubsystem = new Lifter(true);
-        shooterSubsystem = new Shooter();
-        leds = LED.getInstance();
+//        driveSubsystem = new SwerveDriveSteamworks();
+//        augerSubsystem = new Auger();
+//        climberSubsystem = new Climber();
+//        dashboardView = new DashboardView();
+//        intakeSubsystem = new Intake();
+//        lifterSubsystem = new Lifter(true);
+//        shooterSubsystem = new Shooter();
+//        leds = LED.getInstance();
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
 
