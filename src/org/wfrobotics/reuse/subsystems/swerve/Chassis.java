@@ -150,9 +150,9 @@ public class Chassis
 
     public void updateWheelSettings()
     {
-        double p = prefs.getDouble("WheelAngle_P", Config.WHEEL_ANGLE_P);
-        double i = prefs.getDouble("WheelAngle_I", Config.WHEEL_ANGLE_I);
-        double d = prefs.getDouble("WheelAngle_D", Config.WHEEL_ANGLE_D);
+        double p = prefs.getDouble("WheelAngleP", Config.WHEEL_ANGLE_P);
+        double i = prefs.getDouble("WheelAngleI", Config.WHEEL_ANGLE_I);
+        double d = prefs.getDouble("WheelAngleD", Config.WHEEL_ANGLE_D);
         double angleSpeedMax = Preferences.getInstance().getDouble("maxRotationSpeed", Config.WHEEL_ANGLE_SPEED_MAX);
 
         double angleOffsetCal0 = prefs.getDouble("OffsetFR", 0);

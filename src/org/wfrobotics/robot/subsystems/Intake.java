@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.hardware.CANTalonFactory;
 import org.wfrobotics.robot.commands.IntakeSetup;
 import org.wfrobotics.robot.config.RobotMap;
 
@@ -13,7 +14,7 @@ public class Intake extends Subsystem
 
     public Intake()
     {
-        motor = new CANTalon(RobotMap.INTAKE_MOTOR_SRX);
+        motor = CANTalonFactory.makeTalon(RobotMap.INTAKE_MOTOR_SRX);
         motor.setInverted(true);
         motor.enable();
         motor.enableLimitSwitch(false, false);

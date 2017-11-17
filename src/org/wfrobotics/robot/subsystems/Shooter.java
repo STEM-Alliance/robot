@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.hardware.CANTalonFactory;
 import org.wfrobotics.robot.commands.RevOff;
 import org.wfrobotics.robot.config.RobotMap;
 
@@ -25,7 +26,7 @@ public class Shooter extends Subsystem
             this.name = name;
             this.invert = (invert) ? -1:1;
 
-            motor = new CANTalon(address);
+            motor = CANTalonFactory.makeTalon(address);
 
             motor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
             motor.changeControlMode(TalonControlMode.Speed);

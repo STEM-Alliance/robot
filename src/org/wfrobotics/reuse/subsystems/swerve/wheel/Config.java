@@ -23,5 +23,5 @@ public class Config
     /** Value to use for converting raw input (-1 to 1) to speed (in rpm) that the sensor will detect */
     public static final double DRIVE_SPEED_MAX = DRIVE_MAX_RPM * DRIVE_EFFICIENCY * SHIFTER_SENSOR_RATIO;
     /** Leave wheel in current direction when stopping - Snapping to an angle would arc our path when moving again */
-    public static final double DEADBAND_STOP_TURNING_AT_REST = 0.1;
+    public static final double DEADBAND_STOP_TURNING_AT_REST = 0.2;
 }

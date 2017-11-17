@@ -21,7 +21,7 @@ public abstract class CANTalonFactory
 
     public static CANTalon makeSpeedControlTalon(int address, TALON_SENSOR type)
     {
-        CANTalon t = new CANTalon(address);
+        CANTalon t = CANTalonFactory.makeTalon(address);
 
         t.ConfigFwdLimitSwitchNormallyOpen(true);
         t.ConfigRevLimitSwitchNormallyOpen(true);
@@ -49,7 +49,7 @@ public abstract class CANTalonFactory
     /** Goes to an angle */
     public static CANTalon makeAngleControlTalon(int address)
     {
-        CANTalon t = makeTalon(address, true);
+        CANTalon t = makeTalon(address);
 
         t.configNominalOutputVoltage(0, 0);
         t.configPeakOutputVoltage(12, -12);
@@ -58,6 +58,9 @@ public abstract class CANTalonFactory
         t.enableForwardSoftLimit(false);
         t.enableReverseSoftLimit(false);
         t.enableBrakeMode(false);
+        //t.setStatusFrameRateMs(CANTalon.StatusFrameRate.Feedback, 50);
+        t.SetVelocityMeasurementPeriod(CANTalon.VelocityMeasurementPeriod.Period_2Ms);
+        t.SetVelocityMeasurementWindow(0);
 
         return t;
     }
@@ -65,12 +68,12 @@ public abstract class CANTalonFactory
     /** Mirrors its master. Call set() with Master's address **/
     public CANTalon makeSlaveControlTalon(int address, int masterAddress)
     {
-        CANTalon t = makeTalon(address, false);
+        CANTalon t = makeTalon(address);
 
         // Recommended for any single sensor multiple motor subsystem
 
         // TODO Slow settings
-
+        t.setStatusFrameRateMs(CANTalon.StatusFrameRate.General, 1000);
         t.changeControlMode(TalonControlMode.Follower);
         t.set(masterAddress);
 
@@ -78,9 +81,9 @@ public abstract class CANTalonFactory
     }
 
     /** Normal CANTalon. Also documents settings. Override settings on returned talon as needed. **/
-    private static CANTalon makeTalon(int address, boolean hasSensors)
+    public static CANTalon makeTalon(int address)
     {
-        CANTalon t = new CANTalon(address);
+        CANTalon t = new LazyTalon(address);
 
         // See CTR Software Reference Manual
         // Debug              - Consider web API self-test
@@ -101,7 +104,7 @@ public abstract class CANTalonFactory
         t.ConfigRevLimitSwitchNormallyOpen(true);  // Red LED blink toward M- (green) for negative fault triggered
         t.enableLimitSwitch(false, false);
         t.enableBrakeMode(false);                  // When in neutral, applies brake
-
+        
         t.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         t.set(0);  // Set set point immediately after mode change
 
