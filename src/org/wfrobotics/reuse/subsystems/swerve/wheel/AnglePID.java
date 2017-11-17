@@ -3,6 +3,8 @@ package org.wfrobotics.reuse.subsystems.swerve.wheel;
 import org.wfrobotics.reuse.utilities.HerdAngle;
 import org.wfrobotics.reuse.utilities.PIDController;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Absolute angle motor control PID. Corrects to setpoint or it's 180 degree mirror, whichever is closer.
  * @author Team 4818 WFRobotics
@@ -14,9 +16,9 @@ public final class AnglePID
     private boolean isReverseAngleCloser;
     private HerdAngle errorToCloserPath;
 
-    public AnglePID(double p, double i, double d, double max)
+    public AnglePID(double p, double i, double d)
     {
-        pid = new PIDController(p, i, d, max);
+        pid = new PIDController(p, i, d, 1);
         isReverseAngleCloser = false;
     }
 
@@ -28,6 +30,7 @@ public final class AnglePID
     /** Calculate output to move towards setpoint, or its 180 degrees offset, via whichever of those two paths is closest */
     public double update(double setPoint, double sensorValue)
     {
+        SmartDashboard.putNumber("sense", sensorValue);
         HerdAngle forwardError = new HerdAngle(setPoint - sensorValue);
         HerdAngle reversedError = forwardError.rotate(180);
 
@@ -35,7 +38,12 @@ public final class AnglePID
         errorToCloserPath = (isReverseAngleCloser) ? reversedError : forwardError;
 
         // TODO If we reverse, reset the derivative
-        return pid.update(errorToCloserPath.getAngle());
+        double output = pid.update(forwardError.getAngle());
+        output = output - .5;  // PID wont go negative
+        SmartDashboard.putNumber("set", setPoint);
+        SmartDashboard.putNumber("e", errorToCloserPath.getAngle());
+        SmartDashboard.putNumber("o", output);
+        return output;
     }
 
     public void updatePID(double p, double i, double d)

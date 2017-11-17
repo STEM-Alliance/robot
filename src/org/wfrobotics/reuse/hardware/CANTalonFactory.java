@@ -49,7 +49,7 @@ public abstract class CANTalonFactory
     /** Goes to an angle */
     public static CANTalon makeAngleControlTalon(int address)
     {
-        CANTalon t = new CANTalon(address);
+        CANTalon t = makeTalon(address, true);
 
         t.configNominalOutputVoltage(0, 0);
         t.configPeakOutputVoltage(12, -12);
@@ -78,7 +78,7 @@ public abstract class CANTalonFactory
     }
 
     /** Normal CANTalon. Also documents settings. Override settings on returned talon as needed. **/
-    private CANTalon makeTalon(int address, boolean hasSensors)
+    private static CANTalon makeTalon(int address, boolean hasSensors)
     {
         CANTalon t = new CANTalon(address);
 
@@ -105,6 +105,6 @@ public abstract class CANTalonFactory
         t.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
         t.set(0);  // Set set point immediately after mode change
 
-        return null; // Not ready yet
+        return t; // Not ready yet
     }
 }
