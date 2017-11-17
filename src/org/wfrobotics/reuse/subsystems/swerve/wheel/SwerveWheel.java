@@ -25,22 +25,25 @@ public class SwerveWheel
 
     private double angleSpeedMax = 1;
     private double angleOffset = 0;
+    private double lastHighMagAngle;
 
     public SwerveWheel(int addressDriveMotor, int addressAngleMotor)
     {
-        anglePID = new AnglePID(0, 0, 0, 1);
+        anglePID = new AnglePID(0, 0, 0);
         angleMotor = CANTalonFactory.makeAngleControlTalon(addressAngleMotor);
         angleSensor = AngleSensor.makeSensor(angleMotor, SENSOR.MAGPOT);
-
+        angleMotor.setInverted(false);  // TODO config file
+        
         driveMotor = CANTalonFactory.makeSpeedControlTalon(addressDriveMotor, TALON_SENSOR.MAG_ENCODER);
         driveMotor.setPID(Config.DRIVE_P, Config.DRIVE_I, Config.DRIVE_D);
         driveMotor.setVoltageRampRate(30);  // TODO Needing this probably means our PID is not being used correctly. Number very low.
         driveMotor.reverseSensor(true);
+        lastHighMagAngle = 0;
     }
 
     public String toString()
     {
-        return String.format("S:%.2f, A: %.0f\u00b0, E: %.0f\u00b0", driveMotor.getSpeed(), angleSensor.getAngle(), anglePID);
+        return String.format("S:%.2f, A: %.0f\u00b0, E: %s", driveMotor.getSpeed(), angleSensor.getAngle(), anglePID);
     }
 
     public void set(HerdVector desired)
@@ -48,12 +51,22 @@ public class SwerveWheel
         double driveSpeed = desired.getMag() * Config.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
         double angleSetPoint = desired.rotate(angleOffset).getAngle();
         double angleCurrent = angleSensor.getAngle();
-        double angleSpeed = anglePID.update(angleSetPoint, angleCurrent) * angleSpeedMax;
-
+        double angleSpeed = anglePID.update(angleSetPoint, angleCurrent);
+                
         if (desired.getMag() < Config.DEADBAND_STOP_TURNING_AT_REST)
         {
+            angleSetPoint = lastHighMagAngle;
+        }
+        else
+        {
+            lastHighMagAngle = desired.getAngle();
+        }
+        angleSpeed = anglePID.update(angleSetPoint, angleCurrent);
+        
+        //if (desired.getMag() < Config.DEADBAND_STOP_TURNING_AT_REST)
+        {
             //anglePID.resetIntegral();  // TODO Removed. Seems wrong. Better as good IZone if anything
-            angleSpeed = 0;
+//            angleSpeed = 0;
         }
         angleMotor.set(angleSpeed);
 
@@ -61,7 +74,7 @@ public class SwerveWheel
         {
             driveSpeed *= -1;
         }
-        driveMotor.set(driveSpeed);
+        //driveMotor.set(driveSpeed);
     }
 
     public void setBrake(boolean enable)
