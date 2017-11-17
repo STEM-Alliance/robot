@@ -101,21 +101,19 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
-        log.debug("Periodic Time", getPeriodicTime());
         log.info("Drive", driveSubsystem);
         log.info("Battery", m_ds.getBatteryVoltage());
         state.logState();
 
+        double start = Timer.getFPGATimestamp();
         scheduler.run();
+        //log.debug("Periodic Time", getPeriodicTime(start));
+        SmartDashboard.putNumber("Periodic Time ", Timer.getFPGATimestamp() - start);
     }
 
     /** Should be <= 20ms, the rate the driver station pings with IO updates. This assumes using closed loop CANTalon's or sensors/PID are all on our fast service thread to prevent latency */
-    private String getPeriodicTime()
+    private String getPeriodicTime(double start)
     {
-        double now = Timer.getFPGATimestamp();
-        String periodicTime = String.format("%.0f ms", (now - lastPeriodicTime) * 1000);
-
-        lastPeriodicTime = now;
-        return periodicTime;
+        return String.format("%.1f ms", (Timer.getFPGATimestamp() - start) * 1000);
     }
 }

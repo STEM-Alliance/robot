@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.hardware.CANTalonFactory;
 import org.wfrobotics.robot.commands.Up;
 import org.wfrobotics.robot.config.RobotMap;
 
@@ -14,7 +15,7 @@ public class Climber extends Subsystem
 
     public Climber()
     {
-        motor = new CANTalon(RobotMap.CLIMBER_MOTOR_SRX);
+        motor = CANTalonFactory.makeTalon(RobotMap.CLIMBER_MOTOR_SRX);
         //sensor = new DigitalInput(RobotMap.CLIMBER_SENSOR_DIGITAL);
     }
 

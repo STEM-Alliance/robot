@@ -29,15 +29,17 @@ public class SwerveWheel
 
     public SwerveWheel(int addressDriveMotor, int addressAngleMotor)
     {
-        anglePID = new AnglePID(0, 0, 0);
+        anglePID = new AnglePID(.01, 0, .05);
         angleMotor = CANTalonFactory.makeAngleControlTalon(addressAngleMotor);
         angleSensor = AngleSensor.makeSensor(angleMotor, SENSOR.MAGPOT);
         angleMotor.setInverted(false);  // TODO config file
+        angleMotor.setVoltageRampRate(0);
         
         driveMotor = CANTalonFactory.makeSpeedControlTalon(addressDriveMotor, TALON_SENSOR.MAG_ENCODER);
         driveMotor.setPID(Config.DRIVE_P, Config.DRIVE_I, Config.DRIVE_D);
         driveMotor.setVoltageRampRate(30);  // TODO Needing this probably means our PID is not being used correctly. Number very low.
         driveMotor.reverseSensor(true);
+        
         lastHighMagAngle = 0;
     }
 
@@ -62,14 +64,8 @@ public class SwerveWheel
             lastHighMagAngle = desired.getAngle();
         }
         angleSpeed = anglePID.update(angleSetPoint, angleCurrent);
-        
-        //if (desired.getMag() < Config.DEADBAND_STOP_TURNING_AT_REST)
-        {
-            //anglePID.resetIntegral();  // TODO Removed. Seems wrong. Better as good IZone if anything
-//            angleSpeed = 0;
-        }
         angleMotor.set(angleSpeed);
-
+        
         if (anglePID.isReverseAngleCloser())  // Smart turn 180 degrees at most
         {
             driveSpeed *= -1;

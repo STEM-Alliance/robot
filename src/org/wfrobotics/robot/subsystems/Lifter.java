@@ -2,6 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import java.util.logging.Level;
 
+import org.wfrobotics.reuse.hardware.CANTalonFactory;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.commands.Lift;
 import org.wfrobotics.robot.config.RobotMap;
@@ -34,7 +35,7 @@ public class Lifter extends Subsystem
 
     public Lifter(boolean reverseSensor)
     {
-        motor = new CANTalon(RobotMap.LIFTER_MOTOR);
+        motor = CANTalonFactory.makeTalon(RobotMap.LIFTER_MOTOR);
         motor.setFeedbackDevice(FeedbackDevice.AnalogPot);
         motor.changeControlMode(TalonControlMode.Position);
         //        motor.setForwardSoftLimit(TOP_LIMIT);
