@@ -48,15 +48,15 @@ public class Chassis
         log.debug("Scaled BL", WheelsScaled[3]);
 
         updateWheelSettings();
-        wheels[0].set(WheelsScaled[0]);
-        wheels[1].set(WheelsScaled[1]);
+//        wheels[0].set(WheelsScaled[0]);
+//        wheels[1].set(WheelsScaled[1]);
         wheels[2].set(WheelsScaled[2]);
-        wheels[3].set(WheelsScaled[3]);
+//        wheels[3].set(WheelsScaled[3]);
 
-        log.info(wheelNames[0], wheels[0]);
-        log.info(wheelNames[1], wheels[1]);
+//        log.info(wheelNames[0], wheels[0]);
+//        log.info(wheelNames[1], wheels[1]);
         log.info(wheelNames[2], wheels[2]);
-        log.info(wheelNames[3], wheels[3]);
+//        log.info(wheelNames[3], wheels[3]);
     }
 
     private HerdVector[] applyChassisEffects(HerdVector robotVelocity, double robotRotation)
@@ -78,7 +78,7 @@ public class Chassis
         state.updateRobotVelocity(velocity);
 
         log.info("Chassis Final", String.format("V: %s, W: %.2f", velocity, spin));
-
+        
         return chassisToWheelCommands(velocity, spin);
     }
 

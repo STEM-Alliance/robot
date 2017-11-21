@@ -1,5 +1,7 @@
 package org.wfrobotics.robot;
 
+import java.util.logging.Level;
+
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
@@ -18,6 +20,7 @@ import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends SampleRobot
 {
@@ -51,7 +54,8 @@ public class Robot extends SampleRobot
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
 
         // TODO default config?
-        CameraServer.getInstance();
+        log.setLevel(Level.FINE);
+//        CameraServer.getInstance();
     }
 
     public void operatorControl()
