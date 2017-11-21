@@ -1,7 +1,7 @@
 package org.wfrobotics.prototype.config;
 
 import org.wfrobotics.prototype.commands.ExampleForwardCommand;
-import org.wfrobotics.prototype.commands.DriveTank;
+import org.wfrobotics.prototype.commands.DriveArcade;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Xbox;
@@ -14,7 +14,7 @@ public class IO
     public static Xbox controller = new Xbox(0);
 
     public static Button X = ButtonFactory.makeButton(controller, Xbox.BUTTON.X, TRIGGER.WHILE_HELD, new ExampleForwardCommand());
-    public static Button Y = ButtonFactory.makeButton(controller, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new DriveTank());
+    public static Button Y = ButtonFactory.makeButton(controller, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new DriveArcade());
     
     
     // TODO Switch the 'Y' Button to run another Command, such as ExampleBackwardCommand

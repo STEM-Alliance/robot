@@ -6,9 +6,9 @@ import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import edu.wpi.first.wpilibj.command.Command;
 
 /** Sets ExampleSubsystem to a safe state */
-public class DriveTank extends Command
+public class DriveArcade extends Command
 {
-    public DriveTank()
+    public DriveArcade()
     {
         requires(Robot.prototypeSubsystem);
     }

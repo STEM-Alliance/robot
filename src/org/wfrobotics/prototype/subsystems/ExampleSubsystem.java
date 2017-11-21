@@ -1,6 +1,6 @@
 package org.wfrobotics.prototype.subsystems;
 
-import org.wfrobotics.prototype.commands.DriveTank;
+import org.wfrobotics.prototype.commands.DriveRocketLeague;
 
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.TalonControlMode;
@@ -37,7 +37,7 @@ public class ExampleSubsystem extends Subsystem
     protected void initDefaultCommand()
     {
         // TODO pick which Command runs whenever buttons are not being pressed
-        setDefaultCommand(new DriveTank());
+        setDefaultCommand(new DriveRocketLeague());
     }
 
     // TODO rename me (right click -> refactor -> rename)
