@@ -38,7 +38,7 @@ public final class AnglePID
         errorToCloserPath = (isReverseAngleCloser) ? reversedError : forwardError;
 
         // TODO If we reverse, reset the derivative
-        double output = pid.update(forwardError.getAngle());
+        double output = pid.update(errorToCloserPath.getAngle());
         output = output - .5;  // PID wont go negative
         SmartDashboard.putNumber("set", setPoint);
         SmartDashboard.putNumber("e", errorToCloserPath.getAngle());
