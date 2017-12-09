@@ -54,17 +54,17 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.B, TRIGGER.WHILE_HELD, new Shoot(Conveyor.MODE.CONTINUOUS)));
         robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHILE_HELD, new Rev(Rev.MODE.SHOOT)));
 
-//        robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.UNJAM)));
-//        robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.RB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.ON_HOLD)));
-//        robotSpecific.add(ButtonFactory.makeButton(operator, DPAD.UP, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.UP)));
-//        robotSpecific.add(ButtonFactory.makeButton(operator, AXIS.RIGHT_TRIGGER, .25, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.DOWN)));
-//        robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new LEDSignal(3)));
-//
-//        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
-//        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_B, TRIGGER.WHEN_PRESSED, new VisionGearDropAndBackup()));
-//        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.BLACK_B, TRIGGER.WHEN_PRESSED, new TurnToInViewTarget(.1)));
-//        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.WHITE_T, TRIGGER.WHILE_HELD, new Up(Up.MODE.CLIMB)));
-//        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.GREEN_T, TRIGGER.WHILE_HELD, new Rev(Rev.MODE.SHOOT)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.UNJAM)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.RB, TRIGGER.WHILE_HELD, new Conveyor(Conveyor.MODE.ON_HOLD)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, DPAD.UP, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.UP)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, AXIS.RIGHT_TRIGGER, .25, TRIGGER.WHILE_HELD, new Lift(Lift.MODE.DOWN)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new LEDSignal(3)));
+
+        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
+        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_B, TRIGGER.WHEN_PRESSED, new VisionGearDropAndBackup()));
+        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.BLACK_B, TRIGGER.WHEN_PRESSED, new TurnToInViewTarget(.1)));
+        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.WHITE_T, TRIGGER.WHILE_HELD, new Up(Up.MODE.CLIMB)));
+        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.GREEN_T, TRIGGER.WHILE_HELD, new Rev(Rev.MODE.SHOOT)));
     }
 
     public static IO getInstance()
@@ -91,8 +91,7 @@ public class IO
 
     public boolean getIntake()
     {
-        return false;
-//        return operator.getButtonPressed(BUTTON.Y) || panel.getButton(Panel.BUTTON.BLACK_T);
+        return operator.getButtonPressed(BUTTON.Y) || panel.getButton(Panel.BUTTON.BLACK_T);
     }
 
     public int getAutonomousSide()

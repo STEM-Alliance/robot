@@ -65,17 +65,17 @@ public class Swerve
 
         public double getRotation()
         {
-            double w;// = operator.getAxis(Xbox.AXIS.RIGHT_X);
-//
-//            if (Math.abs(w) < DEADBAND)
-//            {
-//                w = 0;
-//            }
-//
-//            if (Drive.OPERATOR_ROTATE && w != 0)
-//            {
-//                return w;
-//            }
+            double w = operator.getAxis(Xbox.AXIS.RIGHT_X);
+
+            if (Math.abs(w) < DEADBAND)
+            {
+                w = 0;
+            }
+
+            if (Drive.OPERATOR_ROTATE && w != 0)
+            {
+                return w;
+            }
 
             w = driver.getAxis(Xbox.AXIS.RIGHT_X);
 

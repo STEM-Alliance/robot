@@ -4,12 +4,9 @@ import org.wfrobotics.reuse.hardware.CANTalonFactory;
 import org.wfrobotics.reuse.hardware.CANTalonFactory.TALON_SENSOR;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleSensor.AngleProvider;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleSensor.SENSOR;
-import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 
 import com.ctre.CANTalon;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // TODO Try scaling pid output of drive motor to full range (don't include deadband). Is integral limit - disable when out of range.
 // TODO Try scaling pid output of angle motor to full range (don't include deadband). Is integral limit - disable when out of range.
@@ -39,7 +36,7 @@ public class SwerveWheel
         angleMotor.setVoltageRampRate(0);
         
         driveMotor = CANTalonFactory.makeSpeedControlTalon(addressDriveMotor, TALON_SENSOR.MAG_ENCODER);
-        driveMotor.setPID(.01, 0, 0);
+        driveMotor.setPID(Config.DRIVE_P, Config.DRIVE_I, Config.DRIVE_D);
         driveMotor.setVoltageRampRate(30);  // TODO Needing this probably means our PID is not being used correctly. Number very low.
         driveMotor.reverseSensor(true);
         
@@ -54,12 +51,9 @@ public class SwerveWheel
     public void set(HerdVector desired)
     {
         double driveSpeed = desired.getMag() * Config.DRIVE_SPEED_MAX;  // 1 --> max RPM obtainable
-        double angleSetPoint = desired.rotate(0).getAngle();
+        double angleSetPoint = desired.rotate(angleOffset).getAngle();
         double angleCurrent = angleSensor.getAngle();
         double angleSpeed = anglePID.update(angleSetPoint, angleCurrent);
-        
-        SmartDashboard.putNumber("mag", desired.getMag());
-        SmartDashboard.putNumber("angle", desired.getAngle());
                 
         if (desired.getMag() < Config.DEADBAND_STOP_TURNING_AT_REST)
         {

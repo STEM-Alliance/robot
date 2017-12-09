@@ -1,8 +1,7 @@
 <xml version="1.0">
 <dashboard>
 	<widget field="Periodic Time " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
-		<location x="356" y="453"/>
-		<property name="Buffer Size (samples)" value="200"/>
+		<location x="354" y="488"/>
 	</widget>
 	<widget field="angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
 		<location x="809" y="648"/>

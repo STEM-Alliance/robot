@@ -23,6 +23,5 @@
 	<classpathentry kind="lib" path="libraries/sf2-core.jar" sourcepath="libraries/sf2_src"/>
 	<classpathentry kind="lib" path="libraries/sf2-frc.jar" sourcepath="libraries/sf2_src"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/CTRLib.jar"/>
-	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
