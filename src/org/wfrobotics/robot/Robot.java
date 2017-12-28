@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends SampleRobot
 {
@@ -112,6 +113,7 @@ public class Robot extends SampleRobot
     }
 
     /** Should be <= 20ms, the rate the driver station pings with IO updates. This assumes using closed loop CANTalon's or sensors/PID are all on our fast service thread to prevent latency */
+    @SuppressWarnings("unused")
     private String getPeriodicTime(double start)
     {
         return String.format("%.1f ms", (Timer.getFPGATimestamp() - start) * 1000);
