@@ -24,7 +24,7 @@ public class CameraServer
     }
 
     // global configuration variable
-    private VisionMessageConfig Config = new VisionMessageConfig(0);
+    private VisionMessageConfig Config = new VisionMessageConfig(0,0, new ArrayList<Boolean>());
     private VisionMessageTargets LastTargets = new VisionMessageTargets();
     
     
@@ -166,7 +166,7 @@ public class CameraServer
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-                log.debug("CameraServer", "Connected to a client at " + clientSocket.getInetAddress().getHostAddress());
+                log.info("CameraServer", "Connected to a client at " + clientSocket.getInetAddress().getHostAddress());
                 
                 while (run)
                 {

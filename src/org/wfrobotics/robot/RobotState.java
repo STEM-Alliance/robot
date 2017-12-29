@@ -11,13 +11,13 @@ public class RobotState
 {
     // ------------- BEGIN Public State (Read-Only) -------------
 
-    public double robotHeading;                        // Angle of robot relative to when gyro was last zeroed
-    public boolean robotGear;                          // True: High, False: Low
+    public double robotHeading;     // Angle of robot relative to when gyro was last zeroed
+    public boolean robotGear;       // True: High, False: Low
 
-    public double visionError;                         // Location of target relative to center of camera
-    public boolean visionInView;                       // If vision determined the criteria for seeing the target(s) is met
-    public VisionMode visionMode;                      // What vision co-processor is using it's camera(s) for
-    public double visionWidth;                         // How big is the target(s), and therefore how close is it
+    public double visionError;      // Location of target relative to center of camera
+    public boolean visionInView;    // If vision determined the criteria for seeing the target(s) is met
+    public VisionMode visionMode;   // What vision co-processor is using it's camera(s) for
+    public double visionWidth;      // How big is the target(s), and therefore how close is it
 
     public static RobotState getInstance()
     {

@@ -5,8 +5,8 @@ import org.wfrobotics.robot.config.VisionMode;
 
 public class VisionModeCamera2 extends VisionModeSet
 {
-    public int getMode()
+    public VisionMode getMode()
     {
-        return VisionMode.CAMERA2.getValue();
+        return VisionMode.CAMERA2;
     }
 }

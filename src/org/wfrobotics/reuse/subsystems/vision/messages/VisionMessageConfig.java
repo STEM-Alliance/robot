@@ -1,36 +1,69 @@
 package org.wfrobotics.reuse.subsystems.vision.messages;
 
+import java.util.ArrayList;
+
 public class VisionMessageConfig extends VisionMessage
 {
-    private final int Version = 1;
+    private final int Version = 2;
     
-    public int Source = 0;
-    public int Width = 640;
-    public int Height = 480;
-    public int Exposure = -10;
-    public int Brightness = 55;
-    public int Saturation = 200;
-    
+    // Target camera source (index of array in the configuration file)
+    public int TargetSource;
+    // Streamer camera source (index of array in the configuration file)
+    public int StreamerSource;
+    // Array of booleans to enable/disable GRIP processing/target detection
+    public ArrayList<Boolean> ProcessingEnable;
+
     /**
-     * Create a new Config Message
-     * @param Source
+     * SUPER basic configuration message. This only enables 1 camera to run
+     * at a time, and that GRIP processing/Target detection and streaming
+     * are all done on the same camera
+     * @param TargetSource
      */
     public VisionMessageConfig(int Source)
     {
-        this.Source = Source;
+        this(Source, Source);
     }
     
-    public VisionMessageConfig(int Source, int Width, int Height,
-            int Exposure, int Brightness, int Saturation)
+    /**
+     * Basic configuration message with option to have different target and streamer
+     * sources. This assumes that GRIP processing/target detection is only done
+     * for the Target source camera.
+     * @param TargetSource
+     * @param StreamerSource
+     */
+    public VisionMessageConfig(int TargetSource, int StreamerSource)
     {
-        this.Source = Source;
-        this.Width = Width;
-        this.Height = Height;
-        this.Exposure = Exposure;
-        this.Brightness = Brightness;
-        this.Saturation = Saturation;
+        this.TargetSource = TargetSource;
+        this.StreamerSource = StreamerSource;
+        this.ProcessingEnable = new ArrayList<>(2); //TODO get count from somewhere else?
+        
+        // set them all to false
+        for (int i = 0; i < this.ProcessingEnable.size(); i++)
+        {
+            this.ProcessingEnable.set(TargetSource, false);
+        }
+        this.ProcessingEnable.set(TargetSource, true);
     }
-    
+
+    /**
+     * Full configuration options. Set the Target and Streamer sources, and
+     * individually select which are doing GRIP processing/target detection.
+     * @Deprecated
+     * This isn't currently advised, as doing GRIP processing on multiple camera
+     * streams is highly resource intensive, and will introduce lag and low FPS.
+     * @param TargetSource
+     * @param StreamerSource
+     * @param ProcessingEnable
+     */
+    @Deprecated
+    public VisionMessageConfig(int TargetSource, int StreamerSource,
+            ArrayList<Boolean> ProcessingEnable)
+    {
+        this.TargetSource = TargetSource;
+        this.StreamerSource = StreamerSource;
+        this.ProcessingEnable = ProcessingEnable;
+    }
+
     /**
      * Get the raw message string
      * @return
@@ -43,12 +76,16 @@ public class VisionMessageConfig extends VisionMessage
         // Message is formatted as comma separated list of
         // MsgLength,Version,CameraSource,Width,Height,Exposure,Brightness,Saturation
         sb.append(Version).append(",");
-        sb.append(Source).append(",");
-        sb.append(Width).append(",");
-        sb.append(Height).append(",");
-        sb.append(Exposure).append(",");
-        sb.append(Brightness).append(",");
-        sb.append(Saturation);
+        sb.append(TargetSource).append(",");
+        sb.append(StreamerSource).append(",");
+        sb.append(ProcessingEnable.size()).append(",");
+        for (int i = 0; i < ProcessingEnable.size(); i++)
+        {
+            sb.append(ProcessingEnable.get(i) ? 1 : 0);
+            
+            if (i + 1 < ProcessingEnable.size())
+                sb.append(",");
+        }
         
         sb.insert(0, Integer.toString(sb.length()) + ",");
         
@@ -64,11 +101,15 @@ public class VisionMessageConfig extends VisionMessage
         StringBuilder sb = new StringBuilder(50);
 
         sb.append("v").append(Version).append(", ");
-        sb.append("Src: ").append(Source).append(", ");
-        sb.append("Img: ").append(Width).append("x").append(Height).append(", ");
-        sb.append("Exp: ").append(Exposure).append(", ");
-        sb.append("Bri: ").append(Brightness).append(", ");
-        sb.append("Sat: ").append(Saturation);
+        sb.append("TargetSrc: ").append(TargetSource).append(", ");
+        sb.append("StreamSrc: ").append(StreamerSource).append(", ");
+        sb.append("ProcessEn: ");
+        for (int i = 0; i < ProcessingEnable.size(); i++)
+        {
+            sb.append(ProcessingEnable.get(i));
+            if (i + 1 < ProcessingEnable.size())
+                sb.append(",");
+        }
         
         return sb.toString();
     }

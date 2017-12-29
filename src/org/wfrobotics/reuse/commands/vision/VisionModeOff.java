@@ -4,8 +4,8 @@ import org.wfrobotics.robot.config.VisionMode;
 
 public class VisionModeOff extends VisionModeSet
 {
-    public int getMode()
+    public VisionMode getMode()
     {
-        return VisionMode.OFF.getValue();
+        return VisionMode.OFF;
     }
 }
