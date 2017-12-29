@@ -13,13 +13,13 @@ import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class VisionGearApproach extends Command
+public class VisionApproach extends Command
 {
-    private HerdLogger log = new HerdLogger(VisionGearApproach.class);
+    private HerdLogger log = new HerdLogger(VisionApproach.class);
     private RobotState state = RobotState.getInstance();
     private PIDController pidX;
 
-    public VisionGearApproach()
+    public VisionApproach()
     {
         requires(Robot.driveSubsystem);
         pidX = new PIDController(2.5, 0.125, 0, .35);
@@ -50,9 +50,9 @@ public class VisionGearApproach extends Command
         v = v.rotate(-state.robotHeading);  // Field relative
         s = new SwerveSignal(v, 0, SwerveSignal.HEADING_IGNORE);
 
-        log.debug("GearDistanceX", distanceFromCenter);
-        log.debug("VisionGearY", valueY);
-        log.debug("VisionGearX", valueX);
+        log.debug("VisionDistanceX", distanceFromCenter);
+        log.debug("VisionY", valueY);
+        log.debug("VisionX", valueX);
 
         Robot.driveSubsystem.driveWithHeading(s);
     }
@@ -62,7 +62,7 @@ public class VisionGearApproach extends Command
         boolean found = state.visionInView;
         double visionWidth = state.visionWidth;
 
-        log.info("GearFound", found);
+        log.info("TargetsFound", found);
         log.debug("VisionWidth", visionWidth);
 
         return !found || visionWidth < 15 || visionWidth > 335;

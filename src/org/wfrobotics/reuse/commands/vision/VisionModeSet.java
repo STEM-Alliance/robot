@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.reuse.commands.vision;
 
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
