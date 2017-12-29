@@ -5,8 +5,8 @@ package org.wfrobotics.reuse.subsystems.vision.messages;
  */
 public class VisionTargetInfo 
 {
-    public final double x;
-    public final double y;
+    public final double center_x;
+    public final double center_y;
     public final double width;
     public final double height;
     
@@ -19,8 +19,8 @@ public class VisionTargetInfo
      */
     public VisionTargetInfo(double x, double y, double w, double h)
     {
-        this.x = x;
-        this.y = y;
+        this.center_x = x;
+        this.center_y = y;
         this.width = w;
         this.height = h;
     }
@@ -29,4 +29,6 @@ public class VisionTargetInfo
     {
         return width * height;
     }
+    
+    //TODO add a function that returns the HerdVector from the center of the image
 }
