@@ -4,8 +4,8 @@ package org.wfrobotics.robot.config;
 public enum VisionMode
 {
     OFF(0),
-    SHOOTER(1),
-    GEAR(2);
+    CAMERA1(1),
+    CAMERA2(2);
 
     private final int value;
 

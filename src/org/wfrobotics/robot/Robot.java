@@ -5,13 +5,8 @@ import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.subsystems.Auger;
-import org.wfrobotics.robot.subsystems.Climber;
-import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.robot.subsystems.LED;
-import org.wfrobotics.robot.subsystems.Lifter;
-import org.wfrobotics.robot.subsystems.Shooter;
-import org.wfrobotics.robot.subsystems.SwerveDriveSteamworks;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -25,14 +20,11 @@ public class Robot extends SampleRobot
     private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
     private final RobotState state = RobotState.getInstance();
+    
     private LED leds;
-    public static SwerveDriveSteamworks driveSubsystem;
-    public static Auger augerSubsystem;
-    public static Climber climberSubsystem;
+    public static SwerveSubsystem driveSubsystem;
     public static DashboardView dashboardView;
-    public static Intake intakeSubsystem;
-    public static Lifter lifterSubsystem;
-    public static Shooter shooterSubsystem;
+    
     public static IO controls;
 
     Command autonomousCommand;
@@ -40,13 +32,8 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveSubsystem = new SwerveDriveSteamworks();
-        augerSubsystem = new Auger();
-        climberSubsystem = new Climber();
+        driveSubsystem = new SwerveSubsystem();
         dashboardView = new DashboardView();
-        intakeSubsystem = new Intake();
-        lifterSubsystem = new Lifter(true);
-        shooterSubsystem = new Shooter();
         leds = LED.getInstance();
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
@@ -84,7 +71,6 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
-            lifterSubsystem.reset();
             driveSubsystem.zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 

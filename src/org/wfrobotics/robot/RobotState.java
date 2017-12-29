@@ -112,7 +112,7 @@ public class RobotState
         visionInView = targetsInView;
         visionError = newError;
         visionWidth = newWidth;
-        visionMode = VisionMode.SHOOTER;
+        visionMode = VisionMode.CAMERA2;
     }
 
     private synchronized void processGearUpdate(VisionMessageTargets v)
@@ -124,7 +124,7 @@ public class RobotState
         visionInView = targetsInView;
         visionError = newError;  // TODO calc this specific to shooter
         visionWidth = newWidth;  // TODO
-        visionMode = VisionMode.GEAR;
+        visionMode = VisionMode.CAMERA1;
     }
 
     // ------------- END State Producers Only -------------
