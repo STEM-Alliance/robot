@@ -10,6 +10,7 @@ public class ExampleForwardCommand extends Command
 {
     // TODO create any objects this Command needs to remember for later
 
+     
     public ExampleForwardCommand()  // TODO pass any parameters needed to setup the command
     {
         requires(Robot.prototypeSubsystem);
@@ -25,6 +26,10 @@ public class ExampleForwardCommand extends Command
     protected void execute()
     {
         // TODO do anything this Command needs to happen REPEATEDLY until it's finished
+        double x = .2;
+        double y = .2;
+        Robot.prototypeSubsystem.setSpeed(x,y);
+
     }
 
     protected boolean isFinished()
