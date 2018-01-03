@@ -1,5 +1,7 @@
 package org.wfrobotics.prototype;
 
+import org.wfrobotics.prototype.commands.AutoDrive;
+import org.wfrobotics.prototype.commands.AutoTurnAndTurn;
 import org.wfrobotics.prototype.config.IO;
 import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
 
@@ -11,13 +13,13 @@ public class Robot extends SampleRobot
 {
     public static ExampleSubsystem prototypeSubsystem;
     public static IO controls;
+    Command autonomousCommand;
 
-    Command autonomousCommand = null;
 
     public void robotInit()
     {
         prototypeSubsystem = new ExampleSubsystem();
-
+        autonomousCommand = new AutoTurnAndTurn();
         controls = new IO();
     }
 
@@ -40,6 +42,7 @@ public class Robot extends SampleRobot
             Scheduler.getInstance().run();
         }
     }
+ 
 
     public void disabled()
     {
