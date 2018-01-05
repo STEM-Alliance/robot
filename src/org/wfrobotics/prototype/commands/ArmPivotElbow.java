@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ArmPivotElbow extends Command {
 
     double speed;
+
+
     public ArmPivotElbow()
     {
         requires(Robot.armSubsystem);
@@ -20,8 +22,8 @@ public class ArmPivotElbow extends Command {
 
     protected void execute()
     {
-        Utilities.spinUntilLimit(Robot.armSubsystem.isAtTop(),
-                Robot.armSubsystem.isAtBottom(), (Robot.controls.getYRotation()), Robot.armSubsystem.elbowMotor);
+      Utilities.spinUntilLimit(Robot.armSubsystem.isAtTop(),Robot.armSubsystem.isAtBottom(),
+                .5 * (Robot.controls.getRightY()), Robot.armSubsystem.elbowMotor1);
         //speed may be needed to be multiplied  by a constant
     }
 

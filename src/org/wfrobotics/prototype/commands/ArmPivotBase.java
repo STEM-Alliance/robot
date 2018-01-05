@@ -19,8 +19,14 @@ public class ArmPivotBase extends Command {
 
     protected void execute()
     {
+        Utilities.spinUntilLimit(Robot.armSubsystem.isAtTop(),Robot.armSubsystem.isAtBottom(),
+                .2 * (Robot.controls.getRightY()), Robot.armSubsystem.elbowMotor1);
+
+      Utilities.spinUntilLimit(Robot.armSubsystem.isAtTop(),Robot.armSubsystem.isAtBottom(),
+              .2 * (Robot.controls.getRightY()), Robot.armSubsystem.elbowMotor2);
+
         Utilities.spinUntilLimit(Robot.armSubsystem.isAtBaseCW(),
-                Robot.armSubsystem.isAtBaseCCW(), Robot.controls.getXRotation(),
+                Robot.armSubsystem.isAtBaseCCW(), .2 * Robot.controls.getRightX(),
                 Robot.armSubsystem.baseMotor);
         //speed may be needed to be multiplied  by a constant
     }
