@@ -32,7 +32,6 @@ public class ArmPivotHand extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute()
     {
-        this.speed = Robot.controls.getTriggerRotation();
 
         Utilities.spinUntilLimit(Robot.handSubsystem.isAtHandCW(),
                 Robot.handSubsystem.isAtHandCCW(), speed, Robot.handSubsystem.handMotor);

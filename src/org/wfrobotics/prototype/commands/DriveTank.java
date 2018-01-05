@@ -23,10 +23,10 @@ public class DriveTank extends Command {
 
     public void execute()
     {
-     this.speedL = Robot.controls.getLeftJoystick();
+     this.speedL = Robot.controls.getLeftY();
      Robot.tankSubsystem.setSpeedLeft(speedL);
 
-     this.speedR = Robot.controls.getRightJoystick();
+     this.speedR = Robot.controls.getRightY();
      Robot.tankSubsystem.setSpeedRight(speedR);
 
     }
