@@ -1,7 +1,8 @@
 package org.wfrobotics.prototype;
 
-import org.wfrobotics.prototype.config.IO;
+import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
+import org.wfrobotics.robot.subsystems.MecanumSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -10,15 +11,17 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class Robot extends SampleRobot
 {
     public static ExampleSubsystem prototypeSubsystem;
+    public static MecanumSubsystem mecanumSubsystem;
     public static IO controls;
 
     Command autonomousCommand = null;
 
     public void robotInit()
     {
+        mecanumSubsystem = new MecanumSubsystem();
         prototypeSubsystem = new ExampleSubsystem();
 
-        controls = new IO();
+        controls = IO.getInstance();
     }
 
     public void operatorControl()

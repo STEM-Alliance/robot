@@ -2,8 +2,6 @@ package org.wfrobotics.robot.config;
 
 import java.util.function.Supplier;
 
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.swerve.DriveOff;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.Robot;
@@ -42,9 +40,9 @@ public class Autonomous
         int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1 : -1; // X driving based on alliance for mirrored field
 
         return new AutoMode[] {
-                new AutoMode("Auto None", () -> new DriveOff(), 0),
-                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(0, DRIVE_SPEED, TIME_DRIVE_MODE), 0),
-                new AutoMode("Auto Forward (HIGH GEAR)", () -> new AutoDrive(0, DRIVE_SPEED * .75, TIME_DRIVE_MODE * .75), 0),
+//                new AutoMode("Auto None", () -> new DriveOff(), 0),
+//                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(0, DRIVE_SPEED, TIME_DRIVE_MODE), 0),
+//                new AutoMode("Auto Forward (HIGH GEAR)", () -> new AutoDrive(0, DRIVE_SPEED * .75, TIME_DRIVE_MODE * .75), 0),
         };
     }
 
