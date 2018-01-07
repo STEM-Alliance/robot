@@ -5,8 +5,8 @@ import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.robot.subsystems.LED;
+import org.wfrobotics.robot.subsystems.MecanumSubsystem;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -22,7 +22,8 @@ public class Robot extends SampleRobot
     private final RobotState state = RobotState.getInstance();
     
     private LED leds;
-    public static SwerveSubsystem driveSubsystem;
+    //public static SwerveSubsystem driveSubsystem;
+    public static MecanumSubsystem mecanumDriveSubsystem;
     public static DashboardView dashboardView;
     
     public static IO controls;
@@ -32,7 +33,8 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveSubsystem = new SwerveSubsystem();
+        //driveSubsystem = new SwerveSubsystem();
+        mecanumDriveSubsystem = new MecanumSubsystem();
         dashboardView = new DashboardView();
         leds = LED.getInstance();
 
@@ -71,7 +73,7 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
-            driveSubsystem.zeroGyro();
+            //driveSubsystem.zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 
             allPeriodic();
@@ -88,7 +90,7 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
-        log.info("Drive", driveSubsystem);
+        //log.info("Drive", driveSubsystem);
         log.info("Battery", m_ds.getBatteryVoltage());
         state.logState();
 
