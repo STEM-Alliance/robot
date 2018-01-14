@@ -32,12 +32,9 @@ public class MatchState {
         // get the data from the driver station
         gameData = DriverStation.getInstance().getGameSpecificMessage();
 
-        // look for the string
+        // if the string isn't empty, look for a match of
         // first three characters can be L or R; ie "LRR", "RLR", etc
-        Matcher match = Pattern.compile("^([LR]{3})").matcher(gameData);
-
-        // if the string isn't empty and we found the match
-        if (!gameData.isEmpty() && match.find())
+        if (!gameData.isEmpty() && Pattern.compile("^([LR]{3})").matcher(gameData).find())
         {
             // order is near switch, scale, far switch
             SwitchNear = (gameData.charAt(0) == 'L') ? Side.Left : Side.Right;
