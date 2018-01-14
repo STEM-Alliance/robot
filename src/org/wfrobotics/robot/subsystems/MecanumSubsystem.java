@@ -2,6 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.commands.DriveMecanum;
 
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.*;
 public class MecanumSubsystem extends Subsystem {
     RobotDrive drive;
     CANTalon frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor;
+    public Gyro gyro;
     
     public MecanumSubsystem()
     {
@@ -22,6 +24,7 @@ public class MecanumSubsystem extends Subsystem {
         this.rearLeftMotor = new CANTalon(11);
         this.frontRightMotor = new CANTalon(12);
         this.rearRightMotor = new CANTalon(13);
+        this.gyro = Gyro.getInstance();
 
         this.rearLeftMotor.setInverted(true);
         this.frontLeftMotor.setInverted(true);
@@ -32,9 +35,20 @@ public class MecanumSubsystem extends Subsystem {
         rearRightMotor.setVoltageRampRate(rampRate);
         rearLeftMotor.setVoltageRampRate(rampRate);
     }
-    public void setSpeed(HerdVector vector, double rotation)
+    public void driveWithHeading(HerdVector vector, double rotation)
     {
-        drive.mecanumDrive_Polar(vector.getMag(), vector.getAngle(), rotation);
+        drive.mecanumDrive_Polar(
+                vector.getMag(),
+                vector.getAngle() - this.gyro.getYaw(),
+                rotation);
+    }
+
+    public void drive(HerdVector vector, double rotation)
+    {
+        drive.mecanumDrive_Polar(
+                vector.getMag(),
+                vector.getAngle(),
+                rotation);
     }
     
 

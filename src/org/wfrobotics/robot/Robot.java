@@ -23,7 +23,7 @@ public class Robot extends SampleRobot
     
     private LED leds;
     //public static SwerveSubsystem driveSubsystem;
-    public static MecanumSubsystem mecanumDriveSubsystem;
+    public static MecanumSubsystem driveSubsystem;
     public static DashboardView dashboardView;
     
     public static IO controls;
@@ -34,7 +34,7 @@ public class Robot extends SampleRobot
     public void robotInit()
     {
         //driveSubsystem = new SwerveSubsystem();
-        mecanumDriveSubsystem = new MecanumSubsystem();
+        driveSubsystem = new MecanumSubsystem();
         dashboardView = new DashboardView();
         leds = LED.getInstance();
 
@@ -73,7 +73,7 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
-            //driveSubsystem.zeroGyro();
+            driveSubsystem.gyro.zeroYaw();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 
             allPeriodic();

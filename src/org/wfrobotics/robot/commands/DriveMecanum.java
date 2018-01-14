@@ -11,12 +11,12 @@ public class DriveMecanum extends Command {
 
     public DriveMecanum()
     {
-        requires(Robot.mecanumDriveSubsystem);
+        requires(Robot.driveSubsystem);
     }
 
     protected void execute()
     {
-        Robot.mecanumDriveSubsystem.setSpeed(
+        Robot.driveSubsystem.driveWithHeading(
                 Robot.controls.mecanumIO.getVector(),
                 Robot.controls.mecanumIO.getRotation());
     }
