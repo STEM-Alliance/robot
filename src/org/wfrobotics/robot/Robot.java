@@ -20,6 +20,7 @@ public class Robot extends SampleRobot
     private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
     private final RobotState state = RobotState.getInstance();
+    private final MatchState matchState = MatchState.getInstance();
     
     private LED leds;
     public static SwerveSubsystem driveSubsystem;
@@ -91,6 +92,7 @@ public class Robot extends SampleRobot
         log.info("Drive", driveSubsystem);
         log.info("Battery", m_ds.getBatteryVoltage());
         state.logState();
+        matchState.update();
 
         double start = Timer.getFPGATimestamp();
         scheduler.run();
