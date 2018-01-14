@@ -49,7 +49,7 @@ public class SwerveWheel
 
     public String toString()
     {
-        return String.format("S:%.2f, A: %.0f\u00b0, E: %s", driveMotor.getSelectedSensorVelocity(0), angleSensor.getAngle(), anglePID);
+        return String.format("S:%.2f, A: %.0f\u00b0, E: %s", (float)driveMotor.getSelectedSensorVelocity(0), angleSensor.getAngle(), anglePID);
     }
 
     public void set(HerdVector desired)
