@@ -9,6 +9,8 @@ import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -33,7 +35,8 @@ public class Robot extends SampleRobot
     public void robotInit()
     {
         driveSubsystem = new SwerveSubsystem();
-        dashboardView = new DashboardView();
+        // uncomment if using USB camera to stream video from roboRio
+        //dashboardView = new DashboardView();
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
 
@@ -53,6 +56,12 @@ public class Robot extends SampleRobot
 
     public void autonomous()
     {
+        if(!matchState.update())
+        {
+            // something went wrong, and we didn't get the match info data
+            // TODO error?
+        }
+        
         autonomousCommand =  Autonomous.setupSelectedMode();
         if (autonomousCommand != null) autonomousCommand.start();
 
@@ -85,7 +94,10 @@ public class Robot extends SampleRobot
     private void allPeriodic()
     {
         log.info("Drive", driveSubsystem);
-        log.info("Battery", m_ds.getBatteryVoltage());
+        
+        SmartDashboard.putNumber("Battery V", RobotController.getInputVoltage());
+        SmartDashboard.putNumber("Battery A", RobotController.getInputCurrent());
+        
         state.logState();
 
         double start = Timer.getFPGATimestamp();
