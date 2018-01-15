@@ -1,11 +1,13 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.drive.DriveLocator;
+import org.wfrobotics.drive.SwerveLocator;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -20,11 +22,12 @@ public class Robot extends SampleRobot
     private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
     private final RobotState state = RobotState.getInstance();
-    
+
     private LED leds;
     public static SwerveSubsystem driveSubsystem;
+    public static DriveLocator<SwerveSubsystem> driveLocator;
     public static DashboardView dashboardView;
-    
+
     public static IO controls;
 
     Command autonomousCommand;
@@ -32,7 +35,9 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveSubsystem = new SwerveSubsystem();
+        driveSubsystem = SwerveSubsystem.getInstance();
+        driveLocator = new SwerveLocator(SwerveSubsystem.getInstance());
+
         dashboardView = new DashboardView();
         leds = LED.getInstance();
 
@@ -96,12 +101,5 @@ public class Robot extends SampleRobot
         scheduler.run();
         //log.debug("Periodic Time", getPeriodicTime(start));
         SmartDashboard.putNumber("Periodic Time ", Timer.getFPGATimestamp() - start);
-    }
-
-    /** Should be <= 20ms, the rate the driver station pings with IO updates. This assumes using closed loop CANTalon's or sensors/PID are all on our fast service thread to prevent latency */
-    @SuppressWarnings("unused")
-    private String getPeriodicTime(double start)
-    {
-        return String.format("%.1f ms", (Timer.getFPGATimestamp() - start) * 1000);
     }
 }
