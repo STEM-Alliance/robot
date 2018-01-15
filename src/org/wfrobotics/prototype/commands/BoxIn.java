@@ -27,8 +27,8 @@ public class BoxIn extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
         double speed = 0.1;
-        Robot.intakeSubsystem.leftSetSpeed(speed); 
-        Robot.intakeSubsystem.rightSetSpeed(speed * -1);
+        Robot.intakeSubsystem.SetSpeed(speed); 
+        
     }
 
     // Make this return true when this Command no longer needs to run execute()

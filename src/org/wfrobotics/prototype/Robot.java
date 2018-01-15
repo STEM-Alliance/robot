@@ -1,7 +1,6 @@
 package org.wfrobotics.prototype;
 
 import org.wfrobotics.prototype.config.IO;
-import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
 import org.wfrobotics.prototype.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -10,7 +9,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends SampleRobot
 {
-    public static ExampleSubsystem prototypeSubsystem;
     public static IntakeSubsystem intakeSubsystem;
     public static IO controls;
 
@@ -18,7 +16,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        prototypeSubsystem = new ExampleSubsystem();
+        
         intakeSubsystem = new IntakeSubsystem();
         
         controls = new IO();
