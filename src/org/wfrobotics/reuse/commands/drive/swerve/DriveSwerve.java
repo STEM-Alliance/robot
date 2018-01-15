@@ -1,6 +1,7 @@
 
 package org.wfrobotics.reuse.commands.drive.swerve;
 
+import org.wfrobotics.drive.HolonomicLocator;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -15,14 +16,16 @@ public class DriveSwerve extends Command
 {
     protected RobotState state = RobotState.getInstance();
     protected HerdLogger log = new HerdLogger(DriveSwerve.class);
+    protected HolonomicLocator<?> driveHelper;
 
     public static boolean FIELD_RELATIVE = true;  // Toggle with button, need if gyro breaks
 
     private double highVelocityStart;
 
-    public DriveSwerve()
+    public DriveSwerve(HolonomicLocator<?> helper)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
     }
 
     protected void initialize()
@@ -47,7 +50,7 @@ public class DriveSwerve extends Command
             }
             gear = timeSinceInitialized() - highVelocityStart > Drive.AUTO_SHIFT_TIME && speedRobot.getMag() > Drive.AUTO_SHIFT_SPEED;
 
-            Robot.driveSubsystem.setGear(gear);
+            driveHelper.getDrive().setGear(gear);
         }
 
         // TODO should mag squared move here? Removed from chassis because all drive commands shouldn't want, just joystick driving, right?
@@ -59,7 +62,7 @@ public class DriveSwerve extends Command
             speedRobot = speedRobot.rotate(-robotHeading);
         }
         log.info("Field Relative", speedRobot);
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(speedRobot, speedRotation, robotHeading));
+        driveHelper.getDrive().driveWithHeading(new SwerveSignal(speedRobot, speedRotation, robotHeading));
     }
 
     protected boolean isFinished()
