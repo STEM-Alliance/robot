@@ -20,8 +20,8 @@ public class Robot extends SampleRobot
     private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
     private final RobotState state = RobotState.getInstance();
+    private final MatchState matchState = MatchState.getInstance();
     
-    private LED leds;
     //public static SwerveSubsystem driveSubsystem;
     public static MecanumSubsystem driveSubsystem;
     public static DashboardView dashboardView;
@@ -36,18 +36,16 @@ public class Robot extends SampleRobot
         //driveSubsystem = new SwerveSubsystem();
         driveSubsystem = new MecanumSubsystem();
         dashboardView = new DashboardView();
-        leds = LED.getInstance();
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
 
         // TODO default config?
-        CameraServer.getInstance();
+        //CameraServer.getInstance();
     }
 
     public void operatorControl()
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
-        leds.set(LED.defaultLEDEffect);
 
         while (isOperatorControl() && isEnabled())
         {
@@ -57,7 +55,6 @@ public class Robot extends SampleRobot
 
     public void autonomous()
     {
-        leds.set(leds.getAllianceEffect());
         autonomousCommand =  Autonomous.setupSelectedMode();
         if (autonomousCommand != null) autonomousCommand.start();
 
@@ -69,7 +66,6 @@ public class Robot extends SampleRobot
 
     public void disabled()
     {
-        leds.set(LED.defaultLEDEffect);
 
         while (isDisabled())
         {
