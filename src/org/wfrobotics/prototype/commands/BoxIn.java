@@ -1,7 +1,8 @@
 package org.wfrobotics.prototype.commands;
 
 
-import org.wfrobotics.prototype.subsystems.BoxIntakeSubsystem;
+import org.wfrobotics.prototype.Robot;
+import org.wfrobotics.prototype.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -10,13 +11,13 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class BoxIn extends Command {
    
-    BoxIntakeSubsystem boxIntakeSub = new BoxIntakeSubsystem();
+    
     
     public BoxIn() {
         
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-        
+        requires(Robot.intakeSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -25,9 +26,9 @@ public class BoxIn extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        int speed = 25;
-        boxIntakeSub.leftSetSpeed(speed); 
-        boxIntakeSub.rightSetSpeed(speed * -1);
+        double speed = 0.1;
+        Robot.intakeSubsystem.leftSetSpeed(speed); 
+        Robot.intakeSubsystem.rightSetSpeed(speed * -1);
     }
 
     // Make this return true when this Command no longer needs to run execute()
