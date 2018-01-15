@@ -4,9 +4,9 @@ import org.wfrobotics.reuse.hardware.sensors.MagnetoPot;
 import org.wfrobotics.reuse.hardware.sensors.MagnetoPotSRX;
 import org.wfrobotics.reuse.utilities.HerdAngle;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
-import com.ctre.CANTalon.TalonControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 
 /**
  * Controls swerve wheel turning
@@ -25,7 +25,7 @@ public abstract class AngleSensor
         public double getAngle();
     }
 
-    public static AngleProvider makeSensor(CANTalon motor, SENSOR type)
+    public static AngleProvider makeSensor(TalonSRX motor, SENSOR type)
     {
         if (type == SENSOR.ENCODER)
         {
@@ -39,13 +39,13 @@ public abstract class AngleSensor
     {
         private final double INVERT;  // Flip to swap left and right motors
 
-        private final CANTalon hardware;
+        private final TalonSRX hardware;
 
-        public AngleMotorEncoder(CANTalon motor, boolean angleInvert)
+        public AngleMotorEncoder(TalonSRX motor, boolean angleInvert)
         {
             hardware = motor;
-            hardware.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Absolute);
-            hardware.changeControlMode(TalonControlMode.PercentVbus);
+            hardware.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+            hardware.set(ControlMode.PercentOutput, 0);
             // hardware.setPosition(angleMotor.getPosition());
             // TODO Set the initial position, switch to relative mode --> Test this, should produce 4x HW closed loop speedup
 
@@ -54,7 +54,7 @@ public abstract class AngleSensor
 
         public double getAngle()
         {
-            HerdAngle wrappedDegrees = new HerdAngle(hardware.getPosition() * 360);
+            HerdAngle wrappedDegrees = new HerdAngle(hardware.getSelectedSensorPosition(0) * 360);
 
             return new HerdAngle(INVERT * wrappedDegrees.getAngle()).getAngle();
         }
@@ -66,7 +66,7 @@ public abstract class AngleSensor
 
         private final MagnetoPot hardware;
 
-        public AngleMotorMagPot(CANTalon motor, boolean angleInvert)
+        public AngleMotorMagPot(TalonSRX motor, boolean angleInvert)
         {
             hardware = new MagnetoPotSRX(motor, 180, -180);
             INVERT = (angleInvert) ? -1 : 1;
