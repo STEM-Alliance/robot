@@ -34,7 +34,9 @@ public class MatchState {
 
         // if the string isn't empty, look for a match of
         // first three characters can be L or R; ie "LRR", "RLR", etc
-        if (!gameData.isEmpty() && Pattern.compile("^([LR]{3})").matcher(gameData).find())
+        if (gameData != null && 
+                !gameData.isEmpty() &&
+                Pattern.compile("^([LR]{3})").matcher(gameData).find())
         {
             // order is near switch, scale, far switch
             SwitchNear = (gameData.charAt(0) == 'L') ? Side.Left : Side.Right;
