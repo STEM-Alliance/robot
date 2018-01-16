@@ -7,7 +7,7 @@ import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.subsystems.LED;
+import org.wfrobotics.robot.subsystems.LEDSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -26,7 +26,7 @@ public class TurnToInViewTarget extends Command
 
     protected void initialize()
     {
-        LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        LEDSubsystem.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
     }
 
     protected void execute()

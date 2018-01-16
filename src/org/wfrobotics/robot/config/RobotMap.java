@@ -8,11 +8,13 @@ public class RobotMap
      * PWM: 0-9 are on-board, 10-19 are on the MXP
      */
 
-    public static final int ANG_SWERVE_ANGLE[] = { 0, 1, 2, 3 };
-    public static final int CAN_SWERVE_DRIVE_TALONS[] = { 1, 4, 5, 8};
-    public static final int CAN_SWERVE_ANGLE_TALONS[] = { 2, 3, 6, 7};
-    public static final int PWM_SWERVE_SHIFT_SERVOS[] = { 0, 1, 2, 3 };
-
+    public static final int CAN_TANK_DRIVE_TALONS[] = { 5, 6, 7, 8};
+    
+    public static final int LIFTER_MOTOR = 1;
+    
+    public static final int INTAKE_MOTOR[] = { 2, 3 };
+    public static final int CLIMB_MOTOR    =    4;  
+    
     public static final int CAN_LIGHT = 31;
 
 }

@@ -22,5 +22,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/navx_frc.jar"/>
 	<classpathentry kind="lib" path="lib/sf2-frc.jar"/>
+	<classpathentry kind="var" path="USERLIBS_DIR/CTRLib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

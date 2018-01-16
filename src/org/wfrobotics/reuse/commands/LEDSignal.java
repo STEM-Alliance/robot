@@ -3,7 +3,7 @@ package org.wfrobotics.reuse.commands;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
-import org.wfrobotics.robot.subsystems.LED;
+import org.wfrobotics.robot.subsystems.LEDSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -16,7 +16,7 @@ public class LEDSignal extends Command
 
     protected void initialize()
     {
-        LED.getInstance().set(new Effect(EFFECT_TYPE.BLINK, LEDs.RED, .15));
+        LEDSubsystem.getInstance().set(new Effect(EFFECT_TYPE.BLINK, LEDs.RED, .15));
     }
 
     protected boolean isFinished()
@@ -26,6 +26,6 @@ public class LEDSignal extends Command
 
     protected void end()
     {
-        LED.getInstance().set(LED.defaultLEDEffect);
+        LEDSubsystem.getInstance().set(LEDSubsystem.defaultLEDEffect);
     }
 }

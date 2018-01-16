@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.robot.commands.VisionModeCamera1;
-import org.wfrobotics.robot.commands.VisionModeDefault;
+import org.wfrobotics.robot.commands.Vision.VisionModeCamera1;
+import org.wfrobotics.robot.commands.Vision.VisionModeDefault;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 

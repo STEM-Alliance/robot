@@ -6,7 +6,10 @@ import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
-import org.wfrobotics.robot.subsystems.LED;
+import org.wfrobotics.robot.subsystems.ClimbSubsystem;
+import org.wfrobotics.robot.subsystems.IntakeSubsystem;
+import org.wfrobotics.robot.subsystems.LEDSubsystem;
+import org.wfrobotics.robot.subsystems.LifterSubsystem;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -23,10 +26,15 @@ public class Robot extends SampleRobot
     private final MatchState matchState = MatchState.getInstance();
     
     public static SwerveSubsystem driveSubsystem;
+    
+    public static ClimbSubsystem climbSubsystem;
+    public static IntakeSubsystem intakeSubsystem;
+    public static LifterSubsystem lifterSubsystem;
+    
     public static DashboardView dashboardView;
     
     public static IO controls;
-
+    
     Command autonomousCommand;
     double lastPeriodicTime = 0;
 
@@ -34,6 +42,10 @@ public class Robot extends SampleRobot
     {
         driveSubsystem = new SwerveSubsystem();
         dashboardView = new DashboardView();
+        
+        climbSubsystem = new ClimbSubsystem();
+        intakeSubsystem = new IntakeSubsystem();
+        lifterSubsystem = new LifterSubsystem();
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
 

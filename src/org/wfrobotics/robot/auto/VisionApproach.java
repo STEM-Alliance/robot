@@ -9,7 +9,7 @@ import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.subsystems.LED;
+import org.wfrobotics.robot.subsystems.LEDSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -27,7 +27,7 @@ public class VisionApproach extends Command
 
     protected void initialize()
     {
-        LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        LEDSubsystem.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
     }
 
     protected void execute()
@@ -70,7 +70,7 @@ public class VisionApproach extends Command
 
     protected void end()
     {
-        LED.getInstance().set(LED.defaultLEDEffect);
+        LEDSubsystem.getInstance().set(LEDSubsystem.defaultLEDEffect);
     }
 
     protected void interrupted()
