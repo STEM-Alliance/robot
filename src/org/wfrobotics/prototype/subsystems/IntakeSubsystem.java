@@ -17,8 +17,8 @@ public class IntakeSubsystem extends Subsystem {
     // here. Call these from Commands.
     public IntakeSubsystem()
     {
-      RightIntake = new CANTalon(1);
-      LeftIntake = new CANTalon(2);
+      RightIntake = new CANTalon(19);
+      LeftIntake = new CANTalon(20);
       RightIntake.setInverted(true);
       LeftIntake.set(ControlMode.Follower, 1);
         // TODO Auto-generated constructor stub
