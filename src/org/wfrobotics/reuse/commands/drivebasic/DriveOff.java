@@ -1,9 +1,9 @@
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.drivebasic;
 
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -11,11 +11,13 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriveOff extends Command
 {
     HerdLogger log = new HerdLogger(DriveOff.class);
+    DriveService<?> driveHelper;
     SwerveSignal s = new SwerveSignal(new HerdVector(0, 0));
 
-    public DriveOff()
+    public DriveOff(DriveService<?> helper)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
     }
 
     protected void initialize()
@@ -26,7 +28,7 @@ public class DriveOff extends Command
     protected void execute()
     {
         log.info("Drive Cmd", s.velocity);
-        Robot.driveSubsystem.driveWithHeading(s);
+        driveHelper.getDrive().driveBasic(new HerdVector(0, 0));
     }
 
     protected boolean isFinished()

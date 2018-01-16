@@ -1,25 +1,27 @@
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.holonomic;
 
+import org.wfrobotics.reuse.subsystems.drive.HolonomicService;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class Strafe extends Command
 {
+    protected HolonomicService<?> driveHelper;
     final SwerveSignal s;
 
-    public Strafe(double xSpeed, double timeout)
+    public Strafe(HolonomicService<?> helper, double xSpeed, double timeout)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
         s = new SwerveSignal(new HerdVector(xSpeed, 0));
         setTimeout(timeout);
     }
 
     protected void execute()
     {
-        Robot.driveSubsystem.driveWithHeading(s);
+        driveHelper.getDrive().driveWithHeading(s);
     }
 
     protected boolean isFinished()
@@ -29,6 +31,6 @@ public class Strafe extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        driveHelper.getDrive().driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

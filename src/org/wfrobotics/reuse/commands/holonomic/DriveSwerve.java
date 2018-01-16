@@ -1,7 +1,7 @@
 
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.holonomic;
 
-import org.wfrobotics.drive.HolonomicLocator;
+import org.wfrobotics.reuse.subsystems.drive.HolonomicService;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -16,13 +16,13 @@ public class DriveSwerve extends Command
 {
     protected RobotState state = RobotState.getInstance();
     protected HerdLogger log = new HerdLogger(DriveSwerve.class);
-    protected HolonomicLocator<?> driveHelper;
+    protected HolonomicService<?> driveHelper;
 
     public static boolean FIELD_RELATIVE = true;  // Toggle with button, need if gyro breaks
 
     private double highVelocityStart;
 
-    public DriveSwerve(HolonomicLocator<?> helper)
+    public DriveSwerve(HolonomicService<?> helper)
     {
         driveHelper = helper;
         requires(driveHelper.getDrive());
@@ -72,6 +72,6 @@ public class DriveSwerve extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        driveHelper.getDrive().driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

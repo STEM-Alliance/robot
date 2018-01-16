@@ -1,5 +1,6 @@
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.holonomic;
 
+import org.wfrobotics.reuse.subsystems.drive.HolonomicService;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -15,13 +16,15 @@ public class DriveCrawl extends Command
 {
     RobotState state = RobotState.getInstance();
     HerdLogger log = new HerdLogger(DriveCrawl.class);
+    HolonomicService<?> driveHelper;
     double initialHeading;
-    
+
     double minSpeed;
 
-    public DriveCrawl()
+    public DriveCrawl(HolonomicService<?> helper)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
     }
 
     protected void initialize()
@@ -41,7 +44,7 @@ public class DriveCrawl extends Command
         log.debug("Drive IO", io);
         log.info("Robot Relative", robotRelative);
         log.info("Field Relative", scaled);
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(robotRelative, 0, initialHeading));
+        driveHelper.getDrive().driveWithHeading(new SwerveSignal(robotRelative, 0, initialHeading));
     }
 
     protected boolean isFinished()
@@ -51,6 +54,6 @@ public class DriveCrawl extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        driveHelper.getDrive().driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

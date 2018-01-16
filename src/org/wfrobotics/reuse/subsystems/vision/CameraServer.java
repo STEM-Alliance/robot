@@ -1,7 +1,11 @@
 package org.wfrobotics.reuse.subsystems.vision;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -14,7 +18,7 @@ import org.wfrobotics.reuse.utilities.HerdLogger;
 public class CameraServer
 {
     private final static int DEFAULT_PORT = 5801;
-    
+
     /**
      * Interface to describe the listener callback
      */
@@ -26,30 +30,30 @@ public class CameraServer
     // global configuration variable
     private VisionMessageConfig Config = new VisionMessageConfig(0,0, new ArrayList<Boolean>());
     private VisionMessageTargets LastTargets = new VisionMessageTargets();
-    
-    
+
+
     // network port to serve on
     private final int PORT;
-    
+
     // list of listeners to notify when receiving messages
     private List<CameraListener> listeners = new ArrayList<CameraListener>();
 
     // server task to monitor for new clients
     private Runnable serverTask;
-    
+
     // server thread to run the task on
     private Thread serverThread;
-    
+
     // pool of threads for client connections to run under
     final ExecutorService clientProcessingPool = Executors.newFixedThreadPool(10);
 
     // actual socket that reads the data
     private ServerSocket serverSocket;
-    
+
     private HerdLogger log = new HerdLogger(CameraServer.class);
 
     private static CameraServer instance = null;
-    
+
     /**
      * Get the instance of the TargetServer at the default port {@value #DEFAULT_PORT}
      * @return
@@ -69,7 +73,7 @@ public class CameraServer
      */
     private CameraServer(int port)
     {
-        this.PORT = port;
+        PORT = port;
 
         // set up a server task so that it can run in the background
         // and wait for clients to connect
@@ -82,7 +86,7 @@ public class CameraServer
                 {
                     serverSocket = new ServerSocket(PORT);
                     log.info("CameraServer", "Waiting for clients to connect at " +
-                            serverSocket.getInetAddress().getHostAddress() + ":" + 
+                            serverSocket.getInetAddress().getHostAddress() + ":" +
                             serverSocket.getLocalPort());
 
                     while (true)
@@ -98,7 +102,7 @@ public class CameraServer
                 }
             }
         };
-        
+
         serverThread = new Thread(serverTask, "CameraServer");
         serverThread.start();
     }
@@ -141,7 +145,7 @@ public class CameraServer
     {
         return LastTargets;
     }
-    
+
     /**
      * Task to run the client connections
      */
@@ -160,28 +164,28 @@ public class CameraServer
             boolean run = true;
 
             String fromClient;
-            
+
             try
             {
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
                 log.info("CameraServer", "Connected to a client at " + clientSocket.getInetAddress().getHostAddress());
-                
+
                 while (run)
                 {
                     fromClient = in.readLine();
-                    
+
                     if(fromClient != null)
                     {
                         // only parse while we get messages
                         VisionMessageTargets message = new VisionMessageTargets(fromClient);
                         log.debug("CameraServer", "RX: " + message.Decoded());
-                        
+
                         // send the config message to sync latest settings
                         out.println(Config.toString());
                         log.debug("CameraServer", "TX: " + Config.Decoded());
-                        
+
                         NotifyListeners(message);
                     }
                     else
@@ -193,14 +197,14 @@ public class CameraServer
 
                 // close the connection now that we're done
                 clientSocket.close();
-                
+
             }
             catch (IOException e)
             {
                 e.printStackTrace();
                 //log.exception("CameraServer", e);
                 log.error("CameraServer", "Error during normal operation");
-                
+
                 // try and force the socket to close on a failure
                 try
                 {
@@ -212,7 +216,7 @@ public class CameraServer
                     log.error("CameraServer", "Unable to close socket");
                     //log.exception("CameraServer", ex);
                 }
-                
+
             }
         }
     }

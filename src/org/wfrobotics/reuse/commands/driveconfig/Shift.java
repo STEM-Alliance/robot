@@ -1,21 +1,23 @@
 package org.wfrobotics.reuse.commands.driveconfig;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class Shift extends InstantCommand
 {
+    DriveService<?> driveHelper;
     private boolean request;
 
-    public Shift(boolean highGear)
+    public Shift(DriveService<?> helper, boolean highGear)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
         request = highGear;
     }
 
     protected void initialize()
     {
-        Robot.driveSubsystem.setGear(request);
+        driveHelper.getDrive().setGear(request);
     }
 }

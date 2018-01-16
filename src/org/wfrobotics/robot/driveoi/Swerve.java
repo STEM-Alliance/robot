@@ -2,14 +2,15 @@ package org.wfrobotics.robot.driveoi;
 
 import java.util.ArrayList;
 
-import org.wfrobotics.reuse.commands.drive.swerve.DriveCrawl;
 import org.wfrobotics.reuse.commands.driveconfig.FieldRelativeToggle;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
+import org.wfrobotics.reuse.commands.holonomic.DriveCrawl;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.BUTTON;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveService;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.Drive;
 
@@ -45,10 +46,10 @@ public class Swerve
         {
             this.driver = driver;
             this.operator = operator;
-            buttons.add(ButtonFactory.makeAnyDpadButton(driver, TRIGGER.WHILE_HELD, new DriveCrawl()));
-            buttons.add(ButtonFactory.makeButton(driver, BUTTON.LB, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
+            buttons.add(ButtonFactory.makeAnyDpadButton(driver, TRIGGER.WHILE_HELD, new DriveCrawl(SwerveService.getInstance())));
+            buttons.add(ButtonFactory.makeButton(driver, BUTTON.LB, TRIGGER.WHEN_PRESSED, new ShiftToggle(SwerveService.getInstance())));
             buttons.add(ButtonFactory.makeButton(driver, BUTTON.BACK, TRIGGER.WHEN_PRESSED, new FieldRelativeToggle()));
-            buttons.add(ButtonFactory.makeButton(driver, BUTTON.START, TRIGGER.WHEN_PRESSED, new GyroZero()));
+            buttons.add(ButtonFactory.makeButton(driver, BUTTON.START, TRIGGER.WHEN_PRESSED, new GyroZero(SwerveService.getInstance())));
         }
 
         public HerdVector getVelocity()
@@ -118,9 +119,9 @@ public class Swerve
             buttonDriveSetGyro = new JoystickButton(driver, 9);
             buttonDriveShift= new JoystickButton(driver, 1);
 
-            buttonDriveShift.whenPressed(new ShiftToggle());
+            buttonDriveShift.whenPressed(new ShiftToggle(SwerveService.getInstance()));
             buttonDriveFieldRelative.whenPressed(new FieldRelativeToggle());
-            buttonDriveSetGyro.whenPressed(new GyroZero());
+            buttonDriveSetGyro.whenPressed(new GyroZero(SwerveService.getInstance()));
         }
 
         public HerdVector getVelocity()

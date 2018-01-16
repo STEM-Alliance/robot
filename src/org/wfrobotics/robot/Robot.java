@@ -1,8 +1,8 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.drive.DriveLocator;
-import org.wfrobotics.drive.SwerveLocator;
-import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
+import org.wfrobotics.reuse.subsystems.tank.TankService;
+import org.wfrobotics.reuse.subsystems.tank.TankSubsystem;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
@@ -24,8 +24,7 @@ public class Robot extends SampleRobot
     private final RobotState state = RobotState.getInstance();
 
     private LED leds;
-    public static SwerveSubsystem driveSubsystem;
-    public static DriveLocator<SwerveSubsystem> driveLocator;
+    public static DriveService<TankSubsystem> driveService;
     public static DashboardView dashboardView;
 
     public static IO controls;
@@ -35,9 +34,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveSubsystem = SwerveSubsystem.getInstance();
-        driveLocator = new SwerveLocator(SwerveSubsystem.getInstance());
-
+        driveService = new TankService(TankSubsystem.getInstance());
         dashboardView = new DashboardView();
         leds = LED.getInstance();
 
@@ -76,7 +73,7 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
-            driveSubsystem.zeroGyro();
+            driveService.getDrive().zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 
             allPeriodic();
@@ -93,7 +90,7 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
-        log.info("Drive", driveSubsystem);
+        log.info("Drive", driveService.getDrive());
         log.info("Battery", m_ds.getBatteryVoltage());
         state.logState();
 

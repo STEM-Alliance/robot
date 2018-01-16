@@ -1,11 +1,11 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
-import org.wfrobotics.drive.HolonomicDrive;
-import org.wfrobotics.drive.SwerveLocator;
-import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
+import org.wfrobotics.reuse.commands.holonomic.DriveSwerve;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
+import org.wfrobotics.reuse.subsystems.drive.HolonomicDrive;
 import org.wfrobotics.reuse.utilities.HerdAngle;
 import org.wfrobotics.reuse.utilities.HerdLogger;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.RobotState;
 
@@ -49,10 +49,7 @@ public class SwerveSubsystem extends Subsystem implements HolonomicDrive
 
     public static SwerveSubsystem getInstance()
     {
-        if (instance == null)
-        {
-            instance = new SwerveSubsystem();
-        }
+        if (instance == null) { instance = new SwerveSubsystem(); }
         return instance;
     }
 
@@ -63,7 +60,17 @@ public class SwerveSubsystem extends Subsystem implements HolonomicDrive
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new DriveSwerve(SwerveLocator.getInstance()));
+        setDefaultCommand(new DriveSwerve(SwerveService.getInstance()));
+    }
+
+    public void driveBasic(HerdVector vector)
+    {
+        // TODO
+    }
+
+    public void turnBasic(HerdVector vector)
+    {
+        // TODO
     }
 
     public void driveWithHeading(SwerveSignal command)

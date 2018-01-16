@@ -1,16 +1,17 @@
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.drivebasic;
 
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
 import org.wfrobotics.robot.subsystems.LED;
 
 /** Turn until we see the target, or get to the expected heading it should be at **/
 public class TurnUntilTargetInView extends TurnToHeading
 {
-    public TurnUntilTargetInView(double headingFieldRelative, double tolerance)
+    public TurnUntilTargetInView(DriveService<?> helper, double headingFieldRelative, double tolerance)
     {
-        super(headingFieldRelative, tolerance);
+        super(helper, headingFieldRelative, tolerance);
     }
 
     protected void initialize()
