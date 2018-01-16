@@ -1,5 +1,7 @@
 package org.wfrobotics.prototype.commands;
 
+import org.wfrobotics.prototype.Robot;
+
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -10,6 +12,7 @@ public class BoxOut extends Command {
     public BoxOut() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
+        requires(Robot.intakeSubsystem);
     }
 
     // Called just before this Command runs the first time
@@ -18,6 +21,8 @@ public class BoxOut extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+        double speed = -0.2;
+        Robot.intakeSubsystem.SetSpeed(speed); 
     }
 
     // Make this return true when this Command no longer needs to run execute()
