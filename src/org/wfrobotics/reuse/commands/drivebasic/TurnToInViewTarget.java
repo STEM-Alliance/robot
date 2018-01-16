@@ -1,11 +1,10 @@
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.drivebasic;
 
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
-import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.LED;
 
@@ -15,12 +14,13 @@ import edu.wpi.first.wpilibj.command.Command;
 public class TurnToInViewTarget extends Command
 {
     RobotState state = RobotState.getInstance();
-    HerdVector v = new HerdVector(0, 0);
+    protected DriveService<?> driveHelper;
     final double tol;
 
-    public TurnToInViewTarget(double tolerance)
+    public TurnToInViewTarget(DriveService<?> helper, double tolerance)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
         tol = tolerance;
     }
 
@@ -31,9 +31,10 @@ public class TurnToInViewTarget extends Command
 
     protected void execute()
     {
+
         double targetHeading = state.robotHeading + state.visionError;
-        SwerveSignal s = new SwerveSignal(v, 0, targetHeading);
-        Robot.driveSubsystem.driveWithHeading(s);
+        HerdVector v = new HerdVector(1, targetHeading);  // TODO magnitude should be configurable, add to constructor?
+        driveHelper.getDrive().turnBasic(v);
     }
 
     protected boolean isFinished()
@@ -43,6 +44,6 @@ public class TurnToInViewTarget extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        driveHelper.getDrive().turnBasic(new HerdVector(0, 0));
     }
 }

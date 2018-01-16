@@ -1,8 +1,9 @@
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.holonomic;
 
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
+import org.wfrobotics.reuse.subsystems.drive.HolonomicService;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.LED;
 
@@ -11,9 +12,9 @@ public class StrafeToTarget extends Strafe
     RobotState state = RobotState.getInstance();
     final double tol;
 
-    public StrafeToTarget(double xSpeed, double timeout, double tolerance)
+    public StrafeToTarget(HolonomicService<?> helper, double xSpeed, double timeout, double tolerance)
     {
-        super(xSpeed, timeout);
+        super(helper, xSpeed, timeout);
         tol = tolerance;
     }
 

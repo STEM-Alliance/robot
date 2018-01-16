@@ -1,8 +1,10 @@
 package org.wfrobotics.reuse.commands.driveconfig;
 
-import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
+import org.wfrobotics.reuse.commands.holonomic.DriveSwerve;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+
+// TODO Work with any drive type
 
 public class FieldRelativeToggle extends InstantCommand
 {

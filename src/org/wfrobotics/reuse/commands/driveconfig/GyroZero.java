@@ -1,18 +1,21 @@
 package org.wfrobotics.reuse.commands.driveconfig;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class GyroZero extends InstantCommand
 {
-    public GyroZero()
+    DriveService<?> driveHelper;
+
+    public GyroZero(DriveService<?> helper)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
     }
 
     protected void initialize()
     {
-        Robot.driveSubsystem.zeroGyro();
+        driveHelper.getDrive().zeroGyro();
     }
 }

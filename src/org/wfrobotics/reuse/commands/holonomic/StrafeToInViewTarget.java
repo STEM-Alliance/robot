@@ -1,11 +1,11 @@
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.holonomic;
 
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
+import org.wfrobotics.reuse.subsystems.drive.HolonomicService;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.LED;
 
@@ -14,12 +14,14 @@ import edu.wpi.first.wpilibj.command.Command;
 public class StrafeToInViewTarget extends Command
 {
     RobotState state = RobotState.getInstance();
+    protected HolonomicService<?> driveHelper;
     final SwerveSignal s;
     final double tol;
 
-    public StrafeToInViewTarget(double xSpeed, double tolerance)
+    public StrafeToInViewTarget(HolonomicService<?> helper, double xSpeed, double tolerance)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
         s = new SwerveSignal(new HerdVector(xSpeed, 0));
         tol = tolerance;
     }
@@ -31,7 +33,7 @@ public class StrafeToInViewTarget extends Command
 
     protected void execute()
     {
-        Robot.driveSubsystem.driveWithHeading(s);
+        driveHelper.getDrive().driveWithHeading(s);
     }
 
     protected boolean isFinished()
@@ -41,6 +43,6 @@ public class StrafeToInViewTarget extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        driveHelper.getDrive().driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

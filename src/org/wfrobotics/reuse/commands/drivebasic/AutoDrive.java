@@ -1,8 +1,7 @@
-package org.wfrobotics.reuse.commands.drive.swerve;
+package org.wfrobotics.reuse.commands.drivebasic;
 
-import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -15,12 +14,14 @@ import edu.wpi.first.wpilibj.command.Command;
 public class AutoDrive extends Command
 {
     protected RobotState state = RobotState.getInstance();
+    protected DriveService<?> driveHelper;
     protected final HerdVector robotRelative;
 
-    public AutoDrive(double speedX, double speedY, double timeout)
+    public AutoDrive(DriveService<?> helper, HerdVector vector, double timeout)
     {
-        requires(Robot.driveSubsystem);
-        robotRelative = new HerdVector(speedX, speedY);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
+        robotRelative = vector;
         setTimeout(timeout);
     }
 
@@ -28,7 +29,7 @@ public class AutoDrive extends Command
     {
         HerdVector fieldRelative = robotRelative.rotate(-state.robotHeading);
 
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(fieldRelative));
+        driveHelper.getDrive().driveBasic(fieldRelative);
     }
 
     protected boolean isFinished()
@@ -38,6 +39,6 @@ public class AutoDrive extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        driveHelper.getDrive().driveBasic(new HerdVector(0, 0));
     }
 }

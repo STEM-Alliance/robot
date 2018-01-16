@@ -1,19 +1,22 @@
 package org.wfrobotics.reuse.commands.driveconfig;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
 import org.wfrobotics.robot.RobotState;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class ShiftToggle extends InstantCommand
 {
-    public ShiftToggle()
+    DriveService<?> driveHelper;
+
+    public ShiftToggle(DriveService<?> helper)
     {
-        requires(Robot.driveSubsystem);
+        driveHelper = helper;
+        requires(driveHelper.getDrive());
     }
 
     protected void initialize()
     {
-        Robot.driveSubsystem.setGear(!RobotState.getInstance().robotGear);
+        driveHelper.getDrive().setGear(!RobotState.getInstance().robotGear);
     }
 }
