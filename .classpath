@@ -10,14 +10,14 @@
 	<classpathentry kind="var" path="wpiutil" sourcepath="wpiutil.sources"/>
 	<classpathentry kind="lib" path="lib/CTRE_Phoenix.jar" sourcepath="lib/CTRE_Phoenix-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/4818Robot/lib/CTRE_Phoenix-javadoc.jar!/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="4818Robot/lib"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/PROJECT_LOC/lib/CTRE_Phoenix-javadoc.jar!/"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="PROJECT_LOC/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/mindsensors.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/4818Robot/lib/mindsensors-javadoc.jar!/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="4818Robot/lib"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/PROJECT_LOC/lib/mindsensors-javadoc.jar!/"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="PROJECT_LOC/lib"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/navx_frc.jar"/>

@@ -1,11 +1,10 @@
-package org.wfrobotics.robot;
+package org.wfrobotics.reuse.utilities;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class MatchState {
+public class MatchState2018 {
 
     public enum Side {
         Left, Right, Unknown
@@ -15,14 +14,14 @@ public class MatchState {
     public Side Scale = Side.Unknown;
     public Side SwitchFar = Side.Unknown;
 
-    private MatchState()
+    private MatchState2018()
     {
         update();
     }
 
-    public static MatchState getInstance()
+    public static MatchState2018 getInstance()
     {
-        return new MatchState();
+        return new MatchState2018();
     }
 
     public boolean update()

@@ -3,6 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
+import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
@@ -22,7 +23,7 @@ public class Robot extends SampleRobot
     private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
     private final RobotState state = RobotState.getInstance();
-    private final MatchState matchState = MatchState.getInstance();
+    private final MatchState2018 matchState = MatchState2018.getInstance();
     
     public static SwerveSubsystem driveSubsystem;
     public static DashboardView dashboardView;
