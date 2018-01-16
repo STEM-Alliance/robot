@@ -30,11 +30,7 @@ public class Chassis
 
     public Chassis()
     {
-        wheels[0] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[0], RobotMap.CAN_SWERVE_ANGLE_TALONS[0]);
-        wheels[1] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[1], RobotMap.CAN_SWERVE_ANGLE_TALONS[1]);
-        wheels[2] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[2], RobotMap.CAN_SWERVE_ANGLE_TALONS[2]);
-        wheels[3] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[3], RobotMap.CAN_SWERVE_ANGLE_TALONS[3]);
-
+       
         lastVelocityTimestamp = Timer.getFPGATimestamp();
     }
 

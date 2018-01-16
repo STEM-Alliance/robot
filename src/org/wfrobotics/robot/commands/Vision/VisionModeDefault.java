@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.Vision;
 
 import org.wfrobotics.reuse.commands.vision.VisionModeSet;
 import org.wfrobotics.robot.config.VisionMode;

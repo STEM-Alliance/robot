@@ -4,7 +4,7 @@ import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.subsystems.LED;
+import org.wfrobotics.robot.subsystems.LEDSubsystem;
 
 public class StrafeUntilTargetInView extends Strafe
 {
@@ -17,7 +17,7 @@ public class StrafeUntilTargetInView extends Strafe
 
     protected void initialize()
     {
-        LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        LEDSubsystem.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
     }
 
     protected boolean isFinished()

@@ -3,7 +3,7 @@ package org.wfrobotics.reuse.commands.drive.swerve;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
-import org.wfrobotics.robot.subsystems.LED;
+import org.wfrobotics.robot.subsystems.LEDSubsystem;
 
 /** Turn until we see the target, or get to the expected heading it should be at **/
 public class TurnUntilTargetInView extends TurnToHeading
@@ -15,7 +15,7 @@ public class TurnUntilTargetInView extends TurnToHeading
 
     protected void initialize()
     {
-        LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+        LEDSubsystem.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
     }
 
     protected boolean isFinished()

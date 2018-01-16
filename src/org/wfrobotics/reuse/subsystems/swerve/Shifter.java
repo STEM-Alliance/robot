@@ -24,7 +24,7 @@ public class Shifter
         {
             int halfRange = (Config.SHIFTER_INVERT[index]) ? -Config.SHIFTER_RANGE / 2 : Config.SHIFTER_RANGE / 2;
 
-            shifter[index] = new Servo(RobotMap.PWM_SWERVE_SHIFT_SERVOS[index]);
+//            shifter[index] = new Servo(RobotMap.PWM_SWERVE_SHIFT_SERVOS[index]);
 
             TOP[index] = Config.SHIFTER_VALS[index] + halfRange;
             BOTTOM[index] = Config.SHIFTER_VALS[index] - halfRange;
