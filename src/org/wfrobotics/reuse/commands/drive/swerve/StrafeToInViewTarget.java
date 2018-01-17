@@ -20,7 +20,7 @@ public class StrafeToInViewTarget extends Command
     public StrafeToInViewTarget(double xSpeed, double tolerance)
     {
         requires(Robot.driveSubsystem);
-        s = new SwerveSignal(new HerdVector(xSpeed, 0), 0);
+        s = new SwerveSignal(new HerdVector(xSpeed, 0));
         tol = tolerance;
     }
 
@@ -36,11 +36,11 @@ public class StrafeToInViewTarget extends Command
 
     protected boolean isFinished()
     {
-        return !state.visionInView || Math.abs(state.getVisionError()) < tol;
+        return !state.visionInView || Math.abs(state.visionError) < tol;
     }
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

@@ -1,72 +1,61 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
+import org.wfrobotics.reuse.utilities.HerdAngle;
 import org.wfrobotics.reuse.utilities.PIDController;
-import org.wfrobotics.reuse.utilities.Utilities;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Absolute angle motor control PID
+ * Absolute angle motor control PID. Corrects to setpoint or it's 180 degree mirror, whichever is closer.
  * @author Team 4818 WFRobotics
  */
 public final class AnglePID
 {
-    private static final double HalfCircle = 180;
+    private final PIDController pid;
 
-    private final PIDController controller;
+    private boolean isReverseAngleCloser;
+    private HerdAngle errorToCloserPath;
 
-    private double motorSpeed;
-    private boolean reverseMotor;
-    public double errorShortestPath;
-
-    public AnglePID(double p, double i, double d, double max)
+    public AnglePID(double p, double i, double d)
     {
-        controller = new PIDController(p, i, d, max);
-        motorSpeed = 0;
-        reverseMotor = false;
+        pid = new PIDController(p, i, d, 1);
+        isReverseAngleCloser = false;
     }
 
     public String toString()
     {
-        return String.format("(Speed: %.2f, Error: %.2f)", motorSpeed, errorShortestPath);
+        return errorToCloserPath.toString();
     }
 
-    /**
-     * Update the motor drive speed using the PI controller
-     * @param setPoint desired position
-     * @param sensorValue current position from sensor
-     * @return new motor speed output, -1 to 1
-     */
+    /** Calculate output to move towards setpoint, or its 180 degrees offset, via whichever of those two paths is closest */
     public double update(double setPoint, double sensorValue)
     {
-        double forwardMotorError = Utilities.wrapToRange(setPoint - sensorValue, -HalfCircle, HalfCircle);
-        double reversedMotorError = Utilities.wrapToRange(forwardMotorError + HalfCircle, -HalfCircle, HalfCircle);
+        SmartDashboard.putNumber("sense", sensorValue);
+        HerdAngle forwardError = new HerdAngle(setPoint - sensorValue);
+        HerdAngle reversedError = forwardError.rotate(180);
 
-        reverseMotor = Math.abs(reversedMotorError) < Math.abs(forwardMotorError);
+        isReverseAngleCloser = Math.abs(reversedError.getAngle()) < Math.abs(forwardError.getAngle());
+        errorToCloserPath = (isReverseAngleCloser) ? reversedError : forwardError;
 
-        errorShortestPath = (reverseMotor) ? reversedMotorError : forwardMotorError;
-        // TODO if we reverse, reset the integral
-        motorSpeed = controller.update(errorShortestPath);
-
-        return motorSpeed;
+        // TODO If we reverse, reset the derivative
+        double output = pid.update(forwardError.getAngle());
+        output = output - .5;  // PID wont go negative
+        SmartDashboard.putNumber("set", setPoint);
+        SmartDashboard.putNumber("e", errorToCloserPath.getAngle());
+        SmartDashboard.putNumber("o", output);
+        return output;
     }
 
     public void updatePID(double p, double i, double d)
     {
-        controller.setP(p);
-        controller.setI(i);
-        controller.setD(d);
+        pid.setP(p);
+        pid.setI(i);
+        pid.setD(d);
     }
 
-    public void resetIntegral()
+    /** Does taking the shortest path require turning the motor in the reverse direction? */
+    public boolean isReverseAngleCloser()
     {
-        controller.resetError();
-    }
-
-    /**
-     * Should the motor be driving in reverse? (180 vs 360 turning)
-     * @return true if motor should be reversed
-     */
-    public boolean reverseDriveMotorMoreEfficient()
-    {
-        return reverseMotor;
+        return isReverseAngleCloser;
     }
 }

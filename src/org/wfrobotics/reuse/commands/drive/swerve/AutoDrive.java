@@ -3,30 +3,32 @@ package org.wfrobotics.reuse.commands.drive.swerve;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.RobotState;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+// TODO Should autodrive switch or optionally have polar?
+// TODO Should we use brake for higher repeatability, does that make issues with drive subsystem PID's?
+// TODO Constructor is broken, HerdVector takes polar not xy
+
+/** Drive relative to the field. The robot's momentum is dampened when the command ends for greater repeatability. **/
 public class AutoDrive extends Command
 {
-    private final SwerveSignal s;
+    protected RobotState state = RobotState.getInstance();
+    protected final HerdVector robotRelative;
 
-    /** Drive, optionally while simultaneously turning at a fixed rate */
-    public AutoDrive(double speedX, double speedY, double speedR, double timeout)
-    {
-        this(speedX, speedY, speedR, SwerveSignal.HEADING_IGNORE, timeout);
-    }
-
-    /** Drive, optionally while simultaneously turning to a specific angle */
-    public AutoDrive(double speedX, double speedY, double speedR, double angle, double timeout)
+    public AutoDrive(double speedX, double speedY, double timeout)
     {
         requires(Robot.driveSubsystem);
-        s = new SwerveSignal(new SwerveSignal(new HerdVector(speedX, speedY), speedR, angle));
+        robotRelative = new HerdVector(speedX, speedY);
         setTimeout(timeout);
     }
 
     protected void execute()
     {
-        Robot.driveSubsystem.driveWithHeading(s);
+        HerdVector fieldRelative = robotRelative.rotate(-state.robotHeading);
+
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(fieldRelative));
     }
 
     protected boolean isFinished()
@@ -36,6 +38,6 @@ public class AutoDrive extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

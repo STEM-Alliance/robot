@@ -1,13 +1,12 @@
 package org.wfrobotics.reuse.utilities;
 
-import com.ctre.CANTalon;
 
 public final class Utilities
 {
     /**
      * Ensure the value is between min and max, and if it is outside the range,
      * wrap it around.
-     *
+     * 
      * @param value
      *            Input value
      * @param min
@@ -25,58 +24,23 @@ public final class Utilities
     /**
      * Ensure the value is between 0 and max, and if it is outside the range,
      * wrap it around.
-     *
+     * 
      * @param value
      *            Input value
      * @param max
      *            Maximum expected output value
      * @return The value wrapped to between 0 and max
      */
-    public static final double wrapToRange(double value, double max)
+    private static final double wrapToRange(double value, double max)
     {
         // The Java mod operator returns values from -max to max,
         // so we need to add max and mod again
         return ((value % max) + max) % max;
-    }
-
-    /**
-     * Ensure the value is between 0 and max, and if it is outside the range,
-     * wrap it around.
-     *
-     * @param value
-     *            Input value
-     * @param max
-     *            Maximum expected output value
-     * @return The value wrapped to between 0 and max
-     */
-    public static final float wrapToRange(float value, float max)
-    {
-        // The Java mod operator returns values from -max to max,
-        // so we need to add max and mod again
-        return ((value % max) + max) % max;
-    }
-
-    /**
-     * Ensure the value is between min and max, and if it is outside the range,
-     * wrap it around.
-     *
-     * @param value
-     *            Input value
-     * @param min
-     *            Minimum expected output value
-     * @param max
-     *            Maximum expected output value
-     * @return The value wrapped to between min and max
-     */
-    public static final float wrapToRange(float value, float min, float max)
-    {
-        // Subract off the min, wrap to the range, and add the min again
-        return wrapToRange(value - min, max - min) + min;
     }
 
     /**
      * Trim a value to keep it in the min/max range.
-     *
+     * 
      * @param value
      *            Input value
      * @param min
@@ -100,7 +64,7 @@ public final class Utilities
 
     /**
      * Trim a value to keep it in the min/max range.
-     *
+     * 
      * @param value
      *            Input value
      * @param limit
@@ -114,7 +78,7 @@ public final class Utilities
 
     /**
      * Scale a value from the expected input range to the expected output range.
-     *
+     * 
      * @param value
      *            Input value
      * @param inMin
@@ -138,7 +102,7 @@ public final class Utilities
 
     /**
      * Scale a value from the expected input range to the expected output range.
-     *
+     * 
      * @param value
      *            Input value
      * @param inMax
@@ -152,19 +116,4 @@ public final class Utilities
     {
         return clampToRange(value, 0, inMax) * outMax / inMax;
     }
-    /**
-     *
-     */
-    public static void spinUntilLimit(boolean atMax, boolean atMin, double speed, CANTalon motor)
-    {
-        if((speed < 0) && !atMin || (speed > 0 && !atMax))
-        {
-            motor.set(speed);
-        }
-        else
-        {
-            motor.set(0);
-        }
-    }
-
 }

@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class HerdLogger
 {
+    private static final HerdLogger temporaryDebuggingLogger = new HerdLogger("Temp");
+
     private final Logger delegateLogger;
 
     public HerdLogger(Class<?> c)
@@ -27,6 +29,19 @@ public class HerdLogger
         delegateLogger.addHandler(new SmartDashProducer());
     }
 
+    /** For last minute debugging. Please delete or adjust into another log level if committing. **/
+    public static void temp(String key, Object value)
+    {
+        temporaryDebuggingLogger.delegateLogger.log(Level.SEVERE, key, value);
+    }
+
+    /** For last minute debugging. Please delete or adjust log statement levels instead of committing **/
+    public void setLevelTempDebug()
+    {
+        delegateLogger.setLevel(Level.FINE);
+    }
+
+    /** Change what gets printed for this logger **/
     public void setLevel(Level l)
     {
         delegateLogger.setLevel(l);

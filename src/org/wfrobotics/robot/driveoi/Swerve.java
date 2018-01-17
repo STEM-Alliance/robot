@@ -11,9 +11,6 @@ import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.BUTTON;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.commands.Conveyor;
-import org.wfrobotics.robot.commands.Rev;
-import org.wfrobotics.robot.commands.Shoot;
 import org.wfrobotics.robot.config.Drive;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -21,8 +18,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
+// TODO Button for fast turning (rotate priority over velocity)
+// TODO Deadband move to subsystem so we can scale to range at PID?
+
 public class Swerve
 {
+    // TODO can these be common among drive types?
+    // TODO what can move to reuse, maybe with config separated out?
     public interface SwerveIO
     {
         public HerdVector getVelocity();
@@ -58,23 +60,31 @@ public class Swerve
                 v.scale(0);
             }
 
-            if (Drive.OPERATOR_ROTATE)
-            {
-                v.rotate(-operator.getX(Hand.kRight));
-            }
-
             return v;
         }
 
         public double getRotation()
         {
-            double value = driver.getAxis(Xbox.AXIS.RIGHT_X);
+            double w = operator.getAxis(Xbox.AXIS.RIGHT_X);
 
-            if (Math.abs(value) < DEADBAND)
+            if (Math.abs(w) < DEADBAND)
             {
-                value = 0;
+                w = 0;
             }
-            return value;
+
+            if (Drive.OPERATOR_ROTATE && w != 0)
+            {
+                return w;
+            }
+
+            w = driver.getAxis(Xbox.AXIS.RIGHT_X);
+
+            if (Math.abs(w) < DEADBAND)
+            {
+                w = 0;
+            }
+
+            return w;
         }
 
         public HerdVector getCrawl()
@@ -97,8 +107,6 @@ public class Swerve
         private final Joystick driver;
         private final Xbox operator;
         Button buttonDriveShift;
-        Button buttonDriveSmartShoot;
-        Button buttonDriveDumbShoot;
         Button buttonDriveFieldRelative;
         Button buttonDriveSetGyro;
 
@@ -106,15 +114,10 @@ public class Swerve
         {
             this.driver = driver;
             this.operator = operator;
-            buttonDriveSmartShoot = new JoystickButton(driver, 6);
-            buttonDriveDumbShoot = new JoystickButton(driver, 7);
             buttonDriveFieldRelative= new JoystickButton(driver, 8);
             buttonDriveSetGyro = new JoystickButton(driver, 9);
-
             buttonDriveShift= new JoystickButton(driver, 1);
 
-            buttonDriveDumbShoot.whileHeld(new Rev(Rev.MODE.SHOOT));
-            buttonDriveSmartShoot.whileHeld(new Shoot(Conveyor.MODE.CONTINUOUS));
             buttonDriveShift.whenPressed(new ShiftToggle());
             buttonDriveFieldRelative.whenPressed(new FieldRelativeToggle());
             buttonDriveSetGyro.whenPressed(new GyroZero());

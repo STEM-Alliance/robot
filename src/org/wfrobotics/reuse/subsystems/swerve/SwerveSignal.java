@@ -1,5 +1,6 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
+import org.wfrobotics.reuse.utilities.HerdAngle;
 import org.wfrobotics.reuse.utilities.HerdVector;
 
 public class SwerveSignal
@@ -8,13 +9,13 @@ public class SwerveSignal
 
     public HerdVector velocity;    // Direction
     public double spin;            // Twist while moving
-    public double heading;         // Angle to track
+    public HerdAngle heading;      // Angle to track
 
     public SwerveSignal(HerdVector velocity,  double rotationalSpeed, double heading)
     {
         this.velocity = new HerdVector(velocity);
         spin = rotationalSpeed;
-        this.heading = heading;
+        this.heading = new HerdAngle(heading);
     }
 
     public SwerveSignal(HerdVector velocity,  double rotationalSpeed)
@@ -22,22 +23,27 @@ public class SwerveSignal
         this(velocity, rotationalSpeed, HEADING_IGNORE);
     }
 
+    public SwerveSignal(HerdVector velocity)
+    {
+        this(velocity, 0, HEADING_IGNORE);
+    }
+
     public SwerveSignal(SwerveSignal clone)
     {
-        this(clone.velocity, clone.spin, clone.heading);
+        this(clone.velocity, clone.spin, clone.heading.getAngle());
     }
 
     public String toString()
     {
         if(hasHeading())
         {
-            return String.format("V: %s, W: %.2f, H: %.2f", velocity, spin, heading);
+            return String.format("V: %s, W: %.1f, H: %s", velocity, spin, heading);
         }
-        return String.format("V: %s, W: %.2f, H: None", velocity, spin);
+        return String.format("V: %s, W: %.1f, H: None", velocity, spin);
     }
 
     public boolean hasHeading()
     {
-        return heading != HEADING_IGNORE;
+        return heading.getAngle() != HEADING_IGNORE;
     }
 }

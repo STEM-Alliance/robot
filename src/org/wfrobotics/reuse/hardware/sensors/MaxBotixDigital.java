@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class MaxBotixDigital extends MaxBotix
 {
@@ -125,9 +124,6 @@ public class MaxBotixDigital extends MaxBotix
         m_counter.setMaxPeriod(1.0);
         m_counter.setSemiPeriodMode(true);
         m_counter.reset();
-
-        LiveWindow.addSensor("Ultrasonic",
-                ((DigitalInput) m_echoChannel).getChannel(), this);
 
         super.initialize();
     }

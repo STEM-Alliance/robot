@@ -1,18 +1,12 @@
 
 package org.wfrobotics.reuse.commands.drive.swerve;
 
-import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
-
+/** Drive relative to the field. The robot's momentum is not dampened when the command ends. **/
 public class AutoDriveCoast extends AutoDrive
 {
-    public AutoDriveCoast(double speedX, double speedY, double speedR, double timeout)
+    public AutoDriveCoast(double speedX, double speedY, double timeout)
     {
-        super(speedX, speedY, speedR, SwerveSignal.HEADING_IGNORE, timeout);
-    }
-
-    public AutoDriveCoast(double speedX, double speedY, double speedR, double angle, double timeout)
-    {
-        super(speedX, speedY, speedR, angle, timeout);
+        super(speedX, speedY, timeout);
     }
 
     protected void end()
