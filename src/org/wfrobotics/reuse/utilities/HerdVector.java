@@ -3,10 +3,10 @@ package org.wfrobotics.reuse.utilities;
 /**
  * @author Team 4818 WFRobotics
  */
-public class HerdVector
+public class HerdVector implements WrappedAngle
 {
-    private double mag;
-    private double angle;
+    private final double mag;
+    private final double angle;
 
     public HerdVector(double mag, double angle)
     {
@@ -20,14 +20,13 @@ public class HerdVector
         }
 
         this.mag = m;
-        if (m == 0 && this.angle == -180)
+        a = ((a + 180 % 360) + 360) % 360 - 180;  // -180 to 180
+
+        if (a == -0)
         {
-            this.angle = 0;  // Postive y-axis atan2 special case
+            a = 0;
         }
-        else
-        {
-            this.angle = ((a + 180 % 360) + 360) % 360 - 180;  // -180 to 180
-        }
+        this.angle = a;
     }
 
     public HerdVector(HerdVector clone)
@@ -55,20 +54,9 @@ public class HerdVector
         return mag * FastTrig.cos(angle);  // Positive y-axis as zero angle
     }
 
-    public double angleRelativeTo(HerdVector b)
-    {
-        return angleRelativeTo(b.getAngle());
-    }
-
-    public double angleRelativeTo(double angle)
-    {
-        double diff = this.angle - angle;
-        return ((diff + 180 % 360) + 360) % 360 - 180;  // -180 to 180
-    }
-
     public String toString()
     {
-        return String.format("(%.2f, %.2f\u00b0)", mag, angle);
+        return String.format("(%.2f, %.1f\u00b0)", mag, angle);
     }
 
     public HerdVector add(HerdVector b)
@@ -84,19 +72,19 @@ public class HerdVector
         return add(b.scale(-1));
     }
 
-    public HerdVector rotate(HerdVector b)
-    {
-        return rotate(b.getAngle());
-    }
-
     public HerdVector rotate(double angle)
     {
         return new HerdVector(mag, this.angle + angle);
     }
 
-    public HerdVector scale(HerdVector b)
+    public HerdVector rotate(WrappedAngle b)
     {
-        return scale(b.getMag());
+        return rotate(b.getAngle());
+    }
+
+    public HerdVector rotateReverse(WrappedAngle b)
+    {
+        return rotate(-b.getAngle());
     }
 
     public HerdVector scale(double mag)

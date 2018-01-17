@@ -3,27 +3,25 @@ package org.wfrobotics.robot.config;
 import java.util.function.Supplier;
 
 import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDriveWait;
+import org.wfrobotics.reuse.commands.drive.swerve.DriveOff;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.auto.AutoGear;
-import org.wfrobotics.robot.auto.AutoShoot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+// TODO Recursively log mode/profile of composing commands with newlines, could ask each to print their toString?
+
 public class Autonomous
 {
     static final double DRIVE_SPEED = .6;
-    static final double START_ANGLE_SHOOT = 99;
-    static final double START_ANGLE_GEAR_ONLY = 90;
     static final double TIME_DRIVE_MODE = 4;
 
-    public enum POSITION_ROTARY {SIDE_BOILER, CENTER, SIDE_LOADING_STATION};
+    public enum POSITION_ROTARY {SIDE_A, CENTER, SIDE_B};
     public static class AutoMode
     {
         public final String text;
@@ -44,14 +42,9 @@ public class Autonomous
         int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1 : -1; // X driving based on alliance for mirrored field
 
         return new AutoMode[] {
-                new AutoMode("Auto None", () -> new AutoDriveWait(), 0),
-                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(0, DRIVE_SPEED, 0, TIME_DRIVE_MODE), 0),
-                new AutoMode("Auto Forward  (HIGH GEAR)", () -> new AutoDrive(0, DRIVE_SPEED * .75, 0, TIME_DRIVE_MODE * .75), 0),
-                //new AutoMode("Auto Shoot (NOT WORKING YET)", new AutoShoot(AutoShoot.MODE_DRIVE.DEAD_RECKONING_MIDPOINT, AutoShoot.MODE_SHOOT.DEAD_RECKONING)),
-                new AutoMode("Auto Shoot then Hopper", () -> new AutoShoot(), signX * START_ANGLE_SHOOT),
-                new AutoMode("Auto Shoot then Gear", () -> new AutoGear(startingPosition, AutoGear.MODE.VISION, true), signX * START_ANGLE_SHOOT),
-                new AutoMode("Auto Gear Vision", () -> new AutoGear(startingPosition, AutoGear.MODE.VISION, false), START_ANGLE_GEAR_ONLY),
-                //new AutoMode("Auto Gear Dead Reckoning", new AutoGear(startingPosition, AutoGear.MODE.DEAD_RECKONING, false)),
+                new AutoMode("Auto None", () -> new DriveOff(), 0),
+                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(0, DRIVE_SPEED, TIME_DRIVE_MODE), 0),
+                new AutoMode("Auto Forward (HIGH GEAR)", () -> new AutoDrive(0, DRIVE_SPEED * .75, TIME_DRIVE_MODE * .75), 0),
         };
     }
 
@@ -84,12 +77,12 @@ public class Autonomous
 
         if (alliance == Alliance.Blue && dial == 7 || alliance == Alliance.Red && dial == 1)
         {
-            position = POSITION_ROTARY.SIDE_BOILER;
+            position = POSITION_ROTARY.SIDE_A;
             log.info("Autonomous Starting Position", "BOILER");
         }
         else if (alliance == Alliance.Blue && dial == 1 || alliance == Alliance.Red && dial == 7)
         {
-            position = POSITION_ROTARY.SIDE_LOADING_STATION;
+            position = POSITION_ROTARY.SIDE_B;
             log.info("Autonomous Starting Position", "LOADING STATION");
         }
         else if (dial == 0)

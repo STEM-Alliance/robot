@@ -13,7 +13,7 @@ public class Strafe extends Command
     public Strafe(double xSpeed, double timeout)
     {
         requires(Robot.driveSubsystem);
-        s = new SwerveSignal(new HerdVector(xSpeed, 0), 0);
+        s = new SwerveSignal(new HerdVector(xSpeed, 0));
         setTimeout(timeout);
     }
 
@@ -29,6 +29,6 @@ public class Strafe extends Command
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

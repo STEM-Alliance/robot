@@ -31,18 +31,18 @@ public class TurnToInViewTarget extends Command
 
     protected void execute()
     {
-        double targetHeading = state.robotHeading + state.getVisionError();
+        double targetHeading = state.robotHeading + state.visionError;
         SwerveSignal s = new SwerveSignal(v, 0, targetHeading);
         Robot.driveSubsystem.driveWithHeading(s);
     }
 
     protected boolean isFinished()
     {
-        return !state.visionInView || Math.abs(state.robotHeading + state.getVisionError()) < tol;
+        return !state.visionInView || Math.abs(state.visionError) < tol;
     }
 
     protected void end()
     {
-        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0), 0));
+        Robot.driveSubsystem.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

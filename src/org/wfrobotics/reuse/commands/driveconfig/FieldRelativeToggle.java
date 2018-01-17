@@ -1,18 +1,13 @@
 package org.wfrobotics.reuse.commands.driveconfig;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.reuse.commands.drive.swerve.DriveSwerve;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class FieldRelativeToggle extends InstantCommand
 {
-    public FieldRelativeToggle()
-    {
-        requires(Robot.driveSubsystem);
-    }
-
     protected void initialize()
     {
-        Robot.driveSubsystem.setFieldRelative(!Robot.driveSubsystem.getFieldRelative());
+        DriveSwerve.FIELD_RELATIVE = !DriveSwerve.FIELD_RELATIVE;
     }
 }

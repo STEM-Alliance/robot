@@ -24,7 +24,7 @@ public class StrafeToTarget extends Strafe
 
     protected boolean isFinished()
     {
-        if(state.visionInView && Math.abs(state.getVisionError()) < tol)
+        if(state.visionInView && Math.abs(state.visionError) < tol)
         {
             return true;
         }

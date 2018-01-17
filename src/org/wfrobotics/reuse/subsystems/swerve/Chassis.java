@@ -1,6 +1,5 @@
 package org.wfrobotics.reuse.subsystems.swerve;
 
-import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleMotorMagPot;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.SwerveWheel;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -10,78 +9,72 @@ import org.wfrobotics.robot.config.RobotMap;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 
+// TODO use two PID, one for each gear
+// TODO rotation adjust to cap angle pid or something? Value always 1 now
+// TODO tune drive PID (D term), remove chassis accel limit when okay
+
 /**
  * Controls swerve drive at the robot/chassis level
  * @author Team 4818 WFRobotics
  */
 public class Chassis
 {
+    Preferences prefs = Preferences.getInstance();
     RobotState state = RobotState.getInstance();
     HerdLogger log = new HerdLogger(Chassis.class);
 
     private final SwerveWheel[] wheels = new SwerveWheel[4];
     private final String[] wheelNames = {"WheelFR", "WheelFL", "WheelBR", "WheelBL"};
-    private final Shifter shifters;
 
     private double lastVelocityTimestamp;
 
     public Chassis()
     {
-        wheels[0] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[0], new AngleMotorMagPot(wheelNames[0] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[0]));
-        wheels[1] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[1], new AngleMotorMagPot(wheelNames[1] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[1]));
-        wheels[2] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[2], new AngleMotorMagPot(wheelNames[2] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[2]));
-        wheels[3] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[3], new AngleMotorMagPot(wheelNames[3] + ".Angle", RobotMap.CAN_SWERVE_ANGLE_TALONS[3]));
-        shifters = new Shifter();
+        wheels[0] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[0], RobotMap.CAN_SWERVE_ANGLE_TALONS[0]);
+        wheels[1] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[1], RobotMap.CAN_SWERVE_ANGLE_TALONS[1]);
+        wheels[2] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[2], RobotMap.CAN_SWERVE_ANGLE_TALONS[2]);
+        wheels[3] = new SwerveWheel(RobotMap.CAN_SWERVE_DRIVE_TALONS[3], RobotMap.CAN_SWERVE_ANGLE_TALONS[3]);
 
         lastVelocityTimestamp = Timer.getFPGATimestamp();
     }
 
-    public void update(HerdVector robotVelocity, double robotRotation, boolean gear, boolean brake)
+    public void update(HerdVector robotVelocity, double robotRotation)
     {
         HerdVector[] WheelsScaled = applyChassisEffects(robotVelocity, robotRotation);
 
-        double angleOffsetCal0 = Preferences.getInstance().getDouble(wheelNames[0] + ".Angle.Offset", 0);
-        double angleOffsetCal1 = Preferences.getInstance().getDouble(wheelNames[1] + ".Angle.Offset", 0);
-        double angleOffsetCal2 = Preferences.getInstance().getDouble(wheelNames[2] + ".Angle.Offset", 0);
-        double angleOffsetCal3 = Preferences.getInstance().getDouble(wheelNames[3] + ".Angle.Offset", 0);
+        log.debug("Scaled FR", WheelsScaled[0]);
+        log.debug("Scaled FL", WheelsScaled[1]);
+        log.debug("Scaled BR", WheelsScaled[2]);
+        log.debug("Scaled BL", WheelsScaled[3]);
 
-        wheels[0].set(WheelsScaled[0], angleOffsetCal0);
-        wheels[1].set(WheelsScaled[1], angleOffsetCal1);
-        wheels[2].set(WheelsScaled[2], angleOffsetCal2);
-        wheels[3].set(WheelsScaled[3], angleOffsetCal3);
-
-        wheels[0].setBrake(brake);
-        wheels[0].setBrake(brake);
-        wheels[0].setBrake(brake);
-        wheels[0].setBrake(brake);
+        updateWheelSettings();
+        wheels[0].set(WheelsScaled[0]);
+        wheels[1].set(WheelsScaled[1]);
+        wheels[2].set(WheelsScaled[2]);
+        wheels[3].set(WheelsScaled[3]);
 
         log.info(wheelNames[0], wheels[0]);
         log.info(wheelNames[1], wheels[1]);
         log.info(wheelNames[2], wheels[2]);
         log.info(wheelNames[3], wheels[3]);
-
-        shifters.setGear(gear);
-        state.updateRobotGear(shifters.isHighGear());
     }
 
     private HerdVector[] applyChassisEffects(HerdVector robotVelocity, double robotRotation)
     {
-        double rotateAdjustMin = Preferences.getInstance().getDouble("DRIVE_MIN_ROTATION", Config.rotationAdjustMin);
-        double maxAccel = Preferences.getInstance().getDouble("MAX_ACCELERATION", Config.accelerationMax);
+        double rotateAdjustMin = prefs.getDouble("DRIVE_MIN_ROTATION", Config.rotationAdjustMin);
+        double maxAccel = prefs.getDouble("MAX_ACCELERATION", Config.accelerationMax);
 
         HerdVector velocity = robotVelocity;
         double spin = robotRotation;
 
         if (velocity.getMag() > 1)
         {
-            log.error("Bad Chassis Command", velocity);
-            velocity = velocity.clampToRange(0, 1);             // Clamp mag - Start with range 0 to 1
+            log.error("Bad Chassis Command?", velocity);
+            velocity = velocity.clampToRange(0, 1);
         }
 
-        velocity = velocity.scale(velocity);                    // Square mag - Finer control at low speed
-        spin = (Config.ENABLE_ROTATION_LIMIT) ? applyRotationLimit(velocity, spin, rotateAdjustMin) : spin;
+        spin = applyRotationLimit(velocity, spin, rotateAdjustMin);
         velocity = applyAccelerationLimit(velocity, maxAccel);  // Cap mag accel - Better traction
-        // TODO Scale velocity to range 0 to 1?
         state.updateRobotVelocity(velocity);
 
         log.info("Chassis Final", String.format("V: %s, W: %.2f", velocity, spin));
@@ -106,10 +99,18 @@ public class Chassis
         maxMag = (wheelBR.getMag() > maxMag) ? wheelBR.getMag(): maxMag;
         maxMag = (wheelBL.getMag() > maxMag) ? wheelBL.getMag(): maxMag;
 
-        wheelCommands[0] = wheelFR.scale(1 / maxMag);
-        wheelCommands[1] = wheelFL.scale(1 / maxMag);
-        wheelCommands[2] = wheelBR.scale(1 / maxMag);
-        wheelCommands[3] = wheelBL.scale(1 / maxMag);
+        if (maxMag > 1)
+        {
+            wheelFR = wheelFR.scale(1 / maxMag);
+            wheelFL = wheelFL.scale(1 / maxMag);
+            wheelBR = wheelBR.scale(1 / maxMag);
+            wheelBL = wheelBL.scale(1 / maxMag);
+        }
+
+        wheelCommands[0] = wheelFR;
+        wheelCommands[1] = wheelFL;
+        wheelCommands[2] = wheelBR;
+        wheelCommands[3] = wheelBL;
 
         return wheelCommands;
     }
@@ -137,5 +138,31 @@ public class Chassis
         lastVelocityTimestamp = now;
 
         return velocity.clampToRange(min, max);
+    }
+
+    public void updateBrake(boolean enable)
+    {
+        wheels[0].setBrake(enable);
+        wheels[1].setBrake(enable);
+        wheels[2].setBrake(enable);
+        wheels[3].setBrake(enable);
+    }
+
+    public void updateWheelSettings()
+    {
+        double p = prefs.getDouble("WheelAngleP", Config.WHEEL_ANGLE_P);
+        double i = prefs.getDouble("WheelAngleI", Config.WHEEL_ANGLE_I);
+        double d = prefs.getDouble("WheelAngleD", Config.WHEEL_ANGLE_D);
+        double angleSpeedMax = Preferences.getInstance().getDouble("maxRotationSpeed", Config.WHEEL_ANGLE_SPEED_MAX);
+
+        double angleOffsetCal0 = prefs.getDouble("OffsetFR", 0);
+        double angleOffsetCal1 = prefs.getDouble("OffsetFL", 0);
+        double angleOffsetCal2 = prefs.getDouble("OffsetBR", 0);
+        double angleOffsetCal3 = prefs.getDouble("OffsetBL", 0);
+
+        wheels[0].updateSettings(p, i, d, angleSpeedMax, angleOffsetCal0);
+        wheels[1].updateSettings(p, i, d, angleSpeedMax, angleOffsetCal1);
+        wheels[2].updateSettings(p, i, d, angleSpeedMax, angleOffsetCal2);
+        wheels[3].updateSettings(p, i, d, angleSpeedMax, angleOffsetCal3);
     }
 }

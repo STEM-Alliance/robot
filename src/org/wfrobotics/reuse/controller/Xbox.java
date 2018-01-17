@@ -1,11 +1,14 @@
 package org.wfrobotics.reuse.controller;
 
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.reuse.utilities.Utilities;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
+
+// TODO What should be the low level access types? All herdvector?
+// TODO reduce interface any more?
+// TODO try getDirectionDegrees() & getMagnitude from JoyStick class
 
 /**
  * @author Team 4818 WFRobotics
@@ -72,19 +75,19 @@ public class Xbox
         hw = new XboxController(driveStationUSBPort);
     }
 
-    /**
-     * Get value
-     * @param axis type
-     * @return axis value
-     */
     public double getAxis(AXIS axis)
     {
         if(axis == AXIS.LEFT_Y || axis == AXIS.RIGHT_Y)
         {
-            // Want forward Y to be positive instead of negative
-            return -getRawAxis(axis.get());
+            double val = -getRawAxis(axis.get());
+            return (val == -0) ? 0 : val;
         }
         return getRawAxis(axis.get());
+    }
+
+    private double getRawAxis(int axis)
+    {
+        return scaleForDeadband(hw.getRawAxis(axis));  // -1 to 1
     }
 
     /**
@@ -105,20 +108,6 @@ public class Xbox
     public double getY(Hand side)
     {
         return (side == Hand.kLeft) ? getAxis(AXIS.LEFT_Y) : getAxis(AXIS.RIGHT_Y);
-    }
-
-    public double getMagnitude(Hand side)
-    {
-        double x = getX(side);
-        double y = getY(side);
-        return Math.sqrt(x * x + y * y);
-    }
-
-    public double getAngleDegrees(Hand side)
-    {
-        double radians = Math.atan2(getY(side), getX(side));
-        double Angle = Math.toDegrees(radians);
-        return Utilities.wrapToRange(Angle + 90, -180, 180);
     }
 
     /**
@@ -167,11 +156,6 @@ public class Xbox
     {
         RumbleType r = (side == Hand.kLeft) ? RumbleType.kLeftRumble : RumbleType.kRightRumble;
         hw.setRumble(r, value);
-    }
-
-    private double getRawAxis(int axis)
-    {
-        return scaleForDeadband(hw.getRawAxis(axis));  // -1 to 1
     }
 
     private double scaleForDeadband(double value)
