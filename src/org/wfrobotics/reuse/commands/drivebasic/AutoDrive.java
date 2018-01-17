@@ -1,26 +1,21 @@
 package org.wfrobotics.reuse.commands.drivebasic;
 
-import org.wfrobotics.reuse.subsystems.drive.DriveService;
+import org.wfrobotics.reuse.commands.DriveCommand;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.RobotState;
-
-import edu.wpi.first.wpilibj.command.Command;
+import org.wfrobotics.robot.Robot;
 
 // TODO Should autodrive switch or optionally have polar?
 // TODO Should we use brake for higher repeatability, does that make issues with drive subsystem PID's?
 // TODO Constructor is broken, HerdVector takes polar not xy
 
 /** Drive relative to the field. The robot's momentum is dampened when the command ends for greater repeatability. **/
-public class AutoDrive extends Command
+public class AutoDrive extends DriveCommand
 {
-    protected RobotState state = RobotState.getInstance();
-    protected DriveService<?> driveHelper;
     protected final HerdVector robotRelative;
 
-    public AutoDrive(DriveService<?> helper, HerdVector vector, double timeout)
+    public AutoDrive(HerdVector vector, double timeout)
     {
-        driveHelper = helper;
-        requires(driveHelper.getDrive());
+        requires(Robot.driveService.getSubsystem());
         robotRelative = vector;
         setTimeout(timeout);
     }
@@ -29,7 +24,7 @@ public class AutoDrive extends Command
     {
         HerdVector fieldRelative = robotRelative.rotate(-state.robotHeading);
 
-        driveHelper.getDrive().driveBasic(fieldRelative);
+        Robot.driveService.driveBasic(fieldRelative);
     }
 
     protected boolean isFinished()
@@ -39,6 +34,6 @@ public class AutoDrive extends Command
 
     protected void end()
     {
-        driveHelper.getDrive().driveBasic(new HerdVector(0, 0));
+        Robot.driveService.driveBasic(new HerdVector(0, 0));
     }
 }

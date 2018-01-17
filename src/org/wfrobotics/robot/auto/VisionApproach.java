@@ -3,11 +3,11 @@ package org.wfrobotics.robot.auto;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
-import org.wfrobotics.reuse.subsystems.drive.HolonomicService;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.LED;
 
@@ -17,13 +17,11 @@ public class VisionApproach extends Command
 {
     private HerdLogger log = new HerdLogger(VisionApproach.class);
     private RobotState state = RobotState.getInstance();
-    HolonomicService<?> driveHelper;
     private PIDController pidX;
 
-    public VisionApproach(HolonomicService<?> helper)
+    public VisionApproach()
     {
-        driveHelper = helper;
-        requires(driveHelper.getDrive());
+        requires(Robot.driveService.getSubsystem());
         pidX = new PIDController(2.5, 0.125, 0, .35);
     }
 
@@ -56,7 +54,7 @@ public class VisionApproach extends Command
         log.debug("VisionY", valueY);
         log.debug("VisionX", valueX);
 
-        driveHelper.getDrive().driveWithHeading(s);
+        Robot.driveService.driveWithHeading(s);
     }
 
     protected boolean isFinished()

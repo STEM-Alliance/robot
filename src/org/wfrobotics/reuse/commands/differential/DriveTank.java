@@ -1,17 +1,13 @@
 package org.wfrobotics.reuse.commands.differential;
 
-import org.wfrobotics.reuse.subsystems.drive.DifferentialService;
+import org.wfrobotics.reuse.commands.DriveCommand;
+import org.wfrobotics.robot.Robot;
 
-import edu.wpi.first.wpilibj.command.Command;
-
-public class DriveTank extends Command
+public class DriveTank extends DriveCommand
 {
-    protected DifferentialService<?> driveHelper;
-
-    public DriveTank(DifferentialService<?> helper)
+    public DriveTank()
     {
-        driveHelper = helper;
-        requires(driveHelper.getDrive());
+        requires(Robot.driveService.getSubsystem());
     }
 
     protected void execute()

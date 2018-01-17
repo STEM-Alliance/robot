@@ -10,7 +10,6 @@ import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.BUTTON;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.driveoi.Arcade.ArcadeIO;
 import org.wfrobotics.robot.driveoi.Mecanum.MecanumIO;
 import org.wfrobotics.robot.driveoi.Swerve.SwerveIO;
@@ -46,8 +45,8 @@ public class IO
 
         robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new LEDSignal(3)));
 
-        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff(Robot.driveService)));
-        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.BLACK_B, TRIGGER.WHEN_PRESSED, new TurnToInViewTarget(Robot.driveService, .1)));
+        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
+        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.BLACK_B, TRIGGER.WHEN_PRESSED, new TurnToInViewTarget(.1)));
     }
 
     public static IO getInstance()
