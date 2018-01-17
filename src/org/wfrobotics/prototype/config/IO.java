@@ -1,10 +1,9 @@
 package org.wfrobotics.prototype.config;
 
-import org.wfrobotics.prototype.commands.ArmPivotBase;
-import org.wfrobotics.prototype.commands.ArmPivotElbow;
-import org.wfrobotics.prototype.commands.ArmPivotHand;
 import org.wfrobotics.prototype.commands.DriveArcade;
-import org.wfrobotics.prototype.commands.HandSolenoid;
+import org.wfrobotics.prototype.commands.Elevate;
+import org.wfrobotics.prototype.commands.IntakePull;
+import org.wfrobotics.prototype.commands.IntakePush;
 import org.wfrobotics.prototype.commands.Shifting;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
@@ -17,34 +16,47 @@ import edu.wpi.first.wpilibj.buttons.Button;
 public class IO
 {
     public static Xbox controller = new Xbox(0);
+    public static Xbox man= new Xbox(1);
+
+    public static Button manB = ButtonFactory.makeButton
+            (man, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new IntakePush(0.3));
+
+    public static Button manA = ButtonFactory.makeButton
+            (man, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new IntakePull(.3));
+
+    public static Button manRB = ButtonFactory.makeButton
+            (man, Xbox.BUTTON.RB,TRIGGER.WHILE_HELD, new Elevate(-1));
+
+    public static Button manLB = ButtonFactory.makeButton
+            (man, Xbox.BUTTON.LB,  TRIGGER.WHILE_HELD, new Elevate(1));
 
 
     public static Button B = ButtonFactory.makeButton
-            (controller, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new HandSolenoid(true));
+            (controller, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new IntakePush());
 
     public static Button A = ButtonFactory.makeButton
-            (controller, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new HandSolenoid(false));
+            (controller, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new IntakePull());
 
     public static Button Start = ButtonFactory.makeButton
             (controller, Xbox.BUTTON.START, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveArcade());
 
     public static Button RB = ButtonFactory.makeButton
-            (controller, Xbox.BUTTON.RB,TRIGGER.WHILE_HELD, new ArmPivotHand(-.2));
+            (controller, Xbox.BUTTON.RB,TRIGGER.WHILE_HELD, new Elevate(-1));
 
     public static Button LB = ButtonFactory.makeButton
-            (controller, Xbox.BUTTON.LB,  TRIGGER.WHILE_HELD, new ArmPivotHand(.2));
+            (controller, Xbox.BUTTON.LB,  TRIGGER.WHILE_HELD, new Elevate(1));
 
 
     public static Button Back= ButtonFactory.makeButton
             (controller, Xbox.BUTTON.BACK,  TRIGGER.TOGGLE_WHEN_PRESSED, new Shifting(true));
 
-
+/*
     public static Button RightY = ButtonFactory.makeAxisButton
             (controller, Xbox.AXIS.RIGHT_Y, .2, TRIGGER.WHEN_PRESSED, new ArmPivotElbow());
 
     public static Button RightX= ButtonFactory.makeAxisButton
             (controller, Xbox.AXIS.RIGHT_X, .2, TRIGGER.WHEN_PRESSED, new ArmPivotBase());
-
+*/
     public double getLeftX()
     {
         double value = controller.getAxis(Xbox.AXIS.LEFT_X);
