@@ -6,11 +6,10 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class Shift extends InstantCommand
 {
-    private boolean request;
+    private final boolean request;
 
     public Shift(boolean highGear)
     {
-        requires(Robot.driveService.getSubsystem());
         request = highGear;
     }
 

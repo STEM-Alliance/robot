@@ -11,6 +11,7 @@ import org.wfrobotics.robot.subsystems.LED;
 
 public class StrafeToInViewTarget extends DriveCommand
 {
+    final SwerveSignal neutral = new SwerveSignal(new HerdVector(0, 0));
     final SwerveSignal s;
     final double tol;
 
@@ -39,6 +40,6 @@ public class StrafeToInViewTarget extends DriveCommand
 
     protected void end()
     {
-        Robot.driveService.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        Robot.driveService.driveWithHeading(neutral);
     }
 }

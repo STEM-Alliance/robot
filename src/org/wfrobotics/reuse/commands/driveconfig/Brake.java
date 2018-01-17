@@ -6,11 +6,10 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class Brake extends InstantCommand
 {
-    private boolean request;
+    private final boolean request;
 
     public Brake(boolean enable)
     {
-        requires(Robot.driveService.getSubsystem());
         request = enable;
     }
 

@@ -1,15 +1,15 @@
 package org.wfrobotics.reuse.commands.driveconfig;
 
-import org.wfrobotics.reuse.commands.holonomic.DriveSwerve;
-
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 // TODO Work with any drive type
 
 public class FieldRelativeToggle extends InstantCommand
 {
+    public static boolean FIELD_RELATIVE = true;  // Toggle with button, need if gyro breaks
+
     protected void initialize()
     {
-        DriveSwerve.FIELD_RELATIVE = !DriveSwerve.FIELD_RELATIVE;
+        FIELD_RELATIVE = !FIELD_RELATIVE;
     }
 }

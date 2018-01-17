@@ -7,6 +7,7 @@ import org.wfrobotics.robot.Robot;
 
 public class Strafe extends DriveCommand
 {
+    final SwerveSignal neutral = new SwerveSignal(new HerdVector(0, 0));
     final SwerveSignal s;
 
     public Strafe(double xSpeed, double timeout)
@@ -28,6 +29,6 @@ public class Strafe extends DriveCommand
 
     protected void end()
     {
-        Robot.driveService.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        Robot.driveService.driveWithHeading(neutral);
     }
 }
