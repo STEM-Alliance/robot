@@ -5,8 +5,9 @@ import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class TankService implements DriveService<TankSubsystem>
+public class TankService implements DriveService
 {
     private static TankService instance = null;
     private TankSubsystem drive;
@@ -25,7 +26,7 @@ public class TankService implements DriveService<TankSubsystem>
         return instance;
     }
 
-    public TankSubsystem getSubsystem()
+    public Subsystem getSubsystem()
     {
         return drive;
     }

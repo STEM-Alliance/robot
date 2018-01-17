@@ -5,7 +5,7 @@ import org.wfrobotics.reuse.utilities.HerdVector;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class SwerveService implements DriveService<SwerveSubsystem>
+public class SwerveService implements DriveService
 {
     private static SwerveService instance = null;
     private SwerveSubsystem drive;
