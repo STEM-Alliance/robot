@@ -34,7 +34,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveService = new TankService(TankSubsystem.getInstance());
+        driveService = new TankService();
         dashboardView = new DashboardView();
         leds = LED.getInstance();
 
@@ -73,7 +73,7 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
-            driveService.getDrive().zeroGyro();
+            driveService.getSubsystem().zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 
             allPeriodic();
@@ -90,7 +90,6 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
-        log.info("Drive", driveService.getDrive());
         log.info("Battery", m_ds.getBatteryVoltage());
         state.logState();
 

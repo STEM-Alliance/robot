@@ -1,36 +1,27 @@
 
 package org.wfrobotics.reuse.commands.holonomic;
 
-import org.wfrobotics.reuse.subsystems.drive.HolonomicService;
+import org.wfrobotics.reuse.commands.DriveCommand;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
-import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.Drive;
 
-import edu.wpi.first.wpilibj.command.Command;
-
 /** Teleop standard Herd swerve. Control is field relative. **/
-public class DriveSwerve extends Command
+public class DriveSwerve extends DriveCommand
 {
-    protected RobotState state = RobotState.getInstance();
-    protected HerdLogger log = new HerdLogger(DriveSwerve.class);
-    protected HolonomicService<?> driveHelper;
-
     public static boolean FIELD_RELATIVE = true;  // Toggle with button, need if gyro breaks
 
     private double highVelocityStart;
 
-    public DriveSwerve(HolonomicService<?> helper)
+    public DriveSwerve()
     {
-        driveHelper = helper;
-        requires(driveHelper.getDrive());
+        requires(Robot.driveService.getSubsystem());
     }
 
     protected void initialize()
     {
-        log.info("Drive Mode", "Swerve");
+        super.initialize();
         highVelocityStart = timeSinceInitialized();
     }
 
@@ -50,7 +41,7 @@ public class DriveSwerve extends Command
             }
             gear = timeSinceInitialized() - highVelocityStart > Drive.AUTO_SHIFT_TIME && speedRobot.getMag() > Drive.AUTO_SHIFT_SPEED;
 
-            driveHelper.getDrive().setGear(gear);
+            Robot.driveService.setGear(gear);
         }
 
         // TODO should mag squared move here? Removed from chassis because all drive commands shouldn't want, just joystick driving, right?
@@ -62,7 +53,7 @@ public class DriveSwerve extends Command
             speedRobot = speedRobot.rotate(-robotHeading);
         }
         log.info("Field Relative", speedRobot);
-        driveHelper.getDrive().driveWithHeading(new SwerveSignal(speedRobot, speedRotation, robotHeading));
+        Robot.driveService.driveWithHeading(new SwerveSignal(speedRobot, speedRotation, robotHeading));
     }
 
     protected boolean isFinished()
@@ -72,6 +63,6 @@ public class DriveSwerve extends Command
 
     protected void end()
     {
-        driveHelper.getDrive().driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        Robot.driveService.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

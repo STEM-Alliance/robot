@@ -1,28 +1,67 @@
 package org.wfrobotics.reuse.subsystems.tank;
 
-import org.wfrobotics.reuse.subsystems.drive.DifferentialService;
+import org.wfrobotics.reuse.subsystems.drive.DriveService;
+import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
+import org.wfrobotics.reuse.utilities.HerdVector;
 
-public class TankService implements DifferentialService<TankSubsystem>
+import edu.wpi.first.wpilibj.DriverStation;
+
+public class TankService implements DriveService<TankSubsystem>
 {
     private static TankService instance = null;
     private TankSubsystem drive;
 
-    public TankService(TankSubsystem differentialDriveSubsystem)
+    public TankService()
     {
-        drive = differentialDriveSubsystem;
+        drive = TankSubsystem.getInstance();
     }
 
     public static TankService getInstance()
     {
         if (instance == null)
         {
-            instance = new TankService(TankSubsystem.getInstance());
+            instance = new TankService();
         }
         return instance;
     }
 
-    public TankSubsystem getDrive()
+    public TankSubsystem getSubsystem()
     {
         return drive;
+    }
+
+    public void driveBasic(HerdVector vector)
+    {
+        drive.driveBasic(vector);
+    }
+
+    public void turnBasic(HerdVector vector)
+    {
+        drive.turnBasic(vector);
+    }
+
+    public void setBrake(boolean enable)
+    {
+        drive.setBrake(enable);
+    }
+
+    public void setGear(boolean useHighGear)
+    {
+        drive.setGear(useHighGear);
+    }
+
+    public void zeroGyro()
+    {
+        drive.zeroGyro();
+    }
+
+    public void driveDifferential(double left, double right)
+    {
+        drive.driveDifferential(left, right);
+    }
+
+    public void driveWithHeading(SwerveSignal command)
+    {
+        DriverStation.reportError(String.format("%s does not support drive command", getClass().getSimpleName()), true);
     }
 }

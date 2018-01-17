@@ -1,28 +1,25 @@
 package org.wfrobotics.reuse.commands.holonomic;
 
-import org.wfrobotics.reuse.subsystems.drive.HolonomicService;
+import org.wfrobotics.reuse.commands.DriveCommand;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
-
-import edu.wpi.first.wpilibj.command.Command;
+import org.wfrobotics.robot.Robot;
 
 /** Drive while letting swerve simultaneously oversee turning to an angle **/
-public class AutoDriveWithHeading extends Command
+public class AutoDriveWithHeading extends DriveCommand
 {
-    protected HolonomicService<?> driveHelper;
     protected final SwerveSignal s;
 
-    public AutoDriveWithHeading(HolonomicService<?> helper, double speedX, double speedY, double angle, double timeout)
+    public AutoDriveWithHeading(double speedX, double speedY, double angle, double timeout)
     {
-        driveHelper = helper;
-        requires(driveHelper.getDrive());
+        requires(Robot.driveService.getSubsystem());
         s = new SwerveSignal(new SwerveSignal(new HerdVector(speedX, speedY), 0, angle));
         setTimeout(timeout);
     }
 
     protected void execute()
     {
-        driveHelper.getDrive().driveWithHeading(s);
+        Robot.driveService.driveWithHeading(s);
     }
 
     protected boolean isFinished()
@@ -32,6 +29,6 @@ public class AutoDriveWithHeading extends Command
 
     protected void end()
     {
-        driveHelper.getDrive().driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        Robot.driveService.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
     }
 }

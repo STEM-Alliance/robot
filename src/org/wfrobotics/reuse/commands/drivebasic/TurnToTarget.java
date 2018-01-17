@@ -3,20 +3,20 @@ package org.wfrobotics.reuse.commands.drivebasic;
 import org.wfrobotics.reuse.hardware.led.LEDs;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
-import org.wfrobotics.reuse.subsystems.drive.DriveService;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.subsystems.LED;
 
 /** Turn until reaching the target, or get to the expected heading it should be at **/
 public class TurnToTarget extends TurnToHeading
 {
-    public TurnToTarget(DriveService<?> helper, double headingFieldRelative, double tolerance)
+    public TurnToTarget(double headingFieldRelative, double tolerance)
     {
-        super(helper, headingFieldRelative, tolerance);
+        super(headingFieldRelative, tolerance);
     }
 
     protected void initialize()
     {
+        super.initialize();
         LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
     }
 

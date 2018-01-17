@@ -1,23 +1,21 @@
 package org.wfrobotics.reuse.commands.driveconfig;
 
-import org.wfrobotics.reuse.subsystems.drive.DriveService;
+import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class Brake extends InstantCommand
 {
-    DriveService<?> driveHelper;
     private boolean request;
 
-    public Brake(DriveService<?> helper, boolean enable)
+    public Brake(boolean enable)
     {
-        driveHelper = helper;
-        requires(driveHelper.getDrive());
+        requires(Robot.driveService.getSubsystem());
         request = enable;
     }
 
     protected void initialize()
     {
-        driveHelper.getDrive().setBrake(request);
+        Robot.driveService.setBrake(request);
     }
 }

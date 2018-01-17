@@ -9,6 +9,7 @@ import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.RobotState;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -60,17 +61,17 @@ public class SwerveSubsystem extends Subsystem implements HolonomicDrive
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new DriveSwerve(SwerveService.getInstance()));
+        setDefaultCommand(new DriveSwerve());
     }
 
     public void driveBasic(HerdVector vector)
     {
-        // TODO
+        DriverStation.reportWarning("TODO", true);
     }
 
     public void turnBasic(HerdVector vector)
     {
-        // TODO
+        DriverStation.reportWarning("TODO", true);
     }
 
     public void driveWithHeading(SwerveSignal command)

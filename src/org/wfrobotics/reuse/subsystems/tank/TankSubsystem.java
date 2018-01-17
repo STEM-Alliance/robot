@@ -23,7 +23,7 @@ public class TankSubsystem extends Subsystem implements DifferentialDrive
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new DriveTank(TankService.getInstance()));
+        setDefaultCommand(new DriveTank());
     }
 
     public void driveBasic(HerdVector vector)

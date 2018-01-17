@@ -43,9 +43,9 @@ public class Autonomous
         DriverStation.getInstance().getAlliance();
 
         return new AutoMode[] {
-                new AutoMode("Auto None", () -> new DriveOff(Robot.driveService), 0),
-                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(Robot.driveService, new HerdVector(DRIVE_SPEED, 0), TIME_DRIVE_MODE), 0),
-                new AutoMode("Auto Forward (HIGH GEAR)", () -> new AutoDrive(Robot.driveService, new HerdVector(DRIVE_SPEED * .75, 0), TIME_DRIVE_MODE * .75), 0),
+                new AutoMode("Auto None", () -> new DriveOff(), 0),
+                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(new HerdVector(DRIVE_SPEED, 0), TIME_DRIVE_MODE), 0),
+                new AutoMode("Auto Forward (HIGH GEAR)", () -> new AutoDrive(new HerdVector(DRIVE_SPEED * .75, 0), TIME_DRIVE_MODE * .75), 0),
         };
     }
 
