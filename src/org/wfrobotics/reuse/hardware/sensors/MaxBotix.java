@@ -5,18 +5,17 @@ package org.wfrobotics.reuse.hardware.sensors;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SensorBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
-import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
  * Ultrasonic rangefinder class for MaxBotix HRLV-MaxSonar-EZ sensors. Similar to
  * the built in Ultrasonic class, but auto converts the distances based on the
  * datasheet for MaxBotix sensors. Provides analog/digital options
  */
-public abstract class MaxBotix extends SensorBase implements PIDSource,
-        LiveWindowSendable {
+public abstract class MaxBotix extends SensorBase implements PIDSource {
 
     /**
      * The units to return when PIDGet is called
@@ -449,30 +448,24 @@ public abstract class MaxBotix extends SensorBase implements PIDSource,
         m_enabled = enable;
     }
 
-    public String getSmartDashboardType() {
-        return "Ultrasonic";
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource)
+    {
+        // TODO Auto-generated method stub
     }
 
-    private ITable m_table;
-
-    public void initTable(ITable subtable) {
-        m_table = subtable;
-        updateTable();
+    @Override
+    public PIDSourceType getPIDSourceType()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public ITable getTable() {
-        return m_table;
-    }
-
-    public void updateTable() {
-        if (m_table != null) {
-            m_table.putNumber("Value", getRangeInches());
-        }
-    }
-    
-    public void startLiveWindowMode() {
-    }
-    
-    public void stopLiveWindowMode() {
+    @Override
+    public void initSendable(SendableBuilder builder)
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

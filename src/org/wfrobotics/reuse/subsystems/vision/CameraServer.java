@@ -28,7 +28,7 @@ public class CameraServer
     }
 
     // global configuration variable
-    private VisionMessageConfig Config = new VisionMessageConfig(0,0, new ArrayList<Boolean>());
+    private VisionMessageConfig Config = new VisionMessageConfig(0,0);
     private VisionMessageTargets LastTargets = new VisionMessageTargets();
 
 

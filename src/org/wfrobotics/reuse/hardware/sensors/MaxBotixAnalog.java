@@ -2,7 +2,6 @@ package org.wfrobotics.reuse.hardware.sensors;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.PIDSourceType;
 
 public class MaxBotixAnalog extends MaxBotix
 {
@@ -149,18 +148,5 @@ public class MaxBotixAnalog extends MaxBotix
         }
 
         return m_oldDistance;
-    }
-
-    @Override
-    public void setPIDSourceType(PIDSourceType pidSource)
-    {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public PIDSourceType getPIDSourceType()
-    {
-        // TODO Auto-generated method stub
-        return null;
     }
 }
