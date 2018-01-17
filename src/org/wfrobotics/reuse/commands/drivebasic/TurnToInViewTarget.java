@@ -11,6 +11,7 @@ import org.wfrobotics.robot.subsystems.LED;
 /** Turn until reaching the target, assumes target in view at start **/
 public class TurnToInViewTarget extends DriveCommand
 {
+    final HerdVector neutral = new HerdVector(0, 0);
     final double tol;
 
     public TurnToInViewTarget(double tolerance)
@@ -27,7 +28,6 @@ public class TurnToInViewTarget extends DriveCommand
 
     protected void execute()
     {
-
         double targetHeading = state.robotHeading + state.visionError;
         HerdVector v = new HerdVector(1, targetHeading);  // TODO magnitude should be configurable, add to constructor?
         Robot.driveService.turnBasic(v);
@@ -40,6 +40,6 @@ public class TurnToInViewTarget extends DriveCommand
 
     protected void end()
     {
-        Robot.driveService.turnBasic(new HerdVector(0, 0));
+        Robot.driveService.turnBasic(neutral);
     }
 }

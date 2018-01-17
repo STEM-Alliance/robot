@@ -8,6 +8,7 @@ import org.wfrobotics.robot.Robot;
 /** Drive while letting swerve simultaneously oversee turning to an angle **/
 public class AutoDriveWithHeading extends DriveCommand
 {
+    final SwerveSignal neutral = new SwerveSignal(new HerdVector(0, 0));
     protected final SwerveSignal s;
 
     public AutoDriveWithHeading(double speedX, double speedY, double angle, double timeout)
@@ -29,6 +30,6 @@ public class AutoDriveWithHeading extends DriveCommand
 
     protected void end()
     {
-        Robot.driveService.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        Robot.driveService.driveWithHeading(neutral);
     }
 }

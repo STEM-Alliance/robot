@@ -2,6 +2,7 @@
 package org.wfrobotics.reuse.commands.holonomic;
 
 import org.wfrobotics.reuse.commands.DriveCommand;
+import org.wfrobotics.reuse.commands.driveconfig.FieldRelativeToggle;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
@@ -10,7 +11,7 @@ import org.wfrobotics.robot.config.Drive;
 /** Teleop standard Herd swerve. Control is field relative. **/
 public class DriveSwerve extends DriveCommand
 {
-    public static boolean FIELD_RELATIVE = true;  // Toggle with button, need if gyro breaks
+    final SwerveSignal neutral = new SwerveSignal(new HerdVector(0, 0));
 
     private double highVelocityStart;
 
@@ -28,8 +29,8 @@ public class DriveSwerve extends DriveCommand
     protected void execute()
     {
         HerdVector speedRobot = Robot.controls.swerveIO.getVelocity();
-        double speedRotation = Robot.controls.swerveIO.getRotation();
-        double robotHeading = state.robotHeading;
+        final double speedRotation = Robot.controls.swerveIO.getRotation();
+        final double robotHeading = state.robotHeading;
 
         if (Drive.AUTO_SHIFT_ENABLE)
         {
@@ -48,7 +49,7 @@ public class DriveSwerve extends DriveCommand
         //velocity = velocity.scale(velocity);  // Square mag - Finer control at low speed
 
         log.info("Robot Relative", speedRobot);
-        if (FIELD_RELATIVE)
+        if (FieldRelativeToggle.FIELD_RELATIVE)
         {
             speedRobot = speedRobot.rotate(-robotHeading);
         }
@@ -63,6 +64,6 @@ public class DriveSwerve extends DriveCommand
 
     protected void end()
     {
-        Robot.driveService.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        Robot.driveService.driveWithHeading(neutral);
     }
 }

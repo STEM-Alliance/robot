@@ -7,13 +7,10 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class ShiftToggle extends InstantCommand
 {
-    public ShiftToggle()
-    {
-        requires(Robot.driveService.getSubsystem());
-    }
+    final RobotState state = RobotState.getInstance();
 
     protected void initialize()
     {
-        Robot.driveService.setGear(!RobotState.getInstance().robotGear);
+        Robot.driveService.setGear(!state.robotGear);
     }
 }

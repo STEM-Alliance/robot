@@ -7,9 +7,10 @@ import org.wfrobotics.robot.Robot;
 /** Turn until reaching the  heading **/
 public class TurnToHeading extends DriveCommand
 {
+    final HerdVector neutral = new HerdVector(0, 0);
+    final double heading;
+    final double tol;
     HerdVector vector;
-    double heading;
-    double tol;
 
     public TurnToHeading(double headingFieldRelative, double tolerance)
     {
@@ -31,6 +32,6 @@ public class TurnToHeading extends DriveCommand
 
     protected void end()
     {
-        Robot.driveService.turnBasic(new HerdVector(0, 0));
+        Robot.driveService.turnBasic(neutral);
     }
 }

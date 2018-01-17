@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Preferences;
 //* Teleop fine control Herd swerve. Control is robot relative. **/
 public class DriveCrawl extends DriveCommand
 {
+    final SwerveSignal neutral = new SwerveSignal(new HerdVector(0, 0));
     double initialHeading;
     double minSpeed;
 
@@ -28,10 +29,10 @@ public class DriveCrawl extends DriveCommand
 
     protected void execute()
     {
-        double maxSpeed = (state.robotGear) ? Drive.CRAWL_SPEED_MAX_HG : Drive.CRAWL_SPEED_MAX_LG;
-        HerdVector io = Robot.controls.swerveIO.getCrawl();
-        HerdVector scaled = io.scaleToRange(minSpeed, maxSpeed);
-        HerdVector robotRelative = scaled.rotate(initialHeading);
+        final double maxSpeed = (state.robotGear) ? Drive.CRAWL_SPEED_MAX_HG : Drive.CRAWL_SPEED_MAX_LG;
+        final HerdVector io = Robot.controls.swerveIO.getCrawl();
+        final HerdVector scaled = io.scaleToRange(minSpeed, maxSpeed);
+        final HerdVector robotRelative = scaled.rotate(initialHeading);
 
         log.debug("Drive IO", io);
         log.info("Robot Relative", robotRelative);
@@ -46,6 +47,6 @@ public class DriveCrawl extends DriveCommand
 
     protected void end()
     {
-        Robot.driveService.driveWithHeading(new SwerveSignal(new HerdVector(0, 0)));
+        Robot.driveService.driveWithHeading(neutral);
     }
 }

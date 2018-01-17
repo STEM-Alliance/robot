@@ -11,6 +11,7 @@ import org.wfrobotics.robot.Robot;
 /** Drive relative to the field. The robot's momentum is dampened when the command ends for greater repeatability. **/
 public class AutoDrive extends DriveCommand
 {
+    final HerdVector neutral = new HerdVector(0, 0);
     protected final HerdVector robotRelative;
 
     public AutoDrive(HerdVector vector, double timeout)
@@ -34,6 +35,6 @@ public class AutoDrive extends DriveCommand
 
     protected void end()
     {
-        Robot.driveService.driveBasic(new HerdVector(0, 0));
+        Robot.driveService.driveBasic(neutral);
     }
 }
