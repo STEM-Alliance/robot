@@ -3,6 +3,8 @@ package org.wfrobotics.prototype;
 import org.wfrobotics.prototype.config.IO;
 import org.wfrobotics.prototype.subsystems.ArmSubsystem;
 import org.wfrobotics.prototype.subsystems.HandSubsystem;
+import org.wfrobotics.prototype.subsystems.IntakeSubsystem;
+import org.wfrobotics.prototype.subsystems.LiftSubsystem;
 import org.wfrobotics.prototype.subsystems.ShiftingSubsystem;
 import org.wfrobotics.prototype.subsystems.TankSubsystem;
 
@@ -16,6 +18,8 @@ public class Robot extends SampleRobot
     public static TankSubsystem tankSubsystem;
     public static HandSubsystem handSubsystem;
     public static ShiftingSubsystem shiftingSubsystem;
+    public static LiftSubsystem liftSubsystem;
+    public static IntakeSubsystem intakeSubsystem;
 
     public static IO controls;
 
@@ -23,6 +27,8 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
+        liftSubsystem = new LiftSubsystem();
+        intakeSubsystem = new IntakeSubsystem();
         armSubsystem = new ArmSubsystem();
         tankSubsystem = new TankSubsystem();
         handSubsystem = new HandSubsystem();
