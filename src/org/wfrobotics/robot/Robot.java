@@ -1,8 +1,6 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.reuse.subsystems.drive.DriveService;
 import org.wfrobotics.reuse.subsystems.tank.TankService;
-import org.wfrobotics.reuse.subsystems.tank.TankSubsystem;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
@@ -24,7 +22,7 @@ public class Robot extends SampleRobot
     private final RobotState state = RobotState.getInstance();
 
     private LED leds;
-    public static DriveService<TankSubsystem> driveService;
+    public static TankService driveService;
     public static DashboardView dashboardView;
 
     public static IO controls;
@@ -73,7 +71,7 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
-            driveService.getSubsystem().zeroGyro();
+            driveService.zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 
             allPeriodic();
