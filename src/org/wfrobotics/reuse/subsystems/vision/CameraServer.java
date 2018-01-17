@@ -93,6 +93,7 @@ public class CameraServer
                     {
                         Socket clientSocket = serverSocket.accept();
                         clientProcessingPool.submit(new ClientTask(clientSocket));
+                        // TODO Thread not busy waiting - improve performance
                     }
                 } catch (IOException e)
                 {
@@ -180,7 +181,7 @@ public class CameraServer
                     {
                         // only parse while we get messages
                         VisionMessageTargets message = new VisionMessageTargets(fromClient);
-                        log.debug("CameraServer", "RX: " + message.Decoded());
+                        log.debug("CameraServer", "RX: " + message.decoded());
 
                         // send the config message to sync latest settings
                         out.println(Config.toString());

@@ -6,6 +6,7 @@ import org.wfrobotics.robot.config.VisionMode;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
+/** Extend to create vision mode specific set commands */
 public abstract class VisionModeSet extends InstantCommand
 {
     public abstract VisionMode getMode();
