@@ -1,7 +1,7 @@
 package org.wfrobotics.reuse.subsystems.swerve.wheel;
 
-import org.wfrobotics.reuse.hardware.CANTalonFactory;
-import org.wfrobotics.reuse.hardware.CANTalonFactory.TALON_SENSOR;
+import org.wfrobotics.reuse.hardware.TalonSRXFactory;
+import org.wfrobotics.reuse.hardware.TalonSRXFactory.TALON_SENSOR;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleSensor.AngleProvider;
 import org.wfrobotics.reuse.subsystems.swerve.wheel.AngleSensor.SENSOR;
 import org.wfrobotics.reuse.utilities.HerdVector;
@@ -32,12 +32,12 @@ public class SwerveWheel
     public SwerveWheel(int addressDriveMotor, int addressAngleMotor)
     {
         anglePID = new AnglePID(.01, 0, .05);
-        angleMotor = CANTalonFactory.makeAngleControlTalon(addressAngleMotor);
+        angleMotor = TalonSRXFactory.makeAngleControlTalon(addressAngleMotor);
         angleSensor = AngleSensor.makeSensor(angleMotor, SENSOR.MAGPOT);
         angleMotor.setInverted(false);  // TODO config file
         angleMotor.configOpenloopRamp(0, 0);
         
-        driveMotor = CANTalonFactory.makeSpeedControlTalon(addressDriveMotor, TALON_SENSOR.MAG_ENCODER);
+        driveMotor = TalonSRXFactory.makeSpeedControlTalon(addressDriveMotor, TALON_SENSOR.MAG_ENCODER);
         driveMotor.config_kP(0, Config.DRIVE_P, 0);
         driveMotor.config_kI(0, Config.DRIVE_I, 0);
         driveMotor.config_kD(0, Config.DRIVE_D, 0);

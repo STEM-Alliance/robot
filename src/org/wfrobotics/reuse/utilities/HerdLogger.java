@@ -26,7 +26,7 @@ public class HerdLogger
         {
             delegateLogger.removeHandler(hand);
         }
-        delegateLogger.addHandler(new SmartDashProducer());
+        delegateLogger.addHandler(new HerdLoggerProducer());
     }
 
     /** For last minute debugging. Please delete or adjust into another log level if committing. **/
@@ -67,7 +67,7 @@ public class HerdLogger
         delegateLogger.log(Level.SEVERE, key, value);
     }
 
-    static class SmartDashProducer extends Handler
+    static class HerdLoggerProducer extends Handler
     {
         @Override
         public void publish(LogRecord record)
@@ -80,7 +80,7 @@ public class HerdLogger
             }
 
             //System.out.println(record.getMessage() + "" + smartDashFormat[0]);
-            SmartDashboard.putString(record.getMessage(), smartDashFormat[0].toString());
+            HerdLoggerTable.putString(record.getMessage(), smartDashFormat[0].toString());
         }
 
         @Override

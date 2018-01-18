@@ -3,6 +3,7 @@ package org.wfrobotics.reuse.subsystems.tank;
 import org.wfrobotics.reuse.subsystems.drive.DriveService;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdVector;
+import org.wfrobotics.robot.RobotState;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -49,6 +50,7 @@ public class TankService implements DriveService
     public void setGear(boolean useHighGear)
     {
         drive.setGear(useHighGear);
+        RobotState.getInstance().updateRobotGear(useHighGear);
     }
 
     public void zeroGyro()
