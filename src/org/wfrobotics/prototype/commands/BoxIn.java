@@ -2,7 +2,7 @@ package org.wfrobotics.prototype.commands;
 
 
 import org.wfrobotics.prototype.Robot;
-import org.wfrobotics.prototype.subsystems.IntakeSubsystem;
+
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -26,8 +26,9 @@ public class BoxIn extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speed = 0.1;
+        double speed = 0.2;
         Robot.intakeSubsystem.SetSpeed(speed); 
+        Robot.intakeSubsystem.HoldBox();
         
     }
 

@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class Wait extends Command {
+public class Stop extends Command {
     
-    public Wait() {
+    public Stop() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.intakeSubsystem);
