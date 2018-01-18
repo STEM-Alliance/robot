@@ -1,7 +1,8 @@
 package org.wfrobotics.prototype.subsystems;
 
-import org.wfrobotics.prototype.commands.BoxIn;
-import org.wfrobotics.prototype.commands.Stop;
+import org.wfrobotics.prototype.commands.BoxHold;
+
+import org.wfrobotics.prototype.commands.IntakeStop;
 
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -18,8 +19,7 @@ public class IntakeSubsystem extends Subsystem {
     TalonSRX RightIntake;
     TalonSRX LeftIntake;
     DigitalInput BoxCheck;
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
+ 
     public IntakeSubsystem()
     {
       RightIntake = new TalonSRX(19);
@@ -27,19 +27,18 @@ public class IntakeSubsystem extends Subsystem {
       RightIntake.setInverted(true);
       LeftIntake.set(ControlMode.Follower, 1);
       BoxCheck = new DigitalInput(0);
-        // TODO Auto-generated constructor stub
+
     }
     
      public boolean hasCube(){
          return false;
      }
     public void initDefaultCommand() {
-        setDefaultCommand(new Stop());
+        setDefaultCommand(new IntakeStop());
         
-        // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
+       
     }
-    public void SetSpeed(double rpm)
+    public void setSpeed(double rpm)
     {
        RightIntake.set(ControlMode.PercentOutput, rpm);
       
@@ -47,13 +46,14 @@ public class IntakeSubsystem extends Subsystem {
     public boolean CheckBox(){
         return BoxCheck.get();
       }
-    public void HoldBox(){
+    public void holdBox(){
         if (CheckBox() == true)
         {
-            setDefaultCommand(new BoxIn());
+            setDefaultCommand(new BoxHold());
+            
         }
         else {
-            setDefaultCommand(new Stop());
+            setDefaultCommand(new IntakeStop());
         }
     }
     
