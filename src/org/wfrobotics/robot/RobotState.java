@@ -98,5 +98,10 @@ public class RobotState
         visionMode = VisionMode.OFF;
     }
 
+    public HerdVector getRobotVelocity()
+    {
+        return null;
+    }
+
     // ------------- END State Producers (Write-Only) -------------
 }

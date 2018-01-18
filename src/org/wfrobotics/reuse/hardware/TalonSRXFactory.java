@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-public abstract class CANTalonFactory
+public abstract class TalonSRXFactory
 {
     public enum TALON_SENSOR
     {
@@ -24,9 +24,15 @@ public abstract class CANTalonFactory
         return null;  // Not ready yet
     }
 
+    /**
+     * Create a velocity/speed controlled Talon
+     * @param address address of new Talon
+     * @param type type of sensor to use, generally {@link TALON_SENSOR#MAG_ENCODER}
+     * @return
+     */
     public static TalonSRX makeSpeedControlTalon(int address, TALON_SENSOR type)
     {
-        TalonSRX t = CANTalonFactory.makeTalon(address);
+        TalonSRX t = TalonSRXFactory.makeTalon(address);
 
         t.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         t.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
@@ -54,7 +60,11 @@ public abstract class CANTalonFactory
         return t;
     }
 
-    /** Goes to an angle */
+    /**
+     * Create a Talon that is controlled by a desired angle 
+     * @param address address of new Talon
+     * @return
+     */
     public static TalonSRX makeAngleControlTalon(int address)
     {
         TalonSRX t = makeTalon(address);
@@ -76,21 +86,31 @@ public abstract class CANTalonFactory
         return t;
     }
 
-    /** Mirrors its master. Call set() with Master's address **/
-    public TalonSRX makeSlaveControlTalon(int address, int masterAddress)
+    /**
+     * Mirror the master Talon's outputs
+     * @param address address of new Talon
+     * @param masterAddress address of master Talon
+     * @return
+     */
+    public static TalonSRX makeFollowerTalon(int address, int masterAddress)
     {
         TalonSRX t = makeTalon(address);
 
         // Recommended for any single sensor multiple motor subsystem
 
         // TODO Slow settings
-        t.setStatusFramePeriod(StatusFrame.Status_1_General, 1000, 0);
+        //t.setStatusFramePeriod(StatusFrame.Status_1_General, 1000, 0);
         t.set(ControlMode.Follower, masterAddress);
 
         return t;
     }
 
-    /** Normal CANTalon. Also documents settings. Override settings on returned talon as needed. **/
+    /**
+     *  Normal TalonSRX. Also documents settings.
+     *  Override settings on returned Talon as needed.
+     * @param address address of new Talon
+     * @return
+     */
     public static TalonSRX makeTalon(int address)
     {
         TalonSRX t = new LazyTalon(address);
