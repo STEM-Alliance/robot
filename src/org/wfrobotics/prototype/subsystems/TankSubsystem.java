@@ -2,34 +2,32 @@ package org.wfrobotics.prototype.subsystems;
 
 import org.wfrobotics.prototype.commands.DriveRocketLeague;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class TankSubsystem extends Subsystem {
 
-    public CANTalon RightFront;
-    public CANTalon RightBack;
-    public CANTalon LeftFront;
-    public CANTalon LeftBack;
+    public TalonSRX RightFront;
+    public TalonSRX RightBack;
+    public TalonSRX LeftFront;
+    public TalonSRX LeftBack;
 
     public TankSubsystem(){
-        this.RightFront = new CANTalon(10);
-        this.RightBack = new CANTalon(11);
-        this.LeftFront= new CANTalon(12);
-        this.LeftBack = new CANTalon(13);
+        this.RightFront = new TalonSRX(10);
+        this.RightBack = new TalonSRX(11);
+        this.LeftFront= new TalonSRX(12);
+        this.LeftBack = new TalonSRX(13);
 
-        RightBack.changeControlMode(CANTalon.TalonControlMode.Follower);
-        RightBack.set(10);
+        RightBack.set(ControlMode.Follower, 10);
+        LeftBack.set(ControlMode.Follower, 12);
+        double rampRate = .5;
 
-        LeftBack.changeControlMode(CANTalon.TalonControlMode.Follower);
-        LeftBack.set(12);
-        double rampRate = 40;
-
-        LeftFront.setVoltageRampRate(rampRate);
-        RightFront.setVoltageRampRate(rampRate);
-        LeftBack.setVoltageRampRate(rampRate);
-        RightBack.setVoltageRampRate(rampRate);
+        LeftFront.configOpenloopRamp(rampRate, 0);
+        RightFront.configOpenloopRamp(rampRate, 0);
+        LeftBack.configOpenloopRamp(rampRate, 0);
+        RightBack.configOpenloopRamp(rampRate, 0);
 
         LeftFront.setInverted(true);
         LeftBack.setInverted(true);
@@ -38,12 +36,12 @@ public class TankSubsystem extends Subsystem {
 
     public void setSpeedRight(double speed)
     {
-       RightFront.set(speed);
+       RightFront.set(ControlMode.Current, speed);
     }
 
     public void setSpeedLeft(double speed)
     {
-        LeftFront.set(speed);
+        LeftFront.set(ControlMode.Current, speed);
     }
 
 

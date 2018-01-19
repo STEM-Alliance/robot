@@ -2,7 +2,8 @@ package org.wfrobotics.prototype.subsystems;
 
 import org.wfrobotics.prototype.commands.ArmPivotHand;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -15,15 +16,15 @@ public class HandSubsystem extends Subsystem {
     public DigitalInput CCWSensor;
     public DigitalInput CWSensor;
 
-    public CANTalon handMotor;
+    public TalonSRX handMotor;
 
 
     public HandSubsystem()
     {
         this.CCWSensor = new DigitalInput(5);
         this.CWSensor = new DigitalInput(4);
-        this.handMotor =  new CANTalon(17);
-        handMotor.enableBrakeMode(true);
+        this.handMotor =  new TalonSRX(17);
+        handMotor.setNeutralMode(NeutralMode.Brake);
         // TODO Auto-generated constructor stub
     }
 
