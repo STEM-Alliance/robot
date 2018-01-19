@@ -1,7 +1,12 @@
 package org.wfrobotics.prototype;
 
 import org.wfrobotics.prototype.config.IO;
-import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
+import org.wfrobotics.prototype.subsystems.ArmSubsystem;
+import org.wfrobotics.prototype.subsystems.HandSubsystem;
+import org.wfrobotics.prototype.subsystems.IntakeSubsystem;
+import org.wfrobotics.prototype.subsystems.LiftSubsystem;
+import org.wfrobotics.prototype.subsystems.ShiftingSubsystem;
+import org.wfrobotics.prototype.subsystems.TankSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -9,15 +14,25 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends SampleRobot
 {
-    public static ExampleSubsystem prototypeSubsystem;
+    public static ArmSubsystem armSubsystem;
+    public static TankSubsystem tankSubsystem;
+    public static HandSubsystem handSubsystem;
+    public static ShiftingSubsystem shiftingSubsystem;
+    public static LiftSubsystem liftSubsystem;
+    public static IntakeSubsystem intakeSubsystem;
+
     public static IO controls;
 
     Command autonomousCommand = null;
 
     public void robotInit()
     {
-        prototypeSubsystem = new ExampleSubsystem();
-
+        liftSubsystem = new LiftSubsystem();
+        intakeSubsystem = new IntakeSubsystem();
+        armSubsystem = new ArmSubsystem();
+        tankSubsystem = new TankSubsystem();
+        handSubsystem = new HandSubsystem();
+        shiftingSubsystem = new ShiftingSubsystem();
         controls = new IO();
     }
 
