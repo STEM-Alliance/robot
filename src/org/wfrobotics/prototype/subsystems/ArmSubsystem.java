@@ -2,7 +2,9 @@ package org.wfrobotics.prototype.subsystems;
 
 import org.wfrobotics.prototype.commands.ArmPivotBase;
 
-import com.ctre.CANTalon;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -16,9 +18,9 @@ public class ArmSubsystem extends Subsystem {
     public DigitalInput CCWSwitch;
     public DigitalInput UpSwitch;
     public DigitalInput DownSwitch;
-    public CANTalon baseMotor;
-    public CANTalon elbowMotor1; //possibly change addresses
-    public CANTalon elbowMotor2;
+    public TalonSRX baseMotor;
+    public TalonSRX elbowMotor1; //possibly change addresses
+    public TalonSRX elbowMotor2;
 
     boolean elbow;
     boolean rotate;
@@ -30,22 +32,22 @@ public class ArmSubsystem extends Subsystem {
     public ArmSubsystem()
     {
 
-        this.baseMotor = new CANTalon(14);
-        this.elbowMotor1 = new CANTalon(15); //possibly change addresses
-        this.elbowMotor2 = new CANTalon(16);
+        this.baseMotor = new TalonSRX(14);
+        this.elbowMotor1 = new TalonSRX(15); //possibly change addresses
+        this.elbowMotor2 = new TalonSRX(16);
         this.CWSwitch = new DigitalInput(0);
         this.CCWSwitch = new DigitalInput(1);
         this.DownSwitch = new DigitalInput(2);
         this.UpSwitch = new DigitalInput(3);
 
 
-        baseMotor.enableBrakeMode(true);
-        elbowMotor1.enableBrakeMode(true);
-        elbowMotor2.enableBrakeMode(true);
-        elbowMotor2.changeControlMode(CANTalon.TalonControlMode.Follower);
-        elbowMotor2.set(15);
+        baseMotor.setNeutralMode(NeutralMode.Brake);
+        elbowMotor1.setNeutralMode(NeutralMode.Brake);
+        elbowMotor2.setNeutralMode(NeutralMode.Brake);
 
-       elbowMotor1.setInverted(true);
+        elbowMotor2.set(ControlMode.Follower, 15);
+
+        elbowMotor1.setInverted(true);
     }
 
     public Boolean isAtTop()

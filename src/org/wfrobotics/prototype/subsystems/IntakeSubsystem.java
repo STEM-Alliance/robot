@@ -2,8 +2,8 @@ package org.wfrobotics.prototype.subsystems;
 
 import org.wfrobotics.prototype.commands.IntakePull;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.TalonControlMode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -11,17 +11,17 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  *
  */
     public class IntakeSubsystem extends Subsystem {
-        public CANTalon leftIntake;
-        public CANTalon rightIntake;
+        public TalonSRX leftIntake;
+        public TalonSRX rightIntake;
 
     public IntakeSubsystem()
     {
-        this.leftIntake = new  CANTalon(19);
-        this.rightIntake = new CANTalon(20);
+        this.leftIntake = new  TalonSRX(19);
+        this.rightIntake = new TalonSRX(20);
 
-        leftIntake.changeControlMode(TalonControlMode.Follower);
-        leftIntake.set(20);
+        leftIntake.set(ControlMode.Follower, 20);
         rightIntake.setInverted(true);
+        leftIntake.setInverted(true);
 
     }
         // Put methods for controlling this subsystem

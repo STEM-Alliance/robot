@@ -1,12 +1,14 @@
 package org.wfrobotics.reuse.utilities;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public final class Utilities
 {
     /**
      * Ensure the value is between min and max, and if it is outside the range,
      * wrap it around.
-     * 
+     *
      * @param value
      *            Input value
      * @param min
@@ -24,7 +26,7 @@ public final class Utilities
     /**
      * Ensure the value is between 0 and max, and if it is outside the range,
      * wrap it around.
-     * 
+     *
      * @param value
      *            Input value
      * @param max
@@ -40,7 +42,7 @@ public final class Utilities
 
     /**
      * Trim a value to keep it in the min/max range.
-     * 
+     *
      * @param value
      *            Input value
      * @param min
@@ -64,7 +66,7 @@ public final class Utilities
 
     /**
      * Trim a value to keep it in the min/max range.
-     * 
+     *
      * @param value
      *            Input value
      * @param limit
@@ -78,7 +80,7 @@ public final class Utilities
 
     /**
      * Scale a value from the expected input range to the expected output range.
-     * 
+     *
      * @param value
      *            Input value
      * @param inMin
@@ -102,7 +104,7 @@ public final class Utilities
 
     /**
      * Scale a value from the expected input range to the expected output range.
-     * 
+     *
      * @param value
      *            Input value
      * @param inMax
@@ -116,4 +118,18 @@ public final class Utilities
     {
         return clampToRange(value, 0, inMax) * outMax / inMax;
     }
+
+    public static void spinUntilLimit(boolean atMax, boolean atMin, double speed, TalonSRX motor)
+    {
+        if((speed < 0) && !atMin || (speed > 0 && !atMax))
+        {
+            motor.set(ControlMode.PercentOutput, speed);
+        }
+        else
+        {
+            motor.set(ControlMode.PercentOutput, 0);
+        }
+    }
+
+
 }

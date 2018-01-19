@@ -19,7 +19,7 @@ public class IO
     public static Xbox man= new Xbox(1);
 
     public static Button manB = ButtonFactory.makeButton
-            (man, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new IntakePush(0.3));
+            (man, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new IntakePush(0.7));
 
     public static Button manA = ButtonFactory.makeButton
             (man, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new IntakePull(.3));
