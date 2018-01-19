@@ -4,17 +4,20 @@ import org.wfrobotics.robot.config.RobotMap;
 
 import com.ctre.CANTalon;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class IntakeSubsystem extends Subsystem {
 
-    CANTalon rightMtr,
+    TalonSRX rightMtr,
              leftMtr;
+    
     public IntakeSubsystem()
     {
-        rightMtr = new CANTalon(RobotMap.INTAKE_MOTOR[0]);
-        leftMtr = new CANTalon(RobotMap.INTAKE_MOTOR[1]);
+        rightMtr = new TalonSRX(RobotMap.INTAKE_MOTOR[0]);
+        leftMtr = new TalonSRX(RobotMap.INTAKE_MOTOR[1]);
+        leftMtr.setInverted(true);
         leftMtr.set(ControlMode.Follower, RobotMap.INTAKE_MOTOR[0]);
     }
     
@@ -29,7 +32,6 @@ public class IntakeSubsystem extends Subsystem {
     public void setSpeed(double speed)
     {
         rightMtr.set(ControlMode.Velocity, speed);
-        leftMtr.set(ControlMode.Follower, speed);
     }
     /**
      * Evaluates if the robot has the cube in it!
