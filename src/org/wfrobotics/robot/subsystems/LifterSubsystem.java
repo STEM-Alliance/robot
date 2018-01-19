@@ -4,16 +4,17 @@ import org.wfrobotics.robot.config.RobotMap;
 
 import com.ctre.CANTalon;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class LifterSubsystem extends Subsystem {
 
-    CANTalon liftMtr;
+    TalonSRX liftMtr;
 
     public  LifterSubsystem()
     {
-        liftMtr = new CANTalon(RobotMap.LIFTER_MOTOR);
+        liftMtr = new TalonSRX(RobotMap.LIFTER_MOTOR);
     }
     @Override
     protected void initDefaultCommand()
