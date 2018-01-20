@@ -1,5 +1,7 @@
 package org.wfrobotics.prototype.subsystems;
 
+import org.wfrobotics.prototype.commands.DriveArcade;
+import org.wfrobotics.prototype.commands.DriveArcade3DPro;
 import org.wfrobotics.prototype.commands.DriveRocketLeague;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -22,27 +24,27 @@ public class ExampleSubsystem extends Subsystem
     
     {
         // TODO setup any hardware this Subsystem will need
-        left = new TalonSRX(0);
-        left2 = new TalonSRX(1);
-        right = new TalonSRX(2);
-        right2 = new TalonSRX(6);
+        left = new TalonSRX(10);
+        left2 = new TalonSRX(11);
+        right = new TalonSRX(12);
+        right2 = new TalonSRX(13);
         right.setInverted(true);
         right2.setInverted(true);
-        left2.set(ControlMode.Follower, 0);
-        right2.set(ControlMode.Follower, 2);
+        left2.set(ControlMode.Follower, 10);
+        right2.set(ControlMode.Follower, 12);
     }
 
     protected void initDefaultCommand()
     {
         // TODO pick which Command runs whenever buttons are not being pressed
-        setDefaultCommand(new DriveRocketLeague());
+        setDefaultCommand(new DriveArcade3DPro());
     }
 
     // TODO rename me (right click -> refactor -> rename)
     public void setSpeed(double x, double y)  // TODO pass any parameters needed to each method
     {
         // TODO create any methods needed to control this Subsystem, called by Commands
-        left.set(ControlMode.PercentOutput, y-x); // -1x, 0y = 1=left, -1=right; -1x, 1y = 1=left, .5=right; 0x, 1y = 1=left, 1=right;
-        right.set(ControlMode.PercentOutput, y+x); // x = -left, right; y = left, right;
+        left.set(ControlMode.PercentOutput, y+x); // x-1 go left, left=back, right=forward
+        right.set(ControlMode.PercentOutput, y-x); // invert x
     }
 }

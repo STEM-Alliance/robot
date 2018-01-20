@@ -1,10 +1,8 @@
 package org.wfrobotics.prototype;
 
-import org.wfrobotics.prototype.commands.AutoDrive;
 import org.wfrobotics.prototype.commands.AutoTurnAndTurn;
 import org.wfrobotics.prototype.config.IO;
 import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
-import org.wfrobotics.prototype.subsystems.ExampleSubsystem2;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -12,14 +10,14 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends SampleRobot
 {
-    public static ExampleSubsystem2 prototypeSubsystem;
+    public static ExampleSubsystem prototypeSubsystem;
     public static IO controls;
     Command autonomousCommand;
 
 
     public void robotInit()
     {
-        prototypeSubsystem = new ExampleSubsystem2();
+        prototypeSubsystem = new ExampleSubsystem();
         autonomousCommand = new AutoTurnAndTurn();
         controls = new IO();
     }
