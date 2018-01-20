@@ -21,7 +21,7 @@ public class VisionApproach extends Command
 
     public VisionApproach()
     {
-        requires(Robot.driveSubsystem);
+        requires(Robot.driveService.getSubsystem());
         pidX = new PIDController(2.5, 0.125, 0, .35);
     }
 
@@ -54,7 +54,7 @@ public class VisionApproach extends Command
         log.debug("VisionY", valueY);
         log.debug("VisionX", valueX);
 
-        Robot.driveSubsystem.driveWithHeading(s);
+        Robot.driveService.driveWithHeading(s);
     }
 
     protected boolean isFinished()

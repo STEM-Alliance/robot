@@ -1,11 +1,12 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.subsystems.tank.TankService;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
+import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.reuse.subsystems.swerve.SwerveSubsystem;
 import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -22,11 +23,11 @@ public class Robot extends SampleRobot
     private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
     private final RobotState state = RobotState.getInstance();
-    private final MatchState matchState = MatchState.getInstance();
-    
-    public static SwerveSubsystem driveSubsystem;
+    private final MatchState2018 matchState = MatchState2018.getInstance();
+
+    public static TankService driveService;
     public static DashboardView dashboardView;
-    
+
     public static IO controls;
 
     Command autonomousCommand;
@@ -34,7 +35,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveSubsystem = new SwerveSubsystem();
+        driveService = new TankService();
         // uncomment if using USB camera to stream video from roboRio
         //dashboardView = new DashboardView();
 
@@ -76,7 +77,7 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
-            driveSubsystem.zeroGyro();
+            driveService.zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 
             allPeriodic();
@@ -93,7 +94,6 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
-        log.info("Drive", driveSubsystem);
         
         SmartDashboard.putNumber("Battery V", RobotController.getInputVoltage());
         SmartDashboard.putNumber("Battery A", RobotController.getInputCurrent());
@@ -104,12 +104,5 @@ public class Robot extends SampleRobot
         scheduler.run();
         //log.debug("Periodic Time", getPeriodicTime(start));
         SmartDashboard.putNumber("Periodic Time ", Timer.getFPGATimestamp() - start);
-    }
-
-    /** Should be <= 20ms, the rate the driver station pings with IO updates. This assumes using closed loop CANTalon's or sensors/PID are all on our fast service thread to prevent latency */
-    @SuppressWarnings("unused")
-    private String getPeriodicTime(double start)
-    {
-        return String.format("%.1f ms", (Timer.getFPGATimestamp() - start) * 1000);
     }
 }
