@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.drive.swerve.TurnToInViewTarget;
+import org.wfrobotics.reuse.commands.drivebasic.TurnToInViewTarget;
 import org.wfrobotics.robot.commands.VisionModeCamera2;
 import org.wfrobotics.robot.commands.VisionModeDefault;
 

@@ -3,14 +3,13 @@ package org.wfrobotics.robot.config;
 import java.util.ArrayList;
 
 import org.wfrobotics.reuse.commands.LEDSignal;
-import org.wfrobotics.reuse.commands.drive.swerve.DriveOff;
-import org.wfrobotics.reuse.commands.drive.swerve.TurnToInViewTarget;
+import org.wfrobotics.reuse.commands.drivebasic.DriveOff;
+import org.wfrobotics.reuse.commands.drivebasic.TurnToInViewTarget;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
-import org.wfrobotics.reuse.controller.Xbox.*;
-import org.wfrobotics.reuse.utilities.Utilities;
+import org.wfrobotics.reuse.controller.Xbox.BUTTON;
 import org.wfrobotics.robot.driveoi.Arcade.ArcadeIO;
 import org.wfrobotics.robot.driveoi.Mecanum.MecanumIO;
 import org.wfrobotics.robot.driveoi.Swerve.SwerveIO;
@@ -28,7 +27,7 @@ public class IO
     private final Xbox driver;
     private final Xbox operator;
     private final Panel panel;
-    
+
     /* Only one of these should be instantiated at a time */
     public TankIO tankIO;
     public ArcadeIO arcadeIO;
@@ -55,7 +54,7 @@ public class IO
         if (instance == null) { instance = new IO(new Xbox(0), new Xbox(1), new Panel(2)); }
         return instance;
     }
-    
+
     public int getAutonomousSide()
     {
         return panel.getRotary();

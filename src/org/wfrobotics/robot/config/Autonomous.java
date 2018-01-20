@@ -2,10 +2,11 @@ package org.wfrobotics.robot.config;
 
 import java.util.function.Supplier;
 
-import org.wfrobotics.reuse.commands.drive.swerve.AutoDrive;
-import org.wfrobotics.reuse.commands.drive.swerve.DriveOff;
+import org.wfrobotics.reuse.commands.drivebasic.AutoDrive;
+import org.wfrobotics.reuse.commands.drivebasic.DriveOff;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 
@@ -38,13 +39,13 @@ public class Autonomous
 
     private static AutoMode[] makeModes()
     {
-        POSITION_ROTARY startingPosition = getRotaryStartingPosition();
-        int signX = (DriverStation.getInstance().getAlliance() == Alliance.Red) ? 1 : -1; // X driving based on alliance for mirrored field
+        getRotaryStartingPosition();
+        DriverStation.getInstance().getAlliance();
 
         return new AutoMode[] {
                 new AutoMode("Auto None", () -> new DriveOff(), 0),
-                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(0, DRIVE_SPEED, TIME_DRIVE_MODE), 0),
-                new AutoMode("Auto Forward (HIGH GEAR)", () -> new AutoDrive(0, DRIVE_SPEED * .75, TIME_DRIVE_MODE * .75), 0),
+                new AutoMode("Auto Forward (LOW GEAR)", () -> new AutoDrive(new HerdVector(DRIVE_SPEED, 0), TIME_DRIVE_MODE), 0),
+                new AutoMode("Auto Forward (HIGH GEAR)", () -> new AutoDrive(new HerdVector(DRIVE_SPEED * .75, 0), TIME_DRIVE_MODE * .75), 0),
         };
     }
 

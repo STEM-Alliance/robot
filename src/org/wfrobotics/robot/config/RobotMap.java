@@ -13,6 +13,10 @@ public class RobotMap
     public static final int CAN_SWERVE_ANGLE_TALONS[] = { 2, 3, 6, 7};
     public static final int PWM_SWERVE_SHIFT_SERVOS[] = { 0, 1, 2, 3 };
 
+
+    public static final int CAN_TANK_DRIVE_TALONS_L[] = { 10, 11 };
+    public static final int CAN_TANK_DRIVE_TALONS_R[] = { 12, 13 };
+    
     public static final int CAN_LIGHT = 31;
 
 }

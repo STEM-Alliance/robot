@@ -2,7 +2,7 @@
 
 <project name="FRC Deployment" default="deploy">
   <property file="build.properties"/>
-  <property file="${user.home}/wpilib/java/${version}/ant/build.properties"/>
+  <property file="reuse/build.properties"/>
   
-  <import file="${wpilib.ant.dir}/build.xml"/>
+  <import file="reuse/build_reuse.xml"/>
 </project> 
