@@ -12,14 +12,14 @@ import edu.wpi.first.wpilibj.buttons.Button;
 /** Maps Buttons to Commands **/
 public class IO
 {
-    public static Xbox controller = new Xbox(0);
+    public static Xbox controller = new Xbox(1);
 
     public static Button X = ButtonFactory.makeButton(controller, Xbox.BUTTON.X, TRIGGER.WHILE_HELD, new ExampleForwardCommand());
     public static Button Y = ButtonFactory.makeButton(controller, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new DriveArcade());
     
     
     
-    public static Joystick joystick = new Joystick(1);
+    public static Joystick joystick = new Joystick(0);
     
     
     // TODO Switch the 'Y' Button to run another Command, such as ExampleBackwardCommand
