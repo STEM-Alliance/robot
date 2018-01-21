@@ -1,18 +1,21 @@
-package org.wfrobotics.prototype.commands;
+package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.prototype.Robot;
 import org.wfrobotics.reuse.utilities.Utilities;
+import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class IntakePush extends Command {
+public class IntakePush extends Command
+{
     double speed;
-    public IntakePush() {
+
+    public IntakePush()
+    {
         requires(Robot.intakeSubsystem);
-        this.speed = .1;
+        speed = .1;
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
@@ -24,33 +27,38 @@ public class IntakePush extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize()
+    {
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute()
     {
-        if(Robot.controls.getTriggerRotationMan() < 0)
-    {
-        Utilities.spinUntilLimit(false, false, speed * Robot.controls.getTriggerRotationMan(), Robot.intakeSubsystem.rightIntake );
-    }
-        else
+        // if speed control is desired, readd for operator controller
+        // if (Robot.controls.getTriggerRotationMan() < 0)
+        // {
+        // Utilities.spinUntilLimit(false, false, speed * Robot.controls.getTriggerRotationMan(), Robot.intakeSubsystem.rightIntake);
+        // }
+        // else
         {
-        Utilities.spinUntilLimit(false, false, -speed, Robot.intakeSubsystem.rightIntake);
+            Utilities.spinUntilLimit(false, false, -speed, Robot.intakeSubsystem.rightIntake);
         }
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    protected boolean isFinished()
+    {
         return true;
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    protected void end()
+    {
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    protected void interrupted()
+    {
     }
 }

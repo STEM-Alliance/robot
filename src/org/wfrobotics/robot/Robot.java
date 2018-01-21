@@ -6,6 +6,9 @@ import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.robot.subsystems.IntakeSolenoidSubsystem;
+import org.wfrobotics.robot.subsystems.IntakeSubsystem;
+import org.wfrobotics.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
@@ -23,6 +26,11 @@ public class Robot extends SampleRobot
     private final MatchState2018 matchState = MatchState2018.getInstance();
 
     public static TankService driveService;
+
+    public static LiftSubsystem liftSubsystem;
+    public static IntakeSubsystem intakeSubsystem;
+    public static IntakeSolenoidSubsystem intakeSolenoidSubsystem;
+
     public static DashboardView dashboardView;
 
     public static IO controls;
@@ -33,6 +41,10 @@ public class Robot extends SampleRobot
     public void robotInit()
     {
         driveService = new TankService();
+        liftSubsystem = new LiftSubsystem();
+        intakeSubsystem = new IntakeSubsystem();
+        intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
+
         // uncomment if using USB camera to stream video from roboRio
         //dashboardView = new DashboardView();
 
