@@ -1,7 +1,7 @@
-package org.wfrobotics.prototype.commands;
+package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.prototype.Robot;
 import org.wfrobotics.reuse.utilities.Utilities;
+import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,7 +13,7 @@ public class Elevate extends Command {
     double speed;
     public Elevate() {
         requires(Robot.liftSubsystem);
-        this.speed= .2;
+        speed= .2;
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
@@ -28,7 +28,7 @@ public class Elevate extends Command {
     {
         if(Robot.liftSubsystem.BottomSensor.get())
         {
-        Robot.liftSubsystem.LiftMotor.setSelectedSensorPosition(0, 0, 0);
+            Robot.liftSubsystem.LiftMotor.setSelectedSensorPosition(0, 0, 0);
         }
 
     }
