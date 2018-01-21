@@ -2,14 +2,12 @@ package org.wfrobotics.robot.config;
 
 import java.util.ArrayList;
 
-import org.wfrobotics.reuse.commands.LEDSignal;
 import org.wfrobotics.reuse.commands.drivebasic.DriveOff;
 import org.wfrobotics.reuse.commands.drivebasic.TurnToInViewTarget;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
-import org.wfrobotics.reuse.controller.Xbox.BUTTON;
 import org.wfrobotics.robot.driveoi.Arcade.ArcadeIO;
 import org.wfrobotics.robot.driveoi.Mecanum.MecanumIO;
 import org.wfrobotics.robot.driveoi.Swerve.SwerveIO;
@@ -43,7 +41,7 @@ public class IO
         this.panel = panel;
         swerveIO = new SwerveXbox(driver, operator);
 
-        robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new LEDSignal(3)));
+        //robotSpecific.add(ButtonFactory.makeButton(operator, BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new LEDSignal(3)));
 
         robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
         robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.BLACK_B, TRIGGER.WHEN_PRESSED, new TurnToInViewTarget(.1)));
