@@ -6,11 +6,11 @@ import edu.wpi.first.wpilibj.command.Command;
 
 /** TODO: comment what this Command does */
 // TODO rename me (right click -> refactor -> rename)
-public class ExampleForwardCommand extends Command
+public class DriveConstAccel extends Command
 {
     // TODO create any objects this Command needs to remember for later
 
-    public ExampleForwardCommand()  // TODO pass any parameters needed to setup the command
+    public DriveConstAccel()  // TODO pass any parameters needed to setup the command
     {
         requires(Robot.prototypeSubsystem);
 
@@ -24,6 +24,7 @@ public class ExampleForwardCommand extends Command
 
     protected void execute()
     {
+        Robot.prototypeSubsystem.doMagic(1);
         // TODO do anything this Command needs to happen REPEATEDLY until it's finished
     }
 
