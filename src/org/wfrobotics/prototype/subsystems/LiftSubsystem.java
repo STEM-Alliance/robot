@@ -1,9 +1,12 @@
 package org.wfrobotics.prototype.subsystems;
 
+import org.wfrobotics.prototype.Robot;
 import org.wfrobotics.prototype.commands.Elevate;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -11,19 +14,31 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class LiftSubsystem extends Subsystem {
     public TalonSRX LiftMotor;
+    public DigitalInput BottomSensor;
+    public DigitalInput TopSensor;
+    public int encoderValue;
 
     public LiftSubsystem()
     {
         this.LiftMotor = new TalonSRX(18);
-    }
-    public static boolean isAtTop()
-    {
-        return false;
+        this.BottomSensor= new DigitalInput(1);
+        this.TopSensor= new DigitalInput(0);
+
+        LiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
 
     }
-    public static boolean isAtBottom()
+    public boolean isAtTop()
     {
-        return false;
+        return Robot.liftSubsystem.TopSensor.get();
+
+    }
+    public boolean isAtBottom()
+    {
+        return Robot.liftSubsystem.BottomSensor.get();
+    }
+    public int getEncoder()
+    {
+        return LiftMotor.getSelectedSensorPosition(0);
     }
 
     // Put methods for controlling this subsystem
@@ -32,7 +47,7 @@ public class LiftSubsystem extends Subsystem {
     public void initDefaultCommand() {
 
         // Set the default command for a subsystem here.
-        setDefaultCommand(new Elevate(-.1));
+        setDefaultCommand(new Elevate(0));
     }
 }
 

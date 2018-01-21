@@ -1,8 +1,7 @@
 package org.wfrobotics.prototype;
 
 import org.wfrobotics.prototype.config.IO;
-import org.wfrobotics.prototype.subsystems.ArmSubsystem;
-import org.wfrobotics.prototype.subsystems.HandSubsystem;
+import org.wfrobotics.prototype.subsystems.IntakeSolenoidSubsystem;
 import org.wfrobotics.prototype.subsystems.IntakeSubsystem;
 import org.wfrobotics.prototype.subsystems.LiftSubsystem;
 import org.wfrobotics.prototype.subsystems.ShiftingSubsystem;
@@ -14,12 +13,11 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends SampleRobot
 {
-    public static ArmSubsystem armSubsystem;
     public static TankSubsystem tankSubsystem;
-    public static HandSubsystem handSubsystem;
     public static ShiftingSubsystem shiftingSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static IntakeSubsystem intakeSubsystem;
+    public static IntakeSolenoidSubsystem intakeSolenoidSubsystem;
 
     public static IO controls;
 
@@ -29,10 +27,9 @@ public class Robot extends SampleRobot
     {
         liftSubsystem = new LiftSubsystem();
         intakeSubsystem = new IntakeSubsystem();
-        armSubsystem = new ArmSubsystem();
         tankSubsystem = new TankSubsystem();
-        handSubsystem = new HandSubsystem();
         shiftingSubsystem = new ShiftingSubsystem();
+        intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
         controls = new IO();
     }
 
@@ -42,6 +39,7 @@ public class Robot extends SampleRobot
 
         while (isOperatorControl() && isEnabled())
         {
+
             Scheduler.getInstance().run();
         }
     }

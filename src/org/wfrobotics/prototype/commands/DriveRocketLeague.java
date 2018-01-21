@@ -25,7 +25,7 @@ public class DriveRocketLeague extends Command {
     public void execute()
     {
         this.LeftX = Robot.controls.getLeftX();
-        this.TriggerRotation = Robot.controls.getTriggerRotation();
+        this.TriggerRotation = Robot.controls.getTriggerRotationDriver();
 
         LeftX = Math.signum(LeftX) * LeftX * LeftX;
 

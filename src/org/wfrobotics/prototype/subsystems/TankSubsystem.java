@@ -36,12 +36,12 @@ public class TankSubsystem extends Subsystem {
 
     public void setSpeedRight(double speed)
     {
-       RightFront.set(ControlMode.Current, speed);
+       RightFront.set(ControlMode.PercentOutput, speed);
     }
 
     public void setSpeedLeft(double speed)
     {
-        LeftFront.set(ControlMode.Current, speed);
+        LeftFront.set(ControlMode.PercentOutput, speed);
     }
 
 
