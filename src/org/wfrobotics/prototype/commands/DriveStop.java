@@ -1,11 +1,10 @@
 package org.wfrobotics.prototype.commands;
 
 import org.wfrobotics.prototype.Robot;
-
-import edu.wpi.first.wpilibj.command.Command;
+import org.wfrobotics.reuse.commands.DriveCommand;
 
 /** Sets ExampleSubsystem to a safe state */
-public class DriveStop extends Command
+public class DriveStop extends DriveCommand
 {
     public DriveStop()
     {
@@ -14,11 +13,11 @@ public class DriveStop extends Command
 
     protected void execute()
     {
-        Robot.prototypeSubsystem.doMagic(0);
+        Robot.prototypeSubsystem.doDrive(0);
     }
 
     protected boolean isFinished()
     {
-        return true;
+        return false;
     }
 }
