@@ -1,36 +1,29 @@
 package org.wfrobotics.prototype.commands;
 
 import org.wfrobotics.prototype.Robot;
+import org.wfrobotics.reuse.commands.DriveCommand;
 
-import edu.wpi.first.wpilibj.command.Command;
-
-/** TODO: comment what this Command does */
-// TODO rename me (right click -> refactor -> rename)
-public class DriveConstAccel extends Command
+public class DriveConstAccel extends DriveCommand
 {
-    // TODO create any objects this Command needs to remember for later
-
-    public DriveConstAccel()  // TODO pass any parameters needed to setup the command
+    public DriveConstAccel()
     {
         requires(Robot.prototypeSubsystem);
-
-        // TODO save off any objects needed to remember for later
     }
 
     protected void initialize()
     {
-        // TODO do anything this Command needs to happen ONCE
+        super.initialize();
+
+        Robot.prototypeSubsystem.doMagic(1);
     }
 
     protected void execute()
     {
-        Robot.prototypeSubsystem.doMagic(1);
-        // TODO do anything this Command needs to happen REPEATEDLY until it's finished
+        Robot.prototypeSubsystem.update();
     }
 
     protected boolean isFinished()
     {
-        // TODO return 'true' whenever this Command has COMPLETED it's purpose
         return false;
     }
 }
