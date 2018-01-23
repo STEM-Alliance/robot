@@ -19,8 +19,9 @@ public class BoxHold extends Command {
 
     protected void execute() {
         double speed = 0.1;
+        Robot.intakeSubsystem.holdBox();
         Robot.intakeSubsystem.setSpeed(speed);
-        
+         
     }
 
     protected boolean isFinished() {
@@ -32,4 +33,5 @@ public class BoxHold extends Command {
 
     protected void interrupted() {
     }
+    
 }

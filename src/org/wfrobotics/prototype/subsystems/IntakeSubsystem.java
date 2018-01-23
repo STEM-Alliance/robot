@@ -22,7 +22,7 @@ public class IntakeSubsystem extends Subsystem {
  
     public IntakeSubsystem()
     {
-      RightIntake = new TalonSRX(19);
+      RightIntake = new TalonSRX(10);
       LeftIntake = new TalonSRX(20);
       RightIntake.setInverted(true);
       LeftIntake.set(ControlMode.Follower, 1);
@@ -47,12 +47,13 @@ public class IntakeSubsystem extends Subsystem {
         return BoxCheck.get();
       }
     public void holdBox(){
-        if (CheckBox() == true)
+        
+        if (CheckBox() == false)
         {
-            setDefaultCommand(new BoxHold());
+           setDefaultCommand(new BoxHold());
             
         }
-        else {
+        if (CheckBox() == true){
             setDefaultCommand(new IntakeStop());
         }
     }
