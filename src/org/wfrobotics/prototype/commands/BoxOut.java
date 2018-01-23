@@ -21,7 +21,8 @@ public class BoxOut extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speed = -0.2;
+        double speed = -0.5;
+        Robot.intakeSubsystem.holdBox();
         Robot.intakeSubsystem.setSpeed(speed); 
     }
 

@@ -25,7 +25,7 @@ public class IntakeStop extends Command {
         double speed = 0;
         Robot.intakeSubsystem.setSpeed(speed); 
         Robot.intakeSubsystem.holdBox();
-    }
+       }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
