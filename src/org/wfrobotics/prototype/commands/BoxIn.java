@@ -25,7 +25,7 @@ public class BoxIn extends Command {
         double speed = 0.5;
         
         Robot.intakeSubsystem.setSpeed(speed); 
-       
+        Robot.intakeSubsystem.holdBox();
         
     }
 

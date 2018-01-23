@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class BoxOut extends Command {
+public class ConfirmExit extends Command {
 
-    public BoxOut() {
+    public ConfirmExit() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.intakeSubsystem);
@@ -17,14 +17,21 @@ public class BoxOut extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+       
+        
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        double speed = -0.5;
+      
+        while (this.timeSinceInitialized() < 1)
+        {
+            double speed = 0.3;
+            Robot.intakeSubsystem.setSpeed(speed);
+        }
+        double speed = 0;
+        Robot.intakeSubsystem.setSpeed(speed);
         Robot.intakeSubsystem.holdBox();
-        Robot.intakeSubsystem.setSpeed(speed); 
-        
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -34,6 +41,7 @@ public class BoxOut extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+        
     }
 
     // Called when another command which requires one or more of the same

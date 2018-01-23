@@ -43,20 +43,24 @@ public class IntakeSubsystem extends Subsystem {
        RightIntake.set(ControlMode.PercentOutput, rpm);
       
     }
-    public boolean CheckBox(){
+    public boolean checkBox(){
         return BoxCheck.get();
       }
     public void holdBox(){
         
-        if (CheckBox() == false)
+        if (checkBox() == false)
         {
            setDefaultCommand(new BoxHold());
             
         }
-        if (CheckBox() == true){
+        if (checkBox() == true){
             setDefaultCommand(new IntakeStop());
         }
     }
+ 
     
-}
+    
+ }
+    
+
 
