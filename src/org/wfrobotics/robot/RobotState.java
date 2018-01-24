@@ -13,7 +13,7 @@ public class RobotState
 {
     // ------------- BEGIN Public State (Read-Only) -------------
 
-    public double robotDistanceDriven;  // Distance driven by robot since encoder distance last zeroed (inches)
+    public double robotDistanceDriven;  // Distance driven by robot in forward direction since wheel encoders last zeroed (inches)
     public double robotHeading;         // Angle of robot relative to when gyro was last zeroed
     public boolean robotGear;           // True: High, False: Low
     public HerdVector robotVelocity;    // Speed and direction robot is driving  // TODO clarify FR or RR, which is ideal?
@@ -55,9 +55,9 @@ public class RobotState
 
     // ------------- BEGIN State Producers (Write-Only) -------------
 
-    public synchronized void updateRobotDistanceDriven(double totalInches)
+    public synchronized void updateRobotDistanceDriven(double inchesForwardTotal)
     {
-        robotDistanceDriven = totalInches;
+        robotDistanceDriven = inchesForwardTotal;
     }
 
     public synchronized void updateRobotGear(boolean isHighGear)
