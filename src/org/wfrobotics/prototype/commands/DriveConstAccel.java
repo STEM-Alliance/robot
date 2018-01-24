@@ -5,25 +5,38 @@ import org.wfrobotics.reuse.commands.DriveCommand;
 
 public class DriveConstAccel extends DriveCommand
 {
-    public DriveConstAccel()
+    private final double distance;
+    private double settledSamples;
+
+    public DriveConstAccel(double inchesForward)
     {
-        requires(Robot.prototypeSubsystem);
+        requires(Robot.driveService.getSubsystem());
+        distance = inchesForward;
+        settledSamples = 0;
     }
 
     protected void initialize()
     {
         super.initialize();
-
-        Robot.prototypeSubsystem.doMagic(1);
+        Robot.driveService.resetDistanceDriven();
     }
 
     protected void execute()
     {
-        Robot.prototypeSubsystem.update();
+        Robot.driveService.driveDistance(distance);
     }
 
     protected boolean isFinished()
+    {        double remainingInches = distance - state.robotDistanceDriven;
+
+    if (Math.abs(remainingInches) < Math.abs(distance * .001))
     {
-        return false;
+        settledSamples++;
+    }
+    else
+    {
+        settledSamples = 0;
+    }
+    return settledSamples > 10;  // Tight tolerances necessary in testing
     }
 }
