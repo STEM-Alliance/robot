@@ -15,4 +15,6 @@ public class Drive
 
     public static final boolean OPERATOR_ROTATE = true;
 
+    public static final boolean SWAP_LEFT_RIGHT = false;
+
 }
