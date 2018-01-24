@@ -32,6 +32,8 @@ public class MagicTankSubsystem extends Subsystem implements DifferentialDrive
         // TODO See documentation for how to actually determine values - these are from the example
         motor = TalonSRXFactory.makeConstAccelControlTalon(10, .25, .005, .75, .25, 0, 15000, 12000);
 
+        // TODO Try SetVelocityMeasurementPeriod and SetVelocityMeasurementWindow new equivalent, try 5ms status frame rate, try voltage ramp rate
+
         motor.setSensorPhase(false);
         motor.setInverted(false);
         motor.config_IntegralZone(0, 5, kTimeoutMs);  // Allows I to drift to exact spot without motor chatter
@@ -64,7 +66,6 @@ public class MagicTankSubsystem extends Subsystem implements DifferentialDrive
     public void driveDistance(double inchesForward)
     {
         double targetPositionTicks = inchesForward / kWheelDiameter / Math.PI * kTicksPerRev;
-        // TODO Inches per tick once cal working
 
         SmartDashboard.putNumber("Target Position", targetPositionTicks);
 
