@@ -6,30 +6,31 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-/**
- *
- */
-public class IntakeSolenoidSubsystem extends Subsystem {
-    public DoubleSolenoid intakeSolenoid;
+public class IntakeSolenoidSubsystem extends Subsystem
+{
+    public DoubleSolenoid intakeSolenoids;
     boolean isHigh;
+    // TODO Do we care about knowing exactly when the state changes? Would require using time since request for state change
+
     public IntakeSolenoidSubsystem()
     {
-        this.intakeSolenoid = new DoubleSolenoid(7, 3, 4);
-
+        intakeSolenoids = new DoubleSolenoid(7, 3, 4);  // TODO Add configuration to Config/RobotMap
     }
 
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
+    // TODO When the lift is up, the intake cannot let go of the cube. Default command needs to be smarter and reference robot state
+    public void initDefaultCommand()
+    {
+        setDefaultCommand(new IntakeSolenoid(false));  // TODO Add configuration to Config/Commands?
+    }
+
     public void intakeSolenoidSet (boolean high)
     {
-        intakeSolenoid.set(high ? Value.kForward : Value.kReverse);
-        this.isHigh = high;
-
+        intakeSolenoids.set(high ? Value.kForward : Value.kReverse);
+        isHigh = high;
     }
-    public void initDefaultCommand() {
 
-        // Set the default command for a subsystem here.
-        setDefaultCommand(new IntakeSolenoid(false));
-    }
+    // TODO Should we allow the driver to change the solenoid direction at any time? Any advantage to a minimum time they try to move to prevent chatter on button smashing?
+
+    // TODO Probably want one or more command groups that use the wheels and pneumatics at the same time? Is that in all cases? Try to figure out what's good by experimenting touch the cube in different ways and different circumstances with the robot.
 }
 
