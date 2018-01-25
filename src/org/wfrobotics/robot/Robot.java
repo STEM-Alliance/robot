@@ -72,7 +72,7 @@ public class Robot extends SampleRobot
             // TODO error?
         }
 
-        autonomousCommand =  Autonomous.setupSelectedMode();
+        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
