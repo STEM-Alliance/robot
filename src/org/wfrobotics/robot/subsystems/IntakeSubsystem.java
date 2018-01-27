@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.robot.commands.IntakePull;
+import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
+import org.wfrobotics.robot.commands.DistanceIntake;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -15,23 +16,40 @@ public class IntakeSubsystem extends Subsystem
 {
     public TalonSRX leftIntake;
     public TalonSRX rightIntake;
+    public SharpDistance uSensor;
 
     public IntakeSubsystem()
     {
-        leftIntake = new TalonSRX(19);
-        rightIntake = new TalonSRX(20);
+        leftIntake = new TalonSRX(10);
+        rightIntake = new TalonSRX(10);
         rightIntake.setNeutralMode(NeutralMode.Brake);
         leftIntake.setNeutralMode(NeutralMode.Brake);
-        leftIntake.set(ControlMode.Follower, 20);
+        leftIntake.set(ControlMode.Follower, 10);
+
         rightIntake.setInverted(true);
         leftIntake.setInverted(true);
+
+        uSensor = new SharpDistance(0);
     }
 
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
     public void initDefaultCommand()
     {
-        // Set the default command for a subsystem here.
-        setDefaultCommand(new IntakePull(0));
+        setDefaultCommand(new DistanceIntake());
+    }
+    public void setMotor(double speed)
+    {
+        rightIntake.set(ControlMode.Current, speed);
+    }
+    public void stopMotor()
+    {
+        rightIntake.set(ControlMode.Current, 0);
+    }
+    public boolean hasCube()
+    {
+        return uSensor.getDistance() < 10;
+    }
+    public double getDistance()
+    {
+        return uSensor.getDistance();
     }
 }
