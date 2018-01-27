@@ -43,6 +43,8 @@ public class RobotState
         robotHeading = 0;
         robotVelocity = new HerdVector(0, 0);
         resetVisionState();
+
+
     }
 
     public void logState()
