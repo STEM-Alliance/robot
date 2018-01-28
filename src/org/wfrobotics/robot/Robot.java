@@ -40,15 +40,16 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
+        controls = IO.getInstance();
         driveService = TankService.getInstance();
-        liftSubsystem = new LiftSubsystem();
-        intakeSubsystem = new IntakeSubsystem();
-        intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
+        //        liftSubsystem = new LiftSubsystem();
+        //        intakeSubsystem = new IntakeSubsystem();
+        //        intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
 
         // uncomment if using USB camera to stream video from roboRio
         //dashboardView = new DashboardView();
 
-        controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
+
 
         // TODO default config?
         //CameraServer.getInstance();
