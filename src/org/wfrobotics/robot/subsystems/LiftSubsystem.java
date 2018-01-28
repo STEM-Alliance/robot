@@ -34,9 +34,9 @@ public class LiftSubsystem extends Subsystem
         //LiftMotor.setNeutralMode(NeutralMode.Brake);
         LiftMotor.setInverted(true);
 
-        int absolutePosition = LiftMotor.getSelectedSensorPosition(10) & 0xFFF;
+        LiftMotor.getSelectedSensorPosition(10);
 
-        LiftMotor.setSelectedSensorPosition(absolutePosition, 0, 10);
+        // LiftMotor.setSelectedSensorPosition(absolutePosition, 0, 10);
 
         LiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
         LiftMotor.setSensorPhase(true);
@@ -48,19 +48,20 @@ public class LiftSubsystem extends Subsystem
         LiftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 5, 10);
         LiftMotor.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, 5, 10);
 
-        LiftMotor.setNeutralMode(NeutralMode.Brake);
+        //LiftMotor.setNeutralMode(NeutralMode.Brake);
 
         LiftMotor.configAllowableClosedloopError(5, 0, 10);
         LiftMotor.config_kF(0, 0.0, 10);
-        LiftMotor.config_kP(0, 20, 10);
-        LiftMotor.config_kI(0, .5, 10);
-        LiftMotor.config_kD(0, 500, 10);
+        LiftMotor.config_kP(0, 20, 10);//20
+        LiftMotor.config_kI(0, 0, 10);
+        LiftMotor.config_kD(0, 125, 10);
         LiftMotor.configNeutralDeadband(.05, 10);
         LiftMotor.config_IntegralZone(0, 1, 10);
     }
 
     public void goToPosition(double destination)
     {
+        LiftMotor.setNeutralMode(NeutralMode.Coast);
 
         update();
         LiftMotor.set(ControlMode.Position, (destination*4096));
@@ -68,7 +69,12 @@ public class LiftSubsystem extends Subsystem
 
     public void setSpeed (double speed)
     {
+        LiftMotor.setNeutralMode(NeutralMode.Brake);
         double output = speed;
+        if(speed == 0)
+        {
+            LiftMotor.setNeutralMode(NeutralMode.Coast);
+        }
 
         if(isAtBottom() && speed < 0 || isAtTop() && speed > 0)
         {
