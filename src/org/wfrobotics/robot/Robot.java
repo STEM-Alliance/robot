@@ -40,7 +40,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveService = new TankService();
+        driveService = TankService.getInstance();
         liftSubsystem = new LiftSubsystem();
         intakeSubsystem = new IntakeSubsystem();
         intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
@@ -72,7 +72,7 @@ public class Robot extends SampleRobot
             // TODO error?
         }
 
-        autonomousCommand =  Autonomous.setupSelectedMode();
+        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
