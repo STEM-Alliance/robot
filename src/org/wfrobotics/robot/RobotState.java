@@ -55,9 +55,9 @@ public class RobotState
 
     // ------------- BEGIN State Producers (Write-Only) -------------
 
-    public synchronized void updateRobotDistanceDriven(double encoderDelta)
+    public synchronized void updateRobotDistanceDriven(double inchesDrivenTotal)
     {
-        robotDistanceDriven += encoderDelta;
+        robotDistanceDriven = inchesDrivenTotal;
     }
 
     public synchronized void updateRobotGear(boolean isHighGear)
