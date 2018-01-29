@@ -1,6 +1,7 @@
 package org.wfrobotics.prototype;
 
 import org.wfrobotics.prototype.config.IO;
+import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -8,13 +9,15 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends SampleRobot
 {
-
+    public static ExampleSubsystem prototypeSubsystem;
     public static IO controls;
 
     Command autonomousCommand = null;
 
     public void robotInit()
     {
+        prototypeSubsystem = new ExampleSubsystem();
+
         controls = new IO();
     }
 
@@ -24,7 +27,6 @@ public class Robot extends SampleRobot
 
         while (isOperatorControl() && isEnabled())
         {
-
             Scheduler.getInstance().run();
         }
     }

@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.robot.commands.IntakeSolenoid;
+import org.wfrobotics.robot.config.RobotMap;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -14,7 +15,7 @@ public class IntakeSolenoidSubsystem extends Subsystem
 
     public IntakeSolenoidSubsystem()
     {
-        intakeSolenoids = new DoubleSolenoid(7, 3, 4);  // TODO Add configuration to Config/RobotMap
+        intakeSolenoids = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_FORWARD, RobotMap.PNEUMATIC_INTAKE_REVERSE);
     }
 
     // TODO When the lift is up, the intake cannot let go of the cube. Default command needs to be smarter and reference robot state

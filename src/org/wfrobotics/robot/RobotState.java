@@ -38,13 +38,11 @@ public class RobotState
 
     protected RobotState()
     {
-        resetRobotDistanceDriven();
+        robotDistanceDriven = 0;
         robotGear = Drive.SHIFTER_INITIAL_STATE;
         robotHeading = 0;
         robotVelocity = new HerdVector(0, 0);
         resetVisionState();
-
-
     }
 
     public void logState()
@@ -57,9 +55,9 @@ public class RobotState
 
     // ------------- BEGIN State Producers (Write-Only) -------------
 
-    public synchronized void updateRobotDistanceDriven(double encoderDelta)
+    public synchronized void updateRobotDistanceDriven(double inchesDrivenTotal)
     {
-        robotDistanceDriven += encoderDelta;
+        robotDistanceDriven = inchesDrivenTotal;
     }
 
     public synchronized void updateRobotGear(boolean isHighGear)
@@ -85,11 +83,6 @@ public class RobotState
         }
 
         DriverStation.reportWarning("RobotState not configured for vision update specific parsing", false);
-    }
-
-    public synchronized void resetRobotDistanceDriven()
-    {
-        robotDistanceDriven = 0;
     }
 
     private synchronized void resetVisionState()
