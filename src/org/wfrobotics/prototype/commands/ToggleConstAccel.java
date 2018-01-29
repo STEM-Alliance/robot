@@ -20,19 +20,19 @@ public class ToggleConstAccel extends DriveCommand
     protected void initialize()
     {
         super.initialize();
-        Robot.driveService.resetDistanceDriven();
+        Robot.driveService.driveDistanceInit(getTargetInches());
     }
 
     protected void execute()
     {
-        Robot.driveService.driveDistance(getTargetInches());
+        Robot.driveService.driveDistanceUpdate();
     }
 
     protected boolean isFinished()
     {
         double remainingInches = getTargetInches() - state.robotDistanceDriven;
 
-        if (Math.abs(remainingInches) < Math.abs(getTargetInches() * .001))
+        if (Math.abs(remainingInches) < Math.abs(getTargetInches() * .05))
         {
             settledSamples++;
         }
@@ -40,7 +40,7 @@ public class ToggleConstAccel extends DriveCommand
         {
             settledSamples = 0;
         }
-        return settledSamples > 10;  // Tight tolerances necessary in testing
+        return settledSamples > 20;  // Tight tolerances necessary in testing
     }
 
     protected void end()
