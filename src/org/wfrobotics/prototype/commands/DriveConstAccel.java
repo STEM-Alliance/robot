@@ -18,12 +18,13 @@ public class DriveConstAccel extends DriveCommand
     protected void initialize()
     {
         super.initialize();
-        Robot.driveService.resetDistanceDriven();
+        Robot.driveService.driveDistanceUpdate();
+        Robot.driveService.driveDistanceInit(distance);
     }
 
     protected void execute()
     {
-        Robot.driveService.driveDistance(distance);
+        Robot.driveService.driveDistanceInit(distance);
     }
 
     protected boolean isFinished()
