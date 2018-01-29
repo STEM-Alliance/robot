@@ -30,7 +30,7 @@ public class DistanceIntake extends Command
 
         if (Robot.intakeSubsystem.getDistance() <= distanceToBlock)
         {
-            Robot.intakeSubsystem.stopMotor();
+            Robot.intakeSubsystem.setMotor(0);
         }
 
 

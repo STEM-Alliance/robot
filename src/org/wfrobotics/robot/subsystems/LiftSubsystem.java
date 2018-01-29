@@ -1,12 +1,20 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.Elevate;
+import org.wfrobotics.robot.config.RobotMap;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 public class LiftSubsystem extends Subsystem
 {
@@ -20,27 +28,57 @@ public class LiftSubsystem extends Subsystem
 
     public LiftSubsystem()
     {
-        // TODO Use Talon factory. If not position control, at least makeTalon()
-        LiftMotor = new TalonSRX(18);
-        BottomSensor = new DigitalInput(1);
-        TopSensor = new DigitalInput(0);
-        LiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+        final int kTimeoutMs = 10;
 
-        // TODO Setup Position control mode
+        // TODO Use Talon factory. If not position control, at least makeTalon()
+        LiftMotor = new TalonSRX(RobotMap.CAN_LIFT);
+        BottomSensor = new DigitalInput(RobotMap.DIGITAL_LIFT_LIMIT_BOTTOM);
+        TopSensor = new DigitalInput(RobotMap.DIGITAL_LIFT_LIMIT_TOP);
+
+        //LiftMotor.setNeutralMode(NeutralMode.Brake);
+        LiftMotor.setInverted(true);
+
+        LiftMotor.getSelectedSensorPosition(10);
+
+        // LiftMotor.setSelectedSensorPosition(absolutePosition, 0, kTimeoutMs);
 
         // TODO Figure out what settings are ideal
 
+        LiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
+        LiftMotor.setSensorPhase(true);
+
         // TODO Poofs used brake mode on drive postion control. Why didn't ours work?
 
-        // TODO Make sure frame rate is high, but not too high. Double check we aren't setting irrelevant frame types super as fast - we need the bandwidth for lift/drive important frames
+        // TODO Double check we aren't setting irrelevant frame types super as fast - we need the bandwidth for lift/drive important frames
 
         // TODO Can we get away with follower mode or do we need to two that try to adjust if we slip a geartooth? Ask mechanical what to do.
+        LiftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 5, kTimeoutMs);
+        LiftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 5, kTimeoutMs);
+        LiftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 1 , kTimeoutMs);
+        //LiftMotor.setControlFramePeriod(ControlFrame.Control_3_General, kTimeoutMs);
+        LiftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 5, kTimeoutMs);
+        LiftMotor.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, 5, kTimeoutMs);
 
         // TODO Setup two hardware managed limit switches - Faster & safer than software limit switches
+        //LiftMotor.setNeutralMode(NeutralMode.Brake);
 
-        // TODO Beast mode - Distance sensors to sense scale here or somewhere else? Low priority.
+        LiftMotor.configAllowableClosedloopError(5, 0, kTimeoutMs);
+        LiftMotor.config_kF(0, 0.0, kTimeoutMs);
+        LiftMotor.config_kP(0, 20, kTimeoutMs);//20
+        LiftMotor.config_kI(0, 0, kTimeoutMs);
+        LiftMotor.config_kD(0, 125, kTimeoutMs);
+        LiftMotor.configNeutralDeadband(.05, kTimeoutMs);
+        LiftMotor.config_IntegralZone(0, 1, kTimeoutMs);
+    }
 
-        // TODO There's a "state pattern" that can help us if the rules for going to/from each state gets too complex
+    // TODO There's a "state pattern" that can help us if the rules for going to/from each state gets too complex
+    public void goToPosition(double destination)
+    {
+        // TODO Setup two hardware managed limit switches - Faster & safer than software limit switches
+        LiftMotor.setNeutralMode(NeutralMode.Coast);
+
+        update();
+        LiftMotor.set(ControlMode.Position, (destination * 4096));
     }
 
     // TODO Lift needs to hold position by default
@@ -48,6 +86,39 @@ public class LiftSubsystem extends Subsystem
     public void initDefaultCommand()
     {
         setDefaultCommand(new Elevate(0));
+    }
+
+    public void setSpeed (double speed)
+    {
+        LiftMotor.setNeutralMode(NeutralMode.Brake);
+        double output = speed;
+
+        if(speed == 0)
+        {
+            LiftMotor.setNeutralMode(NeutralMode.Coast);
+        }
+
+        if(isAtBottom() && speed < 0 || isAtTop() && speed > 0)
+        {
+            output = 0;
+        }
+
+        update();
+        LiftMotor.set(ControlMode.PercentOutput, output);
+    }
+
+    private void update()
+    {
+        zeroPositionIfNeeded();
+        SmartDashboard.putNumber("LiftEncoder", Robot.liftSubsystem.getEncoder());
+    }
+
+    public void zeroPositionIfNeeded()
+    {
+        if(Robot.liftSubsystem.isAtBottom())
+        {
+            Robot.liftSubsystem.LiftMotor.setSelectedSensorPosition(0, 0, 0);
+        }
     }
 
     public boolean isAtTop()
