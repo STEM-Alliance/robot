@@ -9,13 +9,12 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class IntakeSolenoid extends Command {
     boolean high;
+    int timeSinceLastStateChange;
 
     public IntakeSolenoid(boolean high)
     {
         requires(Robot.intakeSolenoidSubsystem);
         this.high = high;
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
     }
 
     // Called just before this Command runs the first time
