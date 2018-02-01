@@ -1,5 +1,6 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.background.BackgroundUpdater;
 import org.wfrobotics.reuse.subsystems.tank.TankService;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends SampleRobot
 {
+    private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater();
     private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
     private final RobotState state = RobotState.getInstance();
@@ -27,9 +29,9 @@ public class Robot extends SampleRobot
 
     public static TankService driveService;
 
-    public static LiftSubsystem liftSubsystem;
-    public static IntakeSubsystem intakeSubsystem;
     public static IntakeSolenoidSubsystem intakeSolenoidSubsystem;
+    public static IntakeSubsystem intakeSubsystem;
+    public static LiftSubsystem liftSubsystem;
 
     public static DashboardView dashboardView;
 
@@ -52,11 +54,15 @@ public class Robot extends SampleRobot
 
         // TODO default config?
         //CameraServer.getInstance();
+
+        // TODO Register background updates, ex: backgroundUpdater.register(liftSubsystem.onBackgroundUpdate());
     }
 
     public void operatorControl()
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
+
+        // TODO backgroundUpdater.start();
 
         while (isOperatorControl() && isEnabled())
         {
@@ -72,6 +78,8 @@ public class Robot extends SampleRobot
             // TODO error?
         }
 
+        // TODO backgroundUpdater.start();
+
         autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
         if (autonomousCommand != null) autonomousCommand.start();
 
@@ -83,6 +91,7 @@ public class Robot extends SampleRobot
 
     public void disabled()
     {
+        // TODO backgroundUpdater.stop();
 
         while (isDisabled())
         {
