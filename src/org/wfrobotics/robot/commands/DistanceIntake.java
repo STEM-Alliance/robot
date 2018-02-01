@@ -22,18 +22,20 @@ public class DistanceIntake extends Command
     public DistanceIntake()
     {
         requires(Robot.intakeSubsystem);
-        requires(Robot.intakeSolenoidSubsystem);
     }
     protected void execute()
     {
         SmartDashboard.putNumber("Distance:", Robot.intakeSubsystem.getDistance());
+        Robot.intakeSubsystem.pushToRobotState();
 
         if (Robot.intakeSubsystem.getDistance() <= distanceToBlock)
         {
-            Robot.intakeSubsystem.setMotor(0);
+            Robot.intakeSubsystem.stopMotor();
         }
-
-
+        else
+        {
+            Robot.intakeSubsystem.setMotor(0.1);
+        }
     }
     protected boolean isFinished()
     {
