@@ -34,7 +34,7 @@ public class ElevatePID extends Command {
         Robot.liftSubsystem.goToPosition(position);
 
 
-        SmartDashboard.putNumber("Encoder Error", Robot.liftSubsystem.LiftMotor.getClosedLoopError(0));
+        SmartDashboard.putNumber("Encoder Error", Robot.liftSubsystem.liftMotorL.getClosedLoopError(0));
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -23,6 +23,8 @@ public class RobotState
     public VisionMode visionMode;       // What vision co-processor is using it's camera(s) for
     public double visionWidth;          // How big is the target(s), and therefore how close is it
 
+    public double intakeSensorReadout;
+
     public static RobotState getInstance()
     {
         if (instance == null) { instance = new RobotState(); }
@@ -54,7 +56,10 @@ public class RobotState
     // ------------- END Private -------------
 
     // ------------- BEGIN State Producers (Write-Only) -------------
-
+    public synchronized void updateIntakeSensor(double distance)
+    {
+        intakeSensorReadout = distance;
+    }
     public synchronized void updateRobotDistanceDriven(double inchesDrivenTotal)
     {
         robotDistanceDriven = inchesDrivenTotal;

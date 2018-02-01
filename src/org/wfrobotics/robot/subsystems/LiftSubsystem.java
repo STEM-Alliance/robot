@@ -5,7 +5,6 @@ import org.wfrobotics.robot.commands.Elevate;
 import org.wfrobotics.robot.config.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -21,7 +20,9 @@ public class LiftSubsystem extends Subsystem
     // TODO List of present heights
     // TODO Preset heights in configuration file
 
-    public TalonSRX LiftMotor;
+    public TalonSRX liftMotorL;
+    public TalonSRX liftMotorR;
+
     public DigitalInput BottomSensor;
     public DigitalInput TopSensor;
     public int encoderValue;
@@ -31,54 +32,59 @@ public class LiftSubsystem extends Subsystem
         final int kTimeoutMs = 10;
 
         // TODO Use Talon factory. If not position control, at least makeTalon()
-        LiftMotor = new TalonSRX(RobotMap.CAN_LIFT);
+        liftMotorL = new TalonSRX(RobotMap.CAN_LIFT_L);
+        liftMotorR = new TalonSRX(RobotMap.CAN_LIFT_R);
+
         BottomSensor = new DigitalInput(RobotMap.DIGITAL_LIFT_LIMIT_BOTTOM);
         TopSensor = new DigitalInput(RobotMap.DIGITAL_LIFT_LIMIT_TOP);
 
         //LiftMotor.setNeutralMode(NeutralMode.Brake);
-        LiftMotor.setInverted(true);
+        liftMotorL.setInverted(true);
 
-        LiftMotor.getSelectedSensorPosition(10);
+        liftMotorL.getSelectedSensorPosition(10);
 
+        liftMotorR.set(ControlMode.Follower, RobotMap.CAN_LIFT_L);
+
+        liftMotorR.setInverted(true);
         // LiftMotor.setSelectedSensorPosition(absolutePosition, 0, kTimeoutMs);
 
         // TODO Figure out what settings are ideal
 
-        LiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
-        LiftMotor.setSensorPhase(true);
+        //        liftMotorL.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
+        //        liftMotorL.setSensorPhase(true);
 
         // TODO Poofs used brake mode on drive postion control. Why didn't ours work?
 
         // TODO Double check we aren't setting irrelevant frame types super as fast - we need the bandwidth for lift/drive important frames
 
         // TODO Can we get away with follower mode or do we need to two that try to adjust if we slip a geartooth? Ask mechanical what to do.
-        LiftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 5, kTimeoutMs);
-        LiftMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 5, kTimeoutMs);
-        LiftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 1 , kTimeoutMs);
+        liftMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 5, kTimeoutMs);
+        liftMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 5, kTimeoutMs);
+        liftMotorL.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 1 , kTimeoutMs);
         //LiftMotor.setControlFramePeriod(ControlFrame.Control_3_General, kTimeoutMs);
-        LiftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 5, kTimeoutMs);
-        LiftMotor.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, 5, kTimeoutMs);
+        liftMotorL.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 5, kTimeoutMs);
+        liftMotorL.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, 5, kTimeoutMs);
 
         // TODO Setup two hardware managed limit switches - Faster & safer than software limit switches
         //LiftMotor.setNeutralMode(NeutralMode.Brake);
 
-        LiftMotor.configAllowableClosedloopError(5, 0, kTimeoutMs);
-        LiftMotor.config_kF(0, 0.0, kTimeoutMs);
-        LiftMotor.config_kP(0, 20, kTimeoutMs);//20
-        LiftMotor.config_kI(0, 0, kTimeoutMs);
-        LiftMotor.config_kD(0, 125, kTimeoutMs);
-        LiftMotor.configNeutralDeadband(.05, kTimeoutMs);
-        LiftMotor.config_IntegralZone(0, 1, kTimeoutMs);
+        liftMotorL.configAllowableClosedloopError(5, 0, kTimeoutMs);
+        liftMotorL.config_kF(0, 0.0, kTimeoutMs);
+        liftMotorL.config_kP(0, 20, kTimeoutMs);//20
+        liftMotorL.config_kI(0, 0, kTimeoutMs);
+        liftMotorL.config_kD(0, 125, kTimeoutMs);
+        liftMotorL.configNeutralDeadband(.05, kTimeoutMs);
+        liftMotorL.config_IntegralZone(0, 1, kTimeoutMs);
     }
 
     // TODO There's a "state pattern" that can help us if the rules for going to/from each state gets too complex
     public void goToPosition(double destination)
     {
         // TODO Setup two hardware managed limit switches - Faster & safer than software limit switches
-        LiftMotor.setNeutralMode(NeutralMode.Coast);
+        liftMotorL.setNeutralMode(NeutralMode.Coast);
 
         update();
-        LiftMotor.set(ControlMode.Position, (destination * 4096));
+        liftMotorL.set(ControlMode.Position, (destination * 4096));
     }
 
     // TODO Lift needs to hold position by default
@@ -90,12 +96,12 @@ public class LiftSubsystem extends Subsystem
 
     public void setSpeed (double speed)
     {
-        LiftMotor.setNeutralMode(NeutralMode.Brake);
+        liftMotorL.setNeutralMode(NeutralMode.Brake);
         double output = speed;
 
         if(speed == 0)
         {
-            LiftMotor.setNeutralMode(NeutralMode.Coast);
+            liftMotorL.setNeutralMode(NeutralMode.Coast);
         }
 
         if(isAtBottom() && speed < 0 || isAtTop() && speed > 0)
@@ -104,9 +110,8 @@ public class LiftSubsystem extends Subsystem
         }
 
         update();
-        LiftMotor.set(ControlMode.PercentOutput, output);
+        liftMotorL.set(ControlMode.PercentOutput, output);
     }
-
     private void update()
     {
         zeroPositionIfNeeded();
@@ -117,7 +122,7 @@ public class LiftSubsystem extends Subsystem
     {
         if(Robot.liftSubsystem.isAtBottom())
         {
-            Robot.liftSubsystem.LiftMotor.setSelectedSensorPosition(0, 0, 0);
+            Robot.liftSubsystem.liftMotorL.setSelectedSensorPosition(0, 0, 0);
         }
     }
 
@@ -133,7 +138,7 @@ public class LiftSubsystem extends Subsystem
 
     public int getEncoder()
     {
-        return LiftMotor.getSelectedSensorPosition(0);
+        return liftMotorL.getSelectedSensorPosition(0);
     }
 
     // TODO Report fommatted state to RobotState. Not the height, but instead something like what the Robot can do. Ex: isSafeToExhaustScale
