@@ -1,6 +1,7 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.subsystems.tank.TankService;
+import org.wfrobotics.reuse.subsystems.tank.TankSubsystem;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.MatchState2018;
@@ -89,6 +90,7 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
+            ((TankSubsystem) driveService.getSubsystem()).reportDistanceDriven();
             driveService.zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 

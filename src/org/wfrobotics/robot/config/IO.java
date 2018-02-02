@@ -42,9 +42,12 @@ public class IO
 
         // this is now how you select select the drive style
         arcadeIO = new ArcadeRocketXbox(driver);
-        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance(6)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.X, TRIGGER.WHEN_PRESSED, new DriveDistance(6)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.Y, TRIGGER.WHEN_PRESSED, new DriveDistance(-6)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance(600)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.X, TRIGGER.WHEN_PRESSED, new DriveDistance(6000)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.Y, TRIGGER.WHILE_HELD, new DriveDistance(60)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHILE_HELD, new DriveDistance(-60)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance()));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.B, TRIGGER.WHEN_PRESSED, new AutoDrive(new HerdVector(-1, 0),5)));
 
 
 
