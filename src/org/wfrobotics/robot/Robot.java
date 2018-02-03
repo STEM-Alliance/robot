@@ -42,10 +42,10 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        driveService = TankService.getInstance();
+        //driveService = TankService.getInstance();
         liftSubsystem = new LiftSubsystem();
-        intakeSubsystem = new IntakeSubsystem();
-        intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
+        //intakeSubsystem = new IntakeSubsystem();
+        //intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
 
         // uncomment if using USB camera to stream video from roboRio
         //dashboardView = new DashboardView();
@@ -55,14 +55,14 @@ public class Robot extends SampleRobot
         // TODO default config?
         //CameraServer.getInstance();
 
-        // TODO Register background updates, ex: backgroundUpdater.register(liftSubsystem.onBackgroundUpdate());
+        backgroundUpdater.register(liftSubsystem);
     }
 
     public void operatorControl()
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
 
-        // TODO backgroundUpdater.start();
+        backgroundUpdater.start();
 
         while (isOperatorControl() && isEnabled())
         {
@@ -78,7 +78,7 @@ public class Robot extends SampleRobot
             // TODO error?
         }
 
-        // TODO backgroundUpdater.start();
+        backgroundUpdater.start();
 
         autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
         if (autonomousCommand != null) autonomousCommand.start();
@@ -91,11 +91,11 @@ public class Robot extends SampleRobot
 
     public void disabled()
     {
-        // TODO backgroundUpdater.stop();
+        backgroundUpdater.stop();
 
         while (isDisabled())
         {
-            driveService.zeroGyro();
+            //driveService.zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
 
             allPeriodic();
