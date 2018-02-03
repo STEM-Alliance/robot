@@ -7,35 +7,27 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class ElevatePID extends Command {
-    double position;
-    public ElevatePID()
-    {
-
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
+public class ElevateGoHome extends Command {
+    double speed;
+    public ElevateGoHome() {
+        requires(Robot.liftSubsystem);
+        speed= -.5;
     }
 
-    public ElevatePID(double position)
-    {
-        this.position = position;
-
-    }
     // Called just before this Command runs the first time
     protected void initialize()
     {
-
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute()
     {
-        Robot.liftSubsystem.goToPosition(position);
+        Robot.liftSubsystem.setSpeed(speed);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false; //potentially: (Math.abs(Robot.liftSubsystem.getEncoder()- destination) < 30)
+        return false;
     }
 
     // Called once after isFinished returns true

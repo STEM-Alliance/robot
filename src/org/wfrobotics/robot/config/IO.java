@@ -16,7 +16,6 @@ import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
 import org.wfrobotics.robot.commands.Elevate;
 import org.wfrobotics.robot.commands.ElevatePID;
-import org.wfrobotics.robot.commands.ElevateRendezvous;
 import org.wfrobotics.robot.commands.IntakePull;
 import org.wfrobotics.robot.commands.IntakePush;
 import org.wfrobotics.robot.commands.IntakeSolenoid;
@@ -62,13 +61,14 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(1)));
         robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.X, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeSolenoid(true)));
 
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new ElevateRendezvous((5000), .5)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new ElevateRendezvous((5000), .5)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new ElevatePID((18000/2)/4096)));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ElevatePID((18000/2)/4096)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LEFT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(0)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RIGHT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(18000/4096)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LEFT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(0)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RIGHT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(18000/4096)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(-.5)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Elevate(.5)));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new IntakePull()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(-1)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Elevate(1)));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeSolenoid(true)));
 
     }

@@ -36,8 +36,6 @@ public class RobotMap
     public static final int CAN_LIGHT = 31;
 
     // Lift ---------------------------------------------------------------------------------------
-    public static final int CAN_LIFT_R = 12;
-    public static final int CAN_LIFT_L = 10;
-    public static final int DIGITAL_LIFT_LIMIT_BOTTOM = 0;
-    public static final int DIGITAL_LIFT_LIMIT_TOP = 1;
+    public static final int CAN_LIFT_R = 10;
+    public static final int CAN_LIFT_L = 11;
 }
