@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -31,6 +30,12 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public double todoRemoveLast;
 
+    enum LimitSwitch
+    {
+        Bottom,
+        Top
+    }
+
     public LiftSubsystem()
     {
         final int kTimeout = 10;
@@ -38,7 +43,10 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         final int[] addresses = {11, 10};
         final boolean[] inverted = {true, true};
         final boolean[] sensorPhase = {false, true};
-        final LimitSwitchNormal[][] sensorNormally = {{LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}, {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}};
+        final LimitSwitchNormal[][] sensorNormally = {
+            {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},
+            {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}
+        };
         //final double kP = 0.1 * 1023.0 / 189.7 * 2 * 2 * 2;  // DRL also works if max velocity multiplied by .75 instead of .8
         final double kP = .1 * 1023.0 / 75 * 2 * 1.25;
         final double kI = 0;
@@ -52,16 +60,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         for (int index = 0; index < motors.length; index++)
         {
             motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], kP, kI, kD, kF, kSlot, kMaxVelocity, kAcceleration);
-            if (index == 0)
-            {
-                motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, sensorNormally[index][0], kTimeout);
-                motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, sensorNormally[index][1], kTimeout);
-            }
-            else
-            {
-                motors[index].configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, sensorNormally[index][0], addresses[0], kTimeout);
-                motors[index].configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, sensorNormally[index][1], addresses[0], kTimeout);
-            }
+            motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, sensorNormally[index][0], kTimeout);
+            motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, sensorNormally[index][1], kTimeout);
             motors[index].overrideLimitSwitchesEnable(true);
             motors[index].set(ControlMode.PercentOutput, 0);
             motors[index].setInverted(inverted[index]);
@@ -83,8 +83,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     public synchronized void onBackgroundUpdate()
     {
         double todoRemoveNow = Timer.getFPGATimestamp();
-
-        // TODO Zero if below bottom limit switch?
 
         set(desiredMode, desiredSetpoint);
 
@@ -111,6 +109,11 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         //set(desiredMode, desiredSetpoint);
     }
 
+    /**
+     * Set the motors
+     * @param mode
+     * @param val
+     */
     private void set(ControlMode mode, double val)
     {
         for (int index = 0; index < motors.length; index++)
@@ -119,11 +122,29 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
     }
 
+    /**
+     * Convert inches to ticks
+     * @param inches
+     * @return ticks
+     */
     private double inchesToTicks(double inches)
     {
         return inches * kRevsPerInch * kTicksPerRev;
     }
 
+    /**
+     * Convert ticks to inches
+     * @param ticks
+     * @return inches
+     */
+    private double ticksToInches(double ticks)
+    {
+        return ticks / kRevsPerInch / kTicksPerRev;
+    }
+
+    /**
+     * print debug information
+     */
     private void debug()
     {
         TalonSRX motor = motors[0];
@@ -134,71 +155,105 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Trajectory Position", motor.getActiveTrajectoryPosition());
         SmartDashboard.putNumber("Trajectory Velocity", motor.getActiveTrajectoryVelocity());
         SmartDashboard.putNumber("TargetPosition", desiredSetpoint);
-        SmartDashboard.putNumber("Height", inchesToTicks(position));
+
         SmartDashboard.putNumber("Error", motors[0].getClosedLoopError(0));
         SmartDashboard.putNumber("Error2", motors[1].getClosedLoopError(0));
-        SmartDashboard.putBoolean("Forward Limit", motor.getSensorCollection().isFwdLimitSwitchClosed());
-        SmartDashboard.putBoolean("Reverse Limit", motor.getSensorCollection().isRevLimitSwitchClosed());
+
+        SmartDashboard.putNumber("Height0", ticksToInches(motors[0].getSelectedSensorPosition(0)));
+        SmartDashboard.putNumber("Height1", ticksToInches(motors[1].getSelectedSensorPosition(0)));
+        SmartDashboard.putBoolean("AtBottom0", isAtBottom(0));
+        SmartDashboard.putBoolean("AtTop0", isAtTop(0));
+        SmartDashboard.putBoolean("AtBottom1", isAtBottom(1));
+        SmartDashboard.putBoolean("AtTop1", isAtTop(1));
+        SmartDashboard.putBoolean("AtBottom", isAtBottom());
+        SmartDashboard.putBoolean("AtTop", isAtTop());
     }
 
+    /**
+     * Zero the encoder position if either side is at the bottom
+     */
+    public void zeroPositionIfNeeded()
+    {
+        for (int index = 0; index < motors.length; index++)
+        {
+            if(isAtBottom(index))
+            {
+                motors[index].setSelectedSensorPosition(0, 0, 0);
+            }
+        }
+    }
 
+    /**
+     * Are all sides at the top?
+     * @return
+     */
+    public boolean isAtTop()
+    {
+        return isAtLimit(LimitSwitch.Top);
+    }
 
+    /**
+     * Are all sides at the bottom?
+     * @return
+     */
+    public boolean isAtBottom()
+    {
+        return isAtLimit(LimitSwitch.Bottom);
+    }
 
+    /**
+     * Is one side at the top?
+     * @param index
+     * @return
+     */
+    public boolean isAtTop(int index)
+    {
+        return isAtLimit(LimitSwitch.Top, index);
+    }
 
+    /**
+     * Is one side at the bottom?
+     * @param index
+     * @return
+     */
+    public boolean isAtBottom(int index)
+    {
+        return isAtLimit(LimitSwitch.Bottom, index);
+    }
 
+    /**
+     * Are all sides at one of the limits?
+     * @param limit
+     * @return
+     */
+    public boolean isAtLimit(LimitSwitch limit)
+    {
+        boolean allAtLimit = true;
+        for (int index = 0; index < motors.length; index++)
+        {
+            allAtLimit &= isAtLimit(limit, index);
+        }
+        return allAtLimit;
+    }
 
+    /**
+     * Is one side at one of the limits?
+     * @param limit
+     * @param index
+     * @return
+     */
+    public boolean isAtLimit(LimitSwitch limit, int index)
+    {
+        if(limit == LimitSwitch.Bottom)
+        {
+            return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
+        }
+        else
+        {
+            return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
+        }
+    }
 
-
-
-
-    //    public void goToPosition(double destination)
-    //    {
-    //        // TODO Setup two hardware managed limit switches - Faster & safer than software limit switches
-    //        //        liftMotorL.setNeutralMode(NeutralMode.Coast);
-    //
-    //        update();
-    //        //        liftMotorL.set(ControlMode.Position, (destination * 4096));
-    //    }
-    //
-    //    public void setSpeed (double speed)
-    //    {
-    //        if(speed == 0)
-    //        {
-    //            //            liftMotorL.setNeutralMode(NeutralMode.Coast);
-    //        }
-    //
-    //        if(isAtBottom() && speed < 0 || isAtTop() && speed > 0)
-    //        {
-    //        }
-    //
-    //        update();
-    //        //        liftMotorL.set(ControlMode.PercentOutput, output);
-    //    }
-    //
-    //    private void update()
-    //    {
-    //        zeroPositionIfNeeded();
-    //        SmartDashboard.putNumber("LiftEncoder", Robot.liftSubsystem.getEncoder());
-    //    }
-    //
-    //    public void zeroPositionIfNeeded()
-    //    {
-    //        if(Robot.liftSubsystem.isAtBottom())
-    //        {
-    //            //            Robot.liftSubsystem.liftMotorL.setSelectedSensorPosition(0, 0, 0);
-    //        }
-    //    }
-    //
-    //    public boolean isAtTop()
-    //    {
-    //        return sensorTop.get();
-    //    }
-    //
-    //    public boolean isAtBottom()
-    //    {
-    //        return sensorBot.get();
-    //    }
-    //
     //    public int getEncoder()
     //    {
     //        //        return liftMotorL.getSelectedSensorPosition(0);
