@@ -2,7 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.DistanceIntake;
+import org.wfrobotics.robot.commands.intake.DistanceIntake;
 import org.wfrobotics.robot.config.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -57,7 +57,10 @@ public class IntakeSubsystem extends Subsystem
     {
         state.updateIntakeSensor(getDistance());
     }
-
+    public void pushHasCube(boolean hasCube)
+    {
+        state.updateHasCube(hasCube);
+    }
     public double getDistance()
     {
         return uSensor.getDistance();

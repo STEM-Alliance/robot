@@ -1,12 +1,12 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.vision;
 
 import org.wfrobotics.reuse.commands.vision.VisionModeSet;
 import org.wfrobotics.robot.config.VisionMode;
 
-public class VisionModeCamera1 extends VisionModeSet
+public class VisionModeDefault extends VisionModeSet
 {
     public VisionMode getMode()
     {
-        return VisionMode.CAMERA1;
+        return VisionMode.robotDefault();
     }
 }
