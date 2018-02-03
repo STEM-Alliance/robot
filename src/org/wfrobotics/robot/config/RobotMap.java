@@ -23,8 +23,11 @@ public class RobotMap
 
     // Intake Solenoid ----------------------------------------------------------------------------
     public static final int CAN_PNEUMATIC_CONTROL_MODULE = 7;
-    public static final int PNEUMATIC_INTAKE_FORWARD = 3;
-    public static final int PNEUMATIC_INTAKE_REVERSE = 4;
+
+    public static final int PNEUMATIC_INTAKE_HORIZONTAL_FORWARD = 3;
+    public static final int PNEUMATIC_INTAKE_HORIZONTAL_REVERSE = 4;
+
+    public static final int PNEUMATIC_INTAKE_VERTICAL = 5;
 
     // Intake Wheels ------------------------------------------------------------------------------
     public static final int CAN_INTAKE_LEFT = 19;

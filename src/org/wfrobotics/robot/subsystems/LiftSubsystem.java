@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.commands.Elevate;
+import org.wfrobotics.robot.commands.lift.Elevate;
 import org.wfrobotics.robot.config.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -41,7 +41,8 @@ public class LiftSubsystem extends Subsystem
         //LiftMotor.setNeutralMode(NeutralMode.Brake);
         liftMotorL.setInverted(true);
 
-        liftMotorL.getSelectedSensorPosition(10);
+        liftMotorL.getSelectedSensorPosition(RobotMap.CAN_LIFT_L);
+        liftMotorR.getSelectedSensorPosition(RobotMap.CAN_LIFT_R);
 
         liftMotorR.set(ControlMode.Follower, RobotMap.CAN_LIFT_L);
 

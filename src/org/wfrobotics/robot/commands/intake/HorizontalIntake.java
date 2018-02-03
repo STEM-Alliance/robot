@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.Robot;
 
@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class IntakeSolenoid extends Command {
+public class HorizontalIntake extends Command {
     boolean high;
     int timeSinceLastStateChange;
 
-    public IntakeSolenoid(boolean high)
+    public HorizontalIntake(boolean high)
     {
         requires(Robot.intakeSolenoidSubsystem);
         this.high = high;
@@ -19,7 +19,7 @@ public class IntakeSolenoid extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-        Robot.intakeSolenoidSubsystem.intakeSolenoidSet(high);
+        Robot.intakeSolenoidSubsystem.intakeSolenoidHorizontalSet(high);
     }
 
     // Called repeatedly when this Command is scheduled to run
