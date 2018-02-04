@@ -11,8 +11,8 @@ import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
-import org.wfrobotics.robot.commands.LiftGoHome;
-import org.wfrobotics.robot.commands.LiftToHeight;
+import org.wfrobotics.robot.commands.lift.LiftGoHome;
+import org.wfrobotics.robot.commands.lift.LiftToHeight;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
