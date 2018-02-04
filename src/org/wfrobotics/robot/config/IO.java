@@ -40,10 +40,10 @@ public class IO
         this.operator = operator;
         this.panel = panel;
 
-        double turns = 6;
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftToHeight(turns)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new LiftToHeight(-turns)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new LiftGoHome()));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Scale.get())));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Switch.get())));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Intake.get())));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome()));
         robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new LiftToHeight(driver, AXIS.RIGHT_Y, 7)));
 
         // this is now how you select select the drive style
