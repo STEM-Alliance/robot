@@ -96,6 +96,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         {
             SmartDashboard.putString("LiftAuto", "Transport");
         }
+
+        // command the motors to run
         set(desiredMode, desiredSetpoint);
 
         debug();
@@ -103,12 +105,20 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         todoRemoveLast = todoRemoveNow;
     }
 
+    /**
+     * Initialize the Go To Height mode
+     * @param heightInches desired height in inches
+     */
     public synchronized void goToHeightInit(double heightInches)
     {
         desiredMode = ControlMode.MotionMagic;
         desiredSetpoint = inchesToTicks(heightInches);
     }
 
+    /**
+     * Initialize the Go To Speed mode
+     * @param percent speed in percent, -1 to 1
+     */
     public synchronized void goToSpeedInit(double percent)
     {
         desiredMode = ControlMode.PercentOutput;
@@ -116,8 +126,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     }
 
     /**
-     * Set the motors
-     * @param mode
+     * Set both of the motors
+     * @param mode Talon Control Mode
      * @param val
      */
     private void set(ControlMode mode, double val)
@@ -126,6 +136,16 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         {
             motors[index].set(mode, val);
         }
+    }
+
+    /**
+     * Set a single one of the motors
+     * @param mode Talon Control Mode
+     * @param val
+     */
+    private void set(int index, ControlMode mode, double val)
+    {
+        motors[index].set(mode, val);
     }
 
     /**
@@ -167,14 +187,15 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
         SmartDashboard.putNumber("Height0", ticksToInches(motors[0].getSelectedSensorPosition(0)));
         SmartDashboard.putNumber("Height1", ticksToInches(motors[1].getSelectedSensorPosition(0)));
-        SmartDashboard.putBoolean("AtBottom0", isAtBottom(0));
-        SmartDashboard.putBoolean("AtTop0", isAtTop(0));
-        SmartDashboard.putBoolean("AtBottom1", isAtBottom(1));
-        SmartDashboard.putBoolean("AtTop1", isAtTop(1));
+
         SmartDashboard.putBoolean("AtBottom", isAtBottom());
         SmartDashboard.putBoolean("AtTop", isAtTop());
     }
 
+    /**
+     * If we're going fast enough or in high gear, move the lift to Transport height (a safe position)
+     * @return true if moved to transport mode
+     */
     private boolean goToTransportIfNeeded()
     {
         if (state.robotVelocity.getMag() > .5 || state.robotGear)
@@ -187,7 +208,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     }
 
     /**
-     * Zero the encoder position if either side is at the bottom
+     * Zero the encoder position if both sides are at the bottom
+     * @return true if both sides are at the bottom
      */
     private boolean zeroPositionIfNeeded()
     {
@@ -197,6 +219,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             {
                 motors[index].setSelectedSensorPosition(0, 0, 0);
             }
+
             // Override with valid + safe command
             if (desiredMode == ControlMode.MotionMagic && desiredSetpoint < LiftHeight.Intake.get())
             {
@@ -279,11 +302,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
     }
 
-    //    public int getEncoder()
-    //    {
-    //        //        return liftMotorL.getSelectedSensorPosition(0);
-    //        return 0;
-    //    }
 
     // TODO Report fommatted state to RobotState. Not the height, but instead something like what the Robot can do. Ex: isSafeToExhaustScale
 
