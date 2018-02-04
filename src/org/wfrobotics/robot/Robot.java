@@ -46,7 +46,6 @@ public class Robot extends SampleRobot
         liftSubsystem = new LiftSubsystem();
         //intakeSubsystem = new IntakeSubsystem();
         //intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
-
         // uncomment if using USB camera to stream video from roboRio
         //dashboardView = new DashboardView();
 

@@ -20,11 +20,18 @@ public class RobotMap
     public static final int CAN_TANK_SHIFTER_LOW = 1;
     public static final boolean TANK_LEFT_INVERT = true;
     public static final boolean TANK_RIGHT_INVERT = false;
+    public static final double TANK_GEAR_RATIO_HIGH = 3.0;  //11.0/3;
+    public static final double TANK_GEAR_RATIO_LOW = 25.0/3.0;
+    public static final double TANK_GEAR_RATIO_MOTOR = 2.0;  //36.0/15;
+    public static final double TANK_WHEEL_CIRCUMFERENCE = 6.21234 * Math.PI;  //20;
 
     // Intake Solenoid ----------------------------------------------------------------------------
     public static final int CAN_PNEUMATIC_CONTROL_MODULE = 7;
-    public static final int PNEUMATIC_INTAKE_FORWARD = 3;
-    public static final int PNEUMATIC_INTAKE_REVERSE = 4;
+
+    public static final int PNEUMATIC_INTAKE_HORIZONTAL_FORWARD = 3;
+    public static final int PNEUMATIC_INTAKE_HORIZONTAL_REVERSE = 4;
+
+    public static final int PNEUMATIC_INTAKE_VERTICAL = 5;
 
     // Intake Wheels ------------------------------------------------------------------------------
     public static final int CAN_INTAKE_LEFT = 19;

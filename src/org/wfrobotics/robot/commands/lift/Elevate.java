@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.lift;
 
 import org.wfrobotics.robot.Robot;
 
@@ -7,23 +7,29 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class IntakeSolenoid extends Command {
-    boolean high;
-    int timeSinceLastStateChange;
-
-    public IntakeSolenoid(boolean high)
+public class Elevate extends Command {
+    double speed;
+    public Elevate() {
+        requires(Robot.liftSubsystem);
+        speed= .2;
+        // Use requires() here to declare subsystem dependencies
+        // eg. requires(chassis);
+    }
+    public Elevate(double speed)
     {
-        requires(Robot.intakeSolenoidSubsystem);
-        this.high = high;
+        requires(Robot.liftSubsystem);
+        this.speed = speed;
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
-        Robot.intakeSolenoidSubsystem.intakeSolenoidSet(high);
+    protected void initialize()
+    {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    protected void execute()
+    {
+        Robot.liftSubsystem.setSpeed(speed);
     }
 
     // Make this return true when this Command no longer needs to run execute()
