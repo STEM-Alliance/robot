@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.intake;
 
 
 import org.wfrobotics.robot.Robot;
@@ -6,17 +6,20 @@ import org.wfrobotics.robot.RobotState;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
+
 public class DistanceIntakeSolenoid extends Command{
 
     double timeSinceLastStateChange;
     protected final RobotState state = RobotState.getInstance();
-
-    public DistanceIntakeSolenoid()
+    public int releseDistance;
+    /**
+     *
+     * @param release distance from block in cm
+     */
+    public DistanceIntakeSolenoid(int release)
     {
         requires(Robot.intakeSolenoidSubsystem);
+        releseDistance = release;
     }
 
     protected void initialize() {
@@ -24,12 +27,12 @@ public class DistanceIntakeSolenoid extends Command{
     }
 
     protected void execute() {
-        if (state.intakeSensorReadout <= 10)
+        if (state.intakeSensorReadout <= releseDistance)
         {
             if (timeSinceInitialized() - timeSinceLastStateChange <= 2)
             {
                 timeSinceLastStateChange = timeSinceInitialized();
-                Robot.intakeSolenoidSubsystem.intakeSolenoidSet(true);
+                Robot.intakeSolenoidSubsystem.intakeSolenoidHorizontalSet(true);
             }
         }
         else
@@ -37,7 +40,7 @@ public class DistanceIntakeSolenoid extends Command{
             if (timeSinceInitialized() - timeSinceLastStateChange <= 2)
             {
                 timeSinceLastStateChange = timeSinceInitialized();
-                Robot.intakeSolenoidSubsystem.intakeSolenoidSet(false);
+                Robot.intakeSolenoidSubsystem.intakeSolenoidHorizontalSet(false);
             }
         }
 

@@ -24,6 +24,9 @@ public class RobotState
     public double visionWidth;          // How big is the target(s), and therefore how close is it
 
     public double intakeSensorReadout;
+    public boolean canLift;
+    public boolean hasCube;
+    public boolean isMoving;
 
     public static RobotState getInstance()
     {
@@ -56,10 +59,19 @@ public class RobotState
     // ------------- END Private -------------
 
     // ------------- BEGIN State Producers (Write-Only) -------------
+    public synchronized void updateIsMoving(boolean moving)
+    {
+        isMoving = moving;
+    }
     public synchronized void updateIntakeSensor(double distance)
     {
         intakeSensorReadout = distance;
     }
+    public synchronized void updateCanLift(boolean state)
+    {
+        canLift = state;
+    }
+
     public synchronized void updateRobotDistanceDriven(double inchesDrivenTotal)
     {
         robotDistanceDriven = inchesDrivenTotal;
@@ -101,6 +113,11 @@ public class RobotState
     public HerdVector getRobotVelocity()
     {
         return null;
+    }
+
+    public void updateHasCube(boolean hasCube)
+    {
+        this.hasCube = hasCube;
     }
 
     // ------------- END State Producers (Write-Only) -------------

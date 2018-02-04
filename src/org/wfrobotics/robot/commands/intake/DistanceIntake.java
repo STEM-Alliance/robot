@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.Robot;
 
@@ -31,6 +31,7 @@ public class DistanceIntake extends Command
         if (Robot.intakeSubsystem.getDistance() <= distanceToBlock)
         {
             Robot.intakeSubsystem.stopMotor();
+            Robot.intakeSubsystem.pushHasCube(true);
         }
         else
         {
