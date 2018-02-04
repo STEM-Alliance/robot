@@ -23,7 +23,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="reuse/lib/navx_frc.jar"/>
 	<classpathentry kind="lib" path="reuse/lib/sf2-frc.jar"/>
-	<classpathentry kind="var" path="USERLIBS_DIR/CTRE_Phoenix-sources.jar"/>
-	<classpathentry kind="var" path="USERLIBS_DIR/CTRE_Phoenix.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
