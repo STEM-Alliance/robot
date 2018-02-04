@@ -23,5 +23,12 @@ public class RobotMap
     public static final boolean TANK_RIGHT_INVERT = false;
 
     public static final int CAN_LIGHT = 31;
+    /** gear ratio between encoder & wheel on black bot in high gear*/
+    public static final double highRatio = 3.0;//11.0/3;
+    /** gear ratio between encoder & wheel on black bot in low gear*/
+    public static final double lowRatio = 25.0/3.0;
+    /** gear ratio between drive shaft & wheels on black bot*/
+    public static final double driveRatio = 2.0;//36.0/15;
 
+    public static final double wheelCircumference = 6.21234794536479395120962303071*Math.PI;//20;
 }

@@ -3,6 +3,7 @@ package org.wfrobotics.robot.config;
 import java.util.ArrayList;
 
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
+import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
@@ -13,6 +14,7 @@ import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketXbox;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
+import org.wfrobotics.robot.auto.DriveTwoDistances;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -39,13 +41,16 @@ public class IO
         this.driver = driver;
         this.operator = operator;
         this.panel = panel;
+        double dist = 48;//(6.0 * Math.PI) * 10.0;
 
         // this is now how you select select the drive style
         arcadeIO = new ArcadeRocketXbox(driver);
         //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance(600)));
         //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.X, TRIGGER.WHEN_PRESSED, new DriveDistance(6000)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.Y, TRIGGER.WHILE_HELD, new DriveDistance(60)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHILE_HELD, new DriveDistance(-60)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.Y, TRIGGER.WHEN_PRESSED, new DriveDistance(dist)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.B, TRIGGER.WHEN_PRESSED, new DriveTwoDistances()));
+        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance(-1 * dist)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToHeading(10,1)));
         //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance()));
         //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.B, TRIGGER.WHEN_PRESSED, new AutoDrive(new HerdVector(-1, 0),5)));
 
