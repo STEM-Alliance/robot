@@ -3,7 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.LiftAutoZeroThenManual;
+import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenManual;
 import org.wfrobotics.robot.config.LiftHeight;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;

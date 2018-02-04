@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.lift;
 
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
