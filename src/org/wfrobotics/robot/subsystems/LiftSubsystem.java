@@ -2,7 +2,9 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
-import org.wfrobotics.robot.commands.LiftManual;
+import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.commands.LiftAutoZeroThenManual;
+import org.wfrobotics.robot.config.LiftHeight;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -17,12 +19,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 {
-    private final double kTicksPerRev = 4096;
-    private final double kRevsPerInch = 1;  // TODO
+    private final static double kSprocketDiameterInches = 1.40;  // 1.29 16 tooth 25 chain
+    private final static double kTicksPerRev = 4096;
+    private final static double kRevsPerInch = 1 / (kSprocketDiameterInches * Math.PI);
 
     // TODO List of present heights
     // TODO Preset heights in configuration file
 
+    private final RobotState state = RobotState.getInstance();
     private TalonSRX[] motors = new TalonSRX[2];
 
     private ControlMode desiredMode;
@@ -77,13 +81,21 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new LiftManual());
+        setDefaultCommand(new LiftAutoZeroThenManual());
     }
 
     public synchronized void onBackgroundUpdate()
     {
         double todoRemoveNow = Timer.getFPGATimestamp();
 
+        if (zeroPositionIfNeeded())
+        {
+            SmartDashboard.putString("LiftAuto", "Zeroing");
+        }
+        else if (goToTransportIfNeeded())
+        {
+            SmartDashboard.putString("LiftAuto", "Transport");
+        }
         set(desiredMode, desiredSetpoint);
 
         debug();
@@ -93,20 +105,14 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public synchronized void goToHeightInit(double heightInches)
     {
-        for (int index = 0; index < motors.length; index++)
-        {
-            motors[index].setSelectedSensorPosition(0, 0, 0);
-        }
         desiredMode = ControlMode.MotionMagic;
         desiredSetpoint = inchesToTicks(heightInches);
-        //set(desiredMode, desiredSetpoint);
     }
 
     public synchronized void goToSpeedInit(double percent)
     {
         desiredMode = ControlMode.PercentOutput;
         desiredSetpoint = percent;
-        //set(desiredMode, desiredSetpoint);
     }
 
     /**
@@ -127,7 +133,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
      * @param inches
      * @return ticks
      */
-    private double inchesToTicks(double inches)
+    private static double inchesToTicks(double inches)
     {
         return inches * kRevsPerInch * kTicksPerRev;
     }
@@ -169,18 +175,37 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putBoolean("AtTop", isAtTop());
     }
 
+    private boolean goToTransportIfNeeded()
+    {
+        if (state.robotVelocity.getMag() > .5 || state.robotGear)
+        {
+            desiredMode = ControlMode.MotionMagic;
+            desiredSetpoint = inchesToTicks(LiftHeight.Transport.get());
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Zero the encoder position if either side is at the bottom
      */
-    public void zeroPositionIfNeeded()
+    private boolean zeroPositionIfNeeded()
     {
-        for (int index = 0; index < motors.length; index++)
+        if(isAtBottom())
         {
-            if(isAtBottom(index))
+            for (int index = 0; index < motors.length; index++)
             {
                 motors[index].setSelectedSensorPosition(0, 0, 0);
             }
+            // Override with valid + safe command
+            if (desiredMode == ControlMode.MotionMagic && desiredSetpoint < LiftHeight.Intake.get())
+            {
+                desiredMode = ControlMode.MotionMagic;
+                desiredSetpoint = inchesToTicks(LiftHeight.Intake.get());
+            }
+            return true;
         }
+        return false;
     }
 
     /**

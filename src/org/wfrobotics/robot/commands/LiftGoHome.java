@@ -7,6 +7,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftGoHome extends Command
 {
+    private static boolean hasZeroed = false;
+
+    public static boolean everZeroed()
+    {
+        return hasZeroed;
+    }
+
     public LiftGoHome()
     {
         requires(Robot.liftSubsystem);
@@ -24,7 +31,13 @@ public class LiftGoHome extends Command
 
     protected boolean isFinished()
     {
-        return Robot.liftSubsystem.isAtBottom();
+        boolean result = Robot.liftSubsystem.isAtBottom();
+
+        if (result)
+        {
+            hasZeroed = true;
+        }
+        return result;
     }
 
     private double getSpeed()
