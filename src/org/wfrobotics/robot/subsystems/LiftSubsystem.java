@@ -91,12 +91,12 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         if(kParallelLiftMode)
         {
             // intialize the lift in follower only mode
-            paralellLift = new ParallelLift(new ParallelLift.Params(
-                                            new ParallelLift.Params.PID(1,0,0,0), // Follower PID
-                                            new ParallelLift.Params.Range(-3, 3), // Input range, height in inches
-                                            new ParallelLift.Params.Range(-.2, .2), // Output range, percent voltage
-                                            .005)
-                                            );
+            //            paralellLift = new ParallelLift(new ParallelLift.Params(
+            //                                            new ParallelLift.Params.PID(1,0,0,0), // Follower PID
+            //                                            new ParallelLift.Params.Range(-3, 3), // Input range, height in inches
+            //                                            new ParallelLift.Params.Range(-.2, .2), // Output range, percent voltage
+            //                                            .005)
+            //                                            );
         }
 
         todoRemoveLast = Timer.getFPGATimestamp();
