@@ -11,6 +11,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -58,7 +60,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         };
         //final double kP = 0.1 * 1023.0 / 189.7 * 2 * 2 * 2;  // DRL also works if max velocity multiplied by .75 instead of .8
         final double kP = .1 * 1023.0 / 75 * 2 * 1.25;
-        final double kI = 0;
+        final double kI = kP * .0001;
         final double kD = kP * 10;
         final double kF = 1023.0/4950.0;
         final int kMaxVelocity = (int) (4950 * .8);
@@ -77,12 +79,18 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].setSensorPhase(sensorPhase[index]);
             motors[index].setNeutralMode(NeutralMode.Brake);
             motors[index].setSelectedSensorPosition(0, kSlot, kTimeout);
+            motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, kTimeout);
+            motors[index].configVelocityMeasurementWindow(64, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 2, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 160, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);
         }
         desiredMode = ControlMode.PercentOutput;
         desiredSetpoint = 0;
 
         if(kParallelLiftMode)
         {
+            // intialize the lift in follower only mode
             paralellLift = new ParallelLift(new ParallelLift.Params(
                                             new ParallelLift.Params.PID(1,0,0,0), // Follower PID
                                             new ParallelLift.Params.Range(-3, 3), // Input range, height in inches
@@ -201,19 +209,24 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private void debug()
     {
         TalonSRX motor = motors[0];
-        double position = motor.getSelectedSensorPosition(0);
+        double position0 = motors[0].getSelectedSensorPosition(0);
+        double position1 = motors[1].getSelectedSensorPosition(0);
+        double error0 = motors[0].getClosedLoopError(0);
+        double error1 = motors[1].getClosedLoopError(0);
 
-        SmartDashboard.putNumber("Position", position);
+        SmartDashboard.putNumber("Position0", position0);
+        SmartDashboard.putNumber("Position1", position1);
         SmartDashboard.putNumber("Velocity", motor.getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("Trajectory Position", motor.getActiveTrajectoryPosition());
-        SmartDashboard.putNumber("Trajectory Velocity", motor.getActiveTrajectoryVelocity());
         SmartDashboard.putNumber("TargetPosition", desiredSetpoint);
 
-        SmartDashboard.putNumber("Error", motors[0].getClosedLoopError(0));
-        SmartDashboard.putNumber("Error2", motors[1].getClosedLoopError(0));
+        SmartDashboard.putNumber("Error0", error0);
+        SmartDashboard.putNumber("Error1", error1);
 
-        SmartDashboard.putNumber("Height0", ticksToInches(motors[0].getSelectedSensorPosition(0)));
-        SmartDashboard.putNumber("Height1", ticksToInches(motors[1].getSelectedSensorPosition(0)));
+        SmartDashboard.putNumber("Height", ticksToInches(position0));
+
+        SmartDashboard.putNumber("Delta E", error0 - error1);
+        SmartDashboard.putNumber("Delta P", position0 - position1);
+
 
         SmartDashboard.putBoolean("AtBottom", isAtBottom());
         SmartDashboard.putBoolean("AtTop", isAtTop());
