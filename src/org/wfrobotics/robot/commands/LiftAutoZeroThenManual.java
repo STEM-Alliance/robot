@@ -6,7 +6,7 @@ public class LiftAutoZeroThenManual extends ConditionalCommand
 {
     public LiftAutoZeroThenManual()
     {
-        super(new LiftManual(), new LiftGoHome());
+        super(new LiftPercentVoltage(), new LiftGoHome());
     }
 
     protected boolean condition()

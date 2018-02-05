@@ -85,9 +85,14 @@ public class IO
         return panel.getRotary();
     }
 
-    public double getLiftManual()
+    public double getLiftPercent()
     {
         return driver.getAxis(AXIS.LEFT_Y);
+    }
+
+    public double getLiftManual()
+    {
+        return driver.getAxis(AXIS.RIGHT_Y);
     }
 
     public void setRumble(boolean rumble)
