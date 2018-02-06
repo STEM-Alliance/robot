@@ -14,7 +14,7 @@ public class RobotMap
 
     // Drive --------------------------------------------------------------------------------------
     public static final int CAN_TANK_DRIVE_TALONS_L[] = { 15, 17 };
-    public static final int CAN_TANK_DRIVE_TALONS_R[] = { 19, 14 };
+    public static final int CAN_TANK_DRIVE_TALONS_R[] = { 16, 14 };
     public static final int CAN_TANK_SHIFTER_DEVICE = 7;
     public static final int CAN_TANK_SHIFTER_HIGH = 0;
     public static final int CAN_TANK_SHIFTER_LOW = 1;

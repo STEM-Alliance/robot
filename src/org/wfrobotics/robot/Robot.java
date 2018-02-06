@@ -42,7 +42,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        //driveService = TankService.getInstance();
+        driveService = TankService.getInstance();
         liftSubsystem = new LiftSubsystem();
         //intakeSubsystem = new IntakeSubsystem();
         //intakeSolenoidSubsystem = new IntakeSolenoidSubsystem();
