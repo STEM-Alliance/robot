@@ -8,6 +8,7 @@ import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
+import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketXbox;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
@@ -47,7 +48,7 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new LiftToHeight(driver, AXIS.RIGHT_Y, 7)));
 
         // this is now how you select select the drive style
-        //        arcadeIO = new ArcadeRocketXbox(driver);
+        arcadeIO = new ArcadeRocketXbox(driver);
         //        //tankIO = new TankXbox(driver);
         //
         //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
@@ -87,7 +88,7 @@ public class IO
 
     public double getLiftPercent()
     {
-        return driver.getAxis(AXIS.LEFT_Y);
+        return 0; //driver.getAxis(AXIS.LEFT_Y);
     }
 
     public double getLiftManual()
