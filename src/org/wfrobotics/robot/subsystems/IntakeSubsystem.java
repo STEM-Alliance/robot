@@ -22,7 +22,7 @@ public class IntakeSubsystem extends Subsystem
         rightIntake.setNeutralMode(NeutralMode.Brake);
         leftIntake.setNeutralMode(NeutralMode.Brake);
         leftIntake.set(ControlMode.Follower, 20);  // TODO Use variable so this never becomes broken if master talon address changes
-        rightIntake.setInverted(true);
+        rightIntake.setInverted(false);
         leftIntake.setInverted(true);
 
         // TODO Turn down frame rates if intake doesn't utilize closed loop control mode - Allows more CAN message bandwidth for lift, drives, etc
