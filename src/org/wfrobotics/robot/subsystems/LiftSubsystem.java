@@ -65,6 +65,14 @@ public class LiftSubsystem extends Subsystem
         return LiftMotor.getSelectedSensorPosition(0);
     }
 
+    public void setSpeed(double speed)
+    {
+    }
+
+    public void goToPosition(double position)
+    {
+    }
+
     // TODO Report fommatted state to RobotState. Not the height, but instead something like what the Robot can do. Ex: isSafeToExhaustScale
 
     // TODO Automatically zero whenever we pass by that sensor(s)

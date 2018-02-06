@@ -9,9 +9,15 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class IntakeSolenoid extends Command {
     boolean high;
+    boolean usesTrue;
 
+    public IntakeSolenoid ()
+    {
+        requires(Robot.intakeSolenoidSubsystem);
+    }
     public IntakeSolenoid(boolean high)
     {
+        usesTrue = true;
         requires(Robot.intakeSolenoidSubsystem);
         this.high = high;
         // Use requires() here to declare subsystem dependencies
@@ -19,9 +25,19 @@ public class IntakeSolenoid extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    protected void initialize()
+    {if(usesTrue)
+    {
+
         Robot.intakeSolenoidSubsystem.intakeSolenoidSet(high);
     }
+    else
+    {
+        Robot.intakeSolenoidSubsystem.intakeSolenoidSet(!Robot.intakeSolenoidSubsystem.getGrab());
+
+    }
+    }
+
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
