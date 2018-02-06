@@ -26,6 +26,12 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private final static double kTicksPerRev = 4096;
     private final static double kRevsPerInch = 1 / (kSprocketDiameterInches * Math.PI);
 
+    private final LimitSwitchNormal[][] limitSwitchNormally = {
+        // forward, then reverse
+        {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},
+        {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}
+    };
+
     // TODO List of present heights
     // TODO Preset heights in configuration file
 
@@ -54,10 +60,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         final int[] addresses = {11, 10};
         final boolean[] inverted = {true, true};
         final boolean[] sensorPhase = {false, true};
-        final LimitSwitchNormal[][] sensorNormally = {
-            {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},
-            {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}
-        };
+
         //final double kP = 0.1 * 1023.0 / 189.7 * 2 * 2 * 2;  // DRL also works if max velocity multiplied by .75 instead of .8
         final double kP = .1 * 1023.0 / 75 * 2 * 1.25;
         final double kI = kP * .0001;
@@ -71,8 +74,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         for (int index = 0; index < motors.length; index++)
         {
             motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], kP, kI, kD, kF, kSlot, kMaxVelocity, kAcceleration);
-            motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, sensorNormally[index][0], kTimeout);
-            motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, sensorNormally[index][1], kTimeout);
+            motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, limitSwitchNormally[index][0], kTimeout);
+            motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, limitSwitchNormally[index][1], kTimeout);
             motors[index].overrideLimitSwitchesEnable(true);
             motors[index].set(ControlMode.PercentOutput, 0);
             motors[index].setInverted(inverted[index]);
@@ -90,13 +93,13 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
         if(kParallelLiftMode)
         {
-            // intialize the lift in follower only mode
-            //            paralellLift = new ParallelLift(new ParallelLift.Params(
-            //                                            new ParallelLift.Params.PID(1,0,0,0), // Follower PID
-            //                                            new ParallelLift.Params.Range(-3, 3), // Input range, height in inches
-            //                                            new ParallelLift.Params.Range(-.2, .2), // Output range, percent voltage
-            //                                            .005)
-            //                                            );
+            // initialize the lift in follower only mode
+            paralellLift = new ParallelLift(new ParallelLift.Params(
+                                            new ParallelLift.Params.PID(1,0,0,0), // Follower PID
+                                            new ParallelLift.Params.Range(-3, 3), // Input range, height in inches
+                                            new ParallelLift.Params.Range(-.2, .2), // Output range, percent voltage
+                                            .005)
+                                            );
         }
 
         todoRemoveLast = Timer.getFPGATimestamp();
@@ -334,11 +337,17 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     {
         if(limit == LimitSwitch.Bottom)
         {
-            return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
+            if(limitSwitchNormally[index][1] == LimitSwitchNormal.NormallyClosed)
+                return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
+            else
+                return motors[index].getSensorCollection().isRevLimitSwitchClosed();
         }
         else
         {
-            return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
+            if(limitSwitchNormally[index][0] == LimitSwitchNormal.NormallyClosed)
+                return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
+            else
+                return motors[index].getSensorCollection().isFwdLimitSwitchClosed();
         }
     }
 
