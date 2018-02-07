@@ -32,7 +32,7 @@ public class DistanceIntakeSolenoid extends Command{
             if (timeSinceInitialized() - timeSinceLastStateChange <= 2)
             {
                 timeSinceLastStateChange = timeSinceInitialized();
-                Robot.intakeSolenoidSubsystem.intakeSolenoidHorizontalSet(true);
+                Robot.intakeSolenoidSubsystem.setHorizontal(true);
             }
         }
         else
@@ -40,7 +40,7 @@ public class DistanceIntakeSolenoid extends Command{
             if (timeSinceInitialized() - timeSinceLastStateChange <= 2)
             {
                 timeSinceLastStateChange = timeSinceInitialized();
-                Robot.intakeSolenoidSubsystem.intakeSolenoidHorizontalSet(false);
+                Robot.intakeSolenoidSubsystem.setHorizontal(false);
             }
         }
 
