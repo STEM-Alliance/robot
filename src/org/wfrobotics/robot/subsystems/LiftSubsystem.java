@@ -5,6 +5,7 @@ import org.wfrobotics.reuse.hardware.ParallelLift;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenManual;
+import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.config.LiftHeight;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -34,6 +35,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     // TODO List of present heights
     // TODO Preset heights in configuration file
+
+    //Three inches of misalignment allowance
+    private double acceptableAlignmentError = 4;
 
     private final RobotState state = RobotState.getInstance();
     private TalonSRX[] motors = new TalonSRX[2];
@@ -103,6 +107,19 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
 
         todoRemoveLast = Timer.getFPGATimestamp();
+
+        //Go home if we're out of alignment
+        if(outOfAlignment())
+        {
+            setDefaultCommand(new LiftGoHome());
+        }
+        else
+        {
+            setDefaultCommand(new LiftAutoZeroThenManual());
+        }
+
+        SmartDashboard.putBoolean("OutOfAlignment", outOfAlignment());
+        SmartDashboard.putNumber("AlignmentError", getAlignmentError());
     }
 
     public void initDefaultCommand()
@@ -351,6 +368,22 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
     }
 
+    //Returns the alignment error in inches
+    public double getAlignmentError()
+    {
+        return ticksToInches(motors[0].getSelectedSensorPosition(0) - motors[1].getSelectedSensorPosition(0));
+    }
+
+    //TODO: Have an enum or something of different out of alignment states and do different things based on the severity of misalignment
+    public boolean outOfAlignment()
+    {
+        if(getAlignmentError() > acceptableAlignmentError)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     // TODO Report fommatted state to RobotState. Not the height, but instead something like what the Robot can do. Ex: isSafeToExhaustScale
 
