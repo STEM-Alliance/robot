@@ -107,19 +107,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
 
         todoRemoveLast = Timer.getFPGATimestamp();
-
-        //Go home if we're out of alignment
-        if(outOfAlignment())
-        {
-            setDefaultCommand(new LiftGoHome());
-        }
-        else
-        {
-            setDefaultCommand(new LiftAutoZeroThenManual());
-        }
-
-        SmartDashboard.putBoolean("OutOfAlignment", outOfAlignment());
-        SmartDashboard.putNumber("AlignmentError", getAlignmentError());
     }
 
     public void initDefaultCommand()
@@ -157,6 +144,19 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         debug();
         SmartDashboard.putNumber("Background Period", (todoRemoveNow - todoRemoveLast) * 1000);
         todoRemoveLast = todoRemoveNow;
+
+        //Go home if we're out of alignment
+        if(outOfAlignment())
+        {
+            setDefaultCommand(new LiftGoHome());
+        }
+        else
+        {
+            setDefaultCommand(new LiftAutoZeroThenManual());
+        }
+
+        SmartDashboard.putBoolean("OutOfAlignment", outOfAlignment());
+        SmartDashboard.putNumber("AlignmentError", getAlignmentError());
     }
 
     /**
