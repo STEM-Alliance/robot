@@ -2,11 +2,11 @@ package org.wfrobotics.robot.commands.lift;
 
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
-public class LiftAutoZeroThenManual extends ConditionalCommand
+public class LiftAutoZeroThenCal extends ConditionalCommand
 {
-    public LiftAutoZeroThenManual()
+    public LiftAutoZeroThenCal()
     {
-        super(new LiftManual(), new LiftGoHome());
+        super(new LiftPercentVoltage(), new LiftGoHome());
     }
 
     protected boolean condition()
