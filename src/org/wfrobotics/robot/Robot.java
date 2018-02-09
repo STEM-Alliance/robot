@@ -54,14 +54,14 @@ public class Robot extends SampleRobot
         // TODO default config?
         //CameraServer.getInstance();
 
-        // TODO Register background updates, ex: backgroundUpdater.register(liftSubsystem.onBackgroundUpdate());
+        backgroundUpdater.register(liftSubsystem);
     }
 
     public void operatorControl()
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
 
-        // TODO backgroundUpdater.start();
+        backgroundUpdater.start();
 
         while (isOperatorControl() && isEnabled())
         {
@@ -77,7 +77,7 @@ public class Robot extends SampleRobot
             // TODO error?
         }
 
-        // TODO backgroundUpdater.start();
+        backgroundUpdater.start();
 
         autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
         if (autonomousCommand != null) autonomousCommand.start();
@@ -90,7 +90,7 @@ public class Robot extends SampleRobot
 
     public void disabled()
     {
-        // TODO backgroundUpdater.stop();
+        backgroundUpdater.stop();
 
         while (isDisabled())
         {
