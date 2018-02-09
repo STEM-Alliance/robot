@@ -3,12 +3,12 @@ package org.wfrobotics.robot.config;
 import java.util.ArrayList;
 
 import org.wfrobotics.reuse.commands.drivebasic.DriveOff;
-import org.wfrobotics.reuse.commands.drivebasic.TurnToInViewTarget;
 import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
+import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketXbox;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
@@ -16,9 +16,8 @@ import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
 import org.wfrobotics.robot.commands.intake.DistanceIntakePush;
 import org.wfrobotics.robot.commands.intake.HorizontalIntake;
-import org.wfrobotics.robot.commands.lift.Elevate;
-import org.wfrobotics.robot.commands.lift.ElevatePID;
-import org.wfrobotics.robot.commands.lift.ElevateRendezvous;
+import org.wfrobotics.robot.commands.lift.LiftGoHome;
+import org.wfrobotics.robot.commands.lift.LiftToHeight;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -27,7 +26,7 @@ import edu.wpi.first.wpilibj.buttons.Button;
 public class IO
 {
     private static IO instance = null;
-
+    private final ArrayList<Button> robotSpecific = new ArrayList<Button>();  // Keep buttons instantiated
     private final Xbox driver;
     private final Xbox operator;
     private final Panel panel;
@@ -38,36 +37,64 @@ public class IO
     public MecanumIO mecanumIO;
     public SwerveIO swerveIO;
 
-    private ArrayList<Button> robotSpecific = new ArrayList<Button>();  // Keep buttons instantiated
-
     private IO(Xbox driver, Xbox operator, Panel panel)
     {
         this.driver = driver;
         this.operator = operator;
         this.panel = panel;
 
-        // this is now how you select select the drive style
+        // ------------------- Select Drive-style  ----------------
         arcadeIO = new ArcadeRocketXbox(driver);
-        //tankIO = new TankXbox(driver);
+        //        //tankIO = new TankXbox(driver);
 
+
+        // ------------------------- Drive ------------------------
         robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
-
         robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
-        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.BLACK_B, TRIGGER.WHEN_PRESSED, new TurnToInViewTarget(.1)));
 
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new DistanceIntakePush(.5)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Elevate(-1)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(1)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.X, TRIGGER.TOGGLE_WHEN_PRESSED, new HorizontalIntake(true)));
 
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new ElevateRendezvous((5000), .5)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ElevatePID((18000/2)/4096)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LEFT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(0)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RIGHT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(18000/4096)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(-1)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Elevate(1)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.TOGGLE_WHEN_PRESSED, new HorizontalIntake(true)));
+        // ------------------------- Climb ------------------------
+
+
+        // ------------------------ Intake ------------------------
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.RB, TRIGGER.TOGGLE_WHEN_PRESSED, new HorizontalIntake(true)));
+        robotSpecific.add(ButtonFactory.makeButton(driver,  AXIS.RIGHT_TRIGGER, .33, TRIGGER.WHILE_HELD, new DistanceIntakePush()));
+
+        // ------------------------- Lift -------------------------
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Scale.get())));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Switch.get())));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Intake.get())));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome()));
+
+
+
+
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new IntakePush(.5)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new IntakePull(.5)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Elevate(-1)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(1)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.X, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeSolenoid(true)));
+        //
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new ElevateRendezvous((5000), .5)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ElevatePID((18000/2)/4096)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LEFT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(0)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RIGHT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(18000/4096)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new IntakePull()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(-1)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Elevate(1)));
+        //        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeSolenoid(true)));
+        //
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(-1)));
     }
+
+    // ------------------- Robot-specific --------------------
+
+    public double getLiftStick()
+    {
+        return driver.getAxis(AXIS.RIGHT_Y);
+    }
+
+    // ------------------------ Reuse ------------------------
 
     public static IO getInstance()
     {

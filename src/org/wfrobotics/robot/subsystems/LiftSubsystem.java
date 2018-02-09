@@ -1,146 +1,356 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.commands.lift.Elevate;
-import org.wfrobotics.robot.config.RobotMap;
+import org.wfrobotics.reuse.background.BackgroundUpdate;
+import org.wfrobotics.reuse.hardware.ParallelLift;
+import org.wfrobotics.reuse.hardware.TalonSRXFactory;
+import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.commands.lift.LiftManual;
+import org.wfrobotics.robot.config.LiftHeight;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class LiftSubsystem extends Subsystem
+public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 {
+    private final static double kSprocketDiameterInches = 1.40;  // 1.29 16 tooth 25 chain
+    private final static double kTicksPerRev = 4096;
+    private final static double kRevsPerInch = 1 / (kSprocketDiameterInches * Math.PI);
+
+    private final LimitSwitchNormal[][] limitSwitchNormally = {
+        // forward, then reverse
+        {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},
+        {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}
+    };
+
     // TODO List of present heights
     // TODO Preset heights in configuration file
 
-    public TalonSRX liftMotorL;
-    public TalonSRX liftMotorR;
+    private final RobotState state = RobotState.getInstance();
+    private TalonSRX[] motors = new TalonSRX[2];
 
-    public DigitalInput BottomSensor;
-    public DigitalInput TopSensor;
-    public int encoderValue;
+    private ControlMode desiredMode;
+    private double desiredSetpoint;
+
+    public double todoRemoveLast;
+
+    // this is untested, don't use yet
+    private final boolean kParallelLiftMode = false;
+    private ParallelLift paralellLift;
+
+    enum LimitSwitch
+    {
+        Bottom,
+        Top
+    }
 
     public LiftSubsystem()
     {
-        final int kTimeoutMs = 10;
+        final int kTimeout = 10;
+        final int kSlot = 0;
+        final int[] addresses = {11, 10};
+        final boolean[] inverted = {false, true};
+        final boolean[] sensorPhase = {false, true};
 
-        // TODO Use Talon factory. If not position control, at least makeTalon()
-        liftMotorL = new TalonSRX(RobotMap.CAN_LIFT_L);
-        liftMotorR = new TalonSRX(RobotMap.CAN_LIFT_R);
+        //final double kP = 0.1 * 1023.0 / 189.7 * 2 * 2 * 2;  // DRL also works if max velocity multiplied by .75 instead of .8
+        final double kP = .1 * 1023.0 / 75 * 2 * 1.25;
+        final double kI = kP * .0001;
+        final double kD = kP * 10;
+        final double kF = 1023.0/4950.0*5/25;
+        final int kMaxVelocity = (int) (4950 * .8);
+        final int kAcceleration = kMaxVelocity;
+        // TODO Make into config file?
+        // TODO Use talon software limit switches
 
-        BottomSensor = new DigitalInput(RobotMap.DIGITAL_LIFT_LIMIT_BOTTOM);
-        TopSensor = new DigitalInput(RobotMap.DIGITAL_LIFT_LIMIT_TOP);
+        for (int index = 0; index < motors.length; index++)
+        {
+            motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], kP, kI, kD, kF, kSlot, kMaxVelocity, kAcceleration);
+            motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, limitSwitchNormally[index][0], kTimeout);
+            motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, limitSwitchNormally[index][1], kTimeout);
+            motors[index].overrideLimitSwitchesEnable(true);
+            motors[index].set(ControlMode.PercentOutput, 0);
+            motors[index].setInverted(inverted[index]);
+            motors[index].setSensorPhase(sensorPhase[index]);
+            motors[index].setNeutralMode(NeutralMode.Brake);
+            motors[index].setSelectedSensorPosition(0, kSlot, kTimeout);
+            motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, kTimeout);
+            motors[index].configVelocityMeasurementWindow(64, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 2, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 160, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);
+        }
+        desiredMode = ControlMode.PercentOutput;
+        desiredSetpoint = 0;
 
-        //LiftMotor.setNeutralMode(NeutralMode.Brake);
-        liftMotorL.setInverted(true);
+        if(kParallelLiftMode)
+        {
+            // initialize the lift in follower only mode
+            paralellLift = new ParallelLift(new ParallelLift.Params(
+                                            new ParallelLift.Params.PID(1,0,0,0), // Follower PID
+                                            new ParallelLift.Params.Range(-3, 3), // Input range, height in inches
+                                            new ParallelLift.Params.Range(-.2, .2), // Output range, percent voltage
+                                            .005)
+                                            );
+        }
 
-        liftMotorL.getSelectedSensorPosition(RobotMap.CAN_LIFT_L);
-        liftMotorR.getSelectedSensorPosition(RobotMap.CAN_LIFT_R);
-
-        liftMotorR.set(ControlMode.Follower, RobotMap.CAN_LIFT_L);
-
-        liftMotorR.setInverted(true);
-        // LiftMotor.setSelectedSensorPosition(absolutePosition, 0, kTimeoutMs);
-
-        // TODO Figure out what settings are ideal
-
-        //        liftMotorL.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
-        //        liftMotorL.setSensorPhase(true);
-
-        // TODO Poofs used brake mode on drive postion control. Why didn't ours work?
-
-        // TODO Double check we aren't setting irrelevant frame types super as fast - we need the bandwidth for lift/drive important frames
-
-        // TODO Can we get away with follower mode or do we need to two that try to adjust if we slip a geartooth? Ask mechanical what to do.
-        liftMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 5, kTimeoutMs);
-        liftMotorL.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 5, kTimeoutMs);
-        liftMotorL.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 1 , kTimeoutMs);
-        //LiftMotor.setControlFramePeriod(ControlFrame.Control_3_General, kTimeoutMs);
-        liftMotorL.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 5, kTimeoutMs);
-        liftMotorL.setStatusFramePeriod(StatusFrame.Status_4_AinTempVbat, 5, kTimeoutMs);
-
-        // TODO Setup two hardware managed limit switches - Faster & safer than software limit switches
-        //LiftMotor.setNeutralMode(NeutralMode.Brake);
-
-        liftMotorL.configAllowableClosedloopError(5, 0, kTimeoutMs);
-        liftMotorL.config_kF(0, 0.0, kTimeoutMs);
-        liftMotorL.config_kP(0, 20, kTimeoutMs);//20
-        liftMotorL.config_kI(0, 0, kTimeoutMs);
-        liftMotorL.config_kD(0, 125, kTimeoutMs);
-        liftMotorL.configNeutralDeadband(.05, kTimeoutMs);
-        liftMotorL.config_IntegralZone(0, 1, kTimeoutMs);
+        todoRemoveLast = Timer.getFPGATimestamp();
     }
 
-    // TODO There's a "state pattern" that can help us if the rules for going to/from each state gets too complex
-    public void goToPosition(double destination)
-    {
-        // TODO Setup two hardware managed limit switches - Faster & safer than software limit switches
-        liftMotorL.setNeutralMode(NeutralMode.Coast);
-
-        update();
-        liftMotorL.set(ControlMode.Position, (destination * 4096));
-    }
-
-    // TODO Lift needs to hold position by default
-    //      Beast mode - Can (or should we even) automatically go the height based on if we have a cube or some IO to tell our intended preset to score on?
     public void initDefaultCommand()
     {
-        setDefaultCommand(new Elevate(0));
+        setDefaultCommand(new LiftManual());
     }
 
-    public void setSpeed (double speed)
+    public synchronized void onBackgroundUpdate()
     {
-        liftMotorL.setNeutralMode(NeutralMode.Brake);
-        double output = speed;
+        double todoRemoveNow = Timer.getFPGATimestamp();
 
-        if(speed == 0)
+        if (zeroPositionIfNeeded())
         {
-            liftMotorL.setNeutralMode(NeutralMode.Coast);
+            SmartDashboard.putString("LiftAuto", "Zeroing");
+        }
+        else if (goToTransportIfNeeded())
+        {
+            SmartDashboard.putString("LiftAuto", "Transport");
         }
 
-        if(isAtBottom() && speed < 0 || isAtTop() && speed > 0)
+        if(!kParallelLiftMode)
         {
-            output = 0;
+            // command the motors to run
+            set(desiredMode, desiredSetpoint);
+        }
+        else
+        {
+            set(0, desiredMode, desiredSetpoint);
+            double followerOutput = paralellLift.followerRun(ticksToInches(motors[0].getSelectedSensorPosition(0)),
+                                            ticksToInches(motors[1].getSelectedSensorPosition(0)),
+                                            motors[0].getMotorOutputPercent());
+            set(1, ControlMode.PercentOutput, followerOutput);
         }
 
-        update();
-        liftMotorL.set(ControlMode.PercentOutput, output);
-    }
-    private void update()
-    {
-        zeroPositionIfNeeded();
-        SmartDashboard.putNumber("LiftEncoder", Robot.liftSubsystem.getEncoder());
+        debug();
+        SmartDashboard.putNumber("Background Period", (todoRemoveNow - todoRemoveLast) * 1000);
+        todoRemoveLast = todoRemoveNow;
     }
 
-    public void zeroPositionIfNeeded()
+    /**
+     * Initialize the Go To Height mode
+     * @param heightInches desired height in inches
+     */
+    public synchronized void goToHeightInit(double heightInches)
     {
-        if(Robot.liftSubsystem.isAtBottom())
+        desiredMode = ControlMode.MotionMagic;
+        desiredSetpoint = inchesToTicks(heightInches);
+    }
+
+    /**
+     * Initialize the Go To Speed mode
+     * @param percent speed in percent, -1 to 1
+     */
+    public synchronized void goToSpeedInit(double percent)
+    {
+        desiredMode = ControlMode.PercentOutput;
+        desiredSetpoint = percent;
+    }
+
+    /**
+     * Set both of the motors
+     * @param mode Talon Control Mode
+     * @param val
+     */
+    private void set(ControlMode mode, double val)
+    {
+        for (int index = 0; index < motors.length; index++)
         {
-            Robot.liftSubsystem.liftMotorL.setSelectedSensorPosition(0, 0, 0);
+            motors[index].set(mode, val);
         }
     }
 
+    /**
+     * Set one of the motors
+     * @param index
+     * @param mode Talon Control Mode
+     * @param val
+     */
+    private void set(int index, ControlMode mode, double val)
+    {
+        motors[index].set(mode, val);
+    }
+
+    /**
+     * Convert inches to ticks
+     * @param inches
+     * @return ticks
+     */
+    private static double inchesToTicks(double inches)
+    {
+        return inches * kRevsPerInch * kTicksPerRev;
+    }
+
+    /**
+     * Convert ticks to inches
+     * @param ticks
+     * @return inches
+     */
+    private double ticksToInches(double ticks)
+    {
+        return ticks / kRevsPerInch / kTicksPerRev;
+    }
+
+    /**
+     * print debug information
+     */
+    private void debug()
+    {
+        TalonSRX motor = motors[0];
+        double position0 = motors[0].getSelectedSensorPosition(0);
+        double position1 = motors[1].getSelectedSensorPosition(0);
+        double error0 = motors[0].getClosedLoopError(0);
+        double error1 = motors[1].getClosedLoopError(0);
+
+        SmartDashboard.putNumber("Position0", position0);
+        SmartDashboard.putNumber("Position1", position1);
+        SmartDashboard.putNumber("Velocity", motor.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("TargetPosition", desiredSetpoint);
+
+        SmartDashboard.putNumber("Error0", error0);
+        SmartDashboard.putNumber("Error1", error1);
+
+        SmartDashboard.putNumber("Height", ticksToInches(position0));
+
+        SmartDashboard.putNumber("Delta E", error0 - error1);
+        SmartDashboard.putNumber("Delta P", position0 - position1);
+
+
+        SmartDashboard.putBoolean("AtBottom", isAtBottom());
+        SmartDashboard.putBoolean("AtTop", isAtTop());
+    }
+
+    /**
+     * If we're going fast enough or in high gear, move the lift to Transport height (a safe position)
+     * @return true if moved to transport mode
+     */
+    private boolean goToTransportIfNeeded()
+    {
+        //        if (state.robotVelocity.getMag() > .5 || state.robotGear)
+        //        {
+        //            desiredMode = ControlMode.MotionMagic;
+        //            desiredSetpoint = inchesToTicks(LiftHeight.Transport.get());
+        //            return true;
+        //        }
+        return false;
+    }
+
+    /**
+     * Zero the encoder position if both sides are at the bottom
+     * @return true if both sides are at the bottom
+     */
+    private boolean zeroPositionIfNeeded()
+    {
+        if(isAtBottom())
+        {
+            for (int index = 0; index < motors.length; index++)
+            {
+                motors[index].setSelectedSensorPosition(0, 0, 0);
+            }
+
+            // Override with valid + safe command
+            if (desiredMode == ControlMode.MotionMagic && desiredSetpoint < LiftHeight.Intake.get())
+            {
+                desiredMode = ControlMode.MotionMagic;
+                desiredSetpoint = inchesToTicks(LiftHeight.Intake.get());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Are all sides at the top?
+     * @return
+     */
     public boolean isAtTop()
     {
-        return TopSensor.get();
+        return isAtLimit(LimitSwitch.Top);
     }
 
+    /**
+     * Are all sides at the bottom?
+     * @return
+     */
     public boolean isAtBottom()
     {
-        return BottomSensor.get();
+        return isAtLimit(LimitSwitch.Bottom);
     }
 
-    public int getEncoder()
+    /**
+     * Is one side at the top?
+     * @param index
+     * @return
+     */
+    public boolean isAtTop(int index)
     {
-        return liftMotorL.getSelectedSensorPosition(0);
+        return isAtLimit(LimitSwitch.Top, index);
     }
+
+    /**
+     * Is one side at the bottom?
+     * @param index
+     * @return
+     */
+    public boolean isAtBottom(int index)
+    {
+        return isAtLimit(LimitSwitch.Bottom, index);
+    }
+
+    /**
+     * Are all sides at one of the limits?
+     * @param limit
+     * @return
+     */
+    public boolean isAtLimit(LimitSwitch limit)
+    {
+        boolean allAtLimit = true;
+        for (int index = 0; index < motors.length; index++)
+        {
+            allAtLimit &= isAtLimit(limit, index);
+        }
+        return allAtLimit;
+    }
+
+    /**
+     * Is one side at one of the limits?
+     * @param limit
+     * @param index
+     * @return
+     */
+    public boolean isAtLimit(LimitSwitch limit, int index)
+    {
+        if(limit == LimitSwitch.Bottom)
+        {
+            if(limitSwitchNormally[index][1] == LimitSwitchNormal.NormallyClosed)
+                return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
+            else
+                return motors[index].getSensorCollection().isRevLimitSwitchClosed();
+        }
+        else
+        {
+            if(limitSwitchNormally[index][0] == LimitSwitchNormal.NormallyClosed)
+                return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
+            else
+                return motors[index].getSensorCollection().isFwdLimitSwitchClosed();
+        }
+    }
+
 
     // TODO Report fommatted state to RobotState. Not the height, but instead something like what the Robot can do. Ex: isSafeToExhaustScale
 
