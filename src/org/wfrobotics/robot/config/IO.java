@@ -9,6 +9,7 @@ import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.BUTTON;
+import org.wfrobotics.reuse.controller.Xbox.DPAD;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketXbox;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
@@ -50,11 +51,14 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.Y, TRIGGER.WHEN_PRESSED, new DriveDistance(dist)));
         robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.B, TRIGGER.WHEN_PRESSED, new DriveTwoDistances()));
         robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance(-1 * dist)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToHeading(10,1)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToHeading(90,1)));
         //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance()));
         //        robotSpecific.add(ButtonFactory.makeButton(driver, BUTTON.B, TRIGGER.WHEN_PRESSED, new AutoDrive(new HerdVector(-1, 0),5)));
 
-
+        robotSpecific.add(ButtonFactory.makeButton(driver, DPAD.UP, TRIGGER.WHILE_HELD, new TurnToHeading(0,1)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, DPAD.RIGHT, TRIGGER.WHILE_HELD, new TurnToHeading(90,1)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, DPAD.LEFT, TRIGGER.WHILE_HELD, new TurnToHeading(-90,1)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, DPAD.DOWN, TRIGGER.WHILE_HELD, new TurnToHeading(180,1)));
 
 
 

@@ -31,4 +31,5 @@ public class RobotMap
     public static final double driveRatio = 2.0;//36.0/15;
 
     public static final double wheelCircumference = 6.21234794536479395120962303071*Math.PI;//20;
+    public static final double robotWidth = 13.0;
 }
