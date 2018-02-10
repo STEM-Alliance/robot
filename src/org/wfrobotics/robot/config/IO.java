@@ -58,7 +58,7 @@ public class IO
 
 
         // ------------------------ Intake ------------------------
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.TOGGLE_WHEN_PRESSED, new VertIntake(true)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new VertIntake()));
         robotSpecific.add(ButtonFactory.makeButton(operator,  AXIS.RIGHT_TRIGGER, .33, TRIGGER.WHILE_HELD, new DistanceIntakePush()));
         robotSpecific.add(ButtonFactory.makeButton(operator,  Xbox.BUTTON.LB, TRIGGER.TOGGLE_WHEN_PRESSED, new HorizontalIntake(true)));
 
@@ -103,7 +103,7 @@ public class IO
 
     public double getLiftStick()
     {
-        return driver.getAxis(AXIS.RIGHT_Y);
+        return operator.getAxis(AXIS.RIGHT_Y);
     }
 
     // ------------------------ Reuse ------------------------
