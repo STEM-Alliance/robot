@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.background.BackgroundUpdate;
-import org.wfrobotics.reuse.hardware.ParallelLift;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenManual;
@@ -43,10 +42,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private double heightStart;
 
     public double todoRemoveLast;
-
-    // this is untested, don't use yet
-    private final boolean kParallelLiftMode = false;
-    private ParallelLift paralellLift;
 
     enum LimitSwitch
     {
@@ -96,17 +91,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         desiredSetpoint = 0;
         heightStart = 0;
 
-        if(kParallelLiftMode)
-        {
-            // initialize the lift in follower only mode
-            paralellLift = new ParallelLift(new ParallelLift.Params(
-                                            new ParallelLift.Params.PID(1,0,0,0), // Follower PID
-                                            new ParallelLift.Params.Range(-3, 3), // Input range, height in inches
-                                            new ParallelLift.Params.Range(-.2, .2), // Output range, percent voltage
-                                            .005)
-                                            );
-        }
-
         todoRemoveLast = Timer.getFPGATimestamp();
     }
 
@@ -132,19 +116,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         //            SmartDashboard.putString("Lift", "Brake at target");
         //        }
 
-        if(!kParallelLiftMode)
-        {
-            // command the motors to run
-            set(desiredMode, desiredSetpoint);
-        }
-        else
-        {
-            set(0, desiredMode, desiredSetpoint);
-            double followerOutput = paralellLift.followerRun(ticksToInches(motors[0].getSelectedSensorPosition(0)),
-                                            ticksToInches(motors[1].getSelectedSensorPosition(0)),
-                                            motors[0].getMotorOutputPercent());
-            set(1, ControlMode.PercentOutput, followerOutput);
-        }
+        set(desiredMode, desiredSetpoint);
 
         debug();
         SmartDashboard.putNumber("Background Period", (todoRemoveNow - todoRemoveLast) * 1000);
@@ -183,17 +155,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         {
             motors[index].set(mode, val);
         }
-    }
-
-    /**
-     * Set one of the motors
-     * @param index
-     * @param mode Talon Control Mode
-     * @param val
-     */
-    private void set(int index, ControlMode mode, double val)
-    {
-        motors[index].set(mode, val);
     }
 
     /**
