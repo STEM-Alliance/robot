@@ -4,7 +4,7 @@ import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.ParallelLift;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.lift.LiftManual;
+import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenManual;
 import org.wfrobotics.robot.config.LiftHeight;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 {
-    private final static double kSprocketDiameterInches = 1.40;  // 1.29 16 tooth 25 chain
+    private final static double kSprocketDiameterInches = 1.35;  // 1.29 16 tooth 25 chain
     private final static double kTicksPerRev = 4096;
     private final static double kRevsPerInch = 1 / (kSprocketDiameterInches * Math.PI);
 
@@ -40,6 +40,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     private ControlMode desiredMode;
     private double desiredSetpoint;
+    private double heightStart;
 
     public double todoRemoveLast;
 
@@ -58,16 +59,17 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         final int kTimeout = 10;
         final int kSlot = 0;
         final int[] addresses = {11, 10};
-        final boolean[] inverted = {false, true};
+        final boolean[] inverted = {true, true};
         final boolean[] sensorPhase = {false, true};
 
         //final double kP = 0.1 * 1023.0 / 189.7 * 2 * 2 * 2;  // DRL also works if max velocity multiplied by .75 instead of .8
-        final double kP = .1 * 1023.0 / 75 * 2 * 1.25;
-        final double kI = kP * .0001;
-        final double kD = kP * 10;
-        final double kF = 1023.0/4950.0*5/25;
-        final int kMaxVelocity = (int) (4950 * .8);
-        final int kAcceleration = kMaxVelocity;
+        final double kMaxPossibleVelocity = 4950.0 * 25.0 / 15.0;
+        final double kP = .1 * 1023.0 / 250.0;
+        final double kI = kP * .001;
+        final double kD = kP * 10.0;
+        final double kF = 1023.0 / kMaxPossibleVelocity;
+        final int kMaxVelocity = (int) (kMaxPossibleVelocity * .75);
+        final int kAcceleration = (int) (kMaxVelocity * .75);
         // TODO Make into config file?
         // TODO Use talon software limit switches
 
@@ -84,12 +86,15 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].setSelectedSensorPosition(0, kSlot, kTimeout);
             motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, kTimeout);
             motors[index].configVelocityMeasurementWindow(64, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 2, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 2, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 160, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);
+            //            motors[index].configAllowableClosedloopError(0, 100, kTimeout);
         }
         desiredMode = ControlMode.PercentOutput;
         desiredSetpoint = 0;
+        heightStart = 0;
 
         if(kParallelLiftMode)
         {
@@ -107,7 +112,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new LiftManual());
+        setDefaultCommand(new LiftAutoZeroThenManual());
     }
 
     public synchronized void onBackgroundUpdate()
@@ -116,12 +121,16 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
         if (zeroPositionIfNeeded())
         {
-            SmartDashboard.putString("LiftAuto", "Zeroing");
+            SmartDashboard.putString("Lift", "Zeroing");
         }
         else if (goToTransportIfNeeded())
         {
-            SmartDashboard.putString("LiftAuto", "Transport");
+            SmartDashboard.putString("Lift", "Transport");
         }
+        //        else if (applyBrakeAtTarget())
+        //        {
+        //            SmartDashboard.putString("Lift", "Brake at target");
+        //        }
 
         if(!kParallelLiftMode)
         {
@@ -150,6 +159,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     {
         desiredMode = ControlMode.MotionMagic;
         desiredSetpoint = inchesToTicks(heightInches);
+        heightStart = getHeight();
     }
 
     /**
@@ -204,6 +214,11 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private double ticksToInches(double ticks)
     {
         return ticks / kRevsPerInch / kTicksPerRev;
+    }
+
+    private double getHeight()
+    {
+        return (motors[0].getSelectedSensorPosition(0) + motors[1].getSelectedSensorPosition(0)) / 2;
     }
 
     /**
@@ -274,6 +289,20 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         return false;
     }
 
+    protected boolean applyBrakeAtTarget()
+    {
+        if (desiredMode == ControlMode.MotionMagic)
+        {
+            if (Math.abs(getHeight()) - Math.abs(desiredSetpoint) < Math.abs(heightStart - desiredSetpoint) * .01)
+            {
+                desiredMode = ControlMode.MotionMagic;
+                desiredSetpoint = 0;
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Are all sides at the top?
      * @return
@@ -337,17 +366,11 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     {
         if(limit == LimitSwitch.Bottom)
         {
-            if(limitSwitchNormally[index][1] == LimitSwitchNormal.NormallyClosed)
-                return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
-            else
-                return motors[index].getSensorCollection().isRevLimitSwitchClosed();
+            return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
         }
         else
         {
-            if(limitSwitchNormally[index][0] == LimitSwitchNormal.NormallyClosed)
-                return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
-            else
-                return motors[index].getSensorCollection().isFwdLimitSwitchClosed();
+            return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
         }
     }
 
