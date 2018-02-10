@@ -28,7 +28,7 @@ public class LiftManual extends Command
 
         if (Math.abs(setpoint) < deadbandPercent)
         {
-            Robot.liftSubsystem.goToSpeedInit(0);
+            Robot.liftSubsystem.goToSpeedInit(0);  // Engage brake
         }
         else
         {
