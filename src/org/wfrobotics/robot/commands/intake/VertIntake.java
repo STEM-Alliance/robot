@@ -2,25 +2,24 @@ package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.Robot;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class VertIntake extends Command
+public class VertIntake extends InstantCommand
 {
-    boolean high;
+    private static boolean last = false;
+    private final boolean newValue;
 
-    public VertIntake(boolean high)
+    public VertIntake()
     {
-        requires(Robot.intakeSolenoidSubsystem);
-        this.high = high;
+        newValue = last;
     }
 
     protected void initialize()
     {
-        Robot.intakeSolenoidSubsystem.setVert(high);
-    }
+        Robot.intakeSolenoidSubsystem.setVert(newValue);
 
-    protected boolean isFinished()
-    {
-        return false;
+        SmartDashboard.putBoolean("vert intake", newValue);
+        VertIntake.last = !VertIntake.last;
     }
 }
