@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.robot.commands.intake.HorizontalIntake;
+import org.wfrobotics.robot.commands.intake.IntakeSolenoidNone;
 import org.wfrobotics.robot.config.RobotMap;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -22,7 +22,7 @@ public class IntakeSolenoidSubsystem extends Subsystem
     // TODO When the lift is up, the intake cannot let go of the cube. Default command needs to be smarter and reference robot state
     public void initDefaultCommand()
     {
-        setDefaultCommand(new HorizontalIntake(false));
+        setDefaultCommand(new IntakeSolenoidNone());
     }
 
     public void setHorizontal(boolean extended)

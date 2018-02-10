@@ -4,19 +4,16 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class VertIntake extends Command
+public class IntakeSolenoidNone extends Command
 {
-    boolean high;
-
-    public VertIntake(boolean high)
+    public IntakeSolenoidNone()
     {
         requires(Robot.intakeSolenoidSubsystem);
-        this.high = high;
     }
 
     protected void initialize()
     {
-        Robot.intakeSolenoidSubsystem.setVert(high);
+        Robot.intakeSolenoidSubsystem.setHorizontal(false);
     }
 
     protected boolean isFinished()

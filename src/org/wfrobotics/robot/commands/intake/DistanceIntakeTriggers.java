@@ -6,30 +6,21 @@ import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DistanceIntake extends Command
+public class DistanceIntakeTriggers extends Command
 {
     final RobotState state = RobotState.getInstance();
     final IntakeSubsystem intake = Robot.intakeSubsystem;
 
-    /**
-     * This command gets the distance from the subsystem and based on that distance
-     * drive the motors at different speeds
-     */
-    public DistanceIntake()
+    public DistanceIntakeTriggers()
     {
         requires(intake);
     }
 
     protected void execute()
     {
-        double speed = 0.1;
+        double speed = Robot.controls.getIntakeIn() - Robot.controls.getIntakeOut();
 
         intake.update();
-
-        if (state.intakeSensorReadout <= IntakeSubsystem.kDistanceHasCube)
-        {
-            speed = 0.0;
-        }
         intake.setMotor(speed);
     }
 
