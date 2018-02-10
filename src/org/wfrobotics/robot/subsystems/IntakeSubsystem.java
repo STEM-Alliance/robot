@@ -1,8 +1,9 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.intake.DistanceIntake;
+import org.wfrobotics.robot.commands.intake.DistanceIntakeTriggers;
 import org.wfrobotics.robot.config.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -25,33 +26,30 @@ public class IntakeSubsystem extends Subsystem
     public static final double kDistanceHasCube = 20; // (in centmeters)
 
     protected final RobotState state = RobotState.getInstance();
-    private TalonSRX leftIntake;
-    private TalonSRX rightIntake;
+    private TalonSRX masterRight;
+    private TalonSRX followerLeft;
     private SharpDistance uSensor;
 
     public IntakeSubsystem()
     {
-        leftIntake = new TalonSRX(RobotMap.CAN_INTAKE_LEFT);
-        rightIntake = new TalonSRX(RobotMap.CAN_INTAKE_RIGHT);
+        masterRight = TalonSRXFactory.makeTalon(RobotMap.CAN_INTAKE_RIGHT);
+        followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
+        masterRight.setNeutralMode(NeutralMode.Brake);
+        followerLeft.setNeutralMode(NeutralMode.Brake);
+        masterRight.setInverted(true);
+        followerLeft.setInverted(true);
 
-        rightIntake.setNeutralMode(NeutralMode.Brake);
-        leftIntake.setNeutralMode(NeutralMode.Brake);
-        leftIntake.set(ControlMode.Follower, RobotMap.CAN_INTAKE_RIGHT);
-
-        rightIntake.setInverted(true);
-        leftIntake.setInverted(true);
-
-        uSensor = new SharpDistance(RobotMap.DIGITAL_INFARAD_SENSOR);
+        uSensor = new SharpDistance(RobotMap.ANALOG_INTAKE_DISTANCE);
     }
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new DistanceIntake());
+        setDefaultCommand(new DistanceIntakeTriggers());
     }
 
     public void setMotor(double percentage)
     {
-        rightIntake.set(ControlMode.PercentOutput, percentage);
+        masterRight.set(ControlMode.PercentOutput, percentage);
     }
 
     public void update()

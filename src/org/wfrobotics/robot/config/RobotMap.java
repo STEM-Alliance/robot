@@ -37,7 +37,7 @@ public class RobotMap
     // Intake Wheels ------------------------------------------------------------------------------
     public static final int CAN_INTAKE_LEFT = 19;
     public static final int CAN_INTAKE_RIGHT = 20;
-    public static final int DIGITAL_INTAKE_DISTANCE = 2;
+    public static final int ANALOG_INTAKE_DISTANCE = 2;
     public static final int DIGITAL_INFARAD_SENSOR = 1;
 
     // LED ----------------------------------------------------------------------------------------

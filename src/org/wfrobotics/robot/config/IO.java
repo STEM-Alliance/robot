@@ -16,6 +16,7 @@ import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
 import org.wfrobotics.robot.commands.intake.DistanceIntakePush;
 import org.wfrobotics.robot.commands.intake.HorizontalIntake;
+import org.wfrobotics.robot.commands.intake.VertIntake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
 
@@ -57,8 +58,9 @@ public class IO
 
 
         // ------------------------ Intake ------------------------
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.RB, TRIGGER.TOGGLE_WHEN_PRESSED, new HorizontalIntake(true)));
-        robotSpecific.add(ButtonFactory.makeButton(driver,  AXIS.RIGHT_TRIGGER, .33, TRIGGER.WHILE_HELD, new DistanceIntakePush()));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.TOGGLE_WHEN_PRESSED, new VertIntake(true)));
+        robotSpecific.add(ButtonFactory.makeButton(operator,  AXIS.RIGHT_TRIGGER, .33, TRIGGER.WHILE_HELD, new DistanceIntakePush()));
+        robotSpecific.add(ButtonFactory.makeButton(operator,  Xbox.BUTTON.LB, TRIGGER.TOGGLE_WHEN_PRESSED, new HorizontalIntake(true)));
 
         // ------------------------- Lift -------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Scale.get())));
@@ -88,6 +90,16 @@ public class IO
     }
 
     // ------------------- Robot-specific --------------------
+
+    public double getIntakeIn()
+    {
+        return operator.getAxis(AXIS.RIGHT_TRIGGER);
+    }
+
+    public double getIntakeOut()
+    {
+        return operator.getAxis(AXIS.LEFT_TRIGGER);
+    }
 
     public double getLiftStick()
     {
