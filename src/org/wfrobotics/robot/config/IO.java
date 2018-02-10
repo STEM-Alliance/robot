@@ -61,10 +61,10 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(driver,  AXIS.RIGHT_TRIGGER, .33, TRIGGER.WHILE_HELD, new DistanceIntakePush()));
 
         // ------------------------- Lift -------------------------
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Scale.get())));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Switch.get())));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Intake.get())));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome()));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Scale.get())));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Switch.get())));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Intake.get())));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome()));
 
 
 

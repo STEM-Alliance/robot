@@ -10,7 +10,7 @@
 		<location x="20" y="448"/>
 	</widget>
 	<widget field="Lift" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="0"/>
+		<location x="108" y="554"/>
 	</widget>
 	<widget field="Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
 		<location x="421" y="2"/>
@@ -67,6 +67,39 @@
 	</widget>
 	<widget field="Forward Limit" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="24" y="58"/>
+	</widget>
+	<widget field="Gyro" type="Gyro" class="edu.wpi.first.smartdashboard.gui.elements.Compass">
+		<location x="2366" y="48"/>
+	</widget>
+	<widget field="Delta E" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="45" y="209"/>
+	</widget>
+	<widget field="Distance:" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="76" y="672"/>
+	</widget>
+	<widget field="Position1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="37" y="602"/>
+	</widget>
+	<widget field="Position0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="43" y="95"/>
+	</widget>
+	<widget field="AtBottom" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="20" y="730"/>
+	</widget>
+	<widget field="AtTop" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="29" y="839"/>
+	</widget>
+	<widget field="Delta P" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="74" y="896"/>
+	</widget>
+	<widget field="Intake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="35" y="769"/>
+	</widget>
+	<widget field="Error1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="102" y="495"/>
+	</widget>
+	<widget field="Error0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="75" y="277"/>
 	</widget>
 </dashboard>
 <live-window>
