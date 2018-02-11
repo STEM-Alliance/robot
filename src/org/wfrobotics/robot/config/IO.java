@@ -93,12 +93,12 @@ public class IO
 
     public double getIntakeIn()
     {
-        return operator.getAxis(AXIS.RIGHT_TRIGGER);
+        return operator.getTrigger(Hand.kRight);
     }
 
     public double getIntakeOut()
     {
-        return operator.getAxis(AXIS.LEFT_TRIGGER);
+        return operator.getTrigger(Hand.kLeft);
     }
 
     public double getLiftStick()

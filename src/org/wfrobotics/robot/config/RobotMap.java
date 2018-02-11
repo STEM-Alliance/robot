@@ -23,7 +23,8 @@ public class RobotMap
     public static final double TANK_GEAR_RATIO_HIGH = 3.0;  //11.0/3;
     public static final double TANK_GEAR_RATIO_LOW = 25.0/3.0;
     public static final double TANK_GEAR_RATIO_MOTOR = 2.0;  //36.0/15;
-    public static final double TANK_WHEEL_CIRCUMFERENCE = 6.21234 * Math.PI;  //20;
+    public static final double TANK_WHEEL_CIRCUMFERENCE = 6.5 * Math.PI;  //20;
+    public static final double DISTANCE_SEPERATION_WHEEL_SIDES = 24;
 
     // Intake Solenoid ----------------------------------------------------------------------------
     public static final int CAN_PNEUMATIC_CONTROL_MODULE = 7;
