@@ -42,6 +42,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private double heightStart;
 
     public double todoRemoveLast;
+    
+    private static double kMaxPossibleUp = 2250;
+    private static double kMaxPossibleDown = 4000;
 
     enum LimitSwitch
     {
@@ -58,7 +61,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         final boolean[] sensorPhase = {false, true};
 
         //final double kP = 0.1 * 1023.0 / 189.7 * 2 * 2 * 2;  // DRL also works if max velocity multiplied by .75 instead of .8
-        final double kMaxPossibleVelocity = 4950.0 * 25.0 / 15.0;
+        final double kMaxPossibleVelocity = kMaxPossibleUp;
         final double kP = .1 * 1023.0 / 250.0;
         final double kI = kP * .001;
         final double kD = kP * 10.0;
@@ -82,7 +85,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, kTimeout);
             motors[index].configVelocityMeasurementWindow(64, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 2, kTimeout);
-            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 2, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 160, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);
             //            motors[index].configAllowableClosedloopError(0, 100, kTimeout);

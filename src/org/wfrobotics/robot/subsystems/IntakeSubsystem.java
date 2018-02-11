@@ -36,8 +36,8 @@ public class IntakeSubsystem extends Subsystem
         followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
         masterRight.setNeutralMode(NeutralMode.Brake);
         followerLeft.setNeutralMode(NeutralMode.Brake);
-        masterRight.setInverted(true);
-        followerLeft.setInverted(true);
+        masterRight.setInverted(false);
+        followerLeft.setInverted(false);
 
         uSensor = new SharpDistance(RobotMap.ANALOG_INTAKE_DISTANCE);
     }
