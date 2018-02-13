@@ -42,10 +42,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private double heightStart;
 
     public double todoRemoveLast;
-    
-    private static double kMaxPossibleUp = 2250;
-    private static double kMaxPossibleDown = 4000;
 
+    private static double kMaxPossibleUp = 2250;
     enum LimitSwitch
     {
         Bottom,
@@ -60,14 +58,13 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         final boolean[] inverted = {true, true};
         final boolean[] sensorPhase = {false, true};
 
-        //final double kP = 0.1 * 1023.0 / 189.7 * 2 * 2 * 2;  // DRL also works if max velocity multiplied by .75 instead of .8
         final double kMaxPossibleVelocity = kMaxPossibleUp;
-        final double kP = .1 * 1023.0 / 250.0;
-        final double kI = kP * .001;
-        final double kD = kP * 10.0;
+        final double kP = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
+        final double kI = kP * .001 * 0;
+        final double kD = kP * 10.0 * 0;
         final double kF = 1023.0 / kMaxPossibleVelocity;
-        final int kMaxVelocity = (int) (kMaxPossibleVelocity * .75);
-        final int kAcceleration = (int) (kMaxVelocity * .75);
+        final int kMaxVelocity = (int) (kMaxPossibleVelocity * .8);
+        final int kAcceleration = kMaxVelocity;
         // TODO Make into config file?
         // TODO Use talon software limit switches
 
