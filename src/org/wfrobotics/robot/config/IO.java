@@ -14,14 +14,14 @@ import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketXbox;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
-import org.wfrobotics.robot.commands.intake.DistanceIntakePush;
-import org.wfrobotics.robot.commands.intake.HorizontalIntake;
-import org.wfrobotics.robot.commands.intake.VertIntake;
+import org.wfrobotics.robot.commands.intake.JawsToggle;
+import org.wfrobotics.robot.commands.intake.WristToggle;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Maps controllers to Commands **/
 public class IO
@@ -58,9 +58,9 @@ public class IO
 
 
         // ------------------------ Intake ------------------------
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new VertIntake()));
-        robotSpecific.add(ButtonFactory.makeButton(operator,  AXIS.RIGHT_TRIGGER, .33, TRIGGER.WHILE_HELD, new DistanceIntakePush()));
-        robotSpecific.add(ButtonFactory.makeButton(operator,  Xbox.BUTTON.LB, TRIGGER.TOGGLE_WHEN_PRESSED, new HorizontalIntake(true)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator,  AXIS.RIGHT_TRIGGER, .33, TRIGGER.WHILE_HELD, new IntakePush()));
+        robotSpecific.add(ButtonFactory.makeButton(operator,  Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
 
         // ------------------------- Lift -------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Scale.get())));
@@ -93,12 +93,16 @@ public class IO
 
     public double getIntakeIn()
     {
-        return operator.getTrigger(Hand.kRight);
+        double value = operator.getTrigger(Hand.kRight);
+        SmartDashboard.putNumber("Intake Wheels In", value);
+        return (value > .1) ? value : 0;
     }
 
     public double getIntakeOut()
     {
-        return operator.getTrigger(Hand.kLeft);
+        double value = operator.getTrigger(Hand.kLeft);
+        SmartDashboard.putNumber("Intake Wheels Out", value);
+        return (value > .1) ? value : 0;
     }
 
     public double getLiftStick()
