@@ -1,28 +1,22 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
-public class DistanceIntakePush extends Command
+public class IntakePush extends Command
 {
-    final RobotState state = RobotState.getInstance();
-    final IntakeSubsystem intake = Robot.intakeSubsystem;
+    protected final IntakeSubsystem intake = Robot.intakeSubsystem;
 
-    public DistanceIntakePush()
+    public IntakePush()
     {
         requires(intake);
     }
 
     protected void execute()
     {
-        intake.update();
-        Robot.intakeSubsystem.setMotor(0.2);
+        Robot.intakeSubsystem.setMotor(1); // TODO Pass a boolean, pick either in or out speed off that, make instantcommand, rename to IntakeSet?
     }
 
     protected boolean isFinished()
