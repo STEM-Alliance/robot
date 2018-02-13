@@ -27,6 +27,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     public static final double kDistanceHasCube = 7; // (in centmeters)
 
     private final double kTimeUntilNextSolenoidHorizontal = .5;
+    private final double kTimeUntilNextSolenoidVert = .5;
 
     protected final RobotState state = RobotState.getInstance();
     private final TalonSRX masterRight;
@@ -36,7 +37,11 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     private final SharpDistance uSensor;
 
     private boolean lastHorizontalState;
+    private boolean lastVertState;
+
     private double lastHorizontalTime;
+    private double lastVertTime;
+
     private double lastDistance;
 
     public IntakeSubsystem()
@@ -57,6 +62,10 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         lastHorizontalTime = Timer.getFPGATimestamp() - kTimeUntilNextSolenoidHorizontal * 1.01;
         lastHorizontalState = true;
         setHorizontal(!lastHorizontalState);
+
+        lastVertTime = Timer.getFPGATimestamp() - kTimeUntilNextSolenoidVert * 1.01;
+        lastVertState = true;
+        setVert(!lastVertState);
 
         lastDistance = uSensor.getDistance();
     }
@@ -105,11 +114,28 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         return stateChanged;
     }
 
-    public void setVert(boolean high)
+    public boolean setVert(boolean extended)
     {
-        SmartDashboard.putBoolean("Wrist Requested", high);
 
-        vertIntake.set(high ? Value.kForward : Value.kReverse);
+        boolean delayedEnough = Timer.getFPGATimestamp() - lastVertTime > kTimeUntilNextSolenoidVert;
+        boolean different = extended != lastVertState;
+        boolean stateChanged = false;
+
+        SmartDashboard.putBoolean("Wrist Requested", extended);
+
+        if (delayedEnough && different)
+        {
+            vertIntake.set(extended ? Value.kForward : Value.kReverse);
+            lastVertTime = Timer.getFPGATimestamp();
+            lastVertState = extended;
+            stateChanged = true;
+        }
+        return stateChanged;
+    }
+
+    public boolean getVertical()
+    {
+        return lastVertState;
     }
 }
 
