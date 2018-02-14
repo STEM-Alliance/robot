@@ -46,7 +46,7 @@ public class SmartIntake extends CommandGroup
 
         // TODO Better off with PID on wheel speed while in the range that we do non-zero wheel speed? Analog Talon position control?
 
-        if (distanceToCube > 7 && distanceToCube < 35)  // TODO Need to move sensor, otherwise we stall motors
+        if (distanceToCube > 8 && distanceToCube < 42)  // TODO Need to move sensor, otherwise we stall motors
         {
             speed = -0.5;  // TODO Find ideal intake speed, put in RobotMap
         }
@@ -61,12 +61,12 @@ public class SmartIntake extends CommandGroup
     {
         String isJawtomated = "No";
 
-        if (distanceToCube < 25)
+        if (distanceToCube < 32)
         {
             intake.setHorizontal(false);  // Can't always set, otherwise we chatter?
             isJawtomated = "Close";
         }
-        else if (distanceToCube > 25 && distanceToCube < 55)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
+        else if (distanceToCube > 32 && distanceToCube < 62)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
         {
             intake.setHorizontal(true);
             isJawtomated = "Open";

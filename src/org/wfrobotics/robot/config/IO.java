@@ -3,6 +3,7 @@ package org.wfrobotics.robot.config;
 import java.util.ArrayList;
 
 import org.wfrobotics.reuse.commands.drivebasic.DriveOff;
+import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
 import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
@@ -48,11 +49,14 @@ public class IO
         arcadeIO = new ArcadeRocketXbox(driver);
         //        //tankIO = new TankXbox(driver);
 
-
         // ------------------------- Drive ------------------------
         robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
         robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
 
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.UP, TRIGGER.WHILE_HELD, new TurnToHeading(0, 1)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new TurnToHeading(90, 1)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.LEFT, TRIGGER.WHILE_HELD, new TurnToHeading(-90, 1)));
+        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.DOWN, TRIGGER.WHILE_HELD, new TurnToHeading(180, 1)));
 
         // ------------------------- Climb ------------------------
 
