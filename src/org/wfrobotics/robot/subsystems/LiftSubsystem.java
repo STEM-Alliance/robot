@@ -55,8 +55,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         final int kTimeout = 10;
         final int kSlot = 0;
         final int[] addresses = {11, 10};
-        final boolean[] inverted = {true, true};
-        final boolean[] sensorPhase = {false, true};
+        final boolean[] inverted = {false, true};
+        final boolean[] sensorPhase = {true, true};
 
         final double kMaxPossibleVelocity = kMaxPossibleUp;
         final double kP = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
