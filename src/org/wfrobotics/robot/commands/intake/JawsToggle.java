@@ -4,7 +4,7 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
-/** Set the jaw solenoids to the opposite state, repeated-buttonsmashing-safe */
+/** Set the solenoids to the opposite state, repeated-buttonsmashing-safe */
 public class JawsToggle extends InstantCommand
 {
     protected void initialize()

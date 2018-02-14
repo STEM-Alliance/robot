@@ -16,7 +16,7 @@ public class IntakePush extends Command
 
     protected void execute()
     {
-        Robot.intakeSubsystem.setMotor(1); // TODO Pass a boolean, pick either in or out speed off that, make instantcommand, rename to IntakeSet?
+        intake.setMotor(1); // TODO Pass a boolean, pick either in or out speed off that, make instantcommand, rename to IntakeSet?
     }
 
     protected boolean isFinished()

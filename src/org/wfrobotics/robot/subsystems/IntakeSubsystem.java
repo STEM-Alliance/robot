@@ -75,11 +75,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         setDefaultCommand(new CyborgIntake());
     }
 
-    public boolean getHorizontal()
-    {
-        return lastHorizontalState;
-    }
-
     public void onBackgroundUpdate()
     {
         double currentDistance = uSensor.getDistance();
@@ -94,6 +89,11 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     public void setMotor(double percentageOutward)
     {
         masterRight.set(ControlMode.PercentOutput, percentageOutward);
+    }
+
+    public boolean getHorizontal()
+    {
+        return lastHorizontalState;
     }
 
     public boolean setHorizontal(boolean extended)
@@ -114,9 +114,13 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         return stateChanged;
     }
 
+    public boolean getVertical()
+    {
+        return lastVertState;
+    }
+
     public boolean setVert(boolean extended)
     {
-
         boolean delayedEnough = Timer.getFPGATimestamp() - lastVertTime > kTimeUntilNextSolenoidVert;
         boolean different = extended != lastVertState;
         boolean stateChanged = false;
@@ -131,11 +135,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
             stateChanged = true;
         }
         return stateChanged;
-    }
-
-    public boolean getVertical()
-    {
-        return lastVertState;
     }
 }
 

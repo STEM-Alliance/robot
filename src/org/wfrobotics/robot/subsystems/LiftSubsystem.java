@@ -114,12 +114,70 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         //        {
         //            SmartDashboard.putString("Lift", "Brake at target");
         //        }
+        else
+        {
+            SmartDashboard.putString("Lift", desiredMode.toString());
+        }
 
         set(desiredMode, desiredSetpoint);
 
         debug();
         SmartDashboard.putNumber("Background Period", (todoRemoveNow - todoRemoveLast) * 1000);
         todoRemoveLast = todoRemoveNow;
+    }
+
+    /**
+     * If we're going fast enough or in high gear, move the lift to Transport height (a safe position)
+     * @return true if moved to transport mode
+     */
+    private boolean goToTransportIfNeeded()
+    {
+        //        if (state.robotVelocity.getMag() > .5 || state.robotGear)
+        //        {
+        //            desiredMode = ControlMode.MotionMagic;
+        //            desiredSetpoint = inchesToTicks(LiftHeight.Transport.get());
+        //            return true;
+        //        }
+        return false;
+    }
+
+    /**
+     * Zero the encoder position if both sides are at the bottom
+     * @return true if both sides are at the bottom
+     */
+    private boolean zeroPositionIfNeeded()
+    {
+        if(isAtBottom())
+        {
+            for (int index = 0; index < motors.length; index++)
+            {
+                motors[index].setSelectedSensorPosition(0, 0, 0);
+            }
+
+            // Override with valid + safe command
+            if (desiredMode == ControlMode.MotionMagic && desiredSetpoint < LiftHeight.Intake.get())
+            {
+                desiredMode = ControlMode.MotionMagic;
+                desiredSetpoint = inchesToTicks(LiftHeight.Intake.get());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean applyBrakeAtTarget()
+    {
+        // TODO Is this causing the lift to slide down when at target? Should we stay in motion magic and rely on being tuned to hit zero to brake?
+        if (desiredMode == ControlMode.MotionMagic)
+        {
+            if (Math.abs(getHeight()) - Math.abs(desiredSetpoint) < Math.abs(heightStart - desiredSetpoint) * .01)
+            {
+                desiredMode = ControlMode.MotionMagic;
+                desiredSetpoint = 0;
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -176,6 +234,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         return ticks / kRevsPerInch / kTicksPerRev;
     }
 
+    // TODO Is this causing one side to get ahead of the other?
     private double getHeight()
     {
         return (motors[0].getSelectedSensorPosition(0) + motors[1].getSelectedSensorPosition(0)) / 2;
@@ -186,7 +245,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
      */
     private void debug()
     {
-        TalonSRX motor = motors[0];
         double position0 = motors[0].getSelectedSensorPosition(0);
         double position1 = motors[1].getSelectedSensorPosition(0);
         double error0 = motors[0].getClosedLoopError(0);
@@ -194,7 +252,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
         SmartDashboard.putNumber("Position0", position0);
         SmartDashboard.putNumber("Position1", position1);
-        SmartDashboard.putNumber("Velocity", motor.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Velocity", motors[0].getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("TargetPosition", desiredSetpoint);
 
         SmartDashboard.putNumber("Error0", error0);
@@ -205,62 +263,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Delta E", error0 - error1);
         SmartDashboard.putNumber("Delta P", position0 - position1);
 
-
         SmartDashboard.putBoolean("AtBottom", isAtBottom());
         SmartDashboard.putBoolean("AtTop", isAtTop());
-    }
-
-    /**
-     * If we're going fast enough or in high gear, move the lift to Transport height (a safe position)
-     * @return true if moved to transport mode
-     */
-    private boolean goToTransportIfNeeded()
-    {
-        //        if (state.robotVelocity.getMag() > .5 || state.robotGear)
-        //        {
-        //            desiredMode = ControlMode.MotionMagic;
-        //            desiredSetpoint = inchesToTicks(LiftHeight.Transport.get());
-        //            return true;
-        //        }
-        return false;
-    }
-
-    /**
-     * Zero the encoder position if both sides are at the bottom
-     * @return true if both sides are at the bottom
-     */
-    private boolean zeroPositionIfNeeded()
-    {
-        if(isAtBottom())
-        {
-            for (int index = 0; index < motors.length; index++)
-            {
-                motors[index].setSelectedSensorPosition(0, 0, 0);
-            }
-
-            // Override with valid + safe command
-            if (desiredMode == ControlMode.MotionMagic && desiredSetpoint < LiftHeight.Intake.get())
-            {
-                desiredMode = ControlMode.MotionMagic;
-                desiredSetpoint = inchesToTicks(LiftHeight.Intake.get());
-            }
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean applyBrakeAtTarget()
-    {
-        if (desiredMode == ControlMode.MotionMagic)
-        {
-            if (Math.abs(getHeight()) - Math.abs(desiredSetpoint) < Math.abs(heightStart - desiredSetpoint) * .01)
-            {
-                desiredMode = ControlMode.MotionMagic;
-                desiredSetpoint = 0;
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -328,18 +332,12 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         {
             return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
         }
-        else
-        {
-            return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
-        }
+        return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
     }
-
 
     // TODO Report fommatted state to RobotState. Not the height, but instead something like what the Robot can do. Ex: isSafeToExhaustScale
 
     // TODO Automatically zero whenever we pass by that sensor(s)
-
-    // TODO What's the most automatic way we can score on the first layer of cube (on scale/switch) vs the second? What are the easiest xbox controls for that?
 
     // TODO Beast mode - The fastest lift possible probably dynamically changes it's control strategy to get to it's destination fastest
     //                   This might mean a more aggressive PID (profile) on the way down

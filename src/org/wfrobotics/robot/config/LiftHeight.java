@@ -4,7 +4,7 @@ package org.wfrobotics.robot.config;
 public enum LiftHeight
 {
     Scale(38.25),
-    Switch(Field.kSwitchClearInches),
+    Switch(RobotMap.kSwitchClearInches),
     Transport(6),
     Intake(0.01);  // Minimum valid height
 

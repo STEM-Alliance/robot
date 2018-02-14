@@ -63,8 +63,7 @@ public class IO
 
         // ------------------------ Intake ------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle()));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator,  AXIS.RIGHT_TRIGGER, .33, TRIGGER.WHILE_HELD, new IntakePush()));
-        robotSpecific.add(ButtonFactory.makeButton(operator,  Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
 
         // ------------------------- Lift -------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Scale.get())));

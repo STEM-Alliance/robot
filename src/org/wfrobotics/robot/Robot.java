@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+// TODO 2019 switch to non-deprecated RobotBase
+@SuppressWarnings("deprecation")
 public class Robot extends SampleRobot
 {
     private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater();

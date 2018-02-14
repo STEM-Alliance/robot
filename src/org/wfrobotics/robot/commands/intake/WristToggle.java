@@ -4,10 +4,9 @@ import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
+/** Set the solenoids to the opposite state, repeated-buttonsmashing-safe */
 public class WristToggle extends InstantCommand
 {
-    // TODO Make this work like JawsToggle, which is super working
-
     protected void initialize()
     {
         Robot.intakeSubsystem.setVert(!Robot.intakeSubsystem.getVertical());
