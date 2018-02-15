@@ -9,6 +9,7 @@ import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
+import org.wfrobotics.robot.subsystems.LEDsubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -35,7 +36,7 @@ public class Robot extends SampleRobot
     public static TankService driveService;
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
-
+    public static LEDsubsystem ledSubsystem;
     public static DashboardView dashboardView;
 
     public static IO controls;
@@ -51,6 +52,7 @@ public class Robot extends SampleRobot
         driveService = TankService.getInstance();
         liftSubsystem = new LiftSubsystem(config);
         intakeSubsystem = new IntakeSubsystem(config);
+        ledSubsystem = new LEDsubsystem();
 
         // uncomment if using USB camera to stream video from roboRio
         //dashboardView = new DashboardView();
