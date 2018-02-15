@@ -1,15 +1,11 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.hardware.led.LEDs;
-import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
-import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.reuse.subsystems.swerve.SwerveSignal;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.PIDController;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.subsystems.LED;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -27,7 +23,7 @@ public class VisionApproach extends Command
 
     protected void initialize()
     {
-        LED.getInstance().set(new Effect(EFFECT_TYPE.OFF, LEDs.BLACK, 1));
+
     }
 
     protected void execute()
@@ -70,7 +66,7 @@ public class VisionApproach extends Command
 
     protected void end()
     {
-        LED.getInstance().set(LED.defaultLEDEffect);
+
     }
 
     protected void interrupted()
