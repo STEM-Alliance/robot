@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.intake.CyborgIntake;
 import org.wfrobotics.robot.config.RobotMap;
+import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -24,12 +25,10 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
      * when it comes closer to the sensor we want to ramp down the motors to speed 2/3x
      * when distances is equal to 0, the motor speed is set to 0
      */
-    public static final double kDistanceHasCube = 7; // (in centmeters)
-
-    private final double kTimeUntilNextSolenoidHorizontal = .5;
-    private final double kTimeUntilNextSolenoidVert = .5;
+    public static RobotConfig config;
 
     protected final RobotState state = RobotState.getInstance();
+
     private final TalonSRX masterRight;
     private final TalonSRX followerLeft;
     private final DoubleSolenoid horizontalIntake;
@@ -44,8 +43,10 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     private double lastDistance;
 
-    public IntakeSubsystem()
+    public IntakeSubsystem(RobotConfig Config)
     {
+        config = Config;
+
         masterRight = TalonSRXFactory.makeTalon(RobotMap.CAN_INTAKE_RIGHT);
         followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
         masterRight.setNeutralMode(NeutralMode.Brake);
@@ -59,11 +60,11 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         uSensor = new SharpDistance(RobotMap.ANALOG_INTAKE_DISTANCE);
 
         // Force defined states
-        lastHorizontalTime = Timer.getFPGATimestamp() - kTimeUntilNextSolenoidHorizontal * 1.01;
+        lastHorizontalTime = Timer.getFPGATimestamp() - config.INTAKE_WRIST_TIMEOUT_LENTH * 1.01;
         lastHorizontalState = true;
         setHorizontal(!lastHorizontalState);
 
-        lastVertTime = Timer.getFPGATimestamp() - kTimeUntilNextSolenoidVert * 1.01;
+        lastVertTime = Timer.getFPGATimestamp() - config.INTAKE_WRIST_TIMEOUT_LENTH * 1.01;
         lastVertState = true;
         setVert(!lastVertState);
 
@@ -83,7 +84,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
         SmartDashboard.putNumber("Cube", centimeters);
         state.updateIntakeSensor(centimeters);
-        state.updateHasCube(uSensor.getDistance() < kDistanceHasCube);
+        state.updateHasCube(uSensor.getDistance() < config.INTAKE_DISTANCE_TO_CUBE);
     }
 
     public void setMotor(double percentageOutward)
@@ -98,7 +99,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public boolean setHorizontal(boolean extended)
     {
-        boolean delayedEnough = Timer.getFPGATimestamp() - lastHorizontalTime > kTimeUntilNextSolenoidHorizontal;
+        boolean delayedEnough = Timer.getFPGATimestamp() - lastHorizontalTime > config.INTAKE_WRIST_TIMEOUT_LENTH;
         boolean different = extended != lastHorizontalState;
         boolean stateChanged = false;
 
@@ -121,7 +122,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public boolean setVert(boolean extended)
     {
-        boolean delayedEnough = Timer.getFPGATimestamp() - lastVertTime > kTimeUntilNextSolenoidVert;
+        boolean delayedEnough = Timer.getFPGATimestamp() - lastVertTime > config.INTAKE_WRIST_TIMEOUT_LENTH;
         boolean different = extended != lastVertState;
         boolean stateChanged = false;
 

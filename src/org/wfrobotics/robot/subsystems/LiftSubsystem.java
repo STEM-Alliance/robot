@@ -5,6 +5,8 @@ import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenManual;
 import org.wfrobotics.robot.config.LiftHeight;
+import org.wfrobotics.robot.config.RobotMap;
+import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -21,9 +23,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 {
-    private final static double kSprocketDiameterInches = 1.35;  // 1.29 16 tooth 25 chain
+    public static RobotConfig config;
+
     private final static double kTicksPerRev = 4096;
-    private final static double kRevsPerInch = 1 / (kSprocketDiameterInches * Math.PI);
+    private final static double kRevsPerInch = 1 / ( 1.35 * Math.PI);;
 
     private final LimitSwitchNormal[][] limitSwitchNormally = {
         // forward, then reverse
@@ -43,29 +46,29 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public double todoRemoveLast;
 
-    private static double kMaxPossibleUp = 2250;
     enum LimitSwitch
     {
         Bottom,
         Top
     }
 
-    public LiftSubsystem()
+    public LiftSubsystem(RobotConfig Config)
     {
+        config = Config;
+
         final int kTimeout = 10;
         final int kSlot = 0;
-        final int[] addresses = {11, 10};
-        final boolean[] inverted = {false, true};
-        final boolean[] sensorPhase = {true, true};
+        final int[] addresses =  {RobotMap.CAN_LIFT_L, RobotMap.CAN_LIFT_R};
+        final boolean[] inverted = {config.LIFT_MOTOR_INVERTED_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
+        final boolean[] sensorPhase = {config.LIFT_SENSOR_PHASE_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
 
-        final double kMaxPossibleVelocity = kMaxPossibleUp;
-        final double kP = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
-        final double kI = kP * .001 * 0;
-        final double kD = kP * 10.0 * 0;
-        final double kF = 1023.0 / kMaxPossibleVelocity;
-        final int kMaxVelocity = (int) (kMaxPossibleVelocity * .8);
+        final double kMaxPossibleVelocity = config.LIFT_MAX_POSSIBLE_UP;
+        final double kP = config.LIFT_P;
+        final double kI = config.LIFT_I;
+        final double kD = config.LIFT_D;
+        final double kF = config.LIFT_F;
+        final int kMaxVelocity = (int) (kMaxPossibleVelocity * config.LIFT_POSIBLE_VELOCITY_PERCENTAGE );
         final int kAcceleration = kMaxVelocity;
-        // TODO Make into config file?
         // TODO Use talon software limit switches
 
         for (int index = 0; index < motors.length; index++)
