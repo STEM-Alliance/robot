@@ -10,11 +10,13 @@ import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.AXIS;
+import org.wfrobotics.reuse.controller.Xbox.DPAD;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketXbox;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.WristToggle;
@@ -91,6 +93,23 @@ public class IO
     public double getLiftStick()
     {
         return operator.getAxis(AXIS.RIGHT_Y);
+    }
+
+    public double getWinchPercent()
+    {
+        int direction = operator.getDpad();
+        double speed = 0;
+
+        if (direction == DPAD.UP.get() || direction == DPAD.UP_LEFT.get() || direction == DPAD.UP_RIGHT.get())
+        {
+            speed = Robot.config.WINCH_SPEED;
+        }
+        else if (direction == DPAD.DOWN.get() || direction == DPAD.DOWN_LEFT.get() || direction == DPAD.DOWN_RIGHT.get())
+        {
+            speed = -Robot.config.WINCH_SPEED;
+        }
+
+        return speed;
     }
 
     // ------------------------ Reuse ------------------------
