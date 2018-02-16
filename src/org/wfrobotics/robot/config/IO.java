@@ -15,6 +15,7 @@ import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketXbox;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
+import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.WristToggle;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
@@ -58,10 +59,9 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.LEFT, TRIGGER.WHILE_HELD, new TurnToHeading(-90, 1)));
         robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.DOWN, TRIGGER.WHILE_HELD, new TurnToHeading(180, 1)));
 
-        // ------------------------- Climb ------------------------
-
-
         // ------------------------ Intake ------------------------
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
 
@@ -70,26 +70,6 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Switch.get())));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new LiftToHeight(LiftHeight.Intake.get())));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome()));
-
-
-
-
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new IntakePush(.5)));
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new IntakePull(.5)));
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Elevate(-1)));
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(1)));
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.X, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeSolenoid(true)));
-        //
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new ElevateRendezvous((5000), .5)));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ElevatePID((18000/2)/4096)));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LEFT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(0)));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RIGHT_STICK, TRIGGER.WHILE_HELD, new ElevatePID(18000/4096)));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new IntakePull()));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(-1)));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new Elevate(1)));
-        //        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeSolenoid(true)));
-        //
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new Elevate(-1)));
     }
 
     // ------------------- Robot-specific --------------------

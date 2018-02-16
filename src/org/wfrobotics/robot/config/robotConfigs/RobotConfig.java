@@ -42,5 +42,9 @@ public class RobotConfig
     public double TANK_OPEN_LOOP_RAMP;
 
     public boolean TANK_SWAP_LEFT_RIGHT;
+
+    //                      Winch
+    // _________________________________________________________________________________
+    public int WINCH;
 }
 
