@@ -4,13 +4,13 @@ public class RobotConfig
 {
     //                      Intake
     // _________________________________________________________________________________
-    public double INTAKE_DISTANCE_TO_CUBE; // centmeters
+    public double INTAKE_DISTANCE_TO_CUBE; // centimeters
     public double INTAKE_WRIST_TIMEOUT_LENTH; // secounds
 
     //                      Lift
     // _________________________________________________________________________________
     public double LIFT_SPROCKET_DIAMETER_INCHES; // 1.29 16 tooth 25 chain
-    public double LIFT_MAX_POSSIBLE_UP; // bottem sensor to top sensor
+    public double LIFT_MAX_POSSIBLE_UP; // bottom sensor to top sensor
     public double LIFT_P;
     public double LIFT_I;
     public double LIFT_D;
@@ -32,10 +32,14 @@ public class RobotConfig
     public double TANK_F;
     public int TANK_CRUISE_VELOCITY;
     public int TANK_ACCELERATION;
+
     public boolean TANK_LEFT_INVERT;
     public boolean TANK_RIGHT_INVERT;
     public boolean TANK_LEFT_SENSOR_PHASE;
     public boolean TANK_RIGHT_SENSOR_PHASE;
 
+    public double TANK_OPEN_LOOP_RAMP;
+
+    public boolean TANK_SWAP_LEFT_RIGHT;
 }
 

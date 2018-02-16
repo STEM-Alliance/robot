@@ -35,6 +35,8 @@ public class HerdPractice extends RobotConfig
         TANK_LEFT_SENSOR_PHASE = false;
         TANK_RIGHT_SENSOR_PHASE = false;
 
+        TANK_OPEN_LOOP_RAMP = 0.5;
 
+        TANK_SWAP_LEFT_RIGHT = false;
     }
 }
