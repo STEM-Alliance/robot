@@ -32,6 +32,7 @@ public class RobotConfig
     public double TANK_F;
     public int TANK_CRUISE_VELOCITY;
     public int TANK_ACCELERATION;
+    public int TANK_IZONE;
 
     public boolean TANK_LEFT_INVERT;
     public boolean TANK_RIGHT_INVERT;

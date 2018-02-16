@@ -20,14 +20,15 @@ public class HerdPractice extends RobotConfig
         LIFT_SENSOR_PHASE_LEFT = true; // left
         LIFT_SENSOR_PHASE_RIGHT = true; // right
 
+        // Motion Magic
         TANK_MAX_VELOCITY = 10000.0;
         TANK_P = 1.25;
         TANK_I = TANK_P * 0.005;
         TANK_D =  TANK_P * 2.5;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
-
         TANK_CRUISE_VELOCITY = 7575;
         TANK_ACCELERATION = 7575;
+        TANK_IZONE = 0;
 
         TANK_LEFT_INVERT = true;
         TANK_RIGHT_INVERT = false;
