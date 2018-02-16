@@ -7,10 +7,11 @@ public class HerdPractice extends RobotConfig
         INTAKE_DISTANCE_TO_CUBE = 7; // centimeters
         INTAKE_WRIST_TIMEOUT_LENTH = 0.5; //secounds
 
-        LIFT_MAX_POSSIBLE_UP = 2250;
-        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
-        LIFT_I = LIFT_P * .001 * 0;
-        LIFT_D = LIFT_P * 10.0 * 0;
+        LIFT_MAX_POSSIBLE_UP = 3100;  // Down 5000
+        //LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 1.25;
+        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2.5;
+        LIFT_I = LIFT_P * .01 * .5;
+        LIFT_D = LIFT_P * 10.0 * .25;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.8;
 
