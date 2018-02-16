@@ -37,7 +37,7 @@ public class SmartIntake extends CommandGroup
 
     protected boolean isFinished()
     {
-        return !IntakeManual.wantsManualIntake();  // Must give up control for conditional command
+        return false;
     }
 
     private void autoIntake(double distanceToCube)

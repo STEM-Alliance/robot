@@ -1,0 +1,30 @@
+package org.wfrobotics.robot.subsystems;
+
+import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.commands.Winch;
+
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public class WinchSubsystem extends Subsystem
+{
+    private final TalonSRX motor;
+
+    public WinchSubsystem()
+    {
+        motor = new TalonSRX(Robot.config.WINCH);
+    }
+
+    protected void initDefaultCommand()
+    {
+        setDefaultCommand(new Winch());
+    }
+
+    public void winch(double percentWinch)
+    {
+        motor.set(ControlMode., demand);
+        SmartDashboard.putNumber("Winch (A)", motor.getOutputCurrent());
+    }
+}

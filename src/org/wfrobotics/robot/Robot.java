@@ -10,6 +10,7 @@ import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
+import org.wfrobotics.robot.subsystems.WinchSubsystem;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
@@ -35,6 +36,7 @@ public class Robot extends SampleRobot
     public static TankService driveService;
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
+    public static WinchSubsystem winch;
     public static DashboardView dashboardView;
 
     public static IO controls;
