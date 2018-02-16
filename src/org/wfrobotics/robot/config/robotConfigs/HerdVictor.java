@@ -20,14 +20,15 @@ public class HerdVictor extends RobotConfig
         LIFT_SENSOR_PHASE_LEFT = true; // left
         LIFT_SENSOR_PHASE_RIGHT = true; // right
 
-        TANK_MAX_VELOCITY = 10000.0;
-        TANK_P = 1.25;
+        // Motion Magic
+        TANK_MAX_VELOCITY = 10139.2;
+        TANK_P = 1.45;
         TANK_I = TANK_P * 0.005;
-        TANK_D =  TANK_P * 2.5;
+        TANK_D =  TANK_P * 2.25;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
-
-        TANK_CRUISE_VELOCITY = 7575;
-        TANK_ACCELERATION = 7575;
+        TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.8);
+        TANK_ACCELERATION = TANK_CRUISE_VELOCITY;
+        TANK_IZONE = 40;
 
         TANK_LEFT_INVERT = true;
         TANK_RIGHT_INVERT = false;
