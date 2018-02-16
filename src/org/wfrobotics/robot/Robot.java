@@ -52,6 +52,7 @@ public class Robot extends SampleRobot
         driveService = TankService.getInstance();
         liftSubsystem = new LiftSubsystem(config);
         intakeSubsystem = new IntakeSubsystem(config);
+        winch = new WinchSubsystem();
 
         // uncomment if using USB camera to stream video from roboRio
         //dashboardView = new DashboardView();

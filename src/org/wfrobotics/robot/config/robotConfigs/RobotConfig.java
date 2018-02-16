@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
-public class RobotConfig
+public abstract class RobotConfig
 {
     //                      Intake
     // _________________________________________________________________________________
@@ -46,5 +46,7 @@ public class RobotConfig
     //                      Winch
     // _________________________________________________________________________________
     public int WINCH;
+    public boolean WINCH_INVERT;
+    public double WINCH_SPEED;
 }
 

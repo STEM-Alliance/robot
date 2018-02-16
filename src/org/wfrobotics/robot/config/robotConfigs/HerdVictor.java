@@ -41,5 +41,7 @@ public class HerdVictor extends RobotConfig
         TANK_SWAP_LEFT_RIGHT = false;
 
         WINCH = 22;
+        WINCH_INVERT = false;
+        WINCH_SPEED = 1;
     }
 }
