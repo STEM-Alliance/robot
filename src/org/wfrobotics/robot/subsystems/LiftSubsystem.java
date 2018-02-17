@@ -115,7 +115,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         set(desiredMode, desiredSetpoint);
         state.updateLiftHeight(ticksToInches(getHeight()));
 
-        debug();
+        //        debug();
         SmartDashboard.putNumber("Background Period", (todoRemoveNow - todoRemoveLast) * 1000);
         todoRemoveLast = todoRemoveNow;
     }
@@ -234,32 +234,32 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         return (motors[0].getSelectedSensorPosition(0) + motors[1].getSelectedSensorPosition(0)) / 2;
     }
 
-    /**
-     * print debug information
-     */
-    private void debug()
-    {
-        double position0 = motors[0].getSelectedSensorPosition(0);
-        double position1 = motors[1].getSelectedSensorPosition(0);
-        double error0 = motors[0].getClosedLoopError(0);
-        double error1 = motors[1].getClosedLoopError(0);
-
-        SmartDashboard.putNumber("Position0", position0);
-        SmartDashboard.putNumber("Position1", position1);
-        SmartDashboard.putNumber("Velocity", motors[0].getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("TargetPosition", desiredSetpoint);
-
-        SmartDashboard.putNumber("Error0", error0);
-        SmartDashboard.putNumber("Error1", error1);
-
-        SmartDashboard.putNumber("Height", ticksToInches(position0));
-
-        SmartDashboard.putNumber("Delta E", error0 - error1);
-        SmartDashboard.putNumber("Delta P", position0 - position1);
-
-        SmartDashboard.putBoolean("AtBottom", isAtBottom());
-        SmartDashboard.putBoolean("AtTop", isAtTop());
-    }
+    //    /**
+    //     * print debug information
+    //     */
+    //    private void debug()
+    //    {
+    //        double position0 = motors[0].getSelectedSensorPosition(0);
+    //        double position1 = motors[1].getSelectedSensorPosition(0);
+    //        double error0 = motors[0].getClosedLoopError(0);
+    //        double error1 = motors[1].getClosedLoopError(0);
+    //
+    //        SmartDashboard.putNumber("Position0", position0);
+    //        SmartDashboard.putNumber("Position1", position1);
+    //        SmartDashboard.putNumber("Velocity", motors[0].getSelectedSensorVelocity(0));
+    //        SmartDashboard.putNumber("TargetPosition", desiredSetpoint);
+    //
+    //        SmartDashboard.putNumber("Error0", error0);
+    //        SmartDashboard.putNumber("Error1", error1);
+    //
+    //        SmartDashboard.putNumber("Height", ticksToInches(position0));
+    //
+    //        SmartDashboard.putNumber("Delta E", error0 - error1);
+    //        SmartDashboard.putNumber("Delta P", position0 - position1);
+    //
+    //        SmartDashboard.putBoolean("AtBottom", isAtBottom());
+    //        SmartDashboard.putBoolean("AtTop", isAtTop());
+    //    }
 
     /**
      * Are all sides at the top?
