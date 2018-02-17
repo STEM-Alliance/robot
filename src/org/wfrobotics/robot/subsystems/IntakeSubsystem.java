@@ -51,8 +51,8 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
         masterRight.setNeutralMode(NeutralMode.Brake);
         followerLeft.setNeutralMode(NeutralMode.Brake);
-        masterRight.setInverted(false);
-        followerLeft.setInverted(true);
+        masterRight.setInverted(config.INTAKE_INVERT_RIGHT);
+        followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
 
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
         vertIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_VERTICAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_VERTICAL_REVERSE);

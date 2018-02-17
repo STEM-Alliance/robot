@@ -3,13 +3,12 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenManual;
+import org.wfrobotics.robot.commands.lift.LiftPercentVoltage;
 import org.wfrobotics.robot.config.LiftHeight;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -27,15 +26,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     private final static double kTicksPerRev = 4096;
     private final static double kRevsPerInch = 1 / ( 1.35 * Math.PI);;
-
-    private final LimitSwitchNormal[][] limitSwitchNormally = {
-        // forward, then reverse
-        {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},
-        {LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}
-    };
-
-    // TODO List of present heights
-    // TODO Preset heights in configuration file
 
     private final RobotState state = RobotState.getInstance();
     private TalonSRX[] motors = new TalonSRX[2];
@@ -74,8 +64,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         for (int index = 0; index < motors.length; index++)
         {
             motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], kP, kI, kD, kF, kSlot, kMaxVelocity, kAcceleration);
-            motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, limitSwitchNormally[index][0], kTimeout);
-            motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, limitSwitchNormally[index][1], kTimeout);
+            motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], kTimeout);
+            motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][1], kTimeout);
             motors[index].overrideLimitSwitchesEnable(true);
             motors[index].set(ControlMode.PercentOutput, 0);
             motors[index].setInverted(inverted[index]);
@@ -98,7 +88,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new LiftAutoZeroThenManual());
+        setDefaultCommand(new LiftPercentVoltage());
     }
 
     public synchronized void onBackgroundUpdate()

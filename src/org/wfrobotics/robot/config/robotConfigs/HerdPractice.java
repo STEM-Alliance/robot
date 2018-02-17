@@ -1,11 +1,15 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+
 public class HerdPractice extends RobotConfig
 {
     public HerdPractice()
     {
         INTAKE_DISTANCE_TO_CUBE = 7; // centimeters
         INTAKE_WRIST_TIMEOUT_LENTH = 0.5; //secounds
+        INTAKE_INVERT_RIGHT = false;
+        INTAKE_INVERT_LEFT = true;
 
         LIFT_MAX_POSSIBLE_UP = 3100;  // Down 5000
         //LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 1.25;
@@ -20,6 +24,11 @@ public class HerdPractice extends RobotConfig
 
         LIFT_SENSOR_PHASE_LEFT = true; // left
         LIFT_SENSOR_PHASE_RIGHT = true; // right
+
+        LIFT_LIMIT_SWITCH_NORMALLY = new LimitSwitchNormal[][] {
+            { LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},  // Left Fwd
+            { LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}  // Right Fwd
+        };
 
         // Motion Magic
         TANK_MAX_VELOCITY = 10000.0;
