@@ -25,6 +25,11 @@ public class IntakeManual extends Command
     {
         double speed = Robot.controls.getIntakeIn() - Robot.controls.getIntakeOut();  // TODO Should either controller do this?
 
+        if (speed > 0)  // Speed > 0 is exhausting cube
+        {
+            speed *= .75;  // Slow cube out direction
+        }
+
         intake.setMotor(speed);
     }
 
