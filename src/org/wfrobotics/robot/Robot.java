@@ -55,7 +55,7 @@ public class Robot extends SampleRobot
         winch = new WinchSubsystem();
 
         // uncomment if using USB camera to stream video from roboRio
-        //dashboardView = new DashboardView();
+        dashboardView = new DashboardView(460, 216, 15);
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
 
