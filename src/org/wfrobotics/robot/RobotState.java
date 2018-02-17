@@ -27,6 +27,7 @@ public class RobotState
     public boolean canLift;
     public boolean hasCube;
     public boolean isMoving;
+    public double liftHeightInches;
 
     public static RobotState getInstance()
     {
@@ -48,6 +49,7 @@ public class RobotState
         robotHeading = 0;
         robotVelocity = new HerdVector(0, 0);
         resetVisionState();
+        liftHeightInches = 0;
     }
 
     public void logState()
@@ -113,6 +115,11 @@ public class RobotState
     public HerdVector getRobotVelocity()
     {
         return null;
+    }
+
+    public void updateLiftHeight(double inches)
+    {
+        liftHeightInches = inches;
     }
 
     public void updateHasCube(boolean hasCube)

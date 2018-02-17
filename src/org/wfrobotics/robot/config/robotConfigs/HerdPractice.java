@@ -10,7 +10,7 @@ public class HerdPractice extends RobotConfig
         LIFT_MAX_POSSIBLE_UP = 3100;  // Down 5000
         //LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 1.25;
         LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2.5;
-        LIFT_I = LIFT_P * .01 * .5;
+        LIFT_I = LIFT_P * .01 * 0;
         LIFT_D = LIFT_P * 10.0 * .25;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.8;
@@ -42,7 +42,7 @@ public class HerdPractice extends RobotConfig
         TANK_SWAP_LEFT_RIGHT = false;
 
         WINCH = 22;
-        WINCH_INVERT = false;
+        WINCH_INVERT = true;
         WINCH_SPEED = 1;
     }
 }
