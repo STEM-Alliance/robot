@@ -1,11 +1,15 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+
 public abstract class RobotConfig
 {
     //                      Intake
     // _________________________________________________________________________________
     public double INTAKE_DISTANCE_TO_CUBE; // centimeters
-    public double INTAKE_WRIST_TIMEOUT_LENTH; // secounds
+    public double INTAKE_WRIST_TIMEOUT_LENTH; // seconds
+    public boolean INTAKE_INVERT_RIGHT;
+    public boolean INTAKE_INVERT_LEFT;
 
     //                      Lift
     // _________________________________________________________________________________
@@ -21,6 +25,7 @@ public abstract class RobotConfig
 
     public boolean LIFT_SENSOR_PHASE_LEFT;
     public boolean LIFT_SENSOR_PHASE_RIGHT;
+    public LimitSwitchNormal[][] LIFT_LIMIT_SWITCH_NORMALLY;
 
     //                      Tank
     // _________________________________________________________________________________

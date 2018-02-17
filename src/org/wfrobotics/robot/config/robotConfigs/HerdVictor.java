@@ -1,11 +1,15 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+
 public class HerdVictor extends RobotConfig
 {
     public HerdVictor()
     {
         INTAKE_DISTANCE_TO_CUBE = 7; // centimeters
         INTAKE_WRIST_TIMEOUT_LENTH = 0.5; //secounds
+        INTAKE_INVERT_RIGHT = false;
+        INTAKE_INVERT_LEFT = false;
 
         LIFT_MAX_POSSIBLE_UP = 2250;
         LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
@@ -19,6 +23,11 @@ public class HerdVictor extends RobotConfig
 
         LIFT_SENSOR_PHASE_LEFT = true; // left
         LIFT_SENSOR_PHASE_RIGHT = true; // right
+
+        LIFT_LIMIT_SWITCH_NORMALLY = new LimitSwitchNormal[][] {
+            { LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen},  // Left Fwd
+            { LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen}  // Right Fwd
+        };
 
         // Motion Magic
         TANK_MAX_VELOCITY = 10139.2;
