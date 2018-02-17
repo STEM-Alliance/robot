@@ -123,6 +123,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
 
         set(desiredMode, desiredSetpoint);
+        state.updateLiftHeight(ticksToInches(getHeight()));
 
         debug();
         SmartDashboard.putNumber("Background Period", (todoRemoveNow - todoRemoveLast) * 1000);
