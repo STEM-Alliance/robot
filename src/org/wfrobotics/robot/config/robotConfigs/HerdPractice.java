@@ -6,11 +6,17 @@ public class HerdPractice extends RobotConfig
 {
     public HerdPractice()
     {
+        //                      Intake
+        // _________________________________________________________________________________
+        INTAKE_SENSOR = 0;
+
         INTAKE_DISTANCE_TO_CUBE = 7; // centimeters
         INTAKE_WRIST_TIMEOUT_LENTH = 0.5; //secounds
         INTAKE_INVERT_RIGHT = false;
         INTAKE_INVERT_LEFT = true;
 
+        //                      Lift
+        // _________________________________________________________________________________
         LIFT_MAX_POSSIBLE_UP = 3100;  // Down 5000
         //LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 1.25;
         LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2.5;
@@ -30,7 +36,8 @@ public class HerdPractice extends RobotConfig
             { LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed}  // Right Fwd
         };
 
-        // Motion Magic
+        //                      Tank
+        // _________________________________________________________________________________
         TANK_MAX_VELOCITY = 10000.0;
         TANK_P = 1.25;
         TANK_I = TANK_P * 0.005;
@@ -50,6 +57,8 @@ public class HerdPractice extends RobotConfig
 
         TANK_SWAP_LEFT_RIGHT = false;
 
+        //                      Winch
+        // _________________________________________________________________________________
         WINCH = 22;
         WINCH_INVERT = true;
         WINCH_SPEED = 1;

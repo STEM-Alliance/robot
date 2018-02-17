@@ -6,6 +6,8 @@ public abstract class RobotConfig
 {
     //                      Intake
     // _________________________________________________________________________________
+    public int INTAKE_SENSOR;
+
     public double INTAKE_DISTANCE_TO_CUBE; // centimeters
     public double INTAKE_WRIST_TIMEOUT_LENTH; // seconds
     public boolean INTAKE_INVERT_RIGHT;

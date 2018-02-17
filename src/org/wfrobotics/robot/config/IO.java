@@ -79,14 +79,12 @@ public class IO
     public double getIntakeIn()
     {
         double value = operator.getTrigger(Hand.kRight);
-        SmartDashboard.putNumber("Intake Wheels In", value);
         return (value > .1) ? value : 0;
     }
 
     public double getIntakeOut()
     {
         double value = operator.getTrigger(Hand.kLeft);
-        SmartDashboard.putNumber("Intake Wheels Out", value);
         return (value > .1) ? value : 0;
     }
 

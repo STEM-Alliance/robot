@@ -35,14 +35,13 @@ public class RobotMap
     // Intake Wheels ------------------------------------------------------------------------------
     public static final int CAN_INTAKE_LEFT = 19;
     public static final int CAN_INTAKE_RIGHT = 20;
-    public static final int ANALOG_INTAKE_DISTANCE = 0;
 
     // Jaws ---------------------------------------------------------------------------------------
     public static final int PNEUMATIC_INTAKE_HORIZONTAL_FORWARD = 2;
     public static final int PNEUMATIC_INTAKE_HORIZONTAL_REVERSE = 3;
 
     // LED ----------------------------------------------------------------------------------------
-    public static final int CAN_LIGHT = 31;
+    public static final int CAN_LIGHT = 0;
 
     // Lift ---------------------------------------------------------------------------------------
     public static final int CAN_LIFT_R = 10;
