@@ -59,7 +59,7 @@ public class HerdVictor extends RobotConfig
         //                      Winch
         // _________________________________________________________________________________
         WINCH = 22;
-        WINCH_INVERT = false;
+        WINCH_INVERT = true;
         WINCH_SPEED = 1;
     }
 }

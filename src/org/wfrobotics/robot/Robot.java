@@ -1,11 +1,11 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.background.BackgroundUpdater;
+import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.subsystems.tank.TankService;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.MatchState2018;
-import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdVictor;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
@@ -44,6 +44,8 @@ public class Robot extends SampleRobot
     Command autonomousCommand;
     double lastPeriodicTime = 0;
 
+    //    Spark led = new Spark(1);
+
     public void robotInit()
     {
         config = new HerdVictor();
@@ -64,6 +66,8 @@ public class Robot extends SampleRobot
 
         backgroundUpdater.register(intakeSubsystem);
         backgroundUpdater.register(liftSubsystem);
+
+        //        led.set(.69);
     }
 
     public void operatorControl()
@@ -105,6 +109,7 @@ public class Robot extends SampleRobot
         {
             driveService.zeroGyro();
             log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
+            intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
 
             allPeriodic();
         }
