@@ -57,7 +57,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
         vertIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_VERTICAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_VERTICAL_REVERSE);
 
-        uSensor = new SharpDistance(RobotMap.ANALOG_INTAKE_DISTANCE);
+        uSensor = new SharpDistance(config.INTAKE_SENSOR);
 
         // Force defined states
         lastHorizontalTime = Timer.getFPGATimestamp() - config.INTAKE_WRIST_TIMEOUT_LENTH * 1.01;

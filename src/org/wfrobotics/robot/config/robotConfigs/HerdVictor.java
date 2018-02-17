@@ -6,11 +6,17 @@ public class HerdVictor extends RobotConfig
 {
     public HerdVictor()
     {
+        //                      Intake
+        // _________________________________________________________________________________
+        INTAKE_SENSOR = 3;
+
         INTAKE_DISTANCE_TO_CUBE = 7; // centimeters
         INTAKE_WRIST_TIMEOUT_LENTH = 0.5; //secounds
         INTAKE_INVERT_RIGHT = false;
         INTAKE_INVERT_LEFT = false;
 
+        //                      Lift
+        // _________________________________________________________________________________
         LIFT_MAX_POSSIBLE_UP = 2250;
         LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
         LIFT_I = LIFT_P * .001 * 0;
@@ -29,7 +35,8 @@ public class HerdVictor extends RobotConfig
             { LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen}  // Right Fwd
         };
 
-        // Motion Magic
+        //                      Tank
+        // _________________________________________________________________________________
         TANK_MAX_VELOCITY = 10139.2;
         TANK_P = 1.45;
         TANK_I = TANK_P * 0.005;
@@ -49,6 +56,8 @@ public class HerdVictor extends RobotConfig
 
         TANK_SWAP_LEFT_RIGHT = false;
 
+        //                      Winch
+        // _________________________________________________________________________________
         WINCH = 22;
         WINCH_INVERT = false;
         WINCH_SPEED = 1;
