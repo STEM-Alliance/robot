@@ -1,12 +1,9 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageTargets;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.Drive;
 import org.wfrobotics.robot.config.VisionMode;
-
-import edu.wpi.first.wpilibj.DriverStation;
 
 /** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
 public class RobotState
@@ -23,10 +20,9 @@ public class RobotState
     public VisionMode visionMode;       // What vision co-processor is using it's camera(s) for
     public double visionWidth;          // How big is the target(s), and therefore how close is it
 
-    public double intakeSensorReadout;
-    public boolean canLift;
-    public boolean hasCube;
-    public boolean isMoving;
+    public boolean robotSafeToLift;
+    public boolean robotHasCube;
+    public double intakeDistance;
     public double liftHeightInches;
 
     public static RobotState getInstance()
@@ -48,11 +44,11 @@ public class RobotState
         robotGear = Drive.SHIFTER_INITIAL_STATE;
         robotHeading = 0;
         robotVelocity = new HerdVector(0, 0);
-        resetVisionState();
+        //        resetVisionState();
         liftHeightInches = 0;
     }
 
-    public void logState()
+    public void reportState()
     {
         log.info("Heading", String.format("%.1f\u00b0", robotHeading));
         log.info("High Gear", robotGear);
@@ -60,19 +56,7 @@ public class RobotState
 
     // ------------- END Private -------------
 
-    // ------------- BEGIN State Producers (Write-Only) -------------
-    public synchronized void updateIsMoving(boolean moving)
-    {
-        isMoving = moving;
-    }
-    public synchronized void updateIntakeSensor(double distance)
-    {
-        intakeSensorReadout = distance;
-    }
-    public synchronized void updateCanLift(boolean state)
-    {
-        canLift = state;
-    }
+    // ------------- BEGIN State Producers Robot-generic (Write-Only) -------------
 
     public synchronized void updateRobotDistanceDriven(double inchesDrivenTotal)
     {
@@ -94,38 +78,47 @@ public class RobotState
         robotVelocity = new HerdVector(velocity);
     }
 
-    public synchronized void addVisionUpdate(VisionMessageTargets v)
-    {
-        if (v.source != visionMode.getTarget())
-        {
-            resetVisionState();
-        }
+    //    public synchronized void addVisionUpdate(VisionMessageTargets v)
+    //    {
+    //        if (v.source != visionMode.getTarget())
+    //        {
+    //            resetVisionState();
+    //        }
+    //
+    //        DriverStation.reportWarning("RobotState not configured for vision update specific parsing", false);
+    //    }
 
-        DriverStation.reportWarning("RobotState not configured for vision update specific parsing", false);
+    //    private synchronized void resetVisionState()
+    //    {
+    //        visionInView = false;
+    //        visionError = 1;
+    //        visionWidth = 0;
+    //        visionMode = VisionMode.OFF;
+    //    }
+
+    // ------------- END State Producers Robot-generic (Write-Only) -------------
+
+    // ------------- Begin State Producers Robot-specific (Write-Only) -------------
+
+    public synchronized void updateCanLift(boolean state)
+    {
+        robotSafeToLift = state;
     }
 
-    private synchronized void resetVisionState()
+    public synchronized void updateRobotHasCube(boolean hasCube)
     {
-        visionInView = false;
-        visionError = 1;
-        visionWidth = 0;
-        visionMode = VisionMode.OFF;
+        robotHasCube = hasCube;
     }
 
-    public HerdVector getRobotVelocity()
+    public synchronized void updateIntakeSensor(double distance)
     {
-        return null;
+        intakeDistance = distance;
     }
 
-    public void updateLiftHeight(double inches)
+    public synchronized void updateLiftHeight(double inches)
     {
         liftHeightInches = inches;
     }
 
-    public void updateHasCube(boolean hasCube)
-    {
-        this.hasCube = hasCube;
-    }
-
-    // ------------- END State Producers (Write-Only) -------------
+    // ------------- END State Producers Robot-specific (Write-Only) -------------
 }

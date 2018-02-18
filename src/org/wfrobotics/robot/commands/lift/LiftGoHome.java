@@ -31,7 +31,7 @@ public class LiftGoHome extends Command
 
     protected boolean isFinished()
     {
-        boolean result = Robot.liftSubsystem.isAtBottom();
+        boolean result = Robot.liftSubsystem.allSidesAtBottom();
 
         if (result)
         {

@@ -29,7 +29,7 @@ public class SmartIntake extends CommandGroup
 
     protected void execute()
     {
-        double distanceToCube = state.intakeSensorReadout;
+        double distanceToCube = state.intakeDistance;
 
         autoIntake(distanceToCube);
         autoJaws(distanceToCube);

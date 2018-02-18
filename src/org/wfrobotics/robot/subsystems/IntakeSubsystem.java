@@ -20,33 +20,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 {
-    /*
-     * when the block is further away from the sensor the motors are at speed x
-     * when it comes closer to the sensor we want to ramp down the motors to speed 2/3x
-     * when distances is equal to 0, the motor speed is set to 0
-     */
-    public static RobotConfig config;
+    private final double kTimeoutHorizontal;
+    private final double kTimeoutVertical;
+    private final double kDistanceToCube;
 
-    protected final RobotState state = RobotState.getInstance();
+    private final RobotState state = RobotState.getInstance();
 
     private final TalonSRX masterRight;
     private final TalonSRX followerLeft;
     private final DoubleSolenoid horizontalIntake;
-    private final DoubleSolenoid vertIntake;
-    private final SharpDistance uSensor;
+    private final DoubleSolenoid verticalIntake;
+    private final SharpDistance distanceSensor;
 
     private boolean lastHorizontalState;
-    private boolean lastVertState;
-
+    private boolean lastVerticalState;
     private double lastHorizontalTime;
-    private double lastVertTime;
-
+    private double lastVerticalTime;
     private double lastDistance;
+    private double distanceCurrent;
 
-    public IntakeSubsystem(RobotConfig Config)
+    public IntakeSubsystem(RobotConfig config)
     {
-        config = Config;
-
         masterRight = TalonSRXFactory.makeTalon(RobotMap.CAN_INTAKE_RIGHT);
         followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
         masterRight.setNeutralMode(NeutralMode.Brake);
@@ -55,21 +49,27 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
 
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
-        vertIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_VERTICAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_VERTICAL_REVERSE);
+        verticalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_VERTICAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_VERTICAL_REVERSE);
 
-        uSensor = new SharpDistance(config.INTAKE_SENSOR);
+        distanceSensor = new SharpDistance(config.INTAKE_SENSOR);
+
+        kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
+        kTimeoutVertical = config.INTAKE_TIMEOUT_WRIST;
+        kDistanceToCube = config.INTAKE_DISTANCE_TO_CUBE;
 
         // Force defined states
-        lastHorizontalTime = Timer.getFPGATimestamp() - config.INTAKE_WRIST_TIMEOUT_LENTH * 1.01;
+        lastHorizontalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
         lastHorizontalState = true;
         setHorizontal(!lastHorizontalState);
 
-        lastVertTime = Timer.getFPGATimestamp() - config.INTAKE_WRIST_TIMEOUT_LENTH * 1.01;
-        lastVertState = true;
-        setVert(!lastVertState);
+        lastVerticalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
+        lastVerticalState = true;
+        setVertical(!lastVerticalState);
 
-        lastDistance = uSensor.getDistance();
+        lastDistance = distanceSensor.getDistance();
     }
+
+    // ----------------------------------------- Interfaces ----------------------------------------
 
     public void initDefaultCommand()
     {
@@ -78,13 +78,22 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void onBackgroundUpdate()
     {
-        double currentDistance = uSensor.getDistance();
-        double centimeters = (currentDistance + lastDistance) / 2;  // TODO Get a better average? Circular buffer? Raw is jumpy when accelerating drivetrain
-        lastDistance = currentDistance;
+        final double rawCentimeters = distanceSensor.getDistance();
+        final double centimeters = (rawCentimeters + lastDistance) / 2;  // TODO Get a better average? Circular buffer? Raw is jumpy when accelerating drivetrain
+        lastDistance = rawCentimeters;
+        distanceCurrent = centimeters;
+    }
 
-        SmartDashboard.putNumber("Cube", centimeters);
-        state.updateIntakeSensor(centimeters);
-        state.updateHasCube(uSensor.getDistance() < config.INTAKE_DISTANCE_TO_CUBE);
+    // ----------------------------------------- Public -------------------------------------------
+
+    public boolean getHorizontal()
+    {
+        return lastHorizontalState;
+    }
+
+    public boolean getVertical()
+    {
+        return lastVerticalState;
     }
 
     public void setMotor(double percentageOutward)
@@ -92,50 +101,49 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         masterRight.set(ControlMode.PercentOutput, percentageOutward);
     }
 
-    public boolean getHorizontal()
+    public boolean setHorizontal(boolean extendedOpen)
     {
-        return lastHorizontalState;
-    }
-
-    public boolean setHorizontal(boolean extended)
-    {
-        boolean delayedEnough = Timer.getFPGATimestamp() - lastHorizontalTime > config.INTAKE_WRIST_TIMEOUT_LENTH;
-        boolean different = extended != lastHorizontalState;
+        final boolean delayedEnough = Timer.getFPGATimestamp() - lastHorizontalTime > kTimeoutHorizontal;
+        final boolean different = extendedOpen != lastHorizontalState;
         boolean stateChanged = false;
 
-        SmartDashboard.putBoolean("Jaws Requested", extended);
+        SmartDashboard.putBoolean("Jaws Requested", extendedOpen);
 
         if (delayedEnough && different)
         {
-            horizontalIntake.set(extended ? Value.kForward : Value.kReverse);
+            horizontalIntake.set(extendedOpen ? Value.kForward : Value.kReverse);
             lastHorizontalTime = Timer.getFPGATimestamp();
-            lastHorizontalState = extended;
+            lastHorizontalState = extendedOpen;
             stateChanged = true;
         }
         return stateChanged;
     }
 
-    public boolean getVertical()
+    public boolean setVertical(boolean contractedUpward)
     {
-        return lastVertState;
-    }
-
-    public boolean setVert(boolean extended)
-    {
-        boolean delayedEnough = Timer.getFPGATimestamp() - lastVertTime > config.INTAKE_WRIST_TIMEOUT_LENTH;
-        boolean different = extended != lastVertState;
+        final boolean delayedEnough = Timer.getFPGATimestamp() - lastVerticalTime > kTimeoutVertical;
+        final boolean different = contractedUpward != lastVerticalState;
         boolean stateChanged = false;
 
-        SmartDashboard.putBoolean("Wrist Requested", extended);
+        SmartDashboard.putBoolean("Wrist Requested", contractedUpward);
 
         if (delayedEnough && different)
         {
-            vertIntake.set(extended ? Value.kForward : Value.kReverse);
-            lastVertTime = Timer.getFPGATimestamp();
-            lastVertState = extended;
+            verticalIntake.set(contractedUpward ? Value.kForward : Value.kReverse);
+            lastVerticalTime = Timer.getFPGATimestamp();
+            lastVerticalState = contractedUpward;
             stateChanged = true;
         }
         return stateChanged;
     }
+
+    public void reportState()
+    {
+        SmartDashboard.putNumber("Cube", distanceCurrent);
+        state.updateIntakeSensor(distanceCurrent);
+        state.updateRobotHasCube(distanceCurrent < kDistanceToCube);
+    }
+
+    // ----------------------------------------- Private ------------------------------------------
 }
 

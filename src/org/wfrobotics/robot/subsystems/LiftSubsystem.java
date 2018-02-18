@@ -22,29 +22,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 {
-    public static RobotConfig config;
+    private enum LimitSwitch
+    {
+        BOTTOM,
+        TOP
+    }
 
     private final static double kTicksPerRev = 4096;
     private final static double kRevsPerInch = 1 / ( 1.35 * Math.PI);;
 
     private final RobotState state = RobotState.getInstance();
-    private TalonSRX[] motors = new TalonSRX[2];
+    private final TalonSRX[] motors = new TalonSRX[2];
 
     private ControlMode desiredMode;
     private double desiredSetpoint;
     private double heightStart;
-
-    public double todoRemoveLast;
-
-    enum LimitSwitch
-    {
-        Bottom,
-        Top
-    }
+    private String liftState;
+    private double todoRemoveLast;
+    private double backgroundPeriod;
 
     public LiftSubsystem(RobotConfig Config)
     {
-        config = Config;
+        final RobotConfig config = Config;
 
         final int kTimeout = 10;
         final int kSlot = 0;
@@ -52,18 +51,11 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         final boolean[] inverted = {config.LIFT_MOTOR_INVERTED_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
         final boolean[] sensorPhase = {config.LIFT_SENSOR_PHASE_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
 
-        final double kMaxPossibleVelocity = config.LIFT_MAX_POSSIBLE_UP;
-        final double kP = config.LIFT_P;
-        final double kI = config.LIFT_I;
-        final double kD = config.LIFT_D;
-        final double kF = config.LIFT_F;
-        final int kMaxVelocity = (int) (kMaxPossibleVelocity * config.LIFT_POSIBLE_VELOCITY_PERCENTAGE );
-        final int kAcceleration = kMaxVelocity;
         // TODO Use talon software limit switches
 
         for (int index = 0; index < motors.length; index++)
         {
-            motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], kP, kI, kD, kF, kSlot, kMaxVelocity, kAcceleration);
+            motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P, config.LIFT_I, config.LIFT_D, config.LIFT_F, kSlot, config.LIFT_VELOCITY, config.LIFT_ACCELERATION);
             motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], kTimeout);
             motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][1], kTimeout);
             motors[index].overrideLimitSwitchesEnable(true);
@@ -76,15 +68,19 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].configVelocityMeasurementWindow(64, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 2, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 160, kTimeout);
-            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);
+            //            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);  // For calibration
             //            motors[index].configAllowableClosedloopError(0, 100, kTimeout);
         }
+
+        // Valid initial state
         desiredMode = ControlMode.PercentOutput;
         desiredSetpoint = 0;
         heightStart = 0;
-
         todoRemoveLast = Timer.getFPGATimestamp();
+        backgroundPeriod = 0;
     }
+
+    // ----------------------------------------- Interfaces ----------------------------------------
 
     public void initDefaultCommand()
     {
@@ -93,37 +89,62 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public synchronized void onBackgroundUpdate()
     {
-        double todoRemoveNow = Timer.getFPGATimestamp();
+        final double todoRemoveNow = Timer.getFPGATimestamp();
 
         if (zeroPositionIfNeeded())
         {
-            SmartDashboard.putString("Lift", "Zeroing");
+            liftState = "Zeroing";
         }
         else if (goToTransportIfNeeded())
         {
-            SmartDashboard.putString("Lift", "Transport");
+            liftState = "Transport";
         }
         //        else if (applyBrakeAtTarget())
         //        {
-        //            SmartDashboard.putString("Lift", "Brake at target");
+        //            liftState = "Brake at target";
         //        }
         else
         {
-            SmartDashboard.putString("Lift", desiredMode.toString());
+            liftState = desiredMode.toString();
         }
 
         set(desiredMode, desiredSetpoint);
-        state.updateLiftHeight(ticksToInches(getHeight()));
 
-        //        debug();
-        SmartDashboard.putNumber("Background Period", (todoRemoveNow - todoRemoveLast) * 1000);
+        //        debugCalibration();
+        backgroundPeriod = todoRemoveNow - todoRemoveLast;
         todoRemoveLast = todoRemoveNow;
     }
 
-    /**
-     * If we're going fast enough or in high gear, move the lift to Transport height (a safe position)
-     * @return true if moved to transport mode
-     */
+    // ----------------------------------------- Public -------------------------------------------
+
+    public boolean allSidesAtBottom()
+    {
+        return allSidesAtLimitSwitch(LimitSwitch.BOTTOM);
+    }
+
+    public synchronized void goToHeightInit(double heightInches)
+    {
+        desiredMode = ControlMode.MotionMagic;
+        desiredSetpoint = inchesToTicks(heightInches);
+        heightStart = getHeightAverage();
+    }
+
+    public synchronized void goToSpeedInit(double percent)
+    {
+        desiredMode = ControlMode.PercentOutput;
+        desiredSetpoint = percent;
+    }
+
+    public void reportState()
+    {
+        SmartDashboard.putString("Lift", liftState);
+        SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000);
+
+        state.updateLiftHeight(ticksToInches(getHeightAverage()));
+    }
+
+    // ----------------------------------------- Private ------------------------------------------
+
     private boolean goToTransportIfNeeded()
     {
         //        if (state.robotVelocity.getMag() > .5 || state.robotGear)
@@ -135,13 +156,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         return false;
     }
 
-    /**
-     * Zero the encoder position if both sides are at the bottom
-     * @return true if both sides are at the bottom
-     */
     private boolean zeroPositionIfNeeded()
     {
-        if(isAtBottom())
+        if(allSidesAtBottom())
         {
             for (int index = 0; index < motors.length; index++)
             {
@@ -161,10 +178,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     protected boolean applyBrakeAtTarget()
     {
-        // TODO Is this causing the lift to slide down when at target? Should we stay in motion magic and rely on being tuned to hit zero to brake?
         if (desiredMode == ControlMode.MotionMagic)
         {
-            if (Math.abs(getHeight()) - Math.abs(desiredSetpoint) < Math.abs(heightStart - desiredSetpoint) * .01)
+            if (Math.abs(getHeightAverage()) - Math.abs(desiredSetpoint) < Math.abs(heightStart - desiredSetpoint) * .01)
             {
                 desiredMode = ControlMode.MotionMagic;
                 desiredSetpoint = 0;
@@ -174,32 +190,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         return false;
     }
 
-    /**
-     * Initialize the Go To Height mode
-     * @param heightInches desired height in inches
-     */
-    public synchronized void goToHeightInit(double heightInches)
-    {
-        desiredMode = ControlMode.MotionMagic;
-        desiredSetpoint = inchesToTicks(heightInches);
-        heightStart = getHeight();
-    }
-
-    /**
-     * Initialize the Go To Speed mode
-     * @param percent speed in percent, -1 to 1
-     */
-    public synchronized void goToSpeedInit(double percent)
-    {
-        desiredMode = ControlMode.PercentOutput;
-        desiredSetpoint = percent;
-    }
-
-    /**
-     * Set both of the motors
-     * @param mode Talon Control Mode
-     * @param val
-     */
     private void set(ControlMode mode, double val)
     {
         for (int index = 0; index < motors.length; index++)
@@ -208,36 +198,41 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
     }
 
-    /**
-     * Convert inches to ticks
-     * @param inches
-     * @return ticks
-     */
+    private double getHeightAverage()
+    {
+        return (motors[0].getSelectedSensorPosition(0) + motors[1].getSelectedSensorPosition(0)) / 2;
+    }
+
+    private boolean allSidesAtLimitSwitch(LimitSwitch limit)
+    {
+        boolean allAtLimit = true;
+        for (int index = 0; index < motors.length; index++)
+        {
+            allAtLimit &= isSideAtLimit(limit, index);
+        }
+        return allAtLimit;
+    }
+
+    private boolean isSideAtLimit(LimitSwitch limit, int index)
+    {
+        if(limit == LimitSwitch.BOTTOM)
+        {
+            return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
+        }
+        return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
+    }
+
     private static double inchesToTicks(double inches)
     {
         return inches * kRevsPerInch * kTicksPerRev;
     }
 
-    /**
-     * Convert ticks to inches
-     * @param ticks
-     * @return inches
-     */
     private double ticksToInches(double ticks)
     {
         return ticks / kRevsPerInch / kTicksPerRev;
     }
 
-    // TODO Is this causing one side to get ahead of the other?
-    private double getHeight()
-    {
-        return (motors[0].getSelectedSensorPosition(0) + motors[1].getSelectedSensorPosition(0)) / 2;
-    }
-
-    //    /**
-    //     * print debug information
-    //     */
-    //    private void debug()
+    //    private void debugCalibration()
     //    {
     //        double position0 = motors[0].getSelectedSensorPosition(0);
     //        double position1 = motors[1].getSelectedSensorPosition(0);
@@ -261,73 +256,15 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     //        SmartDashboard.putBoolean("AtTop", isAtTop());
     //    }
 
-    /**
-     * Are all sides at the top?
-     * @return
-     */
-    public boolean isAtTop()
-    {
-        return isAtLimit(LimitSwitch.Top);
-    }
-
-    /**
-     * Are all sides at the bottom?
-     * @return
-     */
-    public boolean isAtBottom()
-    {
-        return isAtLimit(LimitSwitch.Bottom);
-    }
-
-    /**
-     * Is one side at the top?
-     * @param index
-     * @return
-     */
-    public boolean isAtTop(int index)
-    {
-        return isAtLimit(LimitSwitch.Top, index);
-    }
-
-    /**
-     * Is one side at the bottom?
-     * @param index
-     * @return
-     */
-    public boolean isAtBottom(int index)
-    {
-        return isAtLimit(LimitSwitch.Bottom, index);
-    }
-
-    /**
-     * Are all sides at one of the limits?
-     * @param limit
-     * @return
-     */
-    public boolean isAtLimit(LimitSwitch limit)
-    {
-        boolean allAtLimit = true;
-        for (int index = 0; index < motors.length; index++)
-        {
-            allAtLimit &= isAtLimit(limit, index);
-        }
-        return allAtLimit;
-    }
-
-    /**
-     * Is one side at one of the limits?
-     * @param limit
-     * @param index
-     * @return
-     */
-    public boolean isAtLimit(LimitSwitch limit, int index)
-    {
-        if(limit == LimitSwitch.Bottom)
-        {
-            return !motors[index].getSensorCollection().isRevLimitSwitchClosed();
-        }
-        return !motors[index].getSensorCollection().isFwdLimitSwitchClosed();
-    }
+    //    private boolean isAtTop(int index)
+    //    {
+    //        return isAtLimit(LimitSwitch.Top, index);
+    //    }
+    //
+    //    private boolean isAtBottom(int index)
+    //    {
+    //        return isAtLimit(LimitSwitch.Bottom, index);
+    //    }
 
     // TODO Report fommatted state to RobotState. Not the height, but instead something like what the Robot can do. Ex: isSafeToExhaustScale
 

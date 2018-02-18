@@ -126,15 +126,17 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
+        // Update robot values to latest for this Scheduer iteration
+        intakeSubsystem.reportState();
+        liftSubsystem.reportState();
+        state.reportState();
 
+        // Scheduler
+        double schedulerStart = Timer.getFPGATimestamp();
+        scheduler.run();
+
+        SmartDashboard.putNumber("Periodic Time ", Timer.getFPGATimestamp() - schedulerStart);
         SmartDashboard.putNumber("Battery V", RobotController.getInputVoltage());
         SmartDashboard.putNumber("Battery A", RobotController.getInputCurrent());
-
-        state.logState();
-
-        double start = Timer.getFPGATimestamp();
-        scheduler.run();
-        //log.debug("Periodic Time", getPeriodicTime(start));
-        SmartDashboard.putNumber("Periodic Time ", Timer.getFPGATimestamp() - start);
     }
 }
