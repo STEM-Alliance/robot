@@ -9,6 +9,6 @@ public class WristToggle extends InstantCommand
 {
     protected void initialize()
     {
-        Robot.intakeSubsystem.setVert(!Robot.intakeSubsystem.getVertical());
+        Robot.intakeSubsystem.setVertical(!Robot.intakeSubsystem.getVertical());
     }
 }

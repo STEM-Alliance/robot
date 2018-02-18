@@ -10,19 +10,22 @@ public class HerdVictor extends RobotConfig
         // _________________________________________________________________________________
         INTAKE_SENSOR = 3;
 
-        INTAKE_DISTANCE_TO_CUBE = 7; // centimeters
-        INTAKE_WRIST_TIMEOUT_LENTH = 0.5; //secounds
+        INTAKE_DISTANCE_TO_CUBE = 7.0; // centimeters
+        INTAKE_TIMEOUT_JAWS = 0.5; // seconds
+        INTAKE_TIMEOUT_WRIST = 0.5; //seconds
         INTAKE_INVERT_RIGHT = false;
         INTAKE_INVERT_LEFT = false;
 
         //                      Lift
         // _________________________________________________________________________________
         LIFT_MAX_POSSIBLE_UP = 2250;
+        LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.8;
         LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
         LIFT_I = LIFT_P * .001 * 0;
         LIFT_D = LIFT_P * 10.0 * 0;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
-        LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.8;
+        LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
+        LIFT_ACCELERATION = LIFT_VELOCITY;
 
         LIFT_MOTOR_INVERTED_LEFT = false; // left
         LIFT_MOTOR_INVERTED_RIGHT = true; // right

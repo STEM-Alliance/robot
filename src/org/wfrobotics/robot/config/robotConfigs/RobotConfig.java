@@ -8,20 +8,23 @@ public abstract class RobotConfig
     // _________________________________________________________________________________
     public int INTAKE_SENSOR;
 
-    public double INTAKE_DISTANCE_TO_CUBE; // centimeters
-    public double INTAKE_WRIST_TIMEOUT_LENTH; // seconds
+    public double INTAKE_DISTANCE_TO_CUBE;  // centimeters
+    public double INTAKE_TIMEOUT_JAWS;  // seconds
+    public double INTAKE_TIMEOUT_WRIST;  // seconds
     public boolean INTAKE_INVERT_RIGHT;
     public boolean INTAKE_INVERT_LEFT;
 
     //                      Lift
     // _________________________________________________________________________________
     public double LIFT_SPROCKET_DIAMETER_INCHES; // 1.29 16 tooth 25 chain
-    public double LIFT_MAX_POSSIBLE_UP; // bottom sensor to top sensor
+    protected double LIFT_MAX_POSSIBLE_UP; // bottom sensor to top sensor
+    protected double LIFT_POSIBLE_VELOCITY_PERCENTAGE; // percentage
     public double LIFT_P;
     public double LIFT_I;
     public double LIFT_D;
     public double LIFT_F;
-    public double LIFT_POSIBLE_VELOCITY_PERCENTAGE; // percentage
+    public int LIFT_VELOCITY;
+    public int LIFT_ACCELERATION;
     public boolean LIFT_MOTOR_INVERTED_LEFT;
     public boolean LIFT_MOTOR_INVERTED_RIGHT;
 
