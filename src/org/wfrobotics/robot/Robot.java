@@ -92,7 +92,8 @@ public class Robot extends SampleRobot
 
         backgroundUpdater.start();
 
-        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
+        //        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
+        autonomousCommand = new DriveDistance(12 * 22 + 0);
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
