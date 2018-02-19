@@ -18,14 +18,14 @@ public class HerdVictor extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = 2250;
-        LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.8;
-        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
-        LIFT_I = LIFT_P * .001 * 0;
-        LIFT_D = LIFT_P * 10.0 * 0;
+        LIFT_MAX_POSSIBLE_UP = 1025;  // DRL 2-19-18
+        LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
+        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 1.0;
+        LIFT_I = LIFT_P * .01 * .1;
+        LIFT_D = LIFT_P * 10.0 * .40;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
         LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
-        LIFT_ACCELERATION = LIFT_VELOCITY;
+        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.0);
 
         LIFT_MOTOR_INVERTED_LEFT = false; // left
         LIFT_MOTOR_INVERTED_RIGHT = true; // right
@@ -40,7 +40,7 @@ public class HerdVictor extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = 10139.2;
+        TANK_MAX_VELOCITY = 9500;
         TANK_P = 1.45;
         TANK_I = TANK_P * 0.005;
         TANK_D =  TANK_P * 2.25;

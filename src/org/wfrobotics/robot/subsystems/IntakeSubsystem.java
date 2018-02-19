@@ -22,7 +22,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 {
     private final double kTimeoutHorizontal;
     private final double kTimeoutVertical;
-    private final double kDistanceToCube;
 
     private final RobotState state = RobotState.getInstance();
 
@@ -55,7 +54,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
         kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
         kTimeoutVertical = config.INTAKE_TIMEOUT_WRIST;
-        kDistanceToCube = config.INTAKE_DISTANCE_TO_CUBE;
 
         // Force defined states
         lastHorizontalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
@@ -63,8 +61,8 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         setHorizontal(!lastHorizontalState);
 
         lastVerticalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
-        lastVerticalState = true;
-        setVertical(!lastVerticalState);
+        lastVerticalState = false;
+        setVertical(lastVerticalState);
 
         lastDistance = distanceSensor.getDistance();
     }
@@ -129,7 +127,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
         if (delayedEnough && different)
         {
-            verticalIntake.set(contractedUpward ? Value.kForward : Value.kReverse);
+            verticalIntake.set(contractedUpward ? Value.kReverse : Value.kForward);
             lastVerticalTime = Timer.getFPGATimestamp();
             lastVerticalState = contractedUpward;
             stateChanged = true;
@@ -141,7 +139,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     {
         SmartDashboard.putNumber("Cube", distanceCurrent);
         state.updateIntakeSensor(distanceCurrent);
-        state.updateRobotHasCube(distanceCurrent < kDistanceToCube);
     }
 
     // ----------------------------------------- Private ------------------------------------------

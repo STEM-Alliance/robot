@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /** Pull in the cube purely based on sensors */
 public class SmartIntake extends CommandGroup
 {
+    private final double kCubeIn = 13.0;
+
     protected final RobotState state = RobotState.getInstance();
     protected final IntakeSubsystem intake = Robot.intakeSubsystem;
 
@@ -29,10 +31,18 @@ public class SmartIntake extends CommandGroup
 
     protected void execute()
     {
-        double distanceToCube = state.intakeDistance;
+        if (state.liftHeightInches < .5 && !intake.getVertical())
+        {
+            double distanceToCube = state.intakeDistance;
 
-        autoIntake(distanceToCube);
-        autoJaws(distanceToCube);
+            autoIntake(distanceToCube);
+            autoJaws(distanceToCube);
+            autoWrist(distanceToCube);
+        }
+        else  // Cancel intaking if transition to lifting
+        {
+            intake.setMotor(0);
+        }
     }
 
     protected boolean isFinished()
@@ -46,9 +56,9 @@ public class SmartIntake extends CommandGroup
 
         // TODO Better off with PID on wheel speed while in the range that we do non-zero wheel speed? Analog Talon position control?
 
-        if (distanceToCube > 13 && distanceToCube < 57)  // TODO Need to move sensor, otherwise we stall motors
+        if (distanceToCube > kCubeIn && distanceToCube < 57)  // TODO Need to move sensor, otherwise we stall motors
         {
-            speed = -0.5;  // TODO Find ideal intake speed, put in RobotMap
+            speed = -0.6;  // TODO Find ideal intake speed
         }
 
         // TODO After it's in for a little bit, it's SUPER effective to pulse the cube out a sec then back in to orient it
@@ -73,5 +83,13 @@ public class SmartIntake extends CommandGroup
         }
 
         SmartDashboard.putString("Jawtomatic", isJawtomated);
+    }
+
+    private void autoWrist(double distanceToCube)
+    {
+        if (distanceToCube < kCubeIn)  // TODO Call state.hasCube, make based on two counts at correct distance
+        {
+            intake.setVertical(true);
+        }
     }
 }

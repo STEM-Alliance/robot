@@ -20,7 +20,6 @@ public class RobotState
     public VisionMode visionMode;       // What vision co-processor is using it's camera(s) for
     public double visionWidth;          // How big is the target(s), and therefore how close is it
 
-    public boolean robotSafeToLift;
     public boolean robotHasCube;
     public double intakeDistance;
     public double liftHeightInches;
@@ -37,6 +36,7 @@ public class RobotState
 
     private static RobotState instance = null;
     private final HerdLogger log = new HerdLogger(Robot.class);
+    private double hasCubeCounts;
 
     protected RobotState()
     {
@@ -45,7 +45,11 @@ public class RobotState
         robotHeading = 0;
         robotVelocity = new HerdVector(0, 0);
         //        resetVisionState();
+
+        robotHasCube = false;
+        intakeDistance = 9999;
         liftHeightInches = 0;
+        hasCubeCounts = 0;
     }
 
     public void reportState()
@@ -100,19 +104,19 @@ public class RobotState
 
     // ------------- Begin State Producers Robot-specific (Write-Only) -------------
 
-    public synchronized void updateCanLift(boolean state)
-    {
-        robotSafeToLift = state;
-    }
-
-    public synchronized void updateRobotHasCube(boolean hasCube)
-    {
-        robotHasCube = hasCube;
-    }
-
     public synchronized void updateIntakeSensor(double distance)
     {
         intakeDistance = distance;
+
+        if (intakeDistance < 13)
+        {
+            hasCubeCounts++;
+        }
+        else
+        {
+            hasCubeCounts = 0;
+        }
+        robotHasCube = hasCubeCounts > 20;
     }
 
     public synchronized void updateLiftHeight(double inches)
