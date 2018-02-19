@@ -26,8 +26,6 @@ public class LiftToHeight extends Command
 
     protected boolean isFinished()
     {
-        double diff = Math.abs(desired - state.liftHeightInches);
-        SmartDashboard.putNumber("Lift Remaining", diff);
-        return diff < .5;
+        return Math.abs(desired - state.liftHeightInches) < .1;
     }
 }

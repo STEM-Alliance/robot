@@ -26,7 +26,7 @@ public class LiftGoHome extends Command
 
     protected void execute()
     {
-        Robot.liftSubsystem.goToSpeedInit(getSpeed());
+        Robot.liftSubsystem.goToSpeedInit(-.3);
     }
 
     protected boolean isFinished()
@@ -38,10 +38,5 @@ public class LiftGoHome extends Command
             hasZeroed = true;
         }
         return result;
-    }
-
-    private double getSpeed()
-    {
-        return -.2;
     }
 }

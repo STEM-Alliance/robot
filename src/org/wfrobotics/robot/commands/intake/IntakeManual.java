@@ -37,4 +37,9 @@ public class IntakeManual extends Command
     {
         return false;
     }
+
+    protected void end()
+    {
+        intake.setMotor(0);
+    }
 }

@@ -75,6 +75,7 @@ public class Robot extends SampleRobot
         if (autonomousCommand != null) autonomousCommand.cancel();
 
         backgroundUpdater.start();
+        intakeSubsystem.setVertical(true);
 
         while (isOperatorControl() && isEnabled())
         {
@@ -91,6 +92,7 @@ public class Robot extends SampleRobot
         }
 
         backgroundUpdater.start();
+        intakeSubsystem.setVertical(true);
 
         //        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
         autonomousCommand = new DriveDistance(12 * 22 + 0);

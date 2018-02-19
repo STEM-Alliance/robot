@@ -21,7 +21,7 @@ public class LiftPercentVoltage extends Command
 
     protected void execute()
     {
-        double setpoint = Robot.controls.getLiftStick();
+        final double setpoint = Robot.controls.getLiftStick();
 
         if (Math.abs(setpoint) < deadbandPercent)
         {
