@@ -2,7 +2,6 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.robot.config.Drive;
 import org.wfrobotics.robot.config.VisionMode;
 
 /** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
@@ -41,7 +40,7 @@ public class RobotState
     protected RobotState()
     {
         robotDistanceDriven = 0;
-        robotGear = Drive.SHIFTER_INITIAL_STATE;
+        robotGear = false;
         robotHeading = 0;
         robotVelocity = new HerdVector(0, 0);
         //        resetVisionState();

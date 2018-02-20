@@ -8,7 +8,8 @@ public class HerdPractice extends RobotConfig
     {
         //                      Intake
         // _________________________________________________________________________________
-        INTAKE_SENSOR = 0;
+        INTAKE_SENSOR_R = 0;
+        INTAKE_SENSOR_L = 1;
 
         INTAKE_DISTANCE_TO_CUBE = 7.0; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
@@ -57,8 +58,6 @@ public class HerdPractice extends RobotConfig
         TANK_RIGHT_SENSOR_PHASE = false;
 
         TANK_OPEN_LOOP_RAMP = 0.5;
-
-        TANK_SWAP_LEFT_RIGHT = false;
 
         //                      Winch
         // _________________________________________________________________________________

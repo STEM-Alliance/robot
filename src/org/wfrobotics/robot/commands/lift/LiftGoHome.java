@@ -9,14 +9,18 @@ public class LiftGoHome extends Command
 {
     private static boolean hasZeroed = false;
 
+    private final double speed;
+
     public static boolean everZeroed()
     {
         return hasZeroed;
     }
 
-    public LiftGoHome()
+    public LiftGoHome(double speed, double timeout)
     {
         requires(Robot.liftSubsystem);
+        this.speed = speed;
+        setTimeout(timeout);
     }
 
     protected void initialize()
@@ -26,7 +30,7 @@ public class LiftGoHome extends Command
 
     protected void execute()
     {
-        Robot.liftSubsystem.goToSpeedInit(-.3);
+        Robot.liftSubsystem.goToSpeedInit(speed);
     }
 
     protected boolean isFinished()
@@ -37,6 +41,6 @@ public class LiftGoHome extends Command
         {
             hasZeroed = true;
         }
-        return result;
+        return result || isTimedOut();
     }
 }

@@ -27,7 +27,7 @@ public class RobotMap
 
     // Field --------------------------------------------------------------------------------------
     public static final double kScaleClearWhenDownInches = 53.5;
-    public static final double kSwitchClearInches = 19;
+    public static final double kSwitchClearInches = 13;
 
     // Intake -------------------------------------------------------------------------------------
     public static final int CAN_PNEUMATIC_CONTROL_MODULE = 7;
