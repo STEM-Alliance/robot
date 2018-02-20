@@ -29,14 +29,17 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     private final TalonSRX followerLeft;
     private final DoubleSolenoid horizontalIntake;
     private final DoubleSolenoid verticalIntake;
-    private final SharpDistance distanceSensor;
-
+    private final SharpDistance distanceSensorR;
+    private final SharpDistance distanceSensorL;
     private boolean lastHorizontalState;
     private boolean lastVerticalState;
     private double lastHorizontalTime;
     private double lastVerticalTime;
     private double lastDistance;
     private double distanceCurrent;
+
+    private double debugLastDistanceR;
+    private double debugLastDistanceL;
 
     public IntakeSubsystem(RobotConfig config)
     {
@@ -50,7 +53,8 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
         verticalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_VERTICAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_VERTICAL_REVERSE);
 
-        distanceSensor = new SharpDistance(config.INTAKE_SENSOR);
+        distanceSensorR = new SharpDistance(config.INTAKE_SENSOR_R);
+        distanceSensorL = new SharpDistance(config.INTAKE_SENSOR_L);
 
         kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
         kTimeoutVertical = config.INTAKE_TIMEOUT_WRIST;
@@ -64,7 +68,9 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         lastVerticalState = false;
         setVertical(lastVerticalState);
 
-        lastDistance = distanceSensor.getDistance();
+        lastDistance = distanceSensorR.getDistance();
+        debugLastDistanceR = 0;
+        debugLastDistanceL = 0;
     }
 
     // ----------------------------------------- Interfaces ----------------------------------------
@@ -76,7 +82,9 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void onBackgroundUpdate()
     {
-        final double rawCentimeters = distanceSensor.getDistance();
+        debugLastDistanceR = distanceSensorR.getDistance();
+        debugLastDistanceL = distanceSensorL.getDistance();
+        final double rawCentimeters = (debugLastDistanceR + debugLastDistanceL) / 2;
         final double centimeters = (rawCentimeters + lastDistance) / 2;  // TODO Get a better average? Circular buffer? Raw is jumpy when accelerating drivetrain
         lastDistance = rawCentimeters;
         distanceCurrent = centimeters;
@@ -138,6 +146,8 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     public void reportState()
     {
         SmartDashboard.putNumber("Cube", distanceCurrent);
+        SmartDashboard.putNumber("Cube R", debugLastDistanceR);
+        SmartDashboard.putNumber("Cube L", debugLastDistanceL);
         state.updateIntakeSensor(distanceCurrent);
     }
 

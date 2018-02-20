@@ -3,7 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.lift.LiftPercentVoltage;
+import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenCal;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
@@ -28,7 +28,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     }
 
     private final static double kTicksPerRev = 4096;
-    private final static double kRevsPerInch = 1 / ( 1.35 * Math.PI);;
+    private final static double kRevsPerInch = 1 / ( 1.345 * Math.PI * 13.0 / 10.0);;
 
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX[] motors = new TalonSRX[2];
@@ -85,7 +85,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new LiftPercentVoltage());
+        setDefaultCommand(new LiftAutoZeroThenCal());
     }
 
     public synchronized void onBackgroundUpdate()

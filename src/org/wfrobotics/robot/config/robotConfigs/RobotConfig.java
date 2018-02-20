@@ -6,7 +6,8 @@ public abstract class RobotConfig
 {
     //                      Intake
     // _________________________________________________________________________________
-    public int INTAKE_SENSOR;
+    public int INTAKE_SENSOR_R;
+    public int INTAKE_SENSOR_L;
 
     public double INTAKE_DISTANCE_TO_CUBE;  // centimeters
     public double INTAKE_TIMEOUT_JAWS;  // seconds
@@ -51,8 +52,6 @@ public abstract class RobotConfig
     public boolean TANK_RIGHT_SENSOR_PHASE;
 
     public double TANK_OPEN_LOOP_RAMP;
-
-    public boolean TANK_SWAP_LEFT_RIGHT;
 
     //                      Winch
     // _________________________________________________________________________________

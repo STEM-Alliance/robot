@@ -58,7 +58,7 @@ public class SmartIntake extends CommandGroup
 
         if (distanceToCube > kCubeIn && distanceToCube < 57)  // TODO Need to move sensor, otherwise we stall motors
         {
-            speed = -0.6;  // TODO Find ideal intake speed
+            speed = -1.0;  // TODO Find ideal intake speed
         }
 
         // TODO After it's in for a little bit, it's SUPER effective to pulse the cube out a sec then back in to orient it
