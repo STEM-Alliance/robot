@@ -19,11 +19,12 @@ public class RobotMap
     public static final int CAN_TANK_SHIFTER_DEVICE = 7;
     public static final int CAN_TANK_SHIFTER_HIGH = 0;
     public static final int CAN_TANK_SHIFTER_LOW = 1;
-    public static final double TANK_GEAR_RATIO_HIGH = 3.0;  //11.0/3;
-    public static final double TANK_GEAR_RATIO_LOW = 25.0/3.0;
-    public static final double TANK_GEAR_RATIO_MOTOR = 2.0;  //36.0/15;
-    public static final double TANK_WHEEL_CIRCUMFERENCE = 6.5 * Math.PI;  //20;
+    public static final double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH = 24.0 / 60.0;  // Adjacent to encoder
+    public static final double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW = 60.0 / 24.0;  // Adjacent to encoder
+    public static final double TANK_GEAR_RATIO_MOTOR_TO_ENCODER = 36.0 / 15.0;  // Wheel to adjacent
+    public static final double TANK_WHEEL_CIRCUMFERENCE = (6.25 * .995) * Math.PI;  // 6.25 adjusted for thread wear
     public static final double DISTANCE_SEPERATION_WHEEL_SIDES = 24;
+
 
     // Field --------------------------------------------------------------------------------------
     public static final double kScaleClearWhenDownInches = 53.5;

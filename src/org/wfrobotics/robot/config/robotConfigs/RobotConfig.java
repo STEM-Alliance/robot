@@ -43,8 +43,14 @@ public abstract class RobotConfig
     public double TANK_D;
     public double TANK_F;
     public int TANK_CRUISE_VELOCITY;
-    public int TANK_ACCELERATION;
+    public int TANK_ACCELERATION[];
     public int TANK_IZONE;
+
+    public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH;  // Adjacent to encoder
+    public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW;  // Adjacent to encoder
+    public double TANK_GEAR_RATIO_MOTOR_TO_ENCODER;  // Wheel to adjacent
+    public double TANK_WHEEL_CIRCUMFERENCE;  // Adjust for thread wear as needed
+    public double DISTANCE_SEPERATION_WHEEL_SIDES;  // Center to center (side to side easier to measure)
 
     public boolean TANK_LEFT_INVERT;
     public boolean TANK_RIGHT_INVERT;

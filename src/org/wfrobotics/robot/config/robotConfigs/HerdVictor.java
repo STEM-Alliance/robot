@@ -47,7 +47,7 @@ public class HerdVictor extends RobotConfig
         TANK_D =  TANK_P * 2.25;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
         TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.8);
-        TANK_ACCELERATION = TANK_CRUISE_VELOCITY;
+        TANK_ACCELERATION = new int[] {TANK_CRUISE_VELOCITY, TANK_CRUISE_VELOCITY};
         TANK_IZONE = 40;
 
         TANK_LEFT_INVERT = true;

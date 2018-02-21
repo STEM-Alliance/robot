@@ -4,6 +4,8 @@ import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.VisionMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
 public class RobotState
 {
@@ -53,8 +55,8 @@ public class RobotState
 
     public void reportState()
     {
-        log.info("Heading", String.format("%.1f\u00b0", robotHeading));
-        log.info("High Gear", robotGear);
+        SmartDashboard.putString("Heading", String.format("%.1f\u00b0", robotHeading));
+        SmartDashboard.putBoolean("High Gear", robotGear);
     }
 
     // ------------- END Private -------------
