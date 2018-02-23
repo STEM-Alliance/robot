@@ -1,6 +1,5 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.VisionMode;
 
@@ -36,7 +35,6 @@ public class RobotState
     // ------------- BEGIN Private -------------
 
     private static RobotState instance = null;
-    private final HerdLogger log = new HerdLogger(Robot.class);
     private double hasCubeCounts;
 
     protected RobotState()
