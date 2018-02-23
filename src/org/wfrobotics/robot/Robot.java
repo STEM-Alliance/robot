@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.subsystems.tank.TankService;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.MatchState2018;
+import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdVictor;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
@@ -48,6 +49,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
+        Autonomous.setupSendableChooser();
         config = new HerdVictor();
         //        config = new HerdVictor();
 
