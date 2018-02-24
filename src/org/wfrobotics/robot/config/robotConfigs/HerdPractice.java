@@ -11,7 +11,7 @@ public class HerdPractice extends RobotConfig
         INTAKE_SENSOR_R = 0;
         INTAKE_SENSOR_L = 1;
 
-        INTAKE_DISTANCE_TO_CUBE = 7.0; // centimeters
+        INTAKE_DISTANCE_TO_CUBE = 6.6; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
         INTAKE_INVERT_RIGHT = false;
@@ -21,7 +21,6 @@ public class HerdPractice extends RobotConfig
         // _________________________________________________________________________________
         LIFT_MAX_POSSIBLE_UP = 3100;  // Down 5000
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.8;
-        //LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 1.25;
         LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2.5;
         LIFT_I = LIFT_P * .01 * 0;
         LIFT_D = LIFT_P * 10.0 * .25;

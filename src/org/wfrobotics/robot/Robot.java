@@ -8,7 +8,8 @@ import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.robotConfigs.HerdVictor;
+import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
+import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
@@ -25,12 +26,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 @SuppressWarnings("deprecation")
 public class Robot extends SampleRobot
 {
-    //    public static HerdPractice config;
-    public static HerdVictor config;
-
     private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater();
     private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
+    public static RobotConfig config;
     private final RobotState state = RobotState.getInstance();
     private final MatchState2018 matchState = MatchState2018.getInstance();
 
@@ -50,7 +49,7 @@ public class Robot extends SampleRobot
     public void robotInit()
     {
         Autonomous.setupSendableChooser();
-        config = new HerdVictor();
+        config = new HerdPractice();
         //        config = new HerdVictor();
 
         driveService = TankService.getInstance();
