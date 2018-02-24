@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.commands.intake;
 
+import org.wfrobotics.reuse.utilities.Utilities;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
@@ -10,7 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /** Pull in the cube purely based on sensors */
 public class SmartIntake extends CommandGroup
 {
-    private final double kCubeIn = 13.0;
+    private final double kCubeIn = 5.0;
+    private final double kCubeInDeadband = 0.25;
 
     protected final RobotState state = RobotState.getInstance();
     protected final IntakeSubsystem intake = Robot.intakeSubsystem;
@@ -54,11 +56,13 @@ public class SmartIntake extends CommandGroup
     {
         double speed = 0.0;
 
-        // TODO Better off with PID on wheel speed while in the range that we do non-zero wheel speed? Analog Talon position control?
-
-        if (distanceToCube > kCubeIn && distanceToCube < 57)  // TODO Need to move sensor, otherwise we stall motors
+        if (distanceToCube < kCubeIn && distanceToCube > kCubeInDeadband)
         {
-            speed = -1.0;  // TODO Find ideal intake speed
+            speed = -Utilities.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 1);
+        }
+        else if (distanceToCube > kCubeIn && distanceToCube < 50)  // TODO Need to move sensor, otherwise we stall motors
+        {
+            speed = -1.0;
         }
 
         // TODO After it's in for a little bit, it's SUPER effective to pulse the cube out a sec then back in to orient it
@@ -71,12 +75,12 @@ public class SmartIntake extends CommandGroup
     {
         String isJawtomated = "No";
 
-        if (distanceToCube < 37)
+        if (distanceToCube < 30)
         {
             intake.setHorizontal(false);  // Can't always set, otherwise we chatter?
             isJawtomated = "Close";
         }
-        else if (distanceToCube > 37 && distanceToCube < 67)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
+        else if (distanceToCube > 30 && distanceToCube < 60)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
         {
             intake.setHorizontal(true);
             isJawtomated = "Open";
