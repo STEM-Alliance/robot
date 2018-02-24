@@ -8,6 +8,7 @@ import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -28,7 +29,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     }
 
     private final static double kTicksPerRev = 4096;
-    private final static double kRevsPerInch = 1 / ( 1.345 * Math.PI * 13.0 / 10.0);;
+    private final static double kRevsPerInch = 1 / ( 1.345 * Math.PI * 13.0 / 10.0);
+    private final boolean[][] invertSensorReading = new boolean[2][2];
 
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX[] motors = new TalonSRX[2];
@@ -48,10 +50,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         final int kSlot = 0;
         final int[] addresses =  {RobotMap.CAN_LIFT_L, RobotMap.CAN_LIFT_R};
         final boolean[] inverted = {config.LIFT_MOTOR_INVERTED_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
-        final boolean[] sensorPhase = {config.LIFT_SENSOR_PHASE_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
+        final boolean[] sensorPhase = {config.LIFT_SENSOR_PHASE_LEFT, config.LIFT_SENSOR_PHASE_LEFT};
         final int kStartingTicksRelativeToSensor = -1500;
 
-        // TODO Use talon software limit switches
 
         for (int index = 0; index < motors.length; index++)
         {
@@ -69,6 +70,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].configVelocityMeasurementWindow(64, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 2, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 160, kTimeout);
+            invertSensorReading[index][0] = config.LIFT_LIMIT_SWITCH_NORMALLY[index][0] == LimitSwitchNormal.NormallyClosed;
+            invertSensorReading[index][1] = config.LIFT_LIMIT_SWITCH_NORMALLY[index][1] == LimitSwitchNormal.NormallyClosed;
             //            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);  // For calibration
         }
 
@@ -96,14 +99,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         {
             liftState = "Zeroing";
         }
-        else if (goToTransportIfNeeded())
-        {
-            liftState = "Transport";
-        }
-        //        else if (applyBrakeAtTarget())
-        //        {
-        //            liftState = "Brake at target";
-        //        }
         else
         {
             liftState = desiredMode.toString();
@@ -111,7 +106,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
         set(desiredMode, desiredSetpoint);
 
-        //        debugCalibration();
         backgroundPeriod = todoRemoveNow - todoRemoveLast;
         todoRemoveLast = todoRemoveNow;
     }
@@ -123,10 +117,10 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         return allSidesAtLimitSwitch(LimitSwitch.BOTTOM);
     }
 
-    //    public boolean allSidesAtTop()
-    //    {
-    //        return allSidesAtLimitSwitch(LimitSwitch.TOP);
-    //    }
+    public boolean allSidesAtTop()
+    {
+        return allSidesAtLimitSwitch(LimitSwitch.TOP);
+    }
 
     public synchronized void goToHeightInit(double heightInches)
     {
@@ -148,22 +142,12 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Lift Height", height);
         SmartDashboard.putString("Lift State", liftState);
         SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000);
+        debugCalibration();
 
         state.updateLiftHeight(height);
     }
 
     // ----------------------------------------- Private ------------------------------------------
-
-    private boolean goToTransportIfNeeded()
-    {
-        //        if (state.robotVelocity.getMag() > .5 || state.robotGear)
-        //        {
-        //            desiredMode = ControlMode.MotionMagic;
-        //            desiredSetpoint = inchesToTicks(LiftHeight.Transport.get());
-        //            return true;
-        //        }
-        return false;
-    }
 
     private boolean zeroPositionIfNeeded()
     {
@@ -229,9 +213,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     {
         if(limit == LimitSwitch.BOTTOM)
         {
-            return motors[index].getSensorCollection().isRevLimitSwitchClosed();
+            return motors[index].getSensorCollection().isRevLimitSwitchClosed() ^ invertSensorReading[index][1];
         }
-        return motors[index].getSensorCollection().isFwdLimitSwitchClosed();
+        return motors[index].getSensorCollection().isFwdLimitSwitchClosed() ^ invertSensorReading[index][0];
     }
 
     private static double inchesToTicks(double inches)
@@ -244,42 +228,42 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         return ticks / kRevsPerInch / kTicksPerRev;
     }
 
-    //    private void debugCalibration()
-    //    {
-    //        double position0 = motors[0].getSelectedSensorPosition(0);
-    //        double position1 = motors[1].getSelectedSensorPosition(0);
-    //        double error0 = motors[0].getClosedLoopError(0);
-    //        double error1 = motors[1].getClosedLoopError(0);
-    //
-    //        SmartDashboard.putNumber("Position0", position0);
-    //        SmartDashboard.putNumber("Position1", position1);
-    //        SmartDashboard.putNumber("Velocity", motors[0].getSelectedSensorVelocity(0));
-    //        SmartDashboard.putNumber("TargetPosition", desiredSetpoint);
-    //
-    //        SmartDashboard.putNumber("Error0", error0);
-    //        SmartDashboard.putNumber("Error1", error1);
-    //
-    //        SmartDashboard.putNumber("Height", ticksToInches(position0));
-    //
-    //        SmartDashboard.putNumber("Delta E", error0 - error1);
-    //        SmartDashboard.putNumber("Delta P", position0 - position1);
+    private void debugCalibration()
+    {
+        double position0 = motors[0].getSelectedSensorPosition(0);
+        double position1 = motors[1].getSelectedSensorPosition(0);
+        double error0 = motors[0].getClosedLoopError(0);
+        double error1 = motors[1].getClosedLoopError(0);
 
-    //        SmartDashboard.putBoolean("At Top", allSidesAtTop());
-    //        SmartDashboard.putBoolean("At Bottom", allSidesAtBottom());
-    //        SmartDashboard.putBoolean("LB", isSideAtLimit(LimitSwitch.BOTTOM, 0));
-    //        SmartDashboard.putBoolean("LT", isSideAtLimit(LimitSwitch.TOP, 0));
-    //        SmartDashboard.putBoolean("RB", isSideAtLimit(LimitSwitch.BOTTOM, 1));
-    //        SmartDashboard.putBoolean("RT", isSideAtLimit(LimitSwitch.TOP, 1));
-    //    }
+        SmartDashboard.putNumber("Position0", position0);
+        SmartDashboard.putNumber("Position1", position1);
+        SmartDashboard.putNumber("Velocity", motors[0].getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("TargetPosition", desiredSetpoint);
+
+        SmartDashboard.putNumber("Error0", error0);
+        SmartDashboard.putNumber("Error1", error1);
+
+        SmartDashboard.putNumber("Height", ticksToInches(getHeightAverage()));
+
+        SmartDashboard.putNumber("Delta E", error0 - error1);
+        SmartDashboard.putNumber("Delta P", position0 - position1);
+
+        SmartDashboard.putBoolean("At Top", allSidesAtTop());
+        SmartDashboard.putBoolean("At Bottom", allSidesAtBottom());
+        SmartDashboard.putBoolean("LB", isSideAtLimit(LimitSwitch.BOTTOM, 0));
+        SmartDashboard.putBoolean("LT", isSideAtLimit(LimitSwitch.TOP, 0));
+        SmartDashboard.putBoolean("RB", isSideAtLimit(LimitSwitch.BOTTOM, 1));
+        SmartDashboard.putBoolean("RT", isSideAtLimit(LimitSwitch.TOP, 1));
+    }
 
     //    private boolean isAtTop(int index)
     //    {
-    //        return isAtLimit(LimitSwitch.Top, index);
+    //        return isAtLimit(LimitSwitch.TOP, index);
     //    }
     //
     //    private boolean isAtBottom(int index)
     //    {
-    //        return isAtLimit(LimitSwitch.Bottom, index);
+    //        return isAtLimit(LimitSwitch.BOTTOM, index);
     //    }
 
     // TODO Beast mode - The fastest lift possible probably dynamically changes it's control strategy to get to it's destination fastest
