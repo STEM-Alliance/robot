@@ -95,16 +95,16 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     {
         final double todoRemoveNow = Timer.getFPGATimestamp();
 
-        if (zeroPositionIfNeeded())
+        if(allSidesAtBottom())
         {
+            motors[0].setSelectedSensorPosition(0, 0, 0);
+            motors[1].setSelectedSensorPosition(0, 0, 0);
             liftState = "Zeroing";
         }
         else
         {
             liftState = desiredMode.toString();
         }
-
-        set(desiredMode, desiredSetpoint);
 
         backgroundPeriod = todoRemoveNow - todoRemoveLast;
         todoRemoveLast = todoRemoveNow;
@@ -124,15 +124,13 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public synchronized void goToHeightInit(double heightInches)
     {
-        desiredMode = ControlMode.MotionMagic;
-        desiredSetpoint = inchesToTicks(heightInches);
         heightStart = getHeightAverage();
+        set(ControlMode.MotionMagic, inchesToTicks(heightInches));
     }
 
     public synchronized void goToSpeedInit(double percent)
     {
-        desiredMode = ControlMode.PercentOutput;
-        desiredSetpoint = percent;
+        set(ControlMode.PercentOutput, percent);
     }
 
     public void reportState()
@@ -148,29 +146,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     }
 
     // ----------------------------------------- Private ------------------------------------------
-
-    private boolean zeroPositionIfNeeded()
-    {
-        if(allSidesAtBottom())
-        {
-            for (int index = 0; index < motors.length; index++)
-            {
-                motors[index].setSelectedSensorPosition(0, 0, 0);
-            }
-
-            //            // Override with valid + safe command
-            //            if (desiredMode == ControlMode.MotionMagic && desiredSetpoint < LiftHeight.Intake.get())
-            //            {
-            //                desiredSetpoint = inchesToTicks(LiftHeight.Intake.get());
-            //            }
-            //            else if (desiredMode == ControlMode.PercentOutput && desiredSetpoint < 0)
-            //            {
-            //                desiredSetpoint = 0;
-            //            }
-            return true;
-        }
-        return false;
-    }
 
     protected boolean applyBrakeAtTarget()
     {
@@ -188,10 +163,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     private void set(ControlMode mode, double val)
     {
-        for (int index = 0; index < motors.length; index++)
-        {
-            motors[index].set(mode, val);
-        }
+        motors[0].set(mode, val);
+        motors[1].set(mode, val);
     }
 
     private double getHeightAverage()
