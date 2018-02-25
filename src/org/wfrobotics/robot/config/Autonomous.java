@@ -8,6 +8,7 @@ import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.auto.PrintCommand;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -33,11 +34,14 @@ public class Autonomous
 
     private static enum POSITION_ROTARY {RIGHT, CENTER, LEFT};
     private static SendableChooser<AutoMode> autoCommands;
+    private static SendableChooser<POSITION_ROTARY> autoLocation;
 
     /** FIRST Power Up - Top level autonomous modes **/
-    public static AutoMode[] makeModes()
+    public static AutoMode[] makeModes(boolean mirror)
     {
         return new AutoMode[] {
+            new AutoMode("Auto Zero", () -> new PrintCommand("0"), 0.0),
+            new AutoMode("Auto One", () -> new PrintCommand("1"), 0.0),
             new AutoMode("Auto None", () -> new DriveOff(), 0.0),
             new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),
         };
@@ -46,8 +50,8 @@ public class Autonomous
     /** Grabs the selected 'Auto Mode' from SmartDashboard, sets up gyro, returns the command to run in autonomous */
     public static Command setupAndReturnSelectedMode()
     {
-        SmartDashboard.getString("Position", "test");
-        getRotaryStartingPosition();
+        //        SmartDashboard.getString("Position", "test");
+        //        getRotaryStartingPosition();
         return setupSelectedMode();
     }
 
@@ -55,7 +59,8 @@ public class Autonomous
     protected static Command setupSelectedMode()
     {
         String selected = autoCommands.getSelected().text;
-        AutoMode[] modes = makeModes();
+        boolean mirror = autoLocation.getSelected() == POSITION_ROTARY.LEFT;
+        AutoMode[] modes = makeModes(mirror);
         int choice = 0;
 
         for (int index = 0; index < modes.length; index++)
@@ -69,13 +74,23 @@ public class Autonomous
         return modes[choice].maker.get();
     }
 
-    public static void setupSendableChooser() {
+    public static void setupSendableChooser()
+    {
         autoCommands = new SendableChooser<AutoMode>();
-        for(AutoMode auto: makeModes()) {
-            autoCommands.addObject(auto.text, auto);
+        AutoMode[] modes = makeModes(false);
+        for(int index = 0; index < modes.length; index++)
+        {
+            autoCommands.addObject(modes[index].text, modes[index]);
         }
-        autoCommands.addDefault("Auto Line", new AutoMode("Auto Line", () -> new DriveOff(), 0.0));
-        SmartDashboard.putData("Auto Mode", autoCommands);
+        autoCommands.addDefault(modes[0].text, modes[0]);
+        SmartDashboard.putData("Auto", autoCommands);
+
+        autoLocation = new SendableChooser<POSITION_ROTARY>();
+        autoLocation.addObject("Right", POSITION_ROTARY.RIGHT);
+        autoLocation.addObject("Center", POSITION_ROTARY.CENTER);
+        autoLocation.addObject("Left", POSITION_ROTARY.LEFT);
+        autoLocation.addDefault("Right", POSITION_ROTARY.RIGHT);
+        SmartDashboard.putData("Auto Location", autoLocation);
     }
 
     /** Get the starting position on field for when we switch to autonomous mode */

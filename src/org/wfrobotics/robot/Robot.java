@@ -1,7 +1,6 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.background.BackgroundUpdater;
-import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.subsystems.tank.TankService;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
@@ -45,7 +44,6 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        Autonomous.setupSendableChooser();
         config = new HerdPractice();
         //        config = new HerdVictor();
 
@@ -55,6 +53,7 @@ public class Robot extends SampleRobot
         winch = new WinchSubsystem();
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
+        Autonomous.setupSendableChooser();
 
         // uncomment if using USB camera to stream video from roboRio
         dashboardView = new DashboardView(416, 240, 15);
@@ -92,8 +91,8 @@ public class Robot extends SampleRobot
         backgroundUpdater.start();
         intakeSubsystem.setVertical(true);
 
-        //        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
-        autonomousCommand = new DriveDistance(12 * 22 + 0);
+        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
+        //        autonomousCommand = new DriveDistance(12 * 22 + 0);
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
