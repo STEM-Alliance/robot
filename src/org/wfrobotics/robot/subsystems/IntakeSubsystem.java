@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 {
+    private final double kDistanceMaxIn;
     private final double kTimeoutHorizontal;
     private final double kTimeoutVertical;
 
@@ -56,6 +57,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         distanceSensorR = new SharpDistance(config.INTAKE_SENSOR_R);
         distanceSensorL = new SharpDistance(config.INTAKE_SENSOR_L);
 
+        kDistanceMaxIn = config.INTAKE_DISTANCE_TO_CUBE;
         kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
         kTimeoutVertical = config.INTAKE_TIMEOUT_WRIST;
 
@@ -82,8 +84,8 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void onBackgroundUpdate()
     {
-        debugLastDistanceR = distanceSensorR.getDistance();
-        debugLastDistanceL = distanceSensorL.getDistance();
+        debugLastDistanceR = distanceSensorR.getDistance() - kDistanceMaxIn;
+        debugLastDistanceL = distanceSensorL.getDistance() - kDistanceMaxIn;
         final double rawCentimeters = (debugLastDistanceR + debugLastDistanceL) / 2;
         final double centimeters = (rawCentimeters + lastDistance) / 2;  // TODO Get a better average? Circular buffer? Raw is jumpy when accelerating drivetrain
         lastDistance = rawCentimeters;

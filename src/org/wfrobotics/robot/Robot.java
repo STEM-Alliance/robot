@@ -3,17 +3,15 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.background.BackgroundUpdater;
 import org.wfrobotics.reuse.subsystems.tank.TankService;
 import org.wfrobotics.reuse.utilities.DashboardView;
-import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.reuse.utilities.MatchState2018;
-import org.wfrobotics.robot.auto.pos2.AutoSwitchCenterLeft;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.robotConfigs.HerdBlackTank;
+import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
+import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,12 +23,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 @SuppressWarnings("deprecation")
 public class Robot extends SampleRobot
 {
-    //    public static HerdPractice config;
-    public static HerdBlackTank config;
-
     private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater();
-    private final HerdLogger log = new HerdLogger(Robot.class);
     private final Scheduler scheduler = Scheduler.getInstance();
+    public static RobotConfig config;
     private final RobotState state = RobotState.getInstance();
     private final MatchState2018 matchState = MatchState2018.getInstance();
 
@@ -49,8 +44,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        Autonomous.setupSendableChooser();
-        config = new HerdBlackTank();
+        config = new HerdPractice();
         //        config = new HerdVictor();
 
         driveService = TankService.getInstance();
@@ -58,10 +52,11 @@ public class Robot extends SampleRobot
         intakeSubsystem = new IntakeSubsystem(config);
         winch = new WinchSubsystem();
 
+        controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
+        Autonomous.setupSendableChooser();
+
         // uncomment if using USB camera to stream video from roboRio
         dashboardView = new DashboardView(416, 240, 15);
-
-        controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
 
         // TODO default config?
         //CameraServer.getInstance();
@@ -96,11 +91,8 @@ public class Robot extends SampleRobot
         backgroundUpdater.start();
         intakeSubsystem.setVertical(true);
 
-        //        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
-        //        autonomousCommand = new DriveDistance(12 * 2 + 0);
-        //        autonomousCommand = new AutoScale1();
-        autonomousCommand = new AutoSwitchCenterLeft();
-
+        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
+        //        autonomousCommand = new DriveDistance(12 * 22 + 0);
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
@@ -115,8 +107,8 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
+            // log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
             driveService.zeroGyro();
-            log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
 
             allPeriodic();
