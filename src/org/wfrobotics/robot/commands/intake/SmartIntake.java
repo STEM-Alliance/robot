@@ -39,7 +39,7 @@ public class SmartIntake extends CommandGroup
 
             autoIntake(distanceToCube);
             autoJaws(distanceToCube);
-            autoWrist(distanceToCube);
+            //            autoWrist(distanceToCube); // Sacrificed to save the air R.I.P. 2/24/18
         }
         else  // Cancel intaking if transition to lifting
         {
@@ -87,13 +87,5 @@ public class SmartIntake extends CommandGroup
         }
 
         SmartDashboard.putString("Jawtomatic", isJawtomated);
-    }
-
-    private void autoWrist(double distanceToCube)
-    {
-        if (distanceToCube < kCubeIn)  // TODO Call state.hasCube, make based on two counts at correct distance
-        {
-            intake.setVertical(true);
-        }
     }
 }
