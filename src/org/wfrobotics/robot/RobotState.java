@@ -1,8 +1,11 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.utilities.HerdVector;
+import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.VisionMode;
+import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
@@ -23,7 +26,7 @@ public class RobotState
     public boolean robotHasCube;
     public double intakeDistance;
     public double liftHeightInches;
-
+    public RobotConfig config;
     public static RobotState getInstance()
     {
         if (instance == null) { instance = new RobotState(); }
@@ -103,6 +106,7 @@ public class RobotState
 
     // ------------- Begin State Producers Robot-specific (Write-Only) -------------
 
+    double timeSinceRumbleOn;
     public synchronized void updateIntakeSensor(double distance)
     {
         intakeDistance = distance;
@@ -111,11 +115,32 @@ public class RobotState
         {
             hasCubeCounts++;
         }
+        else if (hasCubeCounts <= 20)
+        {
+            timeSinceRumbleOn = Timer.getFPGATimestamp();
+        }
         else
         {
             hasCubeCounts = 0;
         }
         robotHasCube = hasCubeCounts > 20;
+
+        if(hasCubeCounts > 20)
+        {
+            if (Timer.getFPGATimestamp() - timeSinceRumbleOn < 1)
+            {
+                IO.getInstance().setRumble(true);
+            }
+            else
+            {
+                IO.getInstance().setRumble(false);
+                timeSinceRumbleOn = 0;
+            }
+        }
+        else
+        {
+            IO.getInstance().setRumble(false);
+        }
     }
 
     public synchronized void updateLiftHeight(double inches)

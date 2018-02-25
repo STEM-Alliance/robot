@@ -4,6 +4,7 @@ import org.wfrobotics.reuse.background.BackgroundUpdater;
 import org.wfrobotics.reuse.subsystems.tank.TankService;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
+import org.wfrobotics.robot.auto.pos3.AutoSwitch1;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
@@ -91,7 +92,9 @@ public class Robot extends SampleRobot
         backgroundUpdater.start();
         intakeSubsystem.setVertical(true);
 
-        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
+        autonomousCommand =  new AutoSwitch1();
+
+        //        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
         //        autonomousCommand = new DriveDistance(12 * 22 + 0);
         if (autonomousCommand != null) autonomousCommand.start();
 
