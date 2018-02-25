@@ -41,12 +41,12 @@ public class HerdBlackTank extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = 7575.0 / .8;
+        TANK_MAX_VELOCITY = 7575.0 / 0.4;
         TANK_P = 0.0508 * 2 * 2 * 2 * 2;
         TANK_I = TANK_P * 0.01 * 1;
         TANK_D =  TANK_P * 10.0 * 1;
-        TANK_F = 0.101287;//(1023.0 / TANK_MAX_VELOCITY);
-        TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * .8);
+        TANK_F = 1023.0 / TANK_MAX_VELOCITY;
+        TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * .9);
         TANK_ACCELERATION = new int[] {TANK_CRUISE_VELOCITY, TANK_CRUISE_VELOCITY};
         TANK_IZONE = 40;
 
