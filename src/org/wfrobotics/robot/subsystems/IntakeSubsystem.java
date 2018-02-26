@@ -10,6 +10,7 @@ import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -45,10 +46,17 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     public IntakeSubsystem(RobotConfig config)
     {
         masterRight = TalonSRXFactory.makeTalon(RobotMap.CAN_INTAKE_RIGHT);
-        followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
+        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1000, 10);
+        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 1000, 10);
+        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 1000, 10);
+        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 1000, 10);
+        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 1000, 10);
+        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 1000, 10);
         masterRight.setNeutralMode(NeutralMode.Brake);
-        followerLeft.setNeutralMode(NeutralMode.Brake);
         masterRight.setInverted(config.INTAKE_INVERT_RIGHT);
+
+        followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
+        followerLeft.setNeutralMode(NeutralMode.Brake);
         followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
 
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
@@ -147,7 +155,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void reportState()
     {
-        SmartDashboard.putNumber("Cube", distanceCurrent);
         SmartDashboard.putNumber("Cube R", debugLastDistanceR);
         SmartDashboard.putNumber("Cube L", debugLastDistanceL);
         state.updateIntakeSensor(distanceCurrent);

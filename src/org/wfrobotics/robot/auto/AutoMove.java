@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands.drive;
+package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.robot.Robot;
 

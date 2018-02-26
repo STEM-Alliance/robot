@@ -19,14 +19,14 @@ public class HerdPractice extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = 3100;  // Down 5000
-        LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.8;
-        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2.5;
-        LIFT_I = LIFT_P * .01 * 0;
-        LIFT_D = LIFT_P * 10.0 * .25;
+        LIFT_MAX_POSSIBLE_UP = 1025;
+        LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
+        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 0.90;
+        LIFT_I = LIFT_P * .01 * .008;
+        LIFT_D = LIFT_P * 10.0 * .50;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
         LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
-        LIFT_ACCELERATION = LIFT_VELOCITY;
+        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.5);
 
         LIFT_MOTOR_INVERTED_LEFT = true; // left
         LIFT_MOTOR_INVERTED_RIGHT = false; // right
@@ -43,7 +43,7 @@ public class HerdPractice extends RobotConfig
         // _________________________________________________________________________________
         TANK_MAX_VELOCITY = 10000.0;
         TANK_P = 1.25;
-        TANK_I = TANK_P * 0.005;
+        TANK_I = TANK_P * 0.000001;
         TANK_D =  TANK_P * 2.5;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
         TANK_CRUISE_VELOCITY = 7575;
@@ -61,6 +61,7 @@ public class HerdPractice extends RobotConfig
         //                      Winch
         // _________________________________________________________________________________
         WINCH = 22;
+        WINCH_DOWN_IS_SAFE = true;
         WINCH_INVERT = true;
         WINCH_SPEED = 1;
     }

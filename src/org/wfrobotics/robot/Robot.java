@@ -1,14 +1,15 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.background.BackgroundUpdater;
-import org.wfrobotics.reuse.subsystems.tank.TankService;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.auto.pos3.AutoSwitch1;
+import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
+import org.wfrobotics.robot.subsystems.DriveService;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
@@ -30,7 +31,7 @@ public class Robot extends SampleRobot
     private final RobotState state = RobotState.getInstance();
     private final MatchState2018 matchState = MatchState2018.getInstance();
 
-    public static TankService driveService;
+    public static DriveService driveService;
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
@@ -48,13 +49,13 @@ public class Robot extends SampleRobot
         config = new HerdPractice();
         //        config = new HerdVictor();
 
-        driveService = TankService.getInstance();
+        driveService = DriveService.getInstance();
         liftSubsystem = new LiftSubsystem(config);
         intakeSubsystem = new IntakeSubsystem(config);
-        winch = new WinchSubsystem();
+        winch = new WinchSubsystem(config);
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
-        Autonomous.setupSendableChooser();
+        Autonomous.setupSelection();
 
         // uncomment if using USB camera to stream video from roboRio
         dashboardView = new DashboardView(416, 240, 15);
@@ -108,11 +109,15 @@ public class Robot extends SampleRobot
     {
         backgroundUpdater.stop();
 
+        //        Autonomous.setupSelection();
+        LiftGoHome.reset();
+
         while (isDisabled())
         {
             // log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
             driveService.zeroGyro();
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
+            liftSubsystem.onBackgroundUpdate();  // Zero if possible
 
             allPeriodic();
         }

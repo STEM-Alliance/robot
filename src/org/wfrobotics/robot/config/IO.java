@@ -2,8 +2,6 @@ package org.wfrobotics.robot.config;
 
 import java.util.ArrayList;
 
-import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
-import org.wfrobotics.reuse.commands.driveconfig.ShiftToggle;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
@@ -11,7 +9,6 @@ import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.controller.Xbox.DPAD;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
-import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketXbox;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
@@ -23,6 +20,7 @@ import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 
 /** Maps controllers to Commands **/
@@ -30,7 +28,8 @@ public class IO
 {
     private static IO instance = null;
     private final ArrayList<Button> robotSpecific = new ArrayList<Button>();  // Keep buttons instantiated
-    private final Xbox driver;
+    private final Joystick driverThrottle;
+    private final Joystick driverTurn;
     private final Xbox operator;
     private final Panel panel;
 
@@ -40,24 +39,24 @@ public class IO
     public MecanumIO mecanumIO;
     public SwerveIO swerveIO;
 
-    private IO(Xbox driver, Xbox operator, Panel panel)
+    private IO(Joystick driverThrottle, Joystick driverTurn, Xbox operator, Panel panel)
     {
-        this.driver = driver;
+        this.driverThrottle = driverThrottle;
+        this.driverTurn = driverTurn;
         this.operator = operator;
         this.panel = panel;
 
         // ------------------- Select Drive-style  ----------------
-        arcadeIO = new ArcadeRocketXbox(driver);
-        //        //tankIO = new TankXbox(driver);
+        //        arcadeIO = new ArcadeRocketXbox(driverThrottle, driverTurn);
 
         // ------------------------- Drive ------------------------
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
-        //        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
-
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new TurnToHeading(0, 2)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new TurnToHeading(90, 2)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new TurnToHeading(-90, 2)));
-        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new TurnToHeading(180, 2)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
+        //        //        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
+        //
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new TurnToHeading(0, 2)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new TurnToHeading(90, 2)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new TurnToHeading(-90, 2)));
+        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new TurnToHeading(180, 2)));
 
         // ------------------------ Intake ------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
@@ -70,9 +69,27 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new LiftToHeight(LiftHeight.Switch.get())));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new LiftToHeight(LiftHeight.Intake.get())));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
+
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new AutoZero()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TestServo()));
     }
 
     // ------------------- Robot-specific --------------------
+
+    public double getThrottle()
+    {
+        return -driverThrottle.getY();
+    }
+
+    public double getTurn()
+    {
+        return driverTurn.getRawAxis(0);
+    }
+
+    public boolean getDriveQuickTurn()
+    {
+        return driverTurn.getRawButton(1);
+    }
 
     public double getIntakeIn()
     {
@@ -112,7 +129,7 @@ public class IO
 
     public static IO getInstance()
     {
-        if (instance == null) { instance = new IO(new Xbox(0), new Xbox(1), new Panel(2)); }
+        if (instance == null) { instance = new IO(new Joystick(0), new Joystick(1), new Xbox(2), new Panel(3)); }
         return instance;
     }
 
@@ -126,7 +143,5 @@ public class IO
         float state = (rumble) ? 1 : 0;
         operator.setRumble(Hand.kLeft, state);
         operator.setRumble(Hand.kRight, state);
-        driver.setRumble(Hand.kLeft, state);
-        driver.setRumble(Hand.kRight, state);
     }
 }
