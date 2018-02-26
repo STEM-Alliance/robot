@@ -16,6 +16,11 @@ public class LiftGoHome extends Command
         return hasZeroed;
     }
 
+    public static void reset()
+    {
+        hasZeroed = false;
+    }
+
     public LiftGoHome(double speed, double timeout)
     {
         requires(Robot.liftSubsystem);

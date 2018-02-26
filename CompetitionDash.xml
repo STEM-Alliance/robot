@@ -1,0 +1,227 @@
+<xml version="1.0">
+<dashboard>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
+		<location x="995" y="-1"/>
+		<width>2010</width>
+		<height>1169</height>
+		<property name="Camera Choice" value=""/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="735" y="46"/>
+		<property name="Text" value="Delay"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="588" y="45"/>
+		<property name="Text" value="Position"/>
+	</static-widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="378" y="44"/>
+		<property name="Text" value="Autonomous"/>
+	</static-widget>
+	<widget field="Autonomous" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="388" y="67"/>
+	</widget>
+	<widget field="Auto" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="370" y="17"/>
+	</widget>
+	<widget field="Auto Location" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="406" y="116"/>
+	</widget>
+	<widget field="Cube L Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="298" y="1664"/>
+		<width>295</width>
+		<height>166</height>
+		<property name="Buffer Size (samples)" value="5"/>
+	</widget>
+	<widget field="TargetPosition" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="476"/>
+	</widget>
+	<widget field="Target Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="2666" y="1648"/>
+	</widget>
+	<widget field="High Gear" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="2804" y="1762"/>
+	</widget>
+	<widget field="ErrorDriveR" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="1795" y="1529"/>
+		<width>408</width>
+		<property name="Buffer Size (samples)" value="15"/>
+	</widget>
+	<widget field="ErrorDriveL" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="2204" y="1527"/>
+		<property name="Buffer Size (samples)" value="15"/>
+	</widget>
+	<widget field="DrivePositionL" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="1795" y="1207"/>
+		<width>407</width>
+		<height>317</height>
+		<property name="Buffer Size (samples)" value="30"/>
+	</widget>
+	<widget field="DrivePositionR" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="2204" y="1204"/>
+		<width>399</width>
+		<height>318</height>
+		<property name="Buffer Size (samples)" value="30"/>
+	</widget>
+	<widget field="Driven" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="2745" y="1685"/>
+	</widget>
+	<widget field="Cube L" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="5" y="1662"/>
+		<width>288</width>
+		<height>169</height>
+		<property name="Buffer Size (samples)" value="10"/>
+	</widget>
+	<widget field="Cube R" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="4" y="1494"/>
+		<width>291</width>
+		<height>165</height>
+		<property name="Buffer Size (samples)" value="10"/>
+	</widget>
+	<widget field="RB" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="243" y="908"/>
+	</widget>
+	<widget field="RT" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="245" y="873"/>
+	</widget>
+	<widget field="LB" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="199" y="907"/>
+	</widget>
+	<widget field="LT" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="200" y="874"/>
+	</widget>
+	<widget field="At Bottom" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="90" y="908"/>
+	</widget>
+	<widget field="At Top" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="88" y="877"/>
+	</widget>
+	<widget field="Lift State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="13" y="699"/>
+	</widget>
+	<widget field="Lift Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="14" y="732"/>
+	</widget>
+	<widget field="Winch (A)" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="302" y="1491"/>
+		<width>291</width>
+		<height>170</height>
+		<property name="Buffer Size (samples)" value="50"/>
+	</widget>
+	<widget field="Background Period" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="7" y="1232"/>
+		<width>288</width>
+		<height>255</height>
+		<property name="Buffer Size (samples)" value="50"/>
+	</widget>
+	<widget field="Periodic Time " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="300" y="1233"/>
+		<width>292</width>
+		<height>253</height>
+		<property name="Buffer Size (samples)" value="50"/>
+	</widget>
+	<widget field="DriveVelocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="2610" y="1203"/>
+		<width>381</width>
+		<height>318</height>
+		<property name="Buffer Size (samples)" value="25"/>
+	</widget>
+	<widget field="Intake" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="4" y="377"/>
+	</widget>
+	<widget field="Wrist Requested" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="7" y="449"/>
+	</widget>
+	<widget field="Jaws Requested" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="7" y="414"/>
+	</widget>
+	<widget field="Delta P" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="1391" y="1531"/>
+		<width>402</width>
+		<height>297</height>
+		<property name="Buffer Size (samples)" value="25"/>
+	</widget>
+	<widget field="Position1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="995" y="1532"/>
+		<width>391</width>
+		<height>299</height>
+		<property name="Buffer Size (samples)" value="50"/>
+	</widget>
+	<widget field="Delta E" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="1392" y="1206"/>
+		<width>400</width>
+		<height>323</height>
+		<property name="Buffer Size (samples)" value="25"/>
+	</widget>
+	<widget field="Error1" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="994" y="1205"/>
+		<width>395</width>
+		<height>323</height>
+		<property name="Buffer Size (samples)" value="10"/>
+	</widget>
+	<widget field="Position0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="599" y="1532"/>
+		<width>392</width>
+		<height>298</height>
+		<property name="Buffer Size (samples)" value="50"/>
+	</widget>
+	<widget field="Lift" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="16" y="663"/>
+	</widget>
+	<widget field="Height" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="696" y="688"/>
+		<width>296</width>
+		<height>210</height>
+		<property name="Buffer Size (samples)" value="50"/>
+	</widget>
+	<widget field="Battery V" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="7" y="797"/>
+	</widget>
+	<widget field="Battery A" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="5" y="832"/>
+	</widget>
+	<widget field="Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="593" y="903"/>
+		<width>395</width>
+		<height>296</height>
+		<property name="Buffer Size (samples)" value="25"/>
+	</widget>
+	<widget field="Drive" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="2756" y="1612"/>
+	</widget>
+	<widget field="Jawtomatic" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="8" y="340"/>
+	</widget>
+	<widget field="Error0" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="596" y="1202"/>
+		<width>395</width>
+		<height>327</height>
+		<property name="Buffer Size (samples)" value="10"/>
+	</widget>
+	<widget field="Heading" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="2729" y="1722"/>
+	</widget>
+	<widget field="Auto Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="357" y="552"/>
+	</widget>
+	<widget field="Auto Delay" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="756" y="70"/>
+	</widget>
+	<widget field="Auto Position" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="600" y="67"/>
+	</widget>
+</dashboard>
+<live-window>
+</live-window>
+	<hidden field="QuickTurn"/>
+	<hidden field="Autonomous "/>
+	<hidden field="Test"/>
+	<hidden field="Cube"/>
+	<hidden field="Auto Delay "/>
+	<hidden field="TargetPositionR"/>
+	<hidden field="Lift Amps L"/>
+	<hidden field="Auto Position "/>
+	<hidden field="Gyro"/>
+	<hidden field="TargetPositionL"/>
+	<hidden field="Lift Amps R"/>
+</xml>

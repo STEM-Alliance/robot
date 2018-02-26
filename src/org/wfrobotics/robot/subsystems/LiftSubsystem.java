@@ -3,7 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.lift.LiftPercentVoltage;
+import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
@@ -29,30 +29,28 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     }
 
     private final static double kTicksPerRev = 4096;
-    private final static double kRevsPerInch = 1 / ( 1.345 * Math.PI * 13.0 / 10.0);
+    private final static double kRevsPerInch = 1 / 4.555;  // Measured on practice robot
     private final boolean[][] invertSensorReading = new boolean[2][2];
+    private final boolean kDebug;
 
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX[] motors = new TalonSRX[2];
 
     private ControlMode desiredMode;
     private double desiredSetpoint;
-    private double heightStart;
     private String liftState;
     private double todoRemoveLast;
     private double backgroundPeriod;
 
-    public LiftSubsystem(RobotConfig Config)
+    public LiftSubsystem(RobotConfig config)
     {
-        final RobotConfig config = Config;
-
         final int kTimeout = 10;
         final int kSlot = 0;
         final int[] addresses =  {RobotMap.CAN_LIFT_L, RobotMap.CAN_LIFT_R};
         final boolean[] inverted = {config.LIFT_MOTOR_INVERTED_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
         final boolean[] sensorPhase = {config.LIFT_SENSOR_PHASE_LEFT, config.LIFT_SENSOR_PHASE_LEFT};
-        final int kStartingTicksRelativeToSensor = -1500;
 
+        kDebug = config.LIFT_DEBUG;
 
         for (int index = 0; index < motors.length; index++)
         {
@@ -65,20 +63,22 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);
             motors[index].setNeutralMode(NeutralMode.Brake);
-            motors[index].setSelectedSensorPosition(kStartingTicksRelativeToSensor, kSlot, kTimeout);
+            motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, kSlot, kTimeout);
             motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, kTimeout);
             motors[index].configVelocityMeasurementWindow(64, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 2, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 160, kTimeout);
             invertSensorReading[index][0] = config.LIFT_LIMIT_SWITCH_NORMALLY[index][0] == LimitSwitchNormal.NormallyClosed;
             invertSensorReading[index][1] = config.LIFT_LIMIT_SWITCH_NORMALLY[index][1] == LimitSwitchNormal.NormallyClosed;
-            //            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);  // For calibration
+            if (config.LIFT_DEBUG)
+            {
+                motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);  // For calibration
+            }
         }
 
         // Valid initial state
         desiredMode = ControlMode.PercentOutput;
         desiredSetpoint = 0;
-        heightStart = 0;
         liftState = "";
         todoRemoveLast = Timer.getFPGATimestamp();
         backgroundPeriod = 0;
@@ -88,7 +88,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new LiftPercentVoltage());
+        setDefaultCommand(new LiftAutoZeroThenPercentVoltage());
     }
 
     public synchronized void onBackgroundUpdate()
@@ -104,6 +104,12 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         else
         {
             liftState = desiredMode.toString();
+        }
+
+        if (Math.abs(getHeightAverage() - desiredSetpoint) < 2)
+        {
+            motors[0].setIntegralAccumulator(0, 0, 0);
+            motors[1].setIntegralAccumulator(0, 0, 0);
         }
 
         backgroundPeriod = todoRemoveNow - todoRemoveLast;
@@ -124,8 +130,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public synchronized void goToHeightInit(double heightInches)
     {
-        heightStart = getHeightAverage();
-        set(ControlMode.MotionMagic, inchesToTicks(heightInches));
+        set(ControlMode.MotionMagic, inchesToTicks(heightInches));  // Stalls motors
     }
 
     public synchronized void goToSpeedInit(double percent)
@@ -140,26 +145,15 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Lift Height", height);
         SmartDashboard.putString("Lift State", liftState);
         SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000);
-        debugCalibration();
+        if (kDebug)
+        {
+            debugCalibration();
+        }
 
         state.updateLiftHeight(height);
     }
 
     // ----------------------------------------- Private ------------------------------------------
-
-    protected boolean applyBrakeAtTarget()
-    {
-        if (desiredMode == ControlMode.MotionMagic)
-        {
-            if (Math.abs(getHeightAverage()) - Math.abs(desiredSetpoint) < Math.abs(heightStart - desiredSetpoint) * .01)
-            {
-                desiredMode = ControlMode.MotionMagic;
-                desiredSetpoint = 0;
-                return true;
-            }
-        }
-        return false;
-    }
 
     private void set(ControlMode mode, double val)
     {
@@ -227,6 +221,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putBoolean("LT", isSideAtLimit(LimitSwitch.TOP, 0));
         SmartDashboard.putBoolean("RB", isSideAtLimit(LimitSwitch.BOTTOM, 1));
         SmartDashboard.putBoolean("RT", isSideAtLimit(LimitSwitch.TOP, 1));
+
+        SmartDashboard.putNumber("Lift Amps L", motors[0].getOutputCurrent());
+        SmartDashboard.putNumber("Lift Amps R", motors[1].getOutputCurrent());
     }
 
     //    private boolean isAtTop(int index)
@@ -238,8 +235,4 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     //    {
     //        return isAtLimit(LimitSwitch.BOTTOM, index);
     //    }
-
-    // TODO Beast mode - The fastest lift possible probably dynamically changes it's control strategy to get to it's destination fastest
-    //                   This might mean a more aggressive PID (profile) on the way down
-    //                   Could go as far as using both closed and open loop control modes
 }

@@ -14,11 +14,11 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** Organizes autonomous modes supported by Robot **/
 public class Autonomous
 {
-    /** Defines everything needed for a singular autonomous mode the robot may run */
-    protected static class AutoMode
+    private static enum POSITION {RIGHT, CENTER, LEFT};
+
+    private static class AutoMode
     {
         public final String text;
         public final Supplier<Command> maker;
@@ -30,42 +30,107 @@ public class Autonomous
             maker = mode;
             gyroOffset = gyro;
         }
+
+        public static void initChooser()
+        {
+            AutoMode[] modes = AutoMode.getOptions(0, false);
+            autoCommands = new SendableChooser<AutoMode>();
+
+            autoCommands.addDefault(modes[0].text, modes[0]);
+            for(int index = 1; index < modes.length; index++)
+            {
+                autoCommands.addObject(modes[index].text, modes[index]);
+            }
+            SmartDashboard.putData("Autonomous", autoCommands);
+        }
+
+        /** FIRST Power Up - Top level autonomous modes **/
+        public static AutoMode[] getOptions(int delay, boolean mirror)
+        {
+            return new AutoMode[] {
+                new AutoMode("Auto Zero", () -> new PrintCommand("0"), 0.0),
+                new AutoMode("Auto One", () -> new PrintCommand("1"), 0.0),
+                new AutoMode("Auto None", () -> new DriveOff(), 0.0),
+                new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),
+            };
+        }
     }
 
-    private static enum POSITION_ROTARY {RIGHT, CENTER, LEFT};
+    private static class StartingPosition
+    {
+        POSITION location;
+
+        public StartingPosition(POSITION locationOnField)
+        {
+            locationOnField = location;
+        }
+
+        public static void initChooser()
+        {
+            autoPosition = new SendableChooser<StartingPosition>();
+            autoPosition.addDefault("Right", new StartingPosition(POSITION.RIGHT));
+            autoPosition.addObject("Center", new StartingPosition(POSITION.CENTER));
+            autoPosition.addObject("Left", new StartingPosition(POSITION.LEFT));
+            SmartDashboard.putData("Auto Position", autoPosition);
+        }
+
+        public boolean mirror()
+        {
+            return location == POSITION.LEFT;
+        }
+    }
+
+    private static class Delay
+    {
+        private final int time;
+
+        public Delay(int seconds)
+        {
+            time = seconds;
+        }
+
+        public static void initChooser()
+        {
+            int def = 0;
+            int[] additionalOptions = {1, 2, 3, 4, 5};
+            autoDelay = new SendableChooser<Delay>();
+
+            autoDelay.addDefault(String.valueOf(def), new Delay(def));
+            for (int index = 0; index < additionalOptions.length; index++)
+            {
+                autoDelay.addObject(String.valueOf(additionalOptions[index]), new Delay(additionalOptions[index]));
+            }
+            SmartDashboard.putData("Auto Delay", autoDelay);
+        }
+    }
+
     private static SendableChooser<AutoMode> autoCommands;
-    private static SendableChooser<POSITION_ROTARY> autoLocation;
+    private static SendableChooser<StartingPosition> autoPosition;
+    private static SendableChooser<Delay> autoDelay;
 
-    /** FIRST Power Up - Top level autonomous modes **/
-    public static AutoMode[] makeModes(boolean mirror)
+    public static void setupSelection()
     {
-        return new AutoMode[] {
-            new AutoMode("Auto Zero", () -> new PrintCommand("0"), 0.0),
-            new AutoMode("Auto One", () -> new PrintCommand("1"), 0.0),
-            new AutoMode("Auto None", () -> new DriveOff(), 0.0),
-            new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),
-        };
+        AutoMode.initChooser();
+        StartingPosition.initChooser();
+        Delay.initChooser();
     }
 
     /** Grabs the selected 'Auto Mode' from SmartDashboard, sets up gyro, returns the command to run in autonomous */
-    public static Command setupAndReturnSelectedMode()
-    {
-        //        SmartDashboard.getString("Position", "test");
-        //        getRotaryStartingPosition();
-        return setupSelectedMode();
-    }
-
-    /** Grabs the selected 'Auto Mode' from SmartDashboard, sets up gyro, returns the command to run in autonomous */
-    protected static Command setupSelectedMode()
+    public static Command getConfiguredCommand()
     {
         String selected = autoCommands.getSelected().text;
-        boolean mirror = autoLocation.getSelected() == POSITION_ROTARY.LEFT;
-        AutoMode[] modes = makeModes(mirror);
+        StartingPosition sp = autoPosition.getSelected();
+        int delay = autoDelay.getSelected().time;
+        AutoMode[] modes = AutoMode.getOptions(delay, sp.mirror());
         int choice = 0;
 
         for (int index = 0; index < modes.length; index++)
         {
-            if (modes[index].text.equals(selected)) { choice = index; break; }
+            if (modes[index].text.equals(selected))
+            {
+                choice = index;
+                break;
+            }
         }
 
         Gyro.getInstance().zeroYaw(modes[choice].gyroOffset);
@@ -74,50 +139,31 @@ public class Autonomous
         return modes[choice].maker.get();
     }
 
-    public static void setupSendableChooser()
-    {
-        autoCommands = new SendableChooser<AutoMode>();
-        AutoMode[] modes = makeModes(false);
-        for(int index = 0; index < modes.length; index++)
-        {
-            autoCommands.addObject(modes[index].text, modes[index]);
-        }
-        autoCommands.addDefault(modes[0].text, modes[0]);
-        SmartDashboard.putData("Auto", autoCommands);
-
-        autoLocation = new SendableChooser<POSITION_ROTARY>();
-        autoLocation.addObject("Right", POSITION_ROTARY.RIGHT);
-        autoLocation.addObject("Center", POSITION_ROTARY.CENTER);
-        autoLocation.addObject("Left", POSITION_ROTARY.LEFT);
-        autoLocation.addDefault("Right", POSITION_ROTARY.RIGHT);
-        SmartDashboard.putData("Auto Location", autoLocation);
-    }
-
     /** Get the starting position on field for when we switch to autonomous mode */
-    protected static POSITION_ROTARY getRotaryStartingPosition()
+    protected static POSITION getRotaryStartingPosition()
     {
-        HerdLogger log = new HerdLogger(POSITION_ROTARY.class);
+        HerdLogger log = new HerdLogger(POSITION.class);
         int dial = Robot.controls.getAutonomousSide();
-        POSITION_ROTARY position;
+        POSITION position;
 
         if (dial == 1)
         {
-            position = POSITION_ROTARY.RIGHT;
+            position = POSITION.RIGHT;
             log.info("Autonomous Starting Position", "RIGHT");
         }
         else if (dial == 7)
         {
-            position = POSITION_ROTARY.LEFT;
+            position = POSITION.LEFT;
             log.info("Autonomous Starting Position", "LEFT");
         }
         else if (dial == 0)
         {
-            position = POSITION_ROTARY.CENTER;
+            position = POSITION.CENTER;
             log.info("Autonomous Starting Position", "CENTER");
         }
         else
         {
-            position = POSITION_ROTARY.CENTER;
+            position = POSITION.CENTER;
             log.warning("Autonomous Starting Position", "(defaulting to) CENTER");
         }
         SmartDashboard.getString("Position", "right");
