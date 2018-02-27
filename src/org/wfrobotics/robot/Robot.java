@@ -35,7 +35,7 @@ public class Robot extends SampleRobot
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
-    public static DashboardView dashboardView;
+    public static DashboardView[] dashboardView = {new DashboardView(416, 240, 15), new DashboardView(416, 240, 15)};
 
     public static IO controls;
 
@@ -56,9 +56,6 @@ public class Robot extends SampleRobot
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
         Autonomous.setupSelection();
-
-        // uncomment if using USB camera to stream video from roboRio
-        dashboardView = new DashboardView(416, 240, 15);
 
         // TODO default config?
         //CameraServer.getInstance();
@@ -94,9 +91,9 @@ public class Robot extends SampleRobot
         intakeSubsystem.setVertical(true);
 
         autonomousCommand =  new AutoSwitch1();
+        //        autonomousCommand =  Autonomous.getConfiguredCommand();
+        //        autonomousCommand = new SwitchChoice(new PrintTestCommand("R"), new PrintTestCommand("L"));
 
-        //        autonomousCommand =  Autonomous.setupAndReturnSelectedMode();
-        //        autonomousCommand = new DriveDistance(12 * 22 + 0);
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())

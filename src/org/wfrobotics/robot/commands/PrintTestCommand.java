@@ -1,13 +1,13 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class PrintCommand extends Command
+public class PrintTestCommand extends Command
 {
     private final String s;
 
-    public PrintCommand(String s)
+    public PrintTestCommand(String s)
     {
         this.s  = s;
     }

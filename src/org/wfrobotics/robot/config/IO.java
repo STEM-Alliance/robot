@@ -9,10 +9,12 @@ import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.controller.Xbox.DPAD;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
+import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketJoyStick;
 import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.auto.DriveIntakeSensors;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.WristToggle;
@@ -47,7 +49,7 @@ public class IO
         this.panel = panel;
 
         // ------------------- Select Drive-style  ----------------
-        //        arcadeIO = new ArcadeRocketXbox(driverThrottle, driverTurn);
+        arcadeIO = new ArcadeRocketJoyStick(driverThrottle, driverTurn);
 
         // ------------------------- Drive ------------------------
         //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
