@@ -9,6 +9,7 @@ public abstract class RobotConfig
     public int INTAKE_SENSOR_R;
     public int INTAKE_SENSOR_L;
 
+    public double INTAKE_DISTANCE_TO_BUMPER;  // centimeters
     public double INTAKE_DISTANCE_TO_CUBE;  // centimeters
     public double INTAKE_TIMEOUT_JAWS;  // seconds
     public double INTAKE_TIMEOUT_WRIST;  // seconds

@@ -11,6 +11,7 @@ public class HerdVictor extends RobotConfig
         INTAKE_SENSOR_R = 3;
         INTAKE_SENSOR_L = 2;
 
+        INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
         INTAKE_DISTANCE_TO_CUBE = 7.0; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds

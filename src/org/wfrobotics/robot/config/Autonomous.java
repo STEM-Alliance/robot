@@ -8,7 +8,7 @@ import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.auto.PrintCommand;
+import org.wfrobotics.robot.commands.PrintTestCommand;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -48,8 +48,8 @@ public class Autonomous
         public static AutoMode[] getOptions(int delay, boolean mirror)
         {
             return new AutoMode[] {
-                new AutoMode("Auto Zero", () -> new PrintCommand("0"), 0.0),
-                new AutoMode("Auto One", () -> new PrintCommand("1"), 0.0),
+                new AutoMode("Auto Zero", () -> new PrintTestCommand("0"), 0.0),
+                new AutoMode("Auto One", () -> new PrintTestCommand("1"), 0.0),
                 new AutoMode("Auto None", () -> new DriveOff(), 0.0),
                 new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),
             };
@@ -58,11 +58,11 @@ public class Autonomous
 
     private static class StartingPosition
     {
-        POSITION location;
+        final POSITION location;
 
         public StartingPosition(POSITION locationOnField)
         {
-            locationOnField = location;
+            location = locationOnField;
         }
 
         public static void initChooser()

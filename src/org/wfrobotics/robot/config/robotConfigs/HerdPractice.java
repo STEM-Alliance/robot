@@ -11,6 +11,7 @@ public class HerdPractice extends RobotConfig
         INTAKE_SENSOR_R = 0;
         INTAKE_SENSOR_L = 1;
 
+        INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
         INTAKE_DISTANCE_TO_CUBE = 6.6; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
@@ -41,14 +42,14 @@ public class HerdPractice extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = 10000.0;
-        TANK_P = 1.25;
-        TANK_I = TANK_P * 0.000001;
-        TANK_D =  TANK_P * 2.5;
+        TANK_MAX_VELOCITY = (11200 + 11500) / 2;
+        TANK_P = 1 * 2 * 1.0;//1.25;//* 2 * 2 * 2 * 2 * 2;  // 1.45;
+        TANK_I = TANK_P * 0.01 * .2;  //0.005;
+        TANK_D =  TANK_P * 10.0 * .1;// * .0125;  // 2.25;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
-        TANK_CRUISE_VELOCITY = 7575;
-        TANK_ACCELERATION = new int[] {TANK_CRUISE_VELOCITY, TANK_CRUISE_VELOCITY};
-        TANK_IZONE = 0;
+        TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.9);
+        TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 0.825), (int) (TANK_CRUISE_VELOCITY * 0.825)};
+        TANK_IZONE = 35;
 
         TANK_LEFT_INVERT = true;
         TANK_RIGHT_INVERT = false;
