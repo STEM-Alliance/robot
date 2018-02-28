@@ -24,19 +24,14 @@ public class SmartOutake extends Command
 
     protected void execute()
     {
-        // Robot has a cube and the lift is above x inches
-        if (state.liftHeightInches >= 10)
+        if (state.intakeDistance < 6.5)
         {
-            // Getting passed the complience wheels
-            if (state.intakeDistance < 6)
-            {
-                intake.setMotor(0.2);
-            }
-            else  // When it is passed the wheels open up the Jaws
-            {
-                intake.setHorizontal(true);
-            }
+            intake.setMotor(0.35);
         }
+        else {
+            intake.setHorizontal(true);
+        }
+
     }
 
     protected boolean isFinished()

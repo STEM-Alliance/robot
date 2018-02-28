@@ -1,22 +1,60 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
+import org.wfrobotics.reuse.commands.DriveCommand;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
 
-public class DriveIntakeSensors extends DriveDistance
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public class DriveIntakeSensors extends DriveCommand
 {
+    private double settledSamples;
     private final double target;
+    protected final double tol;
+    protected double distance;
 
     public DriveIntakeSensors(double distanceFromTouchingObject, double tolerance)
     {
-        super(0.0);
+        requires(Robot.driveService.getSubsystem());
+        settledSamples = 0;
         target = distanceFromTouchingObject;
         tol = tolerance;
     }
 
     protected void initialize()
     {
-        distance = (Robot.config.INTAKE_DISTANCE_TO_BUMPER - state.intakeDistance) / 2.54 - target;
         super.initialize();
+        double sense = state.intakeDistance;
+        double inches = (sense - Robot.config.INTAKE_DISTANCE_TO_BUMPER) * 2.54;
+        distance = inches - target;
+        SmartDashboard.putNumber("Sense", sense);
+        SmartDashboard.putNumber("Distance", distance);
+        SmartDashboard.putNumber("inches", inches);
+        Robot.driveService.driveDistanceInit(distance);
+    }
+
+    protected void execute()
+    {
+        Robot.driveService.driveDistanceUpdate();
+    }
+
+    protected boolean isFinished()
+    {
+        final double remainingInches = Math.abs(distance) - Math.abs(state.robotDistanceDriven);
+
+        if (Math.abs(remainingInches) < Math.abs(distance * tol))  // Assumes distance driven is in the direction of the commanded distance
+        {
+            settledSamples++;
+        }
+        else
+        {
+            settledSamples = 0;
+        }
+        return settledSamples > 20  || Robot.controls.arcadeIO.getVector().getMag() > .15;  // Tight tolerances necessary in testing, commands cancel before settled otherwise - but talon not tuned so not sure
+    }
+
+    protected void end()
+    {
+        Robot.driveService.driveBasic(HerdVector.NEUTRAL);;
     }
 }

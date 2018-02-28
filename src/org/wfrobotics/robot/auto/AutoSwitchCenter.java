@@ -2,12 +2,14 @@ package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
+import org.wfrobotics.robot.commands.lift.AutoZero;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoSwitchCenter extends CommandGroup
 {
     double tol = 0.5;
+    double angleFirstTurn = 35.0;
 
     /**
      * @boolean true is 35 (Going to the Right)
@@ -15,12 +17,13 @@ public class AutoSwitchCenter extends CommandGroup
      */
     public AutoSwitchCenter(boolean direction)
     {
+        addParallel(new AutoZero());
         addSequential(new DriveDistance(12));
-        addSequential(new TurnToHeading((direction) ? 35 : -35 , tol));
+        addSequential(new TurnToHeading((direction) ? angleFirstTurn : -angleFirstTurn , tol));
         addSequential(new DriveDistance(95));
         addSequential(new TurnToHeading(0, tol));
+        //        addSequential(new DriveIntakeSensors(0.0, 1.0));
         addSequential(new DriveDistance(15));
-
         addSequential(new IntakeSet(0.8, 0.5, true));
 
         //        addSequential(new DriveDistance(-6));
@@ -36,14 +39,5 @@ public class AutoSwitchCenter extends CommandGroup
         //        addSequential(new TurnToHeading(0, tol));
         //        //start lifting the lift
         //        addSequential(new DriveDistance(12 * 5));
-
-
-
-
-    }
-
-    public AutoSwitchCenter(String name)
-    {
-        super(name);
     }
 }

@@ -2,13 +2,16 @@ package org.wfrobotics.robot.config;
 
 import java.util.function.Supplier;
 
+import org.wfrobotics.reuse.commands.SwitchChoice;
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.DriveOff;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
+import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.PrintTestCommand;
+import org.wfrobotics.robot.auto.AutoSide;
+import org.wfrobotics.robot.auto.AutoSwitchCenter;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous
 {
-    private static enum POSITION {RIGHT, CENTER, LEFT};
+    public static enum POSITION {RIGHT, CENTER, LEFT};
 
     private static class AutoMode
     {
@@ -33,7 +36,7 @@ public class Autonomous
 
         public static void initChooser()
         {
-            AutoMode[] modes = AutoMode.getOptions(0, false);
+            AutoMode[] modes = AutoMode.getOptions(0, POSITION.CENTER);
             autoCommands = new SendableChooser<AutoMode>();
 
             autoCommands.addDefault(modes[0].text, modes[0]);
@@ -45,11 +48,13 @@ public class Autonomous
         }
 
         /** FIRST Power Up - Top level autonomous modes **/
-        public static AutoMode[] getOptions(int delay, boolean mirror)
+        public static AutoMode[] getOptions(int delay, POSITION location)
         {
             return new AutoMode[] {
-                new AutoMode("Auto Zero", () -> new PrintTestCommand("0"), 0.0),
-                new AutoMode("Auto One", () -> new PrintTestCommand("1"), 0.0),
+                new AutoMode("Center Switch", () -> new SwitchChoice(Side.Right, new AutoSwitchCenter(true), new AutoSwitchCenter(false)), 0.0),
+                new AutoMode("Side", () -> new AutoSide(location), 0.0),
+                //                new AutoMode("Side Switch", () -> new AutoSwitchSide(location), 0.0),
+                //                new AutoMode("Side Scale", () -> new AutoScaleSide(location), 0.0),
                 new AutoMode("Auto None", () -> new DriveOff(), 0.0),
                 new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),
             };
@@ -74,9 +79,9 @@ public class Autonomous
             SmartDashboard.putData("Auto Position", autoPosition);
         }
 
-        public boolean mirror()
+        public POSITION get()
         {
-            return location == POSITION.LEFT;
+            return location;
         }
     }
 
@@ -121,7 +126,7 @@ public class Autonomous
         String selected = autoCommands.getSelected().text;
         StartingPosition sp = autoPosition.getSelected();
         int delay = autoDelay.getSelected().time;
-        AutoMode[] modes = AutoMode.getOptions(delay, sp.mirror());
+        AutoMode[] modes = AutoMode.getOptions(delay, sp.get());
         int choice = 0;
 
         for (int index = 0; index < modes.length; index++)

@@ -28,4 +28,9 @@ public class IntakeSet extends Command
     {
         return isTimedOut();
     }
+
+    protected void end()
+    {
+        Robot.intakeSubsystem.setMotor(0);
+    }
 }

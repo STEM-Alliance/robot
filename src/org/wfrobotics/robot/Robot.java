@@ -3,8 +3,6 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.background.BackgroundUpdater;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
-import org.wfrobotics.robot.auto.pos3.AutoSwitch1;
-import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
@@ -90,8 +88,8 @@ public class Robot extends SampleRobot
         backgroundUpdater.start();
         intakeSubsystem.setVertical(true);
 
-        autonomousCommand =  new AutoSwitch1();
-        //        autonomousCommand =  Autonomous.getConfiguredCommand();
+        //        autonomousCommand =  new AutoSwitch1();
+        autonomousCommand =  Autonomous.getConfiguredCommand();
         //        autonomousCommand = new SwitchChoice(new PrintTestCommand("R"), new PrintTestCommand("L"));
 
         if (autonomousCommand != null) autonomousCommand.start();
@@ -107,14 +105,14 @@ public class Robot extends SampleRobot
         backgroundUpdater.stop();
 
         //        Autonomous.setupSelection();
-        LiftGoHome.reset();
+        //        LiftGoHomes.reset();
 
         while (isDisabled())
         {
             // log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
             driveService.zeroGyro();
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
-            liftSubsystem.onBackgroundUpdate();  // Zero if possible
+            //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
 
             allPeriodic();
         }
