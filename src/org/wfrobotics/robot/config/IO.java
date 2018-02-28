@@ -74,6 +74,7 @@ public class IO
 
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new AutoZero()));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TestServo()));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DriveIntakeSensors(0.0, 1.0)));
     }
 
     // ------------------- Robot-specific --------------------

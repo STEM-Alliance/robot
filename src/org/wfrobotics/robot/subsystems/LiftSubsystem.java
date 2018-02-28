@@ -28,7 +28,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         TOP
     }
 
-    private final static double kTicksPerRev = 4096;
+    private final static double kTicksPerRev = 4096.0;
     private final static double kRevsPerInch = 1 / 4.555;  // Measured on practice robot
     private final boolean[][] invertSensorReading = new boolean[2][2];
     private final boolean kDebug;
@@ -58,7 +58,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].config_IntegralZone(0, 20, kTimeout);
             motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], kTimeout);
             motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][1], kTimeout);
-            motors[index].overrideLimitSwitchesEnable(true);
+            motors[index].overrideLimitSwitchesEnable(false);
             motors[index].set(ControlMode.PercentOutput, 0);
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);

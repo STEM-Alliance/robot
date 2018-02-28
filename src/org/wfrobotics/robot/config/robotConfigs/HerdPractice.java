@@ -42,10 +42,10 @@ public class HerdPractice extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = (11200 + 11500) / 2;
-        TANK_P = 1 * 2 * 1.0;//1.25;//* 2 * 2 * 2 * 2 * 2;  // 1.45;
-        TANK_I = TANK_P * 0.01 * .2;  //0.005;
-        TANK_D =  TANK_P * 10.0 * .1;// * .0125;  // 2.25;
+        TANK_MAX_VELOCITY = (12500 + 12750) / 2;
+        TANK_P = 1.0 * 2;//1.25;//* 2 * 2 * 2 * 2 * 2;  // 1.45;
+        TANK_I = TANK_P * 0.001;  //0.005;
+        TANK_D =  TANK_P * 10.0;// * .0125;  // 2.25;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
         TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.9);
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 0.825), (int) (TANK_CRUISE_VELOCITY * 0.825)};
