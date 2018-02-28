@@ -55,9 +55,6 @@ public class Robot extends SampleRobot
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
         Autonomous.setupSelection();
 
-        // TODO default config?
-        //CameraServer.getInstance();
-
         backgroundUpdater.register(intakeSubsystem);
         backgroundUpdater.register(liftSubsystem);
 
@@ -88,10 +85,7 @@ public class Robot extends SampleRobot
         backgroundUpdater.start();
         intakeSubsystem.setVertical(true);
 
-        //        autonomousCommand =  new AutoSwitch1();
         autonomousCommand =  Autonomous.getConfiguredCommand();
-        //        autonomousCommand = new SwitchChoice(new PrintTestCommand("R"), new PrintTestCommand("L"));
-
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
