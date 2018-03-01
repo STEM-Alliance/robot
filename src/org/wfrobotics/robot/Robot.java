@@ -1,17 +1,20 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.background.BackgroundUpdater;
+import org.wfrobotics.reuse.hardware.led.RevLEDs;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
+import org.wfrobotics.robot.config.robotConfigs.HerdVictor;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 import org.wfrobotics.robot.subsystems.DriveService;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
+import org.wfrobotics.robot.subsystems.LED;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -33,6 +36,7 @@ public class Robot extends SampleRobot
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
+    public static LED led;
     public static DashboardView[] dashboardView = {new DashboardView(416, 240, 15), new DashboardView(416, 240, 15)};
 
     public static IO controls;
@@ -40,28 +44,23 @@ public class Robot extends SampleRobot
     Command autonomousCommand;
     double lastPeriodicTime = 0;
 
-    //    Spark led = new Spark(1);
 
     public void robotInit()
     {
-        config = new HerdPractice();
-        //        config = new HerdVictor();
+        config = new HerdVictor();
 
         driveService = DriveService.getInstance();
         liftSubsystem = new LiftSubsystem(config);
         intakeSubsystem = new IntakeSubsystem(config);
         winch = new WinchSubsystem(config);
-
+        led = new LED();
+        led.setLed(RevLEDs.getValue(RevLEDs.PatternName.Fire_Large));
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
         Autonomous.setupSelection();
-
-        // TODO default config?
-        //CameraServer.getInstance();
 
         backgroundUpdater.register(intakeSubsystem);
         backgroundUpdater.register(liftSubsystem);
 
-        //        led.set(.69);
     }
 
     public void operatorControl()
@@ -113,7 +112,7 @@ public class Robot extends SampleRobot
             driveService.zeroGyro();
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
             //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
-
+            led.setLed((m_ds.getAlliance() == Alliance.Red) ? RevLEDs.getValue(RevLEDs.PatternName.Strobe_Red) :  RevLEDs.getValue(RevLEDs.PatternName.Strobe_Blue));
             allPeriodic();
         }
     }

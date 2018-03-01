@@ -42,7 +42,7 @@ public class RobotMap
     public static final int PNEUMATIC_INTAKE_HORIZONTAL_REVERSE = 3;
 
     // LED ----------------------------------------------------------------------------------------
-    public static final int CAN_LIGHT = 0;
+    public static final int REV_UNDERGLOW  = 0;
 
     // Lift ---------------------------------------------------------------------------------------
     public static final int CAN_LIFT_R = 10;
