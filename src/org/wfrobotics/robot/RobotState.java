@@ -1,5 +1,6 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.hardware.led.RevLEDs;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.VisionMode;
@@ -130,6 +131,7 @@ public class RobotState
             if (Timer.getFPGATimestamp() - timeSinceRumbleOn < 1)
             {
                 IO.getInstance().setRumble(true);
+                Robot.led.setLed(RevLEDs.getValue(RevLEDs.PatternName.Confetti));
             }
             else
             {
