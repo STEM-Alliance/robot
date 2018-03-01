@@ -29,8 +29,8 @@ public class HerdVictor extends RobotConfig
         LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
         LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.0);
 
-        LIFT_MOTOR_INVERTED_LEFT = false; // left
-        LIFT_MOTOR_INVERTED_RIGHT = true; // right
+        LIFT_MOTOR_INVERTED_LEFT = true; // left
+        LIFT_MOTOR_INVERTED_RIGHT = false; // right
 
         LIFT_SENSOR_PHASE_LEFT = true; // left
         LIFT_SENSOR_PHASE_RIGHT = true; // right

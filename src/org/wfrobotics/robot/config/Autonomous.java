@@ -51,11 +51,11 @@ public class Autonomous
         public static AutoMode[] getOptions(int delay, POSITION location)
         {
             return new AutoMode[] {
+                new AutoMode("Auto None", () -> new DriveOff(), 0.0),
                 new AutoMode("Center Switch", () -> new SwitchChoice(Side.Right, new AutoSwitchCenter(true), new AutoSwitchCenter(false)), 0.0),
                 new AutoMode("Side", () -> new AutoSide(location), 0.0),
                 //                new AutoMode("Side Switch", () -> new AutoSwitchSide(location), 0.0),
                 //                new AutoMode("Side Scale", () -> new AutoScaleSide(location), 0.0),
-                new AutoMode("Auto None", () -> new DriveOff(), 0.0),
                 new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),
             };
         }

@@ -3,7 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenPercentVoltage;
+import org.wfrobotics.robot.commands.lift.LiftPercentVoltage;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
@@ -58,7 +58,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].config_IntegralZone(0, 20, kTimeout);
             motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], kTimeout);
             motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][1], kTimeout);
-            motors[index].overrideLimitSwitchesEnable(false);
+            motors[index].overrideLimitSwitchesEnable(true);
             motors[index].set(ControlMode.PercentOutput, 0);
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);
@@ -88,7 +88,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new LiftAutoZeroThenPercentVoltage());
+        //        setDefaultCommand(new LiftAutoZeroThenPercentVoltage());
+        setDefaultCommand(new LiftPercentVoltage());
+
     }
 
     public synchronized void onBackgroundUpdate()
@@ -145,6 +147,10 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Lift Height", height);
         SmartDashboard.putString("Lift State", liftState);
         SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000);
+        SmartDashboard.putBoolean("LB", isSideAtLimit(LimitSwitch.BOTTOM, 0));
+        SmartDashboard.putBoolean("LT", isSideAtLimit(LimitSwitch.TOP, 0));
+        SmartDashboard.putBoolean("RB", isSideAtLimit(LimitSwitch.BOTTOM, 1));
+        SmartDashboard.putBoolean("RT", isSideAtLimit(LimitSwitch.TOP, 1));
         if (kDebug)
         {
             debugCalibration();
@@ -217,10 +223,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
         SmartDashboard.putBoolean("At Top", allSidesAtTop());
         SmartDashboard.putBoolean("At Bottom", allSidesAtBottom());
-        SmartDashboard.putBoolean("LB", isSideAtLimit(LimitSwitch.BOTTOM, 0));
-        SmartDashboard.putBoolean("LT", isSideAtLimit(LimitSwitch.TOP, 0));
-        SmartDashboard.putBoolean("RB", isSideAtLimit(LimitSwitch.BOTTOM, 1));
-        SmartDashboard.putBoolean("RT", isSideAtLimit(LimitSwitch.TOP, 1));
 
         SmartDashboard.putNumber("Lift Amps L", motors[0].getOutputCurrent());
         SmartDashboard.putNumber("Lift Amps R", motors[1].getOutputCurrent());
