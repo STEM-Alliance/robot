@@ -3,7 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.lift.LiftPercentVoltage;
+import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
@@ -88,8 +88,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
-        //        setDefaultCommand(new LiftAutoZeroThenPercentVoltage());
-        setDefaultCommand(new LiftPercentVoltage());
+        setDefaultCommand(new LiftAutoZeroThenPercentVoltage());
+        //        setDefaultCommand(new LiftPercentVoltage());
 
     }
 
