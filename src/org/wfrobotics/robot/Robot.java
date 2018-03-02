@@ -112,7 +112,6 @@ public class Robot extends SampleRobot
             driveService.zeroGyro();
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
             //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
-            led.set(RevLEDs.getValue(PatternName.Yellow));
 
             allPeriodic();
         }

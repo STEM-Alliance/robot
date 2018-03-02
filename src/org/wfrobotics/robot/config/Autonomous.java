@@ -19,7 +19,7 @@ public class Autonomous
 {
     public static enum POSITION {RIGHT, CENTER, LEFT};
 
-    private static class AutoMode
+    public static class AutoMode
     {
         public final String text;
         public final Supplier<Command> maker;
