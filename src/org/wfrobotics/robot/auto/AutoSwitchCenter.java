@@ -2,7 +2,7 @@ package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
-import org.wfrobotics.robot.commands.lift.AutoZero;
+import org.wfrobotics.robot.config.Autonomous.POSITION;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -15,12 +15,11 @@ public class AutoSwitchCenter extends CommandGroup
      * @boolean true is 35 (Going to the Right)
      *          false is -35 (going to the Left)
      */
-    public AutoSwitchCenter(boolean direction)
+    public AutoSwitchCenter(POSITION direction)
     {
         // Score Cube
-        addParallel(new AutoZero());
         addSequential(new DriveDistance(12.0));
-        addSequential(new TurnToHeading((direction) ? angleFirstTurn : -angleFirstTurn, tol));
+        addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? angleFirstTurn : -angleFirstTurn, tol));
         addSequential(new DriveDistance(100.0));
         addSequential(new TurnToHeading(0.0, tol));
         //        addSequential(new DriveIntakeSensors(0.0, 1.0));
@@ -29,10 +28,10 @@ public class AutoSwitchCenter extends CommandGroup
 
         // Get Around Switch
         addSequential(new DriveDistance(-12.0));
-        addSequential(new TurnToHeading((direction) ? 90.0 : -90.0, tol));
+        addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? 90.0 : -90.0, tol));
         addSequential(new DriveDistance(12.0 * 4.0));
         addSequential(new TurnToHeading(0.0, tol));
-        addSequential(new DriveDistance(12.0 * 6.0));
+        //        addSequential(new DriveDistance(12.0 * 6.0));
 
         //        addSequential(new DriveDistance(-6));
         //        addSequential(new TurnToHeading(-90, tol));

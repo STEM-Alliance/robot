@@ -1,6 +1,8 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.background.BackgroundUpdater;
+import org.wfrobotics.reuse.hardware.led.RevLEDs;
+import org.wfrobotics.reuse.hardware.led.RevLEDs.PatternName;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
@@ -12,8 +14,9 @@ import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
 
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -33,14 +36,14 @@ public class Robot extends SampleRobot
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
-    public static DashboardView[] dashboardView = {new DashboardView(416, 240, 15), new DashboardView(416, 240, 15)};
+    public static DashboardView dashboardView = new DashboardView(416, 240, 20);//, new DashboardView(416, 240, 20)};
 
     public static IO controls;
 
     Command autonomousCommand;
     double lastPeriodicTime = 0;
 
-    //    Spark led = new Spark(1);
+    public static Spark led = new Spark(9);
 
     public void robotInit()
     {
@@ -57,8 +60,6 @@ public class Robot extends SampleRobot
 
         backgroundUpdater.register(intakeSubsystem);
         backgroundUpdater.register(liftSubsystem);
-
-        //        led.set(.69);
     }
 
     public void operatorControl()
@@ -67,6 +68,7 @@ public class Robot extends SampleRobot
 
         backgroundUpdater.start();
         intakeSubsystem.setVertical(true);
+        led.set(RevLEDs.getValue(PatternName.Yellow));
 
         while (isOperatorControl() && isEnabled())
         {
@@ -84,6 +86,7 @@ public class Robot extends SampleRobot
 
         backgroundUpdater.start();
         intakeSubsystem.setVertical(true);
+        led.set(RevLEDs.getValue((m_ds.getAlliance() == Alliance.Red) ? PatternName.Red : PatternName.Blue));
 
         autonomousCommand =  Autonomous.getConfiguredCommand();
         if (autonomousCommand != null) autonomousCommand.start();
@@ -109,6 +112,7 @@ public class Robot extends SampleRobot
             driveService.zeroGyro();
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
             //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
+            led.set(RevLEDs.getValue(PatternName.Yellow));
 
             allPeriodic();
         }
@@ -134,7 +138,5 @@ public class Robot extends SampleRobot
         scheduler.run();
 
         SmartDashboard.putNumber("Periodic Time ", Timer.getFPGATimestamp() - schedulerStart);
-        SmartDashboard.putNumber("Battery V", RobotController.getInputVoltage());
-        SmartDashboard.putNumber("Battery A", RobotController.getInputCurrent());
     }
 }

@@ -2,12 +2,10 @@ package org.wfrobotics.robot.config;
 
 import java.util.function.Supplier;
 
-import org.wfrobotics.reuse.commands.SwitchChoice;
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.DriveOff;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.reuse.utilities.HerdLogger;
-import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoSide;
@@ -52,7 +50,7 @@ public class Autonomous
         {
             return new AutoMode[] {
                 new AutoMode("Auto None", () -> new DriveOff(), 0.0),
-                new AutoMode("Center Switch", () -> new SwitchChoice(Side.Right, new AutoSwitchCenter(true), new AutoSwitchCenter(false)), 0.0),
+                new AutoMode("Center Switch", () -> new AutoSwitchCenter(location), 0.0),
                 new AutoMode("Side", () -> new AutoSide(location), 0.0),
                 //                new AutoMode("Side Switch", () -> new AutoSwitchSide(location), 0.0),
                 //                new AutoMode("Side Scale", () -> new AutoScaleSide(location), 0.0),

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftPercentVoltage extends Command
 {
-    private final double deadbandPercent = .2;
+    private final double deadbandPercent = 0.2;
 
     public LiftPercentVoltage()
     {
@@ -25,7 +25,7 @@ public class LiftPercentVoltage extends Command
 
         if (Math.abs(setpoint) < deadbandPercent)
         {
-            Robot.liftSubsystem.goToSpeedInit(0);
+            Robot.liftSubsystem.goToSpeedInit(0.0);
         }
         else
         {

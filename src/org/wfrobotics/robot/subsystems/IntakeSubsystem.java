@@ -123,8 +123,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         final boolean different = extendedOpen != lastHorizontalState;
         boolean stateChanged = false;
 
-        SmartDashboard.putBoolean("Jaws Requested", extendedOpen);
-
         if (delayedEnough && different)
         {
             horizontalIntake.set(extendedOpen ? Value.kForward : Value.kReverse);
@@ -140,8 +138,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         final boolean delayedEnough = Timer.getFPGATimestamp() - lastVerticalTime > kTimeoutVertical;
         final boolean different = contractedUpward != lastVerticalState;
         boolean stateChanged = false;
-
-        SmartDashboard.putBoolean("Wrist Requested", contractedUpward);
 
         if (delayedEnough && different)
         {

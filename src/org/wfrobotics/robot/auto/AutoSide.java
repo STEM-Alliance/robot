@@ -1,8 +1,8 @@
 package org.wfrobotics.robot.auto;
 
+import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.reuse.utilities.MatchState2018.Side;
-import org.wfrobotics.robot.commands.lift.AutoZero;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 
@@ -14,10 +14,18 @@ public class AutoSide extends CommandGroup
 
     public AutoSide(POSITION location)
     {
-        addParallel(new AutoZero());
-        if (scaleOnThisSide(location))
+        //        addParallel(new AutoZero());
+        if (state.Scale == Side.Unknown)
+        {
+            addSequential(new DriveDistance(12.0 * 3.0));
+        }
+        else if (scaleOnThisSide(location))
         {
             addSequential(new AutoScaleSide(location));
+        }
+        else if (state.SwitchNear == Side.Unknown)
+        {
+            addSequential(new DriveDistance(12.0 * 3.0));
         }
         else if (switchOnThisSide(location))
         {

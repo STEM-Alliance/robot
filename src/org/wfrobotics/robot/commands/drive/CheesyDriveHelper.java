@@ -9,8 +9,8 @@ package org.wfrobotics.robot.commands.drive;
  */
 public class CheesyDriveHelper {
 
-    private static final double kThrottleDeadband = 0.04;  // 4818 - Modified from 0.02;
-    private static final double kWheelDeadband = 0.04;  // 4818 - Modified from 0.02;
+    private static final double kThrottleDeadband = 0.045;  // 4818 - Modified from 0.02;
+    private static final double kWheelDeadband = 0.045;  // 4818 - Modified from 0.02;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
     private static final double kHighWheelNonLinearity = 0.65;
