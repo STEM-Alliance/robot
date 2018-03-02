@@ -33,7 +33,7 @@ public class SmartIntake extends CommandGroup
 
     protected void execute()
     {
-        if (state.liftHeightInches < .5 && !intake.getVertical())
+        if (state.liftHeightInches < 0.5 && !intake.getVertical())
         {
             double distanceToCube = state.intakeDistance;
 
@@ -43,7 +43,7 @@ public class SmartIntake extends CommandGroup
         }
         else  // Cancel intaking if transition to lifting
         {
-            intake.setMotor(0);
+            intake.setMotor(0.0);
         }
     }
 
@@ -58,7 +58,7 @@ public class SmartIntake extends CommandGroup
 
         if (distanceToCube < kCubeIn && distanceToCube > kCubeInDeadband)
         {
-            speed = -Utilities.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 1);
+            speed = -Utilities.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 1.0);
         }
         else if (distanceToCube > kCubeIn && distanceToCube < 50)  // TODO Need to move sensor, otherwise we stall motors
         {
