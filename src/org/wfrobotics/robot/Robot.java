@@ -103,6 +103,8 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
+            matchState.update();
+
             // log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
             driveService.zeroGyro();
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
