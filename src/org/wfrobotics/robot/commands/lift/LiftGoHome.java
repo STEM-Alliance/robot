@@ -48,4 +48,9 @@ public class LiftGoHome extends Command
         }
         return result || isTimedOut();
     }
+
+    protected void end()
+    {
+        Robot.liftSubsystem.goToSpeedInit(0);
+    }
 }

@@ -1,5 +1,7 @@
 package org.wfrobotics.robot.commands.lift;
 
+import org.wfrobotics.robot.Robot;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,5 +35,10 @@ public class AutoZero extends CommandGroup
     protected void initialize()
     {
         SmartDashboard.putString("Lift", getClass().getSimpleName());
+    }
+
+    protected void end()
+    {
+        Robot.liftSubsystem.goToSpeedInit(0);
     }
 }

@@ -36,7 +36,7 @@ public class HerdVictor extends RobotConfig
         LIFT_SENSOR_PHASE_RIGHT = true; // right
 
         LIFT_LIMIT_SWITCH_NORMALLY = new LimitSwitchNormal[][] {
-            { LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen},  // Left Fwd
+            { LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyOpen},  // Left Fwd
             { LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen}  // Right Fwd
         };
 
