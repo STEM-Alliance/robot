@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.CircularBuffer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Timer;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 {
+    private final double bufferSize = 3;
     private final double kDistanceMaxIn;
     private final double kTimeoutHorizontal;
     private final double kTimeoutVertical;
@@ -32,16 +34,12 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     private final DoubleSolenoid horizontalIntake;
     private final DoubleSolenoid verticalIntake;
     private final SharpDistance distanceSensorR;
-    //    private final SharpDistance distanceSensorL;
+    private CircularBuffer buffer;
+
     private boolean lastHorizontalState;
     private boolean lastVerticalState;
     private double lastHorizontalTime;
     private double lastVerticalTime;
-    private double lastDistance;
-    private double distanceCurrent;
-
-    private double debugLastDistanceR;
-    //    private double debugLastDistanceL;
 
     public IntakeSubsystem(RobotConfig config)
     {
@@ -63,7 +61,11 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         verticalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_VERTICAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_VERTICAL_REVERSE);
 
         distanceSensorR = new SharpDistance(config.INTAKE_SENSOR_R);
-        //        distanceSensorL = new SharpDistance(config.INTAKE_SENSOR_L);
+        buffer = new CircularBuffer((int) bufferSize);
+        for (int index = 0; index < bufferSize; index++)
+        {
+            buffer.addFirst(9999);  // Filled with zeros by default, which is bad because it's a valid value
+        }
 
         kDistanceMaxIn = config.INTAKE_DISTANCE_TO_CUBE;
         kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
@@ -77,10 +79,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         lastVerticalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
         lastVerticalState = false;
         setVertical(lastVerticalState);
-
-        lastDistance = distanceSensorR.getDistance();
-        debugLastDistanceR = 0;
-        //        debugLastDistanceL = 0;
     }
 
     // ----------------------------------------- Interfaces ----------------------------------------
@@ -92,12 +90,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void onBackgroundUpdate()
     {
-        debugLastDistanceR = distanceSensorR.getDistance() - kDistanceMaxIn;
-        //        debugLastDistanceL = distanceSensorL.getDistance() - kDistanceMaxIn;
-        final double rawCentimeters = debugLastDistanceR;
-        final double centimeters = (rawCentimeters + lastDistance) / 2;  // TODO Get a better average? Circular buffer? Raw is jumpy when accelerating drivetrain
-        lastDistance = rawCentimeters;
-        distanceCurrent = centimeters;
+        buffer.addFirst(distanceSensorR.getDistance() - kDistanceMaxIn);
     }
 
     // ----------------------------------------- Public -------------------------------------------
@@ -151,9 +144,13 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void reportState()
     {
-        SmartDashboard.putNumber("Cube R", debugLastDistanceR);
-        //        SmartDashboard.putNumber("Cube L", debugLastDistanceL);
-        state.updateIntakeSensor(distanceCurrent);
+        double sum = 0;
+        for (int index = 0; index < bufferSize; index++)
+        {
+            sum += buffer.get(index);
+        }
+        SmartDashboard.putNumber("Cube R", sum / bufferSize);
+        state.updateIntakeSensor(sum / bufferSize);
     }
 
     // ----------------------------------------- Private ------------------------------------------

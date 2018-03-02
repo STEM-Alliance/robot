@@ -20,7 +20,9 @@ public class AutoSwitchCenter extends CommandGroup
         // Score Cube
         addSequential(new DriveDistance(12.0));
         addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? angleFirstTurn : -angleFirstTurn, tol));
+        addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? angleFirstTurn : -angleFirstTurn, tol));
         addSequential(new DriveDistance(100.0));
+        addSequential(new TurnToHeading(0.0, tol));
         addSequential(new TurnToHeading(0.0, tol));
         //        addSequential(new DriveIntakeSensors(0.0, 1.0));
         addSequential(new DriveDistance(15.0));
@@ -29,8 +31,11 @@ public class AutoSwitchCenter extends CommandGroup
         // Get Around Switch
         addSequential(new DriveDistance(-12.0));
         addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? 90.0 : -90.0, tol));
+        addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? 90.0 : -90.0, tol));
         addSequential(new DriveDistance(12.0 * 4.0));
         addSequential(new TurnToHeading(0.0, tol));
+        addSequential(new TurnToHeading(0.0, tol));
+
         //        addSequential(new DriveDistance(12.0 * 6.0));
 
         //        addSequential(new DriveDistance(-6));

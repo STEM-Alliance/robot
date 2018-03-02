@@ -16,10 +16,13 @@ public class AutoOppisitScalse extends CommandGroup
     {
         addSequential(new DriveDistance(12.0 * 21.0));
         addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0, 1));
+        addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0, 1));
         addSequential(new DriveDistance(12.0 * 18.0));
 
         addParallel(new LiftToHeight(LiftHeight.Scale.get()));
         addSequential(new TurnToHeading((location == POSITION.LEFT) ? -20.0: 20.0, 1));
+        addSequential(new TurnToHeading((location == POSITION.LEFT) ? -20.0: 20.0, 1));
+
 
         addSequential(new DriveDistance(12.0 * 5.0));
         //        addSequential(new DriveDistance(12 * 3));
