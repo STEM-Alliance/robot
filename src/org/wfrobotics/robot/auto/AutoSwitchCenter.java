@@ -25,7 +25,7 @@ public class AutoSwitchCenter extends CommandGroup
         addSequential(new TurnToHeading(0.0, tol));
         //        addSequential(new DriveIntakeSensors(0.0, 1.0));
         addSequential(new DriveDistance(15.0));
-        addSequential(new IntakeSet(0.6, 0.5, true));
+        addSequential(new IntakeSet(0.4, 0.5, true));
 
         // Get Around Switch
         addSequential(new DriveDistance(-12.0));

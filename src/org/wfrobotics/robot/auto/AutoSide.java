@@ -60,13 +60,11 @@ public class AutoSide extends CommandGroup
 
     private boolean scaleOnThisSide(POSITION location)
     {
-        state.update();
         return (location == POSITION.RIGHT && state.Scale == Side.Right) || (location == POSITION.LEFT && state.Scale == Side.Left);
     }
 
     private boolean switchOnThisSide(POSITION location)
     {
-        state.update();
         return (location == POSITION.RIGHT && state.SwitchNear == Side.Right) || (location == POSITION.LEFT && state.SwitchNear == Side.Left);
     }
 
