@@ -17,7 +17,7 @@ public class AutoScaleSide extends CommandGroup
 {
     public AutoScaleSide(POSITION location)
     {
-        addSequential(new DriveDistance(12.0 * 23.75 + 0.0));
+        addSequential(new DriveDistance(12.0 * 24.00 + 0.0));
 
         if (location == POSITION.RIGHT)
         {
@@ -33,12 +33,14 @@ public class AutoScaleSide extends CommandGroup
         public ScoreScale(boolean flipAngle)
         {
             addParallel(new LiftToHeight(LiftHeight.Scale.get()));
-            addSequential(new TurnToHeading((flipAngle) ? -90.0 : 90.0, 5.0));
-            addSequential(new TurnToHeading((flipAngle) ? -90.0 : 90.0, 5.0));
+            addSequential(new TurnToHeading((flipAngle) ? -90.0 : 90.0, 3.0));
+            addSequential(new TurnToHeading((flipAngle) ? -90.0 : 90.0, 3.0));
             addSequential(new AutoDrive(new HerdVector(0.5, (flipAngle) ? -90.0 : 90.0), 0.5));
             addSequential(new WristToggle());
-            addSequential(new IntakeSet( 0.4, 0.5, true));
-            addSequential(new DriveDistance(12.0 * -3.0));
+            addSequential(new IntakeSet( 0.5, 1.0, true));
+            addSequential(new IntakeSet( 0.0, 0.0, true));
+            addSequential(new DriveDistance(12.0 * -1.0));
+            addParallel(new LiftToHeight(LiftHeight.Intake.get()));
         }
     }
 
