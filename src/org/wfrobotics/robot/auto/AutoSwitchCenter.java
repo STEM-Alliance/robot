@@ -1,26 +1,23 @@
 package org.wfrobotics.robot.auto;
 
+import org.wfrobotics.reuse.commands.SwitchChoice;
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
-import org.wfrobotics.robot.config.Autonomous.POSITION;
+import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoSwitchCenter extends CommandGroup
 {
-    double tol = 0.75;
+    double tol = 5.0;
     double angleFirstTurn = 40.0;
 
-    /**
-     * @boolean true is 35 (Going to the Right)
-     *          false is -35 (going to the Left)
-     */
-    public AutoSwitchCenter(POSITION direction)
+    public AutoSwitchCenter()
     {
         // Score Cube
         addSequential(new DriveDistance(12.0));
-        addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? angleFirstTurn : -angleFirstTurn, tol));
-        addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? angleFirstTurn : -angleFirstTurn, tol));
+        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(angleFirstTurn, tol), new TurnToHeading(-angleFirstTurn, tol)));
+        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(angleFirstTurn, tol), new TurnToHeading(-angleFirstTurn, tol)));
         addSequential(new DriveDistance(100.0));
         addSequential(new TurnToHeading(0.0, tol));
         addSequential(new TurnToHeading(0.0, tol));
@@ -30,26 +27,10 @@ public class AutoSwitchCenter extends CommandGroup
 
         // Get Around Switch
         addSequential(new DriveDistance(-12.0));
-        addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? 90.0 : -90.0, tol));
-        addSequential(new TurnToHeading((direction == POSITION.RIGHT) ? 90.0 : -90.0, tol));
+        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(90.0, tol), new TurnToHeading(-90.0, tol)));
+        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(90.0, tol), new TurnToHeading(-90.0, tol)));
         addSequential(new DriveDistance(12.0 * 4.0));
         addSequential(new TurnToHeading(0.0, tol));
         addSequential(new TurnToHeading(0.0, tol));
-
-        //        addSequential(new DriveDistance(12.0 * 6.0));
-
-        //        addSequential(new DriveDistance(-6));
-        //        addSequential(new TurnToHeading(-90, tol));
-        //        addSequential(new DriveDistance(45));
-        //        addSequential(new TurnToHeading(0, tol));
-        //        addSequential(new DriveDistance(100));
-        //        addSequential(new TurnToHeading(90, tol));
-        //        addSequential(new DriveDistance(12));
-        //        // pickup scale cube
-        //        addSequential(new TurnToHeading(60, tol));
-        //        addSequential(new DriveDistance(12 * 15));
-        //        addSequential(new TurnToHeading(0, tol));
-        //        //start lifting the lift
-        //        addSequential(new DriveDistance(12 * 5));
     }
 }

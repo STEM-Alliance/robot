@@ -1,8 +1,10 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.ScaleChoice;
+import org.wfrobotics.reuse.commands.drivebasic.AutoDrive;
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 import org.wfrobotics.robot.commands.intake.WristToggle;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
@@ -31,9 +33,9 @@ public class AutoScaleSide extends CommandGroup
         public ScoreScale(boolean flipAngle)
         {
             addParallel(new LiftToHeight(LiftHeight.Scale.get()));
-            addSequential(new TurnToHeading((flipAngle) ? -90.0 : 90.0, 0.2));
-            addSequential(new TurnToHeading((flipAngle) ? -90.0 : 90.0, 0.2));
-            addSequential(new DriveDistance(12.0 * 3.0));
+            addSequential(new TurnToHeading((flipAngle) ? -90.0 : 90.0, 5.0));
+            addSequential(new TurnToHeading((flipAngle) ? -90.0 : 90.0, 5.0));
+            addSequential(new AutoDrive(new HerdVector(0.5, (flipAngle) ? -90.0 : 90.0), 0.5));
             addSequential(new WristToggle());
             addSequential(new IntakeSet( 0.4, 0.5, true));
             addSequential(new DriveDistance(12.0 * -3.0));

@@ -12,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class WinchSubsystem extends Subsystem
 {
@@ -48,7 +47,6 @@ public class WinchSubsystem extends Subsystem
         if (station.getMatchTime() < 30)  // Only has effect in practice mode
         {
             motor.set(ControlMode.PercentOutput, (downNotSafe && percentWinch < 0) ?  0 : percentWinch);
-            SmartDashboard.putNumber("Winch (A)", motor.getOutputCurrent());
         }
     }
 }
