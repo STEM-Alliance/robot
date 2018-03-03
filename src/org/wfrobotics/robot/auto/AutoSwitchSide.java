@@ -3,7 +3,6 @@ package org.wfrobotics.robot.auto;
 import org.wfrobotics.reuse.commands.SwitchChoice;
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
-import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -15,11 +14,11 @@ public class AutoSwitchSide extends CommandGroup
         addSequential(new DriveDistance(12 * 11 + 3));
         if (location == POSITION.RIGHT)
         {
-            addSequential(new SwitchChoice(Side.Right, new ScoreSwitch(false)));
+            addSequential(new SwitchChoice(new ScoreSwitch(false)));
         }
         else
         {
-            addSequential(new SwitchChoice(Side.Left, new ScoreSwitch(true)));
+            addSequential(new SwitchChoice(new ScoreSwitch(true)));
         }
     }
 

@@ -70,5 +70,19 @@ public abstract class RobotConfig
     public boolean WINCH_DOWN_IS_SAFE = false;
     public boolean WINCH_INVERT;
     public double WINCH_SPEED;
+
+    public double ROBOT_LENGTH = 33;
+    public double ROBOT_WIDTH = 28;
+    public double ROBOT_HEIGHT = 55;
+    public double BUMPER_SIZE = 2.5 + .75;
+
+    public double RobotLengthWithBumpers()
+    {
+        return ROBOT_LENGTH + BUMPER_SIZE * 2;
+    }
+    public double RobotWidthWithBumpers()
+    {
+        return ROBOT_WIDTH + BUMPER_SIZE * 2;
+    }
 }
 

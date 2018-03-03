@@ -110,6 +110,7 @@ public class Autonomous
     private static SendableChooser<AutoMode> autoCommands;
     private static SendableChooser<StartingPosition> autoPosition;
     private static SendableChooser<Delay> autoDelay;
+    public static POSITION autoStartingPosition;
 
     public static void setupSelection()
     {
@@ -123,6 +124,7 @@ public class Autonomous
     {
         String selected = autoCommands.getSelected().text;
         StartingPosition sp = autoPosition.getSelected();
+        autoStartingPosition = sp.get();
         int delay = autoDelay.getSelected().time;
         AutoMode[] modes = AutoMode.getOptions(delay, sp.get());
         int choice = 0;
