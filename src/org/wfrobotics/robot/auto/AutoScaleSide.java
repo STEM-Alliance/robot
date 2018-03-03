@@ -5,7 +5,6 @@ import org.wfrobotics.reuse.commands.drivebasic.AutoDrive;
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
 import org.wfrobotics.reuse.utilities.HerdVector;
-import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 import org.wfrobotics.robot.commands.intake.WristToggle;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
@@ -21,11 +20,11 @@ public class AutoScaleSide extends CommandGroup
 
         if (location == POSITION.RIGHT)
         {
-            addSequential(new ScaleChoice(Side.Right, new ScoreScale(true)));
+            addSequential(new ScaleChoice(new ScoreScale(true)));
         }
         else
         {
-            addSequential(new ScaleChoice(Side.Left, new ScoreScale(false)));
+            addSequential(new ScaleChoice(new ScoreScale(false)));
         }
     }
     private class ScoreScale extends CommandGroup

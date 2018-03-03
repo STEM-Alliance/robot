@@ -3,7 +3,6 @@ package org.wfrobotics.robot.auto;
 import org.wfrobotics.reuse.commands.SwitchChoice;
 import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
 import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
-import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -16,8 +15,8 @@ public class AutoSwitchCenter extends CommandGroup
     {
         // Score Cube
         addSequential(new DriveDistance(12.0));
-        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(angleFirstTurn, tol), new TurnToHeading(-angleFirstTurn, tol)));
-        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(angleFirstTurn, tol), new TurnToHeading(-angleFirstTurn, tol)));
+        addSequential(new SwitchChoice(new TurnToHeading(angleFirstTurn, tol), new TurnToHeading(-angleFirstTurn, tol)));
+        addSequential(new SwitchChoice(new TurnToHeading(angleFirstTurn, tol), new TurnToHeading(-angleFirstTurn, tol)));
         addSequential(new DriveDistance(100.0));
         addSequential(new TurnToHeading(0.0, tol));
         addSequential(new TurnToHeading(0.0, tol));
@@ -27,8 +26,8 @@ public class AutoSwitchCenter extends CommandGroup
 
         // Get Around Switch
         addSequential(new DriveDistance(-12.0));
-        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(90.0, tol), new TurnToHeading(-90.0, tol)));
-        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(90.0, tol), new TurnToHeading(-90.0, tol)));
+        addSequential(new SwitchChoice(new TurnToHeading(90.0, tol), new TurnToHeading(-90.0, tol)));
+        addSequential(new SwitchChoice(new TurnToHeading(90.0, tol), new TurnToHeading(-90.0, tol)));
         addSequential(new DriveDistance(12.0 * 4.0));
         addSequential(new TurnToHeading(0.0, tol));
         addSequential(new TurnToHeading(0.0, tol));
