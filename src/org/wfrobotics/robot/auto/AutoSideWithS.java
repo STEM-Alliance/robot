@@ -9,11 +9,11 @@ import org.wfrobotics.robot.config.Autonomous.POSITION;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class AutoSide extends CommandGroup
+public class AutoSideWithS extends CommandGroup
 {
     private final MatchState2018 state = MatchState2018.getInstance();
 
-    public AutoSide(POSITION location)
+    public AutoSideWithS(POSITION location)
     {
         addParallel(new AutoZero());
         if (state.Scale == Side.Unknown)
@@ -35,8 +35,8 @@ public class AutoSide extends CommandGroup
         }
         else
         {
-            //            addSequential(new AutoOppisitScalse(location));
-            addSequential(new DriveDistance(12 * 22 + 0));
+            addSequential(new AutoOppisitScalse(location));
+            //            addSequential(new DriveDistance(12 * 22 + 0));
         }
         addSequential(new LiftGoHome(-0.2, 15.0));
 

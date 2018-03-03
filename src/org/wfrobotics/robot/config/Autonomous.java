@@ -9,6 +9,7 @@ import org.wfrobotics.reuse.utilities.HerdLogger;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoSide;
+import org.wfrobotics.robot.auto.AutoSideWithS;
 import org.wfrobotics.robot.auto.AutoSwitchCenter;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -52,6 +53,7 @@ public class Autonomous
                 new AutoMode("Auto None", () -> new DriveOff(), 0.0),
                 new AutoMode("Center Switch", () -> new AutoSwitchCenter(), 0.0),
                 new AutoMode("Side", () -> new AutoSide(location), 0.0),
+                new AutoMode("Side With S", () -> new AutoSideWithS(location), 0.0),
                 //                new AutoMode("Side Switch", () -> new AutoSwitchSide(location), 0.0),
                 //                new AutoMode("Side Scale", () -> new AutoScaleSide(location), 0.0),
                 new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),
