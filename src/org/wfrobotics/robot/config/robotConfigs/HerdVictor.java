@@ -15,8 +15,8 @@ public class HerdVictor extends RobotConfig
         INTAKE_DISTANCE_TO_CUBE = 7.0; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
-        INTAKE_INVERT_RIGHT = false;
-        INTAKE_INVERT_LEFT = false;
+        INTAKE_INVERT_RIGHT = true;
+        INTAKE_INVERT_LEFT = true;
 
         //                      Lift
         // _________________________________________________________________________________

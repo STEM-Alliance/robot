@@ -27,7 +27,7 @@ public class AutoOppisitScalse extends CommandGroup
         addSequential(new DriveDistance(12.0 * 5.0));
         //        addSequential(new DriveDistance(12 * 3));
         addSequential(new WristToggle());
-        addSequential(new IntakeSet(0.5, 0.8, true));
+        addSequential(new IntakeSet(0.5, 0.5, true));
         //        addSequential(new SmartOutake());
         //        addSequential(new DriveDistance(12.0 * -3.0));
     }
