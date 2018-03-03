@@ -23,7 +23,7 @@ public class RobotMap
     public static final double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW = 60.0 / 24.0;  // Adjacent to encoder
     public static final double TANK_GEAR_RATIO_MOTOR_TO_ENCODER = 36.0 / 15.0;  // Wheel to adjacent
     public static final double TANK_WHEEL_CIRCUMFERENCE = (6.25 * .995) * Math.PI;  // 6.25 adjusted for thread wear
-    public static final double DISTANCE_SEPERATION_WHEEL_SIDES = 24;
+    public static final double DISTANCE_SEPERATION_WHEEL_SIDES = 25;
 
 
     // Field --------------------------------------------------------------------------------------

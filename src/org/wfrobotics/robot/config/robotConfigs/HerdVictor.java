@@ -20,11 +20,11 @@ public class HerdVictor extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = 1025;  // DRL 2-19-18
+        LIFT_MAX_POSSIBLE_UP = (1350 + 1650) / 2.0;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 1.0;
-        LIFT_I = LIFT_P * .01 * .1;
-        LIFT_D = LIFT_P * 10.0 * .40;
+        LIFT_P = .3;
+        LIFT_I = LIFT_P * .01 * 0;
+        LIFT_D = LIFT_P * 10.0 * 0;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
         LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
         LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.0);
@@ -42,14 +42,14 @@ public class HerdVictor extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = (11200 + 11500) / 2;
-        TANK_P = 1 * 2 * 1.0;//1.25;//* 2 * 2 * 2 * 2 * 2;  // 1.45;
-        TANK_I = TANK_P * 0.01 * .2;  //0.005;
-        TANK_D =  TANK_P * 10.0 * .1;// * .0125;  // 2.25;
+        TANK_MAX_VELOCITY = (12500 + 12750) / 2;
+        TANK_P = 1.9;
+        TANK_I = 0.005;
+        TANK_D =  17.5;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
         TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.9);
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 0.825), (int) (TANK_CRUISE_VELOCITY * 0.825)};
-        TANK_IZONE = 35;
+        TANK_IZONE = 20;
 
         TANK_LEFT_INVERT = true;
         TANK_RIGHT_INVERT = false;
@@ -62,7 +62,7 @@ public class HerdVictor extends RobotConfig
         //                      Winch
         // _________________________________________________________________________________
         WINCH = 22;
-        WINCH_DOWN_IS_SAFE = false;
+        WINCH_DOWN_IS_SAFE = true;
         WINCH_INVERT = true;
         WINCH_SPEED = 1;
     }

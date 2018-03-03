@@ -27,8 +27,8 @@ public class AutoSwitchSide extends CommandGroup
     {
         public ScoreSwitch(boolean flipAngle)
         {
-            addSequential(new TurnToHeading((flipAngle) ? 90 : -90, 0.2));
-            addSequential(new TurnToHeading((flipAngle) ? 90 : -90, 0.2));
+            addSequential(new TurnToHeading((flipAngle) ? 90 : -90, 5.0));
+            addSequential(new TurnToHeading((flipAngle) ? 90 : -90, 5.0));
             addSequential(new DriveDistance(18));
             addSequential(new IntakeSet(0.8, 1.0, true));
             // TODO move back into normal path

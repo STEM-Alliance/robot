@@ -46,7 +46,7 @@ public class LiftGoHome extends Command
         {
             hasZeroed = true;
         }
-        return result || isTimedOut();
+        return hasZeroed || isTimedOut();
     }
 
     protected void end()

@@ -50,7 +50,7 @@ public class Autonomous
         {
             return new AutoMode[] {
                 new AutoMode("Auto None", () -> new DriveOff(), 0.0),
-                new AutoMode("Center Switch", () -> new AutoSwitchCenter(location), 0.0),
+                new AutoMode("Center Switch", () -> new AutoSwitchCenter(), 0.0),
                 new AutoMode("Side", () -> new AutoSide(location), 0.0),
                 //                new AutoMode("Side Switch", () -> new AutoSwitchSide(location), 0.0),
                 //                new AutoMode("Side Scale", () -> new AutoScaleSide(location), 0.0),

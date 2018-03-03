@@ -11,6 +11,8 @@ public class LiftAutoZeroThenPercentVoltage extends ConditionalCommand
 
     protected boolean condition()
     {
-        return LiftGoHome.everZeroed();
+        boolean val = LiftGoHome.everZeroed();
+        System.out.println(val);
+        return val;
     }
 }

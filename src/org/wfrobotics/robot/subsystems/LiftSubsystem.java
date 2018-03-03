@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,6 +43,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private double todoRemoveLast;
     private double backgroundPeriod;
 
+    private boolean AtTopLimitL;
+
     public LiftSubsystem(RobotConfig config)
     {
         final int kTimeout = 10;
@@ -64,15 +67,15 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].setSensorPhase(sensorPhase[index]);
             motors[index].setNeutralMode(NeutralMode.Brake);
             motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, kSlot, kTimeout);
-            motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_100Ms, kTimeout);
-            motors[index].configVelocityMeasurementWindow(64, kTimeout);
-            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 2, kTimeout);
-            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 160, kTimeout);
+            motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, kTimeout);
+            motors[index].configVelocityMeasurementWindow(32, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, kTimeout);
+            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeout);
             invertSensorReading[index][0] = config.LIFT_LIMIT_SWITCH_NORMALLY[index][0] == LimitSwitchNormal.NormallyClosed;
             invertSensorReading[index][1] = config.LIFT_LIMIT_SWITCH_NORMALLY[index][1] == LimitSwitchNormal.NormallyClosed;
             if (config.LIFT_DEBUG)
             {
-                motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 2, kTimeout);  // For calibration
+                motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 5, kTimeout);  // For calibration
             }
         }
 
@@ -82,6 +85,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         liftState = "";
         todoRemoveLast = Timer.getFPGATimestamp();
         backgroundPeriod = 0;
+        AtTopLimitL = false;
     }
 
     // ----------------------------------------- Interfaces ----------------------------------------
@@ -107,6 +111,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         {
             liftState = desiredMode.toString();
         }
+
+        AtTopLimitL = isSideAtLimit(LimitSwitch.TOP, 0);
 
         if (Math.abs(getHeightAverage() - desiredSetpoint) < 2)
         {
@@ -137,12 +143,20 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public synchronized void goToSpeedInit(double percent)
     {
-        set(ControlMode.PercentOutput, percent);
+        if (!AtTopLimitL)
+        {
+            set(ControlMode.PercentOutput, percent);
+        }
     }
 
     public void reportState()
     {
         double height = ticksToInches(getHeightAverage());
+
+        if (AtTopLimitL)
+        {
+            set(ControlMode.PercentOutput, 0);
+        }
 
         SmartDashboard.putNumber("Lift Height", height);
         SmartDashboard.putString("Lift State", liftState);
@@ -221,11 +235,16 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Delta E", error0 - error1);
         SmartDashboard.putNumber("Delta P", position0 - position1);
 
-        SmartDashboard.putBoolean("At Top", allSidesAtTop());
-        SmartDashboard.putBoolean("At Bottom", allSidesAtBottom());
+        double p = Preferences.getInstance().getDouble("lift_p", 0.0);
+        double i = Preferences.getInstance().getDouble("lift_i", 0.0);
+        double d = Preferences.getInstance().getDouble("lift_d", 0.0);
 
-        SmartDashboard.putNumber("Lift Amps L", motors[0].getOutputCurrent());
-        SmartDashboard.putNumber("Lift Amps R", motors[1].getOutputCurrent());
+        motors[0].config_kP(0, p, 10);
+        motors[1].config_kP(0, p, 10);
+        motors[0].config_kI(0, i, 10);
+        motors[1].config_kI(0, i, 10);
+        motors[0].config_kD(0, d, 10);
+        motors[1].config_kD(0, d, 10);
     }
 
     //    private boolean isAtTop(int index)
