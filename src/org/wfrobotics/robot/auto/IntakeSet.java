@@ -21,7 +21,7 @@ public class IntakeSet extends Command
 
     protected void initialize()
     {
-        Robot.intakeSubsystem.setMotor(speed);
+        Robot.intakeSubsystem.setIntake(speed);
     }
 
     protected boolean isFinished()
@@ -31,6 +31,6 @@ public class IntakeSet extends Command
 
     protected void end()
     {
-        Robot.intakeSubsystem.setMotor(0);
+        Robot.intakeSubsystem.setIntake(0);
     }
 }

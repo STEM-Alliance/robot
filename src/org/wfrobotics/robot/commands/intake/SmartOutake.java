@@ -26,7 +26,7 @@ public class SmartOutake extends Command
     {
         if (state.intakeDistance < 6.5)
         {
-            intake.setMotor(0.35);
+            intake.setIntake(0.35);
         }
         else {
             intake.setHorizontal(true);

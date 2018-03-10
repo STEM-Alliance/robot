@@ -7,7 +7,7 @@ import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.robotConfigs.HerdVictor;
+import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 import org.wfrobotics.robot.subsystems.DriveService;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
@@ -47,8 +47,8 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        //        config = new HerdPractice();
-        config = new HerdVictor();
+        config = new HerdPractice();
+        //config = new HerdVictor();
 
         driveService = DriveService.getInstance();
         liftSubsystem = new LiftSubsystem(config);

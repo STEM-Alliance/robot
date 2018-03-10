@@ -43,7 +43,7 @@ public class SmartIntake extends CommandGroup
         }
         else  // Cancel intaking if transition to lifting
         {
-            intake.setMotor(0.0);
+            intake.setIntake(0.0);
         }
     }
 
@@ -68,7 +68,7 @@ public class SmartIntake extends CommandGroup
         // TODO After it's in for a little bit, it's SUPER effective to pulse the cube out a sec then back in to orient it
         //      This would also help us not stall if we don't drive wheels after that pulse. Or we move the distance sensor back enough to always be in a valid range.
 
-        intake.setMotor(speed);
+        intake.setIntake(speed);
     }
 
     private void autoJaws(double distanceToCube)

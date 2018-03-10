@@ -9,6 +9,7 @@ import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -31,6 +32,9 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     private final TalonSRX masterRight;
     private final TalonSRX followerLeft;
+
+    private final TalonSRX intakeLift;
+
     private final DoubleSolenoid horizontalIntake;
     private final DoubleSolenoid verticalIntake;
     private final SharpDistance distanceSensorR;
@@ -56,6 +60,14 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
         followerLeft.setNeutralMode(NeutralMode.Brake);
         followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
+
+        intakeLift = TalonSRXFactory.makeTalon(RobotMap.CAN_INTAKE_LIFT);
+        intakeLift.set(ControlMode.PercentOutput, 0);
+        intakeLift.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
+        intakeLift.configForwardSoftLimitThreshold(4600, 10);
+        intakeLift.configReverseSoftLimitThreshold(0, 10);
+        intakeLift.configForwardSoftLimitEnable(true, 10);
+        intakeLift.configReverseSoftLimitEnable(true, 10);
 
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
         verticalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_VERTICAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_VERTICAL_REVERSE);
@@ -105,10 +117,30 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         return lastVerticalState;
     }
 
-    public void setMotor(double percentageOutward)
+    public void setIntake(double percentageOutward)
     {
         masterRight.set(ControlMode.PercentOutput, percentageOutward);
     }
+
+    public void setIntakeLift(double percentageUp)
+    {
+        //        if(!((percentageUp > 0) && intakeLiftAtTop()) || (!((percentageUp < 0) && intakeLiftAtBottom())))
+        {
+            intakeLift.set(ControlMode.PercentOutput, percentageUp);
+        }
+    }
+    public void ZeroIntakeEncoder()
+    {
+        intakeLift.setSelectedSensorPosition(0, 0, 10);
+    }
+    //    public boolean intakeLiftAtTop()
+    //    {
+    //        return(intakeLift.getSelectedSensorPosition(0) == RobotMap.INTAKE_LIFT_FORWARD_LIMIT);
+    //    }
+    //    public boolean intakeLiftAtBottom()
+    //    {
+    //        return(intakeLift.getSelectedSensorPosition(0) == RobotMap.INTAKE_LIFT_REVERSE_LIMIT);
+    //    }
 
     public boolean setHorizontal(boolean extendedOpen)
     {
@@ -150,6 +182,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
             sum += buffer.get(index);
         }
         SmartDashboard.putNumber("Cube R", sum / bufferSize);
+        SmartDashboard.putNumber("Intake Lift Encoder", intakeLift.getSelectedSensorPosition(0));
         state.updateIntakeSensor(sum / bufferSize);
     }
 

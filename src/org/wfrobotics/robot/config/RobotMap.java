@@ -33,6 +33,11 @@ public class RobotMap
     // Intake -------------------------------------------------------------------------------------
     public static final int CAN_PNEUMATIC_CONTROL_MODULE = 7;
 
+    // Intake Lifting -----------------------------------------------------------------------------
+    public static final int CAN_INTAKE_LIFT = 21;
+    public static final int INTAKE_LIFT_FORWARD_LIMIT = 4600;
+    public static final int INTAKE_LIFT_REVERSE_LIMIT= 0;
+
     // Intake Wheels ------------------------------------------------------------------------------
     public static final int CAN_INTAKE_LEFT = 19;
     public static final int CAN_INTAKE_RIGHT = 20;

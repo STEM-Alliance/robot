@@ -9,18 +9,19 @@ public class IntakePush extends Command
 {
     protected final IntakeSubsystem intake = Robot.intakeSubsystem;
 
-    public IntakePush()
+    public IntakePush(int timeout)
     {
         requires(intake);
+        setTimeout(timeout);
     }
 
     protected void execute()
     {
-        intake.setMotor(1); // TODO Pass a boolean, pick either in or out speed off that, make instantcommand, rename to IntakeSet?
+        intake.setIntake(1); // TODO Pass a boolean, pick either in or out speed off that, make instantcommand, rename to IntakeSet?
     }
 
     protected boolean isFinished()
     {
-        return false;
+        return isTimedOut();
     }
 }
