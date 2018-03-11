@@ -27,7 +27,7 @@ public class IntakeManual extends Command
 
         if (speed > 0)  // Speed > 0 is exhausting cube
         {
-            speed *= .45;  // Slow cube out direction
+            speed *= 0.7;  // Slow cube out direction
         }
 
         intake.setIntake(speed);

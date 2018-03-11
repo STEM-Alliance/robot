@@ -11,11 +11,21 @@ public class HerdPractice extends RobotConfig
         INTAKE_SENSOR_R = 0;
         INTAKE_SENSOR_L = 1;
 
+        INTAKE_MAX_POSSIBLE_UP = 1310;  //(975.0 + 1310.0) / 2.0;
+        INTAKE_POSSIBLE_VELOCITY_PERCENTAGE = 0.975;
+        INTAKE_P = 0.1;
+        INTAKE_I = INTAKE_P * .01 * .008;
+        INTAKE_D = INTAKE_P * 10.0 * .50;
+        INTAKE_F = 1023.0 / INTAKE_MAX_POSSIBLE_UP;
+        INTAKE_VELOCITY = (int) (INTAKE_MAX_POSSIBLE_UP * INTAKE_POSSIBLE_VELOCITY_PERCENTAGE);
+        INTAKE_ACCELERATION = INTAKE_VELOCITY;
+        INTAKE_TICKS_TO_TOP = 4000;
+
         INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
-        INTAKE_DISTANCE_TO_CUBE = 6.6; // centimeters
+        INTAKE_DISTANCE_TO_CUBE = 8.2; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
-        INTAKE_INVERT_RIGHT = false;
+        INTAKE_INVERT_RIGHT = true;
         INTAKE_INVERT_LEFT = true;
 
         //                      Lift
@@ -51,8 +61,8 @@ public class HerdPractice extends RobotConfig
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 0.825), (int) (TANK_CRUISE_VELOCITY * 0.825)};
         TANK_IZONE = 35;
 
-        TANK_LEFT_INVERT = true;
-        TANK_RIGHT_INVERT = false;
+        TANK_LEFT_INVERT = false;
+        TANK_RIGHT_INVERT = true;
 
         TANK_LEFT_SENSOR_PHASE = false;
         TANK_RIGHT_SENSOR_PHASE = false;

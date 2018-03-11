@@ -15,7 +15,7 @@ public class HerdBlackTank extends RobotConfig
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
         INTAKE_INVERT_RIGHT = false;
-        INTAKE_INVERT_LEFT = false;
+        INTAKE_INVERT_LEFT = true;
 
         //                      Lift
         // _________________________________________________________________________________

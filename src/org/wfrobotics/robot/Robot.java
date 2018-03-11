@@ -13,6 +13,7 @@ import org.wfrobotics.robot.subsystems.DriveService;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -36,6 +37,7 @@ public class Robot extends SampleRobot
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
+    public static Wrist wrist;
     public static DashboardView dashboardView = new DashboardView(416, 240, 20);//, new DashboardView(416, 240, 20)};
 
     public static IO controls;
@@ -54,6 +56,7 @@ public class Robot extends SampleRobot
         liftSubsystem = new LiftSubsystem(config);
         intakeSubsystem = new IntakeSubsystem(config);
         winch = new WinchSubsystem(config);
+        wrist = new Wrist(config);
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
         Autonomous.setupSelection();
@@ -67,7 +70,6 @@ public class Robot extends SampleRobot
         if (autonomousCommand != null) autonomousCommand.cancel();
 
         backgroundUpdater.start();
-        intakeSubsystem.setVertical(true);
         led.set(RevLEDs.getValue(PatternName.Yellow));
 
         while (isOperatorControl() && isEnabled())
@@ -85,7 +87,6 @@ public class Robot extends SampleRobot
         }
 
         backgroundUpdater.start();
-        intakeSubsystem.setVertical(true);
         led.set(RevLEDs.getValue((m_ds.getAlliance() == Alliance.Red) ? PatternName.Red : PatternName.Blue));
 
         autonomousCommand =  Autonomous.getConfiguredCommand();

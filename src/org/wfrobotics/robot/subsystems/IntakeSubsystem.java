@@ -9,7 +9,6 @@ import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -26,24 +25,16 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     private final double bufferSize = 3;
     private final double kDistanceMaxIn;
     private final double kTimeoutHorizontal;
-    private final double kTimeoutVertical;
-
     private final RobotState state = RobotState.getInstance();
 
     private final TalonSRX masterRight;
     private final TalonSRX followerLeft;
-
-    private final TalonSRX intakeLift;
-
     private final DoubleSolenoid horizontalIntake;
-    private final DoubleSolenoid verticalIntake;
     private final SharpDistance distanceSensorR;
     private CircularBuffer buffer;
 
     private boolean lastHorizontalState;
-    private boolean lastVerticalState;
     private double lastHorizontalTime;
-    private double lastVerticalTime;
 
     public IntakeSubsystem(RobotConfig config)
     {
@@ -61,16 +52,15 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         followerLeft.setNeutralMode(NeutralMode.Brake);
         followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
 
-        intakeLift = TalonSRXFactory.makeTalon(RobotMap.CAN_INTAKE_LIFT);
-        intakeLift.set(ControlMode.PercentOutput, 0);
-        intakeLift.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
-        intakeLift.configForwardSoftLimitThreshold(4600, 10);
-        intakeLift.configReverseSoftLimitThreshold(0, 10);
-        intakeLift.configForwardSoftLimitEnable(true, 10);
-        intakeLift.configReverseSoftLimitEnable(true, 10);
+        //        intakeLift = TalonSRXFactory.makeConstAccelControlTalon(RobotMap.CAN_INTAKE_LIFT, config.INTAKE_P, config.INTAKE_I, config.INTAKE_D, config.INTAKE_F, 0, config.INTAKE_MAX_POSSIBLE_UP, config.INTAKE_ACCELERATION);
+        //        intakeLift.set(ControlMode.PercentOutput, 0);
+        //        intakeLift.setNeutralMode(NeutralMode.Brake);
+        //        intakeLift.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
+        //        intakeLift.configForwardSoftLimitThreshold(config.INTAKE_TICKS_TO_TOP, 10);
+        //        intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
+        //        intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, 1, 0, 0, 10);
 
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
-        verticalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_VERTICAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_VERTICAL_REVERSE);
 
         distanceSensorR = new SharpDistance(config.INTAKE_SENSOR_R);
         buffer = new CircularBuffer((int) bufferSize);
@@ -81,16 +71,11 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
         kDistanceMaxIn = config.INTAKE_DISTANCE_TO_CUBE;
         kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
-        kTimeoutVertical = config.INTAKE_TIMEOUT_WRIST;
 
         // Force defined states
         lastHorizontalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
         lastHorizontalState = true;
         setHorizontal(!lastHorizontalState);
-
-        lastVerticalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
-        lastVerticalState = false;
-        setVertical(lastVerticalState);
     }
 
     // ----------------------------------------- Interfaces ----------------------------------------
@@ -112,34 +97,38 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         return lastHorizontalState;
     }
 
-    public boolean getVertical()
-    {
-        return lastVerticalState;
-    }
+    //    public boolean intakeLiftAtBottom()
+    //    {
+    //        return intakeLift.getSensorCollection().isRevLimitSwitchClosed();
+    //    }
 
     public void setIntake(double percentageOutward)
     {
         masterRight.set(ControlMode.PercentOutput, percentageOutward);
     }
 
-    public void setIntakeLift(double percentageUp)
+    public void setIntakeHold()
     {
-        //        if(!((percentageUp > 0) && intakeLiftAtTop()) || (!((percentageUp < 0) && intakeLiftAtBottom())))
-        {
-            intakeLift.set(ControlMode.PercentOutput, percentageUp);
-        }
+        masterRight.set(ControlMode.Current, .25);
     }
-    public void ZeroIntakeEncoder()
-    {
-        intakeLift.setSelectedSensorPosition(0, 0, 10);
-    }
-    //    public boolean intakeLiftAtTop()
+
+    //    public void setIntakeLiftSpeed(double percentageUp)
     //    {
-    //        return(intakeLift.getSelectedSensorPosition(0) == RobotMap.INTAKE_LIFT_FORWARD_LIMIT);
+    //        intakeLift.set(ControlMode.PercentOutput, percentageUp);
     //    }
-    //    public boolean intakeLiftAtBottom()
+    //
+    //    /**
+    //     * sets the intake position using motion magic
+    //     * @param percentUp The amount to go up, 0 to 1 for down to up, respectively
+    //     */
+    //    public void setIntakeLiftPosition(double percentUp)
     //    {
-    //        return(intakeLift.getSelectedSensorPosition(0) == RobotMap.INTAKE_LIFT_REVERSE_LIMIT);
+    //        intakeLift.set(ControlMode.MotionMagic, percentUp * Robot.config.INTAKE_TICKS_TO_TOP);
+    //    }
+    //
+    //    public void ZeroIntakeEncoder()
+    //    {
+    //        intakeLift.setSelectedSensorPosition(0, 0, 10);
     //    }
 
     public boolean setHorizontal(boolean extendedOpen)
@@ -158,22 +147,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         return stateChanged;
     }
 
-    public boolean setVertical(boolean contractedUpward)
-    {
-        final boolean delayedEnough = Timer.getFPGATimestamp() - lastVerticalTime > kTimeoutVertical;
-        final boolean different = contractedUpward != lastVerticalState;
-        boolean stateChanged = false;
-
-        if (delayedEnough && different)
-        {
-            verticalIntake.set(contractedUpward ? Value.kReverse : Value.kForward);
-            lastVerticalTime = Timer.getFPGATimestamp();
-            lastVerticalState = contractedUpward;
-            stateChanged = true;
-        }
-        return stateChanged;
-    }
-
     public void reportState()
     {
         double sum = 0;
@@ -182,7 +155,8 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
             sum += buffer.get(index);
         }
         SmartDashboard.putNumber("Cube R", sum / bufferSize);
-        SmartDashboard.putNumber("Intake Lift Encoder", intakeLift.getSelectedSensorPosition(0));
+        //        SmartDashboard.putNumber("Intake Lift Encoder", intakeLift.getSelectedSensorPosition(0));
+        //        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
         state.updateIntakeSensor(sum / bufferSize);
     }
 
