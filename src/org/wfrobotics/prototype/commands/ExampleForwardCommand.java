@@ -3,33 +3,35 @@ package org.wfrobotics.prototype.commands;
 import org.wfrobotics.prototype.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** TODO: comment what this Command does */
-// TODO rename me (right click -> refactor -> rename)
 public class ExampleForwardCommand extends Command
 {
-    // TODO create any objects this Command needs to remember for later
-
-    public ExampleForwardCommand()  // TODO pass any parameters needed to setup the command
+    public ExampleForwardCommand()
     {
         requires(Robot.prototypeSubsystem);
-
-        // TODO save off any objects needed to remember for later
     }
 
     protected void initialize()
     {
-        // TODO do anything this Command needs to happen ONCE
+        SmartDashboard.putString("MP Command", "Init");
+        Robot.prototypeSubsystem.start();
     }
 
     protected void execute()
     {
-        // TODO do anything this Command needs to happen REPEATEDLY until it's finished
+        SmartDashboard.putString("MP Command", "Execute");
+        Robot.prototypeSubsystem.update();
     }
 
     protected boolean isFinished()
     {
-        // TODO return 'true' whenever this Command has COMPLETED it's purpose
-        return false;
+        return Robot.prototypeSubsystem.isDone();
+    }
+
+    protected void end()
+    {
+        SmartDashboard.putString("MP Command", "End");
+        Robot.prototypeSubsystem.manual(0);
     }
 }

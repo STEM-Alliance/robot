@@ -1,5 +1,6 @@
 package org.wfrobotics.prototype;
 
+import org.wfrobotics.prototype.commands.ExampleForwardCommand;
 import org.wfrobotics.prototype.config.IO;
 import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
 
@@ -33,6 +34,7 @@ public class Robot extends SampleRobot
 
     public void autonomous()
     {
+        autonomousCommand = new ExampleForwardCommand();
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())

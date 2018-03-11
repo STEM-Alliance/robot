@@ -1,6 +1,8 @@
 package org.wfrobotics.prototype.commands;
 
 import org.wfrobotics.prototype.Robot;
+import org.wfrobotics.prototype.config.IO;
+import org.wfrobotics.reuse.controller.Xbox.AXIS;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -14,13 +16,14 @@ public class ExampleStopCommand extends Command
 
     protected void execute()
     {
-        int percentForward = 0;
-
-        Robot.prototypeSubsystem.setSpeed(percentForward);
+        double raw = IO.controller.getAxis(AXIS.RIGHT_Y);
+        double speed = (Math.abs(raw) > .1) ? raw : 0;
+        Robot.prototypeSubsystem.manual(speed);
+        Robot.prototypeSubsystem.update();
     }
 
     protected boolean isFinished()
     {
-        return true;
+        return false;
     }
 }
