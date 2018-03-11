@@ -26,7 +26,7 @@ public abstract class RobotConfig
 
     //                      Lift
     // _________________________________________________________________________________
-    public boolean LIFT_DEBUG = false;
+    public boolean LIFT_DEBUG = true;
 
     public double LIFT_SPROCKET_DIAMETER_INCHES; // 1.29 16 tooth 25 chain
     protected double LIFT_MAX_POSSIBLE_UP; // bottom sensor to top sensor

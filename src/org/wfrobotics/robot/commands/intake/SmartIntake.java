@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SmartIntake extends CommandGroup
 {
     private final double kCubeIn = 5.0;
-    private final double kCubeInDeadband = 0.50;
+    private final double kCubeInDeadband = .80;
 
     protected final RobotState state = RobotState.getInstance();
     protected final IntakeSubsystem intake = Robot.intakeSubsystem;
@@ -33,7 +33,7 @@ public class SmartIntake extends CommandGroup
 
     protected void execute()
     {
-        if (state.liftHeightInches < 0.5)
+        if (state.liftHeightInches < kCubeInDeadband)
         {
             double distanceToCube = state.intakeDistance;
 
@@ -57,7 +57,7 @@ public class SmartIntake extends CommandGroup
 
         if (distanceToCube < kCubeInDeadband)
         {
-            intake.setIntakeHold();
+            intake.setIntake(0);
         }
         if (distanceToCube < kCubeIn && distanceToCube > kCubeInDeadband)
         {
