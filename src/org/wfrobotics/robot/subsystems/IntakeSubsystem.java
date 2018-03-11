@@ -52,14 +52,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         followerLeft.setNeutralMode(NeutralMode.Brake);
         followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
 
-        //        intakeLift = TalonSRXFactory.makeConstAccelControlTalon(RobotMap.CAN_INTAKE_LIFT, config.INTAKE_P, config.INTAKE_I, config.INTAKE_D, config.INTAKE_F, 0, config.INTAKE_MAX_POSSIBLE_UP, config.INTAKE_ACCELERATION);
-        //        intakeLift.set(ControlMode.PercentOutput, 0);
-        //        intakeLift.setNeutralMode(NeutralMode.Brake);
-        //        intakeLift.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
-        //        intakeLift.configForwardSoftLimitThreshold(config.INTAKE_TICKS_TO_TOP, 10);
-        //        intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
-        //        intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, 1, 0, 0, 10);
-
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
 
         distanceSensorR = new SharpDistance(config.INTAKE_SENSOR_R);
@@ -97,11 +89,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         return lastHorizontalState;
     }
 
-    //    public boolean intakeLiftAtBottom()
-    //    {
-    //        return intakeLift.getSensorCollection().isRevLimitSwitchClosed();
-    //    }
-
     public void setIntake(double percentageOutward)
     {
         masterRight.set(ControlMode.PercentOutput, percentageOutward);
@@ -109,27 +96,9 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void setIntakeHold()
     {
-        masterRight.set(ControlMode.Current, .25);
+        //        masterRight.set(ControlMode.PercentOutput, -.3);
+        masterRight.set(ControlMode.Current, 5.25);
     }
-
-    //    public void setIntakeLiftSpeed(double percentageUp)
-    //    {
-    //        intakeLift.set(ControlMode.PercentOutput, percentageUp);
-    //    }
-    //
-    //    /**
-    //     * sets the intake position using motion magic
-    //     * @param percentUp The amount to go up, 0 to 1 for down to up, respectively
-    //     */
-    //    public void setIntakeLiftPosition(double percentUp)
-    //    {
-    //        intakeLift.set(ControlMode.MotionMagic, percentUp * Robot.config.INTAKE_TICKS_TO_TOP);
-    //    }
-    //
-    //    public void ZeroIntakeEncoder()
-    //    {
-    //        intakeLift.setSelectedSensorPosition(0, 0, 10);
-    //    }
 
     public boolean setHorizontal(boolean extendedOpen)
     {
@@ -154,9 +123,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         {
             sum += buffer.get(index);
         }
-        SmartDashboard.putNumber("Cube R", sum / bufferSize);
-        //        SmartDashboard.putNumber("Intake Lift Encoder", intakeLift.getSelectedSensorPosition(0));
-        //        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Cube", sum / bufferSize);
         state.updateIntakeSensor(sum / bufferSize);
     }
 

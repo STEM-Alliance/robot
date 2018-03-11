@@ -30,14 +30,14 @@ public class HerdPractice extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = 1025;
+        LIFT_MAX_POSSIBLE_UP = (1350 + 1650) / 2.0;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 0.90;
-        LIFT_I = LIFT_P * .01 * .008;
-        LIFT_D = LIFT_P * 10.0 * .50;
+        LIFT_P = .3;
+        LIFT_I = LIFT_P * .01 * 0;
+        LIFT_D = LIFT_P * 10.0 * 0;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
         LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
-        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.5);
+        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.0);
 
         LIFT_MOTOR_INVERTED_LEFT = true; // left
         LIFT_MOTOR_INVERTED_RIGHT = false; // right

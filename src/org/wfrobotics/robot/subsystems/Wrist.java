@@ -35,6 +35,7 @@ public class Wrist extends Subsystem
     protected void initDefaultCommand()
     {
         setDefaultCommand(new IntakeLiftAutoZeroThenPercentVoltage());
+        //        setDefaultCommand(new IntakeLift());
     }
 
     public boolean intakeLiftAtBottom()
