@@ -15,12 +15,9 @@ import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
 import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
 import org.wfrobotics.reuse.driveio.Tank.TankIO;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.commands.intake.IntakeLift;
-import org.wfrobotics.robot.commands.intake.IntakeLiftZero;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.SmartOutake;
-import org.wfrobotics.robot.commands.intake.WristToggle;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
 
@@ -66,11 +63,11 @@ public class IO
         // ------------------------ Intake ------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_Y, .1, -.1, TRIGGER.WHILE_HELD, new IntakeLift()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new IntakeLiftZero()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_Y, .1, -.1, TRIGGER.WHILE_HELD, new IntakeLiftAutoZeroThenPercentVoltage()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new IntakeLiftZero()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
-
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new IntakeLiftToHeight(.75)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new IntakeLiftToHeight(.25)));
         // ------------------------- Lift -------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new LiftToHeight(LiftHeight.Scale.get())));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SmartOutake()));

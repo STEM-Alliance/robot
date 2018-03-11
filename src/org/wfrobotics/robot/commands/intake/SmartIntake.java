@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SmartIntake extends CommandGroup
 {
     private final double kCubeIn = 5.0;
-    private final double kCubeInDeadband = 0.25;
+    private final double kCubeInDeadband = 0.50;
 
     protected final RobotState state = RobotState.getInstance();
     protected final IntakeSubsystem intake = Robot.intakeSubsystem;
@@ -33,13 +33,12 @@ public class SmartIntake extends CommandGroup
 
     protected void execute()
     {
-        if (state.liftHeightInches < 0.5 && !intake.getVertical())
+        if (state.liftHeightInches < 0.5)
         {
             double distanceToCube = state.intakeDistance;
 
             autoIntake(distanceToCube);
             autoJaws(distanceToCube);
-            //            autoWrist(distanceToCube); // Sacrificed to save the air R.I.P. 2/24/18
         }
         else  // Cancel intaking if transition to lifting
         {
@@ -56,13 +55,17 @@ public class SmartIntake extends CommandGroup
     {
         double speed = 0.0;
 
+        if (distanceToCube < kCubeInDeadband)
+        {
+            intake.setIntakeHold();
+        }
         if (distanceToCube < kCubeIn && distanceToCube > kCubeInDeadband)
         {
-            speed = -Utilities.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 1.0);
+            speed = -Utilities.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 0.7);
         }
         else if (distanceToCube > kCubeIn && distanceToCube < 50)  // TODO Need to move sensor, otherwise we stall motors
         {
-            speed = -1.0;
+            speed = -0.7;
         }
 
         // TODO After it's in for a little bit, it's SUPER effective to pulse the cube out a sec then back in to orient it
