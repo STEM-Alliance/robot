@@ -7,7 +7,7 @@ import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
+import org.wfrobotics.robot.config.robotConfigs.HerdBlackTank;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 import org.wfrobotics.robot.subsystems.DriveService;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
@@ -49,7 +49,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        config = new HerdPractice();
+        config = new HerdBlackTank();
         //config = new HerdVictor();
 
         driveService = DriveService.getInstance();
@@ -61,6 +61,7 @@ public class Robot extends SampleRobot
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
         Autonomous.setupSelection();
 
+        backgroundUpdater.register(driveService.drive);
         backgroundUpdater.register(intakeSubsystem);
         backgroundUpdater.register(liftSubsystem);
     }
@@ -132,6 +133,7 @@ public class Robot extends SampleRobot
         intakeSubsystem.reportState();
         liftSubsystem.reportState();
         state.reportState();
+        driveService.drive.reportDistanceDriven();
 
         // Scheduler
         double schedulerStart = Timer.getFPGATimestamp();

@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class DriveService implements org.wfrobotics.reuse.subsystems.drive.DriveService
 {
     private static DriveService instance = null;
-    protected DriveSubsystem drive;
+    public DriveSubsystem drive;
 
     protected DriveService(RobotConfig config)
     {
@@ -50,6 +50,16 @@ public class DriveService implements org.wfrobotics.reuse.subsystems.drive.Drive
     public void driveDistanceUpdate()
     {
         drive.driveDistanceUpdate();
+    }
+
+    public void drivePath()
+    {
+        drive.drivePath();
+    }
+
+    public boolean onTarget()
+    {
+        return drive.onTarget();
     }
 
     public void setBrake(boolean enable)

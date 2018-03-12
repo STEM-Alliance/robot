@@ -2,7 +2,7 @@ package org.wfrobotics.robot.config;
 
 import java.util.ArrayList;
 
-import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
+import org.wfrobotics.reuse.commands.drivebasic.DrivePath;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
@@ -53,7 +53,6 @@ public class IO
 
         // ------------------------- Drive ------------------------
         //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
-        //        //        robotSpecific.add(ButtonFactory.makeButton(panel, Panel.BUTTON.YELLOW_T, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveOff()));
         //
         //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new TurnToHeading(0, 2)));
         //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new TurnToHeading(90, 2)));
@@ -68,14 +67,17 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new IntakeLiftToHeight(.75)));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new IntakeLiftToHeight(.25)));
+
         // ------------------------- Lift -------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new LiftToHeight(LiftHeight.Scale.get())));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SmartOutake()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new LiftToHeight(LiftHeight.Intake.get())));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
 
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new TurnToHeading(0.0 , 2.0)));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(90.0 , 2.0)));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DrivePath()));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DrivePath()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new TurnToHeading(0.0 , 2.0)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(90.0 , 2.0)));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new PickLocation()));
     }
 
