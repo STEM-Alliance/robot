@@ -18,8 +18,7 @@ public class ExampleStopCommand extends Command
     {
         double raw = IO.controller.getAxis(AXIS.RIGHT_Y);
         double speed = (Math.abs(raw) > .1) ? raw : 0;
-        Robot.prototypeSubsystem.manual(speed);
-        Robot.prototypeSubsystem.update();
+        Robot.prototypeSubsystem.driveDifferential(speed);
     }
 
     protected boolean isFinished()

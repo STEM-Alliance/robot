@@ -1,7 +1,8 @@
 package org.wfrobotics.prototype;
 
-import org.wfrobotics.prototype.commands.ExampleForwardCommand;
+import org.wfrobotics.prototype.commands.DrivePath;
 import org.wfrobotics.prototype.config.IO;
+import org.wfrobotics.prototype.config.RobotConfig;
 import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -10,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends SampleRobot
 {
+    public static RobotConfig config = new RobotConfig();
     public static ExampleSubsystem prototypeSubsystem;
     public static IO controls;
 
@@ -17,7 +19,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        prototypeSubsystem = new ExampleSubsystem();
+        prototypeSubsystem = new ExampleSubsystem(config);
 
         controls = new IO();
     }
@@ -28,17 +30,19 @@ public class Robot extends SampleRobot
 
         while (isOperatorControl() && isEnabled())
         {
+            allPeriodic();
             Scheduler.getInstance().run();
         }
     }
 
     public void autonomous()
     {
-        autonomousCommand = new ExampleForwardCommand();
+        autonomousCommand = new DrivePath();
         if (autonomousCommand != null) autonomousCommand.start();
 
         while (isAutonomous() && isEnabled())
         {
+            allPeriodic();
             Scheduler.getInstance().run();
         }
     }
@@ -47,6 +51,7 @@ public class Robot extends SampleRobot
     {
         while (isDisabled())
         {
+            allPeriodic();
             Scheduler.getInstance().run();
         }
     }
@@ -54,5 +59,10 @@ public class Robot extends SampleRobot
     public void test()
     {
         while (isTest() && isEnabled()) { }
+    }
+
+    private void allPeriodic()
+    {
+        prototypeSubsystem.reportState();
     }
 }

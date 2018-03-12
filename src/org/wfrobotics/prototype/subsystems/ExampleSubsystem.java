@@ -1,13 +1,13 @@
 package org.wfrobotics.prototype.subsystems;
 
 import org.wfrobotics.prototype.commands.ExampleStopCommand;
+import org.wfrobotics.prototype.config.RobotConfig;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
-import org.wfrobotics.reuse.utilities.Utilities;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
-import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -26,49 +26,56 @@ public class ExampleSubsystem extends Subsystem
     {
         public void run()
         {
-            SmartDashboard.putNumber("Streamer Time", Timer.getFPGATimestamp());
-            motor.processMotionProfileBuffer();
+            onBackgroundUpdate();
         }
     }
 
-    private final int maxVelocityTicks = 6000;
-    private TalonSRX motor;
-    private MotionProfileStatus status = new MotionProfileStatus();
-    private Notifier service = new Notifier(new PointStreamer());
-    private boolean isDone = false;
+    private final TalonSRX motor;
+    private final PathFollower pathFollower;
+    private final MotionProfileStatus status = new MotionProfileStatus();
+    private final Notifier service = new Notifier(new PointStreamer());
+    private boolean onTarget = false;
 
-    public ExampleSubsystem()
+    public ExampleSubsystem(RobotConfig config)
     {
         int addToEachTrajDuration = 0;
-        int kHalfRobotPeriod = 10;
+        int kRobotPeriodHalf = 10;
+        int kRobotPeriodQuarter = 5;
 
         motor = TalonSRXFactory.makeTalon(1);
 
+        // Example
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
         int abs = motor.getSensorCollection().getPulseWidthPosition();
         motor.setSelectedSensorPosition(abs, 0, 10);
-
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+
         motor.setInverted(true);
         motor.setSensorPhase(true);
-        motor.configNeutralDeadband(.01, 10);
+        motor.configNeutralDeadband(.01, 10);  // TODO Port to drive train
+        // TODO Delete Lazy Talon
 
         motor.selectProfileSlot(0, 0);
-        motor.config_kP(0, 0.0, 10);
-        motor.config_kI(0, 0.0, 10);
-        motor.config_kD(0, 0.0, 10);
-        motor.config_kF(0, 1023.0 / maxVelocityTicks, 10);
+        motor.config_kP(0, config.kP, 10);
+        motor.config_kI(0, config.kI, 10);
+        motor.config_kD(0, config.kD, 10);
+        motor.config_kF(0, 1023.0 / config.maxVelocity, 10);
 
         motor.configMotionProfileTrajectoryPeriod(addToEachTrajDuration, 10);
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, kHalfRobotPeriod, 10);
-        motor.changeMotionControlFramePeriod(kHalfRobotPeriod / 2);
+        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, kRobotPeriodHalf, 10);
+        motor.changeMotionControlFramePeriod(kRobotPeriodQuarter);
 
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 10);
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 5, 10);
+        // Additions
+        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, kRobotPeriodQuarter, 10);
+        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, kRobotPeriodQuarter, 10);
 
-        motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_1Ms, 10);
-        motor.configVelocityMeasurementWindow(1, 10);
+        motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
+        motor.configVelocityMeasurementWindow(32, 10);
 
+        motor.set(ControlMode.PercentOutput, 0);
+
+        // Defaults
+        pathFollower = new PathFollower();
         service.startPeriodic(.005);
     }
 
@@ -77,112 +84,86 @@ public class ExampleSubsystem extends Subsystem
         setDefaultCommand(new ExampleStopCommand());
     }
 
-    public void manual(double speed)
+    public synchronized void onBackgroundUpdate()
+    {
+        SmartDashboard.putNumber("Streamer Time", Timer.getFPGATimestamp());
+        if (motor.getControlMode() == ControlMode.MotionProfile)  // TODO Could track ourselves, would remove call to hardware in BU
+        {
+            motor.processMotionProfileBuffer();
+        }
+    }
+
+    public void driveDifferential(double speed)
     {
         motor.set(ControlMode.PercentOutput, speed);
     }
 
-    public void start()
+    public void drivePath()
     {
+        // TODO reset distance driven
         motor.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);  // Disable before modifying buffer
-        load();
-        isDone = false;
+        motor.clearMotionProfileTrajectories();  // Flush prior path remaining
+        pathFollower.reload();
+        updatePathBuffer();  // Fill buffer (partially) before enabling
+        onTarget = false;
 
-        motor.getMotionProfileStatus(status);
-        // TODO if not preloading all points, enable only after min points in buffer on status object
         motor.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
     }
 
-    public void update()
+    public boolean onTarget()
     {
-        String mode;
+        return onTarget;
+    }
 
-        if (motor.getControlMode() == ControlMode.MotionProfile)
+    public void reportState()
+    {
+        ControlMode mode = motor.getControlMode();  // TODO Could track ourselves, would remove false warning on MP done and stay in mode intentionally
+        String mode_s = (mode == ControlMode.MotionProfile) ? "Motion Profile" : "Percent Voltage";
+
+        if (mode == ControlMode.MotionProfile)
         {
             motor.getMotionProfileStatus(status);
-
-            SmartDashboard.putBoolean("MP Underrun", status.hasUnderrun);
             if (status.hasUnderrun)
             {
+                DriverStation.reportWarning("Motion profile buffer underrun", false);
                 motor.clearMotionProfileHasUnderrun(0);
             }
-            // TODO fill more points if needed
 
-            SmartDashboard.putBoolean("MP Is Last", status.isLast);
+            if (status.topBufferCnt < 1947)  // CTRE: "If the profile is very large (2048 points or more) the function may return a nonzero error code."
+            {
+                updatePathBuffer();
+            }
+            if (status.activePointValid && status.isLast)
+            {
+                motor.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
+                onTarget = true;
+            }
+
+            // TODO Put just position and velocity in if(kDebug) in drive train
             SmartDashboard.putNumber("MP Buffer Top Count", status.topBufferCnt);
             SmartDashboard.putNumber("MP Buffer Top Remaining", status.topBufferRem);
             SmartDashboard.putNumber("MP Buffer Bot Count", status. btmBufferCnt);
             SmartDashboard.putNumber("MP Position", motor.getActiveTrajectoryPosition());
             SmartDashboard.putNumber("MP Velocity", motor.getActiveTrajectoryVelocity());
-
-            if (status.activePointValid && status.isLast)
-            {
-                motor.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
-                isDone = true;
-            }
-
-            mode = "Motion Profile";
-        }
-        else
-        {
-            mode = "Percent Voltage";
         }
 
+        // TODO Remove in drive train
         SmartDashboard.putNumber("Position", motor.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Velocity", motor.getSelectedSensorVelocity(0));
-        SmartDashboard.putString("Mode", mode);
+        SmartDashboard.putString("Mode", mode_s);
     }
 
-    public boolean isDone()
+    private void updatePathBuffer()
     {
-        return isDone;
-    }
+        TrajectoryPoint[][] t = pathFollower.next(100);  // Less initial delay if streamed
 
-    private void load()
-    {
-        double[][] points = generate();
-        double numPoints = points.length;
-        double lastIndex = numPoints - 1;
-
-        if (numPoints > 2047)
+        for (int index = 0; index < t.length; index++)
         {
-            DriverStation.reportWarning("Would overflow top buffer", true);
+            if (motor.pushMotionProfileTrajectory(t[index][0]) != ErrorCode.OK)
+            {
+                DriverStation.reportWarning("Motion profile buffer push error", false);
+            }
+            // TODO !!! push the other drive train side !!!
         }
-
-        motor.clearMotionProfileTrajectories();
-
-        // TODO stream over time, check if buffer is full on status
-
-        for (int index = 0; index < numPoints; index++)
-        {
-            TrajectoryPoint buffer = new TrajectoryPoint();
-
-            buffer.position = points[index][0];
-            buffer.velocity = points[index][1];
-            buffer.profileSlotSelect0 = 0;
-            buffer.profileSlotSelect1 = 0;
-            buffer.timeDur = TrajectoryDuration.Trajectory_Duration_10ms;
-            buffer.zeroPos = index == 0;  // Zeros position
-            buffer.isLastPoint = index == lastIndex;
-
-            motor.pushMotionProfileTrajectory(buffer);
-        }
-    }
-
-    private double[][] generate()
-    {
-        int numPoints = 1000;
-        double maxRevs = 5;
-        double maxTicksPer100Ms = maxVelocityTicks;
-        double[][] points = new double[numPoints][2];
-
-        for (int index = 0; index < numPoints; index++)
-        {
-            double ticks = Utilities.scaleToRange(index, 0, numPoints, 0, maxRevs * 4096);
-            double unitsPer100Ms = Utilities.scaleToRange((numPoints/2-(Math.abs(numPoints/2-index)))*2.0, 0, numPoints, 0, maxTicksPer100Ms);
-            points[index][0] = ticks;
-            points[index][1] = unitsPer100Ms;
-        }
-        return points;
     }
 }
