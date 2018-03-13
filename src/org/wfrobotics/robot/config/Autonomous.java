@@ -2,11 +2,9 @@ package org.wfrobotics.robot.config;
 
 import java.util.function.Supplier;
 
-import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
-import org.wfrobotics.reuse.commands.drivebasic.DriveOff;
+import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.DriveOff;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
-import org.wfrobotics.reuse.utilities.HerdLogger;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoSide;
 import org.wfrobotics.robot.auto.AutoSideWithS;
@@ -142,37 +140,5 @@ public class Autonomous
         RobotState.getInstance().updateRobotHeading(modes[choice].gyroOffset);
 
         return modes[choice].maker.get();
-    }
-
-    /** Get the starting position on field for when we switch to autonomous mode */
-    protected static POSITION getRotaryStartingPosition()
-    {
-        HerdLogger log = new HerdLogger(POSITION.class);
-        int dial = Robot.controls.getAutonomousSide();
-        POSITION position;
-
-        if (dial == 1)
-        {
-            position = POSITION.RIGHT;
-            log.info("Autonomous Starting Position", "RIGHT");
-        }
-        else if (dial == 7)
-        {
-            position = POSITION.LEFT;
-            log.info("Autonomous Starting Position", "LEFT");
-        }
-        else if (dial == 0)
-        {
-            position = POSITION.CENTER;
-            log.info("Autonomous Starting Position", "CENTER");
-        }
-        else
-        {
-            position = POSITION.CENTER;
-            log.warning("Autonomous Starting Position", "(defaulting to) CENTER");
-        }
-        SmartDashboard.getString("Position", "right");
-
-        return position;
     }
 }

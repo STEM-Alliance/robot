@@ -2,7 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.commands.intake.IntakeLiftAutoZeroThenPercentVoltage;
+import org.wfrobotics.robot.commands.wrist.IntakeLiftAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 

@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands.intake;
+package org.wfrobotics.robot.commands.wrist;
 
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 

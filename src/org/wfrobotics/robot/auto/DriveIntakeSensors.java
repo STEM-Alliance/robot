@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.DriveCommand;
+import org.wfrobotics.reuse.commands.drive.DriveCommand;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.Robot;
 
@@ -15,7 +15,7 @@ public class DriveIntakeSensors extends DriveCommand
 
     public DriveIntakeSensors(double distanceFromTouchingObject, double tolerance)
     {
-        requires(Robot.driveService.getSubsystem());
+        requires(Robot.driveService);
         settledSamples = 0;
         target = distanceFromTouchingObject;
         tol = tolerance;
@@ -30,12 +30,7 @@ public class DriveIntakeSensors extends DriveCommand
         SmartDashboard.putNumber("Sense", sense);
         SmartDashboard.putNumber("Distance", distance);
         SmartDashboard.putNumber("inches", inches);
-        Robot.driveService.driveDistanceInit(distance);
-    }
-
-    protected void execute()
-    {
-        Robot.driveService.driveDistanceUpdate();
+        Robot.driveService.driveDistance(distance);
     }
 
     protected boolean isFinished()
@@ -50,7 +45,7 @@ public class DriveIntakeSensors extends DriveCommand
         {
             settledSamples = 0;
         }
-        return settledSamples > 20  || Robot.controls.arcadeIO.getVector().getMag() > .15;  // Tight tolerances necessary in testing, commands cancel before settled otherwise - but talon not tuned so not sure
+        return settledSamples > 20  || Robot.controls.getThrottle() > .15;  // Tight tolerances necessary in testing, commands cancel before settled otherwise - but talon not tuned so not sure
     }
 
     protected void end()

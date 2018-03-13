@@ -3,13 +3,13 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.background.BackgroundUpdater;
 import org.wfrobotics.reuse.hardware.led.RevLEDs;
 import org.wfrobotics.reuse.hardware.led.RevLEDs.PatternName;
+import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
-import org.wfrobotics.robot.subsystems.DriveService;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
@@ -33,7 +33,7 @@ public class Robot extends SampleRobot
     private final RobotState state = RobotState.getInstance();
     private final MatchState2018 matchState = MatchState2018.getInstance();
 
-    public static DriveService driveService;
+    public static TankSubsystem driveService;
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
@@ -52,7 +52,7 @@ public class Robot extends SampleRobot
         config = new HerdPractice();
         //config = new HerdVictor();
 
-        driveService = DriveService.getInstance();
+        driveService = TankSubsystem.getInstance();
         liftSubsystem = new LiftSubsystem(config);
         intakeSubsystem = new IntakeSubsystem(config);
         winch = new WinchSubsystem(config);
@@ -61,7 +61,7 @@ public class Robot extends SampleRobot
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
         Autonomous.setupSelection();
 
-        backgroundUpdater.register(driveService.drive);
+        backgroundUpdater.register(driveService);
         backgroundUpdater.register(intakeSubsystem);
         backgroundUpdater.register(liftSubsystem);
     }
@@ -132,8 +132,8 @@ public class Robot extends SampleRobot
         // Update robot values to latest for this Scheduer iteration
         intakeSubsystem.reportState();
         liftSubsystem.reportState();
+        driveService.reportState();
         state.reportState();
-        driveService.drive.reportDistanceDriven();
 
         // Scheduler
         double schedulerStart = Timer.getFPGATimestamp();

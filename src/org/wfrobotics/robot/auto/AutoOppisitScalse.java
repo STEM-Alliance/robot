@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
-import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
+import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 import org.wfrobotics.robot.config.LiftHeight;

@@ -1,9 +1,9 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.ScaleChoice;
-import org.wfrobotics.reuse.commands.drivebasic.AutoDrive;
-import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
-import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
+import org.wfrobotics.reuse.commands.drive.AutoDrive;
+import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;

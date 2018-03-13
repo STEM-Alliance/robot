@@ -8,27 +8,12 @@ public class RobotMap
      * PWM: 0-9 are on-board, 10-19 are on the MXP
      */
 
-    // Unused -------------------------------------------------------------------------------------
-    public static final int CAN_SWERVE_DRIVE_TALONS[] = { 1, 4, 5, 8};
-    public static final int CAN_SWERVE_ANGLE_TALONS[] = { 2, 3, 6, 7};
-    public static final int PWM_SWERVE_SHIFT_SERVOS[] = { 0, 1, 2, 3 };
-
     // Drive --------------------------------------------------------------------------------------
     public static final int CAN_TANK_DRIVE_TALONS_L[] = { 15, 17 };
     public static final int CAN_TANK_DRIVE_TALONS_R[] = { 16, 14 };
     public static final int CAN_TANK_SHIFTER_DEVICE = 7;
     public static final int CAN_TANK_SHIFTER_HIGH = 0;
     public static final int CAN_TANK_SHIFTER_LOW = 1;
-    public static final double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH = 24.0 / 40.0;  // Adjacent to encoder
-    public static final double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW = 40.0 / 24.0;  // Adjacent to encoder
-    public static final double TANK_GEAR_RATIO_MOTOR_TO_ENCODER = 36.0 / 15.0;  // Wheel to adjacent
-    public static final double TANK_WHEEL_CIRCUMFERENCE = (6.25 * .995) * Math.PI;  // 6.25 adjusted for thread wear
-    public static final double DISTANCE_SEPERATION_WHEEL_SIDES = 25;
-
-
-    // Field --------------------------------------------------------------------------------------
-    public static final double kScaleClearWhenDownInches = 53.5;
-    public static final double kSwitchClearInches = 13;
 
     // Intake -------------------------------------------------------------------------------------
     public static final int CAN_PNEUMATIC_CONTROL_MODULE = 7;

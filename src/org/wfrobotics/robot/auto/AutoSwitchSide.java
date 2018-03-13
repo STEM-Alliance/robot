@@ -1,8 +1,8 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.SwitchChoice;
-import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
-import org.wfrobotics.reuse.commands.drivebasic.TurnToHeading;
+import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 

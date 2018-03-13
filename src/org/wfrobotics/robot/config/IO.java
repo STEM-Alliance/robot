@@ -2,8 +2,8 @@ package org.wfrobotics.robot.config;
 
 import java.util.ArrayList;
 
-import org.wfrobotics.reuse.commands.drivebasic.DriveDistance;
-import org.wfrobotics.reuse.commands.drivebasic.DrivePath;
+import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.DrivePath;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
@@ -12,9 +12,6 @@ import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.controller.Xbox.DPAD;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketJoyStick;
-import org.wfrobotics.reuse.driveio.Mecanum.MecanumIO;
-import org.wfrobotics.reuse.driveio.Swerve.SwerveIO;
-import org.wfrobotics.reuse.driveio.Tank.TankIO;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
@@ -36,11 +33,7 @@ public class IO
     private final Xbox operator;
     private final Panel panel;
 
-    /* Only one of these should be instantiated at a time */
-    public TankIO tankIO;
     public ArcadeIO arcadeIO;
-    public MecanumIO mecanumIO;
-    public SwerveIO swerveIO;
 
     private IO(Joystick driverThrottle, Joystick driverTurn, Xbox operator, Panel panel)
     {
