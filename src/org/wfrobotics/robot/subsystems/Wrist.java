@@ -2,6 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.wrist.IntakeLiftAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Wrist extends Subsystem
 {
+    private final RobotState state = RobotState.getInstance();
     private final TalonSRX intakeLift;
 
     public Wrist(RobotConfig config)
@@ -30,6 +32,7 @@ public class Wrist extends Subsystem
         intakeLift.configForwardSoftLimitThreshold(config.INTAKE_TICKS_TO_TOP, 10);
         intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, 1, 0, 0, 10);
+        intakeLift.setSelectedSensorPosition(3000, 0, 10);  // Before zeroing, report values above smart intake active therehold
     }
 
     protected void initDefaultCommand()
@@ -57,14 +60,11 @@ public class Wrist extends Subsystem
         intakeLift.set(ControlMode.MotionMagic, percentUp * Robot.config.INTAKE_TICKS_TO_TOP);
     }
 
-    public void ZeroIntakeEncoder()
-    {
-        intakeLift.setSelectedSensorPosition(0, 0, 10);
-    }
-
     public void reportState()
     {
-        SmartDashboard.putNumber("Intake Lift Encoder", intakeLift.getSelectedSensorPosition(0));
+        double ticks = intakeLift.getSelectedSensorPosition(0);
+        SmartDashboard.putNumber("Intake Lift Position", ticks);
         SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
+        state.updateWristPosition(ticks);
     }
 }

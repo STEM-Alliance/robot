@@ -35,9 +35,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX[] motors = new TalonSRX[2];
 
-    private ControlMode desiredMode;
     private double desiredSetpoint;
-    private String liftState;
     private double todoRemoveLast;
     private double backgroundPeriod;
 
@@ -78,10 +76,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
         limit = new LimitSwitchs(motors, config.LIFT_LIMIT_SWITCH_NORMALLY);
 
-        // Valid initial state
-        desiredMode = ControlMode.PercentOutput;
         desiredSetpoint = 0;
-        liftState = "";
         todoRemoveLast = Timer.getFPGATimestamp();
         backgroundPeriod = 0;
         AtTopLimitL = false;
@@ -103,11 +98,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         {
             motors[0].setSelectedSensorPosition(0, 0, 0);
             motors[1].setSelectedSensorPosition(0, 0, 0);
-            liftState = "Zeroing";
-        }
-        else
-        {
-            liftState = desiredMode.toString();
         }
 
         AtTopLimitL = limit.anySideAtTop();//isSideAtLimit(LimitSwitch.TOP, 0);
@@ -157,7 +147,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
 
         SmartDashboard.putNumber("Lift Height", height);
-        SmartDashboard.putString("Lift State", liftState);
         SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000);
         //        SmartDashboard.putBoolean("LB", isSideAtLimit(LimitSwitch.BOTTOM, 0));
         //        SmartDashboard.putBoolean("LT", isSideAtLimit(LimitSwitch.TOP, 0));
@@ -249,14 +238,4 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         motors[0].config_kD(0, d, 10);
         motors[1].config_kD(0, d, 10);
     }
-
-    //    private boolean isAtTop(int index)
-    //    {
-    //        return isAtLimit(LimitSwitch.TOP, index);
-    //    }
-    //
-    //    private boolean isAtBottom(int index)
-    //    {
-    //        return isAtLimit(LimitSwitch.BOTTOM, index);
-    //    }
 }
