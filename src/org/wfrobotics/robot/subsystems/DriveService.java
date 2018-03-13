@@ -52,9 +52,9 @@ public class DriveService implements org.wfrobotics.reuse.subsystems.drive.Drive
         drive.driveDistanceUpdate();
     }
 
-    public void drivePath()
+    public void drivePath(String path)
     {
-        drive.drivePath();
+        drive.drivePath(path);
     }
 
     public boolean onTarget()

@@ -7,7 +7,7 @@ import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.robotConfigs.HerdBlackTank;
+import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 import org.wfrobotics.robot.subsystems.DriveService;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 @SuppressWarnings("deprecation")
 public class Robot extends SampleRobot
 {
-    private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater();
+    private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater(.005);
     private final Scheduler scheduler = Scheduler.getInstance();
     public static RobotConfig config;
     private final RobotState state = RobotState.getInstance();
@@ -49,7 +49,7 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        config = new HerdBlackTank();
+        config = new HerdPractice();
         //config = new HerdVictor();
 
         driveService = DriveService.getInstance();
