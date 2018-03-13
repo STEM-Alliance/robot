@@ -47,7 +47,7 @@ public abstract class RobotConfig
 
     //                      Tank
     // _________________________________________________________________________________
-    public boolean TANK_DEBUG = false;
+    public boolean TANK_DEBUG = true;
     public boolean TANK_SQUARE_TURN_MAG = true;
 
     public double TANK_MAX_VELOCITY;
@@ -61,9 +61,9 @@ public abstract class RobotConfig
 
     public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH;  // Adjacent to encoder
     public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW;  // Adjacent to encoder
-    public double TANK_GEAR_RATIO_MOTOR_TO_ENCODER;  // Wheel to adjacent
-    public double TANK_WHEEL_CIRCUMFERENCE;  // Adjust for thread wear as needed
-    public double DISTANCE_SEPERATION_WHEEL_SIDES;  // Center to center (side to side easier to measure)
+    public double TANK_GEAR_RATIO_MOTOR_TO_ENCODER = 36.0 / 15.0;  // Wheel to adjacent
+    public double TANK_WHEEL_DIAMETER = (6.25 * .995);  // Adjust for thread wear as needed
+    public double TANK_DISTANCE_SEPERATION_WHEEL_SIDES = 25;  // Center to center (side to side easier to measure)
 
     public boolean TANK_LEFT_INVERT;
     public boolean TANK_RIGHT_INVERT;
