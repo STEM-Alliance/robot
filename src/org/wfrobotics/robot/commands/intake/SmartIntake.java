@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SmartIntake extends CommandGroup
 {
     private final double kCubeIn = 5.0;
-    private final double kCubeInDeadband = .80;
+    private final double kCubeInDeadband = 1.25;
 
     protected final RobotState state = RobotState.getInstance();
     protected final IntakeSubsystem intake = Robot.intakeSubsystem;
@@ -33,7 +33,7 @@ public class SmartIntake extends CommandGroup
 
     protected void execute()
     {
-        if (state.liftHeightInches < kCubeInDeadband)
+        if (state.liftHeightInches < 1 && state.wristAngle < 27.5)
         {
             double distanceToCube = state.intakeDistance;
 
@@ -76,19 +76,13 @@ public class SmartIntake extends CommandGroup
 
     private void autoJaws(double distanceToCube)
     {
-        String isJawtomated = "No";
-
         if (distanceToCube < 30)
         {
             intake.setHorizontal(false);  // Can't always set, otherwise we chatter?
-            isJawtomated = "Close";
         }
         else if (distanceToCube > 30 && distanceToCube < 60)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
         {
             intake.setHorizontal(true);
-            isJawtomated = "Open";
         }
-
-        SmartDashboard.putString("Jawtomatic", isJawtomated);
     }
 }

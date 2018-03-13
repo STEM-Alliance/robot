@@ -30,9 +30,9 @@ public class HerdPractice extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = (1350 + 1650) / 2.0;
+        LIFT_MAX_POSSIBLE_UP = (2000 + 2550) / 2.0;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = .3;
+        LIFT_P = .3 * 0;
         LIFT_I = LIFT_P * .01 * 0;
         LIFT_D = LIFT_P * 10.0 * 0;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;

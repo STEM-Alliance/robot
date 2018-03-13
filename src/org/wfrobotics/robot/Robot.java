@@ -137,6 +137,7 @@ public class Robot extends SampleRobot
         // Update robot values to latest for this Scheduer iteration
         intakeSubsystem.reportState();
         liftSubsystem.reportState();
+        wrist.reportState();
         driveService.reportState();
         state.reportState();
 

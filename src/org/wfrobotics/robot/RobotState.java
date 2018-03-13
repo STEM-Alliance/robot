@@ -26,6 +26,7 @@ public class RobotState
     public boolean robotHasCube;
     public double intakeDistance;
     public double liftHeightInches;
+    public double wristAngle;
     public RobotConfig config;
     public static RobotState getInstance()
     {
@@ -51,6 +52,7 @@ public class RobotState
         robotHasCube = false;
         intakeDistance = 9999;
         liftHeightInches = 0;
+        wristAngle = 0;
         hasCubeCounts = 0;
     }
 
@@ -146,6 +148,11 @@ public class RobotState
     public synchronized void updateLiftHeight(double inches)
     {
         liftHeightInches = inches;
+    }
+
+    public synchronized void updateWristPosition(double ticks)
+    {
+        wristAngle = ticks * 4096 * 360;
     }
 
     // ------------- END State Producers Robot-specific (Write-Only) -------------
