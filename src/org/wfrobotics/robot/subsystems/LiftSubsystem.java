@@ -2,7 +2,6 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
-import org.wfrobotics.robot.LimitSwitch;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.RobotMap;
@@ -28,7 +27,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         TOP
     }*/
 
-    private final LimitSwitch limit;
+    private final LimitSwitchs limit;
     private final static double kTicksPerRev = 4096.0;
     private final static double kRevsPerInch = 1 / 4.555;  // Measured on practice robot
     private final boolean kDebug;
@@ -77,7 +76,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
                 motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 5, kTimeout);  // For calibration
             }
         }
-        limit = new LimitSwitch(motors, config);
+        limit = new LimitSwitchs(motors, config.LIFT_LIMIT_SWITCH_NORMALLY);
 
         // Valid initial state
         desiredMode = ControlMode.PercentOutput;
@@ -165,7 +164,11 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         //        SmartDashboard.putBoolean("LT", isSideAtLimit(LimitSwitch.TOP, 0));
         //        SmartDashboard.putBoolean("RB", isSideAtLimit(LimitSwitch.BOTTOM, 1));
         //        SmartDashboard.putBoolean("RT", isSideAtLimit(LimitSwitch.TOP, 1));
-        limit.smartDashPrint();
+        boolean[] limitSwitchSet = limit.smartDashPrint();
+        SmartDashboard.putBoolean("LB", limitSwitchSet[0]);
+        SmartDashboard.putBoolean("LT", limitSwitchSet[1]);
+        SmartDashboard.putBoolean("RB", limitSwitchSet[2]);
+        SmartDashboard.putBoolean("RT", limitSwitchSet[3]);
         if (kDebug)
         {
             debugCalibration();
