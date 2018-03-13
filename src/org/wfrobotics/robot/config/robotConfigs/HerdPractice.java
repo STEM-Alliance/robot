@@ -52,10 +52,10 @@ public class HerdPractice extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = (12500 + 12750) / 2;
-        TANK_P = 1.0 * 2;
-        TANK_I = TANK_P * 0.001;
-        TANK_D =  TANK_P * 10.0;
+        TANK_MAX_VELOCITY = (11500 + 11750) / 2;
+        TANK_P = 1.0 * 1;
+        TANK_I = TANK_P * 0.001 * 0;
+        TANK_D =  TANK_P * 10.0 * 0;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
         TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.9);
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 0.825), (int) (TANK_CRUISE_VELOCITY * 0.825)};
@@ -64,7 +64,7 @@ public class HerdPractice extends RobotConfig
         TANK_LEFT_INVERT = false;
         TANK_RIGHT_INVERT = true;
 
-        TANK_LEFT_SENSOR_PHASE = false;
+        TANK_LEFT_SENSOR_PHASE = true;
         TANK_RIGHT_SENSOR_PHASE = false;
 
         TANK_OPEN_LOOP_RAMP = 0.5;
