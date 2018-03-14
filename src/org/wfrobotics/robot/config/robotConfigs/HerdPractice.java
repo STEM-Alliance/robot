@@ -13,13 +13,13 @@ public class HerdPractice extends RobotConfig
 
         INTAKE_MAX_POSSIBLE_UP = 1310;  //(975.0 + 1310.0) / 2.0;
         INTAKE_POSSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        INTAKE_P = 0.1;
-        INTAKE_I = INTAKE_P * .01 * .008;
-        INTAKE_D = INTAKE_P * 10.0 * .50;
+        INTAKE_P = 0.5;
+        INTAKE_I = INTAKE_P * .01 * .008 * 0;
+        INTAKE_D = INTAKE_P * 10.0 * .50 * 0;
         INTAKE_F = 1023.0 / INTAKE_MAX_POSSIBLE_UP;
         INTAKE_VELOCITY = (int) (INTAKE_MAX_POSSIBLE_UP * INTAKE_POSSIBLE_VELOCITY_PERCENTAGE);
         INTAKE_ACCELERATION = INTAKE_VELOCITY;
-        INTAKE_TICKS_TO_TOP = 4000;
+        INTAKE_TICKS_TO_TOP = 3500;
 
         INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
         INTAKE_DISTANCE_TO_CUBE = 8.2; // centimeters
@@ -30,14 +30,14 @@ public class HerdPractice extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = (2000 + 2550) / 2.0;
+        LIFT_MAX_POSSIBLE_UP = (2050 + 2650) / 2.0;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = .3 * 0;
-        LIFT_I = LIFT_P * .01 * 0;
-        LIFT_D = LIFT_P * 10.0 * 0;
+        LIFT_P = 7.0;
+        LIFT_I = .05;
+        LIFT_D = 40.0;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
         LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
-        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.0);
+        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 4.0);
 
         LIFT_MOTOR_INVERTED_LEFT = true; // left
         LIFT_MOTOR_INVERTED_RIGHT = false; // right

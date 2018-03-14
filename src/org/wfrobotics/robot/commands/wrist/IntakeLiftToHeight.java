@@ -3,6 +3,7 @@ package org.wfrobotics.robot.commands.wrist;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeLiftToHeight extends InstantCommand
 {
@@ -20,6 +21,7 @@ public class IntakeLiftToHeight extends InstantCommand
 
     protected void initialize()
     {
+        SmartDashboard.putString("Wrist", this.getClass().getSimpleName());
         Robot.wrist.setIntakeLiftPosition(distance);
     }
 }

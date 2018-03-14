@@ -35,7 +35,7 @@ public class LiftGoHome extends Command
 
     protected void execute()
     {
-        Robot.liftSubsystem.goToSpeedInit(speed);
+        Robot.liftSubsystem.goToSpeedInit(speed);  // Must be in execute in case interrupted
     }
 
     protected boolean isFinished()

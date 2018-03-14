@@ -10,7 +10,7 @@ public class AutoLiftToBottom extends CommandGroup
 {
     public AutoLiftToBottom()
     {
-        this.addParallel((new IntakeLiftToHeight(1500)));
+        this.addParallel((new IntakeLiftToHeight(.01)));  // Don't slam into chassis, PID to sensor zero rather than go past it with momentum
         this.addSequential(new LiftToHeight(LiftHeight.Intake.get()));
     }
 }
