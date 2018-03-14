@@ -3,6 +3,7 @@ package org.wfrobotics.robot.commands.wrist;
 import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeLiftZero extends InstantCommand
 {
@@ -25,7 +26,12 @@ public class IntakeLiftZero extends InstantCommand
 
     protected void initialize()
     {
-        Robot.wrist.setIntakeLiftSpeed(-0.3);
+        SmartDashboard.putString("Wrist", this.getClass().getSimpleName());
+    }
+
+    protected void execute()
+    {
+        Robot.wrist.setIntakeLiftSpeed(-0.3);  // Must be in execute in case interrupted
     }
 
     protected boolean isFinished()

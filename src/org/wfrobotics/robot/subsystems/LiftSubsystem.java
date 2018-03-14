@@ -54,7 +54,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         for (int index = 0; index < motors.length; index++)
         {
             motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P, config.LIFT_I, config.LIFT_D, config.LIFT_F, kSlot, config.LIFT_VELOCITY, config.LIFT_ACCELERATION);
-            motors[index].config_IntegralZone(0, 20, kTimeout);
+            motors[index].config_IntegralZone(0, 0, kTimeout);
             //            motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], kTimeout);
             //            motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][1], kTimeout);
             //            motors[index].overrideLimitSwitchesEnable(true);
@@ -102,11 +102,11 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
         AtTopLimitL = limit.anySideAtTop();//isSideAtLimit(LimitSwitch.TOP, 0);
 
-        if (Math.abs(getHeightAverage() - desiredSetpoint) < 2)
-        {
-            motors[0].setIntegralAccumulator(0, 0, 0);
-            motors[1].setIntegralAccumulator(0, 0, 0);
-        }
+        //        if (Math.abs(getHeightAverage() - desiredSetpoint) < 2)
+        //        {
+        //            motors[0].setIntegralAccumulator(0, 0, 0);
+        //            motors[1].setIntegralAccumulator(0, 0, 0);
+        //        }
 
         backgroundPeriod = todoRemoveNow - todoRemoveLast;
         todoRemoveLast = todoRemoveNow;

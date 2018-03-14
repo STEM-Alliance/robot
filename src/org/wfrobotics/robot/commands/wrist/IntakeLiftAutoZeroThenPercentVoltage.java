@@ -1,5 +1,7 @@
 package org.wfrobotics.robot.commands.wrist;
 
+import org.wfrobotics.robot.Robot;
+
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
 public class IntakeLiftAutoZeroThenPercentVoltage extends ConditionalCommand
@@ -11,8 +13,11 @@ public class IntakeLiftAutoZeroThenPercentVoltage extends ConditionalCommand
 
     protected boolean condition()
     {
-        boolean val = IntakeLiftZero.everZeroed();
-        System.out.println(val);
-        return val;
+        return IntakeLiftZero.everZeroed();
+    }
+
+    protected void end()
+    {
+        Robot.wrist.setIntakeLiftPosition(.95);
     }
 }

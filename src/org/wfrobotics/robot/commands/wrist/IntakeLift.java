@@ -1,31 +1,33 @@
 package org.wfrobotics.robot.commands.wrist;
 
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeLift extends Command
 {
+    private final Wrist wrist;
+
     public IntakeLift()
     {
-        requires(Robot.wrist);
+        wrist = Robot.wrist;
+        requires(wrist);
+    }
+
+    protected void initialize()
+    {
+        SmartDashboard.putString("Wrist", this.getClass().getSimpleName());
     }
 
     protected void execute()
     {
-        double speed = Robot.controls.getIntakeLift();
-        Robot.wrist.setIntakeLiftSpeed(speed);
-        SmartDashboard.putNumber("Intake Lift Speed", speed);
+        wrist.setIntakeLiftSpeed(Robot.controls.getIntakeLift());
     }
 
     protected boolean isFinished()
     {
         return false;
-    }
-
-    protected void end()
-    {
-        Robot.wrist.setIntakeLiftSpeed(0);
     }
 }

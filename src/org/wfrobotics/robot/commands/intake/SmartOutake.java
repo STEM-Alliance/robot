@@ -23,8 +23,8 @@ public class SmartOutake extends Command
 
     protected void execute()
     {
-        intake.setIntake(0.25);
-        if (timeSinceInitialized() > .25)
+        intake.setIntake(0.30);
+        if (timeSinceInitialized() > .2)
         {
             intake.setHorizontal(true);
         }

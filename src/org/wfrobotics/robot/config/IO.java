@@ -14,11 +14,11 @@ import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
 import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketJoyStick;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.AutoLiftToBottom;
+import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.SmartOutake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
-import org.wfrobotics.robot.commands.lift.LiftToHeightAndHold;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -64,7 +64,7 @@ public class IO
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new IntakeLiftToHeight(.25)));
 
         // ------------------------- Lift -------------------------
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new LiftToHeightAndHold(LiftHeight.Scale.get())));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new AutoLiftToScale()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SmartOutake()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new AutoLiftToBottom()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
@@ -90,7 +90,7 @@ public class IO
 
     public boolean getDriveQuickTurn()
     {
-        return driverTurn.getRawButton(1);
+        return -driverTurn.getY() < 0.1;
     }
 
     public double getIntakeIn()
