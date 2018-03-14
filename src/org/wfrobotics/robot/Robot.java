@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.hardware.led.RevLEDs.PatternName;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
+import org.wfrobotics.robot.auto.Testing_Stuff;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.robotConfigs.HerdPractice;
@@ -15,7 +16,6 @@ import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
 import org.wfrobotics.robot.subsystems.Wrist;
 
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
@@ -97,6 +97,11 @@ public class Robot extends SampleRobot
         {
             allPeriodic();
         }
+
+        //        driveService.turnToHeading(-90);
+        //        driveService.turnToHeading(0);
+        //        driveService.turnToHeading(180);
+
     }
 
     public void disabled()
