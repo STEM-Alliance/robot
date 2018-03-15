@@ -32,8 +32,6 @@ public class IO
     private final Joystick driverThrottle;
     private final Joystick driverTurn;
     private final Xbox operator;
-    private final Panel panel;
-
     public ArcadeIO arcadeIO;
 
     private IO(Joystick driverThrottle, Joystick driverTurn, Xbox operator, Panel panel)
@@ -41,14 +39,10 @@ public class IO
         this.driverThrottle = driverThrottle;
         this.driverTurn = driverTurn;
         this.operator = operator;
-        this.panel = panel;
-
         // ------------------- Select Drive-style  ----------------
         arcadeIO = new ArcadeRocketJoyStick(driverThrottle, driverTurn);
 
         // ------------------------- Drive ------------------------
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ShiftToggle()));
-        //
         //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new TurnToHeading(0, 2)));
         //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new TurnToHeading(90, 2)));
         //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new TurnToHeading(-90, 2)));
@@ -57,11 +51,7 @@ public class IO
         // ------------------------ Intake ------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_Y, .1, -.1, TRIGGER.WHILE_HELD, new IntakeLiftAutoZeroThenPercentVoltage()));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LEFT_STICK, TRIGGER.WHEN_PRESSED, new IntakeLiftZero()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new IntakeLiftToHeight(.75)));
-        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new IntakeLiftToHeight(.25)));
 
         // ------------------------- Lift -------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new AutoLiftToScale()));
@@ -69,6 +59,7 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new AutoLiftToBottom()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
 
+        // ------------------------ Debug -------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DrivePath("TurnLeft")));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DriveDistance(12.0 * 10)));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new TurnToHeading(0.0 , 2.0)));
@@ -77,21 +68,6 @@ public class IO
     }
 
     // ------------------- Robot-specific --------------------
-
-    public double getThrottle()
-    {
-        return -driverThrottle.getY();
-    }
-
-    public double getTurn()
-    {
-        return driverTurn.getRawAxis(0);
-    }
-
-    public boolean getDriveQuickTurn()
-    {
-        return -driverTurn.getY() < 0.1;
-    }
 
     public double getIntakeIn()
     {
@@ -141,9 +117,19 @@ public class IO
         return instance;
     }
 
-    public int getAutonomousSide()
+    public double getThrottle()
     {
-        return panel.getRotary();
+        return -driverThrottle.getY();
+    }
+
+    public double getTurn()
+    {
+        return driverTurn.getRawAxis(0);
+    }
+
+    public boolean getDriveQuickTurn()
+    {
+        return -driverTurn.getY() < 0.1;
     }
 
     public void setRumble(boolean rumble)
