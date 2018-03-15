@@ -21,15 +21,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 {
-    /*private enum LimitSwitch
-    {
-        BOTTOM,
-        TOP
-    }*/
-
     private final LimitSwitchs limit;
     private final static double kTicksPerRev = 4096.0;
-    private final static double kRevsPerInch = 1 / 4.555;  // Measured on practice robot
+    private final static double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
     private final boolean kDebug;
 
     private final RobotState state = RobotState.getInstance();
@@ -38,7 +32,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private double desiredSetpoint;
     private double todoRemoveLast;
     private double backgroundPeriod;
-
     private boolean AtTopLimitL;
 
     public LiftSubsystem(RobotConfig config)
@@ -55,9 +48,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         {
             motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P, config.LIFT_I, config.LIFT_D, config.LIFT_F, kSlot, config.LIFT_VELOCITY, config.LIFT_ACCELERATION);
             motors[index].config_IntegralZone(0, 0, kTimeout);
-            //            motors[index].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], kTimeout);
-            //            motors[index].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config.LIFT_LIMIT_SWITCH_NORMALLY[index][1], kTimeout);
-            //            motors[index].overrideLimitSwitchesEnable(true);
             motors[index].set(ControlMode.PercentOutput, 0);
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);
@@ -67,8 +57,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[index].configVelocityMeasurementWindow(32, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeout);
-            //            invertSensorReading[index][0] = config.LIFT_LIMIT_SWITCH_NORMALLY[index][0] == LimitSwitchNormal.NormallyClosed;
-            //            invertSensorReading[index][1] = config.LIFT_LIMIT_SWITCH_NORMALLY[index][1] == LimitSwitchNormal.NormallyClosed;
             if (config.LIFT_DEBUG)
             {
                 motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 5, kTimeout);  // For calibration
@@ -76,9 +64,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
         limit = new LimitSwitchs(motors, config.LIFT_LIMIT_SWITCH_NORMALLY);
 
-        desiredSetpoint = 0;
+        desiredSetpoint = 0.0;
         todoRemoveLast = Timer.getFPGATimestamp();
-        backgroundPeriod = 0;
+        backgroundPeriod = 0.0;
         AtTopLimitL = false;
     }
 
@@ -94,13 +82,13 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     {
         final double todoRemoveNow = Timer.getFPGATimestamp();
 
-        if(limit.allSidesAtBottom())
+        if(limit.atBottomAll())
         {
             motors[0].setSelectedSensorPosition(0, 0, 0);
             motors[1].setSelectedSensorPosition(0, 0, 0);
         }
 
-        AtTopLimitL = limit.anySideAtTop();//isSideAtLimit(LimitSwitch.TOP, 0);
+        AtTopLimitL = limit.atTopAny();//isSideAtLimit(LimitSwitch.TOP, 0);
 
         //        if (Math.abs(getHeightAverage() - desiredSetpoint) < 2)
         //        {
@@ -116,12 +104,12 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public boolean allSidesAtBottom()
     {
-        return limit.allSidesAtBottom();
+        return limit.atBottomAll();
     }
 
     public boolean allSidesAtTop()
     {
-        return limit.allSidesAtTop();
+        return limit.atTopAll();
     }
 
     public synchronized void goToHeightInit(double heightInches)
@@ -140,6 +128,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     public void reportState()
     {
         double height = ticksToInches(getHeightAverage());
+        boolean[][] limitSwitchSet = limit.dump();
 
         if (AtTopLimitL)
         {
@@ -147,16 +136,11 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
 
         SmartDashboard.putNumber("Lift Height", height);
-        SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000);
-        //        SmartDashboard.putBoolean("LB", isSideAtLimit(LimitSwitch.BOTTOM, 0));
-        //        SmartDashboard.putBoolean("LT", isSideAtLimit(LimitSwitch.TOP, 0));
-        //        SmartDashboard.putBoolean("RB", isSideAtLimit(LimitSwitch.BOTTOM, 1));
-        //        SmartDashboard.putBoolean("RT", isSideAtLimit(LimitSwitch.TOP, 1));
-        boolean[] limitSwitchSet = limit.smartDashPrint();
-        SmartDashboard.putBoolean("LB", limitSwitchSet[0]);
-        SmartDashboard.putBoolean("LT", limitSwitchSet[1]);
-        SmartDashboard.putBoolean("RB", limitSwitchSet[2]);
-        SmartDashboard.putBoolean("RT", limitSwitchSet[3]);
+        SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000.0);
+        SmartDashboard.putBoolean("LB", limitSwitchSet[0][0]);
+        SmartDashboard.putBoolean("LT", limitSwitchSet[0][1]);
+        SmartDashboard.putBoolean("RB", limitSwitchSet[1][0]);
+        SmartDashboard.putBoolean("RT", limitSwitchSet[1][1]);
         if (kDebug)
         {
             debugCalibration();
@@ -175,7 +159,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     private double getHeightAverage()
     {
-        return (motors[0].getSelectedSensorPosition(0) + motors[1].getSelectedSensorPosition(0)) / 2;
+        return (motors[0].getSelectedSensorPosition(0) + motors[1].getSelectedSensorPosition(0)) / 2.0;
     }
 
     /*private boolean allSidesAtLimitSwitch(LimitSwitch limit)
@@ -186,15 +170,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             allAtLimit &= isSideAtLimit(limit, index);
         }
         return allAtLimit;
-    }
-
-    private boolean isSideAtLimit(LimitSwitch limit, int index)
-    {
-        if(limit == LimitSwitch.BOTTOM)
-        {
-            return motors[index].getSensorCollection().isRevLimitSwitchClosed() ^ invertSensorReading[index][1];
-        }
-        return motors[index].getSensorCollection().isFwdLimitSwitchClosed() ^ invertSensorReading[index][0];
     }*/
 
     private static double inchesToTicks(double inches)

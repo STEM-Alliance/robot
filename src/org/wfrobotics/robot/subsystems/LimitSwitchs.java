@@ -6,123 +6,105 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class LimitSwitchs
 {
-    private LimitSwitch[] limitSwitch;
     private enum Limit
     {
         BOTTOM,
         TOP
     }
-    public LimitSwitchs( TalonSRX[] motors,  LimitSwitchNormal[][] config){
-        //        this.motors = motors;
-        //        final int kTimeout = 10;
-        limitSwitch = new LimitSwitch[motors.length];
-        for(int i = 0; i < motors.length; i++){
-            //                motors[i].configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config[i][0], kTimeout);
-            //                motors[i].configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config[i][1], kTimeout);
-            //            motors[i].overrideLimitSwitchesEnable(true);
-            //            invertSensorReading[i][0] = config[i][0] == LimitSwitchNormal.NormallyClosed;
-            //            invertSensorReading[i][1] = config[i][1] == LimitSwitchNormal.NormallyClosed;
-            limitSwitch[i] = new LimitSwitch(motors[i], config[i]);
-        }
-    }
 
-    public boolean allSidesAtBottom()
+    private class LimitSwitch
     {
-        return allSidesAtLimitSwitch(Limit.BOTTOM);
-    }
+        private final TalonSRX motor;
+        private final boolean[] invert;
 
-    public boolean allSidesAtTop()
-    {
-        return allSidesAtLimitSwitch(Limit.TOP);
-    }
-
-    private boolean allSidesAtLimitSwitch(Limit limit)
-    {
-        boolean allAtLimit = true;
-        /*for (int index = 0; index < motors.length; index++)
+        public LimitSwitch(TalonSRX motor, LimitSwitchNormal[] notSetState)
         {
-            allAtLimit &= isSideAtLimit(limit, index);
-        }
-        return allAtLimit;*/
-        for (int i = 0; i < limitSwitch.length; i++){
-            allAtLimit = limitSwitch[i].isSideAtLimit(limit);
-            if(!allAtLimit)return allAtLimit;
-        }
-        return allAtLimit;
-    }
+            invert = new boolean[2];
+            this.motor = motor;
 
-
-    /*private boolean isSideAtLimit(Limit limit, int index)
-    {
-        if(limit == Limit.BOTTOM)
-        {
-            return motors[index].getSensorCollection().isRevLimitSwitchClosed() ^ invertSensorReading[index][1];
-        }
-        return motors[index].getSensorCollection().isFwdLimitSwitchClosed() ^ invertSensorReading[index][0];
-    }*/
-
-    public boolean anySideAtBottom()
-    {
-        return anySideAtLimitSwitch(Limit.BOTTOM);
-    }
-
-    public boolean anySideAtTop()
-    {
-        return anySideAtLimitSwitch(Limit.TOP);
-    }
-
-    private boolean anySideAtLimitSwitch(Limit limit){
-        /*boolean atLimit = false;
-        for (int index = 0; index < motors.length; index++)
-        {
-            atLimit = isSideAtLimit(limit, index);
-            if(atLimit)return atLimit;
-        }
-        return atLimit;*/
-        boolean atLimit = false;
-        for (int i = 0; i < limitSwitch.length; i++)
-        {
-            atLimit = limitSwitch[i].isSideAtLimit(limit);
-            if(atLimit)return atLimit;
-        }
-        return atLimit;
-    }
-
-    public boolean[] smartDashPrint(){
-        /*SmartDashboard.putBoolean("LB", isSideAtLimit(Limit.BOTTOM, 0));
-        SmartDashboard.putBoolean("LT", isSideAtLimit(Limit.TOP, 0));
-        SmartDashboard.putBoolean("RB", isSideAtLimit(Limit.BOTTOM, 1));
-        SmartDashboard.putBoolean("RT", isSideAtLimit(Limit.TOP, 1));*/
-        boolean[] smartDash = new boolean[limitSwitch.length * 2];
-        int i = 0;
-        while( i < limitSwitch.length){
-            smartDash[i] = limitSwitch[i].isSideAtLimit(Limit.BOTTOM);
-            smartDash[i + 1] = limitSwitch[i].isSideAtLimit(Limit.TOP);
-            i += 2;
-        }
-        return smartDash;
-    }
-
-    private class LimitSwitch{
-        private TalonSRX motor;
-        private int kTimeout = 10;
-        private final boolean[] invertSensorReading = new boolean[2];
-
-        public LimitSwitch(TalonSRX motor,  LimitSwitchNormal[] config){
-            this.motor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config[0], kTimeout);
-            this.motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, config[1], kTimeout);
+            this.motor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, notSetState[0], 10);
+            this.motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, notSetState[1], 10);
             this.motor.overrideLimitSwitchesEnable(true);
-            invertSensorReading[0] = config[0] == LimitSwitchNormal.NormallyClosed;
-            invertSensorReading[1] = config[1] == LimitSwitchNormal.NormallyClosed;
+
+            invert[0] = notSetState[0] == LimitSwitchNormal.NormallyClosed;
+            invert[1] = notSetState[1] == LimitSwitchNormal.NormallyClosed;
         }
 
-        public boolean isSideAtLimit(Limit limit){
+        public boolean isSet(Limit limit)
+        {
             if(limit == Limit.BOTTOM)
             {
-                return motor.getSensorCollection().isRevLimitSwitchClosed() ^ invertSensorReading[1];
+                return motor.getSensorCollection().isRevLimitSwitchClosed() ^ invert[1];
             }
-            return motor.getSensorCollection().isFwdLimitSwitchClosed() ^ invertSensorReading[0];
+            return motor.getSensorCollection().isFwdLimitSwitchClosed() ^ invert[0];
         }
+    }
 
+    private final LimitSwitch[] limitSwitch;
+
+    public LimitSwitchs(TalonSRX[] motors, LimitSwitchNormal[][] notSetState)
+    {
+        limitSwitch = new LimitSwitch[motors.length];
+
+        for(int index = 0; index < motors.length; index++)
+        {
+            limitSwitch[index] = new LimitSwitch(motors[index], notSetState[index]);
+        }
+    }
+
+    public boolean atBottomAll()
+    {
+        return allSet(Limit.BOTTOM);
+    }
+
+    public boolean atTopAll()
+    {
+        return allSet(Limit.TOP);
+    }
+
+    public boolean atBottomAny()
+    {
+        return anySet(Limit.BOTTOM);
+    }
+
+    public boolean atTopAny()
+    {
+        return anySet(Limit.TOP);
+    }
+
+    public boolean[][] dump()
+    {
+        boolean[][] buffer = new boolean[limitSwitch.length][2];
+
+        for(int index = 0; index < limitSwitch.length; index++)
+        {
+            buffer[index][0] = limitSwitch[index].isSet(Limit.BOTTOM);
+            buffer[index][1] = limitSwitch[index].isSet(Limit.TOP);
+        }
+        return buffer;
+    }
+
+    private boolean allSet(Limit limit)
+    {
+        for (int index = 0; index < limitSwitch.length; index++)
+        {
+            if(!limitSwitch[index].isSet(limit))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean anySet(Limit limit)
+    {
+        for (int index = 0; index < limitSwitch.length; index++)
+        {
+            if(limitSwitch[index].isSet(limit))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
