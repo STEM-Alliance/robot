@@ -33,7 +33,7 @@ public class SmartIntake extends CommandGroup
 
     protected void execute()
     {
-        if (state.liftHeightInches < 1 && state.wristAngle < 27.5)
+        if (state.liftHeightInches < 1 && state.wristAngle < 10.0)
         {
             double distanceToCube = state.intakeDistance;
 
