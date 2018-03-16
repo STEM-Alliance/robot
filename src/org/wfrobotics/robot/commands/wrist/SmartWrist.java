@@ -1,16 +1,18 @@
 package org.wfrobotics.robot.commands.wrist;
 
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class IntakeLift extends Command
+public class SmartWrist extends Command
 {
+    private final RobotState state = RobotState.getInstance();
     private final Wrist wrist;
 
-    public IntakeLift()
+    public SmartWrist()
     {
         wrist = Robot.wrist;
         requires(wrist);
@@ -23,7 +25,16 @@ public class IntakeLift extends Command
 
     protected void execute()
     {
-        wrist.setIntakeLiftSpeed(Robot.controls.getIntakeLift());
+        double commanded = Robot.controls.getIntakeLift();
+
+        if (Math.abs(commanded) < .1 && Math.abs(state.robotVelocity.getMag()) > 0.1 && Math.abs(state.liftHeightInches) < 1)
+        {
+            wrist.setIntakeLiftPosition(1.0);
+        }
+        else
+        {
+            wrist.setIntakeLiftSpeed(commanded);
+        }
     }
 
     protected boolean isFinished()

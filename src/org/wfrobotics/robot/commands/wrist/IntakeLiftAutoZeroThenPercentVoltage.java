@@ -8,7 +8,7 @@ public class IntakeLiftAutoZeroThenPercentVoltage extends ConditionalCommand
 {
     public IntakeLiftAutoZeroThenPercentVoltage()
     {
-        super(new IntakeLift(), new IntakeLiftZero());
+        super(new SmartWrist(), new IntakeLiftZero());
     }
 
     protected boolean condition()

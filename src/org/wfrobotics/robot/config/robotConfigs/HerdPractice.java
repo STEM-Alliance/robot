@@ -30,14 +30,14 @@ public class HerdPractice extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = (2050 + 2650) / 2.0;
+        LIFT_MAX_POSSIBLE_UP = (2100 + 2400) / 2.0;  // DRL 3-16-18 15:1 ratio
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = 7.0;
-        LIFT_I = .05;
-        LIFT_D = 40.0;
+        LIFT_P = 11.0;
+        LIFT_I = 0.07;
+        LIFT_D = 70.0;
         LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
         LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
-        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 4.0);
+        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 6.0);
 
         LIFT_MOTOR_INVERTED_LEFT = true; // left
         LIFT_MOTOR_INVERTED_RIGHT = false; // right
@@ -52,10 +52,10 @@ public class HerdPractice extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = (10500 + 10500) / 2;  // DRL 3-14-18
-        TANK_P = 1.2;
-        TANK_I = TANK_P * 0.001;
-        TANK_D =  TANK_P * 11.0;
+        TANK_MAX_VELOCITY = (12000 + 12000) / 2;  // DRL 3-14-18, 12000 works way better than say 10500 at 9.9 ft/s DRL 3-15-18
+        TANK_P = 1.15;
+        TANK_I = 0.001;
+        TANK_D = 11.0;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;
         TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.90);
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 0.825), (int) (TANK_CRUISE_VELOCITY * 0.825)};
