@@ -102,6 +102,10 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     // ----------------------------------------- Public -------------------------------------------
 
+    public double getLiftHeight()
+    {
+        return ticksToInches(motors[0].getSelectedSensorPosition(0)) ;
+    }
     public boolean allSidesAtBottom()
     {
         return limit.atBottomAll();

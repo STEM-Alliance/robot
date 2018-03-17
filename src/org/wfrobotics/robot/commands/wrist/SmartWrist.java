@@ -27,7 +27,7 @@ public class SmartWrist extends Command
     {
         double commanded = Robot.controls.getIntakeLift();
 
-        if (Math.abs(commanded) < .1 && Math.abs(state.robotVelocity.getMag()) > 0.1 && Math.abs(state.liftHeightInches) < 1)
+        if (Math.abs(commanded) < 0.4  && Math.abs(state.robotVelocity.getMag()) > 0.4 && Math.abs(state.liftHeightInches) < 1 && state.robotHasCube)
         {
             wrist.setIntakeLiftPosition(1.0);
         }

@@ -6,7 +6,15 @@ public class LiftAutoZeroThenPercentVoltage extends ConditionalCommand
 {
     public LiftAutoZeroThenPercentVoltage()
     {
+        //        if(Robot.controls.getLiftStick() < .1)
+        //        {
+        //            super(new LiftToHeight(Robot.liftSubsystem.getLiftHeight()), new AutoZero());
+        //        }
+        //        else
+        //        {
         super(new LiftPercentVoltage(), new AutoZero());
+        //        }
+
     }
 
     protected boolean condition()
