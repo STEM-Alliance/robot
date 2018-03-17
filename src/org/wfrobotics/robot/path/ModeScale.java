@@ -29,15 +29,14 @@ public class ModeScale extends CommandGroup
         addSequential(new WaitCommand(waitForGyroToFullyZero));
         addSequential(new SynchronizedCommand(new DrivePath("Scale"), new DelayedCommand(new LiftToScale(), 3.0)));
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
-        addSequential(new DriveDistance(-12.0 * 1.0));
-        addParallel(new TurnToHeading(-160.0, 1.0));  // TODO ScaleChoice
-        addSequential(new DelayedCommand(new AutoLiftToBottom(), 1.0));
+        addParallel(new AutoLiftToBottom());  // TODO ScaleChoice
+        addSequential(new TurnToHeading(-175.0, 1.0));
         addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
         //        addSequential(new DriveDistance(inchesToSecondCube));
-        addSequential(new DrivePath("Scale_Second"));
-        addSequential(new WaitUntilCube());
+        //        addSequential(new DriveDistance(12.0 * 3.0));
+        nom();
         addParallel(new IntakeLiftToHeight(1.0));
         addSequential(new TurnToHeading(0.0, 1.0));  // TODO ScaleChoice
         addSequential(new SynchronizedCommand(new DriveDistance(inchesToSecondCube), new DelayedCommand(new LiftToScale(), 0.0)));
@@ -45,8 +44,10 @@ public class ModeScale extends CommandGroup
         addSequential(new IntakeSet(speedOuttake * 0.8, timeOuttake, true));
     }
 
-    public void experimental()
+    public void nom()
     {
-        addSequential(new DriveInfared(100.0, 1.5));
+        addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
+        addParallel(new SmartIntake());
+        addSequential(new DriveInfared(6.0, 1.5));
     }
 }
