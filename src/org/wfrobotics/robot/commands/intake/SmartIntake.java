@@ -17,6 +17,9 @@ public class SmartIntake extends CommandGroup
     protected final RobotState state = RobotState.getInstance();
     protected final IntakeSubsystem intake = Robot.intakeSubsystem;
 
+    protected boolean doingPulse;
+    protected double timeUntilPulse;
+
     /**
      * This command gets the distance from the subsystem and based on that distance
      * drive the motors at different speeds
@@ -29,6 +32,8 @@ public class SmartIntake extends CommandGroup
     protected void initialize()
     {
         SmartDashboard.putString("Intake", "Smart");
+        doingPulse = false;
+        timeUntilPulse = -1.0;
     }
 
     protected void execute()
@@ -37,6 +42,11 @@ public class SmartIntake extends CommandGroup
         {
             double distanceToCube = state.intakeDistance;
 
+            if (!doingPulse)
+            {
+                timeUntilPulse = 0.5;
+                doingPulse = true;
+            }
             autoIntake(distanceToCube);
             autoJaws(distanceToCube);
         }

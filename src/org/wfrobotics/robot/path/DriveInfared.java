@@ -18,11 +18,26 @@ public class DriveInfared extends DriveCommand
     protected void initialize()
     {
         super.initialize();
-        Robot.driveService.driveDistance(target - state.intakeDistance);
+        Robot.driveService.driveDistance(remaining());
+    }
+
+    protected void execute()
+    {
+        Robot.driveService.driveDistance(remaining());
     }
 
     protected boolean isFinished()
     {
-        return Math.abs(target - state.intakeDistance) < tol;
+        return Math.abs(remaining()) < tol;
     }
+
+    private double remaining()
+    {
+        return state.intakeDistance / 2.54 - target;
+    }
+    protected void end()
+    {
+        Robot.driveService.drive(0, 0);
+    }
+
 }
