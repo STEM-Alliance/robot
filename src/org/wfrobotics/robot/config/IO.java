@@ -93,6 +93,7 @@ public class IO
         return operator.getAxis(AXIS.RIGHT_Y);
     }
 
+
     public double getWinchPercent()
     {
         int direction = operator.getDpad();
@@ -125,7 +126,7 @@ public class IO
 
     public double getTurn()
     {
-        return driverTurn.getRawAxis(0);
+        return Math.signum(driverTurn.getRawAxis(0))*Math.pow(driverTurn.getRawAxis(0), 2);
     }
 
     public boolean getDriveQuickTurn()
