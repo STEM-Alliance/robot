@@ -3,6 +3,7 @@ package org.wfrobotics.robot.config;
 import java.util.ArrayList;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.DrivePath;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
@@ -18,7 +19,6 @@ import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.SmartOutake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
-import org.wfrobotics.robot.path.ModeScale;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -60,7 +60,8 @@ public class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
 
         // ------------------------ Debug -------------------------
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeScale()));
+        //robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeScale()));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DrivePath("Straight")));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ModeCenter()));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DriveDistance(12.0 * 20)));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new TurnToHeading(0.0 , 2.0)));
