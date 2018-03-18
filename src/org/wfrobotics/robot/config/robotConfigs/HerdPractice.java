@@ -1,3 +1,4 @@
+
 package org.wfrobotics.robot.config.robotConfigs;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -19,10 +20,10 @@ public class HerdPractice extends RobotConfig
         INTAKE_F = 1023.0 / INTAKE_MAX_POSSIBLE_UP;
         INTAKE_VELOCITY = (int) (INTAKE_MAX_POSSIBLE_UP * INTAKE_POSSIBLE_VELOCITY_PERCENTAGE);
         INTAKE_ACCELERATION = INTAKE_VELOCITY;
-        INTAKE_TICKS_TO_TOP = 3500;
+        INTAKE_TICKS_TO_TOP = 4500;
 
         INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
-        INTAKE_DISTANCE_TO_CUBE = 8.2; // centimeters
+        INTAKE_DISTANCE_TO_CUBE = 10.2; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
         INTAKE_INVERT_RIGHT = true;
@@ -53,7 +54,7 @@ public class HerdPractice extends RobotConfig
         //                      Tank
         // _________________________________________________________________________________
         TANK_MAX_VELOCITY = (11400 + 11200) / 2;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
-        TANK_P = 2.4;
+        TANK_P = 2.25;
         TANK_I = 0.0021;
         TANK_D = 3.775;
         TANK_F = 1023 /  TANK_MAX_VELOCITY;

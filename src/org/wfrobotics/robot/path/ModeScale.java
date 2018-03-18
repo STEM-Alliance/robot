@@ -3,15 +3,15 @@ package org.wfrobotics.robot.path;
 import org.wfrobotics.reuse.commands.decorator.DelayedCommand;
 import org.wfrobotics.reuse.commands.decorator.SynchronizedCommand;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
-import org.wfrobotics.reuse.commands.drive.DrivePath;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.robot.auto.IntakeSet;
 import org.wfrobotics.robot.auto.JawsSet;
-import org.wfrobotics.robot.commands.AutoLiftToBottom;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
+import org.wfrobotics.robot.commands.lift.LiftToHeight;
 import org.wfrobotics.robot.commands.wrist.IntakeLiftToHeight;
+import org.wfrobotics.robot.config.LiftHeight;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
@@ -27,10 +27,11 @@ public class ModeScale extends CommandGroup
     {
         addSequential(new GyroZero());  // For teleop testing
         addSequential(new WaitCommand(waitForGyroToFullyZero));
-        addSequential(new SynchronizedCommand(new DrivePath("Scale"), new DelayedCommand(new LiftToScale(), 3.0)));
+        addSequential(new SynchronizedCommand(new DriveDistance(12.0 * 24.5 - 33.6), new DelayedCommand(new LiftToScale(), 1.75)));
+        addSequential(new TurnToHeading(-30.0, 1.0));
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
-        addParallel(new AutoLiftToBottom());  // TODO ScaleChoice
         addSequential(new TurnToHeading(-175.0, 1.0));
+        addSequential(new LiftToHeight(LiftHeight.Intake.get()));  // TODO ScaleChoice
         addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
