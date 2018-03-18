@@ -47,7 +47,7 @@ public abstract class RobotConfig
 
     //                      Tank
     // _________________________________________________________________________________
-    public boolean TANK_DEBUG = true;
+    public boolean TANK_DEBUG = false;
     public boolean TANK_SQUARE_TURN_MAG = true;
 
     public double TANK_MAX_VELOCITY;
