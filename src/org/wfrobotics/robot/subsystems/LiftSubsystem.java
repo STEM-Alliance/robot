@@ -115,6 +115,10 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     {
         return limit.atTopAll();
     }
+    public boolean eitherSideAtTop()
+    {
+        return limit.atTopAny();
+    }
 
     public synchronized void goToHeightInit(double heightInches)
     {
