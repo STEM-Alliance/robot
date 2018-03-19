@@ -46,7 +46,7 @@ public class LiftGoHome extends Command
         {
             hasZeroed = true;
         }
-        return hasZeroed || isTimedOut() || Robot.liftSubsystem.allSidesAtTop();
+        return hasZeroed || isTimedOut() || Robot.liftSubsystem.eitherSideAtTop();
     }
 
     protected void end()
