@@ -3,6 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.commands.wrist.IntakeLiftAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
@@ -38,7 +39,7 @@ public class Wrist extends Subsystem
 
     protected void initDefaultCommand()
     {
-        //        setDefaultCommand(new IntakeLiftAutoZeroThenPercentVoltage());
+        setDefaultCommand(new IntakeLiftAutoZeroThenPercentVoltage());
         //        setDefaultCommand(new IntakeLift());
     }
 
