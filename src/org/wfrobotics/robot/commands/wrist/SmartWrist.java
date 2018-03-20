@@ -32,10 +32,6 @@ public class SmartWrist extends Command
         {
             wrist.setIntakeLiftPosition(1.0);
         }
-        //        else if (wrist.intakeLiftAtBottom())
-        //        {
-        //            wrist.setIntakeLiftPosition(0.0);
-        //        }
         else
         {
             wrist.setIntakeLiftSpeed(commanded);

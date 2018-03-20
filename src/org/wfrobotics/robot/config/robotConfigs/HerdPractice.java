@@ -23,7 +23,7 @@ public class HerdPractice extends RobotConfig
         INTAKE_TICKS_TO_TOP = 4500;
 
         INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
-        INTAKE_DISTANCE_TO_CUBE = 8.8; // centimeters
+        INTAKE_DISTANCE_TO_CUBE = 15.5; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
         INTAKE_INVERT_RIGHT = true;
@@ -31,15 +31,15 @@ public class HerdPractice extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = new double[] {(2100 + 2400) / 2.0, (2100 + 2400) / 2.0};  // DRL 3-16-18 15:1 ratio
-        LIFT_MAX_POSSIBLE_DOWN = new double[] {LIFT_MAX_POSSIBLE_UP[0], LIFT_MAX_POSSIBLE_UP[1]};
-        LIFT_MAX_POSSIBLE_VELOCITY = new double[] {LIFT_MAX_POSSIBLE_UP[0], LIFT_MAX_POSSIBLE_UP[1]};
+        LIFT_MAX_POSSIBLE_UP = 2200.0;  // DRL 3-19-18 First time different up and down gains
+        LIFT_MAX_POSSIBLE_DOWN = 3000.0;
+        LIFT_MAX_POSSIBLE_VELOCITY = LIFT_MAX_POSSIBLE_UP;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = new double[] {11.0, 11.0};
-        LIFT_I = new double[] {0.07, 0.07};
-        LIFT_D = new double[] {70.0, 70.0};
-        LIFT_F = new double[] {1023.0 / LIFT_MAX_POSSIBLE_UP[0], 1023.0 / LIFT_MAX_POSSIBLE_UP[1]};
-        LIFT_VELOCITY = new int[] {(int) (LIFT_MAX_POSSIBLE_UP[0] * LIFT_POSIBLE_VELOCITY_PERCENTAGE), (int) (LIFT_MAX_POSSIBLE_UP[1] * LIFT_POSIBLE_VELOCITY_PERCENTAGE)};
+        LIFT_P = new double[] {5.6, 0.0};
+        LIFT_I = new double[] {0.001, 0.001};
+        LIFT_D = new double[] {0.0, 0.0};
+        LIFT_F = new double[] {1023.0 / LIFT_MAX_POSSIBLE_UP, 1023.0 / LIFT_MAX_POSSIBLE_DOWN};
+        LIFT_VELOCITY = new int[] {(int) (LIFT_MAX_POSSIBLE_VELOCITY * LIFT_POSIBLE_VELOCITY_PERCENTAGE), (int) (LIFT_MAX_POSSIBLE_VELOCITY * LIFT_POSIBLE_VELOCITY_PERCENTAGE)};
         LIFT_ACCELERATION = new int[] {(int) (LIFT_VELOCITY[0] * 6.0), (int) (LIFT_VELOCITY[1] * 6.0)};
 
         LIFT_MOTOR_INVERTED_LEFT = true; // left

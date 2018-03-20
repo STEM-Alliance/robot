@@ -10,6 +10,7 @@ public class AutoZero extends CommandGroup
     {
         this.addSequential(new LiftGoHome(0.5, 0.2));
         this.addSequential(new LiftGoHome(-0.2, 15.0));
+        this.addSequential(new LiftToHeight(.95));  // Help wrist zero
     }
 
     protected void end()

@@ -48,7 +48,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         for (int index = 0; index < motors.length; index++)
         {
             motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P[kSlotUp], config.LIFT_I[kSlotUp], config.LIFT_D[kSlotUp], config.LIFT_F[kSlotUp], kSlotUp, config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
-            motors[index].config_IntegralZone(kSlotUp, 0, kTimeout);
+            motors[index].config_IntegralZone(kSlotUp, 20, kTimeout);
             motors[index].set(ControlMode.PercentOutput, 0);
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);
@@ -66,8 +66,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         // Down gains
         for (int index = 0; index < motors.length; index++)
         {
-            motors[index].config_IntegralZone(kSlotDown, 0, kTimeout);
-            motors[index].selectProfileSlot(kSlotDown, 0);
+            motors[index].config_IntegralZone(kSlotDown, 20, kTimeout);
             motors[index].config_kF(kSlotDown, config.LIFT_F[kSlotDown], kTimeout);
             motors[index].config_kP(kSlotDown, config.LIFT_P[kSlotDown], kTimeout);
             motors[index].config_kI(kSlotDown, config.LIFT_I[kSlotDown], kTimeout);
@@ -134,6 +133,17 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public synchronized void goToHeightInit(double heightInches)
     {
+        if (heightInches > getHeightAverage())
+        {
+            motors[0].selectProfileSlot(kSlotUp, 0);
+            motors[1].selectProfileSlot(kSlotUp, 0);
+        }
+        else
+        {
+            motors[0].selectProfileSlot(kSlotDown, 0);
+            motors[1].selectProfileSlot(kSlotDown, 0);
+        }
+
         set(ControlMode.MotionMagic, inchesToTicks(heightInches));  // Stalls motors
     }
 
@@ -222,9 +232,9 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Delta E", error0 - error1);
         SmartDashboard.putNumber("Delta P", position0 - position1);
 
-        double p = Preferences.getInstance().getDouble("lift_p", 0.0);
-        double i = Preferences.getInstance().getDouble("lift_i", 0.0);
-        double d = Preferences.getInstance().getDouble("lift_d", 0.0);
+        double p = Preferences.getInstance().getDouble("lift_p_0", 0.0);
+        double i = Preferences.getInstance().getDouble("lift_i_0", 0.0);
+        double d = Preferences.getInstance().getDouble("lift_d_0", 0.0);
 
         motors[0].config_kP(0, p, 10);
         motors[1].config_kP(0, p, 10);
@@ -232,5 +242,16 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         motors[1].config_kI(0, i, 10);
         motors[0].config_kD(0, d, 10);
         motors[1].config_kD(0, d, 10);
+
+        p = Preferences.getInstance().getDouble("lift_p_1", 0.0);
+        i = Preferences.getInstance().getDouble("lift_i_1", 0.0);
+        d = Preferences.getInstance().getDouble("lift_d_1", 0.0);
+
+        motors[0].config_kP(1, p, 10);
+        motors[1].config_kP(1, p, 10);
+        motors[0].config_kI(1, i, 10);
+        motors[1].config_kI(1, i, 10);
+        motors[0].config_kD(1, d, 10);
+        motors[1].config_kD(1, d, 10);
     }
 }

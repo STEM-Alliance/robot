@@ -29,9 +29,9 @@ public abstract class RobotConfig
     public boolean LIFT_DEBUG = false;
 
     public double LIFT_SPROCKET_DIAMETER_INCHES; // 1.29 16 tooth 25 chain
-    protected double[] LIFT_MAX_POSSIBLE_UP;
-    protected double[] LIFT_MAX_POSSIBLE_DOWN;
-    protected double[] LIFT_MAX_POSSIBLE_VELOCITY;
+    protected double LIFT_MAX_POSSIBLE_UP;
+    protected double LIFT_MAX_POSSIBLE_DOWN;
+    protected double LIFT_MAX_POSSIBLE_VELOCITY;
     protected double LIFT_POSIBLE_VELOCITY_PERCENTAGE; // percentage
     public double LIFT_P[];
     public double LIFT_I[];
