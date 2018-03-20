@@ -97,11 +97,6 @@ public class Robot extends SampleRobot
         {
             allPeriodic();
         }
-
-        //        driveService.turnToHeading(-90);
-        //        driveService.turnToHeading(0);
-        //        driveService.turnToHeading(180);
-
     }
 
     public void disabled()

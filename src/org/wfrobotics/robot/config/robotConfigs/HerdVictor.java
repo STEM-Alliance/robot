@@ -20,14 +20,16 @@ public class HerdVictor extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = (1350 + 1650) / 2.0;
+        LIFT_MAX_POSSIBLE_UP = new double[] {(2100 + 2400) / 2.0, (2100 + 2400) / 2.0};  // DRL 3-16-18 15:1 ratio
+        LIFT_MAX_POSSIBLE_DOWN = new double[] {LIFT_MAX_POSSIBLE_UP[0], LIFT_MAX_POSSIBLE_UP[1]};
+        LIFT_MAX_POSSIBLE_VELOCITY = new double[] {LIFT_MAX_POSSIBLE_UP[0], LIFT_MAX_POSSIBLE_UP[1]};
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = .3;
-        LIFT_I = LIFT_P * .01 * 0;
-        LIFT_D = LIFT_P * 10.0 * 0;
-        LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
-        LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
-        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.0);
+        LIFT_P = new double[] {11.0, 11.0};
+        LIFT_I = new double[] {0.07, 0.07};
+        LIFT_D = new double[] {70.0, 70.0};
+        LIFT_F = new double[] {1023.0 / LIFT_MAX_POSSIBLE_UP[0], 1023.0 / LIFT_MAX_POSSIBLE_UP[1]};
+        LIFT_VELOCITY = new int[] {(int) (LIFT_MAX_POSSIBLE_UP[0] * LIFT_POSIBLE_VELOCITY_PERCENTAGE), (int) (LIFT_MAX_POSSIBLE_UP[1] * LIFT_POSIBLE_VELOCITY_PERCENTAGE)};
+        LIFT_ACCELERATION = new int[] {(int) (LIFT_VELOCITY[0] * 6.0), (int) (LIFT_VELOCITY[1] * 6.0)};
 
         LIFT_MOTOR_INVERTED_LEFT = true; // left
         LIFT_MOTOR_INVERTED_RIGHT = false; // right

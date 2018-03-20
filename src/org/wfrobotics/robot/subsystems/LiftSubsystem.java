@@ -24,6 +24,8 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     private final LimitSwitchs limit;
     private final static double kTicksPerRev = 4096.0;
     private final static double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
+    private final int kSlotUp = 0;
+    private final int kSlotDown = 0;
     private final boolean kDebug;
 
     private final RobotState state = RobotState.getInstance();
@@ -37,7 +39,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     public LiftSubsystem(RobotConfig config)
     {
         final int kTimeout = 10;
-        final int kSlot = 0;
         final int[] addresses =  {RobotMap.CAN_LIFT_L, RobotMap.CAN_LIFT_R};
         final boolean[] inverted = {config.LIFT_MOTOR_INVERTED_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
         final boolean[] sensorPhase = {config.LIFT_SENSOR_PHASE_LEFT, config.LIFT_SENSOR_PHASE_LEFT};
@@ -46,13 +47,13 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
         for (int index = 0; index < motors.length; index++)
         {
-            motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P, config.LIFT_I, config.LIFT_D, config.LIFT_F, kSlot, config.LIFT_VELOCITY, config.LIFT_ACCELERATION);
-            motors[index].config_IntegralZone(0, 0, kTimeout);
+            motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P[kSlotUp], config.LIFT_I[kSlotUp], config.LIFT_D[kSlotUp], config.LIFT_F[kSlotUp], kSlotUp, config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
+            motors[index].config_IntegralZone(kSlotUp, 0, kTimeout);
             motors[index].set(ControlMode.PercentOutput, 0);
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);
             motors[index].setNeutralMode(NeutralMode.Brake);
-            motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, kSlot, kTimeout);
+            motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, kTimeout);
             motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, kTimeout);
             motors[index].configVelocityMeasurementWindow(32, kTimeout);
             motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, kTimeout);
@@ -62,6 +63,17 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
                 motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 5, kTimeout);  // For calibration
             }
         }
+        // Down gains
+        for (int index = 0; index < motors.length; index++)
+        {
+            motors[index].config_IntegralZone(kSlotDown, 0, kTimeout);
+            motors[index].selectProfileSlot(kSlotDown, 0);
+            motors[index].config_kF(kSlotDown, config.LIFT_F[kSlotDown], kTimeout);
+            motors[index].config_kP(kSlotDown, config.LIFT_P[kSlotDown], kTimeout);
+            motors[index].config_kI(kSlotDown, config.LIFT_I[kSlotDown], kTimeout);
+            motors[index].config_kD(kSlotDown, config.LIFT_D[kSlotDown], kTimeout);
+        }
+
         limit = new LimitSwitchs(motors, config.LIFT_LIMIT_SWITCH_NORMALLY);
 
         desiredSetpoint = 0.0;

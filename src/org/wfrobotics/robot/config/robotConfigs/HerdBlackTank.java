@@ -19,14 +19,16 @@ public class HerdBlackTank extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = 1025;  // DRL 2-19-18
+        LIFT_MAX_POSSIBLE_UP = new double[] {0.0, 0.0};
+        LIFT_MAX_POSSIBLE_DOWN = new double[] {0.0, 0.0};
+        LIFT_MAX_POSSIBLE_VELOCITY = new double[] {0.0, 0.0};
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = .1 * 1023.0 / 1000.0 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 1.0;
-        LIFT_I = LIFT_P * .01 * .1;
-        LIFT_D = LIFT_P * 10.0 * .40;
-        LIFT_F = 1023.0 / LIFT_MAX_POSSIBLE_UP;
-        LIFT_VELOCITY = (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE);
-        LIFT_ACCELERATION = (int) (LIFT_VELOCITY * 7.0);
+        LIFT_P = new double[] {0.0, 0.0};
+        LIFT_I = new double[] {0.0, 0.0};
+        LIFT_D = new double[] {0.0, 0.0};
+        LIFT_F = new double[] {1023.0 / LIFT_MAX_POSSIBLE_UP[0], 1023.0 / LIFT_MAX_POSSIBLE_UP[1]};
+        LIFT_VELOCITY = new int[] {(int) (LIFT_MAX_POSSIBLE_UP[0] * LIFT_POSIBLE_VELOCITY_PERCENTAGE), (int) (LIFT_MAX_POSSIBLE_UP[1] * LIFT_POSIBLE_VELOCITY_PERCENTAGE)};
+        LIFT_ACCELERATION = new int[] {(int) (LIFT_VELOCITY[0] * 7.0), (int) (LIFT_VELOCITY[0] * 7.0)};
 
         LIFT_MOTOR_INVERTED_LEFT = false; // left
         LIFT_MOTOR_INVERTED_RIGHT = true; // right
