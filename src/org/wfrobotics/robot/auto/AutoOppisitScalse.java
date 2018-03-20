@@ -34,9 +34,9 @@ public class AutoOppisitScalse extends CommandGroup
         // Travel to first scale
         addSequential(new DriveDistance(12.0 * 18.0 - 7.5));
         addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0, 1.0));
-        addSequential(new WaitCommand(5));
-        addSequential(new DriveDistance(12.0 * 18.75));
-        addSequential(new WaitCommand(5));
+        addSequential(new WaitCommand(.1));
+        addSequential(new DriveDistance(12.0 * 17.25));
+        addSequential(new WaitCommand(.1));
 
         // Extra travel to first scale
         addSequential(new TurnToHeading(0, 2));
@@ -45,9 +45,10 @@ public class AutoOppisitScalse extends CommandGroup
         addSequential(new WaitCommand(10));
 
         addParallel(new LiftToHeight(LiftHeight.Scale.get()));
+        addParallel(new IntakeLiftToHeight(.30));
 
         // Score first scale
-        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
+        addParallel(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
 
         // Reset
