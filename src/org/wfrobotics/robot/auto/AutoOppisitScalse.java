@@ -7,7 +7,7 @@ import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
-import org.wfrobotics.robot.commands.wrist.IntakeLiftToHeight;
+import org.wfrobotics.robot.commands.wrist.WristToHeight;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 import org.wfrobotics.robot.config.LiftHeight;
 import org.wfrobotics.robot.path.DriveInfared;
@@ -31,29 +31,36 @@ public class AutoOppisitScalse extends CommandGroup
         addSequential(new GyroZero());  // For teleop testing
         addSequential(new WaitCommand(waitForGyroToFullyZero));
 
-        // Travel to first scale
-        addSequential(new DriveDistance(12.0 * 18.0 - 7.5));
+        // Travel across field
+        addSequential(new DriveDistance(12.0 * 8.5 + 2.25));
+        addSequential(new DriveDistance(12.0 * 8.5 + 2.25));
         addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0, 1.0));
         addSequential(new WaitCommand(.1));
-        addSequential(new DriveDistance(12.0 * 17.25));
+        addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0, 1.0));
         addSequential(new WaitCommand(.1));
 
-        // Extra travel to first scale
-        addSequential(new TurnToHeading(0, 2));
-        addSequential(new WaitCommand(.5));
-        addSequential(new DriveDistance((12.0 * 3) - .25));
-        addSequential(new WaitCommand(10));
+        addSequential(new DriveDistance((12.0 * 8.625) + 6));
+        addSequential(new DriveDistance((12.0 * 8.625) + 6));
 
-        addParallel(new LiftToHeight(LiftHeight.Scale.get()));
-        addParallel(new IntakeLiftToHeight(.30));
+        addSequential(new WaitCommand(.1));
+
+        // Travel to first scale common location
+        addSequential(new TurnToHeading(0, 1));
+        addSequential(new WaitCommand(.2));
+        addSequential(new SynchronizedCommand(new DriveDistance((12.0 * 3) - .25), new LiftToScale()));
+
+        // -------------- Common --------------
 
         // Score first scale
-        addParallel(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
+        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
+        addSequential(new WaitCommand(.1));
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
 
         // Reset
+        addParallel(new WristToHeight(1.0));
         addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube, 1.0)); // to find distance: x= 51 y= 73
-        addSequential(new WaitCommand(0.3));
+        addSequential(new WaitCommand(1.0));
+        addParallel(new WristToHeight(-1.0));
         addSequential(new LiftToHeight(LiftHeight.Intake.get()));
 
         // Acquire second cube
@@ -61,13 +68,15 @@ public class AutoOppisitScalse extends CommandGroup
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
         addSequential(new DriveInfared(6, 1.5));
+        addSequential(new WaitCommand(1.0));  // Unique to opposite auto routine
 
         // Travel to second scale
-        addParallel(new IntakeLiftToHeight(1.0));
+        addParallel(new WristToHeight(1.0));
         addSequential(new SynchronizedCommand(new DriveDistance(-inchesToSecondCube), new LiftToHeight(LiftHeight.Scale.get())));
 
         // Score second cube
         addSequential(new SynchronizedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0), new LiftToScale()));
+        addSequential(new WaitCommand(.1));
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
 
         // Reset
