@@ -9,7 +9,7 @@ import org.wfrobotics.robot.auto.JawsSet;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
-import org.wfrobotics.robot.commands.wrist.IntakeLiftToHeight;
+import org.wfrobotics.robot.commands.wrist.WristToHeight;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 import org.wfrobotics.robot.config.LiftHeight;
 
@@ -33,9 +33,9 @@ public class ModeScale extends CommandGroup
 
         // Travel to first scale
         addSequential(new DriveDistance(12.0 * 12.5 - 33.6));
-        //        addSequential(new TurnToHeading(0, 1.0));
-        //        addSequential(new WaitCommand(.2));
         addSequential(new SynchronizedCommand(new DriveDistance(12.0 * 12.0), new LiftToScale()));
+
+        // -------------- Common --------------
 
         // Score first scale
         addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
@@ -43,10 +43,10 @@ public class ModeScale extends CommandGroup
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
 
         // Reset
-        addParallel(new IntakeLiftToHeight(1.0));
+        addParallel(new WristToHeight(1.0));
         addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube, 1.0)); // to find distance: x= 51 y= 73
         addSequential(new WaitCommand(0.3));
-        addParallel(new IntakeLiftToHeight(0.0));
+        addParallel(new WristToHeight(-1.0));
         addSequential(new LiftToHeight(LiftHeight.Intake.get()));
 
         // Acquire second cube
@@ -57,12 +57,12 @@ public class ModeScale extends CommandGroup
         addSequential(new WaitCommand(.1));
 
         // Travel to second scale
-        addParallel(new IntakeLiftToHeight(1.0));
+        addParallel(new WristToHeight(1.0));
         addSequential(new SynchronizedCommand(new DriveDistance(-inchesToSecondCube), new LiftToHeight(LiftHeight.Scale.get())));
 
         // Score second cube
-        addSequential(new WaitCommand(.3));
         addSequential(new SynchronizedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0), new LiftToScale()));
+        addSequential(new WaitCommand(.1));
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
 
         // Reset
