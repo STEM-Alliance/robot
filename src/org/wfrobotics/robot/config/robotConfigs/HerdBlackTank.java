@@ -68,5 +68,9 @@ public class HerdBlackTank extends RobotConfig
         WINCH = 22;
         WINCH_INVERT = true;
         WINCH_SPEED = 1;
+
+        //                      Wrist
+        // _________________________________________________________________________________
+        WRIST_ZERO_BOTTOM = true;
     }
 }

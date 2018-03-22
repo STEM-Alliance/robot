@@ -9,6 +9,8 @@ public class WristZero extends InstantCommand
 {
     private static boolean hasZeroed = false;
 
+    private final boolean kZeroAtBottom;
+
     public static boolean everZeroed()
     {
         return hasZeroed;
@@ -22,6 +24,7 @@ public class WristZero extends InstantCommand
     public WristZero()
     {
         requires(Robot.wrist);
+        kZeroAtBottom = Robot.config.WRIST_ZERO_BOTTOM;
     }
 
     protected void initialize()
@@ -31,12 +34,13 @@ public class WristZero extends InstantCommand
 
     protected void execute()
     {
-        Robot.wrist.setIntakeLiftSpeed(-0.3);  // Must be in execute in case interrupted
+        final double speed = (kZeroAtBottom) ? -0.3 : 0.4;
+        Robot.wrist.setIntakeLiftSpeed(speed);  // Must be in execute in case interrupted
     }
 
     protected boolean isFinished()
     {
-        boolean result = Robot.wrist.intakeLiftAtBottom();
+        boolean result = (kZeroAtBottom) ? Robot.wrist.intakeLiftAtBottom() : Robot.wrist.intakeLiftAtTop();
 
         if (result)
         {

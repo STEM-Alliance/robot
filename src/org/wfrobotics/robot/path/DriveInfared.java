@@ -35,9 +35,4 @@ public class DriveInfared extends DriveCommand
     {
         return state.intakeDistance / 2.54 - target;
     }
-    protected void end()
-    {
-        //        Robot.driveService.drive(0, 0);
-    }
-
 }

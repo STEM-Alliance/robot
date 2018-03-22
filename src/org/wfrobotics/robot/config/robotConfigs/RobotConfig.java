@@ -81,5 +81,9 @@ public abstract class RobotConfig
     public boolean WINCH_DOWN_IS_SAFE = false;
     public boolean WINCH_INVERT;
     public double WINCH_SPEED;
+
+    //                      Wrist
+    // _________________________________________________________________________________
+    public boolean WRIST_ZERO_BOTTOM;
 }
 

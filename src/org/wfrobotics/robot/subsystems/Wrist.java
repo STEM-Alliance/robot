@@ -19,21 +19,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Wrist extends Subsystem
 {
+    private final int kTicksToTop;
+    private final boolean kZeroAtBottom;
+
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX intakeLift;
 
     public Wrist(RobotConfig config)
     {
+        kTicksToTop = Robot.config.INTAKE_TICKS_TO_TOP;
+        kZeroAtBottom = config.WRIST_ZERO_BOTTOM;
+
         intakeLift = TalonSRXFactory.makeConstAccelControlTalon(RobotMap.CAN_INTAKE_LIFT, config.INTAKE_P, config.INTAKE_I, config.INTAKE_D, config.INTAKE_F, 0, config.INTAKE_MAX_POSSIBLE_UP, config.INTAKE_ACCELERATION);
         intakeLift.setNeutralMode(NeutralMode.Brake);
         //        intakeLift.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
         //        intakeLift.configForwardSoftLimitThreshold(config.INTAKE_TICKS_TO_TOP, 10);
         intakeLift.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
-        intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 10);
-        intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, 1, 0, 0, 10);
+        intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitF, (kZeroAtBottom) ? 0 : 1, 0, 0, 10);
+        intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, (kZeroAtBottom) ? 1 : 0, 0, 0, 10);
         intakeLift.overrideLimitSwitchesEnable(true);
-        intakeLift.setSelectedSensorPosition(9999, 0, 10);  // Before zeroing, report values above smart intake active therehold
+        intakeLift.setSelectedSensorPosition((kZeroAtBottom) ? 9999 : -9999, 0, 10);  // Before zeroing, report values above smart intake active therehold
         intakeLift.configOpenloopRamp(.05, 10);
     }
 
@@ -64,15 +70,16 @@ public class Wrist extends Subsystem
      */
     public void setIntakeLiftPosition(double percentUp)
     {
-        intakeLift.set(ControlMode.MotionMagic, percentUp * Robot.config.INTAKE_TICKS_TO_TOP);
+        final double ticks = (kZeroAtBottom) ? percentUp * kTicksToTop : (1.0 - percentUp) * kTicksToTop;
+        intakeLift.set(ControlMode.MotionMagic, ticks);
     }
 
     public void reportState()
     {
         double ticks = intakeLift.getSelectedSensorPosition(0);
-        SmartDashboard.putNumber("Intake Lift Error", intakeLift.getClosedLoopError(0));
-        SmartDashboard.putNumber("Intake Lift Position", ticks);
-        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
+        //        SmartDashboard.putNumber("Intake Lift Error", intakeLift.getClosedLoopError(0));
+        //        SmartDashboard.putNumber("Intake Lift Position", ticks);
+        //        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
         SmartDashboard.putBoolean("Wrist LimitB", intakeLiftAtBottom());
         SmartDashboard.putBoolean("Wrist LimitT", intakeLiftAtTop());
         state.updateWristPosition(ticks);

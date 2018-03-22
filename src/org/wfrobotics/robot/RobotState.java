@@ -3,7 +3,6 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.VisionMode;
-import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,7 +26,7 @@ public class RobotState
     public double intakeDistance;
     public double liftHeightInches;
     public double wristAngle;
-    public RobotConfig config;
+
     public static RobotState getInstance()
     {
         if (instance == null) { instance = new RobotState(); }
@@ -37,6 +36,8 @@ public class RobotState
     // ------------- END Public State (Read-Only) -------------
 
     // ------------- BEGIN Private -------------
+
+    private final boolean kZeroAtBottom;
 
     private static RobotState instance = null;
     private double hasCubeCounts;
@@ -48,6 +49,8 @@ public class RobotState
         robotHeading = 0;
         robotVelocity = new HerdVector(0, 0);
         //        resetVisionState();
+
+        kZeroAtBottom = Robot.config.WRIST_ZERO_BOTTOM;
 
         robotHasCube = false;
         intakeDistance = 9999;
@@ -152,7 +155,7 @@ public class RobotState
 
     public synchronized void updateWristPosition(double ticks)
     {
-        wristAngle = ticks / 4096 * 360;
+        wristAngle = (kZeroAtBottom) ? ticks / 4096.0 * 360.0 : (ticks + 4096.0) / 4096.0 * 360.0;
         SmartDashboard.putNumber("Wrist Angle", wristAngle);
     }
 

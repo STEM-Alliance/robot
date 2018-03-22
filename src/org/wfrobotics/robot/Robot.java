@@ -108,7 +108,14 @@ public class Robot extends SampleRobot
 
         while (isDisabled())
         {
-            matchState.update();
+            try
+            {
+                matchState.update();
+            }
+            catch (Exception e)
+            {
+                // Iowa: Announcer said we need to try/expect the match data for platforms
+            }
 
             // log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
             //            driveService.zeroGyro();
