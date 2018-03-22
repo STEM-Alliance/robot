@@ -70,5 +70,9 @@ public class HerdVictor extends RobotConfig
         WINCH_DOWN_IS_SAFE = true;
         WINCH_INVERT = true;
         WINCH_SPEED = 1;
+
+        //                      Wrist
+        // _________________________________________________________________________________
+        WRIST_ZERO_BOTTOM = true;
     }
 }
