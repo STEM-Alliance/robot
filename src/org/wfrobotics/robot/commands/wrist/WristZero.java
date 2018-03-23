@@ -31,12 +31,12 @@ public class WristZero extends InstantCommand
 
     protected void execute()
     {
-        Robot.wrist.setIntakeLiftSpeed(-0.3);  // Must be in execute in case interrupted
+        Robot.wrist.setSpeed(-0.3);  // Must be in execute in case interrupted
     }
 
     protected boolean isFinished()
     {
-        boolean result = Robot.wrist.intakeLiftAtBottom();
+        boolean result = Robot.wrist.AtBottom();
 
         if (result)
         {
@@ -47,6 +47,6 @@ public class WristZero extends InstantCommand
 
     protected void end()
     {
-        Robot.wrist.setIntakeLiftPosition(.95);
+        Robot.wrist.setPosition(.95);
     }
 }

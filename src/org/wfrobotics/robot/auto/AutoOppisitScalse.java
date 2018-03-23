@@ -21,7 +21,7 @@ public class AutoOppisitScalse extends CommandGroup
     private final double angleToScale = 50;
     private final double angleToSecondCube = 151.89; //-145.06
     private final double inchesToSecondCube = 72; //78
-    private final double speedOuttake = 1.0;
+    private final double speedOuttake = 0.5;
     private final double timeOuttake = 0.5;
     private final double waitForGyroToFullyZero = Double.MIN_VALUE;
 
@@ -67,7 +67,7 @@ public class AutoOppisitScalse extends CommandGroup
         addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
-        addSequential(new DriveInfared(6, 1.5));
+        addSequential(new DriveInfared(6, 1.5, 3));
         addSequential(new WaitCommand(1.0));  // Unique to opposite auto routine
 
         // Travel to second scale

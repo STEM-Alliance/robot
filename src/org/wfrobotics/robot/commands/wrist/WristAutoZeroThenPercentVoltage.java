@@ -18,6 +18,6 @@ public class WristAutoZeroThenPercentVoltage extends ConditionalCommand
 
     protected void end()
     {
-        Robot.wrist.setIntakeLiftPosition(.95);
+        Robot.wrist.setPosition(.95);
     }
 }

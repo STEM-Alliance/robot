@@ -43,17 +43,17 @@ public class Wrist extends Subsystem
         //        setDefaultCommand(new IntakeLift());
     }
 
-    public boolean intakeLiftAtBottom()
+    public boolean AtBottom()
     {
         return intakeLift.getSensorCollection().isRevLimitSwitchClosed();
     }
 
-    public boolean intakeLiftAtTop()
+    public boolean AtTop()
     {
         return intakeLift.getSensorCollection().isFwdLimitSwitchClosed();
     }
 
-    public void setIntakeLiftSpeed(double percentageUp)
+    public void setSpeed(double percentageUp)
     {
         intakeLift.set(ControlMode.PercentOutput, percentageUp);
     }
@@ -62,7 +62,7 @@ public class Wrist extends Subsystem
      * sets the intake position using motion magic
      * @param percentUp The amount to go up, 0 to 1 for down to up, respectively
      */
-    public void setIntakeLiftPosition(double percentUp)
+    public void setPosition(double percentUp)
     {
         intakeLift.set(ControlMode.MotionMagic, percentUp * Robot.config.INTAKE_TICKS_TO_TOP);
     }
@@ -70,11 +70,11 @@ public class Wrist extends Subsystem
     public void reportState()
     {
         double ticks = intakeLift.getSelectedSensorPosition(0);
-        SmartDashboard.putNumber("Intake Lift Error", intakeLift.getClosedLoopError(0));
-        SmartDashboard.putNumber("Intake Lift Position", ticks);
-        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
-        SmartDashboard.putBoolean("Wrist LimitB", intakeLiftAtBottom());
-        SmartDashboard.putBoolean("Wrist LimitT", intakeLiftAtTop());
+        //        SmartDashboard.putNumber("Intake Lift Error", intakeLift.getClosedLoopError(0));
+        //        SmartDashboard.putNumber("Intake Lift Position", ticks);
+        //        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
+        SmartDashboard.putBoolean("Wrist LimitB", AtBottom());
+        SmartDashboard.putBoolean("Wrist LimitT", AtTop());
         state.updateWristPosition(ticks);
     }
 }
