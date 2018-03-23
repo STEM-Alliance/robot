@@ -18,6 +18,6 @@ public class ModeCenter extends CommandGroup
         addSequential(new SwitchChoice(Side.Right, new DrivePath("CenterRight"), new DrivePath("CenterLeft")));
         addSequential(new IntakeSet(1.0, 0.5, true));  // Yes, 1.0 outtake is good here
         addSequential(new DriveDistance(-12.0 * 1.0));
-        addParallel(new TurnToHeading(90.0, 1.5));  // TODO SwitchChoice
+        addParallel(new SwitchChoice(Side.Right, new TurnToHeading(-90.0, 1.5), new TurnToHeading(90.0, 1.5)));
     }
 }
