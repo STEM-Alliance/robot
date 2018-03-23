@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.path;
 
+import org.wfrobotics.reuse.commands.decorator.DelayedCommand;
 import org.wfrobotics.reuse.commands.decorator.SynchronizedCommand;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
@@ -21,7 +22,7 @@ public class ModeScale extends CommandGroup
     private final double angleToScale = -50; //-50
     private final double angleToSecondCube = -151.89; //-145.06
     private final double inchesToSecondCube = 72; //78
-    private final double speedOuttake = 0.8;
+    private final double speedOuttake = 0.55;
     private final double timeOuttake = 0.5;
     private final double waitForGyroToFullyZero = Double.MIN_VALUE;
 
@@ -53,12 +54,12 @@ public class ModeScale extends CommandGroup
         addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
-        addSequential(new DriveInfared(10.0, 1.5));
+        addSequential(new DriveInfared(10.0, 1.5, 3));
         addSequential(new WaitCommand(.1));
 
         // Travel to second scale
         addParallel(new WristToHeight(1.0));
-        addSequential(new SynchronizedCommand(new DriveDistance(-inchesToSecondCube), new LiftToHeight(LiftHeight.Scale.get())));
+        addSequential(new SynchronizedCommand(new DriveDistance(-inchesToSecondCube), new DelayedCommand(new LiftToHeight(LiftHeight.Scale.get()), 0.05)));
 
         // Score second cube
         addSequential(new SynchronizedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0), new LiftToScale()));

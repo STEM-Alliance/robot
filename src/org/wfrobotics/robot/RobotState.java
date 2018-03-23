@@ -152,7 +152,7 @@ public class RobotState
 
     public synchronized void updateWristPosition(double ticks)
     {
-        wristAngle = ticks / 4096 * 360;
+        wristAngle = ticks / 4096.0 * 90.0;
         SmartDashboard.putNumber("Wrist Angle", wristAngle);
     }
 

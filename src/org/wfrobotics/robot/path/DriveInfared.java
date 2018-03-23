@@ -8,11 +8,12 @@ public class DriveInfared extends DriveCommand
     private final double target;
     private final double tol;
 
-    public DriveInfared(double targetDistance, double absoluteTol)
+    public DriveInfared(double targetDistance, double absoluteTol, double timeout)
     {
         requires(Robot.driveService);
         target = targetDistance;
         tol = absoluteTol;
+        setTimeout(timeout);
     }
 
     protected void initialize()
@@ -28,7 +29,7 @@ public class DriveInfared extends DriveCommand
 
     protected boolean isFinished()
     {
-        return Math.abs(remaining()) < tol;
+        return Math.abs(remaining()) < tol || isTimedOut();
     }
 
     private double remaining()
