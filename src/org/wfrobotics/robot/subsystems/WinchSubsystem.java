@@ -10,12 +10,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class WinchSubsystem extends Subsystem
 {
-    private static final DriverStation station = DriverStation.getInstance();
     private final boolean downNotSafe;
 
     private final TalonSRX motor;
@@ -44,9 +42,6 @@ public class WinchSubsystem extends Subsystem
 
     public void winch(double percentWinch)
     {
-        if (station.getMatchTime() < 30)  // Only has effect in practice mode
-        {
-            motor.set(ControlMode.PercentOutput, (downNotSafe && percentWinch < 0) ?  0 : percentWinch);
-        }
+        motor.set(ControlMode.PercentOutput, (downNotSafe && percentWinch < 0) ?  0 : percentWinch);
     }
 }

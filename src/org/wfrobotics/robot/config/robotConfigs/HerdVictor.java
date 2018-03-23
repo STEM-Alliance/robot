@@ -55,7 +55,7 @@ public class HerdVictor extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = (11400 + 11200) / 2;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
+        TANK_MAX_VELOCITY = (10500 + 10500) / 2;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
         TANK_P = 2.25;
         TANK_I = 0.0021 / 2;
         TANK_D = 3.775;

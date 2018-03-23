@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class ModeScale extends CommandGroup
 {
     private final double angleToScale = -50; //-50
-    private final double angleToSecondCube = -151.89; //-145.06
+    private final double angleToSecondCube = -148.0; //-145.06
     private final double inchesToSecondCube = 72; //78
-    private final double speedOuttake = 0.33;
+    private final double speedOuttake = 0.35;
     private final double timeOuttake = 0.5;
     private final double waitForGyroToFullyZero = Double.MIN_VALUE;
 
@@ -33,7 +33,7 @@ public class ModeScale extends CommandGroup
         addSequential(new WaitCommand(waitForGyroToFullyZero));
 
         // Travel to first scale
-        addSequential(new DriveDistance(12.0 * 12.5 - 33.6));
+        addSequential(new DriveDistance(12.0 * 12.5 - 29.1));
         addSequential(new SynchronizedCommand(new DriveDistance(12.0 * 12.0), new LiftToScale()));
 
         // -------------- Common --------------
@@ -45,8 +45,8 @@ public class ModeScale extends CommandGroup
 
         // Reset
         addParallel(new WristToHeight(1.0));
-        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube, 1.0)); // to find distance: x= 51 y= 73
-        addSequential(new WaitCommand(0.3));
+        addSequential(new DelayedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube, 1.0), .2)); // to find distance: x= 51 y= 73
+        addSequential(new WaitCommand(0.4));
         addParallel(new WristToHeight(-1.0));
         addSequential(new LiftToHeight(LiftHeight.Intake.get()));
 
@@ -54,7 +54,7 @@ public class ModeScale extends CommandGroup
         addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
-        addSequential(new DriveInfared(10.0, 89.0 + 3, 1.5, 3));
+        addSequential(new DriveInfared(10.0, 89.0 + 4.5, 1.5, 3));
         addSequential(new WaitCommand(.1));
 
         // Travel to second scale
