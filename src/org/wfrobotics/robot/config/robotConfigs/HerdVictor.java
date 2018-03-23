@@ -32,7 +32,7 @@ public class HerdVictor extends RobotConfig
         //                      Lift
         // _________________________________________________________________________________
         LIFT_MAX_POSSIBLE_UP = 2200.0;  // DRL 3-19-18 First time different up and down gains
-        LIFT_MAX_POSSIBLE_DOWN = 3000.0;
+        LIFT_MAX_POSSIBLE_DOWN = 2900.0;
         LIFT_MAX_POSSIBLE_VELOCITY = LIFT_MAX_POSSIBLE_UP;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
         LIFT_P = new double[] {5.6, 0.0};
