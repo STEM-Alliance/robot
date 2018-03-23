@@ -47,7 +47,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 1000, 10);
         masterRight.setNeutralMode(NeutralMode.Brake);
         masterRight.setInverted(config.INTAKE_INVERT_RIGHT);
-        masterRight.configOpenloopRamp(.5, 10);
+        masterRight.configOpenloopRamp(.25, 10);
 
         followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
         followerLeft.setNeutralMode(NeutralMode.Brake);

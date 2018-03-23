@@ -7,12 +7,13 @@ public class DriveInfared extends DriveCommand
 {
     private final double target;
     private final double tol;
-
-    public DriveInfared(double targetDistance, double absoluteTol, double timeout)
+    private final double max;
+    public DriveInfared(double targetDistance, double maxDistance, double absoluteTol, double timeout)
     {
         requires(Robot.driveService);
         target = targetDistance;
         tol = absoluteTol;
+        max = maxDistance;
         setTimeout(timeout);
     }
 
@@ -34,11 +35,6 @@ public class DriveInfared extends DriveCommand
 
     private double remaining()
     {
-        return state.intakeDistance / 2.54 - target;
+        return Math.min(max, state.intakeDistance / 2.54 - target);
     }
-    protected void end()
-    {
-        //        Robot.driveService.drive(0, 0);
-    }
-
 }
