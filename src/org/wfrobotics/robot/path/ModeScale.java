@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class ModeScale extends CommandGroup
 {
     private final double angleToScale = -50; //-50
-    private final double angleToSecondCube = -148.0; //-145.06
+    private final double angleToSecondCube = -145.0; //-145.06
     private final double inchesToSecondCube = 72; //78
     private final double speedOuttake = 0.35;
     private final double timeOuttake = 0.5;
@@ -47,7 +47,7 @@ public class ModeScale extends CommandGroup
         addParallel(new WristToHeight(1.0));
         addSequential(new DelayedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube, 1.0), .2)); // to find distance: x= 51 y= 73
         addSequential(new WaitCommand(0.4));
-        addParallel(new WristToHeight(-1.0));
+        addParallel(new WristToHeight(0.0));
         addSequential(new LiftToHeight(LiftHeight.Intake.get()));
 
         // Acquire second cube
