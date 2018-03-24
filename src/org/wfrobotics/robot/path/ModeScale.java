@@ -10,7 +10,6 @@ import org.wfrobotics.robot.auto.JawsSet;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
-import org.wfrobotics.robot.commands.wrist.WristToHeight;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 import org.wfrobotics.robot.config.LiftHeight;
 
@@ -20,7 +19,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class ModeScale extends CommandGroup
 {
     private final double angleToScale = -50; //-50
-    private final double angleToSecondCube = -148.0; //-145.06
+    private final double angleToSecondCube = -145.0; //-145.06
     private final double inchesToSecondCube = 72; //78
     private final double speedOuttake = 0.35;
     private final double timeOuttake = 0.5;
@@ -44,21 +43,21 @@ public class ModeScale extends CommandGroup
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
 
         // Reset
-        addParallel(new WristToHeight(1.0));
+        //        addParallel(new WristToHeight(1.0));
         addSequential(new DelayedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube, 1.0), .2)); // to find distance: x= 51 y= 73
         addSequential(new WaitCommand(0.4));
-        addParallel(new WristToHeight(-1.0));
+        //        addParallel(new WristToHeight(-1.0));
         addSequential(new LiftToHeight(LiftHeight.Intake.get()));
 
         // Acquire second cube
         addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
-        addSequential(new DriveInfared(10.0, 89.0 + 4.5, 1.5, 3));
+        addSequential(new DriveInfared(10.0, 89.0 + 1.0, 1.5, 3));
         addSequential(new WaitCommand(.1));
 
         // Travel to second scale
-        addParallel(new WristToHeight(1.0));
+        //        addParallel(new WristToHeight(1.0));
         addSequential(new SynchronizedCommand(new DriveDistance(-inchesToSecondCube), new DelayedCommand(new LiftToHeight(LiftHeight.Scale.get()), 0.05)));
 
         // Score second cube

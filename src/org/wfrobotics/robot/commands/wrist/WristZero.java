@@ -22,6 +22,7 @@ public class WristZero extends InstantCommand
     public WristZero()
     {
         requires(Robot.wrist);
+        setTimeout(2.0);
     }
 
     protected void initialize()
