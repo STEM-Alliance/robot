@@ -3,7 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.wrist.WristAutoZeroThenPercentVoltage;
+import org.wfrobotics.robot.commands.wrist.WristManuel;
 import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
@@ -32,15 +32,15 @@ public class Wrist extends Subsystem
         intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, 1, 0, 0, 10);
-        intakeLift.overrideLimitSwitchesEnable(true);
+        //        intakeLift.overrideLimitSwitchesEnable(true);
         intakeLift.setSelectedSensorPosition(9999, 0, 10);  // Before zeroing, report values above smart intake active therehold
         intakeLift.configOpenloopRamp(.05, 10);
     }
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new WristAutoZeroThenPercentVoltage());
-        //        setDefaultCommand(new IntakeLift());
+        //        setDefaultCommand(new WristAutoZeroThenPercentVoltage());
+        setDefaultCommand(new WristManuel());
     }
 
     public boolean AtBottom()
