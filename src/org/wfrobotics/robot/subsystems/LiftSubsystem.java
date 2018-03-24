@@ -160,7 +160,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         double height = ticksToInches(getHeightAverage());
         boolean[][] limitSwitchSet = limit.dump();
 
-        SmartDashboard.putNumber("Lift Height", height);
+        //        SmartDashboard.putNumber("Lift Height", height);
         SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000.0);
         SmartDashboard.putBoolean("LB", limitSwitchSet[0][0]);
         SmartDashboard.putBoolean("LT", limitSwitchSet[0][1]);

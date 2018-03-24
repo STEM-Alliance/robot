@@ -1,6 +1,5 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.decorator.SynchronizedCommand;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
@@ -12,7 +11,6 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class AutoOppisitScalse extends CommandGroup
 {
-    private final double angleToScale = 50;
     //    private final double speedOuttake = 0.325;
     //    private final double timeOuttake = 0.5;
     private final double waitForGyroToFullyZero = Double.MIN_VALUE;
@@ -39,12 +37,13 @@ public class AutoOppisitScalse extends CommandGroup
         // Travel to first scale common location
         addSequential(new TurnToHeading(0, 1));
         addSequential(new WaitCommand(.2));
-        addSequential(new SynchronizedCommand(new DriveDistance((12.0 * 3) - .25), new LiftToScale()));
+        //        addSequential(new SynchronizedCommand(new DriveDistance((12.0 * 3) - .25), new LiftToScale()));
+        addSequential(new LiftToScale());
 
         // -------------- Common --------------
 
         // Score first scale
-        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
+        //        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
         addSequential(new WaitCommand(.1));
         //        addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
         //
