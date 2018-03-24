@@ -22,6 +22,7 @@ public class WristZero extends InstantCommand
     public WristZero()
     {
         requires(Robot.wrist);
+        setTimeout(2.0);
     }
 
     protected void initialize()
@@ -42,11 +43,18 @@ public class WristZero extends InstantCommand
         {
             hasZeroed = true;
         }
-        return hasZeroed || isTimedOut();
+        return true;
     }
 
     protected void end()
     {
-        Robot.wrist.setPosition(.95);
+        //        Robot.wrist.setPosition(.95);
+        Robot.wrist.setSpeed(0.0);
+        hasZeroed = true;
+    }
+
+    protected void interrupted()
+    {
+        end();
     }
 }

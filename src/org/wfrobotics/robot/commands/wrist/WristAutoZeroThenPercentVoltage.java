@@ -8,7 +8,7 @@ public class WristAutoZeroThenPercentVoltage extends ConditionalCommand
 {
     public WristAutoZeroThenPercentVoltage()
     {
-        super(new SmartWrist(), new WristZero());
+        super(new SmartWrist(), new SmartWrist());
     }
 
     protected boolean condition()
