@@ -73,13 +73,13 @@ public class IO
 
     public double getIntakeIn()
     {
-        double value = operator.getTrigger(Hand.kLeft);
+        double value = operator.getTrigger(Hand.kRight);
         return (value > .1) ? value : 0;
     }
 
     public double getIntakeOut()
     {
-        double value = operator.getTrigger(Hand.kRight);
+        double value = operator.getTrigger(Hand.kLeft);
         return (value > .1) ? value : 0;
     }
 

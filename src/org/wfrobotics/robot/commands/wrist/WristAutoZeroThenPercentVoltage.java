@@ -1,7 +1,5 @@
 package org.wfrobotics.robot.commands.wrist;
 
-import org.wfrobotics.robot.Robot;
-
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
 public class WristAutoZeroThenPercentVoltage extends ConditionalCommand
@@ -18,6 +16,6 @@ public class WristAutoZeroThenPercentVoltage extends ConditionalCommand
 
     protected void end()
     {
-        Robot.wrist.setPosition(.95);
+        //        Robot.wrist.setPosition(.95);
     }
 }

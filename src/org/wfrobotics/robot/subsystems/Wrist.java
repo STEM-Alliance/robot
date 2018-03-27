@@ -32,8 +32,8 @@ public class Wrist extends Subsystem
         intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, 1, 0, 0, 10);
-        intakeLift.overrideLimitSwitchesEnable(true);
-        intakeLift.setSelectedSensorPosition(9999, 0, 10);  // Before zeroing, report values above smart intake active therehold
+        intakeLift.overrideLimitSwitchesEnable(false);
+        intakeLift.setSelectedSensorPosition(0, 0, 10);  // Before zeroing, report values above smart intake active therehold
         intakeLift.configOpenloopRamp(.05, 10);
     }
 
@@ -71,7 +71,7 @@ public class Wrist extends Subsystem
     {
         double ticks = intakeLift.getSelectedSensorPosition(0);
         //        SmartDashboard.putNumber("Intake Lift Error", intakeLift.getClosedLoopError(0));
-        //        SmartDashboard.putNumber("Intake Lift Position", ticks);
+        SmartDashboard.putNumber("Intake Lift Position", ticks);
         //        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
         SmartDashboard.putBoolean("Wrist LimitB", AtBottom());
         SmartDashboard.putBoolean("Wrist LimitT", AtTop());
