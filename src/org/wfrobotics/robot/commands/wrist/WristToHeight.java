@@ -22,6 +22,6 @@ public class WristToHeight extends InstantCommand
     protected void initialize()
     {
         SmartDashboard.putString("Wrist", this.getClass().getSimpleName());
-        Robot.wrist.setPosition(distance);
+        //        Robot.wrist.setPosition(distance);
     }
 }
