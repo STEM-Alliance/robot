@@ -8,8 +8,6 @@ import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.controller.Xbox.DPAD;
-import org.wfrobotics.reuse.driveio.Arcade.ArcadeIO;
-import org.wfrobotics.reuse.driveio.Arcade.ArcadeRocketJoyStick;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.auto.AutoOppisitScalse;
 import org.wfrobotics.robot.commands.AutoLiftToBottom;
@@ -33,21 +31,14 @@ public class IO
     private final Joystick driverThrottle;
     private final Joystick driverTurn;
     private final Xbox operator;
-    public ArcadeIO arcadeIO;
 
     private IO(Joystick driverThrottle, Joystick driverTurn, Xbox operator, Panel panel)
     {
         this.driverThrottle = driverThrottle;
         this.driverTurn = driverTurn;
         this.operator = operator;
-        // ------------------- Select Drive-style  ----------------
-        arcadeIO = new ArcadeRocketJoyStick(driverThrottle, driverTurn);
 
         // ------------------------- Drive ------------------------
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new TurnToHeading(0, 2)));
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new TurnToHeading(90, 2)));
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new TurnToHeading(-90, 2)));
-        //        robotSpecific.add(ButtonFactory.makeButton(driver, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new TurnToHeading(180, 2)));
 
         // ------------------------ Intake ------------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));

@@ -3,6 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
+import org.wfrobotics.reuse.subsystems.Subsystem;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.config.RobotMap;
@@ -17,7 +18,6 @@ import edu.wpi.first.wpilibj.CircularBuffer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
@@ -35,6 +35,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     private boolean lastHorizontalState;
     private double lastHorizontalTime;
+    private double latestDistance;
 
     public IntakeSubsystem(RobotConfig config)
     {
@@ -68,6 +69,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         // Force defined states
         lastHorizontalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
         lastHorizontalState = true;
+        latestDistance = 9999;
         setHorizontal(!lastHorizontalState);
     }
 
@@ -76,6 +78,22 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     public void initDefaultCommand()
     {
         setDefaultCommand(new SmartIntake());
+    }
+
+    public void updateSensors()
+    {
+        double sum = 0;
+        for (int index = 0; index < bufferSize; index++)
+        {
+            sum += buffer.get(index);
+        }
+        latestDistance = sum / bufferSize;
+        state.updateIntakeSensor(latestDistance);
+    }
+
+    public void reportState()
+    {
+        SmartDashboard.putNumber("Cube", latestDistance);
     }
 
     public void onBackgroundUpdate()
@@ -95,12 +113,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         masterRight.set(ControlMode.PercentOutput, percentageOutward);
     }
 
-    public void setIntakeHold()
-    {
-        //        masterRight.set(ControlMode.PercentOutput, -.3);
-        masterRight.set(ControlMode.Current, 5.25);
-    }
-
     public boolean setHorizontal(boolean extendedOpen)
     {
         final boolean delayedEnough = Timer.getFPGATimestamp() - lastHorizontalTime > kTimeoutHorizontal;
@@ -115,17 +127,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
             stateChanged = true;
         }
         return stateChanged;
-    }
-
-    public void reportState()
-    {
-        double sum = 0;
-        for (int index = 0; index < bufferSize; index++)
-        {
-            sum += buffer.get(index);
-        }
-        SmartDashboard.putNumber("Cube", sum / bufferSize);
-        state.updateIntakeSensor(sum / bufferSize);
     }
 
     // ----------------------------------------- Private ------------------------------------------

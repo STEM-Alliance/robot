@@ -43,6 +43,21 @@ public class Wrist extends Subsystem
         //        setDefaultCommand(new IntakeLift());
     }
 
+    public void updateSensors()
+    {
+        state.updateWristPosition(intakeLift.getSelectedSensorPosition(0));
+    }
+
+    public void reportState()
+    {
+        double ticks = intakeLift.getSelectedSensorPosition(0);
+        //        SmartDashboard.putNumber("Intake Lift Error", intakeLift.getClosedLoopError(0));
+        SmartDashboard.putNumber("Intake Lift Position", ticks);
+        //        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
+        SmartDashboard.putBoolean("Wrist LimitB", AtBottom());
+        SmartDashboard.putBoolean("Wrist LimitT", AtTop());
+    }
+
     public boolean AtBottom()
     {
         return intakeLift.getSensorCollection().isRevLimitSwitchClosed();
@@ -65,16 +80,5 @@ public class Wrist extends Subsystem
     public void setPosition(double percentUp)
     {
         intakeLift.set(ControlMode.MotionMagic, percentUp * Robot.config.INTAKE_TICKS_TO_TOP);
-    }
-
-    public void reportState()
-    {
-        double ticks = intakeLift.getSelectedSensorPosition(0);
-        //        SmartDashboard.putNumber("Intake Lift Error", intakeLift.getClosedLoopError(0));
-        SmartDashboard.putNumber("Intake Lift Position", ticks);
-        //        SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
-        SmartDashboard.putBoolean("Wrist LimitB", AtBottom());
-        SmartDashboard.putBoolean("Wrist LimitT", AtTop());
-        state.updateWristPosition(ticks);
     }
 }

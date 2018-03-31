@@ -60,6 +60,8 @@ public class RobotState
     {
         SmartDashboard.putString("Heading", String.format("%.1f\u00b0", robotHeading));
         //        SmartDashboard.putBoolean("High Gear", robotGear);
+
+        SmartDashboard.putNumber("Wrist Angle", wristAngle);
     }
 
     // ------------- END Private -------------
@@ -153,7 +155,6 @@ public class RobotState
     public synchronized void updateWristPosition(double ticks)
     {
         wristAngle = ticks / 4096.0 * 90.0;
-        SmartDashboard.putNumber("Wrist Angle", wristAngle);
     }
 
     // ------------- END State Producers Robot-specific (Write-Only) -------------

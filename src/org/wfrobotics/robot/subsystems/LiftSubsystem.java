@@ -2,6 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
+import org.wfrobotics.reuse.subsystems.Subsystem;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.RobotMap;
@@ -15,7 +16,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -87,6 +87,28 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         //        setDefaultCommand(new LiftPercentVoltage());
     }
 
+    public void updateSensors()
+    {
+        state.updateLiftHeight(ticksToInches(getHeightAverage()));
+    }
+
+    public void reportState()
+    {
+        boolean[][] limitSwitchSet = limit.dump();
+
+        SmartDashboard.putNumber("Lift Height", ticksToInches(getHeightAverage()));
+        SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000.0);
+        SmartDashboard.putBoolean("LB", limitSwitchSet[0][0]);
+        SmartDashboard.putBoolean("LT", limitSwitchSet[0][1]);
+        SmartDashboard.putBoolean("RB", limitSwitchSet[1][0]);
+        SmartDashboard.putBoolean("RT", limitSwitchSet[1][1]);
+
+        if (kDebug)
+        {
+            debugCalibration();
+        }
+    }
+
     public synchronized void onBackgroundUpdate()
     {
         final double todoRemoveNow = Timer.getFPGATimestamp();
@@ -97,7 +119,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
             motors[1].setSelectedSensorPosition(0, 0, 0);
         }
 
-        AtTopLimitL = limit.atTopAny();//isSideAtLimit(LimitSwitch.TOP, 0);
+        AtTopLimitL = limit.atTopAny();
 
         //        if (Math.abs(getHeightAverage() - desiredSetpoint) < 2)
         //        {
@@ -155,25 +177,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         set(ControlMode.PercentOutput, percent);
     }
 
-    public void reportState()
-    {
-        double height = ticksToInches(getHeightAverage());
-        boolean[][] limitSwitchSet = limit.dump();
-
-        SmartDashboard.putNumber("Lift Height", height);
-        SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000.0);
-        SmartDashboard.putBoolean("LB", limitSwitchSet[0][0]);
-        SmartDashboard.putBoolean("LT", limitSwitchSet[0][1]);
-        SmartDashboard.putBoolean("RB", limitSwitchSet[1][0]);
-        SmartDashboard.putBoolean("RT", limitSwitchSet[1][1]);
-        if (kDebug)
-        {
-            debugCalibration();
-        }
-
-        state.updateLiftHeight(height);
-    }
-
     // ----------------------------------------- Private ------------------------------------------
 
     private void set(ControlMode mode, double val)
@@ -186,16 +189,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     {
         return (motors[0].getSelectedSensorPosition(0) + motors[1].getSelectedSensorPosition(0)) / 2.0;
     }
-
-    /*private boolean allSidesAtLimitSwitch(LimitSwitch limit)
-    {
-        boolean allAtLimit = true;
-        for (int index = 0; index < motors.length; index++)
-        {
-            allAtLimit &= isSideAtLimit(limit, index);
-        }
-        return allAtLimit;
-    }*/
 
     private static double inchesToTicks(double inches)
     {

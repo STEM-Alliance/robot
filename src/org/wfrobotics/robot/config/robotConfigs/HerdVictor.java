@@ -73,7 +73,7 @@ public class HerdVictor extends RobotConfig
         TANK_LEFT_SENSOR_PHASE = true;
         TANK_RIGHT_SENSOR_PHASE = false;
 
-        TANK_OPEN_LOOP_RAMP = 0.375;
+        TANK_OPEN_LOOP_RAMP = 0.05;
 
         //                      Winch
         // _________________________________________________________________________________
