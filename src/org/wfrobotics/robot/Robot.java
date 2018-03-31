@@ -142,5 +142,6 @@ public class Robot extends SampleRobot
         wrist.reportState();
         driveService.reportState();
         state.reportState();
+        backgroundUpdater.reportState();;
     }
 }
