@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Preferences;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -30,10 +29,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX[] motors = new TalonSRX[2];
-
-    private double todoRemoveLast;
-    private double backgroundPeriod;
-    private boolean AtTopLimitL;
 
     public LiftSubsystem(RobotConfig config)
     {
@@ -73,10 +68,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         }
 
         limit = new LimitSwitchs(motors, config.LIFT_LIMIT_SWITCH_NORMALLY);
-
-        todoRemoveLast = Timer.getFPGATimestamp();
-        backgroundPeriod = 0.0;
-        AtTopLimitL = false;
     }
 
     // ----------------------------------------- Interfaces ----------------------------------------
@@ -97,7 +88,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         boolean[][] limitSwitchSet = limit.dump();
 
         SmartDashboard.putNumber("Lift Height", ticksToInches(getHeightAverage()));
-        SmartDashboard.putNumber("Background Period", backgroundPeriod * 1000.0);
         SmartDashboard.putBoolean("LB", limitSwitchSet[0][0]);
         SmartDashboard.putBoolean("LT", limitSwitchSet[0][1]);
         SmartDashboard.putBoolean("RB", limitSwitchSet[1][0]);
@@ -111,24 +101,11 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public synchronized void onBackgroundUpdate()
     {
-        final double todoRemoveNow = Timer.getFPGATimestamp();
-
         if(limit.atBottomAll())
         {
             motors[0].setSelectedSensorPosition(0, 0, 0);
             motors[1].setSelectedSensorPosition(0, 0, 0);
         }
-
-        AtTopLimitL = limit.atTopAny();
-
-        //        if (Math.abs(getHeightAverage() - desiredSetpoint) < 2)
-        //        {
-        //            motors[0].setIntegralAccumulator(0, 0, 0);
-        //            motors[1].setIntegralAccumulator(0, 0, 0);
-        //        }
-
-        backgroundPeriod = todoRemoveNow - todoRemoveLast;
-        todoRemoveLast = todoRemoveNow;
     }
 
     // ----------------------------------------- Public -------------------------------------------
@@ -170,7 +147,7 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
     public synchronized void goToSpeedInit(double percent)
     {
         double speed = percent;
-        if (AtTopLimitL && speed > 0.0)
+        if (limit.atTopAny() && speed > 0.0)
         {
             speed = 0.0;
         }
