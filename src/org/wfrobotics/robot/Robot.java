@@ -33,7 +33,7 @@ public class Robot extends SampleRobot
     private final RobotState state = RobotState.getInstance();
     private final MatchState2018 matchState = MatchState2018.getInstance();
 
-    public static TankSubsystem driveService;
+    private static TankSubsystem driveService;
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
@@ -108,7 +108,7 @@ public class Robot extends SampleRobot
         {
             matchState.update();
 
-            //            driveService.zeroGyro();
+            driveService.zeroGyro();
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
             //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
 
@@ -142,6 +142,6 @@ public class Robot extends SampleRobot
         wrist.reportState();
         driveService.reportState();
         state.reportState();
-        backgroundUpdater.reportState();;
+        backgroundUpdater.reportState();
     }
 }
