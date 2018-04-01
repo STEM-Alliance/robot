@@ -1,16 +1,21 @@
 package org.wfrobotics.robot.path;
 
-import org.wfrobotics.reuse.commands.drive.DriveCommand;
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
+import org.wfrobotics.robot.RobotState;
 
-public class DriveInfared extends DriveCommand
+import edu.wpi.first.wpilibj.command.Command;
+
+public class DriveInfared extends Command
 {
+    private final RobotState state = RobotState.getInstance();
+    private final TankSubsystem drive = TankSubsystem.getInstance();
+
     private final double target;
     private final double tol;
 
     public DriveInfared(double targetDistance, double absoluteTol, double timeout)
     {
-        requires(Robot.driveService);
+        requires(drive);
         target = targetDistance;
         tol = absoluteTol;
         setTimeout(timeout);
@@ -18,13 +23,12 @@ public class DriveInfared extends DriveCommand
 
     protected void initialize()
     {
-        super.initialize();
-        Robot.driveService.driveDistance(remaining());
+        drive.driveDistance(remaining());
     }
 
     protected void execute()
     {
-        Robot.driveService.driveDistance(remaining());
+        drive.driveDistance(remaining());
     }
 
     protected boolean isFinished()
@@ -36,9 +40,4 @@ public class DriveInfared extends DriveCommand
     {
         return state.intakeDistance / 2.54 - target;
     }
-    protected void end()
-    {
-        //        Robot.driveService.drive(0, 0);
-    }
-
 }
