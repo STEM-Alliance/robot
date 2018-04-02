@@ -29,11 +29,11 @@ public class Robot extends SampleRobot
 {
     private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater(.005);
     private final Scheduler scheduler = Scheduler.getInstance();
-    public static RobotConfig config;
+    public static RobotConfig config = new HerdVictor();
     private final RobotState state = RobotState.getInstance();
     private final MatchState2018 matchState = MatchState2018.getInstance();
 
-    private static TankSubsystem driveService;
+    private static TankSubsystem driveService = TankSubsystem.getInstance();
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
@@ -49,10 +49,6 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        //        config = new HerdPractice();
-        config = new HerdVictor();
-
-        driveService = TankSubsystem.getInstance();
         liftSubsystem = new LiftSubsystem(config);
         intakeSubsystem = new IntakeSubsystem(config);
         winch = new WinchSubsystem(config);
