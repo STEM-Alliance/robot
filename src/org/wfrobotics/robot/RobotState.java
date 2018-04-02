@@ -58,7 +58,7 @@ public class RobotState
 
     public void reportState()
     {
-        SmartDashboard.putString("Heading", String.format("%.1f\u00b0", robotHeading));
+        SmartDashboard.putNumber("Heading", robotHeading);
         //        SmartDashboard.putBoolean("High Gear", robotGear);
 
         SmartDashboard.putNumber("Wrist Angle", wristAngle);
