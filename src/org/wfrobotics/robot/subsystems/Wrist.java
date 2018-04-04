@@ -9,6 +9,7 @@ import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -26,13 +27,13 @@ public class Wrist extends Subsystem
     {
         intakeLift = TalonSRXFactory.makeConstAccelControlTalon(RobotMap.CAN_INTAKE_LIFT, config.INTAKE_P, config.INTAKE_I, config.INTAKE_D, config.INTAKE_F, 0, config.INTAKE_MAX_POSSIBLE_UP, config.INTAKE_ACCELERATION);
         intakeLift.setNeutralMode(NeutralMode.Brake);
-        //        intakeLift.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
+        intakeLift.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
         //        intakeLift.configForwardSoftLimitThreshold(config.INTAKE_TICKS_TO_TOP, 10);
         intakeLift.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, 1, 0, 0, 10);
-        intakeLift.overrideLimitSwitchesEnable(false);
+        intakeLift.overrideLimitSwitchesEnable(true);
         intakeLift.setSelectedSensorPosition(0, 0, 10);  // Before zeroing, report values above smart intake active therehold
         intakeLift.configOpenloopRamp(.05, 10);
     }
@@ -45,7 +46,14 @@ public class Wrist extends Subsystem
 
     public void updateSensors()
     {
-        state.updateWristPosition(intakeLift.getSelectedSensorPosition(0));
+        double position = intakeLift.getSelectedSensorPosition(0);
+
+        if (AtTop())
+        {
+            intakeLift.setSelectedSensorPosition(Robot.config.INTAKE_TICKS_TO_TOP, 0, 0);
+        }
+
+        state.updateWristPosition(position);
     }
 
     public void reportState()
