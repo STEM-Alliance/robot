@@ -23,7 +23,7 @@ public class HerdVictor extends RobotConfig
 
 
         INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
-        INTAKE_DISTANCE_TO_CUBE = 15.6; // centimeters
+        INTAKE_DISTANCE_TO_CUBE = 16.6; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
         INTAKE_INVERT_RIGHT = true;
