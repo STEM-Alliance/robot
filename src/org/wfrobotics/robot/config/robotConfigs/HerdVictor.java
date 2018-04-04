@@ -56,13 +56,13 @@ public class HerdVictor extends RobotConfig
         //                      Tank
         // _________________________________________________________________________________
         TANK_MAX_VELOCITY = (11400 + 11200) / 2;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
-        //        TANK_P = 2.25;
+        //        TANK_P = 2.25;  // Motion magic
         //        TANK_I = 0.0021 / 2;
         //        TANK_D = 3.775;
         //        TANK_F = 1023 /  TANK_MAX_VELOCITY;
-        TANK_P = 0.0;
-        TANK_I = 0.0;
-        TANK_D = 0.0;
+        TANK_P = 0.1625;  // Position closed loop, TODO - Make multi-slot
+        TANK_I = 0.005;
+        TANK_D = 0.65;
         TANK_F = 0.0;
         TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.80);
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 1.0), (int) (TANK_CRUISE_VELOCITY * 1.0)};
