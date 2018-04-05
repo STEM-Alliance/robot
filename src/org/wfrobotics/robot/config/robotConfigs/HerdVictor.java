@@ -23,7 +23,7 @@ public class HerdVictor extends RobotConfig
 
 
         INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
-        INTAKE_DISTANCE_TO_CUBE = 15.6; // centimeters
+        INTAKE_DISTANCE_TO_CUBE = 16.6; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
         INTAKE_INVERT_RIGHT = true;
@@ -56,10 +56,14 @@ public class HerdVictor extends RobotConfig
         //                      Tank
         // _________________________________________________________________________________
         TANK_MAX_VELOCITY = (10500 + 10500) / 2;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
-        TANK_P = 2.25;
-        TANK_I = 0.0021 / 2;
-        TANK_D = 3.775;
-        TANK_F = 1023 /  TANK_MAX_VELOCITY;
+        //        TANK_P = 2.25;  // Motion magic
+        //        TANK_I = 0.0021 / 2;
+        //        TANK_D = 3.775;
+        //        TANK_F = 1023 /  TANK_MAX_VELOCITY;
+        TANK_P = 0.1625;  // Position closed loop, TODO - Make multi-slot
+        TANK_I = 0.005;
+        TANK_D = 0.65;
+        TANK_F = 0.0;
         TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.80);
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 1.0), (int) (TANK_CRUISE_VELOCITY * 1.0)};
         TANK_IZONE = 35;
@@ -73,7 +77,7 @@ public class HerdVictor extends RobotConfig
         TANK_LEFT_SENSOR_PHASE = true;
         TANK_RIGHT_SENSOR_PHASE = false;
 
-        TANK_OPEN_LOOP_RAMP = 0.375;
+        TANK_OPEN_LOOP_RAMP = 0.05;
 
         //                      Winch
         // _________________________________________________________________________________

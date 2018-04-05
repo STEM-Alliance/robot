@@ -29,16 +29,16 @@ public class Robot extends SampleRobot
 {
     private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater(.005);
     private final Scheduler scheduler = Scheduler.getInstance();
-    public static RobotConfig config;
+    public static RobotConfig config = new HerdVictor();
     private final RobotState state = RobotState.getInstance();
     private final MatchState2018 matchState = MatchState2018.getInstance();
 
-    public static TankSubsystem driveService;
+    private static TankSubsystem driveService = TankSubsystem.getInstance();
     public static IntakeSubsystem intakeSubsystem;
     public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
     public static Wrist wrist;
-    public static DashboardView dashboardView = new DashboardView(416, 240, 20);//, new DashboardView(416, 240, 20)};
+    public static DashboardView dashboardView = new DashboardView(416, 240, 20);
 
     public static IO controls;
 
@@ -49,10 +49,6 @@ public class Robot extends SampleRobot
 
     public void robotInit()
     {
-        //        config = new HerdPractice();
-        config = new HerdVictor();
-
-        driveService = TankSubsystem.getInstance();
         liftSubsystem = new LiftSubsystem(config);
         intakeSubsystem = new IntakeSubsystem(config);
         winch = new WinchSubsystem(config);
@@ -71,6 +67,8 @@ public class Robot extends SampleRobot
         if (autonomousCommand != null) autonomousCommand.cancel();
 
         backgroundUpdater.start();
+
+        driveService.setBrake(false);
         led.set(RevLEDs.getValue(PatternName.Yellow));
 
         while (isOperatorControl() && isEnabled())
@@ -81,13 +79,9 @@ public class Robot extends SampleRobot
 
     public void autonomous()
     {
-        if(!matchState.update())
-        {
-            // something went wrong, and we didn't get the match info data
-            // TODO error?
-        }
-
         backgroundUpdater.start();
+
+        driveService.setBrake(true);
         led.set(RevLEDs.getValue((m_ds.getAlliance() == Alliance.Red) ? PatternName.Red : PatternName.Blue));
 
         autonomousCommand =  Autonomous.getConfiguredCommand();
@@ -103,15 +97,14 @@ public class Robot extends SampleRobot
     {
         backgroundUpdater.stop();
 
-        //        Autonomous.setupSelection();
-        //        LiftGoHomes.reset();
+        driveService.setBrake(false);
+        led.set(RevLEDs.getValue(PatternName.Yellow));
 
         while (isDisabled())
         {
             matchState.update();
 
-            // log.info("TeamColor", (m_ds.getAlliance() == Alliance.Red) ? "Red" : "Blue");
-            //            driveService.zeroGyro();
+            driveService.zeroGyro();
             intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
             //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
 
@@ -121,6 +114,8 @@ public class Robot extends SampleRobot
 
     public void test()
     {
+        Timer.delay(0.5);
+
         while (isTest() && isEnabled())
         {
             allPeriodic();
@@ -129,17 +124,20 @@ public class Robot extends SampleRobot
 
     private void allPeriodic()
     {
-        // Update robot values to latest for this Scheduer iteration
+        intakeSubsystem.updateSensors();
+        liftSubsystem.updateSensors();
+        wrist.updateSensors();
+        driveService.updateSensors();
+
+        double schedulerStart = Timer.getFPGATimestamp();
+        scheduler.run();
+
+        SmartDashboard.putNumber("Periodic Time ", Timer.getFPGATimestamp() - schedulerStart);
         intakeSubsystem.reportState();
         liftSubsystem.reportState();
         wrist.reportState();
         driveService.reportState();
         state.reportState();
-
-        // Scheduler
-        double schedulerStart = Timer.getFPGATimestamp();
-        scheduler.run();
-
-        SmartDashboard.putNumber("Periodic Time ", Timer.getFPGATimestamp() - schedulerStart);
+        backgroundUpdater.reportState();
     }
 }

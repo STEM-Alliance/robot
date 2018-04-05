@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class WristZero extends InstantCommand
 {
-    private static boolean hasZeroed = false;
+    private static boolean hasZeroed = true;
 
     public static boolean everZeroed()
     {
@@ -16,7 +16,7 @@ public class WristZero extends InstantCommand
 
     public static void reset()
     {
-        hasZeroed = false;
+        hasZeroed = true;
     }
 
     public WristZero()
