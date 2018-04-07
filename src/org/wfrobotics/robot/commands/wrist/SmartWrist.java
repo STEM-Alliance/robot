@@ -5,7 +5,6 @@ import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SmartWrist extends Command
 {
@@ -18,22 +17,17 @@ public class SmartWrist extends Command
         requires(wrist);
     }
 
-    protected void initialize()
-    {
-        SmartDashboard.putString("Wrist", this.getClass().getSimpleName());
-    }
-
     protected void execute()
     {
-        double commanded = Robot.controls.getIntakeLift();
+        final double commanded = Robot.controls.getIntakeLift();
+        final boolean liftIsDownWithCube = Math.abs(state.liftHeightInches) < 1 && state.robotHasCube;
+        final boolean movingFast = Math.abs(state.robotVelocity.getMag()) > 0.33;
 
-        //        if (Math.abs(commanded) < 0.1  && Math.abs(state.robotVelocity.getMag()) > 0.1 && Math.abs(state.liftHeightInches)
-        //                                        < 1 && state.robotHasCube)
-        //        {
-        //            //            wrist.setPosition(1.0);
-        //            wrist.setSpeed(0.0);
-        //        }
-        //        else
+        if (Math.abs(commanded) < 0.1 && liftIsDownWithCube && movingFast)
+        {
+            wrist.setPosition(1.0);
+        }
+        else
         {
             wrist.setSpeed(commanded);
         }

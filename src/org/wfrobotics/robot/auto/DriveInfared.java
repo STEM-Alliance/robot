@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.path;
+package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.robot.RobotState;

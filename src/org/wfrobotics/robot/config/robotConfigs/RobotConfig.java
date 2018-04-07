@@ -53,13 +53,18 @@ public abstract class RobotConfig
     public boolean TANK_DEBUG = false;
 
     public double TANK_MAX_VELOCITY;
-    public double TANK_P;
-    public double TANK_I;
-    public double TANK_D;
-    public double TANK_F;
+    public double TANK_DISTANCE_P;
+    public double TANK_DISTANCE_I;
+    public double TANK_DISTANCE_D;
+    public double TANK_DISTANCE_F;
     public int TANK_CRUISE_VELOCITY;
     public int TANK_ACCELERATION[];
-    public int TANK_IZONE;
+    public int TANK_DISTANCE_IZONE;
+
+    public double TANK_PATH_P;
+    public double TANK_PATH_I;
+    public double TANK_PATH_D;
+    public int TANK_PATH_IZONE;
 
     public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH;  // Adjacent to encoder
     public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW;  // Adjacent to encoder

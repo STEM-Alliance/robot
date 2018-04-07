@@ -56,13 +56,18 @@ public class HerdPractice extends RobotConfig
         //                      Tank
         // _________________________________________________________________________________
         TANK_MAX_VELOCITY = (11400 + 11200) / 2;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
-        TANK_P = 2.25;
-        TANK_I = 0.0021 / 2;
-        TANK_D = 3.775;
-        TANK_F = 1023 /  TANK_MAX_VELOCITY;
+        TANK_DISTANCE_P = 2.25;
+        TANK_DISTANCE_I = 0.0021 / 2;
+        TANK_DISTANCE_D = 3.775;
+        TANK_DISTANCE_F = 1023 /  TANK_MAX_VELOCITY;
         TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * 0.80);
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 1.0), (int) (TANK_CRUISE_VELOCITY * 1.0)};
-        TANK_IZONE = 35;
+        TANK_DISTANCE_IZONE = 35;
+
+        TANK_PATH_P = 0.1625;
+        TANK_PATH_I = 0.005;
+        TANK_PATH_D = 0.65;
+        TANK_PATH_IZONE = 35;
 
         TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH = 24.0 / 40.0;
         TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW = 40.0 / 24.0;

@@ -2,12 +2,11 @@ package org.wfrobotics.robot.commands.wrist;
 
 import org.wfrobotics.robot.Robot;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.command.Command;
 
-public class WristZero extends InstantCommand
+public class WristZero extends Command
 {
-    private static boolean hasZeroed = true;
+    private static boolean hasZeroed = false;
 
     public static boolean everZeroed()
     {
@@ -16,18 +15,13 @@ public class WristZero extends InstantCommand
 
     public static void reset()
     {
-        hasZeroed = true;
+        hasZeroed = false;
     }
 
     public WristZero()
     {
         requires(Robot.wrist);
         setTimeout(2.0);
-    }
-
-    protected void initialize()
-    {
-        SmartDashboard.putString("Wrist", this.getClass().getSimpleName());
     }
 
     protected void execute()
@@ -43,7 +37,7 @@ public class WristZero extends InstantCommand
         {
             hasZeroed = true;
         }
-        return true;
+        return hasZeroed;
     }
 
     protected void end()

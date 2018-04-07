@@ -5,7 +5,6 @@ import org.wfrobotics.reuse.utilities.MatchState2018;
 import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 import org.wfrobotics.robot.commands.lift.AutoZero;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
-import org.wfrobotics.robot.path.ModeScale;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 

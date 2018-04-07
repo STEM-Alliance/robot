@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.path;
+package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;

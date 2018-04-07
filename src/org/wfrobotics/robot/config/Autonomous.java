@@ -8,11 +8,10 @@ import org.wfrobotics.reuse.hardware.sensors.Gyro;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoSide;
 import org.wfrobotics.robot.auto.AutoSwitchCenter;
-import org.wfrobotics.robot.path.ModeCenter;
+import org.wfrobotics.robot.auto.ModeCenter;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous
 {
@@ -41,7 +40,6 @@ public class Autonomous
             {
                 autoCommands.addObject(modes[index].text, modes[index]);
             }
-            SmartDashboard.putData("Autonomous", autoCommands);
         }
 
         /** FIRST Power Up - Top level autonomous modes **/
@@ -52,8 +50,6 @@ public class Autonomous
                 new AutoMode("Center Switch", () -> new AutoSwitchCenter(), 0.0),
                 new AutoMode("New Center Path", () -> new ModeCenter(), 0.0),
                 new AutoMode("Side", () -> new AutoSide(location), 0.0),
-                //                new AutoMode("Side Switch", () -> new AutoSwitchSide(location), 0.0),
-                //                new AutoMode("Side Scale", () -> new AutoScaleSide(location), 0.0),
                 new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),
             };
         }
@@ -74,7 +70,6 @@ public class Autonomous
             autoPosition.addDefault("Right", new StartingPosition(POSITION.RIGHT));
             autoPosition.addObject("Center", new StartingPosition(POSITION.CENTER));
             autoPosition.addObject("Left", new StartingPosition(POSITION.LEFT));
-            SmartDashboard.putData("Auto Position", autoPosition);
         }
 
         public POSITION get()
@@ -103,7 +98,6 @@ public class Autonomous
             {
                 autoDelay.addObject(String.valueOf(additionalOptions[index]), new Delay(additionalOptions[index]));
             }
-            SmartDashboard.putData("Auto Delay", autoDelay);
         }
     }
 
