@@ -6,16 +6,11 @@ public class WristAutoZeroThenPercentVoltage extends ConditionalCommand
 {
     public WristAutoZeroThenPercentVoltage()
     {
-        super(new SmartWrist(), new SmartWrist());
+        super(new SmartWrist(), new WristZero());
     }
 
     protected boolean condition()
     {
         return WristZero.everZeroed();
-    }
-
-    protected void end()
-    {
-        //        Robot.wrist.setPosition(.95);
     }
 }

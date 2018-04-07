@@ -1,12 +1,10 @@
-package org.wfrobotics.robot.path;
+package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.decorator.DelayedCommand;
 import org.wfrobotics.reuse.commands.decorator.SynchronizedCommand;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
-import org.wfrobotics.robot.auto.IntakeSet;
-import org.wfrobotics.robot.auto.JawsSet;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;

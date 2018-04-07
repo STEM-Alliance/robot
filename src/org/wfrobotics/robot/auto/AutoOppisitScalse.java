@@ -4,7 +4,6 @@ import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
-import org.wfrobotics.robot.path.LiftToScale;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
