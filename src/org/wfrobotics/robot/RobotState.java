@@ -26,7 +26,7 @@ public class RobotState
     public boolean robotHasCube;
     public double intakeDistance;
     public double liftHeightInches;
-    public double wristAngle;
+    public double wristTicks;
     public RobotConfig config;
     public static RobotState getInstance()
     {
@@ -52,7 +52,7 @@ public class RobotState
         robotHasCube = false;
         intakeDistance = 9999;
         liftHeightInches = 0;
-        wristAngle = 0;
+        wristTicks = 0;
         hasCubeCounts = 0;
     }
 
@@ -61,7 +61,7 @@ public class RobotState
         SmartDashboard.putNumber("Heading", robotHeading);
         //        SmartDashboard.putBoolean("High Gear", robotGear);
 
-        SmartDashboard.putNumber("Wrist Angle", wristAngle);
+        SmartDashboard.putNumber("Wrist Angle", wristTicks);
     }
 
     // ------------- END Private -------------
@@ -154,7 +154,7 @@ public class RobotState
 
     public synchronized void updateWristPosition(double ticks)
     {
-        wristAngle = ticks / 4096.0 * 90.0;
+        wristTicks = ticks;
     }
 
     // ------------- END State Producers Robot-specific (Write-Only) -------------
