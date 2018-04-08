@@ -40,7 +40,7 @@ public class Wrist extends Subsystem
         intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 10);
         intakeLift.configSetParameter(ParamEnum.eClearPositionOnLimitR, 1, 0, 0, 10);
-        intakeLift.overrideLimitSwitchesEnable(false);
+        intakeLift.overrideLimitSwitchesEnable(true);
         intakeLift.setSelectedSensorPosition(0, 0, 10);  // Before zeroing, report values above smart intake active therehold
         intakeLift.configOpenloopRamp(.05, 10);
 
