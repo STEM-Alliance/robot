@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
+//TODO 2019 switch to non-deprecated RobotBase
+@SuppressWarnings("deprecation")
 public class Robot extends SampleRobot
 {
     public static ExampleSubsystem prototypeSubsystem;
