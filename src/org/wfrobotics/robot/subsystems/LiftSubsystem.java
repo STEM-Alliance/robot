@@ -1,6 +1,5 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.reuse.subsystems.Subsystem;
 import org.wfrobotics.robot.RobotState;
@@ -18,7 +17,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class LiftSubsystem extends Subsystem implements BackgroundUpdate
+public class LiftSubsystem extends Subsystem
 {
     private final LimitSwitchs limit;
     private final static double kTicksPerRev = 4096.0;
@@ -80,6 +79,12 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public void updateSensors()
     {
+        if(limit.atBottomAll())
+        {
+            motors[0].setSelectedSensorPosition(0, 0, 0);
+            motors[1].setSelectedSensorPosition(0, 0, 0);
+        }
+
         state.updateLiftHeight(ticksToInches(getHeightAverage()));
     }
 
@@ -96,15 +101,6 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
         if (kDebug)
         {
             debugCalibration();
-        }
-    }
-
-    public synchronized void onBackgroundUpdate()
-    {
-        if(limit.atBottomAll())
-        {
-            motors[0].setSelectedSensorPosition(0, 0, 0);
-            motors[1].setSelectedSensorPosition(0, 0, 0);
         }
     }
 
@@ -130,17 +126,10 @@ public class LiftSubsystem extends Subsystem implements BackgroundUpdate
 
     public synchronized void goToHeightInit(double heightInches)
     {
-        if (heightInches > getHeightAverage())
-        {
-            motors[0].selectProfileSlot(kSlotUp, 0);
-            motors[1].selectProfileSlot(kSlotUp, 0);
-        }
-        else
-        {
-            motors[0].selectProfileSlot(kSlotDown, 0);
-            motors[1].selectProfileSlot(kSlotDown, 0);
-        }
+        final int slot = (heightInches > getHeightAverage()) ? kSlotUp : kSlotDown;
 
+        motors[0].selectProfileSlot(slot, 0);
+        motors[1].selectProfileSlot(slot, 0);
         set(ControlMode.MotionMagic, inchesToTicks(heightInches));  // Stalls motors
     }
 

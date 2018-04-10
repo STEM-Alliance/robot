@@ -59,7 +59,6 @@ public class Robot extends SampleRobot
 
         backgroundUpdater.register(driveService);
         backgroundUpdater.register(intakeSubsystem);
-        backgroundUpdater.register(liftSubsystem);
     }
 
     public void operatorControl()
