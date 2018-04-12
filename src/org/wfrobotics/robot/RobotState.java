@@ -15,7 +15,6 @@ public class RobotState
 
     public double robotDistanceDriven;  // Distance driven by robot since encoder distance last zeroed (inches)
     public double robotHeading;         // Angle of robot relative to when gyro was last zeroed
-    public boolean robotGear;           // True: High, False: Low
     public HerdVector robotVelocity;    // Speed and direction robot is driving  // TODO clarify FR or RR, which is ideal?
 
     public double visionError;          // Location of target relative to center of camera
@@ -44,7 +43,6 @@ public class RobotState
     protected RobotState()
     {
         robotDistanceDriven = 0;
-        robotGear = false;
         robotHeading = 0;
         robotVelocity = new HerdVector(0, 0);
         //        resetVisionState();
@@ -71,11 +69,6 @@ public class RobotState
     public synchronized void updateRobotDistanceDriven(double inchesDrivenTotal)
     {
         robotDistanceDriven = inchesDrivenTotal;
-    }
-
-    public synchronized void updateRobotGear(boolean isHighGear)
-    {
-        robotGear = isHighGear;
     }
 
     public synchronized void updateRobotHeading(double fieldRelativeHeading)
