@@ -4,6 +4,7 @@ import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.Subsystem;
+import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.config.RobotMap;
@@ -14,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.CircularBuffer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Timer;
@@ -30,7 +30,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     private final TalonSRX masterRight;
     private final TalonSRX followerLeft;
     private final DoubleSolenoid horizontalIntake;
-    private final SharpDistance distanceSensorR;
+    private final SharpDistance distanceSensor;
     private CircularBuffer buffer;
 
     private boolean lastHorizontalState;
@@ -49,10 +49,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         masterRight.setNeutralMode(NeutralMode.Brake);
         masterRight.setInverted(config.INTAKE_INVERT_RIGHT);
         masterRight.configOpenloopRamp(.25, 10);
-        masterRight.configPeakCurrentLimit(30, 10);
-        masterRight.configPeakCurrentDuration(100, 10);
-        masterRight.configContinuousCurrentLimit(10, 10);
-        masterRight.enableCurrentLimit(true);
+        TalonSRXFactory.configCurrentLimiting(masterRight, 30, 100, 10);
 
         followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
         followerLeft.setNeutralMode(NeutralMode.Brake);
@@ -60,7 +57,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
         horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
 
-        distanceSensorR = new SharpDistance(config.INTAKE_SENSOR_R);
+        distanceSensor = new SharpDistance(config.INTAKE_SENSOR_R);
         buffer = new CircularBuffer((int) bufferSize);
         for (int index = 0; index < bufferSize; index++)
         {
@@ -86,12 +83,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void updateSensors()
     {
-        double sum = 0;
-        for (int index = 0; index < bufferSize; index++)
-        {
-            sum += buffer.get(index);
-        }
-        latestDistance = sum / bufferSize;
+        latestDistance = buffer.getAverage();
         state.updateIntakeSensor(latestDistance);
     }
 
@@ -102,7 +94,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public void onBackgroundUpdate()
     {
-        buffer.addFirst(distanceSensorR.getDistance() - kDistanceMaxIn);
+        buffer.addFirst(distanceSensor.getDistance() - kDistanceMaxIn);
     }
 
     // ----------------------------------------- Public -------------------------------------------

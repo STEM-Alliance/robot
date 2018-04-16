@@ -9,7 +9,6 @@ import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -23,7 +22,7 @@ public class LiftSubsystem extends Subsystem
     private final static double kTicksPerRev = 4096.0;
     private final static double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
     private final int kSlotUp = 0;
-    private final int kSlotDown = 0;
+    private final int kSlotDown = 1;
     private final boolean kDebug;
 
     private final RobotState state = RobotState.getInstance();
@@ -40,30 +39,14 @@ public class LiftSubsystem extends Subsystem
 
         for (int index = 0; index < motors.length; index++)
         {
-            motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P[kSlotUp], config.LIFT_I[kSlotUp], config.LIFT_D[kSlotUp], config.LIFT_F[kSlotUp], kSlotUp, config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
-            motors[index].config_IntegralZone(kSlotUp, 20, kTimeout);
-            motors[index].set(ControlMode.PercentOutput, 0);
+            motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P[kSlotUp], config.LIFT_I[kSlotUp], config.LIFT_D[kSlotUp], config.LIFT_F[kSlotUp], 20, kSlotUp, config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
+            TalonSRXFactory.configPIDF(motors[index], kSlotDown, config.LIFT_P[kSlotDown], config.LIFT_I[kSlotDown], config.LIFT_D[kSlotDown], config.LIFT_F[kSlotDown], 20);
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);
             motors[index].setNeutralMode(NeutralMode.Brake);
             motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, kTimeout);
             motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, kTimeout);
             motors[index].configVelocityMeasurementWindow(32, kTimeout);
-            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, kTimeout);
-            motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeout);
-            if (config.LIFT_DEBUG)
-            {
-                motors[index].setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 5, kTimeout);  // For calibration
-            }
-        }
-        // Down gains
-        for (int index = 0; index < motors.length; index++)
-        {
-            motors[index].config_IntegralZone(kSlotDown, 20, kTimeout);
-            motors[index].config_kF(kSlotDown, config.LIFT_F[kSlotDown], kTimeout);
-            motors[index].config_kP(kSlotDown, config.LIFT_P[kSlotDown], kTimeout);
-            motors[index].config_kI(kSlotDown, config.LIFT_I[kSlotDown], kTimeout);
-            motors[index].config_kD(kSlotDown, config.LIFT_D[kSlotDown], kTimeout);
         }
 
         limit = new LimitSwitchs(motors, config.LIFT_LIMIT_SWITCH_NORMALLY);
@@ -182,26 +165,16 @@ public class LiftSubsystem extends Subsystem
 
         SmartDashboard.putNumber("Delta P", position0 - position1);
 
-        double p = Preferences.getInstance().getDouble("lift_p_0", 0.0);
-        double i = Preferences.getInstance().getDouble("lift_i_0", 0.0);
-        double d = Preferences.getInstance().getDouble("lift_d_0", 0.0);
+        double p = Preferences.getInstance().getDouble("lift_p", 0.0);
+        double i = Preferences.getInstance().getDouble("lift_i", 0.0);
+        double d = Preferences.getInstance().getDouble("lift_d", 0.0);
+        int slot = Preferences.getInstance().getInt("lift_slot", 0);
 
-        motors[0].config_kP(0, p, 10);
-        motors[1].config_kP(0, p, 10);
-        motors[0].config_kI(0, i, 10);
-        motors[1].config_kI(0, i, 10);
-        motors[0].config_kD(0, d, 10);
-        motors[1].config_kD(0, d, 10);
-
-        p = Preferences.getInstance().getDouble("lift_p_1", 0.0);
-        i = Preferences.getInstance().getDouble("lift_i_1", 0.0);
-        d = Preferences.getInstance().getDouble("lift_d_1", 0.0);
-
-        motors[0].config_kP(1, p, 10);
-        motors[1].config_kP(1, p, 10);
-        motors[0].config_kI(1, i, 10);
-        motors[1].config_kI(1, i, 10);
-        motors[0].config_kD(1, d, 10);
-        motors[1].config_kD(1, d, 10);
+        motors[0].config_kP(slot, p, 10);
+        motors[1].config_kP(slot, p, 10);
+        motors[0].config_kI(slot, i, 10);
+        motors[1].config_kI(slot, i, 10);
+        motors[0].config_kD(slot, d, 10);
+        motors[1].config_kD(slot, d, 10);
     }
 }

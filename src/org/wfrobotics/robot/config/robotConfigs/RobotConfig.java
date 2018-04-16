@@ -76,7 +76,6 @@ public abstract class RobotConfig
     public boolean TANK_RIGHT_INVERT;
     public boolean TANK_LEFT_SENSOR_PHASE;
     public boolean TANK_RIGHT_SENSOR_PHASE;
-
     public double TANK_OPEN_LOOP_RAMP;
 
     //                      Winch

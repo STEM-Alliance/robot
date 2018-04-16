@@ -62,10 +62,8 @@ public class HerdBlackTank extends RobotConfig
 
         TANK_LEFT_INVERT = true;
         TANK_RIGHT_INVERT = false;
-
         TANK_LEFT_SENSOR_PHASE = false;
         TANK_RIGHT_SENSOR_PHASE = true;
-
         TANK_OPEN_LOOP_RAMP = 0.05;
 
         //                      Winch
