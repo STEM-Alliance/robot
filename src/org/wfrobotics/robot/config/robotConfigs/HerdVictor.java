@@ -63,20 +63,25 @@ public class HerdVictor extends RobotConfig
         TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 1.0), (int) (TANK_CRUISE_VELOCITY * 1.0)};
         TANK_DISTANCE_IZONE = 35;
 
-        TANK_PATH_P = 0.1625;
-        TANK_PATH_I = 0.005;
-        TANK_PATH_D = 0.65;
+        TANK_PATH_P = 0.07;
+        TANK_PATH_I = 0.0;
+        TANK_PATH_D = 0.315;
         TANK_PATH_IZONE = 35;
+
+        // Velocity experiment
+        //        TANK_PATH_P = 1.0;
+        //        TANK_PATH_I = 0.0;
+        //        TANK_PATH_D = 5.0;
+        //        TANK_PATH_IZONE = 0;
+
 
         TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH = 24.0 / 40.0;
         TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW = 40.0 / 24.0;
 
         TANK_LEFT_INVERT = false;
         TANK_RIGHT_INVERT = true;
-
         TANK_LEFT_SENSOR_PHASE = true;
         TANK_RIGHT_SENSOR_PHASE = false;
-
         TANK_OPEN_LOOP_RAMP = 0.05;
 
         //                      Winch

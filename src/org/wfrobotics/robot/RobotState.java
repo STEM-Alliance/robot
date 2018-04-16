@@ -57,6 +57,7 @@ public class RobotState
     public void reportState()
     {
         SmartDashboard.putNumber("Heading", robotHeading);
+        SmartDashboard.putNumber("Distance", robotDistanceDriven);
 
         SmartDashboard.putNumber("Wrist Angle", wristTicks);
     }
