@@ -2,7 +2,7 @@ package org.wfrobotics.robot.config.robotConfigs;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
-public class HerdBlackTank extends RobotConfig
+public final class HerdBlackTank extends RobotConfig
 {
     public HerdBlackTank()
     {

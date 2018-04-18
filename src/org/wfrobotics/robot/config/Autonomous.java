@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.DriveOff;
 import org.wfrobotics.reuse.hardware.sensors.Gyro;
+import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoSide;
 import org.wfrobotics.robot.auto.AutoSwitchCenter;
@@ -131,7 +132,7 @@ public class Autonomous
         }
 
         Gyro.getInstance().zeroYaw(modes[choice].gyroOffset);
-        RobotState.getInstance().updateRobotHeading(modes[choice].gyroOffset);
+        RobotState.getInstance().updateRobotVelocity(new HerdVector(0.0, modes[choice].gyroOffset));
 
         return modes[choice].maker.get();
     }

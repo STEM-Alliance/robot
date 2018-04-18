@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 
 /** Maps controllers to Commands **/
-public class IO
+public final class IO
 {
     private static IO instance = null;
     private final ArrayList<Button> robotSpecific = new ArrayList<Button>();  // Keep buttons instantiated

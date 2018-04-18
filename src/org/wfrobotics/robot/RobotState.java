@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
-public class RobotState
+public final class RobotState
 {
     // ------------- BEGIN Public State (Read-Only) -------------
 
@@ -71,13 +71,9 @@ public class RobotState
         robotDistanceDriven = inchesDrivenTotal;
     }
 
-    public synchronized void updateRobotHeading(double fieldRelativeHeading)
-    {
-        robotHeading = fieldRelativeHeading;
-    }
-
     public synchronized void updateRobotVelocity(HerdVector velocity)
     {
+        robotHeading = velocity.getAngle();
         robotVelocity = new HerdVector(velocity);
     }
 
