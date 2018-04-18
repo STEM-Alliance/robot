@@ -66,6 +66,11 @@ public abstract class RobotConfig
     public double TANK_PATH_D;
     public int TANK_PATH_IZONE;
 
+    public double TANK_PATH_VELOCITY_P;
+    public double TANK_PATH_VELOCITY_I;
+    public double TANK_PATH_VELOCITY_D;
+    public int TANK_PATH_VELOCITY_IZONE;
+
     public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH;  // Adjacent to encoder
     public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW;  // Adjacent to encoder
     public double TANK_GEAR_RATIO_MOTOR_TO_ENCODER = 36.0 / 15.0;  // Wheel to adjacent

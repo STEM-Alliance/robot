@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // TODO 2019 switch to non-deprecated RobotBase
 @SuppressWarnings("deprecation")
-public class Robot extends SampleRobot
+public final class Robot extends SampleRobot
 {
     private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater(.005);
     private final Scheduler scheduler = Scheduler.getInstance();

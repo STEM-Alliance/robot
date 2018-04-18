@@ -2,7 +2,7 @@ package org.wfrobotics.robot.config.robotConfigs;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
-public class HerdVictor extends RobotConfig
+public final class HerdVictor extends RobotConfig
 {
     public HerdVictor()
     {
@@ -54,7 +54,7 @@ public class HerdVictor extends RobotConfig
 
         //                      Tank
         // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = (10500 + 10500) / 2;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
+        TANK_MAX_VELOCITY = (11750 + 11750) / 2;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
         TANK_DISTANCE_P = 2.25;
         TANK_DISTANCE_I = 0.0021 / 2;
         TANK_DISTANCE_D = 3.775;
@@ -68,12 +68,10 @@ public class HerdVictor extends RobotConfig
         TANK_PATH_D = 0.315;
         TANK_PATH_IZONE = 35;
 
-        // Velocity experiment
-        //        TANK_PATH_P = 1.0;
-        //        TANK_PATH_I = 0.0;
-        //        TANK_PATH_D = 5.0;
-        //        TANK_PATH_IZONE = 0;
-
+        TANK_PATH_VELOCITY_P = 1.0;
+        TANK_PATH_VELOCITY_I = 0.0;
+        TANK_PATH_VELOCITY_D = 5.0;
+        TANK_PATH_VELOCITY_IZONE = 0;
 
         TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH = 24.0 / 40.0;
         TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW = 40.0 / 24.0;
