@@ -59,8 +59,8 @@ public final class HerdVictor extends RobotConfig
         TANK_DISTANCE_I = 0.0021 / 2.0;
         TANK_DISTANCE_D = 3.775;
         TANK_DISTANCE_F = 1023.0 /  TANK_MAX_VELOCITY;
-        TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY);
-        TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 1.0), (int) (TANK_CRUISE_VELOCITY * 1.0)};
+        TANK_CRUISE_VELOCITY = (int) (1.0 * TANK_MAX_VELOCITY);
+        TANK_ACCELERATION = new int[] {(int) (TANK_CRUISE_VELOCITY * 0.925), (int) (TANK_CRUISE_VELOCITY * 1.0)};
         TANK_DISTANCE_IZONE = 35;
 
         TANK_PATH_P = 0.07;
