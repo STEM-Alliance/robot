@@ -1,6 +1,5 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.reuse.utilities.HerdVector;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.VisionMode;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
@@ -15,7 +14,7 @@ public final class RobotState
 
     public double robotDistanceDriven;  // Distance driven by robot since encoder distance last zeroed (inches)
     public double robotHeading;         // Angle of robot relative to when gyro was last zeroed
-    public HerdVector robotVelocity;    // Speed and direction robot is driving  // TODO clarify FR or RR, which is ideal?
+    public double robotVelocity;        // Speed and direction robot is driving  // TODO clarify FR or RR, which is ideal?
 
     public double visionError;          // Location of target relative to center of camera
     public boolean visionInView;        // If vision determined the criteria for seeing the target(s) is met
@@ -43,8 +42,8 @@ public final class RobotState
     protected RobotState()
     {
         robotDistanceDriven = 0;
+        robotVelocity = 0;
         robotHeading = 0;
-        robotVelocity = new HerdVector(0, 0);
         //        resetVisionState();
 
         robotHasCube = false;
@@ -56,6 +55,7 @@ public final class RobotState
 
     public void reportState()
     {
+        SmartDashboard.putNumber("Velocity", robotHeading);
         SmartDashboard.putNumber("Heading", robotHeading);
         SmartDashboard.putNumber("Distance", robotDistanceDriven);
 
@@ -71,10 +71,10 @@ public final class RobotState
         robotDistanceDriven = inchesDrivenTotal;
     }
 
-    public synchronized void updateRobotVelocity(HerdVector velocity)
+    public synchronized void updateRobotVelocity(double velocity, double heading)
     {
-        robotHeading = velocity.getAngle();
-        robotVelocity = new HerdVector(velocity);
+        robotVelocity = velocity;
+        robotHeading = heading;
     }
 
     //    public synchronized void addVisionUpdate(VisionMessageTargets v)
