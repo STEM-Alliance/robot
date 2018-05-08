@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.TalonSRXFactory;
 import org.wfrobotics.reuse.subsystems.Subsystem;
 import org.wfrobotics.robot.RobotState;
@@ -18,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftSubsystem extends Subsystem
 {
-    private final LimitSwitchs limit;
     private final static double kTicksPerRev = 4096.0;
     private final static double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
     private final int kSlotUp = 0;
@@ -27,6 +27,7 @@ public class LiftSubsystem extends Subsystem
 
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX[] motors = new TalonSRX[2];
+    private final LimitSwitch[] limit = new LimitSwitch[2];
 
     public LiftSubsystem(RobotConfig config)
     {
@@ -47,9 +48,9 @@ public class LiftSubsystem extends Subsystem
             motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, kTimeout);
             motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, kTimeout);
             motors[index].configVelocityMeasurementWindow(32, kTimeout);
-        }
 
-        limit = new LimitSwitchs(motors, config.LIFT_LIMIT_SWITCH_NORMALLY);
+            limit[index] =  new LimitSwitch(motors[index], config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], config.LIFT_LIMIT_SWITCH_NORMALLY[index][1]);
+        }
     }
 
     // ----------------------------------------- Interfaces ----------------------------------------
@@ -62,7 +63,7 @@ public class LiftSubsystem extends Subsystem
 
     public void updateSensors()
     {
-        if(limit.atBottomAll())
+        if(LimitSwitch.atReverseAll(limit))
         {
             motors[0].setSelectedSensorPosition(0, 0, 0);
             motors[1].setSelectedSensorPosition(0, 0, 0);
@@ -73,7 +74,7 @@ public class LiftSubsystem extends Subsystem
 
     public void reportState()
     {
-        boolean[][] limitSwitchSet = limit.dump();
+        boolean[][] limitSwitchSet = LimitSwitch.dump(limit);
 
         SmartDashboard.putNumber("Lift Height", ticksToInches(getHeightAverage()));
         SmartDashboard.putBoolean("LB", limitSwitchSet[0][0]);
@@ -95,16 +96,16 @@ public class LiftSubsystem extends Subsystem
     }
     public boolean allSidesAtBottom()
     {
-        return limit.atBottomAll();
+        return LimitSwitch.atReverseAll(limit);
     }
 
     public boolean allSidesAtTop()
     {
-        return limit.atTopAll();
+        return LimitSwitch.atForwardAll(limit);
     }
     public boolean eitherSideAtTop()
     {
-        return limit.atTopAny();
+        return LimitSwitch.atForwardAny(limit);
     }
 
     public synchronized void goToHeightInit(double heightInches)
@@ -119,7 +120,7 @@ public class LiftSubsystem extends Subsystem
     public synchronized void goToSpeedInit(double percent)
     {
         double speed = percent;
-        if (limit.atTopAny() && speed > 0.0)
+        if (LimitSwitch.atForwardAny(limit) && speed > 0.0)
         {
             speed = 0.0;
         }
