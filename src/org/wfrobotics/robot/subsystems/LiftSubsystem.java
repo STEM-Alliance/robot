@@ -40,7 +40,7 @@ public class LiftSubsystem extends Subsystem
 
         for (int index = 0; index < motors.length; index++)
         {
-            motors[index] = TalonSRXFactory.makeConstAccelControlTalon(addresses[index], config.LIFT_P[kSlotUp], config.LIFT_I[kSlotUp], config.LIFT_D[kSlotUp], config.LIFT_F[kSlotUp], 20, kSlotUp, config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
+            motors[index] = TalonSRXFactory.makeMotionMagicTalon(addresses[index], config.LIFT_P[kSlotUp], config.LIFT_I[kSlotUp], config.LIFT_D[kSlotUp], config.LIFT_F[kSlotUp], 20, kSlotUp, config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
             TalonSRXFactory.configPIDF(motors[index], kSlotDown, config.LIFT_P[kSlotDown], config.LIFT_I[kSlotDown], config.LIFT_D[kSlotDown], config.LIFT_F[kSlotDown], 20);
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);

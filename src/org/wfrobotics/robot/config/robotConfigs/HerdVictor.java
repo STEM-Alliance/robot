@@ -1,5 +1,7 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
+import org.wfrobotics.reuse.hardware.Gains;
+
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
 public final class HerdVictor extends RobotConfig
@@ -9,17 +11,6 @@ public final class HerdVictor extends RobotConfig
         //                      Intake
         // _________________________________________________________________________________
         INTAKE_SENSOR_R = 3;
-        INTAKE_SENSOR_L = 2;
-
-        INTAKE_MAX_POSSIBLE_UP = 1310;  //(975.0 + 1310.0) / 2.0;
-        INTAKE_POSSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        INTAKE_P = 0.5;
-        INTAKE_I = INTAKE_P * .01 * .008 * 0;
-        INTAKE_D = INTAKE_P * 10.0 * .50 * 0;
-        INTAKE_F = 1023.0 / INTAKE_MAX_POSSIBLE_UP;
-        INTAKE_VELOCITY = (int) (INTAKE_MAX_POSSIBLE_UP * INTAKE_POSSIBLE_VELOCITY_PERCENTAGE);
-        INTAKE_ACCELERATION = INTAKE_VELOCITY;
-        INTAKE_TICKS_TO_TOP = 4500;
 
         INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
         INTAKE_DISTANCE_TO_CUBE = 16.6; // centimeters
@@ -85,8 +76,16 @@ public final class HerdVictor extends RobotConfig
         //                      Winch
         // _________________________________________________________________________________
         WINCH = 22;
-        WINCH_DOWN_IS_SAFE = true;
         WINCH_INVERT = true;
         WINCH_SPEED = 1;
+
+        //                      Wrist
+        // _________________________________________________________________________________
+        WRIST_MAX_POSSIBLE_UP = 1310;  //(975.0 + 1310.0) / 2.0;
+        WRIST_POSSIBLE_VELOCITY_PERCENTAGE = 0.975;
+        WRIST_TICKS_TO_TOP = 4500;
+        WRIST_GAINS = new Gains(0, 0.5, 0.00004, 0.0, 1023.0 / WRIST_MAX_POSSIBLE_UP, 0);
+        WRIST_VELOCITY = (int) (WRIST_MAX_POSSIBLE_UP * WRIST_POSSIBLE_VELOCITY_PERCENTAGE);
+        WRIST_ACCELERATION = WRIST_VELOCITY;
     }
 }

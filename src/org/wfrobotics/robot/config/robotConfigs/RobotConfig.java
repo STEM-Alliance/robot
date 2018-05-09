@@ -1,5 +1,7 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
+import org.wfrobotics.reuse.hardware.Gains;
+
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
 public abstract class RobotConfig
@@ -7,16 +9,7 @@ public abstract class RobotConfig
     //                      Intake
     // _________________________________________________________________________________
     public int INTAKE_SENSOR_R;
-    public int INTAKE_SENSOR_L;
-    public double INTAKE_POSSIBLE_VELOCITY_PERCENTAGE;
-    public double INTAKE_P;
-    public double INTAKE_I;
-    public double INTAKE_D;
-    public double INTAKE_F;
-    public int INTAKE_VELOCITY;
-    public int INTAKE_ACCELERATION;
-    public int INTAKE_MAX_POSSIBLE_UP;
-    public int INTAKE_TICKS_TO_TOP;
+
     public double INTAKE_DISTANCE_TO_BUMPER;  // centimeters
     public double INTAKE_DISTANCE_TO_CUBE;  // centimeters
     public double INTAKE_TIMEOUT_JAWS;  // seconds
@@ -86,8 +79,16 @@ public abstract class RobotConfig
     //                      Winch
     // _________________________________________________________________________________
     public int WINCH;
-    public boolean WINCH_DOWN_IS_SAFE = false;
     public boolean WINCH_INVERT;
     public double WINCH_SPEED;
+
+    //                      Wrist
+    // _________________________________________________________________________________
+    public double WRIST_POSSIBLE_VELOCITY_PERCENTAGE;
+    public int WRIST_MAX_POSSIBLE_UP;
+    public int WRIST_TICKS_TO_TOP;
+    public Gains WRIST_GAINS;
+    public int WRIST_VELOCITY;
+    public int WRIST_ACCELERATION;
 }
 
