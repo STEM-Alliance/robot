@@ -12,7 +12,6 @@ import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -40,12 +39,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     public IntakeSubsystem(RobotConfig config)
     {
         masterRight = TalonSRXFactory.makeTalon(RobotMap.CAN_INTAKE_RIGHT);
-        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1000, 10);
-        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 1000, 10);
-        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 1000, 10);
-        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 1000, 10);
-        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 1000, 10);
-        masterRight.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 1000, 10);
+        TalonSRXFactory.configOpenLoopOnly(masterRight);
         masterRight.setNeutralMode(NeutralMode.Brake);
         masterRight.setInverted(config.INTAKE_INVERT_RIGHT);
         masterRight.configOpenloopRamp(.25, 10);
