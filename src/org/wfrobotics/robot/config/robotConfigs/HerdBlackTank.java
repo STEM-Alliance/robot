@@ -1,5 +1,8 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
+import org.wfrobotics.reuse.hardware.Gains;
+import org.wfrobotics.reuse.subsystems.drive.TankConfig;
+
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
 public final class HerdBlackTank extends RobotConfig
@@ -22,10 +25,10 @@ public final class HerdBlackTank extends RobotConfig
         LIFT_MAX_POSSIBLE_DOWN = 0.0;
         LIFT_MAX_POSSIBLE_VELOCITY = 0.0;
         LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_P = new double[] {0.0, 0.0};
-        LIFT_I = new double[] {0.0, 0.0};
-        LIFT_D = new double[] {0.0, 0.0};
-        LIFT_F = new double[] {1023.0 / LIFT_MAX_POSSIBLE_UP, 1023.0 / LIFT_MAX_POSSIBLE_DOWN};
+        LIFT_GAINS = new Gains[] {
+            new Gains(0, 0.0, 0.0, 0.0, 1023.0 / LIFT_MAX_POSSIBLE_UP, 0),
+            new Gains(1, 0.0, 0.0, 0.0, 1023.0 / LIFT_MAX_POSSIBLE_DOWN, 0),
+        };
         LIFT_VELOCITY = new int[] {(int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE), (int) (LIFT_MAX_POSSIBLE_UP * LIFT_POSIBLE_VELOCITY_PERCENTAGE)};
         LIFT_ACCELERATION = new int[] {(int) (LIFT_VELOCITY[0] * 7.0), (int) (LIFT_VELOCITY[0] * 7.0)};
 
@@ -40,35 +43,43 @@ public final class HerdBlackTank extends RobotConfig
             { LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen}  // Right Fwd
         };
 
-        //                      Tank
-        // _________________________________________________________________________________
-        TANK_MAX_VELOCITY = (10000 + 10300) / 2.0;  // 2-28-18
-        TANK_DISTANCE_P = 0.31;
-        TANK_DISTANCE_I = 0.005;
-        TANK_DISTANCE_D =  0.68;
-        TANK_DISTANCE_F = 1023.0 / TANK_MAX_VELOCITY;
-        TANK_CRUISE_VELOCITY = (int) (TANK_MAX_VELOCITY * .9);
-        TANK_ACCELERATION = new int[] {TANK_CRUISE_VELOCITY, TANK_CRUISE_VELOCITY};
-        TANK_DISTANCE_IZONE = 20;
-
-        TANK_PATH_P = 0.1625;
-        TANK_PATH_I = 0.005;
-        TANK_PATH_D = 0.65;
-        TANK_PATH_IZONE = 35;
-
-        TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH = 24.0 / 60.0;
-        TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW = 60.0 / 24.0;
-
-        TANK_LEFT_INVERT = true;
-        TANK_RIGHT_INVERT = false;
-        TANK_LEFT_SENSOR_PHASE = false;
-        TANK_RIGHT_SENSOR_PHASE = true;
-        TANK_OPEN_LOOP_RAMP = 0.05;
-
         //                      Winch
         // _________________________________________________________________________________
         WINCH = 22;
         WINCH_INVERT = true;
         WINCH_SPEED = 1;
+    }
+
+    public TankConfig getTankConfig()
+    {
+        TankConfig config = new TankConfig();
+
+        config.MASTER_L = 15;
+        config.MASTER_R = 16;
+        config.FOLLOWERS_L = new int[] { 17 };
+        config.FOLLOWERS_R = new int[] { 14 };
+
+        config.VELOCITY_MAX = 10000.0;  // 2-28-18
+        config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * .9);
+        config.ACCELERATION = new int[] {config.VELOCITY_PATH, config.VELOCITY_PATH};
+        config.OPEN_LOOP_RAMP = 0.05;
+
+        config.GAINS_DISTANCE = new Gains(0, 0.31, 0.005, 0.68, 1023.0 / config.VELOCITY_MAX, 20);
+        config.GAINS_PATH = new Gains(0, 0.1625, 0.005, 0.65, 0.0, 35);
+        config.GAINS_PATH_VELOCITY = new Gains(2, 1.0, 0.0, 5.0, 0, 0);
+        config.GAINS_GYRO = new Gains(3, 2.0, 0.0, 0.0, 0.0, 0);
+
+        config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 60.0);
+        config.GEAR_RATIO_LOW = (36.0 / 15.0) * (60.0 / 24.0);
+        config.SCRUB = 0.96;
+        config.WHEEL_DIAMETER = 6.25;
+        config.WIDTH = 24.0;
+
+        config.INVERT_L = true;
+        config.INVERT_R = false;
+        config.SENSOR_PHASE_L = false;
+        config.SENSOR_PHASE_R = true;
+
+        return config;
     }
 }

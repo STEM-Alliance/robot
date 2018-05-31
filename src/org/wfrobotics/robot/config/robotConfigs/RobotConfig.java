@@ -1,10 +1,11 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
 import org.wfrobotics.reuse.hardware.Gains;
+import org.wfrobotics.reuse.subsystems.drive.TankConfig.TankConfigSupplier;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
-public abstract class RobotConfig
+public abstract class RobotConfig implements TankConfigSupplier
 {
     //                      Intake
     // _________________________________________________________________________________
@@ -21,16 +22,12 @@ public abstract class RobotConfig
     // _________________________________________________________________________________
     public boolean LIFT_DEBUG = false;
 
-    public double LIFT_SPROCKET_DIAMETER_INCHES; // 1.29 16 tooth 25 chain
+    public double LIFT_SPROCKET_DIAMETER_INCHES;
     protected double LIFT_MAX_POSSIBLE_UP;
     protected double LIFT_MAX_POSSIBLE_DOWN;
     protected double LIFT_MAX_POSSIBLE_VELOCITY;
     protected double LIFT_POSIBLE_VELOCITY_PERCENTAGE; // percentage
-    public double LIFT_P[];
-    public double LIFT_I[];
-    public double LIFT_D[];
-    public double LIFT_F[];
-
+    public Gains[] LIFT_GAINS;
     public int LIFT_VELOCITY[];
     public int LIFT_ACCELERATION[];
 
@@ -40,41 +37,6 @@ public abstract class RobotConfig
     public boolean LIFT_SENSOR_PHASE_RIGHT;
     public LimitSwitchNormal[][] LIFT_LIMIT_SWITCH_NORMALLY;
     public int LIFT_TICKS_STARTING = -1500;
-
-    //                      Tank
-    // _________________________________________________________________________________
-    public boolean TANK_DEBUG = false;
-
-    public double TANK_MAX_VELOCITY;
-    public double TANK_DISTANCE_P;
-    public double TANK_DISTANCE_I;
-    public double TANK_DISTANCE_D;
-    public double TANK_DISTANCE_F;
-    public int TANK_CRUISE_VELOCITY;
-    public int TANK_ACCELERATION[];
-    public int TANK_DISTANCE_IZONE;
-
-    public double TANK_PATH_P;
-    public double TANK_PATH_I;
-    public double TANK_PATH_D;
-    public int TANK_PATH_IZONE;
-
-    public double TANK_PATH_VELOCITY_P;
-    public double TANK_PATH_VELOCITY_I;
-    public double TANK_PATH_VELOCITY_D;
-    public int TANK_PATH_VELOCITY_IZONE;
-
-    public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_HIGH;  // Adjacent to encoder
-    public double TANK_GEAR_RATIO_ENCODER_TO_WHEEL_LOW;  // Adjacent to encoder
-    public double TANK_GEAR_RATIO_MOTOR_TO_ENCODER = 36.0 / 15.0;  // Wheel to adjacent
-    public double TANK_WHEEL_DIAMETER = (6.25 * .995);  // Adjust for thread wear as needed
-    public double TANK_DISTANCE_SEPERATION_WHEEL_SIDES = 25;  // Center to center (side to side easier to measure)
-
-    public boolean TANK_LEFT_INVERT;
-    public boolean TANK_RIGHT_INVERT;
-    public boolean TANK_LEFT_SENSOR_PHASE;
-    public boolean TANK_RIGHT_SENSOR_PHASE;
-    public double TANK_OPEN_LOOP_RAMP;
 
     //                      Winch
     // _________________________________________________________________________________

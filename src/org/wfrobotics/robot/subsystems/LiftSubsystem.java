@@ -21,8 +21,8 @@ public class LiftSubsystem extends Subsystem
 {
     private final static double kTicksPerRev = 4096.0;
     private final static double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
-    private final int kSlotUp = 0;
-    private final int kSlotDown = 1;
+    private final int kSlotUp;
+    private final int kSlotDown;
     private final boolean kDebug;
 
     private final RobotState state = RobotState.getInstance();
@@ -37,11 +37,13 @@ public class LiftSubsystem extends Subsystem
         final boolean[] sensorPhase = {config.LIFT_SENSOR_PHASE_LEFT, config.LIFT_SENSOR_PHASE_LEFT};
 
         kDebug = config.LIFT_DEBUG;
+        kSlotUp = config.LIFT_GAINS[0].kSlot;
+        kSlotDown = config.LIFT_GAINS[1].kSlot;
 
         for (int index = 0; index < motors.length; index++)
         {
-            motors[index] = TalonSRXFactory.makeMotionMagicTalon(addresses[index], config.LIFT_P[kSlotUp], config.LIFT_I[kSlotUp], config.LIFT_D[kSlotUp], config.LIFT_F[kSlotUp], 20, kSlotUp, config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
-            TalonSRXFactory.configPIDF(motors[index], kSlotDown, config.LIFT_P[kSlotDown], config.LIFT_I[kSlotDown], config.LIFT_D[kSlotDown], config.LIFT_F[kSlotDown], 20);
+            motors[index] = TalonSRXFactory.makeMotionMagicTalon(addresses[index], config.LIFT_GAINS[0], config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
+            TalonSRXFactory.configPIDF(motors[index], config.LIFT_GAINS[1]);
             motors[index].setInverted(inverted[index]);
             motors[index].setSensorPhase(sensorPhase[index]);
             motors[index].setNeutralMode(NeutralMode.Brake);
