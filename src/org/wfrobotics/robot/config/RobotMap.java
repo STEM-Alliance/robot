@@ -8,10 +8,6 @@ public class RobotMap
      * PWM: 0-9 are on-board, 10-19 are on the MXP
      */
 
-    // Drive --------------------------------------------------------------------------------------
-    public static final int CAN_TANK_DRIVE_TALONS_L[] = { 15, 17 };
-    public static final int CAN_TANK_DRIVE_TALONS_R[] = { 16, 14 };
-
     // Intake -------------------------------------------------------------------------------------
     public static final int CAN_PNEUMATIC_CONTROL_MODULE = 7;
 
