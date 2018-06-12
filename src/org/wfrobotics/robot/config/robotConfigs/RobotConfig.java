@@ -1,14 +1,21 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
-import org.wfrobotics.reuse.hardware.Gains;
+import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.subsystems.drive.TankConfig.TankConfigSupplier;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
 public abstract class RobotConfig implements TankConfigSupplier
 {
+    public final int CAN_PNEUMATIC_CONTROL_MODULE = 7;
+
     //                      Intake
     // _________________________________________________________________________________
+    public final int CAN_INTAKE_LEFT = 19;
+    public final int CAN_INTAKE_RIGHT = 20;
+    public final int PNEUMATIC_INTAKE_HORIZONTAL_FORWARD = 2;
+    public final int PNEUMATIC_INTAKE_HORIZONTAL_REVERSE = 3;
+
     public int INTAKE_SENSOR_R;
 
     public double INTAKE_DISTANCE_TO_BUMPER;  // centimeters
@@ -22,19 +29,7 @@ public abstract class RobotConfig implements TankConfigSupplier
     // _________________________________________________________________________________
     public boolean LIFT_DEBUG = false;
 
-    public double LIFT_SPROCKET_DIAMETER_INCHES;
-    protected double LIFT_MAX_POSSIBLE_UP;
-    protected double LIFT_MAX_POSSIBLE_DOWN;
-    protected double LIFT_MAX_POSSIBLE_VELOCITY;
-    protected double LIFT_POSIBLE_VELOCITY_PERCENTAGE; // percentage
-    public Gains[] LIFT_GAINS;
-    public int LIFT_VELOCITY[];
-    public int LIFT_ACCELERATION[];
-
-    public boolean LIFT_MOTOR_INVERTED_LEFT;
-    public boolean LIFT_MOTOR_INVERTED_RIGHT;
-    public boolean LIFT_SENSOR_PHASE_LEFT;
-    public boolean LIFT_SENSOR_PHASE_RIGHT;
+    public ClosedLoopConfig LIFT_CLOSED_LOOP;
     public LimitSwitchNormal[][] LIFT_LIMIT_SWITCH_NORMALLY;
     public int LIFT_TICKS_STARTING = -1500;
 
@@ -46,11 +41,9 @@ public abstract class RobotConfig implements TankConfigSupplier
 
     //                      Wrist
     // _________________________________________________________________________________
-    public double WRIST_POSSIBLE_VELOCITY_PERCENTAGE;
-    public int WRIST_MAX_POSSIBLE_UP;
+    public ClosedLoopConfig WRIST_CLOSED_LOOP;
     public int WRIST_TICKS_TO_TOP;
-    public Gains WRIST_GAINS;
-    public int WRIST_VELOCITY;
-    public int WRIST_ACCELERATION;
+    public final int INTAKE_LIFT_FORWARD_LIMIT = 4600;
+    public final int INTAKE_LIFT_REVERSE_LIMIT= 0;
 }
 

@@ -1,13 +1,13 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.background.BackgroundUpdate;
-import org.wfrobotics.reuse.hardware.TalonSRXFactory;
+import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
-import org.wfrobotics.reuse.subsystems.Subsystem;
+import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
-import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
+public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 {
     private final double bufferSize = 3;
     private final double kDistanceMaxIn;
@@ -30,7 +30,7 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     private final TalonSRX followerLeft;
     private final DoubleSolenoid horizontalIntake;
     private final SharpDistance distanceSensor;
-    private CircularBuffer buffer;
+    private final CircularBuffer buffer;
 
     private boolean lastHorizontalState;
     private double lastHorizontalTime;
@@ -38,18 +38,18 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
 
     public IntakeSubsystem(RobotConfig config)
     {
-        masterRight = TalonSRXFactory.makeTalon(RobotMap.CAN_INTAKE_RIGHT);
-        TalonSRXFactory.configOpenLoopOnly(masterRight);
+        masterRight = TalonFactory.makeTalon(Robot.config.CAN_INTAKE_RIGHT);
+        TalonFactory.configOpenLoopOnly(masterRight);
         masterRight.setNeutralMode(NeutralMode.Brake);
         masterRight.setInverted(config.INTAKE_INVERT_RIGHT);
         masterRight.configOpenloopRamp(.25, 10);
-        TalonSRXFactory.configCurrentLimiting(masterRight, 30, 100, 10);
+        TalonFactory.configCurrentLimiting(masterRight, 30, 100, 10);
 
-        followerLeft = TalonSRXFactory.makeFollowerTalon(RobotMap.CAN_INTAKE_LEFT, RobotMap.CAN_INTAKE_RIGHT);
+        followerLeft = TalonFactory.makeFollowerTalon(Robot.config.CAN_INTAKE_LEFT, Robot.config.CAN_INTAKE_RIGHT);
         followerLeft.setNeutralMode(NeutralMode.Brake);
         followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
 
-        horizontalIntake = new DoubleSolenoid(RobotMap.CAN_PNEUMATIC_CONTROL_MODULE, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, RobotMap.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
+        horizontalIntake = new DoubleSolenoid(Robot.config.CAN_PNEUMATIC_CONTROL_MODULE, Robot.config.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, Robot.config.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
 
         distanceSensor = new SharpDistance(config.INTAKE_SENSOR_R);
         buffer = new CircularBuffer((int) bufferSize);
@@ -67,8 +67,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         latestDistance = 9999;
         setHorizontal(!lastHorizontalState);
     }
-
-    // ----------------------------------------- Interfaces ----------------------------------------
 
     public void initDefaultCommand()
     {
@@ -90,8 +88,6 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
     {
         buffer.addFirst(distanceSensor.getDistance() - kDistanceMaxIn);
     }
-
-    // ----------------------------------------- Public -------------------------------------------
 
     public boolean getHorizontal()
     {
@@ -118,7 +114,5 @@ public class IntakeSubsystem extends Subsystem implements BackgroundUpdate
         }
         return stateChanged;
     }
-
-    // ----------------------------------------- Private ------------------------------------------
 }
 

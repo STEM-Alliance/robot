@@ -5,7 +5,6 @@ import org.wfrobotics.reuse.hardware.led.LEDs.Color;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect;
 import org.wfrobotics.reuse.hardware.led.LEDs.Effect.EFFECT_TYPE;
 import org.wfrobotics.reuse.hardware.led.MindsensorCANLight;
-import org.wfrobotics.robot.config.RobotMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -22,7 +21,7 @@ public class LED extends MindsensorCANLight
 
     public static LED getInstance()
     {
-        if (instance == null) { instance = new LED(RobotMap.CAN_LIGHT); }
+        if (instance == null) { instance = new LED(0); }
         return instance;
     }
 

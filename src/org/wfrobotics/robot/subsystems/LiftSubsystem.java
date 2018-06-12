@@ -1,15 +1,15 @@
 package org.wfrobotics.robot.subsystems;
 
+import java.util.List;
+
 import org.wfrobotics.reuse.hardware.LimitSwitch;
-import org.wfrobotics.reuse.hardware.TalonSRXFactory;
-import org.wfrobotics.reuse.subsystems.Subsystem;
+import org.wfrobotics.reuse.hardware.TalonFactory;
+import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenPercentVoltage;
-import org.wfrobotics.robot.config.RobotMap;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class LiftSubsystem extends Subsystem
+public class LiftSubsystem extends SAFMSubsystem
 {
     private final static double kTicksPerRev = 4096.0;
     private final static double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
@@ -31,25 +31,18 @@ public class LiftSubsystem extends Subsystem
 
     public LiftSubsystem(RobotConfig config)
     {
-        final int kTimeout = 10;
-        final int[] addresses =  {RobotMap.CAN_LIFT_L, RobotMap.CAN_LIFT_R};
-        final boolean[] inverted = {config.LIFT_MOTOR_INVERTED_LEFT, config.LIFT_MOTOR_INVERTED_RIGHT};
-        final boolean[] sensorPhase = {config.LIFT_SENSOR_PHASE_LEFT, config.LIFT_SENSOR_PHASE_LEFT};
-
         kDebug = config.LIFT_DEBUG;
-        kSlotUp = config.LIFT_GAINS[0].kSlot;
-        kSlotDown = config.LIFT_GAINS[1].kSlot;
+        kSlotUp = config.LIFT_CLOSED_LOOP.gains.get(0).kSlot;
+        kSlotDown = config.LIFT_CLOSED_LOOP.gains.get(1).kSlot;;
+
+        List<TalonSRX> talons = TalonFactory.makeClosedLoopTalon(config.LIFT_CLOSED_LOOP);
 
         for (int index = 0; index < motors.length; index++)
         {
-            motors[index] = TalonSRXFactory.makeMotionMagicTalon(addresses[index], config.LIFT_GAINS[0], config.LIFT_VELOCITY[kSlotUp], config.LIFT_ACCELERATION[kSlotUp]);
-            TalonSRXFactory.configPIDF(motors[index], config.LIFT_GAINS[1]);
-            motors[index].setInverted(inverted[index]);
-            motors[index].setSensorPhase(sensorPhase[index]);
-            motors[index].setNeutralMode(NeutralMode.Brake);
-            motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, kTimeout);
-            motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, kTimeout);
-            motors[index].configVelocityMeasurementWindow(32, kTimeout);
+            motors[index] = talons.get(index);
+            motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, 10);
+            motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
+            motors[index].configVelocityMeasurementWindow(32, 10);
 
             limit[index] =  new LimitSwitch(motors[index], config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], config.LIFT_LIMIT_SWITCH_NORMALLY[index][1]);
         }

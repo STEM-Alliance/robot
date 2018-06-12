@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.hardware.TalonSRXFactory;
+import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.Winch;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
@@ -17,8 +17,8 @@ public class WinchSubsystem extends Subsystem
 
     public WinchSubsystem(RobotConfig config)
     {
-        motor = TalonSRXFactory.makeTalon(Robot.config.WINCH);
-        TalonSRXFactory.configOpenLoopOnly(motor);
+        motor = TalonFactory.makeTalon(Robot.config.WINCH);
+        TalonFactory.configOpenLoopOnly(motor);
         motor.setInverted(Robot.config.WINCH_INVERT);
         motor.setNeutralMode(NeutralMode.Brake);
     }
