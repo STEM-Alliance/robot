@@ -1,6 +1,8 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
-import org.wfrobotics.reuse.hardware.Gains;
+import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
+import org.wfrobotics.reuse.config.TalonConfig.Gains;
+import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.subsystems.drive.TankConfig;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -22,22 +24,17 @@ public final class HerdVictor extends RobotConfig
 
         //                      Lift
         // _________________________________________________________________________________
-        LIFT_MAX_POSSIBLE_UP = 2200.0;  // DRL 3-19-18 First time different up and down gains
-        LIFT_MAX_POSSIBLE_DOWN = 2900.0;
-        LIFT_MAX_POSSIBLE_VELOCITY = LIFT_MAX_POSSIBLE_UP;
-        LIFT_POSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        LIFT_GAINS = new Gains[] {
-            new Gains(0, 5.6, 0.001, 0.0, 1023.0 / LIFT_MAX_POSSIBLE_UP, 0),
-            new Gains(1, 0.0, 0.001, 0.0, 1023.0 / LIFT_MAX_POSSIBLE_DOWN, 0),
-        };
-        LIFT_VELOCITY = new int[] {(int) (LIFT_MAX_POSSIBLE_VELOCITY * LIFT_POSIBLE_VELOCITY_PERCENTAGE), (int) (LIFT_MAX_POSSIBLE_VELOCITY * LIFT_POSIBLE_VELOCITY_PERCENTAGE)};
-        LIFT_ACCELERATION = new int[] {(int) (LIFT_VELOCITY[0] * 6.0), (int) (LIFT_VELOCITY[1] * 6.0)};
+        double kLiftMaxUp = 2200.0;  // DRL 3-19-18 First time different up and down gains
+        int kLiftCruiseUp = (int) (kLiftMaxUp * 0.975);  // TODO Gain schedule down motion magics?
+        int kLiftAccelerationUp = (int) (kLiftCruiseUp * 6.0);
 
-        LIFT_MOTOR_INVERTED_LEFT = true; // left
-        LIFT_MOTOR_INVERTED_RIGHT = false; // right
-
-        LIFT_SENSOR_PHASE_LEFT = true; // left
-        LIFT_SENSOR_PHASE_RIGHT = true; // right
+        LIFT_CLOSED_LOOP = new ClosedLoopConfig("Lift", new MasterConfig[] {
+            new MasterConfig(11, true, true),
+            new MasterConfig(10, false, true),
+        }, new Gains[] {
+            new Gains("Up", 0, 5.6, 0.001, 0.0, 1023.0 / kLiftMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
+            new Gains("Down", 1, 0.0, 0.001, 0.0, 1023.0 / kLiftMaxUp, 0),
+        });
 
         LIFT_LIMIT_SWITCH_NORMALLY = new LimitSwitchNormal[][] {
             { LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},  // Left Fwd
@@ -52,44 +49,48 @@ public final class HerdVictor extends RobotConfig
 
         //                      Wrist
         // _________________________________________________________________________________
-        WRIST_MAX_POSSIBLE_UP = 1310;  //(975.0 + 1310.0) / 2.0;
-        WRIST_POSSIBLE_VELOCITY_PERCENTAGE = 0.975;
-        WRIST_TICKS_TO_TOP = 4500;
-        WRIST_GAINS = new Gains(0, 0.5, 0.00004, 0.0, 1023.0 / WRIST_MAX_POSSIBLE_UP, 0);
-        WRIST_VELOCITY = (int) (WRIST_MAX_POSSIBLE_UP * WRIST_POSSIBLE_VELOCITY_PERCENTAGE);
-        WRIST_ACCELERATION = WRIST_VELOCITY;
+        int kWristMax = 1310;  //(975.0 + 1310.0) / 2.0;
+        int kWristCruiseVelocity = (int) (kWristMax * 0.975);
+        int kWristAcceleration = kWristCruiseVelocity;
 
+        WRIST_CLOSED_LOOP = new ClosedLoopConfig("Wrist", new MasterConfig[] {
+            new MasterConfig(21, false, false),
+        }, new Gains[] {
+            new Gains("Motion Magic", 0, 0.5, 0.00004, 0.0, 1023.0 / kWristMax, 0, kWristCruiseVelocity, kWristAcceleration),
+        });
+
+        WRIST_TICKS_TO_TOP = 4500;
     }
 
     public TankConfig getTankConfig()
     {
         TankConfig config = new TankConfig();
 
-        config.MASTER_L = 15;
-        config.MASTER_R = 16;
+        config.DEBUG = false;
+
         config.FOLLOWERS_L = new int[] { 17 };
         config.FOLLOWERS_R = new int[] { 14 };
 
-        config.VELOCITY_MAX = 11000.0;  // 12000 works way better than say 10500 at 9.9 ft/s DRL 3-16-18
-        config.VELOCITY_PATH = (int) (1.0 * config.VELOCITY_MAX);
-        config.ACCELERATION = new int[] {(int) (config.VELOCITY_PATH * 1.0), (int) (config.VELOCITY_PATH * 1.0)};
+        config.VELOCITY_MAX = 11000.0;
+        config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.8);
+        config.ACCELERATION = config.VELOCITY_PATH;
         config.OPEN_LOOP_RAMP = 0.05;
 
-        config.GAINS_DISTANCE = new Gains(0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35);
-        config.GAINS_PATH = new Gains(1, 0.07, 0.0, 0.315, 0, 35);
-        config.GAINS_PATH_VELOCITY = new Gains(2, 1.0, 0.0, 5.0, 0, 0);
-        config.GAINS_GYRO = new Gains(3, 2.0, 0.0, 0.0, 0.0, 0);
+        config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
+            new MasterConfig(15, false, true),
+            new MasterConfig(16, true, false),
+        }, new Gains[] {
+            new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
+            new Gains("Path", 1, 0.07, 0.0, 0.315, 0, 35),
+            new Gains("Velocity", 2, 1.0, 0.0, 5.0, 0, 0),
+            new Gains("Gyro", 3, 2.0, 0.0, 0.0, 0.0, 0),
+        });
 
         config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);
         config.GEAR_RATIO_LOW = (36.0 / 15.0) * (40.0 / 24.0);
         config.SCRUB = 0.96;
         config.WHEEL_DIAMETER = 6.25;
         config.WIDTH = 24.0;
-
-        config.INVERT_L = false;
-        config.INVERT_R = true;
-        config.SENSOR_PHASE_L = true;
-        config.SENSOR_PHASE_R = false;
 
         return config;
     }

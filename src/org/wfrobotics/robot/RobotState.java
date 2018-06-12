@@ -1,103 +1,55 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageTargets;
+import org.wfrobotics.reuse.utilities.RobotStateBase;
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.VisionMode;
-import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** Up-to-date info about Robot, favor over coupling to raw subsystem state in Commands **/
-public final class RobotState
+/** Preferred provider of global, formatted state about the robot. Commands can get information from one place rather than from multiple subsystems. **/
+public final class RobotState extends RobotStateBase
 {
-    // ------------- BEGIN Public State (Read-Only) -------------
+    private static final RobotState instance = new RobotState();
+    private double hasCubeCounts;
 
-    public double robotDistanceDriven;  // Distance driven by robot since encoder distance last zeroed (inches)
-    public double robotHeading;         // Angle of robot relative to when gyro was last zeroed
-    public double robotVelocity;        // Speed and direction robot is driving  // TODO clarify FR or RR, which is ideal?
-
-    public double visionError;          // Location of target relative to center of camera
-    public boolean visionInView;        // If vision determined the criteria for seeing the target(s) is met
-    public VisionMode visionMode;       // What vision co-processor is using it's camera(s) for
-    public double visionWidth;          // How big is the target(s), and therefore how close is it
-
+    // Robot-specific state
     public boolean robotHasCube;
     public double intakeDistance;
     public double liftHeightInches;
     public double wristTicks;
-    public RobotConfig config;
+
     public static RobotState getInstance()
     {
-        if (instance == null) { instance = new RobotState(); }
         return instance;
-    }
-
-    // ------------- END Public State (Read-Only) -------------
-
-    // ------------- BEGIN Private -------------
-
-    private static RobotState instance = null;
-    private double hasCubeCounts;
-
-    protected RobotState()
-    {
-        robotDistanceDriven = 0;
-        robotVelocity = 0;
-        robotHeading = 0;
-        //        resetVisionState();
-
-        robotHasCube = false;
-        intakeDistance = 9999;
-        liftHeightInches = 0;
-        wristTicks = 0;
-        hasCubeCounts = 0;
     }
 
     public void reportState()
     {
-        SmartDashboard.putNumber("Velocity", robotHeading);
-        SmartDashboard.putNumber("Heading", robotHeading);
-        SmartDashboard.putNumber("Distance", robotDistanceDriven);
-
+        super.reportState();
+        SmartDashboard.putBoolean("Has Cube", robotHasCube);
+        SmartDashboard.putNumber("Cube", intakeDistance);
         SmartDashboard.putNumber("Wrist Angle", wristTicks);
     }
 
-    // ------------- END Private -------------
-
-    // ------------- BEGIN State Producers Robot-generic (Write-Only) -------------
-
-    public synchronized void updateRobotDistanceDriven(double inchesDrivenTotal)
+    protected synchronized void resetRobotSpecificState()
     {
-        robotDistanceDriven = inchesDrivenTotal;
+        robotHasCube = false;
+        intakeDistance = 9999;
+        liftHeightInches = 0;
+        hasCubeCounts = 0;
     }
 
-    public synchronized void updateRobotVelocity(double velocity, double heading)
+    public synchronized void addVisionUpdate(VisionMessageTargets v)
     {
-        robotVelocity = velocity;
-        robotHeading = heading;
+        if (v.source != visionMode.getTarget())
+        {
+            resetVisionState();
+        }
+
+        DriverStation.reportWarning("RobotState not configured to receive and parse vision updates right now", false);
     }
-
-    //    public synchronized void addVisionUpdate(VisionMessageTargets v)
-    //    {
-    //        if (v.source != visionMode.getTarget())
-    //        {
-    //            resetVisionState();
-    //        }
-    //
-    //        DriverStation.reportWarning("RobotState not configured for vision update specific parsing", false);
-    //    }
-
-    //    private synchronized void resetVisionState()
-    //    {
-    //        visionInView = false;
-    //        visionError = 1;
-    //        visionWidth = 0;
-    //        visionMode = VisionMode.OFF;
-    //    }
-
-    // ------------- END State Producers Robot-generic (Write-Only) -------------
-
-    // ------------- Begin State Producers Robot-specific (Write-Only) -------------
 
     double timeSinceRumbleOn;
     public synchronized void updateIntakeSensor(double distance)
@@ -145,6 +97,4 @@ public final class RobotState
     {
         wristTicks = ticks;
     }
-
-    // ------------- END State Producers Robot-specific (Write-Only) -------------
 }
