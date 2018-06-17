@@ -4,7 +4,6 @@ import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.StallSense;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.wrist.WristAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
@@ -18,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Wrist extends SAFMSubsystem
 {
+    private final int kTicksToTop;
+
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX intakeLift;
     private final StallSense stallSensor;
@@ -25,8 +26,11 @@ public class Wrist extends SAFMSubsystem
     private boolean stalled;
     private boolean debugStalledLatched;
 
-    public Wrist(RobotConfig config)
+    public Wrist()
     {
+        RobotConfig config = RobotConfig.getInstance();
+        kTicksToTop = config.WRIST_TICKS_TO_TOP;
+
         intakeLift = TalonFactory.makeClosedLoopTalon(config.WRIST_CLOSED_LOOP).get(0);
 
         intakeLift.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
@@ -58,7 +62,7 @@ public class Wrist extends SAFMSubsystem
 
         if (AtTop())
         {
-            intakeLift.setSelectedSensorPosition(Robot.config.WRIST_TICKS_TO_TOP, 0, 0);
+            intakeLift.setSelectedSensorPosition(kTicksToTop, 0, 0);
         }
 
         state.updateWristPosition(position);
@@ -100,6 +104,6 @@ public class Wrist extends SAFMSubsystem
      */
     public void setPosition(double percentUp)
     {
-        intakeLift.set(ControlMode.MotionMagic, percentUp * Robot.config.WRIST_TICKS_TO_TOP);
+        intakeLift.set(ControlMode.MotionMagic, percentUp * kTicksToTop);
     }
 }

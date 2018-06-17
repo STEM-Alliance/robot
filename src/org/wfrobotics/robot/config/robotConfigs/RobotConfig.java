@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
+import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.subsystems.drive.TankConfig.TankConfigSupplier;
 
@@ -7,6 +8,8 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
 public abstract class RobotConfig implements TankConfigSupplier
 {
+    private static RobotConfig instance = null;
+
     public final int CAN_PNEUMATIC_CONTROL_MODULE = 7;
 
     //                      Intake
@@ -45,5 +48,14 @@ public abstract class RobotConfig implements TankConfigSupplier
     public int WRIST_TICKS_TO_TOP;
     public final int INTAKE_LIFT_FORWARD_LIMIT = 4600;
     public final int INTAKE_LIFT_REVERSE_LIMIT= 0;
+
+    public static RobotConfig getInstance()
+    {
+        if (instance == null)
+        {
+            instance = RobotConfigPicker.get(new RobotConfig[] { new HerdVictor(), new HerdBlackTank()});
+        }
+        return instance;
+    }
 }
 

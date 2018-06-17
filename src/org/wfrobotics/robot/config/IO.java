@@ -10,13 +10,13 @@ import org.wfrobotics.reuse.controller.Panel;
 import org.wfrobotics.reuse.controller.Xbox;
 import org.wfrobotics.reuse.controller.Xbox.AXIS;
 import org.wfrobotics.reuse.controller.Xbox.DPAD;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.AutoLiftToBottom;
 import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.SmartOutake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
+import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.buttons.Button;
 /** Maps controllers to Commands **/
 public final class IO
 {
+    private final double kWinchSpeed;
+
     private static IO instance = null;
     private final ArrayList<Button> robotSpecific = new ArrayList<Button>();  // Keep buttons instantiated
     private final Joystick driverThrottle;
@@ -33,6 +35,8 @@ public final class IO
 
     private IO(Joystick driverThrottle, Joystick driverTurn, Xbox operator, Panel panel)
     {
+        kWinchSpeed = RobotConfig.getInstance().WINCH_SPEED;
+
         this.driverThrottle = driverThrottle;
         this.driverTurn = driverTurn;
         this.operator = operator;
@@ -84,7 +88,6 @@ public final class IO
         return operator.getAxis(AXIS.RIGHT_Y);
     }
 
-
     public double getWinchPercent()
     {
         int direction = operator.getDpad();
@@ -92,11 +95,11 @@ public final class IO
 
         if (direction == DPAD.UP.get() || direction == DPAD.UP_LEFT.get() || direction == DPAD.UP_RIGHT.get())
         {
-            speed = Robot.config.WINCH_SPEED;
+            speed = kWinchSpeed;
         }
         else if (direction == DPAD.DOWN.get() || direction == DPAD.DOWN_LEFT.get() || direction == DPAD.DOWN_RIGHT.get())
         {
-            speed = -Robot.config.WINCH_SPEED;
+            speed = -kWinchSpeed;
         }
 
         return speed;
