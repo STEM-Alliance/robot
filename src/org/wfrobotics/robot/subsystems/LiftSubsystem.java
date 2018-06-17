@@ -29,8 +29,9 @@ public class LiftSubsystem extends SAFMSubsystem
     private final TalonSRX[] motors = new TalonSRX[2];
     private final LimitSwitch[] limit = new LimitSwitch[2];
 
-    public LiftSubsystem(RobotConfig config)
+    public LiftSubsystem()
     {
+        RobotConfig config = RobotConfig.getInstance();
         kDebug = config.LIFT_DEBUG;
         kSlotUp = config.LIFT_CLOSED_LOOP.gains.get(0).kSlot;
         kSlotDown = config.LIFT_CLOSED_LOOP.gains.get(1).kSlot;;
