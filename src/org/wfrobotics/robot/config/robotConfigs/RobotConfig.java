@@ -2,7 +2,7 @@ package org.wfrobotics.robot.config.robotConfigs;
 
 import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
-import org.wfrobotics.reuse.subsystems.drive.TankConfig.TankConfigSupplier;
+import org.wfrobotics.reuse.config.TankConfig.TankConfigSupplier;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 

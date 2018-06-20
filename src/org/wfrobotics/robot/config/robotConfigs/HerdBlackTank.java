@@ -3,7 +3,7 @@ package org.wfrobotics.robot.config.robotConfigs;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
-import org.wfrobotics.reuse.subsystems.drive.TankConfig;
+import org.wfrobotics.reuse.config.TankConfig;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 
@@ -47,8 +47,6 @@ public final class HerdBlackTank extends RobotConfig
     public TankConfig getTankConfig()
     {
         TankConfig config = new TankConfig();
-
-        config.DEBUG = false;
 
         config.FOLLOWERS_L = new int[] { 17 };
         config.FOLLOWERS_R = new int[] { 14 };

@@ -2,8 +2,8 @@ package org.wfrobotics.robot.config;
 
 import java.util.ArrayList;
 
-import org.wfrobotics.reuse.commands.drive.DrivePath;
-import org.wfrobotics.reuse.commands.drive.DrivePathCal;
+import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.DrivePathPosition;
 import org.wfrobotics.reuse.controller.ButtonFactory;
 import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.controller.Panel;
@@ -55,8 +55,8 @@ public final class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
 
         // ------------------------ Debug -------------------------
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DrivePath("Path")));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DrivePathCal("Path")));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DrivePathPosition("Path")));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DriveDistance(10 * 12)));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DriveDistance(12.0 * 20)));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new TurnToHeading(0.0 , 2.0)));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(90.0 , 2.0)));
