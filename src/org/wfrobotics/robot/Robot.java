@@ -17,15 +17,14 @@ import org.wfrobotics.robot.subsystems.WinchSubsystem;
 import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-// TODO 2019 switch to non-deprecated RobotBase
-public final class Robot extends SampleRobot
+public final class Robot extends IterativeRobot
 {
     private final BackgroundUpdater backgroundUpdater = new BackgroundUpdater(.005);
     private final Scheduler scheduler = Scheduler.getInstance();
@@ -45,6 +44,7 @@ public final class Robot extends SampleRobot
 
     public static Spark led = new Spark(9);
 
+    @Override
     public void robotInit()
     {
         liftSubsystem = new LiftSubsystem();
@@ -60,23 +60,8 @@ public final class Robot extends SampleRobot
         backgroundUpdater.register(RobotStateEstimator.getInstance());
     }
 
-    public void operatorControl()
-    {
-        if (autonomousCommand != null) autonomousCommand.cancel();
-
-        RobotStateEstimator.getInstance().reset();
-        backgroundUpdater.start();
-
-        driveSubsystem.setBrake(false);
-        led.set(RevLEDs.getValue(PatternName.Yellow));
-
-        while (isOperatorControl() && isEnabled())
-        {
-            allPeriodic();
-        }
-    }
-
-    public void autonomous()
+    @Override
+    public void autonomousInit()
     {
         RobotStateEstimator.getInstance().reset();
         backgroundUpdater.start();
@@ -86,40 +71,63 @@ public final class Robot extends SampleRobot
 
         autonomousCommand =  Autonomous.getConfiguredCommand();
         if (autonomousCommand != null) autonomousCommand.start();
-
-        while (isAutonomous() && isEnabled())
-        {
-            allPeriodic();
-        }
     }
 
-    public void disabled()
+    @Override
+    public void autonomousPeriodic()
+    {
+        allPeriodic();
+    }
+
+    @Override
+    public void teleopInit()
+    {
+        if (autonomousCommand != null) autonomousCommand.cancel();
+
+        RobotStateEstimator.getInstance().reset();
+        backgroundUpdater.start();
+
+        driveSubsystem.setBrake(false);
+        led.set(RevLEDs.getValue(PatternName.Yellow));
+    }
+
+    @Override
+    public void teleopPeriodic()
+    {
+        allPeriodic();
+    }
+
+    @Override
+    public void disabledInit()
     {
         backgroundUpdater.stop();
 
         driveSubsystem.setBrake(false);
         led.set(RevLEDs.getValue(PatternName.Yellow));
-
-        while (isDisabled())
-        {
-            matchState.update();
-
-            driveSubsystem.zeroGyro();
-            intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
-            //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
-
-            allPeriodic();
-        }
     }
 
-    public void test()
+    @Override
+    public void disabledPeriodic()
+    {
+        matchState.update();
+
+        driveSubsystem.zeroGyro();
+        intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
+        //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
+
+        allPeriodic();
+    }
+
+    @Override
+    public void testInit()
     {
         Timer.delay(0.5);
+    }
 
-        while (isTest() && isEnabled())
-        {
-            allPeriodic();
-        }
+    @Override
+    public void testPeriodic()
+    {
+        allPeriodic();
     }
 
     private void allPeriodic()
