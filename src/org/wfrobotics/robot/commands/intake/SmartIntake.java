@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands.intake;
 
-import org.wfrobotics.reuse.utilities.Utilities;
+import org.wfrobotics.reuse.math.Util;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
@@ -71,7 +71,7 @@ public class SmartIntake extends CommandGroup
         }
         if (distanceToCube < kCubeIn && distanceToCube > kCubeInDeadband)
         {
-            speed = -Utilities.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 0.7);
+            speed = -Util.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 0.7);
         }
         else if (distanceToCube > kCubeIn && distanceToCube < 50)  // TODO Need to move sensor, otherwise we stall motors
         {
