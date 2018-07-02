@@ -1,9 +1,9 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.background.BackgroundUpdate;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
+import org.wfrobotics.reuse.subsystems.background.BackgroundUpdate;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.intake.SmartIntake;

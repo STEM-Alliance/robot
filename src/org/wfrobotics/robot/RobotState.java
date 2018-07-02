@@ -1,7 +1,7 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageTargets;
-import org.wfrobotics.reuse.utilities.RobotStateBase;
 import org.wfrobotics.robot.config.IO;
 
 import edu.wpi.first.wpilibj.DriverStation;

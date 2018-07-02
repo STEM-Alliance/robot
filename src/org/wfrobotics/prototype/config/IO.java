@@ -1,9 +1,9 @@
 package org.wfrobotics.prototype.config;
 
 import org.wfrobotics.prototype.commands.ExampleForwardCommand;
-import org.wfrobotics.reuse.controller.ButtonFactory;
-import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
-import org.wfrobotics.reuse.controller.Xbox;
+import org.wfrobotics.reuse.config.ButtonFactory;
+import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
+import org.wfrobotics.reuse.config.Xbox;
 
 import edu.wpi.first.wpilibj.buttons.Button;
 

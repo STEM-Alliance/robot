@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.DrivePathPosition;
-import org.wfrobotics.reuse.controller.ButtonFactory;
-import org.wfrobotics.reuse.controller.ButtonFactory.TRIGGER;
-import org.wfrobotics.reuse.controller.Panel;
-import org.wfrobotics.reuse.controller.Xbox;
-import org.wfrobotics.reuse.controller.Xbox.AXIS;
-import org.wfrobotics.reuse.controller.Xbox.DPAD;
+import org.wfrobotics.reuse.config.ButtonFactory;
+import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
+import org.wfrobotics.reuse.config.Panel;
+import org.wfrobotics.reuse.config.Xbox;
+import org.wfrobotics.reuse.config.Xbox.AXIS;
+import org.wfrobotics.reuse.config.Xbox.DPAD;
 import org.wfrobotics.robot.commands.AutoLiftToBottom;
 import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
