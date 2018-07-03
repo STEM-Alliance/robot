@@ -72,6 +72,8 @@ public final class HerdVictor extends RobotConfig
         config.VELOCITY_MAX = 11000.0;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.8);
         config.ACCELERATION = config.VELOCITY_PATH;
+        config.STEERING_DRIVE_DISTANCE_P = 0.000022;
+        config.STEERING_DRIVE_DISTANCE_I = 0.000005;
         config.OPEN_LOOP_RAMP = 0.05;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
