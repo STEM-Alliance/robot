@@ -111,7 +111,9 @@ public final class Robot extends IterativeRobot
     {
         matchState.update();
 
+        driveSubsystem.zeroEncoders();
         driveSubsystem.zeroGyro();
+        state.resetDriveState();
         intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
         //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
 
