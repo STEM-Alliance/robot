@@ -100,6 +100,7 @@ public final class Robot extends IterativeRobot
     @Override
     public void disabledInit()
     {
+        driveSubsystem.log();
         backgroundUpdater.stop();
 
         driveSubsystem.setBrake(false);

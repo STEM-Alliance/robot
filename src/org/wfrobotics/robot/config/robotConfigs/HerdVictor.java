@@ -69,7 +69,7 @@ public final class HerdVictor extends RobotConfig
         config.FOLLOWERS_L = new int[] { 17 };
         config.FOLLOWERS_R = new int[] { 14 };
 
-        config.VELOCITY_MAX = 10750.0;
+        config.VELOCITY_MAX = 10000.0;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.8);
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
@@ -83,7 +83,7 @@ public final class HerdVictor extends RobotConfig
             new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
             //            new Gains("Path", 1, 0.07, 0.0, 0.315, 0, 35),
             new Gains("Path", 1, 100.00, 0.0, 0.0, 0, 0),
-            new Gains("Velocity", 2, 0.05, 0.0, 0, 1023.0 / config.VELOCITY_MAX, 0),
+            new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
             new Gains("Gyro", 3, 2.0, 0.0, 0.0, 0.0, 0),
         });
 
