@@ -1,11 +1,17 @@
 package org.wfrobotics.robot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.wfrobotics.reuse.hardware.AutoTune;
 import org.wfrobotics.reuse.hardware.led.RevLEDs;
 import org.wfrobotics.reuse.hardware.led.RevLEDs.PatternName;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdater;
 import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
+import org.wfrobotics.reuse.subsystems.vision.CameraServer;
+import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
+import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageTargets;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.reuse.utilities.MatchState2018;
@@ -44,6 +50,9 @@ public final class Robot extends IterativeRobot
 
     public static Spark led = new Spark(9);
 
+    public static CameraServer visionServer;
+
+    @SuppressWarnings("deprecation")
     @Override
     public void robotInit()
     {
@@ -51,6 +60,14 @@ public final class Robot extends IterativeRobot
         intakeSubsystem = new IntakeSubsystem();
         winch = new WinchSubsystem();
         wrist = new Wrist();
+
+        visionServer = CameraServer.getInstance();
+        visionServer.SetConfig(new VisionMessageConfig(0,1,
+                                        new ArrayList<>(Arrays.asList(new Boolean[] {true, false}))));
+        visionServer.AddListener(new VisionListener());
+
+        //        VisionProcessor processor = new VisionProcessor();
+        //        visionServer.AddListener(processor);
 
         controls = IO.getInstance();  // IMPORTANT: Initialize IO after subsystems, so all subsystem parameters passed to commands are initialized
         Autonomous.setupSelection();
@@ -151,5 +168,38 @@ public final class Robot extends IterativeRobot
         backgroundUpdater.reportState();
         ConsoleLogger.reportState();
         AutoTune.getInstance().reportState();
+    }
+    public class VisionListener implements CameraServer.CameraListener
+    {
+        private final RobotState state = RobotState.getInstance();
+
+        public void Notify(VisionMessageTargets message)
+        {
+            state.addVisionUpdate(message);
+        }
+    }
+    public static class VisionProcessor implements CameraServer.CameraListener
+    {
+        private VisionMessageTargets rx = null;
+
+        public synchronized void Notify(VisionMessageTargets message)
+        {
+            rx = message;
+        }
+
+        public void onBackgroundUpdate()
+        {
+            VisionMessageTargets update;
+            synchronized (this)
+            {
+                if (rx != null)
+                {
+                    return;
+                }
+                update = rx;
+                rx = null;
+            }
+            System.out.println(update.fps);
+        }
     }
 }

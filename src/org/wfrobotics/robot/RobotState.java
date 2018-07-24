@@ -2,9 +2,9 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageTargets;
+import org.wfrobotics.reuse.subsystems.vision.messages.VisionTargetInfo;
 import org.wfrobotics.robot.config.IO;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,6 +20,16 @@ public final class RobotState extends RobotStateBase
     public double liftHeightInches;
     public double wristTicks;
 
+    //vision specific updates
+    // ToDo: Move all of these to the RobotStateBase
+    public VisionMessageTargets latestUpdate;
+    public VisionTargetInfo largestDetected;
+    public int centerX;
+    public int centerY;
+    // boolean visionInView
+    // double visionWidth
+    // double visionError;
+
     public static RobotState getInstance()
     {
         return instance;
@@ -31,6 +41,7 @@ public final class RobotState extends RobotStateBase
         SmartDashboard.putBoolean("Has Cube", robotHasCube);
         SmartDashboard.putNumber("Cube", intakeDistance);
         SmartDashboard.putNumber("Wrist Angle", wristTicks);
+        SmartDashboard.putString("Vision MSG", latestUpdate.msg);
     }
 
     protected synchronized void resetRobotSpecificState()
@@ -39,6 +50,8 @@ public final class RobotState extends RobotStateBase
         intakeDistance = 9999;
         liftHeightInches = 0;
         hasCubeCounts = 0;
+
+        largestDetected = null;
     }
 
     public synchronized void addVisionUpdate(VisionMessageTargets v)
@@ -47,10 +60,57 @@ public final class RobotState extends RobotStateBase
         {
             resetVisionState();
         }
+        else
+        {
+            latestUpdate = v;
 
-        DriverStation.reportWarning("RobotState not configured to receive and parse vision updates right now", false);
+            centerX = latestUpdate.imageWidth / 2;
+            centerY = latestUpdate.imageHeight / 2;
+
+            if (v.Targets.size() > 0)
+            {
+                visionInView = true;
+
+                VisionTargetInfo largestTarget = null;
+                for (VisionTargetInfo target : v.Targets)
+                {
+                    if ( target.area() >= largestTarget.area() || largestTarget == null)
+                    {
+                        largestTarget = target;
+                    }
+                }
+                largestDetected = largestTarget;
+                visionWidth = largestTarget.width;
+                calcVisionError();
+            }
+        }
     }
-
+    /**
+     *
+     * Ask or look up
+     *  0) I should probibly split up the method above...or take out some fetures.... How so?
+     *  1) If i acutely did this correctly (mag of the vector)
+     *  2) How to turn this into a precentage error instead of the mag
+     *  3) Test how the TurnUntilTargetInView works with this precentage
+     *  4) Rewrite the aformentioned command to use a RobotState is centered (in tol)
+     *  5) delete all of the unneccary things that was written
+     *
+     */
+    public void calcVisionError()
+    {
+        visionError = largestDetected.getHerdVector().getMag();
+    }
+    // I don't think I did this in the most efficient way
+    public boolean isCentered()
+    {
+        boolean centered = false;
+        double vistol = 0.05;
+        if ((centerX - largestDetected.center_x) < (vistol * visionWidth*2))
+        {
+            return true;
+        }
+        return centered;
+    }
     double timeSinceRumbleOn;
     public synchronized void updateIntakeSensor(double distance)
     {
