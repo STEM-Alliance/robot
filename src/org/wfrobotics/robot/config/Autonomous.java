@@ -6,8 +6,9 @@ import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.DriveOff;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoSide;
-import org.wfrobotics.robot.auto.AutoSwitchCenter;
 import org.wfrobotics.robot.auto.ModeCenter;
+import org.wfrobotics.robot.auto.ModeSwitchCenter;
+import org.wfrobotics.robot.auto.ModeTestPathVelocity;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -44,9 +45,12 @@ public class Autonomous
         /** FIRST Power Up - Top level autonomous modes **/
         public static AutoMode[] getOptions(int delay, POSITION location)
         {
+            // TODO AutoMode as Command Group subclass, interface includes setDelay()?
+
             return new AutoMode[] {
+                new AutoMode("Test Path Velocity", () -> new ModeTestPathVelocity(), 0.0),
                 new AutoMode("Auto None", () -> new DriveOff(), 0.0),
-                new AutoMode("Center Switch", () -> new AutoSwitchCenter(), 0.0),
+                new AutoMode("Center Switch", () -> new ModeSwitchCenter(), 0.0),
                 new AutoMode("New Center Path", () -> new ModeCenter(), 0.0),
                 new AutoMode("Side", () -> new AutoSide(location), 0.0),
                 new AutoMode("Auto Cross Line", () -> new DriveDistance(12 * 22 + 0), 0.0),

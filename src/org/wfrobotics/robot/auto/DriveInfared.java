@@ -13,6 +13,7 @@ public class DriveInfared extends Command
     private final double target;
     private final double tol;
     private final double max;
+
     public DriveInfared(double targetDistance, double maxDistance, double absoluteTol, double timeout)
     {
         requires(drive);
