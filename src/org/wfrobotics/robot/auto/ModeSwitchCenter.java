@@ -7,12 +7,12 @@ import org.wfrobotics.reuse.utilities.MatchState2018.Side;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class AutoSwitchCenter extends CommandGroup
+public class ModeSwitchCenter extends CommandGroup
 {
     double tol = 5.0;
     double angleFirstTurn = 40.0;
 
-    public AutoSwitchCenter()
+    public ModeSwitchCenter()
     {
         // Score Cube
         addSequential(new DriveDistance(12.0));

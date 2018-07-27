@@ -26,7 +26,7 @@ public class AutoSide extends CommandGroup
         }
         else
         {
-            addSequential(new AutoOppisitScalse(location));
+            addSequential(new ModeOppisitScalse(location));
         }
     }
 

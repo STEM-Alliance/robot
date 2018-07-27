@@ -8,13 +8,13 @@ import org.wfrobotics.robot.config.Autonomous.POSITION;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
-public class AutoOppisitScalse extends CommandGroup
+public class ModeOppisitScalse extends CommandGroup
 {
     //    private final double speedOuttake = 0.325;
     //    private final double timeOuttake = 0.5;
     private final double waitForGyroToFullyZero = Double.MIN_VALUE;
 
-    public AutoOppisitScalse(POSITION location)
+    public ModeOppisitScalse(POSITION location)
     {
         // Setup
         addSequential(new GyroZero());  // For teleop testing
