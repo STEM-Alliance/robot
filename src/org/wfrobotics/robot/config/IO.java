@@ -2,11 +2,10 @@ package org.wfrobotics.robot.config;
 
 import java.util.ArrayList;
 
-import org.wfrobotics.reuse.commands.drive.DrivePathPosition;
+import org.wfrobotics.reuse.commands.drive.DrivePath;
 import org.wfrobotics.reuse.commands.drive.DrivePathVelocity;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
-import org.wfrobotics.reuse.config.Panel;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.config.Xbox.AXIS;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
@@ -17,6 +16,7 @@ import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.SmartOutake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
+import org.wfrobotics.robot.paths.SortOfDriveDistance;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -33,7 +33,7 @@ public final class IO
     private final Joystick driverTurn;
     private final Xbox operator;
 
-    private IO(Joystick driverThrottle, Joystick driverTurn, Xbox operator, Panel panel)
+    private IO(Joystick driverThrottle, Joystick driverTurn, Xbox operator)
     {
         kWinchSpeed = RobotConfig.getInstance().WINCH_SPEED;
 
@@ -55,7 +55,7 @@ public final class IO
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
 
         // ------------------------ Debug -------------------------
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DrivePathPosition("Path")));
+        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DrivePath(new SortOfDriveDistance())));
         //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DriveDistance(17 * 12)));
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DrivePathVelocity(17.0 * 12.0, 0.0 * 12.0)));
 
@@ -111,7 +111,7 @@ public final class IO
 
     public static IO getInstance()
     {
-        if (instance == null) { instance = new IO(new Joystick(0), new Joystick(1), new Xbox(2), new Panel(3)); }
+        if (instance == null) { instance = new IO(new Joystick(0), new Joystick(1), new Xbox(2)); }
         return instance;
     }
 
