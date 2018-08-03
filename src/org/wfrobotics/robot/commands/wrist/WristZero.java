@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class WristZero extends Command
 {
     private static boolean hasZeroed = false;
+    private static double negate = -1;
 
     public static boolean everZeroed()
     {
@@ -26,23 +27,29 @@ public class WristZero extends Command
 
     protected void execute()
     {
-        Robot.wrist.setSpeed(-0.3);  // Must be in execute in case interrupted
+        boolean stalled = Robot.wrist.isStalled();
+        if(stalled)
+        {
+            negate = -1 * negate;
+        }
+        Robot.wrist.setSpeed(negate * 0.3);  // Must be in execute in case interrupted
     }
 
     protected boolean isFinished()
     {
-        boolean result = Robot.wrist.AtBottom();
+        boolean stalled = Robot.wrist.isStalled();
 
-        if (result)
+        Robot.wrist.AtBottom();
+        if (stalled && negate == -1)
         {
             hasZeroed = true;
+            Robot.wrist.setWristSensor(5482);
         }
         return hasZeroed;
     }
 
     protected void end()
     {
-        //        Robot.wrist.setPosition(.95);
         Robot.wrist.setSpeed(0.0);
         hasZeroed = true;
     }
