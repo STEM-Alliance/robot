@@ -40,7 +40,7 @@ public class Wrist extends SAFMSubsystem
         intakeLift.setSelectedSensorPosition(0, 0, 10);  // Before zeroing, report values above smart intake active therehold
         intakeLift.configOpenloopRamp(.05, 10);
 
-        stallSensor = new StallSense(intakeLift, 15.0, 0.15);
+        stallSensor = new StallSense(intakeLift, 4.0, 0.15);
         stalled = false;
         debugStalledLatched = false;
     }
@@ -67,7 +67,19 @@ public class Wrist extends SAFMSubsystem
 
         state.updateWristPosition(position);
     }
+    public void setWristSensor(int height)
+    {
+        intakeLift.setSelectedSensorPosition(height, 0, 0);
+    }
 
+    public boolean isStalled()
+    {
+        return stalled;
+    }
+    public boolean hasStalled()
+    {
+        return debugStalledLatched;
+    }
     public void reportState()
     {
         SmartDashboard.putString("Wrist", getCurrentCommandName());
