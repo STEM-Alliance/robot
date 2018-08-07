@@ -3,6 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.hardware.AutoTune;
 import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.RevLEDs.PatternName;
+import org.wfrobotics.reuse.math.rigidtransform.RigidTransform2d;
 import org.wfrobotics.reuse.subsystems.SubsystemRunner;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdater;
 import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
@@ -111,8 +112,8 @@ public final class Robot extends IterativeRobot
         matchState.update();
 
         driveSubsystem.zeroEncoders();
-        driveSubsystem.zeroGyro();
-        state.resetDriveState();
+        driveSubsystem.setGyro(0.0);
+        state.resetDriveState(Timer.getFPGATimestamp(), new RigidTransform2d());
         intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
         //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
 
@@ -123,7 +124,7 @@ public final class Robot extends IterativeRobot
     public void testPeriodic()
     {
         leds.testRobotSpecificColors();
-        leds.testScrollAll();
+        //        leds.testScrollAll();
     }
 
     private void allPeriodic()

@@ -14,19 +14,22 @@ import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 public class SortOfDriveDistance implements PathContainer
 {
+    double offset = 50;
+
     public PathAdaptive buildPath()
     {
         double velocity = TankMaths.ticksToInchesPerSecond(RobotConfig.getInstance().getTankConfig().VELOCITY_MAX);
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(0, 0, 0, 0));
-        sWaypoints.add(new Waypoint(17 * 12, 0, 0, velocity));
+        sWaypoints.add(new Waypoint(offset, offset, 0, 0));
+        sWaypoints.add(new Waypoint(17 * 12.0 + offset, offset, 0, velocity));
+        sWaypoints.add(new Waypoint(17 * 12.0 + offset, offset, 0, velocity));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
 
     public RigidTransform2d getStartPose()
     {
-        return new RigidTransform2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0.0));
+        return new RigidTransform2d(new Translation2d(offset, offset), Rotation2d.fromDegrees(0.0));
     }
 
     public boolean isReversed()
