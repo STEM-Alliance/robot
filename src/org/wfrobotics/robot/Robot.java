@@ -114,7 +114,7 @@ public final class Robot extends IterativeRobot
         driveSubsystem.zeroEncoders();
         driveSubsystem.setGyro(0.0);
         state.resetDriveState(Timer.getFPGATimestamp(), new RigidTransform2d());
-        intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
+        intakeSubsystem.onBackgroundUpdate(Timer.getFPGATimestamp());  // For cube distance sensor
         //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
 
         allPeriodic();

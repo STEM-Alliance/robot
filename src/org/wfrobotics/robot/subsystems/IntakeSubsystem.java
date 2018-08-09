@@ -81,12 +81,12 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Cube", latestDistance);
     }
 
-    public void onStart(boolean isAutonomous)
+    public void onStart(double now, boolean isAutonomous)
     {
 
     }
 
-    public void onBackgroundUpdate()
+    public void onBackgroundUpdate(double now)
     {
         buffer.addFirst(distanceSensor.getDistance() - kDistanceMaxIn);
     }

@@ -14,7 +14,7 @@ import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 public class SortOfDriveDistance implements PathContainer
 {
-    double offset = 50;
+    double offset = 0;
 
     public PathAdaptive buildPath()
     {
