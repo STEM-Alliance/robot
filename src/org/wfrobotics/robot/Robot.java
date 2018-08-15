@@ -36,7 +36,6 @@ public final class Robot extends IterativeRobot
     public static Wrist wrist;
 
     public static LEDs leds = new LEDs(9, PatternName.Yellow);
-    public static DashboardView dashboardView = new DashboardView();
     public static IO controls;
     Command autonomousCommand;
 
@@ -49,6 +48,7 @@ public final class Robot extends IterativeRobot
         wrist = new Wrist();
 
         controls = IO.getInstance();  // Initialize IO after subsystems
+        DashboardView.startQualityCamera();
         Autonomous.setupSelection();
 
         subsystems.register(intakeSubsystem);
@@ -114,7 +114,7 @@ public final class Robot extends IterativeRobot
         driveSubsystem.zeroEncoders();
         driveSubsystem.setGyro(0.0);
         state.resetDriveState(Timer.getFPGATimestamp(), new RigidTransform2d());
-        intakeSubsystem.onBackgroundUpdate(Timer.getFPGATimestamp());  // For cube distance sensor
+        intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
         //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
 
         allPeriodic();

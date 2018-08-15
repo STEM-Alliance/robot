@@ -134,7 +134,7 @@ public class Autonomous
         }
 
         //        TankSubsystem.getInstance().zeroGyro(modes[choice].gyroOffset);
-        RobotState.getInstance().updateRobotVelocity(0.0, modes[choice].gyroOffset);
+        RobotState.getInstance().updateRobotHeading(modes[choice].gyroOffset);
 
         return modes[choice].maker.get();
     }
