@@ -46,7 +46,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         masterRight.configOpenloopRamp(.25, 10);
         TalonFactory.configCurrentLimiting(masterRight, 30, 100, 10);
 
-        followerLeft = TalonFactory.makeFollowerTalon(config.CAN_INTAKE_LEFT, config.CAN_INTAKE_RIGHT);
+        followerLeft = TalonFactory.makeFollowerTalon(config.CAN_INTAKE_LEFT, masterRight);
         followerLeft.setNeutralMode(NeutralMode.Brake);
         followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
 
@@ -81,12 +81,12 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Cube", latestDistance);
     }
 
-    public void onStart(double now, boolean isAutonomous)
+    public void onStart(boolean isAutonomous)
     {
 
     }
 
-    public void onBackgroundUpdate(double now)
+    public void onBackgroundUpdate()
     {
         buffer.addFirst(distanceSensor.getDistance() - kDistanceMaxIn);
     }

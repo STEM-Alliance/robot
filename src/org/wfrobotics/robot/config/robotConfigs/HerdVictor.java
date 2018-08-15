@@ -66,8 +66,8 @@ public final class HerdVictor extends RobotConfig
     {
         TankConfig config = new TankConfig();
 
-        config.FOLLOWERS_L = new int[] { 17 };
-        config.FOLLOWERS_R = new int[] { 14 };
+        config.FOLLOWERS_L = new int[] { 17, };
+        config.FOLLOWERS_R = new int[] { 14, };
 
         config.VELOCITY_MAX = 10000.0;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.8);
