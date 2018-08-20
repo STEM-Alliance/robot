@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.config.robotConfigs;
 
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
+import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
@@ -66,9 +67,6 @@ public final class HerdVictor extends RobotConfig
     {
         TankConfig config = new TankConfig();
 
-        config.FOLLOWERS_L = new int[] { 17, };
-        config.FOLLOWERS_R = new int[] { 14, };
-
         config.VELOCITY_MAX = 10000.0;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.8);
         config.ACCELERATION = config.VELOCITY_PATH;
@@ -77,8 +75,8 @@ public final class HerdVictor extends RobotConfig
         config.OPEN_LOOP_RAMP = 0.05;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
-            new MasterConfig(15, false, true),
-            new MasterConfig(16, true, true),
+            new MasterConfig(15, false, true, new FollowerConfig(17, true)),
+            new MasterConfig(16, true, true, new FollowerConfig(14, true)),
         }, new Gains[] {
             new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
             //            new Gains("Path", 1, 0.07, 0.0, 0.315, 0, 35),
