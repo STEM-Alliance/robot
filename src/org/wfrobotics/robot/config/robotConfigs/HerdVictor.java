@@ -84,7 +84,8 @@ public final class HerdVictor extends RobotConfig
             //            new Gains("Path", 1, 0.07, 0.0, 0.315, 0, 35),
             new Gains("Path", 1, 100.00, 0.0, 0.0, 0, 0),
             new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
-            new Gains("Gyro", 3, 2.0, 0.0, 0.0, 0.0, 0),
+            new Gains("Turn", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
+            // TODO Retune with increased turn derivative
         });
 
         config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);

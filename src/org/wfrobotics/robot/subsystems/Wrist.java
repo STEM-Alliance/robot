@@ -36,7 +36,7 @@ public class Wrist extends SAFMSubsystem
         intakeLift.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
         intakeLift.overrideLimitSwitchesEnable(true);
-        LimitSwitch.configHardwareAutoZero(intakeLift, true, false);
+        LimitSwitch.configHardwareLimitAutoZero(intakeLift, true, false);
         intakeLift.setSelectedSensorPosition(0, 0, 10);  // Before zeroing, report values above smart intake active therehold
         intakeLift.configOpenloopRamp(.05, 10);
 

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
+/** @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead */
 public final class Robot extends IterativeRobot
 {
     private final BackgroundUpdater backgroundUpdater = BackgroundUpdater.getInstance();
@@ -61,7 +62,8 @@ public final class Robot extends IterativeRobot
     @Override
     public void autonomousInit()
     {
-        leds.useAllianceColor(m_ds.getAlliance());
+        leds.setAllianceColor(m_ds.getAlliance());
+        leds.setRobotMode(true);
         backgroundUpdater.start(true);
 
         autonomousCommand =  Autonomous.getConfiguredCommand();
@@ -73,7 +75,7 @@ public final class Robot extends IterativeRobot
     {
         if (autonomousCommand != null) autonomousCommand.cancel();
 
-        leds.useTeamColor();
+        leds.setRobotMode(false);
         backgroundUpdater.start(false);
 
         driveSubsystem.setBrake(false);
@@ -91,7 +93,12 @@ public final class Robot extends IterativeRobot
     @Override
     public void testInit()
     {
+        boolean result = true;
+
         Timer.delay(0.5);
+        result &= driveSubsystem.runFunctionalTest();
+        result &= leds.testRobotSpecificColors();
+        System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));
     }
 
     @Override
@@ -123,8 +130,7 @@ public final class Robot extends IterativeRobot
     @Override
     public void testPeriodic()
     {
-        leds.testRobotSpecificColors();
-        //        leds.testScrollAll();
+        leds.testScrollAll();
     }
 
     private void allPeriodic()
