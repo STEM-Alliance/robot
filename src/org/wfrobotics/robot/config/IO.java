@@ -72,19 +72,19 @@ public final class IO
     public double getIntakeIn()
     {
         double value = operator.getTrigger(Hand.kRight);
-        return (value > .1) ? value : 0;
+        return (value > .1) ? value : 0;  // TODO Convert to configNeutralDeadband()
     }
 
     public double getIntakeOut()
     {
         double value = operator.getTrigger(Hand.kLeft);
-        return (value > .1) ? value : 0;
+        return (value > .1) ? value : 0;  // TODO Convert to configNeutralDeadband()
     }
 
     public double getIntakeLift()
     {
         double value = operator.getAxis(Xbox.AXIS.LEFT_Y);
-        return (Math.abs(value ) > .1) ? value : 0;
+        return (Math.abs(value ) > .1) ? value : 0;  // TODO Convert to configNeutralDeadband()
     }
 
     public double getLiftStick()

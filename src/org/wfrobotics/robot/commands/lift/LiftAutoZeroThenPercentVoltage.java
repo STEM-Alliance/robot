@@ -20,7 +20,6 @@ public class LiftAutoZeroThenPercentVoltage extends ConditionalCommand
     protected boolean condition()
     {
         boolean val = LiftGoHome.everZeroed();
-        System.out.println(val);
         return val;
     }
 }

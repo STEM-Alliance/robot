@@ -72,19 +72,23 @@ public final class RobotState extends RobotStateBase
 
         if(hasCubeCounts > 20)
         {
-            if (Timer.getFPGATimestamp() - timeSinceRumbleOn < 1)
+            final double now = Timer.getFPGATimestamp();
+
+            IO.getInstance().setRumble(now - timeSinceRumbleOn < 1.0);
+            if (now - timeSinceRumbleOn < 2.0)
             {
-                IO.getInstance().setRumble(true);
+                Robot.leds.signalDriveTeam();
             }
             else
             {
-                IO.getInstance().setRumble(false);
+                Robot.leds.useRobotModeColor();
                 timeSinceRumbleOn = 0;
             }
         }
         else
         {
             IO.getInstance().setRumble(false);
+            Robot.leds.useRobotModeColor();
         }
     }
 
