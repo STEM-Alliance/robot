@@ -14,22 +14,25 @@ import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 public class SortOfDriveDistance implements PathContainer
 {
-    double offset = 0;
-
     public PathAdaptive buildPath()
     {
         double velocity = TankMaths.ticksToInchesPerSecond(RobotConfig.getInstance().getTankConfig().VELOCITY_MAX);
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(offset, offset, 0, 0));
-        sWaypoints.add(new Waypoint(17 * 12.0 + offset, offset, 0, velocity));
-        sWaypoints.add(new Waypoint(17 * 12.0 + offset, offset, 0, velocity));
+        sWaypoints.add(new Waypoint(0, 0, 0, 0));
+        sWaypoints.add(new Waypoint(8.5 * 12, -2 * 12, 2 * 12, velocity));
+        sWaypoints.add(new Waypoint(17 * 12, 0 * 12, 0 * 12, velocity));
+        sWaypoints.add(new Waypoint(19 * 12, 1 * 12, .5 * 12, velocity));
+        sWaypoints.add(new Waypoint(17 * 12, 2 * 12, .5 * 12, velocity));
+        sWaypoints.add(new Waypoint(15 * 12, 1 * 12, .5 * 12, velocity));
+        sWaypoints.add(new Waypoint(17 * 12, 0 * 12, .5 * 12, velocity));
+        sWaypoints.add(new Waypoint(24 * 12, 0 * 12, 0 * 12, velocity));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
     }
 
     public RigidTransform2d getStartPose()
     {
-        return new RigidTransform2d(new Translation2d(offset, offset), Rotation2d.fromDegrees(0.0));
+        return new RigidTransform2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0.0));
     }
 
     public boolean isReversed()

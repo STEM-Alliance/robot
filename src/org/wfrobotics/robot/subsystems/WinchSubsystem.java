@@ -4,6 +4,7 @@ import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.robot.commands.Winch;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
+import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -19,6 +20,7 @@ public class WinchSubsystem extends Subsystem
         RobotConfig config = RobotConfig.getInstance();
         motor = TalonFactory.makeTalon(config.WINCH);
         TalonFactory.configOpenLoopOnly(motor);
+        motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);
         motor.setInverted(config.WINCH_INVERT);
         motor.setNeutralMode(NeutralMode.Brake);
     }
