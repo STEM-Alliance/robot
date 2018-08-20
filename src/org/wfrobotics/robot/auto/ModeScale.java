@@ -1,10 +1,14 @@
 package org.wfrobotics.robot.auto;
 
+import java.util.function.DoubleSupplier;
+
 import org.wfrobotics.reuse.commands.decorator.DelayedCommand;
 import org.wfrobotics.reuse.commands.decorator.SynchronizedCommand;
+import org.wfrobotics.reuse.commands.drive.CorrectDistanceFromObject;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
+import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
@@ -17,6 +21,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class ModeScale extends CommandGroup
 {
+    private final DoubleSupplier intakeInfared = () -> RobotState.getInstance().getIntakeDistanceCM();
     private final double angleToScale = -50; //-50
     private final double angleToSecondCube = -145.0; //-145.06
     private final double inchesToSecondCube = 72; //78
@@ -52,7 +57,8 @@ public class ModeScale extends CommandGroup
         addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
-        addSequential(new DriveInfared(10.0, 89.0 + 4.5, 1.5, 3));
+        //        addSequential(new DriveInfared(10.0, 89.0 + 4.5, 1.5, 3.0));
+        addSequential(new CorrectDistanceFromObject(intakeInfared, 10.0, 89.0 + 4.5, 1.5, 3.0));
         addSequential(new WaitCommand(.1));
 
         // Travel to second scale

@@ -51,6 +51,11 @@ public final class RobotState extends RobotStateBase
         DriverStation.reportWarning("RobotState not configured to receive and parse vision updates right now", false);
     }
 
+    public double getIntakeDistanceCM()
+    {
+        return intakeDistance / 2.54;
+    }
+
     double timeSinceRumbleOn;
     public synchronized void updateIntakeSensor(double distance)
     {
