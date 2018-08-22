@@ -49,7 +49,7 @@ public final class Robot extends IterativeRobot
         wrist = new Wrist();
 
         controls = IO.getInstance();  // Initialize IO after subsystems
-        DashboardView.startQualityCamera();
+        DashboardView.startPerformanceCamera();
         Autonomous.setupSelection();
 
         subsystems.register(intakeSubsystem);
@@ -77,8 +77,6 @@ public final class Robot extends IterativeRobot
 
         leds.setRobotMode(false);
         backgroundUpdater.start(false);
-
-        driveSubsystem.setBrake(false);
     }
 
     @Override
