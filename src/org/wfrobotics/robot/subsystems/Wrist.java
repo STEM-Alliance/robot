@@ -19,6 +19,7 @@ public class Wrist extends SAFMSubsystem
 {
     private final int kTicksToTop;
 
+    private static Wrist instance = null;
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX intakeLift;
     private final StallSense stallSensor;
@@ -26,7 +27,7 @@ public class Wrist extends SAFMSubsystem
     private boolean stalled;
     private boolean debugStalledLatched;
 
-    public Wrist()
+    private Wrist()
     {
         RobotConfig config = RobotConfig.getInstance();
         kTicksToTop = config.WRIST_TICKS_TO_TOP;
@@ -43,6 +44,15 @@ public class Wrist extends SAFMSubsystem
         stallSensor = new StallSense(intakeLift, 4.0, 0.15);
         stalled = false;
         debugStalledLatched = false;
+    }
+
+    public static Wrist getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new Wrist();
+        }
+        return instance;
     }
 
     protected void initDefaultCommand()

@@ -31,10 +31,7 @@ public final class Robot extends IterativeRobot
     private static TankSubsystem driveSubsystem = TankSubsystem.getInstance();
     private final SubsystemRunner subsystems = SubsystemRunner.getInstance();
 
-    public static IntakeSubsystem intakeSubsystem;
-    public static LiftSubsystem liftSubsystem;
     public static WinchSubsystem winch;
-    public static Wrist wrist;
 
     public static LEDs leds = new LEDs(9, PatternName.Yellow);
     public static IO controls;
@@ -43,18 +40,15 @@ public final class Robot extends IterativeRobot
     @Override
     public void robotInit()
     {
-        intakeSubsystem = new IntakeSubsystem();
-        liftSubsystem = new LiftSubsystem();
-        winch = new WinchSubsystem();
-        wrist = new Wrist();
+        winch = WinchSubsystem.getInstance();
 
         controls = IO.getInstance();  // Initialize IO after subsystems
         DashboardView.startPerformanceCamera();
         Autonomous.setupSelection();
 
-        subsystems.register(intakeSubsystem);
-        subsystems.register(liftSubsystem);
-        subsystems.register(wrist);
+        subsystems.register(IntakeSubsystem.getInstance());
+        subsystems.register(LiftSubsystem.getInstance());
+        subsystems.register(Wrist.getInstance());
         subsystems.register(driveSubsystem);
         backgroundUpdater.register(RobotStateEstimator.getInstance());
     }
@@ -119,8 +113,7 @@ public final class Robot extends IterativeRobot
         driveSubsystem.zeroEncoders();
         driveSubsystem.setGyro(0.0);
         state.resetDriveState(Timer.getFPGATimestamp(), new RigidTransform2d());
-        intakeSubsystem.onBackgroundUpdate();  // For cube distance sensor
-        //            liftSubsystem.onBackgroundUpdate();  // Zero if possible
+        IntakeSubsystem.getInstance().onBackgroundUpdate();  // For cube distance sensor
 
         allPeriodic();
     }

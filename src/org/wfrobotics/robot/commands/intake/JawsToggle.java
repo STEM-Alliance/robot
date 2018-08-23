@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands.intake;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
@@ -9,6 +9,7 @@ public class JawsToggle extends InstantCommand
 {
     protected void initialize()
     {
-        Robot.intakeSubsystem.setHorizontal(!Robot.intakeSubsystem.getHorizontal());
+        final IntakeSubsystem intake = IntakeSubsystem.getInstance();
+        intake.setHorizontal(!intake.getHorizontal());
     }
 }

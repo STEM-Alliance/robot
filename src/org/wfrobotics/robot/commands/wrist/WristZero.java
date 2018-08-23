@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands.wrist;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -8,6 +8,8 @@ public class WristZero extends Command
 {
     private static boolean hasZeroed = false;
     private static double negate = -1;
+
+    private final Wrist wrist = Wrist.getInstance();
 
     public static boolean everZeroed()
     {
@@ -21,36 +23,36 @@ public class WristZero extends Command
 
     public WristZero()
     {
-        requires(Robot.wrist);
+        requires(wrist);
         setTimeout(2.0);
     }
 
     protected void execute()
     {
-        boolean stalled = Robot.wrist.isStalled();
+        boolean stalled = wrist.isStalled();
         if(stalled)
         {
             negate = -1 * negate;
         }
-        Robot.wrist.setSpeed(negate * 0.3);  // Must be in execute in case interrupted
+        wrist.setSpeed(negate * 0.3);  // Must be in execute in case interrupted
     }
 
     protected boolean isFinished()
     {
-        boolean stalled = Robot.wrist.isStalled();
+        boolean stalled = wrist.isStalled();
 
-        Robot.wrist.AtBottom();
+        wrist.AtBottom();
         if (stalled && negate == -1)
         {
             hasZeroed = true;
-            Robot.wrist.setWristSensor(5482);
+            wrist.setWristSensor(5482);
         }
         return hasZeroed;
     }
 
     protected void end()
     {
-        Robot.wrist.setSpeed(0.0);
+        wrist.setSpeed(0.0);
         hasZeroed = true;
     }
 
