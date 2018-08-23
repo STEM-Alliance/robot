@@ -40,7 +40,7 @@ public final class Robot extends IterativeRobot
     @Override
     public void robotInit()
     {
-        winch = WinchSubsystem.getInstance();
+        winch = WinchSubsystem.getInstance();  // TODO Can we remove?
 
         controls = IO.getInstance();  // Initialize IO after subsystems
         DashboardView.startPerformanceCamera();
@@ -89,6 +89,10 @@ public final class Robot extends IterativeRobot
 
         Timer.delay(0.5);
         result &= driveSubsystem.runFunctionalTest();
+        result &= Wrist.getInstance().runFunctionalTest();
+        result &= IntakeSubsystem.getInstance().runFunctionalTest();
+        result &= LiftSubsystem.getInstance().runFunctionalTest();
+        result &= winch.runFunctionalTest();
         result &= leds.testRobotSpecificColors();
         System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));
     }

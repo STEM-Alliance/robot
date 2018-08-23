@@ -32,6 +32,6 @@ public class IntakeSet extends Command
 
     protected void end()
     {
-        intake.setIntake(0);
+        intake.setIntake(0.0);
     }
 }

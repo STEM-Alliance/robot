@@ -71,20 +71,17 @@ public final class IO
 
     public double getIntakeIn()
     {
-        double value = operator.getTrigger(Hand.kRight);
-        return (value > .1) ? value : 0;  // TODO Convert to configNeutralDeadband()
+        return operator.getTrigger(Hand.kRight);
     }
 
     public double getIntakeOut()
     {
-        double value = operator.getTrigger(Hand.kLeft);
-        return (value > .1) ? value : 0;  // TODO Convert to configNeutralDeadband()
+        return operator.getTrigger(Hand.kLeft);
     }
 
-    public double getIntakeLift()
+    public double getWristStick()
     {
-        double value = operator.getAxis(Xbox.AXIS.LEFT_Y);
-        return (Math.abs(value ) > .1) ? value : 0;  // TODO Convert to configNeutralDeadband()
+        return operator.getAxis(Xbox.AXIS.LEFT_Y);
     }
 
     public double getLiftStick()
@@ -95,7 +92,7 @@ public final class IO
     public double getWinchPercent()
     {
         int direction = operator.getDpad();
-        double speed = 0;
+        double speed = 0.0;
 
         if (direction == DPAD.UP.get() || direction == DPAD.UP_LEFT.get() || direction == DPAD.UP_RIGHT.get())
         {
@@ -129,7 +126,7 @@ public final class IO
 
     public boolean getDriveQuickTurn()
     {
-        return -driverTurn.getY() < 0.1;
+        return driverThrottle.getY() < 0.1;  // TODO Was set to driveTurn stick. Is okay now?
     }
 
     public void setRumble(boolean rumble)

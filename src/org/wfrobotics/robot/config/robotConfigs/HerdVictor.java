@@ -60,6 +60,7 @@ public final class HerdVictor extends RobotConfig
             new Gains("Motion Magic", 0, 0.5, 0.00004, 0.0, 1023.0 / kWristMax, 0, kWristCruiseVelocity, kWristAcceleration),
         });
 
+        WRIST_DEADBAND = 0.1;
         WRIST_TICKS_TO_TOP = 4500;
     }
 

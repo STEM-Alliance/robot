@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 {
-    private final int bufferSize = 3;
     private final double kDistanceMaxIn;
     private final double kTimeoutHorizontal;
 
@@ -39,6 +38,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
     private IntakeSubsystem()
     {
         final RobotConfig config = RobotConfig.getInstance();
+        final int bufferSize = 3;
 
         masterRight = TalonFactory.makeTalon(config.CAN_INTAKE_RIGHT);
         TalonFactory.configOpenLoopOnly(masterRight);
@@ -125,6 +125,11 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
             stateChanged = true;
         }
         return stateChanged;
+    }
+
+    public boolean runFunctionalTest()
+    {
+        return true;
     }
 }
 

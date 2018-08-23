@@ -11,14 +11,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /** Preferred provider of global, formatted state about the robot. Commands can get information from one place rather than from multiple subsystems. **/
 public final class RobotState extends RobotStateBase
 {
+    private static final int kHasCubeCountThreshold = 20;
+    private static final double kHasCubeSignalDriveTeamDuration = 2.0;
     private static final RobotState instance = new RobotState();
-    private double hasCubeCounts;
+    private int hasCubeCounts;
+    private double timeSinceRumbleOn;
 
     // Robot-specific state
     public boolean robotHasCube;
-    public double intakeDistance;
+    public double intakeDistanceToCube;
     public double liftHeightInches;
-    public double wristTicks;
+    public double wristAngleDegrees;
 
     public static RobotState getInstance()
     {
@@ -29,15 +32,15 @@ public final class RobotState extends RobotStateBase
     {
         super.reportState();
         SmartDashboard.putBoolean("Has Cube", robotHasCube);
-        SmartDashboard.putNumber("Cube", intakeDistance);
-        SmartDashboard.putNumber("Wrist Angle", wristTicks);
+        SmartDashboard.putNumber("Cube", intakeDistanceToCube);
+        SmartDashboard.putNumber("Wrist Angle", wristAngleDegrees);
     }
 
     protected synchronized void resetRobotSpecificState()
     {
         robotHasCube = false;
-        intakeDistance = 9999;
-        liftHeightInches = 0;
+        intakeDistanceToCube = 9999.0;  // Big so we don't think we have a cube
+        liftHeightInches = 0.0;
         hasCubeCounts = 0;
     }
 
@@ -51,43 +54,28 @@ public final class RobotState extends RobotStateBase
         DriverStation.reportWarning("RobotState not configured to receive and parse vision updates right now", false);
     }
 
-    public double getIntakeDistanceCM()
+    public double getIntakeDistanceCM()  // TODO Use robot standard units (inches)
     {
-        return intakeDistance / 2.54;
+        return intakeDistanceToCube / 2.54;
     }
 
-    double timeSinceRumbleOn;
-    public synchronized void updateIntakeSensor(double distance)
+    public void updateIntakeSensor(double distance)
     {
-        intakeDistance = distance;
+        handleDetectCube(distance);
 
-        if (intakeDistance < 13)
-        {
-            hasCubeCounts++;
-        }
-        else if (hasCubeCounts <= 20)
-        {
-            timeSinceRumbleOn = Timer.getFPGATimestamp();
-        }
-        else
-        {
-            hasCubeCounts = 0;
-        }
-        robotHasCube = hasCubeCounts > 20;
-
-        if(hasCubeCounts > 20)
+        if(robotHasCube)
         {
             final double now = Timer.getFPGATimestamp();
 
             IO.getInstance().setRumble(now - timeSinceRumbleOn < 1.0);
-            if (now - timeSinceRumbleOn < 2.0)
+            if (now - timeSinceRumbleOn < kHasCubeSignalDriveTeamDuration)
             {
                 Robot.leds.signalDriveTeam();
             }
             else
             {
                 Robot.leds.useRobotModeColor();
-                timeSinceRumbleOn = 0;
+                timeSinceRumbleOn = 0.0;
             }
         }
         else
@@ -102,8 +90,27 @@ public final class RobotState extends RobotStateBase
         liftHeightInches = inches;
     }
 
-    public synchronized void updateWristPosition(double ticks)
+    public synchronized void updateWristPosition(double degrees)
     {
-        wristTicks = ticks;
+        wristAngleDegrees = degrees;
+    }
+
+    private synchronized void handleDetectCube(double cubeDistanceInches)
+    {
+        intakeDistanceToCube = cubeDistanceInches;
+
+        if (intakeDistanceToCube < 13.0)
+        {
+            hasCubeCounts++;
+        }
+        else if (hasCubeCounts < kHasCubeCountThreshold)
+        {
+            timeSinceRumbleOn = Timer.getFPGATimestamp();
+        }
+        else
+        {
+            hasCubeCounts = 0;
+        }
+        robotHasCube = hasCubeCounts > kHasCubeCountThreshold;
     }
 }
