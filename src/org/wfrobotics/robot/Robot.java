@@ -3,7 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.hardware.AutoTune;
 import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.RevLEDs.PatternName;
-import org.wfrobotics.reuse.math.rigidtransform.RigidTransform2d;
+import org.wfrobotics.reuse.math.geometry.Pose2d;
 import org.wfrobotics.reuse.subsystems.SubsystemRunner;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdater;
 import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
@@ -44,7 +44,7 @@ public final class Robot extends IterativeRobot
 
         controls = IO.getInstance();  // Initialize IO after subsystems
         DashboardView.startPerformanceCamera();
-        Autonomous.setupSelection();
+        Autonomous.setupSelection();  // TODO Improve reliability
 
         subsystems.register(IntakeSubsystem.getInstance());
         subsystems.register(LiftSubsystem.getInstance());
@@ -87,7 +87,9 @@ public final class Robot extends IterativeRobot
     {
         boolean result = true;
 
-        Timer.delay(0.5);
+        // TODO Start background updater?
+        leds.signalHumanPlayer();  // Pit safety
+        Timer.delay(1.0);
         result &= driveSubsystem.runFunctionalTest();
         result &= Wrist.getInstance().runFunctionalTest();
         result &= IntakeSubsystem.getInstance().runFunctionalTest();
@@ -116,8 +118,10 @@ public final class Robot extends IterativeRobot
 
         driveSubsystem.zeroEncoders();
         driveSubsystem.setGyro(0.0);
-        state.resetDriveState(Timer.getFPGATimestamp(), new RigidTransform2d());
+        state.resetDriveState(Timer.getFPGATimestamp(), new Pose2d());
         IntakeSubsystem.getInstance().onBackgroundUpdate();  // For cube distance sensor
+        LiftSubsystem.getInstance().zeroIfAtLimit();
+        Wrist.getInstance().zeroIfAtLimit();
 
         allPeriodic();
     }

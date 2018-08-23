@@ -57,8 +57,7 @@ public class ModeScale extends CommandGroup
         addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
         addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
-        //        addSequential(new DriveInfared(10.0, 89.0 + 4.5, 1.5, 3.0));
-        addSequential(new CorrectDistanceFromObject(intakeInfared, 10.0, 89.0 + 4.5, 1.5, 3.0));
+        addSequential(new CorrectDistanceFromObject(intakeInfared, 10.0, 89.0 + 4.5, 1.5, 3.0));  // DriveInfared
         addSequential(new WaitCommand(.1));
 
         // Travel to second scale

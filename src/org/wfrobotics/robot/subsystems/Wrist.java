@@ -6,7 +6,7 @@ import org.wfrobotics.reuse.hardware.StallSense;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.wrist.WristAutoZeroThenPercentVoltage;
+import org.wfrobotics.robot.commands.wrist.WristZeroThenOpenLoop;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Wrist extends SAFMSubsystem
 {
-    private static final double kRangeDegrees = 90.0;
+    private static final double kFullRangeDegrees = 90.0;
     private final int kTicksToTop;
     private final boolean kTuning;
 
@@ -44,7 +44,7 @@ public class Wrist extends SAFMSubsystem
         motor.configNeutralDeadband(config.WRIST_DEADBAND, 10);
         motor.configOpenloopRamp(.05, 10);  // TODO Try smaller value in auto
         motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
-        motor.configVelocityMeasurementWindow(1, 10);
+        motor.configVelocityMeasurementWindow(1, 10);  // TODO Changed to small value. Is okay?
         motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
         TalonFactory.configCurrentLimiting(motor, 40, 200, 20);  // Adding with high numbers just in case
         if (kTuning)
@@ -73,7 +73,7 @@ public class Wrist extends SAFMSubsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new WristAutoZeroThenPercentVoltage());
+        setDefaultCommand(new WristZeroThenOpenLoop());
     }
 
     public void updateSensors()
@@ -144,7 +144,7 @@ public class Wrist extends SAFMSubsystem
         {
             zeroEncoder();
         }
-        else if (AtHardwareLimitTop() || stalled)
+        else if (AtHardwareLimitTop() || isStalled())
         {
             motor.setSelectedSensorPosition(kTicksToTop, 0, 0);
             hasZeroed = true;
@@ -159,12 +159,12 @@ public class Wrist extends SAFMSubsystem
 
     private double degreesToTicks(double degrees)
     {
-        return degrees / kRangeDegrees * kTicksToTop;
+        return degrees / kFullRangeDegrees * kTicksToTop;
     }
 
     private double ticksToDegrees(double ticks)
     {
-        return ticks * kRangeDegrees / kTicksToTop;
+        return ticks * kFullRangeDegrees / kTicksToTop;
     }
 
     private void setMotor(ControlMode mode, double setpoint)
@@ -175,6 +175,13 @@ public class Wrist extends SAFMSubsystem
 
     public boolean runFunctionalTest()
     {
-        return true;
+        boolean result = true;
+
+        result &= TalonFactory.checkFirmware(motor);
+        result &= TalonFactory.checkEncoder(motor);
+        // TODO Check limits?
+
+        System.out.println(String.format("Wrist Test: %s", (result) ? "SUCCESS" : "FAILURE"));
+        return result;
     }
 }

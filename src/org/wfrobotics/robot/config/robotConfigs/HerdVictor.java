@@ -16,7 +16,6 @@ public final class HerdVictor extends RobotConfig
         // _________________________________________________________________________________
         INTAKE_SENSOR_R = 3;
 
-        INTAKE_DISTANCE_TO_BUMPER = 17.22;  // centimeters
         INTAKE_DISTANCE_TO_CUBE = 16.6; // centimeters
         INTAKE_TIMEOUT_JAWS = 0.5; // seconds
         INTAKE_TIMEOUT_WRIST = 0.5; //seconds
@@ -30,23 +29,21 @@ public final class HerdVictor extends RobotConfig
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 6.0);
 
         LIFT_CLOSED_LOOP = new ClosedLoopConfig("Lift", new MasterConfig[] {
-            new MasterConfig(11, true, true),
-            new MasterConfig(10, false, true),
+            new MasterConfig(10, false, true, new FollowerConfig(11, true, true)),
         }, new Gains[] {
             new Gains("Up", 0, 5.6, 0.001, 0.0, 1023.0 / kLiftMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
             new Gains("Down", 1, 0.0, 0.001, 0.0, 1023.0 / kLiftMaxUp, 0),
         });
 
-        LIFT_LIMIT_SWITCH_NORMALLY = new LimitSwitchNormal[][] {
-            { LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},  // Left Fwd
-            { LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed},  // Right Fwd
+        LIFT_LIMIT_SWITCH_NORMALLY = new LimitSwitchNormal[] {
+            LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed
         };
 
         //                      Winch
         // _________________________________________________________________________________
         WINCH = 22;
         WINCH_INVERT = true;
-        WINCH_SPEED = 1;
+        WINCH_SPEED = 1.0;
 
         //                      Wrist
         // _________________________________________________________________________________

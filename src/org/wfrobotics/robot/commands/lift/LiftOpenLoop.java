@@ -5,12 +5,12 @@ import org.wfrobotics.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LiftPercentVoltage extends Command
+public class LiftOpenLoop extends Command
 {
     private final double deadbandPercent = 0.2;
     private final LiftSubsystem lift = LiftSubsystem.getInstance();
 
-    public LiftPercentVoltage()
+    public LiftOpenLoop()
     {
         requires(lift);
     }

@@ -85,11 +85,11 @@ public class SmartIntake extends CommandGroup
     {
         if (distanceToCube < 30)
         {
-            intake.setHorizontal(false);  // Can't always set, otherwise we chatter?
+            intake.setJaws(false);  // Can't always set, otherwise we chatter?
         }
         else if (distanceToCube > 30 && distanceToCube < 60)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
         {
-            intake.setHorizontal(true);
+            intake.setJaws(true);
         }
     }
 }

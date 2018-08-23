@@ -48,6 +48,11 @@ public class WinchSubsystem extends Subsystem
 
     public boolean runFunctionalTest()
     {
-        return true;
+        boolean result = true;
+
+        result &= TalonFactory.checkFirmware(motor);
+
+        System.out.println(String.format("Winch Test: %s", (result) ? "SUCCESS" : "FAILURE"));
+        return result;
     }
 }

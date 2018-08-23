@@ -4,9 +4,9 @@ import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
-public class WristAutoZeroThenPercentVoltage extends ConditionalCommand
+public class WristZeroThenOpenLoop extends ConditionalCommand
 {
-    public WristAutoZeroThenPercentVoltage()
+    public WristZeroThenOpenLoop()
     {
         super(new SmartWrist(), new WristZero());
     }

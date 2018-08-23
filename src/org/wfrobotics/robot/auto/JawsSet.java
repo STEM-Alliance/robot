@@ -22,7 +22,7 @@ public class JawsSet extends Command
 
     protected void initialize()
     {
-        intake.setHorizontal(wantOpen);
+        intake.setJaws(wantOpen);
     }
 
     protected boolean isFinished()

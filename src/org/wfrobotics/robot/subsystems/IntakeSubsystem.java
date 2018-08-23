@@ -25,14 +25,14 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 
     private static IntakeSubsystem instance = null;
     private final RobotState state = RobotState.getInstance();
-    private final TalonSRX masterRight;
-    private final TalonSRX followerLeft;
-    private final DoubleSolenoid horizontalIntake;
+    private final TalonSRX master;
+    private final TalonSRX follower;
+    private final DoubleSolenoid cylinders;
     private final SharpDistance distanceSensor;
     private final CircularBuffer buffer;
 
-    private boolean lastHorizontalState;
-    private double lastHorizontalTime;
+    private boolean lastJawsState;
+    private double lastJawsChangedTime;
     private double latestDistance;
 
     private IntakeSubsystem()
@@ -40,30 +40,30 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         final RobotConfig config = RobotConfig.getInstance();
         final int bufferSize = 3;
 
-        masterRight = TalonFactory.makeTalon(config.CAN_INTAKE_RIGHT);
-        TalonFactory.configOpenLoopOnly(masterRight);
-        masterRight.setNeutralMode(NeutralMode.Brake);
-        masterRight.setInverted(config.INTAKE_INVERT_RIGHT);
-        masterRight.configOpenloopRamp(.25, 10);
-        TalonFactory.configCurrentLimiting(masterRight, 30, 100, 10);
+        kDistanceMaxIn = config.INTAKE_DISTANCE_TO_CUBE;
+        kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
 
-        followerLeft = TalonFactory.makeFollowerTalon(config.CAN_INTAKE_LEFT, masterRight);
-        followerLeft.setNeutralMode(NeutralMode.Brake);
-        followerLeft.setInverted(config.INTAKE_INVERT_LEFT);
+        master = TalonFactory.makeTalon(config.CAN_INTAKE_RIGHT);
+        TalonFactory.configOpenLoopOnly(master);
+        master.setNeutralMode(NeutralMode.Brake);
+        master.setInverted(config.INTAKE_INVERT_RIGHT);
+        master.configOpenloopRamp(.25, 10);
+        TalonFactory.configCurrentLimiting(master, 30, 100, 10);
 
-        horizontalIntake = new DoubleSolenoid(config.CAN_PNEUMATIC_CONTROL_MODULE, config.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, config.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
+        follower = TalonFactory.makeFollowerTalon(config.CAN_INTAKE_LEFT, master);
+        follower.setNeutralMode(NeutralMode.Brake);
+        follower.setInverted(config.INTAKE_INVERT_LEFT);
+
+        cylinders = new DoubleSolenoid(config.CAN_PNEUMATIC_CONTROL_MODULE, config.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, config.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
 
         distanceSensor = new SharpDistance(config.INTAKE_SENSOR_R);
         buffer = new CircularBuffer(bufferSize, 9999);  // Filled with zeros by default, which is bad because it's a valid value
 
-        kDistanceMaxIn = config.INTAKE_DISTANCE_TO_CUBE;
-        kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
-
         // Force defined states
-        lastHorizontalTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
-        lastHorizontalState = true;
-        latestDistance = 9999;
-        setHorizontal(!lastHorizontalState);
+        lastJawsChangedTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
+        lastJawsState = true;
+        latestDistance = 9999.0;
+        setJaws(!lastJawsState);
     }
 
     public static IntakeSubsystem getInstance()
@@ -98,30 +98,30 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 
     public void onBackgroundUpdate()
     {
-        buffer.addFirst(distanceSensor.getDistance() - kDistanceMaxIn);
+        buffer.addFirst(distanceSensor.getDistanceInches() * 2.54 - kDistanceMaxIn);
     }
 
-    public boolean getHorizontal()
+    public boolean getJawsState()
     {
-        return lastHorizontalState;
+        return lastJawsState;
     }
 
     public void setIntake(double percentageOutward)
     {
-        masterRight.set(ControlMode.PercentOutput, percentageOutward);
+        master.set(ControlMode.PercentOutput, percentageOutward);
     }
 
-    public boolean setHorizontal(boolean extendedOpen)
+    public boolean setJaws(boolean extendedOpen)
     {
-        final boolean delayedEnough = Timer.getFPGATimestamp() - lastHorizontalTime > kTimeoutHorizontal;
-        final boolean different = extendedOpen != lastHorizontalState;
+        final boolean delayedEnough = Timer.getFPGATimestamp() - lastJawsChangedTime > kTimeoutHorizontal;
+        final boolean different = extendedOpen != lastJawsState;
         boolean stateChanged = false;
 
         if (delayedEnough && different)
         {
-            horizontalIntake.set(extendedOpen ? Value.kForward : Value.kReverse);
-            lastHorizontalTime = Timer.getFPGATimestamp();
-            lastHorizontalState = extendedOpen;
+            cylinders.set(extendedOpen ? Value.kForward : Value.kReverse);
+            lastJawsChangedTime = Timer.getFPGATimestamp();
+            lastJawsState = extendedOpen;
             stateChanged = true;
         }
         return stateChanged;
@@ -129,7 +129,16 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 
     public boolean runFunctionalTest()
     {
-        return true;
+        boolean result = true;
+
+        result &= TalonFactory.checkFirmware(master);
+        result &= TalonFactory.checkFirmware(follower);
+        result &= TalonFactory.checkEncoder(master);
+
+        // TODO Check infared < some value == plugged in?
+
+        System.out.println(String.format("Lift Test: %s", (result) ? "SUCCESS" : "FAILURE"));
+        return result;
     }
 }
 
