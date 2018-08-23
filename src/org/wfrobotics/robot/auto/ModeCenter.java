@@ -15,7 +15,7 @@ public class ModeCenter extends CommandGroup
 {
     public ModeCenter()
     {
-        addParallel(new WristToHeight(1.0));
+        addParallel(new WristToHeight(90.0));
         addSequential(new SwitchChoice(Side.Right, new DrivePathPosition("CenterRight"), new DrivePathPosition("CenterLeft")));
         addSequential(new IntakeSet(1.0, 0.5, true));  // Yes, 1.0 outtake is good here
 

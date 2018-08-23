@@ -10,7 +10,7 @@ public class AutoLiftToScale extends CommandGroup
 {
     public AutoLiftToScale()
     {
-        this.addParallel((new WristToHeight(.55)));  // Keep cube level to prevent slippage
+        this.addParallel((new WristToHeight(50.0)));  // Keep cube level to prevent slippage
         this.addSequential(new LiftToHeight(LiftHeight.Scale.get()));
     }
 }

@@ -1,5 +1,7 @@
 package org.wfrobotics.robot.commands.wrist;
 
+import org.wfrobotics.robot.subsystems.Wrist;
+
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
 public class WristAutoZeroThenPercentVoltage extends ConditionalCommand
@@ -11,6 +13,6 @@ public class WristAutoZeroThenPercentVoltage extends ConditionalCommand
 
     protected boolean condition()
     {
-        return WristZero.everZeroed();
+        return Wrist.getInstance().hasZeroed();
     }
 }

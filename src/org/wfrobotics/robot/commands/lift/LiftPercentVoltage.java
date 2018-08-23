@@ -4,7 +4,6 @@ import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftPercentVoltage extends Command
 {
@@ -15,11 +14,6 @@ public class LiftPercentVoltage extends Command
     public LiftPercentVoltage()
     {
         requires(lift);
-    }
-
-    protected void initialize()
-    {
-        SmartDashboard.putString("Lift", getClass().getSimpleName());
     }
 
     protected void execute()
