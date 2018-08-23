@@ -20,7 +20,7 @@ public class LiftToHeight extends Command
 
     protected void initialize()
     {
-        lift.goToHeightInit(desired);
+        lift.setClosedLoop(desired);
     }
 
     protected boolean isFinished()

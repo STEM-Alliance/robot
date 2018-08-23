@@ -14,6 +14,6 @@ public class AutoZero extends CommandGroup
 
     protected void end()
     {
-        LiftSubsystem.getInstance().goToSpeedInit(0);
+        LiftSubsystem.getInstance().setOpenLoop(0);
     }
 }

@@ -25,12 +25,12 @@ public class LiftManual extends Command
 
         if (Math.abs(setpoint) < deadbandPercent)
         {
-            lift.goToSpeedInit(0);  // Engage brake
+            lift.setOpenLoop(0);  // Engage brake
         }
         else
         {
             setpoint = (setpoint > 0) ? kUp : kDown;
-            lift.goToHeightInit(setpoint);
+            lift.setClosedLoop(setpoint);
         }
     }
 
