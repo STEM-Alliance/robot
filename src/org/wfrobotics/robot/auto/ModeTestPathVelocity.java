@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.auto;
 
+import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.DriveOff;
 import org.wfrobotics.reuse.commands.drive.DrivePath;
 import org.wfrobotics.reuse.commands.driveconfig.ResetPose;
@@ -18,6 +19,9 @@ public class ModeTestPathVelocity extends CommandGroup
         this.addSequential(new ResetPose(path));
         this.addSequential(new DrivePath(path));
         this.addSequential(new WaitCommand(2.0));
+
+        // Reset
+        this.addSequential(new DriveDistance(-2.0));
         this.addSequential(new DriveOff());
     }
 }

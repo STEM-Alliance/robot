@@ -21,7 +21,6 @@ public abstract class RobotConfig implements TankConfigSupplier
 
     public int INTAKE_SENSOR_R;
 
-    public double INTAKE_DISTANCE_TO_BUMPER;  // centimeters
     public double INTAKE_DISTANCE_TO_CUBE;  // centimeters
     public double INTAKE_TIMEOUT_JAWS;  // seconds
     public double INTAKE_TIMEOUT_WRIST;  // seconds
@@ -33,7 +32,7 @@ public abstract class RobotConfig implements TankConfigSupplier
     public boolean LIFT_DEBUG = false;
 
     public ClosedLoopConfig LIFT_CLOSED_LOOP;
-    public LimitSwitchNormal[][] LIFT_LIMIT_SWITCH_NORMALLY;
+    public LimitSwitchNormal[] LIFT_LIMIT_SWITCH_NORMALLY;
     public int LIFT_TICKS_STARTING = -1500;
 
     //                      Winch

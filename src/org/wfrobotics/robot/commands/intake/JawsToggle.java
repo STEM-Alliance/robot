@@ -10,6 +10,6 @@ public class JawsToggle extends InstantCommand
     protected void initialize()
     {
         final IntakeSubsystem intake = IntakeSubsystem.getInstance();
-        intake.setHorizontal(!intake.getHorizontal());
+        intake.setJaws(!intake.getJawsState());
     }
 }

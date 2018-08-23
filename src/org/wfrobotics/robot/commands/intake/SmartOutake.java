@@ -19,7 +19,7 @@ public class SmartOutake extends Command
         intake.setIntake(0.30);
         if (timeSinceInitialized() > .2)
         {
-            intake.setHorizontal(true);
+            intake.setJaws(true);
         }
     }
 

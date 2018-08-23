@@ -10,6 +10,7 @@ public class AutoLiftToBottom extends CommandGroup
 {
     public AutoLiftToBottom()
     {
+        // TODO Delay wrist until mostly down with Command that waits for state
         this.addParallel((new WristToHeight(0.0)));  // SLAM SLAM
         this.addSequential(new LiftToHeight(LiftHeight.Intake.get()));
     }
