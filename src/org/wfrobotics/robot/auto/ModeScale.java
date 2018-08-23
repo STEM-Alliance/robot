@@ -47,7 +47,7 @@ public class ModeScale extends CommandGroup
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
 
         // Reset
-        addParallel(new WristToHeight(1.0));
+        addParallel(new WristToHeight(90.0));
         addSequential(new DelayedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube, 1.0), .2)); // to find distance: x= 51 y= 73
         addSequential(new WaitCommand(0.4));
         addParallel(new WristToHeight(0.0));
@@ -62,7 +62,7 @@ public class ModeScale extends CommandGroup
         addSequential(new WaitCommand(.1));
 
         // Travel to second scale
-        addParallel(new WristToHeight(1.0));
+        addParallel(new WristToHeight(90.0));
         addSequential(new SynchronizedCommand(new DriveDistance(-inchesToSecondCube), new DelayedCommand(new LiftToHeight(LiftHeight.Scale.get()), 0.05)));
 
         // Score second cube

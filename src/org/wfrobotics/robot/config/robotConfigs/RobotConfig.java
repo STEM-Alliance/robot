@@ -44,6 +44,7 @@ public abstract class RobotConfig implements TankConfigSupplier
 
     //                      Wrist
     // _________________________________________________________________________________
+    public boolean WRIST_TUNING = false;
     public ClosedLoopConfig WRIST_CLOSED_LOOP;
     public double WRIST_DEADBAND;
     public int WRIST_TICKS_TO_TOP;

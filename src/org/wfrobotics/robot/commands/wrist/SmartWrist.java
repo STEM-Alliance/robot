@@ -27,7 +27,7 @@ public class SmartWrist extends Command
         //        }
         //        else
         {
-            wrist.setSpeed(commanded);
+            wrist.setOpenLoop(commanded);
         }
     }
 
