@@ -22,6 +22,7 @@ public class WinchSubsystem extends Subsystem
         motor = TalonFactory.makeTalon(config.WINCH);
         TalonFactory.configOpenLoopOnly(motor);
         motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);
+        // TODO try slow general status
         motor.setInverted(config.WINCH_INVERT);
         motor.setNeutralMode(NeutralMode.Brake);
     }
@@ -43,5 +44,10 @@ public class WinchSubsystem extends Subsystem
     public void winch(double percentWinch)
     {
         motor.set(ControlMode.PercentOutput, percentWinch);
+    }
+
+    public boolean runFunctionalTest()
+    {
+        return true;
     }
 }

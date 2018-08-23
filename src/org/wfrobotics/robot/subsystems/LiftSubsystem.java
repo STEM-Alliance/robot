@@ -45,6 +45,7 @@ public class LiftSubsystem extends SAFMSubsystem
             motors[index].setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, 10);
             motors[index].configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
             motors[index].configVelocityMeasurementWindow(32, 10);
+            motors[index].configNeutralDeadband(0.1, 10);
 
             limit[index] =  new LimitSwitch(motors[index], config.LIFT_LIMIT_SWITCH_NORMALLY[index][0], config.LIFT_LIMIT_SWITCH_NORMALLY[index][1]);
         }
@@ -177,5 +178,10 @@ public class LiftSubsystem extends SAFMSubsystem
         motors[1].config_kI(slot, i, 10);
         motors[0].config_kD(slot, d, 10);
         motors[1].config_kD(slot, d, 10);
+    }
+
+    public boolean runFunctionalTest()
+    {
+        return true;
     }
 }

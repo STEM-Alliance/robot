@@ -45,6 +45,7 @@ public abstract class RobotConfig implements TankConfigSupplier
     //                      Wrist
     // _________________________________________________________________________________
     public ClosedLoopConfig WRIST_CLOSED_LOOP;
+    public double WRIST_DEADBAND;
     public int WRIST_TICKS_TO_TOP;
     public final int INTAKE_LIFT_FORWARD_LIMIT = 4600;
     public final int INTAKE_LIFT_REVERSE_LIMIT= 0;

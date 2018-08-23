@@ -40,6 +40,6 @@ public class DriveInfared extends Command
 
     private double remaining()
     {
-        return Math.min(max, state.intakeDistance / 2.54 - target);
+        return Math.min(max, state.intakeDistanceToCube / 2.54 - target);
     }
 }

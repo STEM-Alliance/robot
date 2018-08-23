@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Wrist extends SAFMSubsystem
 {
+    private static final double kRangeDegrees = 90.0;
     private final int kTicksToTop;
 
     private static Wrist instance = null;
@@ -39,6 +40,7 @@ public class Wrist extends SAFMSubsystem
         intakeLift.overrideLimitSwitchesEnable(true);
         LimitSwitch.configHardwareLimitAutoZero(intakeLift, true, false);
         intakeLift.setSelectedSensorPosition(0, 0, 10);  // Before zeroing, report values above smart intake active therehold
+        intakeLift.configNeutralDeadband(config.WRIST_DEADBAND, 10);
         intakeLift.configOpenloopRamp(.05, 10);
 
         stallSensor = new StallSense(intakeLift, 4.0, 0.15);
@@ -62,7 +64,7 @@ public class Wrist extends SAFMSubsystem
 
     public void updateSensors()
     {
-        double position = intakeLift.getSelectedSensorPosition(0);
+        intakeLift.getSelectedSensorPosition(0);
 
         stalled = stallSensor.isStalled();
         if (stalled)
@@ -75,21 +77,9 @@ public class Wrist extends SAFMSubsystem
             intakeLift.setSelectedSensorPosition(kTicksToTop, 0, 0);
         }
 
-        state.updateWristPosition(position);
-    }
-    public void setWristSensor(int height)
-    {
-        intakeLift.setSelectedSensorPosition(height, 0, 0);
+        state.updateWristPosition(getAngle());
     }
 
-    public boolean isStalled()
-    {
-        return stalled;
-    }
-    public boolean hasStalled()
-    {
-        return debugStalledLatched;
-    }
     public void reportState()
     {
         SmartDashboard.putString("Wrist", getCurrentCommandName());
@@ -103,6 +93,25 @@ public class Wrist extends SAFMSubsystem
         // For Calibration
         //        SmartDashboard.putNumber("Intake Lift Error", intakeLift.getClosedLoopError(0));
         //      SmartDashboard.putNumber("Intake Lift Velocity", intakeLift.getSelectedSensorVelocity(0));
+    }
+
+    public void setWristSensor(int height)
+    {
+        intakeLift.setSelectedSensorPosition(height, 0, 0);
+    }
+
+    public double getAngle()
+    {
+        return ticksToDegrees(intakeLift.getSelectedSensorPosition(0));
+    }
+
+    public boolean isStalled()
+    {
+        return stalled;
+    }
+    public boolean hasStalled()
+    {
+        return debugStalledLatched;
     }
 
     public boolean AtBottom()
@@ -127,5 +136,15 @@ public class Wrist extends SAFMSubsystem
     public void setPosition(double percentUp)
     {
         intakeLift.set(ControlMode.MotionMagic, percentUp * kTicksToTop);
+    }
+
+    private double ticksToDegrees(double ticks)
+    {
+        return ticks * kRangeDegrees / kTicksToTop;
+    }
+
+    public boolean runFunctionalTest()
+    {
+        return true;
     }
 }

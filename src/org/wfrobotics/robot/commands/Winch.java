@@ -13,7 +13,7 @@ public class Winch extends Command
 
     public Winch()
     {
-        winch = Robot.winch;
+        winch = WinchSubsystem.getInstance();
         io = Robot.controls;
         requires(winch);
     }
