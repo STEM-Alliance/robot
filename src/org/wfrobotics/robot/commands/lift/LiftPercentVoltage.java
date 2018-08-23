@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.commands.lift;
 
 import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,9 +10,11 @@ public class LiftPercentVoltage extends Command
 {
     private final double deadbandPercent = 0.2;
 
+    private final LiftSubsystem lift = LiftSubsystem.getInstance();
+
     public LiftPercentVoltage()
     {
-        requires(Robot.liftSubsystem);
+        requires(lift);
     }
 
     protected void initialize()
@@ -25,11 +28,11 @@ public class LiftPercentVoltage extends Command
 
         if (Math.abs(setpoint) < deadbandPercent)
         {
-            Robot.liftSubsystem.goToSpeedInit(0.0);
+            lift.goToSpeedInit(0.0);
         }
         else
         {
-            Robot.liftSubsystem.goToSpeedInit(setpoint);
+            lift.goToSpeedInit(setpoint);
         }
     }
 

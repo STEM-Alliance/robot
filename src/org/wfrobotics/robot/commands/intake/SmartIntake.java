@@ -1,12 +1,10 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.reuse.math.Util;
-import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Pull in the cube purely based on sensors */
 public class SmartIntake extends CommandGroup
@@ -15,7 +13,7 @@ public class SmartIntake extends CommandGroup
     private final double kCubeInDeadband = 1.25;
 
     protected final RobotState state = RobotState.getInstance();
-    protected final IntakeSubsystem intake = Robot.intakeSubsystem;
+    protected final IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
     protected boolean doingPulse;
     protected double timeUntilPulse;
@@ -31,7 +29,6 @@ public class SmartIntake extends CommandGroup
 
     protected void initialize()
     {
-        SmartDashboard.putString("Intake", "Smart");
         doingPulse = false;
         timeUntilPulse = -1.0;
     }

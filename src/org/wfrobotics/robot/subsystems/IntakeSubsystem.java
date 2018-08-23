@@ -23,8 +23,9 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
     private final int bufferSize = 3;
     private final double kDistanceMaxIn;
     private final double kTimeoutHorizontal;
-    private final RobotState state = RobotState.getInstance();
 
+    private static IntakeSubsystem instance = null;
+    private final RobotState state = RobotState.getInstance();
     private final TalonSRX masterRight;
     private final TalonSRX followerLeft;
     private final DoubleSolenoid horizontalIntake;
@@ -35,7 +36,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
     private double lastHorizontalTime;
     private double latestDistance;
 
-    public IntakeSubsystem()
+    private IntakeSubsystem()
     {
         final RobotConfig config = RobotConfig.getInstance();
 
@@ -63,6 +64,15 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         lastHorizontalState = true;
         latestDistance = 9999;
         setHorizontal(!lastHorizontalState);
+    }
+
+    public static IntakeSubsystem getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new IntakeSubsystem();
+        }
+        return instance;
     }
 
     public void initDefaultCommand()

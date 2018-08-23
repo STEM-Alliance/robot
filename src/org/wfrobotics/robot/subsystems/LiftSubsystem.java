@@ -25,11 +25,12 @@ public class LiftSubsystem extends SAFMSubsystem
     private final int kSlotDown;
     private final boolean kDebug;
 
+    private static LiftSubsystem instance = null;
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX[] motors = new TalonSRX[2];
     private final LimitSwitch[] limit = new LimitSwitch[2];
 
-    public LiftSubsystem()
+    private LiftSubsystem()
     {
         RobotConfig config = RobotConfig.getInstance();
         kDebug = config.LIFT_DEBUG;
@@ -49,7 +50,14 @@ public class LiftSubsystem extends SAFMSubsystem
         }
     }
 
-    // ----------------------------------------- Interfaces ----------------------------------------
+    public static LiftSubsystem getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new LiftSubsystem();
+        }
+        return instance;
+    }
 
     public void initDefaultCommand()
     {
@@ -83,8 +91,6 @@ public class LiftSubsystem extends SAFMSubsystem
             debugCalibration();
         }
     }
-
-    // ----------------------------------------- Public -------------------------------------------
 
     public double getLiftHeight()
     {
@@ -122,8 +128,6 @@ public class LiftSubsystem extends SAFMSubsystem
         }
         set(ControlMode.PercentOutput, percent);
     }
-
-    // ----------------------------------------- Private ------------------------------------------
 
     private void set(ControlMode mode, double val)
     {

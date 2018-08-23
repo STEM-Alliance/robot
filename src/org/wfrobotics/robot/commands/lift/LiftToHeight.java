@@ -2,25 +2,25 @@ package org.wfrobotics.robot.commands.lift;
 
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftToHeight extends Command
 {
     private final RobotState state = RobotState.getInstance();
+    private final LiftSubsystem lift = LiftSubsystem.getInstance();
     protected final double desired;
 
     public LiftToHeight(double desired)
     {
-        requires(Robot.liftSubsystem);
+        requires(lift);
         this.desired = desired;
     }
 
     protected void initialize()
     {
-        SmartDashboard.putString("Lift", getClass().getSimpleName());
-        Robot.liftSubsystem.goToHeightInit(desired);
+        lift.goToHeightInit(desired);
     }
 
     protected boolean isFinished()

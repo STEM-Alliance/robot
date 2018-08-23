@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands.lift;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class LiftGoHome extends Command
 {
     private static boolean hasZeroed = false;
+
+    private final LiftSubsystem lift = LiftSubsystem.getInstance();
 
     private final double speed;
 
@@ -23,7 +25,7 @@ public class LiftGoHome extends Command
 
     public LiftGoHome(double speed, double timeout)
     {
-        requires(Robot.liftSubsystem);
+        requires(lift);
         this.speed = speed;
         setTimeout(timeout);
     }
@@ -35,22 +37,22 @@ public class LiftGoHome extends Command
 
     protected void execute()
     {
-        Robot.liftSubsystem.goToSpeedInit(speed);  // Must be in execute in case interrupted
+        lift.goToSpeedInit(speed);  // Must be in execute in case interrupted
     }
 
     protected boolean isFinished()
     {
-        boolean result = Robot.liftSubsystem.allSidesAtBottom();
+        boolean result = lift.allSidesAtBottom();
 
         if (result)
         {
             hasZeroed = true;
         }
-        return hasZeroed || isTimedOut() || Robot.liftSubsystem.eitherSideAtTop();
+        return hasZeroed || isTimedOut() || lift.eitherSideAtTop();
     }
 
     protected void end()
     {
-        Robot.liftSubsystem.goToSpeedInit(0);
+        lift.goToSpeedInit(0);
     }
 }

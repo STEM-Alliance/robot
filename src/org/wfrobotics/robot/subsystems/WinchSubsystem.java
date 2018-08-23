@@ -13,9 +13,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class WinchSubsystem extends Subsystem
 {
+    private static WinchSubsystem instance = null;
     private final TalonSRX motor;
 
-    public WinchSubsystem()
+    private WinchSubsystem()
     {
         RobotConfig config = RobotConfig.getInstance();
         motor = TalonFactory.makeTalon(config.WINCH);
@@ -23,6 +24,15 @@ public class WinchSubsystem extends Subsystem
         motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);
         motor.setInverted(config.WINCH_INVERT);
         motor.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public static WinchSubsystem getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new WinchSubsystem();
+        }
+        return instance;
     }
 
     protected void initDefaultCommand()

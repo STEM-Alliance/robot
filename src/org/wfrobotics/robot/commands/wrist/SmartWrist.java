@@ -8,11 +8,10 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SmartWrist extends Command
 {
     //    private final RobotState state = RobotState.getInstance();
-    private final Wrist wrist;
+    private final Wrist wrist = Wrist.getInstance();
 
     public SmartWrist()
     {
-        wrist = Robot.wrist;
         requires(wrist);
     }
 
