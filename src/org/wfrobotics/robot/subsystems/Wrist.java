@@ -9,15 +9,21 @@ import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.wrist.WristZeroThenOpenLoop;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
+import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * The wrist consists of a BAG motor to rotate the intake
+ * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
+ */
 public class Wrist extends SAFMSubsystem
 {
     private static final double kFullRangeDegrees = 90.0;
@@ -40,12 +46,14 @@ public class Wrist extends SAFMSubsystem
         kTuning = config.WRIST_TUNING;
 
         motor = TalonFactory.makeClosedLoopTalon(config.WRIST_CLOSED_LOOP).get(0);
-        motor.setSelectedSensorPosition(0, 0, 10);  // Before zeroing, report values above smart intake active therehold
+        motor.setSelectedSensorPosition(0, 0, 10);  // TODO Change for our auto's starting configuration?
         motor.configNeutralDeadband(config.WRIST_DEADBAND, 10);
         motor.configOpenloopRamp(.05, 10);  // TODO Try smaller value in auto
         motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
         motor.configVelocityMeasurementWindow(1, 10);  // TODO Changed to small value. Is okay?
+        motor.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
         motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
+        motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 10);  // Slow down, doesn't make decisions off this
         TalonFactory.configCurrentLimiting(motor, 40, 200, 20);  // Adding with high numbers just in case
         if (kTuning)
         {
@@ -170,6 +178,7 @@ public class Wrist extends SAFMSubsystem
     private void setMotor(ControlMode mode, double setpoint)
     {
         final double feedforward = 0.0;  // TODO Get this working then retune
+
         motor.set(mode, setpoint, DemandType.ArbitraryFeedForward, feedforward);
     }
 

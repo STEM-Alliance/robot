@@ -18,6 +18,12 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * The intake consists of two 775pro motors to pull in the cube,
+ * two pneumatic cylinders for compliance and controlled release,
+ * and an infared distance sensor for our automated SmartIntake
+ * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
+ */
 public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 {
     private final double kDistanceMaxIn;
@@ -25,8 +31,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 
     private static IntakeSubsystem instance = null;
     private final RobotState state = RobotState.getInstance();
-    private final TalonSRX master;
-    private final TalonSRX follower;
+    private final TalonSRX master, follower;
     private final DoubleSolenoid cylinders;
     private final SharpDistance distanceSensor;
     private final CircularBuffer buffer;
@@ -39,6 +44,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
     {
         final RobotConfig config = RobotConfig.getInstance();
         final int bufferSize = 3;
+        final double doesntHaveCubeDistance = 9999.0;  // Otherwise buffer initially filled with valid value
 
         kDistanceMaxIn = config.INTAKE_DISTANCE_TO_CUBE;
         kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
@@ -57,12 +63,12 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         cylinders = new DoubleSolenoid(config.CAN_PNEUMATIC_CONTROL_MODULE, config.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, config.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
 
         distanceSensor = new SharpDistance(config.INTAKE_SENSOR_R);
-        buffer = new CircularBuffer(bufferSize, 9999);  // Filled with zeros by default, which is bad because it's a valid value
+        buffer = new CircularBuffer(bufferSize, doesntHaveCubeDistance);
 
         // Force defined states
         lastJawsChangedTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
         lastJawsState = true;
-        latestDistance = 9999.0;
+        latestDistance = doesntHaveCubeDistance;
         setJaws(!lastJawsState);
     }
 

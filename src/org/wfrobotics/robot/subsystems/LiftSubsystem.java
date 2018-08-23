@@ -18,14 +18,17 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * The elevator consists of two independently connected Mini CIM motors to raise/lower the intake and climber
+ * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
+ */
 public class LiftSubsystem extends SAFMSubsystem
 {
-    private static final double kTicksPerRev = 4096.0;
-    private static final double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
+    private static final double kTicksPerInch = 4096.0 / 4.555;  // TODO Remeasure
     private static final double kFeedForwardHasCube = 0.0;   // TODO Tune me
     private static final double kFeedForwardNoCube = 0.0;    // TODO Tune me
-    private final int kSlotUp;
-    private final int kSlotDown;
+    private static final double kInchesGroundToZero = 0.0;      // TODO Measure me and apply offset to commands too
+    private final int kSlotUp, kSlotDown;
     private final boolean kTuning;
 
     private static LiftSubsystem instance = null;
@@ -46,10 +49,17 @@ public class LiftSubsystem extends SAFMSubsystem
         master = TalonFactory.makeClosedLoopTalon(config.LIFT_CLOSED_LOOP).get(0);
         master.setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, 10);
         master.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
-        master.configVelocityMeasurementWindow(32, 10);
+        master.configVelocityMeasurementWindow(1, 10);  // TODO Changed to small value. Is okay?
         master.configNeutralDeadband(0.1, 10);
         master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
         TalonFactory.configCurrentLimiting(master, 30, 200, 15);  // Observed 10A when holding
+        if (kTuning)
+        {
+            TalonFactory.configFastErrorReporting(master);
+        }
+        // TODO Try configAllowableClosedloopError()
+        // TODO Try using Status_10_MotionMagic to improve motion?
+        // TODO Try configClosedloopRamp() of .1, see if it approaches limits smoother
 
         follower = TalonFactory.makeFollowers(master, config.LIFT_CLOSED_LOOP.masters.get(0)).get(0);
 
@@ -76,7 +86,7 @@ public class LiftSubsystem extends SAFMSubsystem
     public void updateSensors()
     {
         zeroIfAtLimit();
-        state.updateLiftHeight(getHeightInches());
+        state.updateLiftHeight(getInchesOffGround());
     }
 
     public void reportState()
@@ -99,15 +109,22 @@ public class LiftSubsystem extends SAFMSubsystem
         return limit.isSet(Limit.FORWARD);
     }
 
-    public double getHeightInches()
+    public double getInchesOffGround()
     {
-        return ticksToInches(getHeightRaw());
+        return ticksToInches(getHeightRaw()) + kInchesGroundToZero;
     }
 
     /** Encoder has zeroed at any point and is ready to do some pull ups! */
     public boolean hasZeroed()
     {
         return hasZeroed;
+    }
+
+    /** Use to improve isFinished() criteria for closed loop commands? */
+    public boolean onTarget()  // TODO Use it?
+    {
+        final int kTickRateSlowEnough = 100;  // Tune me
+        return master.getSelectedSensorVelocity(0) < kTickRateSlowEnough;
     }
 
     public void setOpenLoop(double percent)
@@ -122,12 +139,13 @@ public class LiftSubsystem extends SAFMSubsystem
         setMotor(ControlMode.PercentOutput, speed);
     }
 
-    public void setClosedLoop(double heightInches)
+    public void setClosedLoop(double inchesOffGround)
     {
-        final int slot = (heightInches > getHeightRaw()) ? kSlotUp : kSlotDown;
+        final double inchesFromZero = inchesOffGround - kInchesGroundToZero;
+        final int slot = (inchesFromZero > getHeightRaw()) ? kSlotUp : kSlotDown;
 
         master.selectProfileSlot(slot, 0);
-        setMotor(ControlMode.MotionMagic, inchesToTicks(heightInches));  // Stalls motors
+        setMotor(ControlMode.MotionMagic, inchesToTicks(inchesFromZero));  // Stalls motors
     }
 
     public void zeroIfAtLimit()
@@ -149,14 +167,14 @@ public class LiftSubsystem extends SAFMSubsystem
         return master.getSelectedSensorPosition(0);
     }
 
-    private static double inchesToTicks(double inches)
+    private double inchesToTicks(double inches)
     {
-        return inches * kRevsPerInch * kTicksPerRev;
+        return inches * kTicksPerInch;
     }
 
     private double ticksToInches(double ticks)
     {
-        return ticks / kRevsPerInch / kTicksPerRev;
+        return ticks / kTicksPerInch;
     }
 
     private void setMotor(ControlMode mode, double val)
