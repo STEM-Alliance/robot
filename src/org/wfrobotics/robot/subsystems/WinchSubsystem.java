@@ -7,10 +7,15 @@ import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+/**
+ * The winch consists of one Mini CIM motor to pull up the robot after our hook is deployed
+ * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
+ */
 public class WinchSubsystem extends Subsystem
 {
     private static WinchSubsystem instance = null;
@@ -21,7 +26,8 @@ public class WinchSubsystem extends Subsystem
         RobotConfig config = RobotConfig.getInstance();
         motor = TalonFactory.makeTalon(config.WINCH);
         TalonFactory.configOpenLoopOnly(motor);
-        motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);
+        motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);  // Responsiveness non-critical
+        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, 10);  // TODO Okay to slow down?
         // TODO try slow general status
         motor.setInverted(config.WINCH_INVERT);
         motor.setNeutralMode(NeutralMode.Brake);
