@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class LiftPercentVoltage extends Command
 {
     private final double deadbandPercent = 0.2;
-
     private final LiftSubsystem lift = LiftSubsystem.getInstance();
 
     public LiftPercentVoltage()
@@ -22,11 +21,11 @@ public class LiftPercentVoltage extends Command
 
         if (Math.abs(setpoint) < deadbandPercent)
         {
-            lift.goToSpeedInit(0.0);
+            lift.setOpenLoop(0.0);
         }
         else
         {
-            lift.goToSpeedInit(setpoint);
+            lift.setOpenLoop(setpoint);
         }
     }
 

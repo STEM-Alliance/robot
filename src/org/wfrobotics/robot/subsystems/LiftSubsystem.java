@@ -10,6 +10,7 @@ import org.wfrobotics.robot.commands.lift.LiftAutoZeroThenPercentVoltage;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -19,11 +20,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftSubsystem extends SAFMSubsystem
 {
-    private final static double kTicksPerRev = 4096.0;
-    private final static double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
+    private static final double kTicksPerRev = 4096.0;
+    private static final double kRevsPerInch = 1.0 / 4.555;  // Measured on practice robot
+    private static final double kFeedForwardHasCube = 0.0;   // TODO Tune me
+    private static final double kFeedForwardNoCube = 0.0;    // TODO Tune me
     private final int kSlotUp;
     private final int kSlotDown;
-    private final boolean kDebug;
+    private final boolean kTuning;
 
     private static LiftSubsystem instance = null;
     private final RobotState state = RobotState.getInstance();
@@ -33,7 +36,7 @@ public class LiftSubsystem extends SAFMSubsystem
     private LiftSubsystem()
     {
         RobotConfig config = RobotConfig.getInstance();
-        kDebug = config.LIFT_DEBUG;
+        kTuning = config.LIFT_DEBUG;
         kSlotUp = config.LIFT_CLOSED_LOOP.gains.get(0).kSlot;
         kSlotDown = config.LIFT_CLOSED_LOOP.gains.get(1).kSlot;;
 
@@ -87,7 +90,7 @@ public class LiftSubsystem extends SAFMSubsystem
         SmartDashboard.putBoolean("RB", limitSwitchSet[1][0]);
         SmartDashboard.putBoolean("RT", limitSwitchSet[1][1]);
 
-        if (kDebug)
+        if (kTuning)
         {
             debugCalibration();
         }
@@ -111,29 +114,23 @@ public class LiftSubsystem extends SAFMSubsystem
         return LimitSwitch.atForwardAny(limit);
     }
 
-    public synchronized void goToHeightInit(double heightInches)
+    public synchronized void setClosedLoop(double heightInches)
     {
         final int slot = (heightInches > getHeightAverage()) ? kSlotUp : kSlotDown;
 
         motors[0].selectProfileSlot(slot, 0);
         motors[1].selectProfileSlot(slot, 0);
-        set(ControlMode.MotionMagic, inchesToTicks(heightInches));  // Stalls motors
+        setMotor(ControlMode.MotionMagic, inchesToTicks(heightInches));  // Stalls motors
     }
 
-    public synchronized void goToSpeedInit(double percent)
+    public synchronized void setOpenLoop(double percent)
     {
         double speed = percent;
         if (LimitSwitch.atForwardAny(limit) && speed > 0.0)
         {
             speed = 0.0;
         }
-        set(ControlMode.PercentOutput, percent);
-    }
-
-    private void set(ControlMode mode, double val)
-    {
-        motors[0].set(mode, val);
-        motors[1].set(mode, val);
+        setMotor(ControlMode.PercentOutput, percent);
     }
 
     private double getHeightAverage()
@@ -149,6 +146,14 @@ public class LiftSubsystem extends SAFMSubsystem
     private double ticksToInches(double ticks)
     {
         return ticks / kRevsPerInch / kTicksPerRev;
+    }
+
+    private void setMotor(ControlMode mode, double val)
+    {
+        final double feedforward = (state.robotHasCube) ? kFeedForwardHasCube : kFeedForwardNoCube;
+
+        motors[0].set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
+        motors[1].set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
     }
 
     private void debugCalibration()

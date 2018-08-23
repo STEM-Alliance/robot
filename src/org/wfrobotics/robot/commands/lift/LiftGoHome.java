@@ -37,7 +37,7 @@ public class LiftGoHome extends Command
 
     protected void execute()
     {
-        lift.goToSpeedInit(speed);  // Must be in execute in case interrupted
+        lift.setOpenLoop(speed);
     }
 
     protected boolean isFinished()
@@ -53,6 +53,6 @@ public class LiftGoHome extends Command
 
     protected void end()
     {
-        lift.goToSpeedInit(0);
+        lift.setOpenLoop(0.0);
     }
 }
