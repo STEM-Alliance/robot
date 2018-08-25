@@ -6,7 +6,6 @@ import org.wfrobotics.reuse.hardware.RevLEDs.PatternName;
 import org.wfrobotics.reuse.math.geometry.Pose2d;
 import org.wfrobotics.reuse.subsystems.SubsystemRunner;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdater;
-import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
@@ -50,7 +49,6 @@ public final class Robot extends IterativeRobot
         subsystems.register(LiftSubsystem.getInstance());
         subsystems.register(Wrist.getInstance());
         subsystems.register(driveSubsystem);
-        backgroundUpdater.register(RobotStateEstimator.getInstance());
     }
 
     @Override
@@ -90,12 +88,12 @@ public final class Robot extends IterativeRobot
         // TODO Start background updater?
         leds.signalHumanPlayer();  // Pit safety
         Timer.delay(1.0);
-        result &= driveSubsystem.runFunctionalTest();
-        result &= Wrist.getInstance().runFunctionalTest();
-        result &= IntakeSubsystem.getInstance().runFunctionalTest();
-        result &= LiftSubsystem.getInstance().runFunctionalTest();
-        result &= winch.runFunctionalTest();
-        result &= leds.testRobotSpecificColors();
+        result &= driveSubsystem.runFunctionalTest(true);
+        result &= Wrist.getInstance().runFunctionalTest(true);
+        result &= IntakeSubsystem.getInstance().runFunctionalTest(true);
+        result &= LiftSubsystem.getInstance().runFunctionalTest(true);
+        result &= winch.runFunctionalTest(true);
+        result &= leds.runFunctionalTest(true);
         System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));
     }
 
@@ -129,7 +127,7 @@ public final class Robot extends IterativeRobot
     @Override
     public void testPeriodic()
     {
-        leds.testScrollAll();
+        //        leds.testScrollAll();
     }
 
     private void allPeriodic()
