@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 {
     private final double kDistanceMaxIn;
+    private final double kDistanceSensorPluggedIn = Double.POSITIVE_INFINITY;  // TODO Tune me
     private final double kTimeoutHorizontal;
 
     private static IntakeSubsystem instance = null;
@@ -54,7 +56,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         master.setNeutralMode(NeutralMode.Brake);
         master.setInverted(config.INTAKE_INVERT_RIGHT);
         master.configOpenloopRamp(.25, 10);
-        TalonFactory.configCurrentLimiting(master, 30, 100, 10);
+        TalonFactory.configCurrentLimiting(master, 10, 30, 100);
 
         follower = TalonFactory.makeFollowerTalon(config.CAN_INTAKE_LEFT, master);
         follower.setNeutralMode(NeutralMode.Brake);
@@ -112,6 +114,11 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         return lastJawsState;
     }
 
+    public boolean isSensorPluggedIn()
+    {
+        return latestDistance < kDistanceSensorPluggedIn;
+    }
+
     public void setIntake(double percentageOutward)
     {
         master.set(ControlMode.PercentOutput, percentageOutward);
@@ -119,29 +126,29 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
 
     public boolean setJaws(boolean extendedOpen)
     {
-        final boolean delayedEnough = Timer.getFPGATimestamp() - lastJawsChangedTime > kTimeoutHorizontal;
+        final double now = Timer.getFPGATimestamp();
+        final boolean delayedEnough = now - lastJawsChangedTime > kTimeoutHorizontal;
         final boolean different = extendedOpen != lastJawsState;
         boolean stateChanged = false;
 
         if (delayedEnough && different)
         {
             cylinders.set(extendedOpen ? Value.kForward : Value.kReverse);
-            lastJawsChangedTime = Timer.getFPGATimestamp();
+            lastJawsChangedTime = now;
             lastJawsState = extendedOpen;
             stateChanged = true;
         }
         return stateChanged;
     }
 
-    public boolean runFunctionalTest()
+    public boolean runFunctionalTest(boolean includeMotion)
     {
         boolean result = true;
 
-        result &= TalonFactory.checkFirmware(master);
-        result &= TalonFactory.checkFirmware(follower);
-        result &= TalonFactory.checkEncoder(master);
-
-        // TODO Check infared < some value == plugged in?
+        result &= TalonChecker.checkFirmware(master);
+        result &= TalonChecker.checkFirmware(follower);
+        result &= TalonChecker.checkEncoder(master);
+        result &= isSensorPluggedIn();
 
         System.out.println(String.format("Lift Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;

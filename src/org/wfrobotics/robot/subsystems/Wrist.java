@@ -3,6 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.LimitSwitch.Limit;
 import org.wfrobotics.reuse.hardware.StallSense;
+import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
 import org.wfrobotics.robot.RobotState;
@@ -54,7 +55,7 @@ public class Wrist extends SAFMSubsystem
         motor.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
         motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
         motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 10);  // Slow down, doesn't make decisions off this
-        TalonFactory.configCurrentLimiting(motor, 40, 200, 20);  // Adding with high numbers just in case
+        TalonFactory.configCurrentLimiting(motor, 20, 40, 200);  // Adding with high numbers just in case
         if (kTuning)
         {
             TalonFactory.configFastErrorReporting(motor);
@@ -182,12 +183,12 @@ public class Wrist extends SAFMSubsystem
         motor.set(mode, setpoint, DemandType.ArbitraryFeedForward, feedforward);
     }
 
-    public boolean runFunctionalTest()
+    public boolean runFunctionalTest(boolean includeMotion)
     {
         boolean result = true;
 
-        result &= TalonFactory.checkFirmware(motor);
-        result &= TalonFactory.checkEncoder(motor);
+        result &= TalonChecker.checkFirmware(motor);
+        result &= TalonChecker.checkEncoder(motor);
         // TODO Check limits?
 
         System.out.println(String.format("Wrist Test: %s", (result) ? "SUCCESS" : "FAILURE"));

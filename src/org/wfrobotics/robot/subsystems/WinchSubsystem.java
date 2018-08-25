@@ -1,6 +1,8 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
+import org.wfrobotics.reuse.utilities.Testable;
 import org.wfrobotics.robot.commands.Winch;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
@@ -16,7 +18,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * The winch consists of one Mini CIM motor to pull up the robot after our hook is deployed
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class WinchSubsystem extends Subsystem
+public class WinchSubsystem extends Subsystem implements Testable
 {
     private static WinchSubsystem instance = null;
     private final TalonSRX motor;
@@ -28,9 +30,9 @@ public class WinchSubsystem extends Subsystem
         TalonFactory.configOpenLoopOnly(motor);
         motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);  // Responsiveness non-critical
         motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, 10);  // TODO Okay to slow down?
-        // TODO try slow general status
         motor.setInverted(config.WINCH_INVERT);
         motor.setNeutralMode(NeutralMode.Brake);
+        TalonFactory.configCurrentLimiting(motor, 25, 35, 200);  // TODO Added this, is okay?
     }
 
     public static WinchSubsystem getInstance()
@@ -52,11 +54,11 @@ public class WinchSubsystem extends Subsystem
         motor.set(ControlMode.PercentOutput, percentWinch);
     }
 
-    public boolean runFunctionalTest()
+    public boolean runFunctionalTest(boolean includeMotion)
     {
         boolean result = true;
 
-        result &= TalonFactory.checkFirmware(motor);
+        result &= TalonChecker.checkFirmware(motor);
 
         System.out.println(String.format("Winch Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;

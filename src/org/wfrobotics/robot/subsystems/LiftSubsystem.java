@@ -2,6 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.LimitSwitch.Limit;
+import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
 import org.wfrobotics.robot.RobotState;
@@ -52,7 +53,7 @@ public class LiftSubsystem extends SAFMSubsystem
         master.configVelocityMeasurementWindow(1, 10);  // TODO Changed to small value. Is okay?
         master.configNeutralDeadband(0.1, 10);
         master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
-        TalonFactory.configCurrentLimiting(master, 30, 200, 15);  // Observed 10A when holding
+        TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // Observed 10A when holding
         if (kTuning)
         {
             TalonFactory.configFastErrorReporting(master);
@@ -203,13 +204,13 @@ public class LiftSubsystem extends SAFMSubsystem
         master.config_kD(slot, d, 0);
     }
 
-    public boolean runFunctionalTest()
+    public boolean runFunctionalTest(boolean includeMotion)
     {
         boolean result = true;
 
-        result &= TalonFactory.checkFirmware(master);
-        result &= TalonFactory.checkFirmware(follower);
-        result &= TalonFactory.checkEncoder(master);
+        result &= TalonChecker.checkFirmware(master);
+        result &= TalonChecker.checkFirmware(follower);
+        result &= TalonChecker.checkEncoder(master);
 
         System.out.println(String.format("Lift Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;
