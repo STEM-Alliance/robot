@@ -148,6 +148,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
         result &= TalonChecker.checkEncoder(master);
+        result &= TalonChecker.checkFrameRates(master);
         result &= isSensorPluggedIn();
 
         System.out.println(String.format("Lift Test: %s", (result) ? "SUCCESS" : "FAILURE"));

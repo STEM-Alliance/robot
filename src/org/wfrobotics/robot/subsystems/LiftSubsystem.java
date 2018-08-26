@@ -54,10 +54,7 @@ public class LiftSubsystem extends SAFMSubsystem
         master.configNeutralDeadband(0.1, 10);
         master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
         TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // Observed 10A when holding
-        if (kTuning)
-        {
-            TalonFactory.configFastErrorReporting(master);
-        }
+        TalonFactory.configFastErrorReporting(master, kTuning);
         // TODO Try configAllowableClosedloopError()
         // TODO Try using Status_10_MotionMagic to improve motion?
         // TODO Try configClosedloopRamp() of .1, see if it approaches limits smoother
@@ -211,6 +208,9 @@ public class LiftSubsystem extends SAFMSubsystem
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
         result &= TalonChecker.checkEncoder(master);
+        result &= TalonChecker.checkFrameRates(master);
+
+        result &= TalonChecker.checkSensorPhase(0.1, master);
 
         System.out.println(String.format("Lift Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;

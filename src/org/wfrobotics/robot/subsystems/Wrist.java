@@ -56,10 +56,7 @@ public class Wrist extends SAFMSubsystem
         motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
         motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 10);  // Slow down, doesn't make decisions off this
         TalonFactory.configCurrentLimiting(motor, 20, 40, 200);  // Adding with high numbers just in case
-        if (kTuning)
-        {
-            TalonFactory.configFastErrorReporting(motor);
-        }
+        TalonFactory.configFastErrorReporting(motor, kTuning);
         // TODO Try configAllowableClosedloopError()
         // TODO Try using Status_10_MotionMagic to improve motion?
 
@@ -189,7 +186,10 @@ public class Wrist extends SAFMSubsystem
 
         result &= TalonChecker.checkFirmware(motor);
         result &= TalonChecker.checkEncoder(motor);
+        result &= TalonChecker.checkFrameRates(motor);
         // TODO Check limits?
+
+        result &= TalonChecker.checkSensorPhase(0.1, motor);
 
         System.out.println(String.format("Wrist Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;
