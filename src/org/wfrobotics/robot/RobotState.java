@@ -19,6 +19,7 @@ public final class RobotState extends RobotStateBase
 
     // Robot-specific state
     public boolean robotHasCube;
+    public boolean isLiftMoving;
     public double intakeDistanceToCube;
     public double liftHeightInches;
     public double wristAngleDegrees;
@@ -39,6 +40,7 @@ public final class RobotState extends RobotStateBase
     protected synchronized void resetRobotSpecificState()
     {
         robotHasCube = false;
+        isLiftMoving = false;
         intakeDistanceToCube = 9999.0;  // Big so we don't think we have a cube
         liftHeightInches = 0.0;
         hasCubeCounts = 0;
@@ -59,7 +61,7 @@ public final class RobotState extends RobotStateBase
         return intakeDistanceToCube / 2.54;
     }
 
-    public void updateIntakeSensor(double distance)
+    public void updateIntake(double distance)
     {
         handleDetectCube(distance);
 
@@ -85,12 +87,13 @@ public final class RobotState extends RobotStateBase
         }
     }
 
-    public synchronized void updateLiftHeight(double inches)
+    public synchronized void updateLift(double inches, boolean isLiftMoving)
     {
         liftHeightInches = inches;
+        this.isLiftMoving = isLiftMoving;
     }
 
-    public synchronized void updateWristPosition(double degrees)
+    public synchronized void updateWrist(double degrees)
     {
         wristAngleDegrees = degrees;
     }

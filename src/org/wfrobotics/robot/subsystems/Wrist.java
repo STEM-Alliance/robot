@@ -5,7 +5,7 @@ import org.wfrobotics.reuse.hardware.LimitSwitch.Limit;
 import org.wfrobotics.reuse.hardware.StallSense;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
-import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
+import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.wrist.WristZeroThenOpenLoop;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * The wrist consists of a BAG motor to rotate the intake
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class Wrist extends SAFMSubsystem
+public class Wrist extends EnhancedSubsystem
 {
     private static final double kFullRangeDegrees = 90.0;
     private final int kTicksToTop;
@@ -86,7 +86,7 @@ public class Wrist extends SAFMSubsystem
     {
         stalled = stallSensor.isStalled();
         zeroIfAtLimit();
-        state.updateWristPosition(getAngle());
+        state.updateWrist(getAngle());
     }
 
     public void reportState()

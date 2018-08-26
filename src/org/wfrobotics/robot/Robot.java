@@ -14,6 +14,7 @@ import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
+import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.subsystems.WinchSubsystem;
 import org.wfrobotics.robot.subsystems.Wrist;
 
@@ -47,12 +48,13 @@ public final class Robot extends IterativeRobot
 
         subsystems.register(IntakeSubsystem.getInstance());
         subsystems.register(LiftSubsystem.getInstance());
+        subsystems.register(SuperStructure.getInstance());
         subsystems.register(Wrist.getInstance());
         subsystems.register(driveSubsystem);
-        subsystems.registerExtraReporter(state);
-        subsystems.registerExtraReporter(backgroundUpdater);
-        subsystems.registerExtraReporter(ConsoleLogger.getInstance());
-        subsystems.registerExtraReporter(AutoTune.getInstance());
+        subsystems.registerReporter(state);
+        subsystems.registerReporter(backgroundUpdater);
+        subsystems.registerReporter(ConsoleLogger.getInstance());
+        subsystems.registerReporter(AutoTune.getInstance());
     }
 
     @Override
@@ -89,7 +91,6 @@ public final class Robot extends IterativeRobot
     {
         boolean result = true;
 
-        // TODO Start background updater?
         leds.signalHumanPlayer();  // Pit safety
         Timer.delay(1.0);
         result &= driveSubsystem.runFunctionalTest(true);
@@ -97,6 +98,7 @@ public final class Robot extends IterativeRobot
         result &= IntakeSubsystem.getInstance().runFunctionalTest(true);
         result &= LiftSubsystem.getInstance().runFunctionalTest(true);
         result &= winch.runFunctionalTest(true);
+        result &= SuperStructure.getInstance().runFunctionalTest(true);
         result &= leds.runFunctionalTest(true);
         System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));
     }

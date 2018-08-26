@@ -4,7 +4,7 @@ import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.LimitSwitch.Limit;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
-import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
+import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftZeroThenOpenLoop;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * The elevator consists of two independently connected Mini CIM motors to raise/lower the intake and climber
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class LiftSubsystem extends SAFMSubsystem
+public class LiftSubsystem extends EnhancedSubsystem
 {
     private static final double kTicksPerInch = 4096.0 / 4.555;  // TODO Remeasure
     private static final double kFeedForwardHasCube = 0.0;   // TODO Tune me
@@ -84,7 +84,7 @@ public class LiftSubsystem extends SAFMSubsystem
     public void updateSensors()
     {
         zeroIfAtLimit();
-        state.updateLiftHeight(getInchesOffGround());
+        state.updateLift(getInchesOffGround(), onTarget());
     }
 
     public void reportState()
@@ -119,9 +119,9 @@ public class LiftSubsystem extends SAFMSubsystem
     }
 
     /** Use to improve isFinished() criteria for closed loop commands? */
-    public boolean onTarget()  // TODO Use it?
+    public boolean onTarget()
     {
-        final int kTickRateSlowEnough = 100;  // Tune me
+        final int kTickRateSlowEnough = 100;  // TODO Tune me
         return master.getSelectedSensorVelocity(0) < kTickRateSlowEnough;
     }
 
