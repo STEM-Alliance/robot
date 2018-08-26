@@ -3,7 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
-import org.wfrobotics.reuse.subsystems.SAFMSubsystem;
+import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdate;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.robot.RobotState;
@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * and an infared distance sensor for our automated SmartIntake
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
+public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpdate
 {
     private final double kDistanceMaxIn;
     private final double kDistanceSensorPluggedIn = Double.POSITIVE_INFINITY;  // TODO Tune me
@@ -91,7 +91,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
     public void updateSensors()
     {
         latestDistance = buffer.getAverage();
-        state.updateIntakeSensor(latestDistance);
+        state.updateIntake(latestDistance);
     }
 
     public void reportState()
@@ -99,7 +99,7 @@ public class IntakeSubsystem extends SAFMSubsystem implements BackgroundUpdate
         SmartDashboard.putNumber("Cube", latestDistance);
     }
 
-    public void onStart(boolean isAutonomous)
+    public void onStartUpdates(boolean isAutonomous)
     {
 
     }
