@@ -49,6 +49,10 @@ public final class Robot extends IterativeRobot
         subsystems.register(LiftSubsystem.getInstance());
         subsystems.register(Wrist.getInstance());
         subsystems.register(driveSubsystem);
+        subsystems.registerExtraReporter(state);
+        subsystems.registerExtraReporter(backgroundUpdater);
+        subsystems.registerExtraReporter(ConsoleLogger.getInstance());
+        subsystems.registerExtraReporter(AutoTune.getInstance());
     }
 
     @Override
@@ -100,13 +104,13 @@ public final class Robot extends IterativeRobot
     @Override
     public void autonomousPeriodic()
     {
-        allPeriodic();
+        subsystems.update();
     }
 
     @Override
     public void teleopPeriodic()
     {
-        allPeriodic();
+        subsystems.update();
     }
 
     @Override
@@ -121,24 +125,12 @@ public final class Robot extends IterativeRobot
         LiftSubsystem.getInstance().zeroIfAtLimit();
         Wrist.getInstance().zeroIfAtLimit();
 
-        allPeriodic();
+        subsystems.update();
     }
 
     @Override
     public void testPeriodic()
     {
         //        leds.testScrollAll();
-    }
-
-    private void allPeriodic()
-    {
-        subsystems.updateSensors();
-        subsystems.runCommands();
-        subsystems.reportState();
-
-        state.reportState();
-        backgroundUpdater.reportState();
-        ConsoleLogger.reportState();
-        AutoTune.getInstance().reportState();
     }
 }
