@@ -2,10 +2,11 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.hardware.AutoTune;
 import org.wfrobotics.reuse.hardware.LEDs;
-import org.wfrobotics.reuse.hardware.RevLEDs.PatternName;
+import org.wfrobotics.reuse.hardware.lowleveldriver.RevLEDs.PatternName;
 import org.wfrobotics.reuse.math.geometry.Pose2d;
 import org.wfrobotics.reuse.subsystems.SubsystemRunner;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdater;
+import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
@@ -55,6 +56,7 @@ public final class Robot extends IterativeRobot
         subsystems.registerReporter(backgroundUpdater);
         subsystems.registerReporter(ConsoleLogger.getInstance());
         subsystems.registerReporter(AutoTune.getInstance());
+        BackgroundUpdater.getInstance().register(RobotStateEstimator.getInstance());
     }
 
     @Override

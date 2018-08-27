@@ -58,6 +58,7 @@ public class WinchSubsystem extends Subsystem implements Testable
     {
         boolean result = true;
 
+        System.out.println("Winch Test:");
         result &= TalonChecker.checkFirmware(motor);
         TalonChecker.checkFrameRates(motor);  // Not in result, intentionally slow rates
 

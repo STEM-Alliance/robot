@@ -184,6 +184,7 @@ public class Wrist extends EnhancedSubsystem
     {
         boolean result = true;
 
+        System.out.println("Wrist Test:");
         result &= TalonChecker.checkFirmware(motor);
         result &= TalonChecker.checkEncoder(motor);
         result &= TalonChecker.checkFrameRates(motor);

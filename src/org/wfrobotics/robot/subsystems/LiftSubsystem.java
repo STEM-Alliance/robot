@@ -205,12 +205,13 @@ public class LiftSubsystem extends EnhancedSubsystem
     {
         boolean result = true;
 
+        System.out.println("Lift Test:");
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
         result &= TalonChecker.checkEncoder(master);
         result &= TalonChecker.checkFrameRates(master);
 
-        result &= TalonChecker.checkSensorPhase(0.1, master);
+        result &= TalonChecker.checkSensorPhase(0.2, master);
 
         System.out.println(String.format("Lift Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;
