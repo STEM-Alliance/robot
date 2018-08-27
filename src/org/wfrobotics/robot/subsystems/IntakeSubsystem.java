@@ -145,13 +145,14 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
     {
         boolean result = true;
 
+        System.out.println("Intake Test:");
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
         result &= TalonChecker.checkEncoder(master);
         result &= TalonChecker.checkFrameRates(master);
         result &= isSensorPluggedIn();
 
-        System.out.println(String.format("Lift Test: %s", (result) ? "SUCCESS" : "FAILURE"));
+        System.out.println(String.format("Intake Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;
     }
 }
