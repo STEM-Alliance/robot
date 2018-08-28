@@ -10,7 +10,7 @@ import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
-import org.wfrobotics.reuse.utilities.MatchState2018;
+import org.wfrobotics.robot.auto.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
