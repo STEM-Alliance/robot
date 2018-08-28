@@ -48,11 +48,6 @@ public final class RobotState extends RobotStateBase
 
     public synchronized void addVisionUpdate(VisionMessageTargets v)
     {
-        if (v.source != visionMode.getTarget())
-        {
-            resetVisionState();
-        }
-
         DriverStation.reportWarning("RobotState not configured to receive and parse vision updates right now", false);
     }
 
