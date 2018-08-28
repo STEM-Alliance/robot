@@ -190,7 +190,7 @@ public class Wrist extends EnhancedSubsystem
         result &= TalonChecker.checkFrameRates(motor);
         // TODO Check limits?
 
-        result &= TalonChecker.checkSensorPhase(0.1, motor);
+        result &= TalonChecker.checkSensorPhase(0.3, motor);
 
         System.out.println(String.format("Wrist Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;

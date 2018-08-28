@@ -93,6 +93,8 @@ public final class Robot extends IterativeRobot
     {
         boolean result = true;
 
+        ConsoleLogger.getInstance().reportState();  // flush
+        System.out.println("-------------\nRobot Tests\n-------------");
         leds.signalHumanPlayer();  // Pit safety
         Timer.delay(1.0);
         result &= driveSubsystem.runFunctionalTest(true);
@@ -100,9 +102,11 @@ public final class Robot extends IterativeRobot
         result &= IntakeSubsystem.getInstance().runFunctionalTest(true);
         result &= LiftSubsystem.getInstance().runFunctionalTest(true);
         result &= winch.runFunctionalTest(true);
-        result &= SuperStructure.getInstance().runFunctionalTest(true);
-        result &= leds.runFunctionalTest(true);
+        //        result &= SuperStructure.getInstance().runFunctionalTest(true);
+        result &= leds.runFunctionalTest(result);
+        ConsoleLogger.getInstance().reportState();
         System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));
+        Timer.delay(3.0);
     }
 
     @Override
