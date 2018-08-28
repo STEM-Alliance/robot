@@ -89,6 +89,7 @@ public class LiftSubsystem extends EnhancedSubsystem
 
     public void reportState()
     {
+        SmartDashboard.putNumber("Lift Position", master.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("Lift Height", ticksToInches(getHeightRaw()));
         SmartDashboard.putBoolean("RB", limit.isSet(Limit.REVERSE));
         SmartDashboard.putBoolean("RT", limit.isSet(Limit.FORWARD));
@@ -127,12 +128,7 @@ public class LiftSubsystem extends EnhancedSubsystem
 
     public void setOpenLoop(double percent)
     {
-        double speed = percent;
-
-        if (AtHardwareLimitTop() && speed > 0.0)
-        {
-            speed = 0.0;
-        }
+        final double speed = (AtHardwareLimitTop() && percent > 0.0) ? 0.0 : percent;
 
         setMotor(ControlMode.PercentOutput, speed);
     }
@@ -184,21 +180,15 @@ public class LiftSubsystem extends EnhancedSubsystem
 
     private void debugCalibration()
     {
-        SmartDashboard.putNumber("Lift Position", master.getSelectedSensorPosition(0));
+        Preferences prefs = Preferences.getInstance();
+        int slot = prefs.getInt("lift_slot", 0);
+
         SmartDashboard.putNumber("Lift Velocity", master.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("Lift Error", master.getClosedLoopError(0));
 
-        double p = Preferences.getInstance().getDouble("lift_p", 0.0);
-        double i = Preferences.getInstance().getDouble("lift_i", 0.0);
-        double d = Preferences.getInstance().getDouble("lift_d", 0.0);
-        int slot = Preferences.getInstance().getInt("lift_slot", 0);
-
-        master.config_kP(slot, p, 0);
-        master.config_kP(slot, p, 0);
-        master.config_kI(slot, i, 0);
-        master.config_kI(slot, i, 0);
-        master.config_kD(slot, d, 0);
-        master.config_kD(slot, d, 0);
+        master.config_kP(slot, prefs.getDouble("lift_p", 0.0), 0);
+        master.config_kI(slot, prefs.getDouble("lift_i", 0.0), 0);
+        master.config_kD(slot, prefs.getDouble("lift_d", 0.0), 0);
     }
 
     public boolean runFunctionalTest(boolean includeMotion)

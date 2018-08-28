@@ -1,9 +1,8 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.SwitchChoice;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
-import org.wfrobotics.reuse.utilities.MatchState2018.Side;
+import org.wfrobotics.robot.auto.MatchState2018.Side;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
