@@ -73,8 +73,8 @@ public final class HerdVictor extends RobotConfig
         config.OPEN_LOOP_RAMP = 0.05;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
-            new MasterConfig(15, false, true, new FollowerConfig(17, false), new FollowerConfig(19, false)),
-            new MasterConfig(14, true, true, new FollowerConfig(16, false), new FollowerConfig(18, false)),
+            new MasterConfig(15, true, true, new FollowerConfig(17, false), new FollowerConfig(19, false)),
+            new MasterConfig(14, false, true, new FollowerConfig(16, false), new FollowerConfig(18, false)),
         }, new Gains[] {
             new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
             //            new Gains("Path", 1, 0.07, 0.0, 0.315, 0, 35),
