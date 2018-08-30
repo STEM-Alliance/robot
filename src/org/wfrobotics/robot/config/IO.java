@@ -10,12 +10,6 @@ import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.config.Xbox.AXIS;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
 import org.wfrobotics.robot.auto.ModeTestPathVelocity;
-import org.wfrobotics.robot.commands.AutoLiftToBottom;
-import org.wfrobotics.robot.commands.AutoLiftToScale;
-import org.wfrobotics.robot.commands.intake.IntakeManual;
-import org.wfrobotics.robot.commands.intake.JawsToggle;
-import org.wfrobotics.robot.commands.intake.SmartOutake;
-import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -44,15 +38,15 @@ public final class IO
         // ------------------------- Drive ------------------------
 
         // ------------------------ Intake ------------------------
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SmartOutake()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SmartOutake()));
 
         // ------------------------- Lift -------------------------
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new AutoLiftToScale()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new AutoLiftToBottom()));
-        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new AutoLiftToScale()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new AutoLiftToBottom()));
+        //        robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
 
         // -------------------- Super Structure -------------------
         robotSpecific.add(ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer()));
