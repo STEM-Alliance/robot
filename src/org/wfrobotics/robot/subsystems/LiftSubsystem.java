@@ -7,6 +7,7 @@ import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftZeroThenOpenLoop;
+import org.wfrobotics.robot.config.LiftHeight;
 import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -25,10 +26,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class LiftSubsystem extends EnhancedSubsystem
 {
-    private static final double kTicksPerInch = 4096.0 / 4.555;  // TODO Remeasure
+    private static final int kTicksToTop = 27000;
+    private static final double kTicksPerInch = kTicksToTop / 38.0;
     private static final double kFeedForwardHasCube = 0.0;   // TODO Tune me
-    private static final double kFeedForwardNoCube = 0.0;    // TODO Tune me
-    private static final double kInchesGroundToZero = 0.0;      // TODO Measure me and apply offset to commands too
+    private static final double kFeedForwardNoCube = 0.15;
+    private static final double kInchesGroundToZero = LiftHeight.Intake.get();
+    private static final int kTickRateBrakeMode = 500;
     private final int kSlotUp, kSlotDown;
     private final boolean kTuning;
 
@@ -55,15 +58,17 @@ public class LiftSubsystem extends EnhancedSubsystem
         master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
         TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // Observed 10A when holding
         TalonFactory.configFastErrorReporting(master, kTuning);
-        // TODO Try configAllowableClosedloopError()
+        //        master.configAllowableClosedloopError(0, 20, 10);
+        //        master.configAllowableClosedloopError(1, 20, 10);
+        master.configClosedloopRamp(0.15, 10);  // Soften reaching setpoint
         // TODO Try using Status_10_MotionMagic to improve motion?
         // TODO Try configClosedloopRamp() of .1, see if it approaches limits smoother
 
         follower = TalonFactory.makeFollowers(master, config.LIFT_CLOSED_LOOP.masters.get(0)).get(0);
 
         limit =  new LimitSwitch(master, config.LIFT_LIMIT_SWITCH_NORMALLY[0], config.LIFT_LIMIT_SWITCH_NORMALLY[1]);
-        LimitSwitch.configSoftwareLimitF(master, 100000000, true);  // TODO Tune
-        LimitSwitch.configSoftwareLimitR(master, -100000000, true);  // TODO Tune
+        LimitSwitch.configSoftwareLimitF(master, kTicksToTop, true);
+        LimitSwitch.configSoftwareLimitR(master, -500, true);
         LimitSwitch.configHardwareLimitAutoZero(master, false, false);
     }
 
@@ -84,13 +89,15 @@ public class LiftSubsystem extends EnhancedSubsystem
     public void updateSensors()
     {
         zeroIfAtLimit();
-        state.updateLift(getInchesOffGround(), onTarget());
+        state.updateLift(getInchesOffGround(), !onTarget());
     }
 
     public void reportState()
     {
         SmartDashboard.putNumber("Lift Position", master.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Lift Height", ticksToInches(getHeightRaw()));
+        SmartDashboard.putNumber("Lift Velocity", master.getSelectedSensorVelocity(0));
+        SmartDashboard.putNumber("Lift Height", ticksToInches(getHeightRaw()) + kInchesGroundToZero);
+        SmartDashboard.putNumber("Lift Current", master.getOutputCurrent());
         SmartDashboard.putBoolean("RB", limit.isSet(Limit.REVERSE));
         SmartDashboard.putBoolean("RT", limit.isSet(Limit.FORWARD));
         if (kTuning)
@@ -98,6 +105,7 @@ public class LiftSubsystem extends EnhancedSubsystem
             debugCalibration();
         }
     }
+
     public boolean AtHardwareLimitBottom()
     {
         return limit.isSet(Limit.REVERSE);
@@ -122,8 +130,8 @@ public class LiftSubsystem extends EnhancedSubsystem
     /** Use to improve isFinished() criteria for closed loop commands? */
     public boolean onTarget()
     {
-        final int kTickRateSlowEnough = 100;  // TODO Tune me
-        return master.getSelectedSensorVelocity(0) < kTickRateSlowEnough;
+        final int kTickRateSlowEnough = kTickRateBrakeMode + 200;
+        return Math.abs(master.getSelectedSensorVelocity(0)) < kTickRateSlowEnough;
     }
 
     public void setOpenLoop(double percent)
@@ -183,7 +191,6 @@ public class LiftSubsystem extends EnhancedSubsystem
         Preferences prefs = Preferences.getInstance();
         int slot = prefs.getInt("lift_slot", 0);
 
-        SmartDashboard.putNumber("Lift Velocity", master.getSelectedSensorVelocity(0));
         SmartDashboard.putNumber("Lift Error", master.getClosedLoopError(0));
 
         master.config_kP(slot, prefs.getDouble("lift_p", 0.0), 0);
