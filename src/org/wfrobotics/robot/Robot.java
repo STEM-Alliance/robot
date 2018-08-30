@@ -10,7 +10,7 @@ import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
-import org.wfrobotics.reuse.utilities.MatchState2018;
+import org.wfrobotics.robot.auto.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
@@ -93,6 +93,8 @@ public final class Robot extends IterativeRobot
     {
         boolean result = true;
 
+        ConsoleLogger.getInstance().reportState();  // flush
+        System.out.println("-------------\nRobot Tests\n-------------");
         leds.signalHumanPlayer();  // Pit safety
         Timer.delay(1.0);
         result &= driveSubsystem.runFunctionalTest(true);
@@ -101,8 +103,10 @@ public final class Robot extends IterativeRobot
         result &= LiftSubsystem.getInstance().runFunctionalTest(true);
         result &= winch.runFunctionalTest(true);
         result &= SuperStructure.getInstance().runFunctionalTest(true);
-        result &= leds.runFunctionalTest(true);
+        result &= leds.runFunctionalTest(result);
+        ConsoleLogger.getInstance().reportState();
         System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));
+        Timer.delay(3.0);
     }
 
     @Override

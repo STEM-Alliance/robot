@@ -47,11 +47,11 @@ public class Wrist extends EnhancedSubsystem
         kTuning = config.WRIST_TUNING;
 
         motor = TalonFactory.makeClosedLoopTalon(config.WRIST_CLOSED_LOOP).get(0);
-        motor.setSelectedSensorPosition(0, 0, 10);  // TODO Change for our auto's starting configuration?
+        motor.setSelectedSensorPosition(kTicksToTop, 0, 10);  // Start able to always reach limit switch
         motor.configNeutralDeadband(config.WRIST_DEADBAND, 10);
-        motor.configOpenloopRamp(.05, 10);  // TODO Try smaller value in auto
+        motor.configOpenloopRamp(.1, 10);
         motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
-        motor.configVelocityMeasurementWindow(1, 10);  // TODO Changed to small value. Is okay?
+        motor.configVelocityMeasurementWindow(1, 10);
         motor.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
         motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
         motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 10);  // Slow down, doesn't make decisions off this
@@ -61,11 +61,11 @@ public class Wrist extends EnhancedSubsystem
         // TODO Try using Status_10_MotionMagic to improve motion?
 
         limits = new LimitSwitch(motor, LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen);
-        LimitSwitch.configSoftwareLimitF(motor, kTicksToTop + 100000000, true);  // TODO Tune
-        LimitSwitch.configSoftwareLimitR(motor, -100000000, true);  // TODO Tune
+        LimitSwitch.configSoftwareLimitF(motor, kTicksToTop, true);
+        LimitSwitch.configSoftwareLimitR(motor, -500, true);
         LimitSwitch.configHardwareLimitAutoZero(motor, false, false);
 
-        stallSensor = new StallSense(motor, 4.0, 0.15);
+        stallSensor = new StallSense(motor, 25.0, 0.1);
     }
 
     public static Wrist getInstance()
@@ -188,9 +188,8 @@ public class Wrist extends EnhancedSubsystem
         result &= TalonChecker.checkFirmware(motor);
         result &= TalonChecker.checkEncoder(motor);
         result &= TalonChecker.checkFrameRates(motor);
+        result &= TalonChecker.checkSensorPhase(0.3, motor);
         // TODO Check limits?
-
-        result &= TalonChecker.checkSensorPhase(0.1, motor);
 
         System.out.println(String.format("Wrist Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;

@@ -54,7 +54,9 @@ public abstract class RobotConfig implements TankConfigSupplier
     {
         if (instance == null)
         {
-            instance = RobotConfigPicker.get(new RobotConfig[] { new HerdVictor() });
+            instance = RobotConfigPicker.get(new RobotConfig[] {
+                new HerdVictor(),
+            });
         }
         return instance;
     }

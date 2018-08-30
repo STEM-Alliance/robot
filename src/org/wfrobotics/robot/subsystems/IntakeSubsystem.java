@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpdate
 {
     private final double kDistanceMaxIn;
-    private final double kDistanceSensorPluggedIn = Double.POSITIVE_INFINITY;  // TODO Tune me
+    private final double kDistanceSensorPluggedIn = 3000.0;  // TODO Tune me
     private final double kTimeoutHorizontal;
 
     private static IntakeSubsystem instance = null;
@@ -106,7 +106,7 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
 
     public void onBackgroundUpdate()
     {
-        buffer.addFirst(distanceSensor.getDistanceInches() * 2.54 - kDistanceMaxIn);
+        buffer.addFirst(getRawDistance());
     }
 
     public boolean getJawsState()
@@ -116,7 +116,7 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
 
     public boolean isSensorPluggedIn()
     {
-        return latestDistance < kDistanceSensorPluggedIn;
+        return getRawDistance() < kDistanceSensorPluggedIn;
     }
 
     public void setIntake(double percentageOutward)
@@ -141,16 +141,26 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
         return stateChanged;
     }
 
+    private double getRawDistance()
+    {
+        return distanceSensor.getDistanceInches() * 2.54 - kDistanceMaxIn;
+    }
+
     public boolean runFunctionalTest(boolean includeMotion)
     {
         boolean result = true;
+        boolean sensorOkay;
 
         System.out.println("Intake Test:");
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
-        result &= TalonChecker.checkEncoder(master);
         result &= TalonChecker.checkFrameRates(master);
-        result &= isSensorPluggedIn();
+        sensorOkay = isSensorPluggedIn();
+        System.out.println(String.format("Infared distance sensor %s", (sensorOkay) ? "okay" : "not plugged in"));
+
+        setIntake(0.3);
+        Timer.delay(0.75);
+        setIntake(0.0);
 
         System.out.println(String.format("Intake Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;

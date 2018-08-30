@@ -25,6 +25,6 @@ public class LiftToHeight extends Command
 
     protected boolean isFinished()
     {
-        return Math.abs(state.liftHeightInches - desired) < 2.0 || Math.abs(Robot.controls.getLiftStick()) > .15;
+        return Math.abs(state.liftHeightInches - desired) < 0.5 || Math.abs(Robot.controls.getLiftStick()) > .15;
     }
 }
