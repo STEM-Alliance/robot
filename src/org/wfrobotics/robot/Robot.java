@@ -102,7 +102,7 @@ public final class Robot extends IterativeRobot
         result &= IntakeSubsystem.getInstance().runFunctionalTest(true);
         result &= LiftSubsystem.getInstance().runFunctionalTest(true);
         result &= winch.runFunctionalTest(true);
-        //        result &= SuperStructure.getInstance().runFunctionalTest(true);
+        result &= SuperStructure.getInstance().runFunctionalTest(true);
         result &= leds.runFunctionalTest(result);
         ConsoleLogger.getInstance().reportState();
         System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));

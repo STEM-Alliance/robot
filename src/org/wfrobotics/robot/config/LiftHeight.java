@@ -3,8 +3,8 @@ package org.wfrobotics.robot.config;
 /** All heights are relative distances the lift must move from bottom limit switch */
 public enum LiftHeight
 {
-    Scale(29.0),
-    Intake(0.00);  // Minimum valid height
+    Scale(46.0),
+    Intake(12.00);  // Minimum valid height
 
     private final double value;
 
