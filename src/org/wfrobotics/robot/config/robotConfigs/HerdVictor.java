@@ -58,7 +58,7 @@ public final class HerdVictor extends RobotConfig
         });
 
         WRIST_DEADBAND = 0.1;
-        WRIST_TICKS_TO_TOP = 5000;  // TODO Tune me
+        WRIST_TICKS_TO_TOP = 5000;
     }
 
     public TankConfig getTankConfig()
