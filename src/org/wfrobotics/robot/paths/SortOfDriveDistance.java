@@ -10,7 +10,7 @@ import org.wfrobotics.reuse.math.geometry.Translation2d;
 import org.wfrobotics.reuse.config.PathContainer;
 import org.wfrobotics.reuse.subsystems.control.PathAdaptive;
 import org.wfrobotics.reuse.subsystems.drive.TankMaths;
-import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
+import org.wfrobotics.robot.config.RobotConfig;
 
 public class SortOfDriveDistance implements PathContainer
 {

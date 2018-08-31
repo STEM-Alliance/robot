@@ -7,19 +7,20 @@ import edu.wpi.first.wpilibj.command.Command;
 /** Delay until wrist is in position */
 public class WaitForWristAngle extends Command
 {
-    private final RobotState state = RobotState.getInstance();
+    private final RobotState state;
     private final double threshold;
-    private final boolean wantdirectionUp;
+    private final boolean wantAtLeast;
 
-    public WaitForWristAngle(double thresholdDegrees, boolean wantPastDirectionUp)
+    public WaitForWristAngle(double degreesFromBottom, boolean atOrAbove)
     {
-        threshold = thresholdDegrees;
-        wantdirectionUp = wantPastDirectionUp;
+        state = RobotState.getInstance();
+        threshold = degreesFromBottom;
+        wantAtLeast = atOrAbove;
     }
 
     protected boolean isFinished()
     {
         final double angle = state.wristAngleDegrees;
-        return (wantdirectionUp) ?  angle > threshold :  angle < threshold;
+        return (wantAtLeast) ?  angle > threshold :  angle < threshold;
     }
 }

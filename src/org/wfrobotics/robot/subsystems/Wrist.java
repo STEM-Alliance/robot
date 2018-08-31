@@ -8,7 +8,7 @@ import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.wrist.WristZeroThenOpenLoop;
-import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -47,14 +47,14 @@ public class Wrist extends EnhancedSubsystem
         kTuning = config.WRIST_TUNING;
 
         motor = TalonFactory.makeClosedLoopTalon(config.WRIST_CLOSED_LOOP).get(0);
-        motor.setSelectedSensorPosition(kTicksToTop, 0, 10);  // Start able to always reach limit switch
-        motor.configNeutralDeadband(config.WRIST_DEADBAND, 10);
+        motor.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
+        motor.configNeutralDeadband(config.WRIST_DEADBAND, 100);
         motor.configOpenloopRamp(.1, 10);
-        motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
-        motor.configVelocityMeasurementWindow(1, 10);
-        motor.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
-        motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 10);  // Slow down, doesn't make decisions off this
+        motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 100);
+        motor.configVelocityMeasurementWindow(1, 100);
+        motor.setControlFramePeriod(ControlFrame.Control_3_General, 100);  // Slow down, wrist responsiveness not critical
+        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 100);  // Faster limit switches
+        motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 100);  // Slow down, doesn't make decisions off this
         TalonFactory.configCurrentLimiting(motor, 20, 40, 200);  // Adding with high numbers just in case
         TalonFactory.configFastErrorReporting(motor, kTuning);
         // TODO Try configAllowableClosedloopError()
@@ -92,6 +92,7 @@ public class Wrist extends EnhancedSubsystem
     public void reportState()
     {
         SmartDashboard.putNumber("Wrist Position", motor.getSelectedSensorPosition(0));
+        SmartDashboard.putNumber("Wrist Velocity", motor.getSelectedSensorVelocity(0));
         SmartDashboard.putBoolean("Wrist Limit B", AtHardwareLimitBottom());
         SmartDashboard.putBoolean("Wrist Limit T", AtHardwareLimitTop());
         SmartDashboard.putBoolean("Wrist Stalled", stalled);
@@ -99,7 +100,6 @@ public class Wrist extends EnhancedSubsystem
         if (kTuning)
         {
             SmartDashboard.putNumber("Wrist Error", motor.getClosedLoopError(0));
-            SmartDashboard.putNumber("Wrist Velocity", motor.getSelectedSensorVelocity(0));
         }
     }
 

@@ -8,7 +8,7 @@ import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.lift.LiftZeroThenOpenLoop;
 import org.wfrobotics.robot.config.LiftHeight;
-import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -29,7 +29,7 @@ public class LiftSubsystem extends EnhancedSubsystem
     private static final int kTicksToTop = 27000;
     private static final double kTicksPerInch = kTicksToTop / 38.0;
     private static final double kFeedForwardHasCube = 0.0;   // TODO Tune me
-    private static final double kFeedForwardNoCube = 0.15;
+    private static final double kFeedForwardNoCube = 0.15;  // TODO Try increasing to make more buoyant
     private static final double kInchesGroundToZero = LiftHeight.Intake.get();
     private static final int kTickRateBrakeMode = 500;
     private final int kSlotUp, kSlotDown;
@@ -51,16 +51,16 @@ public class LiftSubsystem extends EnhancedSubsystem
         kSlotDown = config.LIFT_CLOSED_LOOP.gains.get(1).kSlot;
 
         master = TalonFactory.makeClosedLoopTalon(config.LIFT_CLOSED_LOOP).get(0);
-        master.setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, 10);
-        master.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 10);
-        master.configVelocityMeasurementWindow(1, 10);  // TODO Changed to small value. Is okay?
-        master.configNeutralDeadband(0.1, 10);
-        master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 10);  // Faster limit switches
+        master.setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, 100);
+        master.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 100);
+        master.configVelocityMeasurementWindow(1, 100);  // TODO Changed to small value. Is okay?
+        master.configNeutralDeadband(0.1, 100);
+        master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 100);  // Faster limit switches
         TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // Observed 10A when holding
         TalonFactory.configFastErrorReporting(master, kTuning);
         //        master.configAllowableClosedloopError(0, 20, 10);
         //        master.configAllowableClosedloopError(1, 20, 10);
-        master.configClosedloopRamp(0.15, 10);  // Soften reaching setpoint
+        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint
         // TODO Try using Status_10_MotionMagic to improve motion?
         // TODO Try configClosedloopRamp() of .1, see if it approaches limits smoother
 
@@ -182,6 +182,7 @@ public class LiftSubsystem extends EnhancedSubsystem
     private void setMotor(ControlMode mode, double val)
     {
         final double feedforward = (state.robotHasCube) ? kFeedForwardHasCube : kFeedForwardNoCube;
+        // TODO If height is zero, no ff to save battery?
 
         master.set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
     }
