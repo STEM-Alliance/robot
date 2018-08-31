@@ -4,7 +4,7 @@ import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.utilities.Testable;
 import org.wfrobotics.robot.commands.Winch;
-import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -29,7 +29,7 @@ public class WinchSubsystem extends Subsystem implements Testable
         motor = TalonFactory.makeTalon(config.WINCH);
         TalonFactory.configOpenLoopOnly(motor);
         motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);  // Responsiveness non-critical
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, 10);  // TODO Okay to slow down?
+        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, 100);  // TODO Okay to slow down?
         motor.setInverted(config.WINCH_INVERT);
         motor.setNeutralMode(NeutralMode.Brake);
         TalonFactory.configCurrentLimiting(motor, 25, 35, 200);  // TODO Added this, is okay?

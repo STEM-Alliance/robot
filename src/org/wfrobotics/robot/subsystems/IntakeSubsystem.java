@@ -8,7 +8,7 @@ import org.wfrobotics.reuse.subsystems.background.BackgroundUpdate;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
-import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -155,8 +155,10 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
         result &= TalonChecker.checkFrameRates(master);
+
         sensorOkay = isSensorPluggedIn();
         System.out.println(String.format("Infared distance sensor %s", (sensorOkay) ? "okay" : "not plugged in"));
+        result &= sensorOkay;
 
         setIntake(0.3);
         Timer.delay(0.75);

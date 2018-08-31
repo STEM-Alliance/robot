@@ -2,7 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.robot.commands.ConserveCompressor;
-import org.wfrobotics.robot.config.robotConfigs.RobotConfig;
+import org.wfrobotics.robot.config.RobotConfig;
 
 public class SuperStructure extends SuperStructureBase
 {

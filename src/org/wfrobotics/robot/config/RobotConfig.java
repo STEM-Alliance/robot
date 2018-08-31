@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.config.robotConfigs;
+package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;

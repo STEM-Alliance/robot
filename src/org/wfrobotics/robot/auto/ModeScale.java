@@ -16,6 +16,7 @@ import org.wfrobotics.robot.commands.wrist.WristToHeight;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 import org.wfrobotics.robot.config.LiftHeight;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
@@ -37,7 +38,10 @@ public class ModeScale extends CommandGroup
 
         // Travel to first scale
         addSequential(new DriveDistance(12.0 * 12.5 - 29.1));
-        addSequential(new SynchronizedCommand(new DriveDistance(12.0 * 12.0), new LiftToScale()));
+        addSequential(new SynchronizedCommand(new Command[] {
+            new DriveDistance(12.0 * 12.0),
+            new LiftToScale(),
+        }));
 
         // -------------- Common --------------
 
@@ -62,10 +66,16 @@ public class ModeScale extends CommandGroup
 
         // Travel to second scale
         addParallel(new WristToHeight(90.0));
-        addSequential(new SynchronizedCommand(new DriveDistance(-inchesToSecondCube), new DelayedCommand(new LiftToHeight(LiftHeight.Scale.get()), 0.05)));
+        addSequential(new SynchronizedCommand(new Command[] {
+            new DriveDistance(-inchesToSecondCube),
+            new DelayedCommand(new LiftToHeight(LiftHeight.Scale.get()), 0.05)
+        }));
 
         // Score second cube
-        addSequential(new SynchronizedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0), new LiftToScale()));
+        addSequential(new SynchronizedCommand(new Command[] {
+            new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0),
+            new LiftToScale(),
+        }));
         addSequential(new WaitCommand(.1));
         addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
 

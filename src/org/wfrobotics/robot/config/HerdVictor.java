@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.config.robotConfigs;
+package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
@@ -47,9 +47,9 @@ public final class HerdVictor extends RobotConfig
 
         //                      Wrist
         // _________________________________________________________________________________
-        int kWristMax = 1310;  //(975.0 + 1310.0) / 2.0;
+        int kWristMax = 1100;
         int kWristCruiseVelocity = (int) (kWristMax * 0.975);
-        int kWristAcceleration = kWristCruiseVelocity;
+        int kWristAcceleration = (int) (kWristCruiseVelocity * 3.0);
 
         WRIST_CLOSED_LOOP = new ClosedLoopConfig("Wrist", new MasterConfig[] {
             new MasterConfig(21, false, false),

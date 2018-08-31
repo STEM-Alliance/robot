@@ -67,7 +67,7 @@ public final class RobotState extends RobotStateBase
             IO.getInstance().setRumble(now - timeSinceRumbleOn < 1.0);
             if (now - timeSinceRumbleOn < kHasCubeSignalDriveTeamDuration)
             {
-                Robot.leds.signalDriveTeam();
+                Robot.leds.signalDriveTeam();  // TODO latched boolean?
             }
             else
             {
@@ -78,7 +78,6 @@ public final class RobotState extends RobotStateBase
         else
         {
             IO.getInstance().setRumble(false);
-            Robot.leds.useRobotModeColor();
         }
     }
 

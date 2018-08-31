@@ -20,19 +20,20 @@ public class LiftOpenLoop extends Command
 
     protected void execute()
     {
+        final double liftHeight = state.liftHeightInches;
         double setpoint = Robot.controls.getLiftStick();
 
         if (Math.abs(setpoint) < deadbandPercent)
         {
             setpoint = 0.0;
         }
-        else if (state.liftHeightInches < LiftHeight.Intake.get() + 4.0 && setpoint < 0.0)
+        else if (liftHeight < LiftHeight.Intake.get() + 4.0 && setpoint < 0.0)
         {
             setpoint /= 4.0;
         }
-        else if (state.liftHeightInches > LiftHeight.Scale.get() - 4.0 && setpoint > 0.0)
+        else if (liftHeight > LiftHeight.Scale.get() - 0.5 && setpoint > 0.0)
         {
-            setpoint /= 4.0;
+            setpoint /= 3.0;
         }
         lift.setOpenLoop(setpoint);
     }
