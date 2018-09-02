@@ -28,14 +28,17 @@ public class LiftSubsystem extends EnhancedSubsystem
 {
     private static final int kTicksToTop = 27000;
     private static final double kTicksPerInch = kTicksToTop / 38.0;
-    private static final double kFeedForwardHasCube = 0.0;   // TODO Tune me
-    private static final double kFeedForwardNoCube = 0.15;  // TODO Try increasing to make more buoyant
+    private static final double kFeedForwardHasCube = 0.25;  // TODO Keep track even if we tilt wrist
+    private static final double kFeedForwardNoCube = 0.20;  // TODO Try increasing to make more buoyant
     private static final double kInchesGroundToZero = LiftHeight.Intake.get();
     private static final int kTickRateBrakeMode = 500;
     private final int kSlotUp, kSlotDown;
     private final boolean kTuning;
 
-    private static LiftSubsystem instance = null;
+    static class SingletonHolder
+    {
+        static LiftSubsystem instance = new LiftSubsystem();
+    }
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX master;
     private final BaseMotorController follower;
@@ -46,12 +49,12 @@ public class LiftSubsystem extends EnhancedSubsystem
     private LiftSubsystem()
     {
         RobotConfig config = RobotConfig.getInstance();
-        kTuning = config.LIFT_DEBUG;
+        kTuning = config.kLiftTuning;
         kSlotUp = config.LIFT_CLOSED_LOOP.gains.get(0).kSlot;
         kSlotDown = config.LIFT_CLOSED_LOOP.gains.get(1).kSlot;
 
         master = TalonFactory.makeClosedLoopTalon(config.LIFT_CLOSED_LOOP).get(0);
-        master.setSelectedSensorPosition(config.LIFT_TICKS_STARTING, 0, 100);
+        master.setSelectedSensorPosition(config.kLiftTicksStartup, 0, 100);
         master.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 100);
         master.configVelocityMeasurementWindow(1, 100);  // TODO Changed to small value. Is okay?
         master.configNeutralDeadband(0.1, 100);
@@ -74,11 +77,7 @@ public class LiftSubsystem extends EnhancedSubsystem
 
     public static LiftSubsystem getInstance()
     {
-        if (instance == null)
-        {
-            instance = new LiftSubsystem();
-        }
-        return instance;
+        return SingletonHolder.instance;  // TODO Test if this worked. If so, look into protected member in superclass?
     }
 
     public void initDefaultCommand()
@@ -89,7 +88,15 @@ public class LiftSubsystem extends EnhancedSubsystem
     public void updateSensors()
     {
         zeroIfAtLimit();
+
+        // TODO Cache sensors in private class?
+
         state.updateLift(getInchesOffGround(), !onTarget());
+    }
+
+    public void periodic()
+    {
+        //        System.out.println("Lift Periodic(), test me");
     }
 
     public void reportState()
@@ -181,8 +188,8 @@ public class LiftSubsystem extends EnhancedSubsystem
 
     private void setMotor(ControlMode mode, double val)
     {
-        final double feedforward = (state.robotHasCube) ? kFeedForwardHasCube : kFeedForwardNoCube;
-        // TODO If height is zero, no ff to save battery?
+        final double antigravity= (state.robotHasCube) ? kFeedForwardHasCube : kFeedForwardNoCube;
+        final double feedforward = (state.liftHeightInches > kInchesGroundToZero) ? antigravity : 0.0;
 
         master.set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
     }

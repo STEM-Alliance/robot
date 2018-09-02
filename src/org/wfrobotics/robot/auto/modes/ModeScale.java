@@ -1,14 +1,17 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.auto.modes;
 
 import java.util.function.DoubleSupplier;
 
-import org.wfrobotics.reuse.commands.decorator.DelayedCommand;
-import org.wfrobotics.reuse.commands.decorator.SynchronizedCommand;
 import org.wfrobotics.reuse.commands.drive.BufferDistanceToObject;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
+import org.wfrobotics.reuse.commands.wrapper.DelayedCommand;
+import org.wfrobotics.reuse.commands.wrapper.SynchronizedCommand;
 import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.auto.IntakeSet;
+import org.wfrobotics.robot.auto.JawsSet;
+import org.wfrobotics.robot.auto.LiftToScale;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
@@ -48,7 +51,7 @@ public class ModeScale extends CommandGroup
         // Score first scale
         addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
         addSequential(new WaitCommand(.1));
-        addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
+        addSequential(new IntakeSet(speedOuttake, timeOuttake));
 
         // Reset
         addParallel(new WristToHeight(90.0));
@@ -77,7 +80,7 @@ public class ModeScale extends CommandGroup
             new LiftToScale(),
         }));
         addSequential(new WaitCommand(.1));
-        addSequential(new IntakeSet(speedOuttake, timeOuttake, true));
+        addSequential(new IntakeSet(speedOuttake, timeOuttake));
 
         // Reset
         addSequential(new TurnToHeading((location == POSITION.RIGHT) ? 20 : -20, 1.0));

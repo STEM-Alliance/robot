@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.auto.modes;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.DriveOff;

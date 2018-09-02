@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.robot.auto.MatchState2018.Side;
+import org.wfrobotics.robot.config.MatchState2018;
+import org.wfrobotics.robot.config.MatchState2018.Side;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;

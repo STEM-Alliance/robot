@@ -10,12 +10,9 @@ public class IntakeSet extends Command
     private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
     private final double speed;
 
-    public IntakeSet(double percentageOutward, double timeout, boolean blockIntake)
+    public IntakeSet(double percentageOutward, double timeout)
     {
-        if (blockIntake)  // Don't allow SmartIntake to override this autonomous command
-        {
-            requires(intake);
-        }
+        requires(intake);
         speed = percentageOutward;
         setTimeout(timeout);
     }

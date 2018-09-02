@@ -29,7 +29,7 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
 {
     private final double kDistanceMaxIn;
     private final double kDistanceSensorPluggedIn = 3000.0;  // TODO Tune me
-    private final double kTimeoutHorizontal;
+    private final double kJawsTimeout;
 
     private static IntakeSubsystem instance = null;
     private final RobotState state = RobotState.getInstance();
@@ -48,27 +48,27 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
         final int bufferSize = 3;
         final double doesntHaveCubeDistance = 9999.0;  // Otherwise buffer initially filled with valid value
 
-        kDistanceMaxIn = config.INTAKE_DISTANCE_TO_CUBE;
-        kTimeoutHorizontal = config.INTAKE_TIMEOUT_WRIST;
+        kDistanceMaxIn = config.kIntakeDistanceToCube;
+        kJawsTimeout = config.kJawsTimeoutSeconds;
 
-        master = TalonFactory.makeTalon(config.CAN_INTAKE_RIGHT);
-        TalonFactory.configOpenLoopOnly(master);
+        master = TalonFactory.makeTalon(config.kIntakeAddressR);
         master.setNeutralMode(NeutralMode.Brake);
-        master.setInverted(config.INTAKE_INVERT_RIGHT);
+        master.setInverted(config.kIntakeInvertR);
         master.configOpenloopRamp(.25, 10);
         TalonFactory.configCurrentLimiting(master, 10, 30, 100);
+        TalonFactory.configOpenLoopOnly(master);
 
-        follower = TalonFactory.makeFollowerTalon(config.CAN_INTAKE_LEFT, master);
+        follower = TalonFactory.makeFollowerTalon(config.kIntakeAddressL, master);
         follower.setNeutralMode(NeutralMode.Brake);
-        follower.setInverted(config.INTAKE_INVERT_LEFT);
+        follower.setInverted(config.kIntakeInvertL);
 
-        cylinders = new DoubleSolenoid(config.CAN_PNEUMATIC_CONTROL_MODULE, config.PNEUMATIC_INTAKE_HORIZONTAL_FORWARD, config.PNEUMATIC_INTAKE_HORIZONTAL_REVERSE);
+        cylinders = new DoubleSolenoid(config.kPCMAddress, config.kIntakeSolenoidF, config.kIntakeSolenoidR);
 
-        distanceSensor = new SharpDistance(config.INTAKE_SENSOR_R);
+        distanceSensor = new SharpDistance(config.kIntakeInfrared);
         buffer = new CircularBuffer(bufferSize, doesntHaveCubeDistance);
 
         // Force defined states
-        lastJawsChangedTime = Timer.getFPGATimestamp() - config.INTAKE_TIMEOUT_WRIST * 1.01;
+        lastJawsChangedTime = Timer.getFPGATimestamp() - config.kJawsTimeoutSeconds * 1.01;
         lastJawsState = true;
         latestDistance = doesntHaveCubeDistance;
         setJaws(!lastJawsState);
@@ -127,7 +127,7 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
     public boolean setJaws(boolean extendedOpen)
     {
         final double now = Timer.getFPGATimestamp();
-        final boolean delayedEnough = now - lastJawsChangedTime > kTimeoutHorizontal;
+        final boolean delayedEnough = now - lastJawsChangedTime > kJawsTimeout;
         final boolean different = extendedOpen != lastJawsState;
         boolean stateChanged = false;
 
@@ -143,7 +143,7 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
 
     private double getRawDistance()
     {
-        return distanceSensor.getDistanceInches() * 2.54 - kDistanceMaxIn;
+        return distanceSensor.getDistanceInches() - kDistanceMaxIn;
     }
 
     public boolean runFunctionalTest(boolean includeMotion)

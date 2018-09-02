@@ -18,6 +18,9 @@ public class SmartWrist extends Command
     protected void execute()
     {
         final double commanded = Robot.controls.getWristStick();
+
+        // TODO Need some sort of latched timeout since wrist stick overridden
+
         //        final boolean liftIsDownWithCube = Math.abs(state.liftHeightInches) < 1 && state.robotHasCube;
         //        final boolean movingFast = Math.abs(state.robotVelocity.getMag()) > 0.33;
         //

@@ -12,22 +12,27 @@ public class AutoLiftToBottom extends CommandGroup
 {
     private static final double kLiftRange = LiftHeight.Scale.get() - LiftHeight.Intake.get();
     private static final double kWristStowHeight = kLiftRange * 0.66 + LiftHeight.Intake.get();
-    private static final double kWristDownHeight = kLiftRange * 0.33 + LiftHeight.Intake.get();
+    private static final double kWristUnstowHeight = kLiftRange * 0.66 + LiftHeight.Intake.get();
 
     public AutoLiftToBottom()
     {
+        this(0.0);
+    }
+
+    public AutoLiftToBottom(double overrideWristDownAngle)
+    {
         this.addSequential(new IfLiftIsAbove(new WristToHeight(90.0), kWristStowHeight));
-        this.addParallel(new WristDownAfterHeight());
-        // TODO Try breaking into two heights if we slam into bottom lift stops
+        this.addParallel(new WristDownAfterHeight(overrideWristDownAngle));
+        this.addSequential(new LiftToHeight(LiftHeight.Intake.get() + 4.0));  // Gentler slamming
         this.addSequential(new LiftToHeight(LiftHeight.Intake.get()));
     }
 
-    private class WristDownAfterHeight extends CommandGroup
+    private class WristDownAfterHeight extends CommandGroup // TODO Make series command?
     {
-        public WristDownAfterHeight()
+        public WristDownAfterHeight(double angle)
         {
-            this.addSequential(new WaitForLiftHeight(kWristDownHeight, false));
-            this.addSequential(new WristToHeight(0.0));  // SLAM SLAM
+            this.addSequential(new WaitForLiftHeight(kWristUnstowHeight, false));
+            this.addSequential(new WristToHeight(angle));  // SLAM SLAM
         }
     }
 }

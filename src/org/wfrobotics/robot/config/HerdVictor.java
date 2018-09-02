@@ -12,18 +12,17 @@ public final class HerdVictor extends RobotConfig
 {
     public HerdVictor()
     {
-        //                      Intake
-        // _________________________________________________________________________________
-        INTAKE_SENSOR_R = 3;
+        // ------------------------ Intake ------------------------
 
-        INTAKE_DISTANCE_TO_CUBE = 16.6; // centimeters
-        INTAKE_TIMEOUT_JAWS = 0.5; // seconds
-        INTAKE_TIMEOUT_WRIST = 0.5; //seconds
-        INTAKE_INVERT_RIGHT = true;
-        INTAKE_INVERT_LEFT = true;
+        kIntakeInfrared = 3;
 
-        //                      Lift
-        // _________________________________________________________________________________
+        kIntakeDistanceToCube = 85.0;
+        kJawsTimeoutSeconds = 0.5; //seconds
+        kIntakeInvertR = true;
+        kIntakeInvertL = true;
+
+        // ------------------------- Lift -------------------------
+
         double kLiftMaxUp = 2200.0;  // DRL 3-19-18 First time different up and down gains
         int kLiftCruiseUp = (int) (kLiftMaxUp * 0.975);  // TODO Gain schedule down motion magics?
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 6.0);
@@ -39,14 +38,14 @@ public final class HerdVictor extends RobotConfig
             LimitSwitchNormal.NormallyClosed, LimitSwitchNormal.NormallyClosed
         };
 
-        //                      Winch
-        // _________________________________________________________________________________
-        WINCH = 22;
-        WINCH_INVERT = true;
-        WINCH_SPEED = 1.0;
+        // ------------------------ Winch -------------------------
 
-        //                      Wrist
-        // _________________________________________________________________________________
+        kWinchAddress = 22;
+        kWinchInvert = true;
+        kWinchSpeed = 1.0;
+
+        // ------------------------ Wrist -------------------------
+
         int kWristMax = 1100;
         int kWristCruiseVelocity = (int) (kWristMax * 0.975);
         int kWristAcceleration = (int) (kWristCruiseVelocity * 3.0);
@@ -57,7 +56,7 @@ public final class HerdVictor extends RobotConfig
             new Gains("Motion Magic", 0, 0.5, 0.00004, 0.0, 1023.0 / kWristMax, 0, kWristCruiseVelocity, kWristAcceleration),
         });
 
-        WRIST_DEADBAND = 0.1;
+        kWristDeadband = 0.1;
         WRIST_TICKS_TO_TOP = 5000;
     }
 
@@ -80,8 +79,8 @@ public final class HerdVictor extends RobotConfig
             //            new Gains("Path", 1, 0.07, 0.0, 0.315, 0, 35),
             new Gains("Path", 1, 100.00, 0.0, 0.0, 0, 0),
             new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
-            new Gains("Turn", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
-            // TODO Retune with increased turn derivative
+            new Gains("Turn", 0, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
+            // TODO Try upping turn acceleration
         });
 
         config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);

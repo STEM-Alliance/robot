@@ -6,9 +6,9 @@ import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.DriveOff;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.auto.AutoSide;
-import org.wfrobotics.robot.auto.ModeCenter;
-import org.wfrobotics.robot.auto.ModeSwitchCenter;
-import org.wfrobotics.robot.auto.ModeTestPathVelocity;
+import org.wfrobotics.robot.auto.modes.ModeCenter;
+import org.wfrobotics.robot.auto.modes.ModeScale2;
+import org.wfrobotics.robot.auto.modes.ModeSwitchCenter;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -48,7 +48,7 @@ public class Autonomous
             // TODO AutoMode as Command Group subclass, interface includes setDelay()?
 
             return new AutoMode[] {
-                new AutoMode("Test Path Velocity", () -> new ModeTestPathVelocity(), 0.0),
+                new AutoMode("Test Path Velocity", () -> new ModeScale2(), 0.0),
                 new AutoMode("Auto None", () -> new DriveOff(), 0.0),
                 new AutoMode("Center Switch", () -> new ModeSwitchCenter(), 0.0),
                 new AutoMode("New Center Path", () -> new ModeCenter(), 0.0),

@@ -1,11 +1,13 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.auto.modes;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.DrivePathPosition;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
-import org.wfrobotics.robot.auto.MatchState2018.Side;
+import org.wfrobotics.robot.auto.IntakeSet;
+import org.wfrobotics.robot.auto.SwitchChoice;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
+import org.wfrobotics.robot.config.MatchState2018.Side;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
@@ -16,7 +18,7 @@ public class ModeCenter extends CommandGroup
     {
         addParallel(new WristToHeight(90.0));
         addSequential(new SwitchChoice(Side.Right, new DrivePathPosition("CenterRight"), new DrivePathPosition("CenterLeft")));
-        addSequential(new IntakeSet(1.0, 0.5, true));  // Yes, 1.0 outtake is good here
+        addSequential(new IntakeSet(1.0, 0.5));  // Yes, 1.0 outtake is good here
 
         oneCube();
         //        twoCube();
@@ -43,7 +45,7 @@ public class ModeCenter extends CommandGroup
 
         // Third path to the switch
         addSequential(new SwitchChoice(Side.Right, new DrivePathPosition("CenterRightThird"), new WaitCommand(3.0)));
-        addSequential(new IntakeSet(1.0, 0.5, true));
+        addSequential(new IntakeSet(1.0, 0.5));
         addSequential(new SwitchChoice(Side.Right, new TurnToHeading(90.0, 2.0), new TurnToHeading(-90.0, 2.0)));
     }
 }

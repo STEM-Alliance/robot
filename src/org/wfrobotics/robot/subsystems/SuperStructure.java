@@ -17,7 +17,7 @@ public class SuperStructure extends SuperStructureBase
     {
         if (instance == null)
         {
-            instance = new SuperStructure(RobotConfig.getInstance().CAN_PNEUMATIC_CONTROL_MODULE);
+            instance = new SuperStructure(RobotConfig.getInstance().kPCMAddress);
         }
         return instance;
     }

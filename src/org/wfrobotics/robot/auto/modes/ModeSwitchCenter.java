@@ -1,8 +1,10 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.auto.modes;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
-import org.wfrobotics.robot.auto.MatchState2018.Side;
+import org.wfrobotics.robot.auto.IntakeSet;
+import org.wfrobotics.robot.auto.SwitchChoice;
+import org.wfrobotics.robot.config.MatchState2018.Side;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -22,7 +24,7 @@ public class ModeSwitchCenter extends CommandGroup
         addSequential(new TurnToHeading(0.0, tol));
         //        addSequential(new DriveIntakeSensors(0.0, 1.0));
         addSequential(new DriveDistance(15.0));
-        addSequential(new IntakeSet(0.4, 0.5, true));
+        addSequential(new IntakeSet(0.4, 0.5));
 
         // Get Around Switch
         addSequential(new DriveDistance(-12.0));

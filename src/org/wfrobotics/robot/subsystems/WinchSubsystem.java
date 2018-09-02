@@ -26,13 +26,13 @@ public class WinchSubsystem extends Subsystem implements Testable
     private WinchSubsystem()
     {
         RobotConfig config = RobotConfig.getInstance();
-        motor = TalonFactory.makeTalon(config.WINCH);
+        motor = TalonFactory.makeTalon(config.kWinchAddress);
+        motor.setInverted(config.kWinchInvert);
+        motor.setNeutralMode(NeutralMode.Brake);
+        TalonFactory.configCurrentLimiting(motor, 25, 35, 200);  // TODO Added this, is okay?
         TalonFactory.configOpenLoopOnly(motor);
         motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);  // Responsiveness non-critical
         motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, 100);  // TODO Okay to slow down?
-        motor.setInverted(config.WINCH_INVERT);
-        motor.setNeutralMode(NeutralMode.Brake);
-        TalonFactory.configCurrentLimiting(motor, 25, 35, 200);  // TODO Added this, is okay?
     }
 
     public static WinchSubsystem getInstance()
