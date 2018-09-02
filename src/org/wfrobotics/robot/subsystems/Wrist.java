@@ -44,18 +44,18 @@ public class Wrist extends EnhancedSubsystem
     {
         RobotConfig config = RobotConfig.getInstance();
         kTicksToTop = config.WRIST_TICKS_TO_TOP;
-        kTuning = config.WRIST_TUNING;
+        kTuning = config.kWinchTuning;
 
         motor = TalonFactory.makeClosedLoopTalon(config.WRIST_CLOSED_LOOP).get(0);
         motor.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
-        motor.configNeutralDeadband(config.WRIST_DEADBAND, 100);
+        motor.configNeutralDeadband(config.kWristDeadband, 100);
         motor.configOpenloopRamp(.1, 10);
         motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 100);
         motor.configVelocityMeasurementWindow(1, 100);
+        TalonFactory.configCurrentLimiting(motor, 20, 40, 200);  // Adding with high numbers just in case
         motor.setControlFramePeriod(ControlFrame.Control_3_General, 100);  // Slow down, wrist responsiveness not critical
         motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 100);  // Faster limit switches
         motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 100);  // Slow down, doesn't make decisions off this
-        TalonFactory.configCurrentLimiting(motor, 20, 40, 200);  // Adding with high numbers just in case
         TalonFactory.configFastErrorReporting(motor, kTuning);
         // TODO Try configAllowableClosedloopError()
         // TODO Try using Status_10_MotionMagic to improve motion?

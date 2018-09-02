@@ -25,6 +25,12 @@ public class LiftToHeight extends Command
 
     protected boolean isFinished()
     {
-        return Math.abs(state.liftHeightInches - desired) < 0.5 || Math.abs(Robot.controls.getLiftStick()) > .15;
+        final boolean isClose = Math.abs(state.liftHeightInches - desired) < 1.0;
+        return isClose || Robot.controls.isLiftOverrideRequested();
+    }
+
+    protected void end()
+    {
+        lift.setOpenLoop(0.0);  // In autonomous, this holds the current position
     }
 }

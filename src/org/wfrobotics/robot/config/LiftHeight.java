@@ -4,6 +4,7 @@ package org.wfrobotics.robot.config;
 public enum LiftHeight
 {
     Scale(46.0),
+    // TODO Switch
     Intake(12.00);  // Minimum valid height
 
     private final double value;

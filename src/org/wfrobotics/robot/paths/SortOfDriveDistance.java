@@ -8,13 +8,13 @@ import org.wfrobotics.reuse.math.geometry.Pose2d;
 import org.wfrobotics.reuse.math.geometry.Rotation2d;
 import org.wfrobotics.reuse.math.geometry.Translation2d;
 import org.wfrobotics.reuse.config.PathContainer;
-import org.wfrobotics.reuse.subsystems.control.PathAdaptive;
+import org.wfrobotics.reuse.subsystems.control.Path;
 import org.wfrobotics.reuse.subsystems.drive.TankMaths;
 import org.wfrobotics.robot.config.RobotConfig;
 
 public class SortOfDriveDistance implements PathContainer
 {
-    public PathAdaptive buildPath()
+    public Path buildPath()
     {
         double velocity = TankMaths.ticksToInchesPerSecond(RobotConfig.getInstance().getTankConfig().VELOCITY_MAX);
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();

@@ -1,9 +1,12 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
-import org.wfrobotics.robot.auto.MatchState2018.Side;
+import org.wfrobotics.robot.auto.modes.ModeOppisitScalse;
+import org.wfrobotics.robot.auto.modes.ModeScale;
 import org.wfrobotics.robot.commands.lift.AutoZero;
+import org.wfrobotics.robot.config.MatchState2018;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
+import org.wfrobotics.robot.config.MatchState2018.Side;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 

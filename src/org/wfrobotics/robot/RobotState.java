@@ -3,6 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageTargets;
 import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public final class RobotState extends RobotStateBase
 {
     private static final int kHasCubeCountThreshold = 20;
+    private final double kIntakeDistanceHasCube;
     private static final double kHasCubeSignalDriveTeamDuration = 2.0;
     private static final RobotState instance = new RobotState();
     private int hasCubeCounts;
@@ -23,6 +25,11 @@ public final class RobotState extends RobotStateBase
     public double intakeDistanceToCube;
     public double liftHeightInches;
     public double wristAngleDegrees;
+
+    public RobotState()
+    {
+        kIntakeDistanceHasCube = RobotConfig.getInstance().kIntakeDistanceToCube;
+    }
 
     public static RobotState getInstance()
     {
@@ -96,7 +103,7 @@ public final class RobotState extends RobotStateBase
     {
         intakeDistanceToCube = cubeDistanceInches;
 
-        if (intakeDistanceToCube < 13.0)
+        if (intakeDistanceToCube < kIntakeDistanceHasCube)
         {
             hasCubeCounts++;
         }

@@ -10,9 +10,13 @@ public class AutoLiftToScale extends CommandGroup
 {
     public AutoLiftToScale()
     {
+        this(0.0);
+    }
 
+    public AutoLiftToScale(double belowScaleHeight)
+    {
+        // TODO Wrist more vertical during the middle of the motion
         this.addParallel((new WristToHeight(50.0)));  // Keep cube level to prevent slippage
-        this.addSequential(new LiftToHeight(LiftHeight.Scale.get()));
-        // TODO Delay level out wrist once up with Command that waits for state?
+        this.addSequential(new LiftToHeight(LiftHeight.Scale.get() - belowScaleHeight));
     }
 }

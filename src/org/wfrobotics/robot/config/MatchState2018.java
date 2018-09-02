@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.config;
 
 import java.util.regex.Pattern;
 

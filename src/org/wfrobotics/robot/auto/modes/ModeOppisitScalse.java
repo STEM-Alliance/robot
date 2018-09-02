@@ -1,8 +1,9 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.auto.modes;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
+import org.wfrobotics.robot.auto.LiftToScale;
 import org.wfrobotics.robot.config.Autonomous.POSITION;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;

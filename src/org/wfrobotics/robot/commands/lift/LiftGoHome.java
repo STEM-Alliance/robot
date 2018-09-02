@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.commands.lift;
 
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -23,7 +24,8 @@ public class LiftGoHome extends Command
 
     protected boolean isFinished()
     {
-        return lift.hasZeroed() || isTimedOut() || lift.AtHardwareLimitTop();
+        final boolean override = Robot.controls.isLiftOverrideRequested();
+        return lift.hasZeroed() || isTimedOut() || lift.AtHardwareLimitTop() || override;
     }
 
     protected void end()
