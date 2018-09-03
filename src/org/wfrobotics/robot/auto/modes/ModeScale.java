@@ -49,13 +49,13 @@ public class ModeScale extends CommandGroup
         // -------------- Common --------------
 
         // Score first scale
-        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0));
+        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale));
         addSequential(new WaitCommand(.1));
         addSequential(new IntakeSet(speedOuttake, timeOuttake));
 
         // Reset
         addParallel(new WristToHeight(90.0));
-        addSequential(new DelayedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube, 1.0), .2)); // to find distance: x= 51 y= 73
+        addSequential(new DelayedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube), 1.0)); // to find distance: x= 51 y= 73
         addSequential(new WaitCommand(0.4));
         addParallel(new WristToHeight(0.0));
         addSequential(new LiftToHeight(LiftHeight.Intake.get()));
@@ -76,14 +76,14 @@ public class ModeScale extends CommandGroup
 
         // Score second cube
         addSequential(new SynchronizedCommand(new Command[] {
-            new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale, 1.0),
+            new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale),
             new LiftToScale(),
         }));
         addSequential(new WaitCommand(.1));
         addSequential(new IntakeSet(speedOuttake, timeOuttake));
 
         // Reset
-        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? 20 : -20, 1.0));
+        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? 20 : -20));
         addSequential(new LiftToHeight(LiftHeight.Intake.get()));
     }
 }

@@ -29,7 +29,7 @@ public class ModeCenter extends CommandGroup
         // Get away from wall
         addSequential(new DriveDistance(-12.0 * 1.0));
         addParallel(new WristToHeight(0.0));
-        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(-90.0, 1.5), new TurnToHeading(90.0, 1.5)));
+        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(-90.0), new TurnToHeading(90.0)));
     }
 
     public void twoCube()
@@ -46,6 +46,6 @@ public class ModeCenter extends CommandGroup
         // Third path to the switch
         addSequential(new SwitchChoice(Side.Right, new DrivePathPosition("CenterRightThird"), new WaitCommand(3.0)));
         addSequential(new IntakeSet(1.0, 0.5));
-        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(90.0, 2.0), new TurnToHeading(-90.0, 2.0)));
+        addSequential(new SwitchChoice(Side.Right, new TurnToHeading(90.0), new TurnToHeading(-90.0)));
     }
 }

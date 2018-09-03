@@ -25,7 +25,8 @@ public class LiftGoHome extends Command
     protected boolean isFinished()
     {
         final boolean override = Robot.controls.isLiftOverrideRequested();
-        return lift.hasZeroed() || isTimedOut() || lift.AtHardwareLimitTop() || override;
+        final boolean atLimit = lift.AtHardwareLimitBottom() || lift.AtHardwareLimitTop();
+        return atLimit || isTimedOut() || override;
     }
 
     protected void end()

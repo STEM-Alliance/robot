@@ -1,11 +1,14 @@
 package org.wfrobotics.robot.commands;
 
+import org.wfrobotics.reuse.commands.wrapper.SeriesCommand;
 import org.wfrobotics.robot.commands.lift.IfLiftIsAbove;
+import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
 import org.wfrobotics.robot.commands.lift.WaitForLiftHeight;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
 import org.wfrobotics.robot.config.LiftHeight;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoLiftToBottom extends CommandGroup
@@ -21,18 +24,13 @@ public class AutoLiftToBottom extends CommandGroup
 
     public AutoLiftToBottom(double overrideWristDownAngle)
     {
-        this.addSequential(new IfLiftIsAbove(new WristToHeight(90.0), kWristStowHeight));
-        this.addParallel(new WristDownAfterHeight(overrideWristDownAngle));
-        this.addSequential(new LiftToHeight(LiftHeight.Intake.get() + 4.0));  // Gentler slamming
-        this.addSequential(new LiftToHeight(LiftHeight.Intake.get()));
-    }
-
-    private class WristDownAfterHeight extends CommandGroup // TODO Make series command?
-    {
-        public WristDownAfterHeight(double angle)
-        {
-            this.addSequential(new WaitForLiftHeight(kWristUnstowHeight, false));
-            this.addSequential(new WristToHeight(angle));  // SLAM SLAM
-        }
+        addSequential(new IfLiftIsAbove(new WristToHeight(90.0), kWristStowHeight));
+        addParallel(new SeriesCommand(new Command[] {
+            new WaitForLiftHeight(kWristUnstowHeight, false),
+            new WristToHeight(overrideWristDownAngle),  // SLAM SLAM
+        }));
+        addSequential(new LiftToHeight(LiftHeight.Intake.get() + 4.0));  // Gentler slamming
+        addSequential(new LiftToHeight(LiftHeight.Intake.get()));
+        addSequential(new LiftGoHome(-0.25, 0.4));  // Anything the command didn't let the PID finish
     }
 }

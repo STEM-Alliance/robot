@@ -13,6 +13,7 @@ import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.MatchState2018;
+import org.wfrobotics.robot.paths.TrajectoryGenerator;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.SuperStructure;
@@ -42,6 +43,8 @@ public final class Robot extends IterativeRobot
     public void robotInit()
     {
         winch = WinchSubsystem.getInstance();  // TODO Can we remove?
+
+        TrajectoryGenerator.getInstance().generateTrajectories();
 
         controls = IO.getInstance();  // Initialize IO after subsystems
         DashboardView.startPerformanceCamera();
@@ -91,6 +94,7 @@ public final class Robot extends IterativeRobot
     @Override
     public void testInit()
     {
+        if (autonomousCommand != null) autonomousCommand.cancel();
         boolean result = true;
 
         ConsoleLogger.getInstance().reportState();  // flush
