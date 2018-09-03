@@ -24,9 +24,9 @@ public class ModeOppisitScalse extends CommandGroup
         // Travel across field
         addSequential(new DriveDistance(12.0 * 8.5 + 2.25));
         addSequential(new DriveDistance(12.0 * 8.5 + 2.25));
-        addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0, 1.0));
+        addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0));
         addSequential(new WaitCommand(.1));
-        addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0, 1.0));
+        addSequential(new TurnToHeading((location == POSITION.LEFT) ? 90.0 : -90.0));
         addSequential(new WaitCommand(.1));
 
         addSequential(new DriveDistance((12.0 * 8.625) + 6));
@@ -35,7 +35,7 @@ public class ModeOppisitScalse extends CommandGroup
         addSequential(new WaitCommand(.1));
 
         // Travel to first scale common location
-        addSequential(new TurnToHeading(0, 1));
+        addSequential(new TurnToHeading(0));
         addSequential(new WaitCommand(.2));
         //        addSequential(new SynchronizedCommand(new DriveDistance((12.0 * 3) - .25), new LiftToScale()));
         addSequential(new LiftToScale());

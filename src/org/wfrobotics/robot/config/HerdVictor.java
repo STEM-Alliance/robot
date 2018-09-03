@@ -76,11 +76,11 @@ public final class HerdVictor extends RobotConfig
             new MasterConfig(16, true, true, new FollowerConfig(14, true)),
         }, new Gains[] {
             new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
-            //            new Gains("Path", 1, 0.07, 0.0, 0.315, 0, 35),
             new Gains("Path", 1, 100.00, 0.0, 0.0, 0, 0),
             new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
-            new Gains("Turn", 0, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
-            // TODO Try upping turn acceleration
+            // TODO Figure out if high acceleration > high PID?
+            new Gains("Turn", 3, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
+            //            new Gains("Turn", 3, 1.0, 0.001, 4.5, 1023.0 / config.VELOCITY_MAX, 20, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 3.0)),
         });
 
         config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);
