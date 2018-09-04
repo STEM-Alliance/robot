@@ -79,8 +79,9 @@ public final class HerdVictor extends RobotConfig
             new Gains("Path", 1, 100.00, 0.0, 0.0, 0, 0),
             new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
             // TODO Figure out if high acceleration > high PID?
-            new Gains("Turn", 3, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
-            //            new Gains("Turn", 3, 1.0, 0.001, 4.5, 1023.0 / config.VELOCITY_MAX, 20, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 3.0)),
+            // TODO Turning PID only works if slot < 2. Thought there were 4??? Is it aux only?
+            new Gains("Turn", 0, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
+            //            new Gains("Turn", 0, 1.0, 0.001, 9.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 2.0)),
         });
 
         config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);
