@@ -5,6 +5,7 @@ import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Pull in the cube purely based on sensors */
 public class SmartIntake extends CommandGroup
@@ -15,9 +16,6 @@ public class SmartIntake extends CommandGroup
     protected final RobotState state = RobotState.getInstance();
     protected final IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
-    protected boolean doingPulse;
-    protected double timeUntilPulse;
-
     /**
      * This command gets the distance from the subsystem and based on that distance
      * drive the motors at different speeds
@@ -27,23 +25,12 @@ public class SmartIntake extends CommandGroup
         requires(intake);
     }
 
-    protected void initialize()
-    {
-        doingPulse = false;
-        timeUntilPulse = -1.0;
-    }
-
     protected void execute()
     {
-        if (state.liftHeightInches < 1.0 && state.wristAngleDegrees < 5.0)
+        if (state.liftHeightInches < 13.0 && state.wristAngleDegrees < 5.0)
         {
             double distanceToCube = state.intakeDistanceToCube;
 
-            if (!doingPulse)
-            {
-                timeUntilPulse = 0.5;
-                doingPulse = true;
-            }
             autoIntake(distanceToCube);
             autoJaws(distanceToCube);
         }
@@ -61,17 +48,20 @@ public class SmartIntake extends CommandGroup
     private void autoIntake(double distanceToCube)
     {
         double speed = 0.0;
-
+        SmartDashboard.putNumber("autoIntake something", 0);
         if (distanceToCube < kCubeInDeadband)
         {
+            SmartDashboard.putNumber("autoIntake something", 1);
             intake.setIntake(0);
         }
-        if (distanceToCube < kCubeIn && distanceToCube > kCubeInDeadband)
+        else if (distanceToCube < kCubeIn && distanceToCube > kCubeInDeadband)
         {
+            SmartDashboard.putNumber("autoIntake something", 2);
             speed = -Util.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 0.7);
         }
-        else if (distanceToCube > kCubeIn && distanceToCube < 50)  // TODO Need to move sensor, otherwise we stall motors
+        else if (distanceToCube > kCubeIn && distanceToCube < 50/2.54)  // TODO Need to move sensor, otherwise we stall motors
         {
+            SmartDashboard.putNumber("autoIntake something", 3);
             speed = -0.7;
         }
 
@@ -83,11 +73,11 @@ public class SmartIntake extends CommandGroup
 
     private void autoJaws(double distanceToCube)
     {
-        if (distanceToCube < 30)
+        if (distanceToCube < 30/2.54)
         {
             intake.setJaws(false);  // Can't always set, otherwise we chatter?
         }
-        else if (distanceToCube > 30 && distanceToCube < 60)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
+        else if (distanceToCube > 30/2.54 && distanceToCube < 60/2.54)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
         {
             intake.setJaws(true);
         }
