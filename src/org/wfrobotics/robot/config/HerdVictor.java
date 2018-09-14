@@ -16,7 +16,7 @@ public final class HerdVictor extends RobotConfig
 
         kIntakeInfrared = 3;
 
-        kIntakeDistanceToCube = 85.0;
+        kIntakeDistanceToCube = 6.5;
         kJawsTimeoutSeconds = 0.5; //seconds
         kIntakeInvertR = true;
         kIntakeInvertL = true;
@@ -75,12 +75,11 @@ public final class HerdVictor extends RobotConfig
             new MasterConfig(15, false, true, new FollowerConfig(17, true)),
             new MasterConfig(16, true, true, new FollowerConfig(14, true)),
         }, new Gains[] {
-            new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
-            new Gains("Path", 1, 100.00, 0.0, 0.0, 0, 0),
-            new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
+            new Gains("Velocity", 0, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
+            new Gains("Turn", 1, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
+            new Gains("Motion Magic", 2, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
             // TODO Figure out if high acceleration > high PID?
             // TODO Turning PID only works if slot < 2. Thought there were 4??? Is it aux only?
-            new Gains("Turn", 0, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
             //            new Gains("Turn", 0, 1.0, 0.001, 9.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 2.0)),
         });
 

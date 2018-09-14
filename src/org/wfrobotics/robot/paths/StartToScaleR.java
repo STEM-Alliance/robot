@@ -24,6 +24,14 @@ public class StartToScaleR implements PathContainer {
         sWaypoints.add(new Waypoint(300,85,0,60));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);
+
+        //        List<Pose2d> poses = Arrays.asList(new Pose2d[]{
+        //            new Pose2d(0, 50, Rotation2d.fromDegrees(0)),
+        //            new Pose2d(150, 50, Rotation2d.fromDegrees(0)),
+        //            new Pose2d(300, 85, Rotation2d.fromDegrees(12)),
+        //        });
+        //
+        //        return PathBuilder.buildPathFromPoses(poses, velocity, velocity/2);
     }
 
     @Override

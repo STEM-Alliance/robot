@@ -1,89 +1,75 @@
 package org.wfrobotics.robot.auto.modes;
 
-import java.util.function.DoubleSupplier;
-
-import org.wfrobotics.reuse.commands.drive.BufferDistanceToObject;
-import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.DriveOff;
+import org.wfrobotics.reuse.commands.drive.DrivePath;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
-import org.wfrobotics.reuse.commands.driveconfig.GyroZero;
-import org.wfrobotics.reuse.commands.wrapper.DelayedCommand;
+import org.wfrobotics.reuse.commands.driveconfig.ResetPose;
+import org.wfrobotics.reuse.commands.wait.WaitUntilAcrossX;
+import org.wfrobotics.reuse.commands.wrapper.SeriesCommand;
 import org.wfrobotics.reuse.commands.wrapper.SynchronizedCommand;
-import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.reuse.config.PathContainer;
 import org.wfrobotics.robot.auto.IntakeSet;
-import org.wfrobotics.robot.auto.JawsSet;
-import org.wfrobotics.robot.auto.LiftToScale;
+import org.wfrobotics.robot.commands.AutoLiftToBottom;
+import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
-import org.wfrobotics.robot.commands.lift.LiftGoHome;
-import org.wfrobotics.robot.commands.lift.LiftToHeight;
+import org.wfrobotics.robot.commands.lift.WaitForLiftHeight;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
-import org.wfrobotics.robot.config.Autonomous.POSITION;
-import org.wfrobotics.robot.config.LiftHeight;
+import org.wfrobotics.robot.paths.ScaleSecondCubeR;
+import org.wfrobotics.robot.paths.SecondCubeToScaleR;
+import org.wfrobotics.robot.paths.StartToScaleR;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class ModeScale extends CommandGroup
 {
-    private final DoubleSupplier intakeInfared = () -> RobotState.getInstance().getIntakeDistanceCM();
-    private final double angleToScale = -50; //-50
-    private final double angleToSecondCube = -145.0; //-145.06
-    private final double inchesToSecondCube = 72; //78
-    private final double speedOuttake = 0.35;
-    private final double timeOuttake = 0.5;
-    private final double waitForGyroToFullyZero = Double.MIN_VALUE;
+    static PathContainer path = new StartToScaleR();
+    static PathContainer path2 = new ScaleSecondCubeR();
+    static PathContainer path3 = new SecondCubeToScaleR();
 
-    public ModeScale(POSITION location)
+    // TODO Think paths malfunction without recreating them. Do this in disabledInit?
+    // TODO Create AutoModeBase from CommandGroup, recalc paths on auto select?
+
+    public ModeScale()
     {
-        // Setup
-        addSequential(new GyroZero());  // For teleop testing
-        addSequential(new WaitCommand(waitForGyroToFullyZero));
+        addSequential(new ResetPose(path));
+        // TODO Do autozeros?
 
         // Travel to first scale
-        addSequential(new DriveDistance(12.0 * 12.5 - 29.1));
-        addSequential(new SynchronizedCommand(new Command[] {
-            new DriveDistance(12.0 * 12.0),
-            new LiftToScale(),
+        addParallel(new SeriesCommand(new Command[] {
+            new WaitUntilAcrossX(50.0),
+            new WristToHeight(85.0),
+            new WaitUntilAcrossX(140.0),
+            new AutoLiftToScale(4.0),
+            new WaitUntilAcrossX(275.0),
+            new IntakeSet(0.34, 0.325),
+            new AutoLiftToBottom(),
         }));
-
-        // -------------- Common --------------
-
-        // Score first scale
-        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale));
-        addSequential(new WaitCommand(.1));
-        addSequential(new IntakeSet(speedOuttake, timeOuttake));
+        addSequential(new DrivePath(path));
 
         // Reset
-        addParallel(new WristToHeight(90.0));
-        addSequential(new DelayedCommand(new TurnToHeading((location == POSITION.RIGHT) ? angleToSecondCube : -angleToSecondCube), 1.0)); // to find distance: x= 51 y= 73
-        addSequential(new WaitCommand(0.4));
+        addSequential(new WaitForLiftHeight(20.0, false));
+        addSequential(new TurnToHeading(-150.0));
+
+        // Travel to second cube
         addParallel(new WristToHeight(0.0));
-        addSequential(new LiftToHeight(LiftHeight.Intake.get()));
-
-        // Acquire second cube
-        addParallel(new LiftGoHome(-0.2, 0.5));  // Ensure at smart intake height
-        addParallel(new JawsSet(true, 0.1, false));  // Prime smart intake
         addParallel(new SmartIntake());
-        addSequential(new BufferDistanceToObject(intakeInfared, 10.0, 89.0 + 4.5, 1.5, 3.0));  // DriveInfared
-        addSequential(new WaitCommand(.1));
+        addSequential(new DrivePath(path2));
 
-        // Travel to second scale
-        addParallel(new WristToHeight(90.0));
-        addSequential(new SynchronizedCommand(new Command[] {
-            new DriveDistance(-inchesToSecondCube),
-            new DelayedCommand(new LiftToHeight(LiftHeight.Scale.get()), 0.05)
-        }));
-
-        // Score second cube
-        addSequential(new SynchronizedCommand(new Command[] {
-            new TurnToHeading((location == POSITION.RIGHT) ? angleToScale : -angleToScale),
-            new LiftToScale(),
-        }));
-        addSequential(new WaitCommand(.1));
-        addSequential(new IntakeSet(speedOuttake, timeOuttake));
+        // Input second cube into scale
+        addParallel(new WristToHeight(85.0));  // TODO Does this fix oscillation?
+        addSequential(new TurnToHeading(0.0));  // TODO Start lifting with a WaitForHeading?
+        addSequential(new SynchronizedCommand(new DrivePath(path3), new AutoLiftToScale(4.0, 30.0)));
+        addSequential(new IntakeSet(0.34, 0.325));
 
         // Reset
-        addSequential(new TurnToHeading((location == POSITION.RIGHT) ? 20 : -20));
-        addSequential(new LiftToHeight(LiftHeight.Intake.get()));
+        addSequential(new AutoLiftToBottom());
+        addSequential(new WaitForLiftHeight(20.0, false));
+        addSequential(new TurnToHeading(-150.0));
+
+        // Travel to third cube
+        // TODO Drive a bit?
+
+        addSequential(new DriveOff());  // Observe robot state
     }
 }
