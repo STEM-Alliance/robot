@@ -8,6 +8,9 @@ import org.wfrobotics.reuse.subsystems.SubsystemRunner;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdater;
 import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
+import org.wfrobotics.reuse.subsystems.vision.CameraServer;
+import org.wfrobotics.reuse.subsystems.vision.VisionListener;
+import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.robot.config.Autonomous;
@@ -39,12 +42,23 @@ public final class Robot extends IterativeRobot
     public static IO controls;
     Command autonomousCommand;
 
+    public CameraServer visionServer = CameraServer.getInstance();
+
     @Override
     public void robotInit()
     {
         winch = WinchSubsystem.getInstance();  // TODO Can we remove?
 
+        visionServer.SetConfig(new VisionMessageConfig(0));
+        //        visionServer.SetConfig(new VisionMessageConfig(0,1, new ArrayList<>(Arrays.asList(new Boolean[] {true, true}))));
         TrajectoryGenerator.getInstance().generateTrajectories();
+
+        VisionListener listener = new VisionListener();
+        visionServer.AddListener(listener);
+
+
+        //        VisionProcessor processor = new VisionProcessor();
+        //        visionServer.AddListener(processor);
 
         controls = IO.getInstance();  // Initialize IO after subsystems
         DashboardView.startPerformanceCamera();
