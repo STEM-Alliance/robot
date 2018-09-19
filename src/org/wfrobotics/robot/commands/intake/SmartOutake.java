@@ -16,7 +16,7 @@ public class SmartOutake extends Command
 
     protected void execute()
     {
-        intake.setIntake(0.30);
+        intake.setMotors(0.30);
         if (timeSinceInitialized() > .2)
         {
             intake.setJaws(true);

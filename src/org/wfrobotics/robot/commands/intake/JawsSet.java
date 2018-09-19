@@ -1,34 +1,32 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /** Set the jaw solenoids open or closed to nom nom nom dat cube */
-public class IntakeSet extends Command
+public class JawsSet extends Command
 {
     private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
-    private final double speed;
+    private final boolean wantOpen;
 
-    public IntakeSet(double percentageOutward, double timeout)
+    public JawsSet(boolean open, double timeout, boolean blockIntake)
     {
-        requires(intake);
-        speed = percentageOutward;
+        if (blockIntake)  // Don't allow SmartIntake to override this autonomous command
+        {
+            requires(intake);
+        }
+        wantOpen = open;
         setTimeout(timeout);
     }
 
     protected void initialize()
     {
-        intake.setIntake(speed);
+        intake.setJaws(wantOpen);
     }
 
     protected boolean isFinished()
     {
         return isTimedOut();
-    }
-
-    protected void end()
-    {
-        intake.setIntake(0.0);
     }
 }

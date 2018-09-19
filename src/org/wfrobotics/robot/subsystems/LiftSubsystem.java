@@ -85,18 +85,13 @@ public class LiftSubsystem extends EnhancedSubsystem
         setDefaultCommand(new LiftZeroThenOpenLoop());
     }
 
-    public void updateSensors()
+    public void updateSensors(boolean isDisabled)
     {
         zeroIfAtLimit();
 
         // TODO Cache sensors in private class?
 
         state.updateLift(getInchesOffGround(), !onTarget());
-    }
-
-    public void periodic()
-    {
-        //        System.out.println("Lift Periodic(), test me");
     }
 
     public void reportState()

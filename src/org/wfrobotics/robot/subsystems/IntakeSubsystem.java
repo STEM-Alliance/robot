@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdate;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
+import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.config.RobotConfig;
@@ -88,10 +89,16 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
         setDefaultCommand(new SmartIntake());
     }
 
-    public void updateSensors()
+    public void updateSensors(boolean isDisabled)
     {
         latestDistance = buffer.getAverage();
         state.updateIntake(latestDistance);
+
+        if (isDisabled)
+        {
+            onBackgroundUpdate();  // Pump cube measurement for debugging sensor
+            testSensorPluggedIn(false);
+        }
     }
 
     public void reportState()
@@ -106,7 +113,7 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
 
     public void onBackgroundUpdate()
     {
-        buffer.addFirst(getRawDistance());
+        buffer.addFirst(rawDistance());
     }
 
     public boolean getJawsState()
@@ -116,12 +123,12 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
 
     public boolean isSensorPluggedIn()
     {
-        return getRawDistance() < kDistanceSensorPluggedIn;
+        return latestDistance < kDistanceSensorPluggedIn;
     }
 
-    public void setIntake(double percentageOutward)
+    public void setMotors(double percentageOut)
     {
-        master.set(ControlMode.PercentOutput, percentageOutward);
+        master.set(ControlMode.PercentOutput, percentageOut);
     }
 
     public boolean setJaws(boolean extendedOpen)
@@ -141,30 +148,47 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
         return stateChanged;
     }
 
-    private double getRawDistance()
+    private double rawDistance()
     {
         return distanceSensor.getDistanceInches() - kDistanceMaxIn;
+    }
+
+    private boolean testSensorPluggedIn(boolean printOnSuccess)
+    {
+        boolean sensorOkay = isSensorPluggedIn();
+        String msg = String.format("Infared distance sensor %s", (sensorOkay) ? "okay" : "not plugged in");
+        if (printOnSuccess)
+        {
+            System.out.println(msg);
+        }
+        else if (!sensorOkay)
+        {
+            ConsoleLogger.error(msg);
+        }
+        return sensorOkay;
     }
 
     public boolean runFunctionalTest(boolean includeMotion)
     {
         boolean result = true;
-        boolean sensorOkay;
 
-        System.out.println("Intake Test:");
+        System.out.println(String.format("%s Test:", this));
+        System.out.print(String.format("%s default command: %s", this, getDefaultCommandName()));
+        result &= getDefaultCommand().doesRequire(this);
+
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
         result &= TalonChecker.checkFrameRates(master);
+        result &= testSensorPluggedIn(true);
 
-        sensorOkay = isSensorPluggedIn();
-        System.out.println(String.format("Infared distance sensor %s", (sensorOkay) ? "okay" : "not plugged in"));
-        result &= sensorOkay;
+        if (includeMotion)
+        {
+            setMotors(0.3);
+            Timer.delay(0.75);
+            setMotors(0.0);
+        }
 
-        setIntake(0.3);
-        Timer.delay(0.75);
-        setIntake(0.0);
-
-        System.out.println(String.format("Intake Test: %s", (result) ? "SUCCESS" : "FAILURE"));
+        System.out.println(String.format("%s Test: %s", this, (result) ? "SUCCESS" : "FAILURE"));
         return result;
     }
 }

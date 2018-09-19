@@ -7,7 +7,6 @@ import org.wfrobotics.reuse.subsystems.vision.messages.VisionTargetInfo;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -56,8 +55,6 @@ public final class RobotState extends RobotStateBase
         SmartDashboard.putBoolean("Has Cube", robotHasCube);
         SmartDashboard.putNumber("Cube", intakeDistanceToCube);
         SmartDashboard.putNumber("Wrist Angle", wristAngleDegrees);
-        SmartDashboard.putNumber("Cube", intakeDistance);
-        SmartDashboard.putNumber("Wrist Angle", wristTicks);
 
         SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
         try {
