@@ -3,19 +3,19 @@ package org.wfrobotics.robot.commands;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
-import org.wfrobotics.robot.subsystems.WinchSubsystem;
+import org.wfrobotics.robot.subsystems.Winch;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Winch extends Command
+public class WinchOpenLoop extends Command
 {
-    private final WinchSubsystem winch;
+    private final Winch winch;
     private final IO io;
     private final double speed;
 
-    public Winch()
+    public WinchOpenLoop()
     {
-        winch = WinchSubsystem.getInstance();
+        winch = Winch.getInstance();
         io = Robot.controls;
         requires(winch);
         speed = RobotConfig.getInstance().kWinchSpeed;

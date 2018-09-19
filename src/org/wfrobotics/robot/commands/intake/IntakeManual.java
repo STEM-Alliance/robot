@@ -1,14 +1,14 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.subsystems.IntakeSubsystem;
+import org.wfrobotics.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /** Rocket League the intake wheels */
 public class IntakeManual extends Command
 {
-    protected final IntakeSubsystem intake = IntakeSubsystem.getInstance();
+    protected final Intake intake = Intake.getInstance();
 
     public IntakeManual()
     {

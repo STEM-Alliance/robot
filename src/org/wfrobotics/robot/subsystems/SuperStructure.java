@@ -5,15 +5,14 @@ import org.wfrobotics.robot.commands.ConserveCompressor;
 
 public class SuperStructure extends SuperStructureBase
 {
-    private static SuperStructure instance = null;
+    static class SingletonHolder
+    {
+        static SuperStructure instance = new SuperStructure();
+    }
 
     public static SuperStructure getInstance()
     {
-        if (instance == null)
-        {
-            instance = new SuperStructure();
-        }
-        return instance;
+        return SingletonHolder.instance;
     }
 
     protected void initDefaultCommand()

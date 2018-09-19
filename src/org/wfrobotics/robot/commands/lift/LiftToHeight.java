@@ -2,14 +2,14 @@ package org.wfrobotics.robot.commands.lift;
 
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.subsystems.LiftSubsystem;
+import org.wfrobotics.robot.subsystems.Lift;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class LiftToHeight extends Command
 {
     private final RobotState state = RobotState.getInstance();
-    private final LiftSubsystem lift = LiftSubsystem.getInstance();
+    private final Lift lift = Lift.getInstance();
     protected final double desired;
 
     public LiftToHeight(double desired)

@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands.lift;
 
-import org.wfrobotics.robot.subsystems.LiftSubsystem;
+import org.wfrobotics.robot.subsystems.Lift;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -14,6 +14,6 @@ public class AutoZero extends CommandGroup
 
     protected void end()
     {
-        LiftSubsystem.getInstance().setOpenLoop(0.0);
+        Lift.getInstance().setOpenLoop(0.0);
     }
 }

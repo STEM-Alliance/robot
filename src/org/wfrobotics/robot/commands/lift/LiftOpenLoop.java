@@ -3,7 +3,7 @@ package org.wfrobotics.robot.commands.lift;
 import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.LiftHeight;
-import org.wfrobotics.robot.subsystems.LiftSubsystem;
+import org.wfrobotics.robot.subsystems.Lift;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -11,7 +11,7 @@ public class LiftOpenLoop extends Command
 {
     private final double deadbandPercent = 0.1;
     private final RobotState state = RobotState.getInstance();
-    private final LiftSubsystem lift = LiftSubsystem.getInstance();
+    private final Lift lift = Lift.getInstance();
 
     public LiftOpenLoop()
     {
