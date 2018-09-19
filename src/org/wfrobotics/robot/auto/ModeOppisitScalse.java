@@ -1,8 +1,11 @@
-package org.wfrobotics.robot.auto.modes;
+package org.wfrobotics.robot.auto;
 
+import java.util.Arrays;
+
+import org.wfrobotics.reuse.commands.AutoMode;
+import org.wfrobotics.reuse.commands.config.ResetPose;
 import org.wfrobotics.reuse.commands.drive.DriveOff;
 import org.wfrobotics.reuse.commands.drive.DrivePath;
-import org.wfrobotics.reuse.commands.driveconfig.ResetPose;
 import org.wfrobotics.reuse.commands.wait.WaitUntilAcrossX;
 import org.wfrobotics.reuse.commands.wrapper.SeriesCommand;
 import org.wfrobotics.reuse.config.PathContainer;
@@ -10,16 +13,18 @@ import org.wfrobotics.robot.commands.wrist.WristToHeight;
 import org.wfrobotics.robot.paths.StartToOppositeScaleR;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class ModeOppisitScalse2 extends CommandGroup
+public class ModeOppisitScalse extends AutoMode
 {
     static PathContainer path = new StartToOppositeScaleR(); //TODO Switch to new path
     //static PathContainer path2 = new ScaleSecondCubeR(); //TODO Switch to new path
 
-    public ModeOppisitScalse2()
+    public ModeOppisitScalse()
     {
-        addSequential(new ResetPose(path));
+        // Reset
+        super(Arrays.asList(new Command[] {
+            new ResetPose(path),
+        }));
 
         // Travel to first scale
         addParallel(new SeriesCommand(new Command[] {

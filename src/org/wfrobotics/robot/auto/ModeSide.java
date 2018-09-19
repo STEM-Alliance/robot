@@ -1,22 +1,21 @@
 package org.wfrobotics.robot.auto;
 
+import org.wfrobotics.reuse.commands.AutoMode;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
-import org.wfrobotics.robot.auto.modes.ModeOppisitScalse;
-import org.wfrobotics.robot.auto.modes.ModeScale;
-import org.wfrobotics.robot.commands.lift.AutoZero;
-import org.wfrobotics.robot.config.Autonomous.POSITION;
 import org.wfrobotics.robot.config.MatchState2018;
 import org.wfrobotics.robot.config.MatchState2018.Side;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
-
-public class AutoSide extends CommandGroup
+public class ModeSide extends AutoMode
 {
+    public static enum POSITION {RIGHT, CENTER, LEFT};
+
     private final MatchState2018 state = MatchState2018.getInstance();
 
-    public AutoSide(POSITION location)
+    public ModeSide()
     {
-        addParallel(new AutoZero());
+        super(null);
+
+        POSITION location = POSITION.RIGHT;  // TODO
 
         if (state.Scale == Side.Unknown)
         {
@@ -28,7 +27,7 @@ public class AutoSide extends CommandGroup
         }
         else
         {
-            addSequential(new ModeOppisitScalse(location));
+            addSequential(new ModeOppisitScalse());
         }
     }
 

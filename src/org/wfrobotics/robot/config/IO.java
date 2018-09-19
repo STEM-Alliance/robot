@@ -1,16 +1,15 @@
 package org.wfrobotics.robot.config;
 
-import java.util.ArrayList;
-
 import org.wfrobotics.reuse.commands.SignalHumanPlayer;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
+import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
-import org.wfrobotics.reuse.config.Xbox.AXIS;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
-import org.wfrobotics.reuse.utilities.Testable;
-import org.wfrobotics.robot.auto.modes.ModeOppisitScalse2;
-import org.wfrobotics.robot.auto.modes.ModeScale;
+import org.wfrobotics.robot.auto.ModeOppisitScalse;
+import org.wfrobotics.robot.auto.ModeScale;
+import org.wfrobotics.robot.auto.SelectDelay;
+import org.wfrobotics.robot.auto.SelectMode;
 import org.wfrobotics.robot.commands.AutoLiftToBottom;
 import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
@@ -20,53 +19,54 @@ import org.wfrobotics.robot.commands.lift.LiftGoHome;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Button;
 
 /** Maps controllers to Commands **/
-public final class IO implements Testable
+public final class IO
 {
     private static IO instance = null;
-    private final ArrayList<Button> buttons = new ArrayList<Button>();  // Keep buttons instantiated
-    private final Joystick driverThrottle;
+    private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
     private final Joystick driverTurn;
     private final Xbox operator;
 
-    private IO(Joystick driverThrottle, Joystick driverTurn, Xbox operator)
+    private IO(HerdJoystick driverThrottle, Joystick driverTurn, Xbox operator)
     {
         this.driverThrottle = driverThrottle;
         this.driverTurn = driverTurn;
         this.operator = operator;
 
+        // ---------------------- Autonomous ----------------------
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, new SelectMode());
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, new SelectDelay());
+
         // ------------------------- Drive ------------------------
 
         // ------------------------ Intake ------------------------
 
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual()));
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle()));
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SmartOutake()));
+        ButtonFactory.makeButton(operator, Xbox.AXIS.RIGHT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual());
+        ButtonFactory.makeButton(operator, Xbox.AXIS.LEFT_TRIGGER, .1, TRIGGER.WHILE_HELD, new IntakeManual());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new JawsToggle());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SmartOutake());
 
         // ------------------------- Lift -------------------------
 
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new AutoLiftToScale()));
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new AutoLiftToBottom()));
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10)));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new AutoLiftToScale());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new AutoLiftToBottom());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new LiftGoHome(-.3, 10));
 
         // -------------------- Super Structure -------------------
 
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer()));
+        ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
 
         // ------------------------ Debug -------------------------
 
-        //        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeTestPathVelocity()));
-        //        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DrivePathTest(17.0 * 12.0, 0.0 * 12.0)));
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeScale()));
-        //        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TeleopPath(new StartToScaleR(), 4.0)));
-        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ModeOppisitScalse2()));
-        //        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(130.0)));
-        //        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TuningTrajectory()));
-        //        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.TOGGLE_WHEN_PRESSED, new BlinkInArea(60.0, 36.0, 36.0, 60.0)));
-        //        buttons.add(ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new CharacterizeDrivetrain()));
+        //        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeTestPathVelocity());
+        //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DrivePathTest(17.0 * 12.0, 0.0 * 12.0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeScale());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ModeOppisitScalse());
+        //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(130.0));
+        //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TuningTrajectory());
+        //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.TOGGLE_WHEN_PRESSED, new BlinkInArea(60.0, 36.0, 36.0, 60.0));
+        //        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new CharacterizeDrivetrain());
     }
 
     // ------------------- Robot-specific --------------------
@@ -88,19 +88,19 @@ public final class IO implements Testable
 
     public double getLiftStick()
     {
-        return operator.getAxis(AXIS.RIGHT_Y);
+        return operator.getAxis(Xbox.AXIS.RIGHT_Y);
     }
 
     public double getWinchPercent()
     {
-        int direction = operator.getDpad();
+        int val = operator.getDpad();
         double speed = 0.0;
 
-        if (direction == DPAD.UP.get() || direction == DPAD.UP_LEFT.get() || direction == DPAD.UP_RIGHT.get())
+        if (val == DPAD.UP.get() || val == DPAD.UP_LEFT.get() || val == DPAD.UP_RIGHT.get())
         {
             speed = 1.0;
         }
-        else if (direction == DPAD.DOWN.get() || direction == DPAD.DOWN_LEFT.get() || direction == DPAD.DOWN_RIGHT.get())
+        else if (val == DPAD.DOWN.get() || val == DPAD.DOWN_LEFT.get() || val == DPAD.DOWN_RIGHT.get())
         {
             speed = -1.0;
         }
@@ -119,7 +119,7 @@ public final class IO implements Testable
     {
         if (instance == null)
         {
-            instance = new IO(new Joystick(0), new Joystick(1), new Xbox(2));
+            instance = new IO(new HerdJoystick(0), new Joystick(1), new Xbox(2));
         }
         return instance;
     }
@@ -131,7 +131,8 @@ public final class IO implements Testable
 
     public double getTurn()
     {
-        return Math.signum(driverTurn.getRawAxis(0)) * Math.pow(driverTurn.getRawAxis(0), 2);
+        final double val = driverTurn.getRawAxis(0);
+        return Math.signum(val) * Math.pow(val, 2);  // TODO Remove?
     }
 
     public boolean getDriveQuickTurn()
@@ -144,12 +145,5 @@ public final class IO implements Testable
         float state = (rumble) ? 1 : 0;
         operator.setRumble(Hand.kLeft, state);
         operator.setRumble(Hand.kRight, state);
-    }
-
-    public boolean runFunctionalTest(boolean includeMotion)
-    {
-        // TODO Refactor button adding, then check if inputs contain unique targeted buttons
-
-        return false;
     }
 }

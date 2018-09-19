@@ -1,6 +1,5 @@
-package org.wfrobotics.robot.auto;
+package org.wfrobotics.robot.commands.lift;
 
-import org.wfrobotics.robot.commands.lift.LiftToHeight;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
 import org.wfrobotics.robot.config.LiftHeight;
 

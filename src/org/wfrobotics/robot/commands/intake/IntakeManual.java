@@ -24,7 +24,7 @@ public class IntakeManual extends Command
             speed *= 0.8;  // Slow cube out direction
         }
 
-        intake.setIntake(speed);
+        intake.setMotors(speed);
     }
 
     protected boolean isFinished()
@@ -34,6 +34,6 @@ public class IntakeManual extends Command
 
     protected void end()
     {
-        intake.setIntake(0);
+        intake.setMotors(0);
     }
 }

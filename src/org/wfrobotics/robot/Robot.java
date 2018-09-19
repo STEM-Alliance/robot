@@ -13,10 +13,10 @@ import org.wfrobotics.reuse.subsystems.vision.VisionListener;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
-import org.wfrobotics.robot.config.Autonomous;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.MatchState2018;
 import org.wfrobotics.robot.paths.TrajectoryGenerator;
+import org.wfrobotics.robot.subsystems.AutoRunner;
 import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 import org.wfrobotics.robot.subsystems.LiftSubsystem;
 import org.wfrobotics.robot.subsystems.SuperStructure;
@@ -25,9 +25,11 @@ import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 
-/** @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead */
+/**
+ * Robot: Victor - 2018
+ * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
+ * */
 public final class Robot extends IterativeRobot
 {
     private final BackgroundUpdater backgroundUpdater = BackgroundUpdater.getInstance();
@@ -35,12 +37,12 @@ public final class Robot extends IterativeRobot
     private final MatchState2018 matchState = MatchState2018.getInstance();
     private static TankSubsystem driveSubsystem = TankSubsystem.getInstance();
     private final SubsystemRunner subsystems = SubsystemRunner.getInstance();
+    private final AutoRunner auto = AutoRunner.getInstance();
 
-    public static WinchSubsystem winch;
+    private static WinchSubsystem winch;
 
     public static LEDs leds = new LEDs(9, PatternName.Yellow);
     public static IO controls;
-    Command autonomousCommand;
 
     public CameraServer visionServer = CameraServer.getInstance();
 
@@ -62,7 +64,6 @@ public final class Robot extends IterativeRobot
 
         controls = IO.getInstance();  // Initialize IO after subsystems
         DashboardView.startPerformanceCamera();
-        Autonomous.setupSelection();  // TODO Improve reliability
 
         subsystems.register(IntakeSubsystem.getInstance());
         subsystems.register(LiftSubsystem.getInstance());
@@ -83,14 +84,13 @@ public final class Robot extends IterativeRobot
         leds.setRobotMode(true);
         backgroundUpdater.start(true);
 
-        autonomousCommand =  Autonomous.getConfiguredCommand();
-        if (autonomousCommand != null) autonomousCommand.start();
+        auto.startMode();
     }
 
     @Override
     public void teleopInit()
     {
-        if (autonomousCommand != null) autonomousCommand.cancel();
+        auto.stopMode();
 
         leds.setRobotMode(false);
         backgroundUpdater.start(false);
@@ -99,17 +99,21 @@ public final class Robot extends IterativeRobot
     @Override
     public void disabledInit()
     {
+        auto.stopMode();
         driveSubsystem.log();
         backgroundUpdater.stop();
 
+        // TODO Remove if UpdateSensors(isDisabled) worked
         driveSubsystem.setBrake(false);
     }
 
     @Override
     public void testInit()
     {
-        if (autonomousCommand != null) autonomousCommand.cancel();
+        auto.stopMode();
         boolean result = true;
+
+        // TODO Pass SubsystemRunner a Supplier of robot-specific tests instead?
 
         ConsoleLogger.getInstance().reportState();  // flush
         System.out.println("-------------\nRobot Tests\n-------------");
@@ -120,6 +124,7 @@ public final class Robot extends IterativeRobot
         result &= IntakeSubsystem.getInstance().runFunctionalTest(true);
         result &= LiftSubsystem.getInstance().runFunctionalTest(true);
         result &= winch.runFunctionalTest(true);
+        result &= auto.runFunctionalTest(false);
         result &= SuperStructure.getInstance().runFunctionalTest(true);
         result &= leds.runFunctionalTest(result);
         ConsoleLogger.getInstance().reportState();
@@ -142,8 +147,9 @@ public final class Robot extends IterativeRobot
     @Override
     public void disabledPeriodic()
     {
-        matchState.update();
+        matchState.update();  // TODO Move to AutoSelector?
 
+        // TODO Remove some of these if UpdateSensors(isDisabled) worked
         driveSubsystem.zeroEncoders();
         driveSubsystem.setGyro(0.0);
         state.resetDriveState(Timer.getFPGATimestamp(), new Pose2d());
