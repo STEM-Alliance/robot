@@ -2,7 +2,7 @@ package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.reuse.math.Util;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.subsystems.IntakeSubsystem;
+import org.wfrobotics.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,7 +14,7 @@ public class SmartIntake extends CommandGroup
     private final double kCubeInDeadband = 1.25;
 
     protected final RobotState state = RobotState.getInstance();
-    protected final IntakeSubsystem intake = IntakeSubsystem.getInstance();
+    protected final Intake intake = Intake.getInstance();
 
     /**
      * This command gets the distance from the subsystem and based on that distance

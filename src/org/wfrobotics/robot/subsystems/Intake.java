@@ -26,13 +26,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * and an infared distance sensor for our automated SmartIntake
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpdate
+public class Intake extends EnhancedSubsystem implements BackgroundUpdate
 {
+    static class SingletonHolder
+    {
+        static Intake instance = new Intake();
+    }
+
+    public static Intake getInstance()
+    {
+        return SingletonHolder.instance;
+    }
+
     private final double kDistanceMaxIn;
     private final double kDistanceSensorPluggedIn = 3000.0;  // TODO Tune me
     private final double kJawsTimeout;
 
-    private static IntakeSubsystem instance = null;
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX master, follower;
     private final DoubleSolenoid cylinders;
@@ -43,7 +52,7 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
     private double lastJawsChangedTime;
     private double latestDistance;
 
-    private IntakeSubsystem()
+    private Intake()
     {
         final RobotConfig config = RobotConfig.getInstance();
         final int bufferSize = 3;
@@ -73,15 +82,6 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
         lastJawsState = true;
         latestDistance = doesntHaveCubeDistance;
         setJaws(!lastJawsState);
-    }
-
-    public static IntakeSubsystem getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new IntakeSubsystem();
-        }
-        return instance;
     }
 
     public void initDefaultCommand()
@@ -172,10 +172,7 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
     {
         boolean result = true;
 
-        System.out.println(String.format("%s Test:", this));
-        System.out.print(String.format("%s default command: %s", this, getDefaultCommandName()));
         result &= getDefaultCommand().doesRequire(this);
-
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
         result &= TalonChecker.checkFrameRates(master);
@@ -188,7 +185,6 @@ public class IntakeSubsystem extends EnhancedSubsystem implements BackgroundUpda
             setMotors(0.0);
         }
 
-        System.out.println(String.format("%s Test: %s", this, (result) ? "SUCCESS" : "FAILURE"));
         return result;
     }
 }

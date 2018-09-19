@@ -24,8 +24,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * The elevator consists of two independently connected Mini CIM motors to raise/lower the intake and climber
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class LiftSubsystem extends EnhancedSubsystem
+public class Lift extends EnhancedSubsystem
 {
+    static class SingletonHolder
+    {
+        static Lift instance = new Lift();
+    }
+
+    public static Lift getInstance()
+    {
+        return SingletonHolder.instance;
+    }
+
     private static final int kTicksToTop = 27000;
     private static final double kTicksPerInch = kTicksToTop / 38.0;
     private static final double kFeedForwardHasCube = 0.25;  // TODO Keep track even if we tilt wrist
@@ -35,10 +45,6 @@ public class LiftSubsystem extends EnhancedSubsystem
     private final int kSlotUp, kSlotDown;
     private final boolean kTuning;
 
-    static class SingletonHolder
-    {
-        static LiftSubsystem instance = new LiftSubsystem();
-    }
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX master;
     private final BaseMotorController follower;
@@ -46,7 +52,7 @@ public class LiftSubsystem extends EnhancedSubsystem
 
     private boolean hasZeroed = false;
 
-    private LiftSubsystem()
+    private Lift()
     {
         RobotConfig config = RobotConfig.getInstance();
         kTuning = config.kLiftTuning;
@@ -73,11 +79,6 @@ public class LiftSubsystem extends EnhancedSubsystem
         LimitSwitch.configSoftwareLimitF(master, kTicksToTop, true);
         LimitSwitch.configSoftwareLimitR(master, -500, true);
         LimitSwitch.configHardwareLimitAutoZero(master, false, false);
-    }
-
-    public static LiftSubsystem getInstance()
-    {
-        return SingletonHolder.instance;  // TODO Test if this worked. If so, look into protected member in superclass?
     }
 
     public void initDefaultCommand()
@@ -205,15 +206,13 @@ public class LiftSubsystem extends EnhancedSubsystem
     {
         boolean result = true;
 
-        System.out.println("Lift Test:");
+        result &= getDefaultCommand().doesRequire(this);
         result &= TalonChecker.checkFirmware(master);
         result &= TalonChecker.checkFirmware(follower);
         result &= TalonChecker.checkEncoder(master);
         result &= TalonChecker.checkFrameRates(master);
-
         result &= TalonChecker.checkSensorPhase(0.3, master);
 
-        System.out.println(String.format("Lift Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;
     }
 }

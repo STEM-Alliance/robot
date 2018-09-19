@@ -13,14 +13,15 @@ import org.wfrobotics.reuse.subsystems.vision.VisionListener;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
+import org.wfrobotics.reuse.utilities.Testable;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.MatchState2018;
 import org.wfrobotics.robot.paths.TrajectoryGenerator;
 import org.wfrobotics.robot.subsystems.AutoRunner;
-import org.wfrobotics.robot.subsystems.IntakeSubsystem;
-import org.wfrobotics.robot.subsystems.LiftSubsystem;
+import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.Lift;
 import org.wfrobotics.robot.subsystems.SuperStructure;
-import org.wfrobotics.robot.subsystems.WinchSubsystem;
+import org.wfrobotics.robot.subsystems.Winch;
 import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -39,18 +40,13 @@ public final class Robot extends IterativeRobot
     private final SubsystemRunner subsystems = SubsystemRunner.getInstance();
     private final AutoRunner auto = AutoRunner.getInstance();
 
-    private static WinchSubsystem winch;
-
     public static LEDs leds = new LEDs(9, PatternName.Yellow);
     public static IO controls;
-
-    public CameraServer visionServer = CameraServer.getInstance();
+    public final CameraServer visionServer = CameraServer.getInstance();
 
     @Override
     public void robotInit()
     {
-        winch = WinchSubsystem.getInstance();  // TODO Can we remove?
-
         visionServer.SetConfig(new VisionMessageConfig(0));
         //        visionServer.SetConfig(new VisionMessageConfig(0,1, new ArrayList<>(Arrays.asList(new Boolean[] {true, true}))));
         TrajectoryGenerator.getInstance().generateTrajectories();
@@ -58,16 +54,16 @@ public final class Robot extends IterativeRobot
         VisionListener listener = new VisionListener();
         visionServer.AddListener(listener);
 
-
         //        VisionProcessor processor = new VisionProcessor();
         //        visionServer.AddListener(processor);
 
         controls = IO.getInstance();  // Initialize IO after subsystems
         DashboardView.startPerformanceCamera();
 
-        subsystems.register(IntakeSubsystem.getInstance());
-        subsystems.register(LiftSubsystem.getInstance());
+        subsystems.register(Intake.getInstance());
+        subsystems.register(Lift.getInstance());
         subsystems.register(SuperStructure.getInstance());
+        subsystems.register(Winch.getInstance());
         subsystems.register(Wrist.getInstance());
         subsystems.register(driveSubsystem);
         subsystems.registerReporter(state);
@@ -80,8 +76,7 @@ public final class Robot extends IterativeRobot
     @Override
     public void autonomousInit()
     {
-        leds.setAllianceColor(m_ds.getAlliance());
-        leds.setRobotMode(true);
+        leds.setForAuto(m_ds.getAlliance());
         backgroundUpdater.start(true);
 
         auto.startMode();
@@ -92,7 +87,7 @@ public final class Robot extends IterativeRobot
     {
         auto.stopMode();
 
-        leds.setRobotMode(false);
+        leds.setForTeleop();
         backgroundUpdater.start(false);
     }
 
@@ -100,11 +95,13 @@ public final class Robot extends IterativeRobot
     public void disabledInit()
     {
         auto.stopMode();
-        driveSubsystem.log();
+        driveSubsystem.log();  // TODO Move to updateSensors(isDisabled)?
         backgroundUpdater.stop();
 
-        // TODO Remove if UpdateSensors(isDisabled) worked
-        driveSubsystem.setBrake(false);
+        if (Math.abs(Robot.controls.getThrottle()) < 0.15)
+        {
+            driveSubsystem.setBrake(false);
+        }
     }
 
     @Override
@@ -119,17 +116,17 @@ public final class Robot extends IterativeRobot
         System.out.println("-------------\nRobot Tests\n-------------");
         leds.signalHumanPlayer();  // Pit safety
         Timer.delay(1.0);
-        result &= driveSubsystem.runFunctionalTest(true);
-        result &= Wrist.getInstance().runFunctionalTest(true);
-        result &= IntakeSubsystem.getInstance().runFunctionalTest(true);
-        result &= LiftSubsystem.getInstance().runFunctionalTest(true);
-        result &= winch.runFunctionalTest(true);
-        result &= auto.runFunctionalTest(false);
-        result &= SuperStructure.getInstance().runFunctionalTest(true);
-        result &= leds.runFunctionalTest(result);
+        result &= Testable.run(driveSubsystem, true);
+        result &= Testable.run(Intake.getInstance(), true);
+        result &= Testable.run(Lift.getInstance(), true);
+        result &= Testable.run(Winch.getInstance(), true);
+        result &= Testable.run(Wrist.getInstance(), true);
+        result &= Testable.run(auto, false);
+        result &= Testable.run(SuperStructure.getInstance(), true);
+        result &= Testable.run(leds, result);
         ConsoleLogger.getInstance().reportState();
         System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));
-        Timer.delay(3.0);
+        Timer.delay(3.0);  // Display result
     }
 
     @Override
@@ -153,8 +150,8 @@ public final class Robot extends IterativeRobot
         driveSubsystem.zeroEncoders();
         driveSubsystem.setGyro(0.0);
         state.resetDriveState(Timer.getFPGATimestamp(), new Pose2d());
-        IntakeSubsystem.getInstance().onBackgroundUpdate();  // For cube distance sensor
-        LiftSubsystem.getInstance().zeroIfAtLimit();
+        Intake.getInstance().onBackgroundUpdate();  // For cube distance sensor
+        Lift.getInstance().zeroIfAtLimit();
         Wrist.getInstance().zeroIfAtLimit();
 
         subsystems.update();

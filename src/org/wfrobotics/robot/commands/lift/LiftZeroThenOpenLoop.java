@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands.lift;
 
-import org.wfrobotics.robot.subsystems.LiftSubsystem;
+import org.wfrobotics.robot.subsystems.Lift;
 
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
@@ -13,6 +13,6 @@ public class LiftZeroThenOpenLoop extends ConditionalCommand
 
     protected boolean condition()
     {
-        return LiftSubsystem.getInstance().hasZeroed();
+        return Lift.getInstance().hasZeroed();
     }
 }

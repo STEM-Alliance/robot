@@ -1,13 +1,13 @@
 package org.wfrobotics.robot.commands.lift;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.subsystems.LiftSubsystem;
+import org.wfrobotics.robot.subsystems.Lift;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class LiftGoHome extends Command
 {
-    private final LiftSubsystem lift = LiftSubsystem.getInstance();
+    private final Lift lift = Lift.getInstance();
     private final double speed;
 
     public LiftGoHome(double speed, double timeout)

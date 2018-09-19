@@ -27,11 +27,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Wrist extends EnhancedSubsystem
 {
+    static class SingletonHolder
+    {
+        static Wrist instance = new Wrist();
+    }
+
+    public static Wrist getInstance()
+    {
+        return SingletonHolder.instance;
+    }
+
     private static final double kFullRangeDegrees = 90.0;
     private final int kTicksToTop;
     private final boolean kTuning;
 
-    private static Wrist instance = null;
     private final RobotState state = RobotState.getInstance();
     private final TalonSRX motor;
     private final LimitSwitch limits;
@@ -66,15 +75,6 @@ public class Wrist extends EnhancedSubsystem
         LimitSwitch.configHardwareLimitAutoZero(motor, false, false);
 
         stallSensor = new StallSense(motor, 25.0, 0.1);
-    }
-
-    public static Wrist getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new Wrist();
-        }
-        return instance;
     }
 
     protected void initDefaultCommand()
@@ -184,14 +184,13 @@ public class Wrist extends EnhancedSubsystem
     {
         boolean result = true;
 
-        System.out.println("Wrist Test:");
+        result &= getDefaultCommand().doesRequire(this);
         result &= TalonChecker.checkFirmware(motor);
         result &= TalonChecker.checkEncoder(motor);
         result &= TalonChecker.checkFrameRates(motor);
         result &= TalonChecker.checkSensorPhase(0.3, motor);
         // TODO Check limits?
 
-        System.out.println(String.format("Wrist Test: %s", (result) ? "SUCCESS" : "FAILURE"));
         return result;
     }
 }
