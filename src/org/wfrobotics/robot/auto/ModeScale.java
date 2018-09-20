@@ -1,10 +1,6 @@
 package org.wfrobotics.robot.auto;
 
-import java.util.Arrays;
-
-import org.wfrobotics.reuse.commands.AutoMode;
 import org.wfrobotics.reuse.commands.config.ResetPose;
-import org.wfrobotics.reuse.commands.drive.DriveOff;
 import org.wfrobotics.reuse.commands.drive.DrivePath;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.wait.WaitUntilAcrossX;
@@ -24,29 +20,25 @@ import org.wfrobotics.robot.paths.SecondCubeToScaleR;
 import org.wfrobotics.robot.paths.StartToScaleR;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class ModeScale extends AutoMode
+public class ModeScale extends CommandGroup
 {
     private static final double kIntakeShootPower = 0.34;
     private static final double kIntakeShootTimeout = 0.325;
     private static final double kLiftHeightStartTurn = 20.0;
     private static final double kWristStowDegrees = 87.5;
 
-    static PathContainer path = new StartToScaleR();
-    static PathContainer path2 = new ScaleSecondCubeR();
-    static PathContainer path3 = new SecondCubeToScaleR();
-
-    // TODO Think paths malfunction without recreating them. Do this in disabledInit?
-    // TODO Create AutoModeBase from CommandGroup, recalc paths on auto select?
-
     public ModeScale()
     {
+        final PathContainer path = new StartToScaleR();
+        final PathContainer path2 = new ScaleSecondCubeR();
+        final PathContainer path3 = new SecondCubeToScaleR();
+
         // Reset
-        super(Arrays.asList(new Command[] {
-            new ResetPose(path),
-            new LiftGoHome(-0.25, 0.4),
-            new WristZero(),
-        }));
+        addParallel(new LiftGoHome(-0.25, 0.4));
+        addParallel(new WristZero());
+        addSequential(new ResetPose(path));
         // TODO Force a different wrist zero value?
 
         final double kPath2StartDegrees = path2.getStartPose().getRotation().getDegrees();
@@ -87,7 +79,5 @@ public class ModeScale extends AutoMode
 
         // Travel to third cube
         // TODO Drive a bit?
-
-        addSequential(new DriveOff());  // Observe robot state
     }
 }
