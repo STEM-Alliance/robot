@@ -1,6 +1,8 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.SignalHumanPlayer;
+import org.wfrobotics.reuse.commands.config.SelectDelay;
+import org.wfrobotics.reuse.commands.config.SelectMode;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.HerdJoystick;
@@ -8,8 +10,6 @@ import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
 import org.wfrobotics.robot.auto.ModeOppisitScalse;
 import org.wfrobotics.robot.auto.ModeScale;
-import org.wfrobotics.robot.auto.SelectDelay;
-import org.wfrobotics.robot.auto.SelectMode;
 import org.wfrobotics.robot.commands.AutoLiftToBottom;
 import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
