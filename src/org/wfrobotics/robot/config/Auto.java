@@ -1,14 +1,16 @@
-package org.wfrobotics.robot.subsystems;
+package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.AutoMode;
-import org.wfrobotics.reuse.subsystems.AutoRunnerBase;
+import org.wfrobotics.reuse.config.AutoRunner;
+import org.wfrobotics.reuse.config.AutoRunner.ModeSafetyOff;
+import org.wfrobotics.reuse.config.AutoRunner.Selection;
 import org.wfrobotics.robot.auto.ModeCenter;
 import org.wfrobotics.robot.auto.ModeOppisitScalse;
 import org.wfrobotics.robot.auto.ModeScale;
 import org.wfrobotics.robot.auto.ModeSide;
 
-/** Selects, sets up, and runs an autonomous mode */
-public class AutoRunner extends AutoRunnerBase
+/** Configuration of {@link AutoMode} can be run in autonomous mode*/
+public abstract class Auto
 {
     private static class ModeSelection extends Selection<AutoMode>
     {
@@ -24,19 +26,9 @@ public class AutoRunner extends AutoRunnerBase
         }
     }
 
-    private static AutoRunner instance = null;
-
-    private AutoRunner()
+    /** Let {@link AutoRunner} know which {@link AutoMode}s to choose from */
+    public static void registerModes()
     {
-        super(new ModeSelection());
-    }
-
-    public static AutoRunner getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new AutoRunner();
-        }
-        return instance;
+        AutoRunner.getInstance().register(new ModeSelection());
     }
 }
