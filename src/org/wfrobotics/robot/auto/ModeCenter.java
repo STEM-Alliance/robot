@@ -1,15 +1,14 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.AutoMode;
 import org.wfrobotics.robot.commands.intake.IntakeSet;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
 
-public class ModeCenter extends AutoMode
+import edu.wpi.first.wpilibj.command.CommandGroup;
+
+public class ModeCenter extends CommandGroup
 {
     public ModeCenter()
     {
-        super(null);
-
         // TODO Refactor
 
         addParallel(new WristToHeight(90.0));

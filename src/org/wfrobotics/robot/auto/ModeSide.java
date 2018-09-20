@@ -1,20 +1,19 @@
 package org.wfrobotics.robot.auto;
 
-import org.wfrobotics.reuse.commands.AutoMode;
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
 import org.wfrobotics.robot.config.MatchState2018;
 import org.wfrobotics.robot.config.MatchState2018.Side;
 
-public class ModeSide extends AutoMode
+import edu.wpi.first.wpilibj.command.CommandGroup;
+
+public class ModeSide extends CommandGroup
 {
-    public static enum POSITION {RIGHT, CENTER, LEFT};
+    public enum POSITION {RIGHT, CENTER, LEFT};
 
     private final MatchState2018 state = MatchState2018.getInstance();
 
     public ModeSide()
     {
-        super(null);
-
         POSITION location = POSITION.RIGHT;  // TODO
 
         if (state.Scale == Side.Unknown)
