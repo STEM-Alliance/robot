@@ -58,7 +58,6 @@ public final class Robot extends IterativeRobot
         //        VisionProcessor processor = new VisionProcessor();
         //        visionServer.AddListener(processor);
 
-        Auto.registerModes();
         controls = IO.getInstance();  // Initialize IO after subsystems
         DashboardView.startPerformanceCamera();
 
@@ -124,6 +123,7 @@ public final class Robot extends IterativeRobot
         result &= Testable.run(SuperStructure.getInstance(), true);
         result &= Testable.run(Winch.getInstance(), true);
         result &= Testable.run(Wrist.getInstance(), true);
+        result &= Testable.run(Auto.factory, false);
         result &= Testable.run(autos, false);
         result &= Testable.run(leds, result);
         ConsoleLogger.getInstance().reportState();

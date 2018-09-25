@@ -34,15 +34,14 @@ public class ModeScale extends CommandGroup
         final PathContainer path = new StartToScaleR();
         final PathContainer path2 = new ScaleSecondCubeR();
         final PathContainer path3 = new SecondCubeToScaleR();
+        final double kPath2StartDegrees = path2.getStartPose().getRotation().getDegrees();
+        final double kPath3StartDegrees = path3.getStartPose().getRotation().getDegrees();
 
         // Reset
         addParallel(new LiftGoHome(-0.25, 0.4));
         addParallel(new WristZero());
         addSequential(new ResetPose(path));
         // TODO Force a different wrist zero value?
-
-        final double kPath2StartDegrees = path2.getStartPose().getRotation().getDegrees();
-        final double kPath3StartDegrees = path3.getStartPose().getRotation().getDegrees();
 
         // Travel to first scale
         addParallel(new SeriesCommand(new Command[] {
