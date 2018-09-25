@@ -1,9 +1,9 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.wrapper.AutoMode;
-import org.wfrobotics.reuse.config.AutoRunner;
-import org.wfrobotics.reuse.config.AutoRunner.ModeSafetyOff;
-import org.wfrobotics.reuse.config.AutoRunner.Selection;
+import org.wfrobotics.reuse.config.AutoFactory;
+import org.wfrobotics.reuse.config.AutoFactory.ModeSafetyOff;
+import org.wfrobotics.reuse.config.Selection;
 import org.wfrobotics.robot.auto.ModeCenter;
 import org.wfrobotics.robot.auto.ModeOppisitScalse;
 import org.wfrobotics.robot.auto.ModeScale;
@@ -14,7 +14,33 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /** Configuration of {@link AutoMode} can be run in autonomous mode*/
 public abstract class Auto
 {
-    private static class ModeSelection extends Selection<CommandGroup>
+    public static ModeSelection modes = new ModeSelection();
+    public static DelaySelection delays = new DelaySelection();
+    public static AutoFactory<Autonomous> factory = new AutoFactory<Autonomous>(new Autonomous());
+    public static PositionSelection positions = new PositionSelection();
+
+    public static class Autonomous extends AutoMode
+    {
+        public POSITION startLocation;
+
+        @SuppressWarnings("unchecked")
+        public Autonomous getNewInstance()
+        {
+            return new Autonomous();
+        }
+
+        public void setPosition(POSITION p)
+        {
+            startLocation = p;
+        }
+
+        public String toString()
+        {
+            return String.format("%s, %s", super.toString(), startLocation.toString());
+        }
+    }
+
+    private static class ModeSelection extends Selection<Autonomous, CommandGroup>
     {
         protected CommandGroup[] options()
         {
@@ -26,11 +52,38 @@ public abstract class Auto
                 new ModeSide(),
             };
         }
+
+        protected void apply(Autonomous mode)
+        {
+            mode.setMode(get());
+        }
     }
 
-    /** Let {@link AutoRunner} know which {@link AutoMode}s to choose from */
-    public static void registerModes()
+    public static class DelaySelection extends Selection<Autonomous, Integer>
     {
-        AutoRunner.getInstance().register(new ModeSelection());
+        protected Integer[] options()
+        {
+            return new Integer[] {0, 1, 2, 3, 4, 5};
+        }
+
+        protected void apply(Autonomous mode)
+        {
+            mode.setDelay(get());
+        }
+    }
+
+    public static enum POSITION { LEFT, CENTER, RIGHT, };
+
+    public static class PositionSelection extends Selection<Autonomous, POSITION>
+    {
+        protected POSITION[] options()
+        {
+            return new POSITION[] {POSITION.LEFT, POSITION.CENTER, POSITION.RIGHT};
+        }
+
+        protected void apply(Autonomous mode)
+        {
+            mode.setPosition(get());
+        }
     }
 }
