@@ -19,6 +19,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -180,7 +181,7 @@ public class Wrist extends EnhancedSubsystem
         motor.set(mode, setpoint, DemandType.ArbitraryFeedForward, feedforward);
     }
 
-    public boolean runFunctionalTest(boolean includeMotion)
+    public boolean runFunctionalTest()
     {
         boolean result = true;
 
@@ -188,8 +189,16 @@ public class Wrist extends EnhancedSubsystem
         result &= TalonChecker.checkFirmware(motor);
         result &= TalonChecker.checkEncoder(motor);
         result &= TalonChecker.checkFrameRates(motor);
+
+        int retries = 10;
+        while (!hasZeroed && retries-- > 0)
+        {
+            setOpenLoop(-.3);
+            Timer.delay(.2);
+            setOpenLoop(0.0);
+        }
+        result &= AtHardwareLimitBottom();
         result &= TalonChecker.checkSensorPhase(0.3, motor);
-        // TODO Check limits?
 
         return result;
     }

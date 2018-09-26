@@ -62,7 +62,7 @@ public class Winch extends EnhancedSubsystem
         motor.set(ControlMode.PercentOutput, percentWinch);
     }
 
-    public boolean runFunctionalTest(boolean includeMotion)
+    public boolean runFunctionalTest()
     {
         boolean result = true;
 

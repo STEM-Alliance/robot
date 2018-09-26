@@ -116,6 +116,11 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
         buffer.addFirst(rawDistance());
     }
 
+    public void onStopUpdates()
+    {
+
+    }
+
     public boolean getJawsState()
     {
         return lastJawsState;
@@ -168,7 +173,7 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
         return sensorOkay;
     }
 
-    public boolean runFunctionalTest(boolean includeMotion)
+    public boolean runFunctionalTest()
     {
         boolean result = true;
 
@@ -178,16 +183,14 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
         result &= TalonChecker.checkFrameRates(master);
         result &= testSensorPluggedIn(true);
 
-        if (includeMotion)
-        {
-            setMotors(0.3);
-            Timer.delay(0.75);
-            setMotors(0.0);
-            Timer.delay(0.5);
-            setJaws(!getJawsState());
-            Timer.delay(0.5);
-            setJaws(!getJawsState());
-        }
+        // Visual inspection
+        setMotors(0.3);
+        Timer.delay(0.75);
+        setMotors(0.0);
+        Timer.delay(0.5);
+        setJaws(!getJawsState());
+        Timer.delay(0.5);
+        setJaws(!getJawsState());
 
         return result;
     }

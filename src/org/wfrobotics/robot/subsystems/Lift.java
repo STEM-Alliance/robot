@@ -202,7 +202,7 @@ public class Lift extends EnhancedSubsystem
         master.config_kD(slot, prefs.getDouble("lift_d", 0.0), 0);
     }
 
-    public boolean runFunctionalTest(boolean includeMotion)
+    public boolean runFunctionalTest()
     {
         boolean result = true;
 
