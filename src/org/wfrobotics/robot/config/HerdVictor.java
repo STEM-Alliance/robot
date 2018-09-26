@@ -64,7 +64,7 @@ public final class HerdVictor extends RobotConfig
     {
         TankConfig config = new TankConfig();
 
-        config.VELOCITY_MAX = 10000.0;
+        config.VELOCITY_MAX = 10000;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.8);
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
@@ -75,12 +75,12 @@ public final class HerdVictor extends RobotConfig
             new MasterConfig(15, false, true, new FollowerConfig(17, true)),
             new MasterConfig(16, true, true, new FollowerConfig(14, true)),
         }, new Gains[] {
-            new Gains("Velocity", 0, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
-            new Gains("Turn", 1, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
-            new Gains("Motion Magic", 2, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
+            new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
+            new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
             // TODO Figure out if high acceleration > high PID?
             // TODO Turning PID only works if slot < 2. Thought there were 4??? Is it aux only?
-            //            new Gains("Turn", 0, 1.0, 0.001, 9.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 2.0)),
+            new Gains("Turn", 0, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
+            //            new Gains("Turn", 0, 1.0, 0.001, 9.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX
         });
 
         config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);
