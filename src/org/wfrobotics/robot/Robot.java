@@ -13,7 +13,6 @@ import org.wfrobotics.reuse.subsystems.vision.VisionListener;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
-import org.wfrobotics.reuse.utilities.Testable;
 import org.wfrobotics.robot.config.Auto;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.MatchState2018;
@@ -71,6 +70,8 @@ public final class Robot extends IterativeRobot
         subsystems.registerReporter(backgroundUpdater);
         subsystems.registerReporter(ConsoleLogger.getInstance());
         subsystems.registerReporter(AutoTune.getInstance());
+        subsystems.registerTest(Auto.factory);
+        subsystems.registerTest(autos);
         BackgroundUpdater.getInstance().register(RobotStateEstimator.getInstance());
     }
 
@@ -96,7 +97,6 @@ public final class Robot extends IterativeRobot
     public void disabledInit()
     {
         autos.stopMode();
-        driveSubsystem.log();  // TODO Move to updateSensors(isDisabled)?
         backgroundUpdater.stop();
 
         if (Math.abs(Robot.controls.getThrottle()) < 0.15)  // Add stop to subsystem or background update?
@@ -109,25 +109,10 @@ public final class Robot extends IterativeRobot
     public void testInit()
     {
         autos.stopMode();
-        boolean result = true;
 
-        // TODO Pass SubsystemRunner a Supplier of robot-specific tests instead?
-
-        ConsoleLogger.getInstance().reportState();  // flush
-        System.out.println("-------------\nRobot Tests\n-------------");
         leds.signalHumanPlayer();  // Pit safety
-        Timer.delay(1.0);
-        result &= Testable.run(driveSubsystem, true);
-        result &= Testable.run(Intake.getInstance(), true);
-        result &= Testable.run(Lift.getInstance(), true);
-        result &= Testable.run(SuperStructure.getInstance(), true);
-        result &= Testable.run(Winch.getInstance(), true);
-        result &= Testable.run(Wrist.getInstance(), true);
-        result &= Testable.run(Auto.factory, false);
-        result &= Testable.run(autos, false);
-        result &= Testable.run(leds, result);
-        ConsoleLogger.getInstance().reportState();
-        System.out.println(String.format("Robot Tests: %s", (result) ? "SUCCESS" : "FAILURE"));
+        boolean result = subsystems.runFunctionalTests();
+        leds.signalFunctionalTestResult(result);
         Timer.delay(3.0);  // Display result
     }
 
