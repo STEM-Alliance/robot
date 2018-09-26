@@ -183,6 +183,10 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
             setMotors(0.3);
             Timer.delay(0.75);
             setMotors(0.0);
+            Timer.delay(0.5);
+            setJaws(!getJawsState());
+            Timer.delay(0.5);
+            setJaws(!getJawsState());
         }
 
         return result;

@@ -4,7 +4,6 @@ import org.wfrobotics.reuse.config.AutoRunner;
 import org.wfrobotics.reuse.hardware.AutoTune;
 import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.lowleveldriver.RevLEDs.PatternName;
-import org.wfrobotics.reuse.math.geometry.Pose2d;
 import org.wfrobotics.reuse.subsystems.SubsystemRunner;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdater;
 import org.wfrobotics.reuse.subsystems.background.RobotStateEstimator;
@@ -59,6 +58,7 @@ public final class Robot extends IterativeRobot
         //        visionServer.AddListener(processor);
 
         controls = IO.getInstance();  // Initialize IO after subsystems
+        Auto.factory.onNewSelection();  // Set default auto mode
         DashboardView.startPerformanceCamera();
 
         subsystems.register(Intake.getInstance());
@@ -146,22 +146,13 @@ public final class Robot extends IterativeRobot
     @Override
     public void disabledPeriodic()
     {
-        matchState.update();  // TODO Move to AutoSelector?
-
-        // TODO Remove some of these if UpdateSensors(isDisabled) worked
-        driveSubsystem.zeroEncoders();
-        driveSubsystem.setGyro(0.0);
-        state.resetDriveState(Timer.getFPGATimestamp(), new Pose2d());
-        Intake.getInstance().onBackgroundUpdate();  // For cube distance sensor
-        Lift.getInstance().zeroIfAtLimit();
-        Wrist.getInstance().zeroIfAtLimit();
-
+        matchState.update();
         subsystems.update();
     }
 
     @Override
     public void testPeriodic()
     {
-        leds.testScrollAll();
+        //        leds.testScrollAll();
     }
 }
