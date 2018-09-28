@@ -4,6 +4,7 @@ import org.wfrobotics.reuse.commands.config.ResetPose;
 import org.wfrobotics.reuse.commands.drive.DrivePath;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.wait.WaitUntilAcrossX;
+import org.wfrobotics.reuse.commands.wrapper.AutoMode;
 import org.wfrobotics.reuse.commands.wrapper.SeriesCommand;
 import org.wfrobotics.reuse.commands.wrapper.SynchronizedCommand;
 import org.wfrobotics.reuse.config.PathContainer;
@@ -11,18 +12,16 @@ import org.wfrobotics.robot.commands.AutoLiftToBottom;
 import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.IntakeSet;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
-import org.wfrobotics.robot.commands.lift.LiftGoHome;
 import org.wfrobotics.robot.commands.lift.WaitForLiftHeight;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
-import org.wfrobotics.robot.commands.wrist.WristZero;
 import org.wfrobotics.robot.paths.ScaleSecondCubeR;
 import org.wfrobotics.robot.paths.SecondCubeToScaleR;
 import org.wfrobotics.robot.paths.StartToScaleR;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 
-public class ModeScale extends CommandGroup
+public class ModeScale extends AutoMode
 {
     private static final double kIntakeShootPower = 0.34;
     private static final double kIntakeShootTimeout = 0.325;
@@ -34,14 +33,13 @@ public class ModeScale extends CommandGroup
         final PathContainer path = new StartToScaleR();
         final PathContainer path2 = new ScaleSecondCubeR();
         final PathContainer path3 = new SecondCubeToScaleR();
+
         final double kPath2StartDegrees = path2.getStartPose().getRotation().getDegrees();
         final double kPath3StartDegrees = path3.getStartPose().getRotation().getDegrees();
 
         // Reset
-        addParallel(new LiftGoHome(-0.25, 0.4));
-        addParallel(new WristZero());
-        addSequential(new ResetPose(path));
-        // TODO Force a different wrist zero value?
+        addParallel(new ResetPose(path));
+        addSequential(new WaitCommand(startingDelay));
 
         // Travel to first scale
         addParallel(new SeriesCommand(new Command[] {

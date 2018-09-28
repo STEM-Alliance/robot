@@ -83,7 +83,7 @@ public class Wrist extends EnhancedSubsystem
         setDefaultCommand(new WristZeroThenOpenLoop());
     }
 
-    public void updateSensors(boolean isDisabled)
+    public void cacheSensors(boolean isDisabled)
     {
         stalled = stallSensor.isStalled();
         zeroIfAtLimit();

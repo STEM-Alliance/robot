@@ -12,7 +12,6 @@ import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -42,6 +41,7 @@ public class Lift extends EnhancedSubsystem
     private static final double kFeedForwardNoCube = 0.20;  // TODO Try increasing to make more buoyant
     private static final double kInchesGroundToZero = LiftHeight.Intake.get();
     private static final int kTickRateBrakeMode = 500;
+    private static final int kTickRateSlowEnough = kTickRateBrakeMode + 200;
     private final int kSlotUp, kSlotDown;
     private final boolean kTuning;
 
@@ -49,6 +49,7 @@ public class Lift extends EnhancedSubsystem
     private final TalonSRX master;
     private final BaseMotorController follower;
     private final LimitSwitch limit;
+    private CachedIO cachedIO = new CachedIO();
 
     private boolean hasZeroed = false;
 
@@ -64,14 +65,13 @@ public class Lift extends EnhancedSubsystem
         master.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 100);
         master.configVelocityMeasurementWindow(1, 100);  // TODO Changed to small value. Is okay?
         master.configNeutralDeadband(0.1, 100);
-        master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 100);  // Faster limit switches
+        //        master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 100);  // Faster limit switches
         TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // Observed 10A when holding
         TalonFactory.configFastErrorReporting(master, kTuning);
         //        master.configAllowableClosedloopError(0, 20, 10);
         //        master.configAllowableClosedloopError(1, 20, 10);
         master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint
         // TODO Try using Status_10_MotionMagic to improve motion?
-        // TODO Try configClosedloopRamp() of .1, see if it approaches limits smoother
 
         follower = TalonFactory.makeFollowers(master, config.LIFT_CLOSED_LOOP.masters.get(0)).get(0);
 
@@ -86,23 +86,25 @@ public class Lift extends EnhancedSubsystem
         setDefaultCommand(new LiftZeroThenOpenLoop());
     }
 
-    public void updateSensors(boolean isDisabled)
+    public void cacheSensors(boolean isDisabled)
     {
+        cachedIO.positionTicks = master.getSelectedSensorPosition(0);
+        cachedIO.velocityTicksPer100ms = master.getSelectedSensorVelocity(0);
+        cachedIO.limitSwitchB = limit.isSet(Limit.REVERSE);
+        cachedIO.limitSwitchT = limit.isSet(Limit.FORWARD);
+
         zeroIfAtLimit();
-
-        // TODO Cache sensors in private class?
-
         state.updateLift(getInchesOffGround(), !onTarget());
     }
 
     public void reportState()
     {
-        SmartDashboard.putNumber("Lift Position", master.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Lift Velocity", master.getSelectedSensorVelocity(0));
-        SmartDashboard.putNumber("Lift Height", ticksToInches(getHeightRaw()) + kInchesGroundToZero);
+        SmartDashboard.putNumber("Lift Position", cachedIO.positionTicks);
+        SmartDashboard.putNumber("Lift Velocity", cachedIO.velocityTicksPer100ms);
+        SmartDashboard.putNumber("Lift Height", getInchesOffGround());
         SmartDashboard.putNumber("Lift Current", master.getOutputCurrent());
-        SmartDashboard.putBoolean("RB", limit.isSet(Limit.REVERSE));
-        SmartDashboard.putBoolean("RT", limit.isSet(Limit.FORWARD));
+        SmartDashboard.putBoolean("RB", cachedIO.limitSwitchB);
+        SmartDashboard.putBoolean("RT", cachedIO.limitSwitchT);
         if (kTuning)
         {
             debugCalibration();
@@ -111,12 +113,12 @@ public class Lift extends EnhancedSubsystem
 
     public boolean AtHardwareLimitBottom()
     {
-        return limit.isSet(Limit.REVERSE);
+        return cachedIO.limitSwitchB;
     }
 
     public boolean AtHardwareLimitTop()
     {
-        return limit.isSet(Limit.FORWARD);
+        return cachedIO.limitSwitchT;
     }
 
     public double getInchesOffGround()
@@ -133,8 +135,7 @@ public class Lift extends EnhancedSubsystem
     /** Use to improve isFinished() criteria for closed loop commands? */
     public boolean onTarget()
     {
-        final int kTickRateSlowEnough = kTickRateBrakeMode + 200;
-        return Math.abs(master.getSelectedSensorVelocity(0)) < kTickRateSlowEnough;
+        return Math.abs(cachedIO.velocityTicksPer100ms) < kTickRateSlowEnough;
     }
 
     public void setOpenLoop(double percent)
@@ -169,7 +170,7 @@ public class Lift extends EnhancedSubsystem
 
     private double getHeightRaw()
     {
-        return master.getSelectedSensorPosition(0);
+        return cachedIO.positionTicks;
     }
 
     private double inchesToTicks(double inches)
@@ -185,7 +186,7 @@ public class Lift extends EnhancedSubsystem
     private void setMotor(ControlMode mode, double val)
     {
         final double antigravity= (state.robotHasCube) ? kFeedForwardHasCube : kFeedForwardNoCube;
-        final double feedforward = (state.liftHeightInches > kInchesGroundToZero) ? antigravity : 0.0;
+        final double feedforward = (state.liftHeightInches > kInchesGroundToZero || mode == ControlMode.MotionMagic) ? antigravity : 0.0;
 
         master.set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
     }
@@ -214,5 +215,13 @@ public class Lift extends EnhancedSubsystem
         result &= TalonChecker.checkSensorPhase(0.3, master);
 
         return result;
+    }
+
+    private class CachedIO
+    {
+        public int positionTicks;
+        public int velocityTicksPer100ms;
+        public boolean limitSwitchB;
+        public boolean limitSwitchT;
     }
 }

@@ -5,6 +5,7 @@ import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.LiftHeight;
 import org.wfrobotics.robot.subsystems.Lift;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class LiftOpenLoop extends Command
@@ -20,22 +21,25 @@ public class LiftOpenLoop extends Command
 
     protected void execute()
     {
-        final double liftHeight = state.liftHeightInches;
-        double setpoint = Robot.controls.getLiftStick();
+        if (DriverStation.getInstance().isAutonomous())
+        {
+            final double liftHeight = state.liftHeightInches;
+            double setpoint = Robot.controls.getLiftStick();
 
-        if (Math.abs(setpoint) < deadbandPercent)
-        {
-            setpoint = 0.0;
+            if (Math.abs(setpoint) < deadbandPercent)
+            {
+                setpoint = 0.0;
+            }
+            else if (liftHeight < LiftHeight.Intake.get() + 4.0 && setpoint < 0.0)
+            {
+                setpoint /= 4.0;
+            }
+            else if (liftHeight > LiftHeight.Scale.get() - 0.5 && setpoint > 0.0)
+            {
+                setpoint /= 3.0;
+            }
+            lift.setOpenLoop(setpoint);
         }
-        else if (liftHeight < LiftHeight.Intake.get() + 4.0 && setpoint < 0.0)
-        {
-            setpoint /= 4.0;
-        }
-        else if (liftHeight > LiftHeight.Scale.get() - 0.5 && setpoint > 0.0)
-        {
-            setpoint /= 3.0;
-        }
-        lift.setOpenLoop(setpoint);
     }
 
     protected boolean isFinished()

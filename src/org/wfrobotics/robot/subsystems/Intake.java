@@ -89,7 +89,7 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
         setDefaultCommand(new SmartIntake());
     }
 
-    public void updateSensors(boolean isDisabled)
+    public void cacheSensors(boolean isDisabled)
     {
         latestDistance = buffer.getAverage();
         state.updateIntake(latestDistance);

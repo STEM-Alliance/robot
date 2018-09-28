@@ -47,7 +47,7 @@ public class Winch extends EnhancedSubsystem
         setDefaultCommand(new WinchOpenLoop());
     }
 
-    public void updateSensors(boolean isDisabled)
+    public void cacheSensors(boolean isDisabled)
     {
 
     }
