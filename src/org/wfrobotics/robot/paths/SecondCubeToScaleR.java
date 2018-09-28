@@ -15,7 +15,7 @@ public class SecondCubeToScaleR implements PathContainer {
     @Override
     public Path buildPath() {
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
-        sWaypoints.add(new Waypoint(235,100,0,85));  // TODO Slowed, lift is faster
+        sWaypoints.add(new Waypoint(235,100,0,60));
         sWaypoints.add(new Waypoint(286,96,0,0));
 
         return PathBuilder.buildPathFromWaypoints(sWaypoints);

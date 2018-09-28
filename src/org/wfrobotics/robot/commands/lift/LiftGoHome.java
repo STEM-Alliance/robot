@@ -17,7 +17,7 @@ public class LiftGoHome extends Command
         setTimeout(timeout);
     }
 
-    protected void execute()
+    protected void initialize()
     {
         lift.setOpenLoop(speed);
     }
@@ -25,8 +25,7 @@ public class LiftGoHome extends Command
     protected boolean isFinished()
     {
         final boolean override = Robot.controls.isLiftOverrideRequested();
-        final boolean atLimit = lift.AtHardwareLimitBottom() || lift.AtHardwareLimitTop();
-        return atLimit || isTimedOut() || override;
+        return lift.hasZeroed() || isTimedOut() || override;
     }
 
     protected void end()

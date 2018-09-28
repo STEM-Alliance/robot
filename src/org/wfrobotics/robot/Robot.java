@@ -1,5 +1,6 @@
 package org.wfrobotics.robot;
 
+import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.AutoRunner;
 import org.wfrobotics.reuse.hardware.AutoTune;
 import org.wfrobotics.reuse.hardware.LEDs;
@@ -13,7 +14,6 @@ import org.wfrobotics.reuse.subsystems.vision.VisionListener;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.utilities.DashboardView;
-import org.wfrobotics.robot.config.Auto;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.MatchState2018;
 import org.wfrobotics.robot.paths.TrajectoryGenerator;
@@ -33,9 +33,6 @@ import edu.wpi.first.wpilibj.Timer;
 public final class Robot extends IterativeRobot
 {
     private final BackgroundUpdater backgroundUpdater = BackgroundUpdater.getInstance();
-    private final RobotState state = RobotState.getInstance();
-    private final MatchState2018 matchState = MatchState2018.getInstance();
-    private static TankSubsystem driveSubsystem = TankSubsystem.getInstance();
     private final SubsystemRunner subsystems = SubsystemRunner.getInstance();
     private final AutoRunner autos = AutoRunner.getInstance();
 
@@ -57,21 +54,20 @@ public final class Robot extends IterativeRobot
         //        visionServer.AddListener(processor);
 
         controls = IO.getInstance();  // Initialize IO after subsystems
-        Auto.factory.onNewSelection();  // Set default auto mode
+        AutoFactory.getInstance().onSelectionChanged();  // Set default auto mode
         DashboardView.startPerformanceCamera();
 
         subsystems.register(Intake.getInstance());
         subsystems.register(Lift.getInstance());
-        subsystems.register(SuperStructure.getInstance());
         subsystems.register(Winch.getInstance());
         subsystems.register(Wrist.getInstance());
-        subsystems.register(driveSubsystem);
-        subsystems.registerReporter(state);
+        subsystems.register(SuperStructure.getInstance());
+        subsystems.register(TankSubsystem.getInstance());
+        subsystems.registerReporter(RobotState.getInstance());
         subsystems.registerReporter(backgroundUpdater);
         subsystems.registerReporter(ConsoleLogger.getInstance());
         subsystems.registerReporter(AutoTune.getInstance());
-        subsystems.registerTest(Auto.factory);
-        subsystems.registerTest(autos);
+        subsystems.registerTest(AutoFactory.getInstance());
         BackgroundUpdater.getInstance().register(RobotStateEstimator.getInstance());
     }
 
@@ -98,11 +94,6 @@ public final class Robot extends IterativeRobot
     {
         autos.stopMode();
         backgroundUpdater.stop();
-
-        if (Math.abs(Robot.controls.getThrottle()) < 0.15)  // Add stop to subsystem or background update?
-        {
-            driveSubsystem.setBrake(false);
-        }
     }
 
     @Override
@@ -131,7 +122,7 @@ public final class Robot extends IterativeRobot
     @Override
     public void disabledPeriodic()
     {
-        matchState.update();
+        MatchState2018.getInstance().update();
         subsystems.update();
     }
 

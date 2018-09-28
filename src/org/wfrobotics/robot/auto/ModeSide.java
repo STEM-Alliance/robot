@@ -1,20 +1,21 @@
 package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.wrapper.AutoMode;
+import org.wfrobotics.robot.config.Auto;
+import org.wfrobotics.robot.config.Auto.POSITION;
 import org.wfrobotics.robot.config.MatchState2018;
 import org.wfrobotics.robot.config.MatchState2018.Side;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
-
-public class ModeSide extends CommandGroup
+public class ModeSide extends AutoMode
 {
-    public enum POSITION {RIGHT, CENTER, LEFT};
-
     private final MatchState2018 state = MatchState2018.getInstance();
+
+    // TODO Refactor to flatten? Should branching use a wrapper group or not?
 
     public ModeSide()
     {
-        POSITION location = POSITION.RIGHT;  // TODO
+        POSITION location = Auto.positions.get();
 
         if (state.Scale == Side.Unknown)
         {
