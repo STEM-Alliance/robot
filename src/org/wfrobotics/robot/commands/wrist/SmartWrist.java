@@ -18,7 +18,7 @@ public class SmartWrist extends Command
 
     protected void execute()
     {
-        if (!DriverStation.getInstance().isAutonomous())
+        if (!DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
         {
             final double commanded = Robot.controls.getWristStick();
 

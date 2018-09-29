@@ -203,18 +203,18 @@ public class Lift extends EnhancedSubsystem
         master.config_kD(slot, prefs.getDouble("lift_d", 0.0), 0);
     }
 
-    public boolean runFunctionalTest()
+    public TestReport runFunctionalTest()
     {
-        boolean result = true;
+        TestReport report = new TestReport();
 
-        result &= getDefaultCommand().doesRequire(this);
-        result &= TalonChecker.checkFirmware(master);
-        result &= TalonChecker.checkFirmware(follower);
-        result &= TalonChecker.checkEncoder(master);
-        result &= TalonChecker.checkFrameRates(master);
-        result &= TalonChecker.checkSensorPhase(0.3, master);
+        report.add(getDefaultCommand().doesRequire(this));
+        report.add(TalonChecker.checkFirmware(master));
+        report.add(TalonChecker.checkFirmware(follower));
+        report.add(TalonChecker.checkEncoder(master));
+        report.add(TalonChecker.checkFrameRates(master));
+        report.add(TalonChecker.checkSensorPhase(0.3, master));
 
-        return result;
+        return report;
     }
 
     private class CachedIO

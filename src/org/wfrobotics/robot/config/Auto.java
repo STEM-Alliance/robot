@@ -1,9 +1,9 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.wrapper.AutoMode;
-import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.AutoFactory.DelaySelect;
 import org.wfrobotics.reuse.config.AutoFactory.ModeSafetyOff;
+import org.wfrobotics.reuse.config.AutoFactory.ModeSelectBase;
 import org.wfrobotics.reuse.config.AutoSelection;
 import org.wfrobotics.robot.auto.ModeCenter;
 import org.wfrobotics.robot.auto.ModeOppisitScalse;
@@ -17,7 +17,7 @@ public abstract class Auto
     public static DelaySelect delays = new DelaySelect();
     public static PositionSelect positions = new PositionSelect();
 
-    public static class ModeSelect extends AutoSelection<AutoMode>
+    public static class ModeSelect extends ModeSelectBase
     {
         protected AutoMode[] options()
         {
@@ -28,11 +28,6 @@ public abstract class Auto
                 new ModeCenter(),
                 new ModeSide(),
             };
-        }
-
-        protected void apply()
-        {
-            AutoFactory.getInstance().mode = get();
         }
     }
 

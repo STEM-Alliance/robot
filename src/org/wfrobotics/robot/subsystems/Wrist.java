@@ -181,14 +181,14 @@ public class Wrist extends EnhancedSubsystem
         motor.set(mode, setpoint, DemandType.ArbitraryFeedForward, feedforward);
     }
 
-    public boolean runFunctionalTest()
+    public TestReport runFunctionalTest()
     {
-        boolean result = true;
+        TestReport report = new TestReport();
 
-        result &= getDefaultCommand().doesRequire(this);
-        result &= TalonChecker.checkFirmware(motor);
-        result &= TalonChecker.checkEncoder(motor);
-        result &= TalonChecker.checkFrameRates(motor);
+        report.add(getDefaultCommand().doesRequire(this));
+        report.add(TalonChecker.checkFirmware(motor));
+        report.add(TalonChecker.checkEncoder(motor));
+        report.add(TalonChecker.checkFrameRates(motor));
 
         int retries = 10;
         while (!hasZeroed && retries-- > 0)
@@ -197,9 +197,9 @@ public class Wrist extends EnhancedSubsystem
             Timer.delay(.2);
             setOpenLoop(0.0);
         }
-        result &= AtHardwareLimitBottom();
-        result &= TalonChecker.checkSensorPhase(0.3, motor);
+        report.add(AtHardwareLimitBottom());
+        report.add(TalonChecker.checkSensorPhase(0.3, motor));
 
-        return result;
+        return report;
     }
 }
