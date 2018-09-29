@@ -173,26 +173,30 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
         return sensorOkay;
     }
 
-    public boolean runFunctionalTest()
+    public TestReport runFunctionalTest()
     {
-        boolean result = true;
+        TestReport report = new TestReport();
 
-        result &= getDefaultCommand().doesRequire(this);
-        result &= TalonChecker.checkFirmware(master);
-        result &= TalonChecker.checkFirmware(follower);
-        result &= TalonChecker.checkFrameRates(master);
-        result &= testSensorPluggedIn(true);
+        report.add(getDefaultCommand().doesRequire(this));
+        report.add(TalonChecker.checkFirmware(master));
+        report.add(TalonChecker.checkFirmware(follower));
+        report.add(TalonChecker.checkFrameRates(master));
+        report.add(testSensorPluggedIn(true));
 
         // Visual inspection
         setMotors(0.3);
         Timer.delay(0.75);
         setMotors(0.0);
-        Timer.delay(0.5);
-        setJaws(!getJawsState());
-        Timer.delay(0.5);
-        setJaws(!getJawsState());
+        report.addManualTest();
 
-        return result;
+        Timer.delay(0.5);
+
+        setJaws(!getJawsState());
+        Timer.delay(0.5);
+        setJaws(!getJawsState());
+        report.addManualTest();
+
+        return report;
     }
 }
 

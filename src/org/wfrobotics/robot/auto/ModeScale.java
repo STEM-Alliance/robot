@@ -67,6 +67,7 @@ public class ModeScale extends AutoMode
         // TODO Start lifting with a WaitForHeading?
         addSequential(new TurnToHeading(kPath3StartDegrees));
         addSequential(new SynchronizedCommand(new DrivePath(path3), new AutoLiftToScale(4.0, 30.0)));
+        // TODO Try WaitForChildren Command, are these substitutes?
         addSequential(new IntakeSet(kIntakeShootPower, kIntakeShootTimeout));
 
         // Reset

@@ -62,14 +62,14 @@ public class Winch extends EnhancedSubsystem
         motor.set(ControlMode.PercentOutput, percentWinch);
     }
 
-    public boolean runFunctionalTest()
+    public TestReport runFunctionalTest()
     {
-        boolean result = true;
+        TestReport report = new TestReport();
 
-        result &= getDefaultCommand().doesRequire(this);
-        result &= TalonChecker.checkFirmware(motor);
-        TalonChecker.checkFrameRates(motor);  // Not in result, intentionally slow rates
+        report.add(getDefaultCommand().doesRequire(this));
+        report.add(TalonChecker.checkFirmware(motor));
+        report.add(TalonChecker.checkFrameRates(motor), false);  // intentionally slow rates
 
-        return result;
+        return report;
     }
 }

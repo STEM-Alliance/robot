@@ -21,7 +21,7 @@ public class LiftOpenLoop extends Command
 
     protected void execute()
     {
-        if (DriverStation.getInstance().isAutonomous())
+        if (DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
         {
             final double liftHeight = state.liftHeightInches;
             double setpoint = Robot.controls.getLiftStick();
