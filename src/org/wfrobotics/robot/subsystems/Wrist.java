@@ -1,22 +1,16 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.LimitSwitch;
-import org.wfrobotics.reuse.hardware.LimitSwitch.Limit;
 import org.wfrobotics.reuse.hardware.StallSense;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
-import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
-import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.wrist.WristZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlFrame;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -26,56 +20,51 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * The wrist consists of a BAG motor to rotate the intake
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class Wrist extends EnhancedSubsystem
+public class Wrist extends PositionBasedSubsystem
 {
-    static class SingletonHolder
-    {
-        static Wrist instance = new Wrist();
-    }
-
     public static Wrist getInstance()
     {
-        return SingletonHolder.instance;
+        if (instance == null)
+        {
+            final RobotConfig config = RobotConfig.getInstance();
+            final TalonSRX master = TalonFactory.makeClosedLoopTalon(config.WRIST_CLOSED_LOOP).get(0);
+            final LimitSwitchNormal[] limitsConfig = new LimitSwitchNormal[] {
+                LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen,
+            };
+            instance = new Wrist(master, limitsConfig);
+        }
+        return instance;
     }
 
     private static final double kFullRangeDegrees = 90.0;
-    private final int kTicksToTop;
+    private static final int kTicksToTop = 5000;
     private final boolean kTuning;
 
-    private final RobotState state = RobotState.getInstance();
-    private final TalonSRX motor;
-    private final LimitSwitch limits;
+    private static Wrist instance = null;
     private final StallSense stallSensor;
 
-    private boolean hasZeroed = false;
     private boolean stalled = false;
 
-    private Wrist()
+    private Wrist(TalonSRX masterTalon, LimitSwitchNormal[] limitsConfig)
     {
+        super(masterTalon, limitsConfig, kTicksToTop / kFullRangeDegrees);
         RobotConfig config = RobotConfig.getInstance();
-        kTicksToTop = config.WRIST_TICKS_TO_TOP;
         kTuning = config.kWinchTuning;
 
-        motor = TalonFactory.makeClosedLoopTalon(config.WRIST_CLOSED_LOOP).get(0);
-        motor.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
-        motor.configNeutralDeadband(config.kWristDeadband, 100);
-        motor.configOpenloopRamp(.1, 10);
-        motor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 100);
-        motor.configVelocityMeasurementWindow(1, 100);
-        TalonFactory.configCurrentLimiting(motor, 20, 40, 200);  // Adding with high numbers just in case
-        motor.setControlFramePeriod(ControlFrame.Control_3_General, 100);  // Slow down, wrist responsiveness not critical
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 5, 100);  // Faster limit switches
-        motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 100);  // Slow down, doesn't make decisions off this
-        TalonFactory.configFastErrorReporting(motor, kTuning);
+        master.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
+        master.configNeutralDeadband(config.kWristDeadband, 100);
+        master.configOpenloopRamp(.1, 10);
+        TalonFactory.configCurrentLimiting(master, 20, 40, 200);  // Adding with high numbers just in case
+        master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
+        master.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 100);  // Slow down, doesn't make decisions off this
+        TalonFactory.configFastErrorReporting(master, kTuning);
         // TODO Try configAllowableClosedloopError()
         // TODO Try using Status_10_MotionMagic to improve motion?
 
-        limits = new LimitSwitch(motor, LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen);
-        LimitSwitch.configSoftwareLimitF(motor, kTicksToTop, true);
-        LimitSwitch.configSoftwareLimitR(motor, -500, true);
-        LimitSwitch.configHardwareLimitAutoZero(motor, false, false);
+        LimitSwitch.configSoftwareLimitF(master, kTicksToTop, true);
+        LimitSwitch.configSoftwareLimitR(master, -500, true);
 
-        stallSensor = new StallSense(motor, 25.0, 0.1);
+        stallSensor = new StallSense(master, 25.0, 0.1);
     }
 
     protected void initDefaultCommand()
@@ -83,46 +72,18 @@ public class Wrist extends EnhancedSubsystem
         setDefaultCommand(new WristZeroThenOpenLoop());
     }
 
+    @Override
     public void cacheSensors(boolean isDisabled)
     {
         stalled = stallSensor.isStalled();
-        zeroIfAtLimit();
-        state.updateWrist(getAngle());
+        super.cacheSensors(isDisabled);
     }
 
+    @Override
     public void reportState()
     {
-        SmartDashboard.putNumber("Wrist Position", motor.getSelectedSensorPosition(0));
-        SmartDashboard.putNumber("Wrist Velocity", motor.getSelectedSensorVelocity(0));
-        SmartDashboard.putBoolean("Wrist Limit B", AtHardwareLimitBottom());
-        SmartDashboard.putBoolean("Wrist Limit T", AtHardwareLimitTop());
+        super.reportState();
         SmartDashboard.putBoolean("Wrist Stalled", stalled);
-        SmartDashboard.putNumber("Wrist Current", motor.getOutputCurrent());
-        if (kTuning)
-        {
-            SmartDashboard.putNumber("Wrist Error", motor.getClosedLoopError(0));
-        }
-    }
-
-    public boolean AtHardwareLimitBottom()
-    {
-        return limits.isSet(Limit.REVERSE);
-    }
-
-    public boolean AtHardwareLimitTop()
-    {
-        return limits.isSet(Limit.FORWARD);
-    }
-
-    public double getAngle()
-    {
-        return ticksToDegrees(motor.getSelectedSensorPosition(0));
-    }
-
-    /** Wrist encoder has zeroed at any point and is ready to do some bicep curling! */
-    public boolean hasZeroed()
-    {
-        return hasZeroed;
     }
 
     /** Current sense limit switch is set. Only the top can trigger this. */
@@ -131,20 +92,7 @@ public class Wrist extends EnhancedSubsystem
         return stalled;
     }
 
-    public void setOpenLoop(double percentageUp)
-    {
-        setMotor(ControlMode.PercentOutput, percentageUp);
-    }
-
-    /**
-     * Sets the intake position using motion magic
-     * @param degrees Bottom: 0, Top: 90, but will try any value
-     */
-    public void setClosedLoop(double degrees)
-    {
-        setMotor(ControlMode.MotionMagic, degreesToTicks(degrees));
-    }
-
+    @Override
     public void zeroIfAtLimit()
     {
         if (AtHardwareLimitBottom())
@@ -153,32 +101,9 @@ public class Wrist extends EnhancedSubsystem
         }
         else if (AtHardwareLimitTop() || isStalled())
         {
-            motor.setSelectedSensorPosition(kTicksToTop, 0, 0);
+            master.setSelectedSensorPosition(kTicksToTop, 0, 0);
             hasZeroed = true;
         }
-    }
-
-    public void zeroEncoder()
-    {
-        motor.setSelectedSensorPosition(0, 0, 0);
-        hasZeroed = true;
-    }
-
-    private double degreesToTicks(double degrees)
-    {
-        return degrees / kFullRangeDegrees * kTicksToTop;
-    }
-
-    private double ticksToDegrees(double ticks)
-    {
-        return ticks * kFullRangeDegrees / kTicksToTop;
-    }
-
-    private void setMotor(ControlMode mode, double setpoint)
-    {
-        final double feedforward = 0.0;  // TODO Get this working then retune
-
-        motor.set(mode, setpoint, DemandType.ArbitraryFeedForward, feedforward);
     }
 
     public TestReport runFunctionalTest()
@@ -186,19 +111,20 @@ public class Wrist extends EnhancedSubsystem
         TestReport report = new TestReport();
 
         report.add(getDefaultCommand().doesRequire(this));
-        report.add(TalonChecker.checkFirmware(motor));
-        report.add(TalonChecker.checkEncoder(motor));
-        report.add(TalonChecker.checkFrameRates(motor));
+        report.add(TalonChecker.checkFirmware(master));
+        report.add(TalonChecker.checkEncoder(master));
+        report.add(TalonChecker.checkFrameRates(master));
 
         int retries = 10;
-        while (!hasZeroed && retries-- > 0)
+        while (!hasZeroed() && retries-- > 0)
         {
-            setOpenLoop(-.3);
+            setOpenLoop(-1.0);
             Timer.delay(.2);
-            setOpenLoop(0.0);
+            zeroIfAtLimit();
         }
-        report.add(AtHardwareLimitBottom());
-        report.add(TalonChecker.checkSensorPhase(0.3, motor));
+        setOpenLoop(0.0);
+        report.add(AtHardwareLimitBottom(), "Bottom Limit Is Set");
+        report.add(TalonChecker.checkSensorPhase(0.3, master));
 
         return report;
     }

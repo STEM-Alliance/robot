@@ -45,7 +45,6 @@ public abstract class RobotConfig implements TankConfigSupplier
     public boolean kWinchTuning = false;
     public ClosedLoopConfig WRIST_CLOSED_LOOP;
     public double kWristDeadband;
-    public int WRIST_TICKS_TO_TOP;
 
     public static RobotConfig getInstance()
     {
