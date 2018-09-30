@@ -1,14 +1,12 @@
 package org.wfrobotics.robot.commands.lift;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.Lift;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class LiftToHeight extends Command
 {
-    private final RobotState state = RobotState.getInstance();
     private final Lift lift = Lift.getInstance();
     protected final double desired;
 
@@ -25,7 +23,7 @@ public class LiftToHeight extends Command
 
     protected boolean isFinished()
     {
-        final boolean isClose = Math.abs(state.liftHeightInches - desired) < 1.0;
+        final boolean isClose = Math.abs(lift.getPosition() - desired) < 1.0;
         return isClose || Robot.controls.isLiftOverrideRequested();
     }
 

@@ -33,10 +33,7 @@ public final class RobotState extends RobotStateBase
 
     // Robot-specific state
     public boolean robotHasCube;
-    public boolean isLiftMoving;
     public double intakeDistanceToCube;
-    public double liftHeightInches;
-    public double wristAngleDegrees;
 
     //vision specific updates
     // ToDo: Move all of these to the RobotStateBase
@@ -62,7 +59,6 @@ public final class RobotState extends RobotStateBase
         super.reportState();
         SmartDashboard.putBoolean("Has Cube", robotHasCube);
         SmartDashboard.putNumber("Cube", intakeDistanceToCube);
-        SmartDashboard.putNumber("Wrist Angle", wristAngleDegrees);
 
         SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
         try {
@@ -78,9 +74,7 @@ public final class RobotState extends RobotStateBase
     protected synchronized void resetRobotSpecificState()
     {
         robotHasCube = false;
-        isLiftMoving = false;
         intakeDistanceToCube = 9999.0;  // Big so we don't think we have a cube
-        liftHeightInches = 0.0;
         hasCubeCounts = 0;
 
         largestDetected = null;
@@ -155,17 +149,6 @@ public final class RobotState extends RobotStateBase
         {
             IO.getInstance().setRumble(false);
         }
-    }
-
-    public synchronized void updateLift(double inches, boolean isLiftMoving)
-    {
-        liftHeightInches = inches;
-        this.isLiftMoving = isLiftMoving;
-    }
-
-    public synchronized void updateWrist(double degrees)
-    {
-        wristAngleDegrees = degrees;
     }
 
     private synchronized void handleDetectCube(double cubeDistanceInches)

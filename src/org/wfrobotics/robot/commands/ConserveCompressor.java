@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.subsystems.Lift;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ConserveCompressor extends Command
 {
-    private final RobotState state = RobotState.getInstance();
     private final SuperStructure sp = SuperStructure.getInstance();
+    private final Lift lift = Lift.getInstance();
     private boolean isTeleop = true;
 
     public ConserveCompressor()
@@ -24,7 +24,7 @@ public class ConserveCompressor extends Command
 
     protected void execute()
     {
-        sp.setCompressor(isTeleop && !state.isLiftMoving);
+        sp.setCompressor(isTeleop && lift.onTarget());
     }
 
     protected boolean isFinished()

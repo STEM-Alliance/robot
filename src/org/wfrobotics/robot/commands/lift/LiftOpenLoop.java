@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.commands.lift;
 
 import org.wfrobotics.robot.Robot;
-import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.config.LiftHeight;
 import org.wfrobotics.robot.subsystems.Lift;
 
@@ -11,7 +10,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class LiftOpenLoop extends Command
 {
     private final double deadbandPercent = 0.1;
-    private final RobotState state = RobotState.getInstance();
     private final Lift lift = Lift.getInstance();
 
     public LiftOpenLoop()
@@ -21,9 +19,9 @@ public class LiftOpenLoop extends Command
 
     protected void execute()
     {
-        if (DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
+        if (!DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
         {
-            final double liftHeight = state.liftHeightInches;
+            final double liftHeight = lift.getPosition();
             double setpoint = Robot.controls.getLiftStick();
 
             if (Math.abs(setpoint) < deadbandPercent)

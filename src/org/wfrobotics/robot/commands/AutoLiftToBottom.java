@@ -31,6 +31,6 @@ public class AutoLiftToBottom extends CommandGroup
         }));
         addSequential(new LiftToHeight(LiftHeight.Intake.get() + 4.0));  // Gentler slamming
         addSequential(new LiftToHeight(LiftHeight.Intake.get()));
-        addSequential(new LiftGoHome(-0.25, 0.4));  // Anything the command didn't let the PID finish
+        addSequential(new LiftGoHome(-0.25, 2.0));  // Anything the command didn't let the PID finish
     }
 }

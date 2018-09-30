@@ -3,6 +3,8 @@ package org.wfrobotics.robot.commands.intake;
 import org.wfrobotics.reuse.math.Util;
 import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.Lift;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,8 +15,10 @@ public class SmartIntake extends CommandGroup
     private final double kCubeIn = 5.0;
     private final double kCubeInDeadband = 1.25;
 
-    protected final RobotState state = RobotState.getInstance();
-    protected final Intake intake = Intake.getInstance();
+    private final RobotState state = RobotState.getInstance();
+    private final Intake intake = Intake.getInstance();
+    private final Lift lift = Lift.getInstance();
+    private final Wrist wrist = Wrist.getInstance();
 
     /**
      * This command gets the distance from the subsystem and based on that distance
@@ -27,7 +31,7 @@ public class SmartIntake extends CommandGroup
 
     protected void execute()
     {
-        if (state.liftHeightInches < 13.0 && state.wristAngleDegrees < 5.0)
+        if (lift.getPosition() < 13.0 && wrist.getPosition() < 5.0)
         {
             double distanceToCube = state.intakeDistanceToCube;
 

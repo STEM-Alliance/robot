@@ -1,13 +1,19 @@
 package org.wfrobotics.robot.commands;
 
+import org.wfrobotics.reuse.commands.wrapper.SeriesCommand;
 import org.wfrobotics.robot.commands.lift.LiftToHeight;
+import org.wfrobotics.robot.commands.lift.WaitForLiftHeight;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
 import org.wfrobotics.robot.config.LiftHeight;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoLiftToScale extends CommandGroup
 {
+    private static final double kLiftRange = LiftHeight.Scale.get() - LiftHeight.Intake.get();
+    private static final double kWristUnstowHeight = kLiftRange * 0.5 + LiftHeight.Intake.get();
+
     public AutoLiftToScale()
     {
         this(0.0);
@@ -20,8 +26,11 @@ public class AutoLiftToScale extends CommandGroup
 
     public AutoLiftToScale(double belowScaleHeight, double wristAngle)
     {
-        // TODO Wrist more vertical during the middle of the motion
-        this.addParallel((new WristToHeight(wristAngle)));  // Keep cube level to prevent slippage
-        this.addSequential(new LiftToHeight(LiftHeight.Scale.get() - belowScaleHeight));
+        addSequential(new WristToHeight(80.0));  // Stow
+        addParallel(new SeriesCommand(new Command[] {
+            new WaitForLiftHeight(kWristUnstowHeight, true),
+            new WristToHeight(wristAngle),  // Keep cube level to prevent slippage
+        }));
+        addSequential(new LiftToHeight(LiftHeight.Scale.get() - belowScaleHeight));
     }
 }

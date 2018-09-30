@@ -183,18 +183,17 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
         report.add(TalonChecker.checkFrameRates(master));
         report.add(testSensorPluggedIn(true));
 
-        // Visual inspection
         setMotors(0.3);
         Timer.delay(0.75);
         setMotors(0.0);
-        report.addManualTest();
+        report.addManualTest("Visual inspection motors");
 
         Timer.delay(0.5);
 
         setJaws(!getJawsState());
         Timer.delay(0.5);
         setJaws(!getJawsState());
-        report.addManualTest();
+        report.addManualTest("Visual inspection cylinders");
 
         return report;
     }
