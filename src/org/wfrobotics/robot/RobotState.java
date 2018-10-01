@@ -33,13 +33,13 @@ public final class RobotState extends RobotStateBase
 
     // Robot-specific state
     public boolean robotHasCube;
-    public double intakeDistanceToCube;
 
     //vision specific updates
     // ToDo: Move all of these to the RobotStateBase
     public VisionMessageTargets latestUpdate;
     public VisionTargetInfo largestDetected;
     public int centerX;
+
     public RobotState()
     {
         kIntakeDistanceHasCube = RobotConfig.getInstance().kIntakeDistanceToCube;
@@ -58,7 +58,6 @@ public final class RobotState extends RobotStateBase
     {
         super.reportState();
         SmartDashboard.putBoolean("Has Cube", robotHasCube);
-        SmartDashboard.putNumber("Cube", intakeDistanceToCube);
 
         SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
         try {
@@ -74,7 +73,6 @@ public final class RobotState extends RobotStateBase
     protected synchronized void resetRobotSpecificState()
     {
         robotHasCube = false;
-        intakeDistanceToCube = 9999.0;  // Big so we don't think we have a cube
         hasCubeCounts = 0;
 
         largestDetected = null;
@@ -121,11 +119,6 @@ public final class RobotState extends RobotStateBase
         viaionAngleError = precentError * (kCamera_Range /2);
     }
 
-    public double getIntakeDistanceCM()  // TODO Use robot standard units (inches)
-    {
-        return intakeDistanceToCube / 2.54;
-    }
-
     public void updateIntake(double distance)
     {
         handleDetectCube(distance);
@@ -153,9 +146,7 @@ public final class RobotState extends RobotStateBase
 
     private synchronized void handleDetectCube(double cubeDistanceInches)
     {
-        intakeDistanceToCube = cubeDistanceInches;
-
-        if (intakeDistanceToCube < kIntakeDistanceHasCube)
+        if (cubeDistanceInches < kIntakeDistanceHasCube)
         {
             hasCubeCounts++;
         }

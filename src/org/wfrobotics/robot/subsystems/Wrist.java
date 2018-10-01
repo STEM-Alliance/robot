@@ -1,6 +1,5 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.StallSense;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
@@ -9,9 +8,7 @@ import org.wfrobotics.robot.commands.wrist.WristZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlFrame;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,43 +23,29 @@ public class Wrist extends PositionBasedSubsystem
     {
         if (instance == null)
         {
-            final RobotConfig config = RobotConfig.getInstance();
-            final TalonSRX master = TalonFactory.makeClosedLoopTalon(config.WRIST_CLOSED_LOOP).get(0);
-            final LimitSwitchNormal[] limitsConfig = new LimitSwitchNormal[] {
-                LimitSwitchNormal.NormallyOpen, LimitSwitchNormal.NormallyOpen,
-            };
-            instance = new Wrist(master, limitsConfig);
+            instance = new Wrist(RobotConfig.getInstance().getWristConfig());
         }
         return instance;
     }
-
-    private static final double kFullRangeDegrees = 90.0;
-    private static final int kTicksToTop = 5000;
-    private final boolean kTuning;
 
     private static Wrist instance = null;
     private final StallSense stallSensor;
 
     private boolean stalled = false;
 
-    private Wrist(TalonSRX masterTalon, LimitSwitchNormal[] limitsConfig)
+    private Wrist(PositionConfig positionConfig)
     {
-        super(masterTalon, limitsConfig, kTicksToTop / kFullRangeDegrees);
-        RobotConfig config = RobotConfig.getInstance();
-        kTuning = config.kWinchTuning;
+        super(positionConfig);
+
+        RobotConfig.getInstance();
 
         master.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
-        master.configNeutralDeadband(config.kWristDeadband, 100);
-        master.configOpenloopRamp(.1, 10);
+        master.configOpenloopRamp(.05, 10);
         TalonFactory.configCurrentLimiting(master, 20, 40, 200);  // Adding with high numbers just in case
         master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
         master.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 100);  // Slow down, doesn't make decisions off this
-        TalonFactory.configFastErrorReporting(master, kTuning);
         // TODO Try configAllowableClosedloopError()
         // TODO Try using Status_10_MotionMagic to improve motion?
-
-        LimitSwitch.configSoftwareLimitF(master, kTicksToTop, true);
-        LimitSwitch.configSoftwareLimitR(master, -500, true);
 
         stallSensor = new StallSense(master, 25.0, 0.1);
     }

@@ -1,21 +1,23 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.reuse.math.Util;
-import org.wfrobotics.robot.RobotState;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Lift;
 import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Pull in the cube purely based on sensors */
 public class SmartIntake extends CommandGroup
 {
-    private final double kCubeIn = 5.0;
-    private final double kCubeInDeadband = 1.25;
+    private static final double kCubeIn = 5.0;
+    private static final double kCubeInDeadband = 1.25;
+    private static final double kCubeWant = 50/2.54;
+    private static final double kJawsNom = 30/2.54;
+    private static final double kJawsHungry = 60/2.54;
+    private static final double kSpeedNom = 0.25;
+    private static final double kSpeedHungry = 0.7;
 
-    private final RobotState state = RobotState.getInstance();
     private final Intake intake = Intake.getInstance();
     private final Lift lift = Lift.getInstance();
     private final Wrist wrist = Wrist.getInstance();
@@ -33,7 +35,7 @@ public class SmartIntake extends CommandGroup
     {
         if (lift.getPosition() < 13.0 && wrist.getPosition() < 5.0)
         {
-            double distanceToCube = state.intakeDistanceToCube;
+            final double distanceToCube = intake.getCubeDistance();
 
             autoIntake(distanceToCube);
             autoJaws(distanceToCube);
@@ -52,36 +54,29 @@ public class SmartIntake extends CommandGroup
     private void autoIntake(double distanceToCube)
     {
         double speed = 0.0;
-        SmartDashboard.putNumber("autoIntake something", 0);
+
         if (distanceToCube < kCubeInDeadband)
         {
-            SmartDashboard.putNumber("autoIntake something", 1);
             intake.setMotors(0);
         }
         else if (distanceToCube < kCubeIn && distanceToCube > kCubeInDeadband)
         {
-            SmartDashboard.putNumber("autoIntake something", 2);
-            speed = -Util.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, .25, 0.7);
+            speed = -Util.scaleToRange(distanceToCube, kCubeInDeadband, kCubeIn, kSpeedNom, kSpeedHungry);
         }
-        else if (distanceToCube > kCubeIn && distanceToCube < 50/2.54)  // TODO Need to move sensor, otherwise we stall motors
+        else if (distanceToCube > kCubeIn && distanceToCube < kCubeWant)
         {
-            SmartDashboard.putNumber("autoIntake something", 3);
-            speed = -0.7;
+            speed = -kSpeedHungry;
         }
-
-        // TODO After it's in for a little bit, it's SUPER effective to pulse the cube out a sec then back in to orient it
-        //      This would also help us not stall if we don't drive wheels after that pulse. Or we move the distance sensor back enough to always be in a valid range.
-
         intake.setMotors(speed);
     }
 
     private void autoJaws(double distanceToCube)
     {
-        if (distanceToCube < 30/2.54)
+        if (distanceToCube < kJawsNom)
         {
             intake.setJaws(false);  // Can't always set, otherwise we chatter?
         }
-        else if (distanceToCube > 30/2.54 && distanceToCube < 60/2.54)  // TODO find ideal range to be auto-opened, put in RobotMap or use robot state
+        else if (distanceToCube > kJawsNom && distanceToCube < kJawsHungry)
         {
             intake.setJaws(true);
         }
