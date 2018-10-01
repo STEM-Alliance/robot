@@ -72,7 +72,7 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
         follower.setNeutralMode(NeutralMode.Brake);
         follower.setInverted(config.kIntakeInvertL);
 
-        cylinders = new DoubleSolenoid(config.kPCMAddress, config.kIntakeSolenoidF, config.kIntakeSolenoidR);
+        cylinders = new DoubleSolenoid(0, config.kIntakeSolenoidF, config.kIntakeSolenoidR);
 
         distanceSensor = new SharpDistance(config.kIntakeInfrared);
         buffer = new CircularBuffer(bufferSize, doesntHaveCubeDistance);
@@ -119,6 +119,11 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
     public void onStopUpdates()
     {
 
+    }
+
+    public double getCubeDistance()
+    {
+        return latestDistance;
     }
 
     public boolean getJawsState()

@@ -1,6 +1,5 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
@@ -10,9 +9,7 @@ import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 /**
  * The elevator consists of two independently connected Mini CIM motors to raise/lower the intake and climber
@@ -24,48 +21,37 @@ public class Lift extends PositionBasedSubsystem
     {
         if (instance == null)
         {
-            final RobotConfig config = RobotConfig.getInstance();
-            final TalonSRX master = TalonFactory.makeClosedLoopTalon(config.LIFT_CLOSED_LOOP).get(0);
-            final LimitSwitchNormal[] limitsConfig = config.LIFT_LIMIT_SWITCH_NORMALLY;
-            instance = new Lift(master, limitsConfig);
+            instance = new Lift(RobotConfig.getInstance().getLiftConfig());
         }
         return instance;
     }
 
-    private static final int kTicksToTop = 27000;
-    private static final double kTicksPerInch = kTicksToTop / 38.0;
     private static final double kFeedForwardHasCube = 0.25;  // TODO Keep track even if we tilt wrist
     private static final double kFeedForwardNoCube = 0.20;  // TODO Try increasing to make more buoyant
     private static final double kInchesGroundToZero = LiftHeight.Intake.get();
     private static final int kTickRateBrakeModeObserved = 500;
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;
     private final int kSlotUp, kSlotDown;
-    private final boolean kTuning;
 
     private static Lift instance = null;
     private final BaseMotorController follower;
 
-    private Lift(TalonSRX masterTalon, LimitSwitchNormal[] limitsConfig)
+    private Lift(PositionConfig positionConfig)
     {
-        super(masterTalon, limitsConfig, kTicksPerInch);
+        super(positionConfig);
+
         RobotConfig config = RobotConfig.getInstance();
-        kTuning = config.kLiftTuning;
-        kSlotUp = config.LIFT_CLOSED_LOOP.gains.get(0).kSlot;
-        kSlotDown = config.LIFT_CLOSED_LOOP.gains.get(1).kSlot;
+        kSlotUp = positionConfig.kClosedLoop.gains.get(0).kSlot;
+        kSlotDown = positionConfig.kClosedLoop.gains.get(1).kSlot;
 
         master.setSelectedSensorPosition(config.kLiftTicksStartup, 0, 100);
-        master.configNeutralDeadband(0.1, 100);
         TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // Observed 10A when holding
-        TalonFactory.configFastErrorReporting(master, kTuning);
         //        master.configAllowableClosedloopError(0, 20, 10);
         //        master.configAllowableClosedloopError(1, 20, 10);
         master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint
         // TODO Try using Status_10_MotionMagic to improve motion?
 
-        follower = TalonFactory.makeFollowers(master, config.LIFT_CLOSED_LOOP.masters.get(0)).get(0);
-
-        LimitSwitch.configSoftwareLimitF(master, kTicksToTop, true);
-        LimitSwitch.configSoftwareLimitR(master, -500, true);
+        follower = TalonFactory.makeFollowers(master, positionConfig.kClosedLoop.masters.get(0)).get(0);
     }
 
     public void initDefaultCommand()
