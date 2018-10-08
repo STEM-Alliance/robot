@@ -27,13 +27,19 @@ public final class IO
     private final Joystick driverTurn;
     private final Xbox operator;
 
-    private IO(HerdJoystick driverThrottle, Joystick driverTurn, Xbox operator)
+    /** Create and configure controls for Drive Team */
+    private IO()
     {
-        this.driverThrottle = driverThrottle;
-        this.driverTurn = driverTurn;
-        this.operator = operator;
+        driverThrottle = new HerdJoystick(0);
+        driverTurn = new Joystick(1);
+        operator = new Xbox(2);
+    }
 
+    /** Configure each Button to run a Command */
+    public void assignButtons()
+    {
         // ---------------------- Autonomous ----------------------
+
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
@@ -119,7 +125,7 @@ public final class IO
     {
         if (instance == null)
         {
-            instance = new IO(new HerdJoystick(0), new Joystick(1), new Xbox(2));
+            instance = new IO();
         }
         return instance;
     }
@@ -132,12 +138,12 @@ public final class IO
     public double getTurn()
     {
         final double val = driverTurn.getRawAxis(0);
-        return Math.signum(val) * Math.pow(val, 2);  // TODO Remove?
+        return Math.signum(val) * Math.pow(val, 2);  // TODO Remove this input squaring?
     }
 
     public boolean getDriveQuickTurn()
     {
-        return driverThrottle.getY() < 0.1;
+        return Math.abs(getThrottle()) < 0.1;
     }
 
     public void setRumble(boolean rumble)

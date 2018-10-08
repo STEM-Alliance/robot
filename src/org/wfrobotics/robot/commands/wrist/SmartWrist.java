@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands.wrist;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -10,6 +10,7 @@ public class SmartWrist extends Command
 {
     //    private final RobotState state = RobotState.getInstance();
     private final Wrist wrist = Wrist.getInstance();
+    private final IO io = IO.getInstance();
 
     public SmartWrist()
     {
@@ -20,7 +21,7 @@ public class SmartWrist extends Command
     {
         if (!DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
         {
-            final double commanded = Robot.controls.getWristStick();
+            final double commanded = io.getWristStick();
 
             // TODO Need some sort of latched timeout since wrist stick overridden
 

@@ -40,11 +40,10 @@ public class Lift extends PositionBasedSubsystem
     {
         super(positionConfig);
 
-        RobotConfig config = RobotConfig.getInstance();
         kSlotUp = positionConfig.kClosedLoop.gains.get(0).kSlot;
         kSlotDown = positionConfig.kClosedLoop.gains.get(1).kSlot;
 
-        master.setSelectedSensorPosition(config.kLiftTicksStartup, 0, 100);
+        master.setSelectedSensorPosition(RobotConfig.kLiftTicksStartup, 0, 100);
         TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // Observed 10A when holding
         //        master.configAllowableClosedloopError(0, 20, 10);
         //        master.configAllowableClosedloopError(1, 20, 10);
