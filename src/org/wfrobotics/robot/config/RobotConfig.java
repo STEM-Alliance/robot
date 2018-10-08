@@ -11,29 +11,34 @@ import org.wfrobotics.reuse.config.TankConfig;
 import org.wfrobotics.reuse.config.TankConfig.TankConfigSupplier;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
 
-/** Competition Robot Config, Name: Herd Victor */
+/** Robot Name: Herd Victor */
 public class RobotConfig implements TankConfigSupplier
 {
     private static RobotConfig instance = null;
 
     //                       Intake
     // _________________________________________________________________________________
-    public final int kIntakeAddressL = 19;
-    public final int kIntakeAddressR = 20;
-    public final int kIntakeSolenoidF = 2;
-    public final int kIntakeSolenoidR = 3;
-    public int kIntakeInfrared = 3;
 
+    // Hardware
+    public int kIntakeAddressL = 19;
+    public int kIntakeAddressR = 20;
+    public int kIntakeSolenoidF = 2;
+    public int kIntakeSolenoidR = 3;
+    public int kIntakeInfrared = 3;
     public boolean kIntakeInvertR = true;
     public boolean kIntakeInvertL = true;
+
+    // Subsystem
+    public static final int kIntakeBufferSize = 3;
+    public static final double kIntakeDistanceSensorPluggedIn = 3000.0;  // TODO Tune me
+    public static final double kIntakeDistanceReboot = kIntakeDistanceSensorPluggedIn * 3;
     public double kIntakeDistanceToCube = 6.5;
-    public double kJawsTimeoutSeconds = 0.5;
+    public final double kJawsTimeoutSeconds = 0.5;
 
     //                       Lift
     // _________________________________________________________________________________
-    public int kLiftTicksStartup = -1500;
-    public boolean[] LIFT_LIMIT_SWITCH_NORMALLY = new boolean[] { false, false };
 
+    // Hardware
     public PositionConfig getLiftConfig()
     {
         int kTicksToTop = 27000;
@@ -60,6 +65,13 @@ public class RobotConfig implements TankConfigSupplier
         return c;
     }
 
+    // Subsystem
+    public static double kLiftFeedForwardHasCube = 0.25;
+    public static double kLiftFeedForwardNoCube = 0.20;
+    public static final int kLiftTicksStartup = -1500;
+    public static int kLiftTickRateSlowVelocityObserved = 500;
+    public static int kLiftTickRateSlowEnough = kLiftTickRateSlowVelocityObserved + 200;
+
     //                      Winch
     // _________________________________________________________________________________
     public int kWinchAddress = 22;
@@ -68,6 +80,8 @@ public class RobotConfig implements TankConfigSupplier
 
     //                      Wrist
     // _________________________________________________________________________________
+
+    // Hardware
     public PositionConfig getWristConfig()
     {
         int kTicksToTop = 5000;
@@ -93,8 +107,19 @@ public class RobotConfig implements TankConfigSupplier
         return c;
     }
 
+    // Subsystem
+
+    //                      Super Structure
+    // _________________________________________________________________________________
+
+    // Hardware
+
+    // Subsystem
+
     //                      Tank
     // _________________________________________________________________________________
+
+    // Hardware
     public TankConfig getTankConfig()
     {
         TankConfig config = new TankConfig();
@@ -127,13 +152,18 @@ public class RobotConfig implements TankConfigSupplier
         return config;
     }
 
+    // Subsystem
+
+    //                      Helper Methods
+    // _________________________________________________________________________________
+
     public static RobotConfig getInstance()
     {
         if (instance == null)
         {
             instance = RobotConfigPicker.get(new RobotConfig[] {
-                new RobotConfig(),
-                new PracticeConfig(),
+                new RobotConfig(),     // Competition robot
+                new PracticeConfig(),  // Practice robot differences
             });
         }
         return instance;

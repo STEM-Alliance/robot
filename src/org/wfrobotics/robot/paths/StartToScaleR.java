@@ -10,13 +10,12 @@ import org.wfrobotics.reuse.math.geometry.Rotation2d;
 import org.wfrobotics.reuse.math.geometry.Translation2d;
 import org.wfrobotics.reuse.subsystems.control.Path;
 import org.wfrobotics.reuse.subsystems.drive.TankMaths;
-import org.wfrobotics.robot.config.RobotConfig;
 
 public class StartToScaleR implements PathContainer {
 
     @Override
     public Path buildPath() {
-        double velocity = TankMaths.ticksToInchesPerSecond(RobotConfig.getInstance().getTankConfig().VELOCITY_MAX);
+        double velocity = TankMaths.kVelocityMaxInchesPerSecond;
         ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
         sWaypoints.add(new Waypoint(0,50,0,0));
         sWaypoints.add(new Waypoint(150,50,70,velocity));
