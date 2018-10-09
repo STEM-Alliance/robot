@@ -8,10 +8,6 @@ import org.wfrobotics.reuse.subsystems.vision.VisionListener;
 import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
 import org.wfrobotics.robot.config.MatchState2018;
 import org.wfrobotics.robot.paths.TrajectoryGenerator;
-import org.wfrobotics.robot.subsystems.Intake;
-import org.wfrobotics.robot.subsystems.Lift;
-import org.wfrobotics.robot.subsystems.Winch;
-import org.wfrobotics.robot.subsystems.Wrist;
 
 /**
  * Robot: Victor - 2018
@@ -34,10 +30,10 @@ public final class Robot extends EnhancedRobot
         //        VisionProcessor processor = new VisionProcessor();
         //        visionServer.AddListener(processor);
 
-        subsystems.register(Intake.getInstance());
-        subsystems.register(Lift.getInstance());
-        subsystems.register(Winch.getInstance());
-        subsystems.register(Wrist.getInstance());
+        //        subsystems.register(Intake.getInstance());
+        //        subsystems.register(Lift.getInstance());
+        //        subsystems.register(Winch.getInstance());
+        //        subsystems.register(Wrist.getInstance());
     }
 
     @Override
