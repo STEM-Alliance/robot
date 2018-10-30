@@ -22,12 +22,14 @@ public class GoalTrack {
     public static double kMaxTrackerDistance = 18.0;
     public static double kCameraFrameRate = 30.0;
 
+    private final boolean javaTimestamps;
 
     Map<Double, Translation2d> mObservedPositions = new TreeMap<>();
     Translation2d mSmoothedPosition = null;
     int mId;
 
     private GoalTrack() {
+        javaTimestamps = System.getProperty("os.name").contains("Windows");
     }
 
     /**
@@ -74,7 +76,7 @@ public class GoalTrack {
      * @see Constants.java
      */
     void pruneByTime() {
-        double delete_before = Timer.getFPGATimestamp() - kMaxGoalTrackAge;
+        double delete_before = getTimestamp() - kMaxGoalTrackAge;
         for (Iterator<Map.Entry<Double, Translation2d>> it = mObservedPositions.entrySet().iterator(); it.hasNext();) {
             Map.Entry<Double, Translation2d> entry = it.next();
             if (entry.getKey() < delete_before) {
@@ -119,5 +121,14 @@ public class GoalTrack {
 
     public int getId() {
         return mId;
+    }
+
+    private double getTimestamp()
+    {
+        if (javaTimestamps)
+        {
+            return System.currentTimeMillis();  // ms since epoch - java testing
+        }
+        return Timer.getFPGATimestamp();  // ms - RIO
     }
 }
