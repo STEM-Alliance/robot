@@ -137,8 +137,7 @@ public final class IO
 
     public double getTurn()
     {
-        final double val = driverTurn.getRawAxis(0);
-        return Math.signum(val) * Math.pow(val, 2);  // TODO Remove this input squaring?
+        return driverTurn.getRawAxis(0);
     }
 
     public boolean getDriveQuickTurn()

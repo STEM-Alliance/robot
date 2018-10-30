@@ -10,6 +10,9 @@ import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
 import org.wfrobotics.reuse.config.TankConfig.TankConfigSupplier;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
+import org.wfrobotics.robot.commands.DriveCarefully;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 /** Robot Name: Herd Victor */
 public class RobotConfig implements TankConfigSupplier
@@ -122,9 +125,9 @@ public class RobotConfig implements TankConfigSupplier
     // Hardware
     public TankConfig getTankConfig()
     {
-        TankConfig config = new TankConfig();
+        TankConfig config = new VictorTankConfig();
 
-        config.VELOCITY_MAX = 10000;
+        config.VELOCITY_MAX = 10000.0;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.8);
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
@@ -153,6 +156,13 @@ public class RobotConfig implements TankConfigSupplier
     }
 
     // Subsystem
+    public class VictorTankConfig extends TankConfig
+    {
+        public Command getTeleopCommand()
+        {
+            return new DriveCarefully();
+        }
+    }
 
     //                      Helper Methods
     // _________________________________________________________________________________
