@@ -4,29 +4,27 @@ import org.wfrobotics.reuse.commands.SignalHumanPlayer;
 import org.wfrobotics.reuse.commands.debug.TeleopPath;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
-import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
 import org.wfrobotics.robot.paths.StartToOppositeScaleR;
 import org.wfrobotics.robot.paths.StartToScaleR;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.Joystick;
 
 /** Maps controllers to Commands **/
 public final class IO
 {
     private static IO instance = null;
-    private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
-    private final Joystick driverTurn;
+    private final Xbox driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
+    private final Xbox driverTurn;
     private final Xbox operator;
 
     /** Create and configure controls for Drive Team */
     private IO()
     {
-        driverThrottle = new HerdJoystick(0);
-        driverTurn = new Joystick(1);
-        operator = new Xbox(2);
+        driverThrottle = new Xbox(0);
+        driverTurn = driverThrottle;
+        operator = new Xbox(1);
     }
 
     /** Configure each Button to run a Command */
@@ -128,12 +126,12 @@ public final class IO
 
     public double getThrottle()
     {
-        return -driverThrottle.getY();
+        return driverThrottle.getY(Hand.kLeft);
     }
 
     public double getTurn()
     {
-        final double val = driverTurn.getRawAxis(0);
+        final double val = driverTurn.getX(Hand.kRight);
         return Math.signum(val) * Math.pow(val, 2);  // TODO Remove this input squaring?
     }
 
