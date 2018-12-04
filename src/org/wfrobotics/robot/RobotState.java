@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
+import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
+import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
-import org.wfrobotics.test.vision.CoprocessorData;
-import org.wfrobotics.test.vision.CoprocessorData.VisionTargetInfo;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
