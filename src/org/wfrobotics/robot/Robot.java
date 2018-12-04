@@ -4,10 +4,8 @@ import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.lowleveldriver.RevLEDs.PatternName;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
-import org.wfrobotics.reuse.subsystems.vision.VisionListener;
-import org.wfrobotics.reuse.subsystems.vision.messages.VisionMessageConfig;
+import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
 import org.wfrobotics.robot.config.MatchState2018;
-import org.wfrobotics.robot.paths.TrajectoryGenerator;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Lift;
 import org.wfrobotics.robot.subsystems.Winch;
@@ -21,18 +19,13 @@ public final class Robot extends EnhancedRobot
 {
     public static LEDs leds = new LEDs(9, PatternName.Yellow);
     public final CameraServer visionServer = CameraServer.getInstance();
+    VisionProcessor processor = VisionProcessor.getInstance();
 
     protected void registerRobotSpecific()
     {
-        visionServer.SetConfig(new VisionMessageConfig(0));
-        //        visionServer.SetConfig(new VisionMessageConfig(0,1, new ArrayList<>(Arrays.asList(new Boolean[] {true, true}))));
-        TrajectoryGenerator.getInstance().generateTrajectories();
+        visionServer.register(processor);
 
-        VisionListener listener = new VisionListener();
-        visionServer.AddListener(listener);
-
-        //        VisionProcessor processor = new VisionProcessor();
-        //        visionServer.AddListener(processor);
+        RobotState.getInstance().resetVisionState();
 
         subsystems.register(Intake.getInstance());
         subsystems.register(Lift.getInstance());
