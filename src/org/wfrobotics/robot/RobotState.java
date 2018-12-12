@@ -17,8 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /** Preferred provider of global, formatted state about the robot. Commands can get information from one place rather than from multiple subsystems. **/
 public final class RobotState extends RobotStateBase
 {
-    // Angle of the camera with used vision error
-    private static final double kCamera_Range = 68.5;
     private static final int kHasCubeCountThreshold = 20;
     private final double kIntakeDistanceHasCube;
     private static final double kHasCubeSignalDriveTeamDuration = 2.0;
@@ -34,7 +32,6 @@ public final class RobotState extends RobotStateBase
     // ToDo: Move all of these to the RobotStateBase
     public  List<VisionTargetInfo> usableTargets = new ArrayList<VisionTargetInfo>();
     public CoprocessorData latestUpdate;
-    public int centerX;
 
     public RobotState()
     {
@@ -73,7 +70,6 @@ public final class RobotState extends RobotStateBase
     public synchronized void addVisionUpdate(CoprocessorData latest)
     {
         latestUpdate = latest;
-        centerX = latestUpdate.frameWidthPixels / 2;
 
         if (latest.targets.size() > 0)
         {
@@ -88,7 +84,6 @@ public final class RobotState extends RobotStateBase
                 }
             }
             usableTargets.add(0, largestTarget);
-            calcVisionError();
         }
         else {
             visionInView = false;
@@ -96,20 +91,6 @@ public final class RobotState extends RobotStateBase
         }
     }
 
-    public void calcVisionError()
-    {
-        double precentError = Double.NaN;
-        if (centerX - usableTargets.get(0).center_x > 0 ) {
-            precentError = 1;
-        }
-        else if ( centerX - usableTargets.get(0).center_x < 0){
-            precentError = -1;
-        }
-
-        precentError = (centerX - usableTargets.get(0).center_x) / centerX;
-
-        viaionAngleError = precentError * (kCamera_Range /2);
-    }
 
     public void updateIntake(double distance)
     {
