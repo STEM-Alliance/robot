@@ -1,13 +1,11 @@
 package org.wfrobotics.robot;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
+import org.wfrobotics.reuse.subsystems.vision.Point;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
 
@@ -25,13 +23,12 @@ public final class RobotState extends RobotStateBase
     private int hasCubeCounts;
     private double timeSinceRumbleOn;
 
+    public final double kcameraAngle = 68.7;
+
     // Robot-specific state
     public boolean robotHasCube;
+    public CoprocessorData update;
 
-    //vision specific updates
-    // ToDo: Move all of these to the RobotStateBase
-    public  List<VisionTargetInfo> usableTargets = new ArrayList<VisionTargetInfo>();
-    public CoprocessorData latestUpdate;
 
     public RobotState()
     {
@@ -50,10 +47,8 @@ public final class RobotState extends RobotStateBase
 
         SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
         try {
-            SmartDashboard.putString("Message", latestUpdate.toString());
-            SmartDashboard.putNumber("vision Error", viaionAngleError);
+            SmartDashboard.putString("Message", update.toString());
             SmartDashboard.putBoolean("Target In View", visionInView);
-            SmartDashboard.putNumber("Largest Area", usableTargets.get(1).area());
         }
         catch (Exception e) {
         }
@@ -64,34 +59,37 @@ public final class RobotState extends RobotStateBase
         robotHasCube = false;
         hasCubeCounts = 0;
 
-        usableTargets.clear();
     }
-
-    public synchronized void addVisionUpdate(CoprocessorData latest)
+    public void addVisionUpdate(Double time, CoprocessorData coprocessorData)
     {
-        latestUpdate = latest;
+        update = coprocessorData;
 
-        if (latest.targets.size() > 0)
+        if (coprocessorData.targets.size() > 0)
         {
             visionInView = true;
 
-            VisionTargetInfo largestTarget = latestUpdate.targets.get(0);
-            for (VisionTargetInfo target : latestUpdate.targets)
+            VisionTargetInfo largestTarget = update.targets.get(0);
+            for (VisionTargetInfo target : update.targets)
             {
                 if ( target.area() > largestTarget.area() || largestTarget == null)
                 {
                     largestTarget = target;
                 }
             }
-            usableTargets.add(0, largestTarget);
+            points.add(0, (new Point(time, largestTarget)));
         }
         else {
             visionInView = false;
-            viaionAngleError = 0;
+        }
+        if (points.size() > 2)
+        {
+            SmartDashboard.putNumber("vision Error", getVisionError());
         }
     }
-
-
+    public double getVisionError()
+    {
+        return points.get(0).extrapolate(points.get(1), Timer.getFPGATimestamp()).getXerror();
+    }
     public void updateIntake(double distance)
     {
         handleDetectCube(distance);
