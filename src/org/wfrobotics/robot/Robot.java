@@ -1,8 +1,8 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.EnhancedRobot;
-import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.Blinkin;
+import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.lowleveldriver.BlinkinPatterns.PatternName;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
@@ -32,6 +32,7 @@ public final class Robot extends EnhancedRobot
         subsystems.register(Lift.getInstance());
         subsystems.register(Winch.getInstance());
         subsystems.register(Wrist.getInstance());
+
     }
 
     @Override
@@ -39,5 +40,11 @@ public final class Robot extends EnhancedRobot
     {
         MatchState2018.getInstance().update();  // Need game-specific data
         super.disabledPeriodic();
+    }
+    @Override
+    public void teleopPeriodic()
+    {
+        subsystems.update();
+        processor.onBackgroundUpdate();
     }
 }

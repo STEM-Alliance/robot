@@ -1,6 +1,9 @@
 package org.wfrobotics.robot;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
@@ -23,11 +26,13 @@ public final class RobotState extends RobotStateBase
     private int hasCubeCounts;
     private double timeSinceRumbleOn;
 
-    public final double kcameraAngle = 68.7;
+    public final double kcameraAngle = 34.5;
 
     // Robot-specific state
     public boolean robotHasCube;
     public CoprocessorData update;
+    public  List<Point> points = new ArrayList<Point>();
+    public boolean visionInView = false;
 
 
     public RobotState()
@@ -44,14 +49,18 @@ public final class RobotState extends RobotStateBase
     {
         super.reportState();
         SmartDashboard.putBoolean("Has Cube", robotHasCube);
+        SmartDashboard.putString("Reported State", "True");
+        SmartDashboard.putNumber("target", points.size());
+        try
+        {
+            SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        SmartDashboard.putBoolean("Target In View", visionInView);
 
-        SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
-        try {
-            SmartDashboard.putString("Message", update.toString());
-            SmartDashboard.putBoolean("Target In View", visionInView);
-        }
-        catch (Exception e) {
-        }
     }
 
     protected synchronized void resetRobotSpecificState()
@@ -62,6 +71,7 @@ public final class RobotState extends RobotStateBase
     }
     public void addVisionUpdate(Double time, CoprocessorData coprocessorData)
     {
+        SmartDashboard.putString("Ran vision update", "Ran Vision Update");
         update = coprocessorData;
 
         if (coprocessorData.targets.size() > 0)
@@ -83,12 +93,18 @@ public final class RobotState extends RobotStateBase
         }
         if (points.size() > 2)
         {
-            SmartDashboard.putNumber("vision Error", getVisionError());
+            SmartDashboard.putNumber("vision Error", getExtrapolatedVisionError());
+            SmartDashboard.putNumber("test", points.get(0).getXerror());
         }
+        reportState();
+    }
+    public double getExtrapolatedVisionError()
+    {
+        return points.get(0).extrapolate(points.get(1), Timer.getFPGATimestamp()).getXerror();
     }
     public double getVisionError()
     {
-        return points.get(0).extrapolate(points.get(1), Timer.getFPGATimestamp()).getXerror();
+        return points.get(0).getXerror();
     }
     public void updateIntake(double distance)
     {
