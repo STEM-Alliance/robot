@@ -54,6 +54,9 @@ public final class RobotState extends RobotStateBase
         try
         {
             SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
+            System.out.println(update.toString());
+            SmartDashboard.putString("Message", update.toString());
+            SmartDashboard.putString("area", points.get(0).toString());
         }
         catch (Exception e)
         {
@@ -81,7 +84,7 @@ public final class RobotState extends RobotStateBase
             VisionTargetInfo largestTarget = update.targets.get(0);
             for (VisionTargetInfo target : update.targets)
             {
-                if ( target.area() > largestTarget.area() || largestTarget == null)
+                if ( target.area() > largestTarget.area())
                 {
                     largestTarget = target;
                 }
