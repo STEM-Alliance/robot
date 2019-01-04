@@ -10,7 +10,6 @@ import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
 import org.wfrobotics.robot.auto.ModeScale;
-import org.wfrobotics.robot.commands.AutoLiftToBottom;
 import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
@@ -56,7 +55,7 @@ public final class IO
         // ------------------------- Lift -------------------------
 
         ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new AutoLiftToScale());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new AutoLiftToBottom());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new TurnToHeading(90));
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget(10));
 
         // -------------------- Super Structure -------------------

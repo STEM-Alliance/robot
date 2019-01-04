@@ -27,6 +27,7 @@ public final class Robot extends EnhancedRobot
         visionServer.register(processor);
 
         RobotState.getInstance().resetVisionState();
+        backgroundUpdater.register(processor);
 
         subsystems.register(Intake.getInstance());
         subsystems.register(Lift.getInstance());
@@ -40,11 +41,5 @@ public final class Robot extends EnhancedRobot
     {
         MatchState2018.getInstance().update();  // Need game-specific data
         super.disabledPeriodic();
-    }
-    @Override
-    public void teleopPeriodic()
-    {
-        subsystems.update();
-        processor.onBackgroundUpdate();
     }
 }
