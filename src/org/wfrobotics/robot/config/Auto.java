@@ -6,8 +6,6 @@ import org.wfrobotics.reuse.config.AutoFactory.ModeSafetyOff;
 import org.wfrobotics.reuse.config.AutoFactory.ModeSelectBase;
 import org.wfrobotics.reuse.config.AutoSelection;
 import org.wfrobotics.robot.auto.ModeCenter;
-import org.wfrobotics.robot.auto.ModeOppisitScalse;
-import org.wfrobotics.robot.auto.ModeScale;
 import org.wfrobotics.robot.auto.ModeSide;
 
 /** Configuration of {@link AutoMode} can be run in autonomous mode*/
@@ -23,8 +21,6 @@ public abstract class Auto
         {
             return new AutoMode[] {
                 new ModeSafetyOff(),
-                new ModeScale(),
-                new ModeOppisitScalse(),
                 new ModeCenter(),
                 new ModeSide(),
             };
