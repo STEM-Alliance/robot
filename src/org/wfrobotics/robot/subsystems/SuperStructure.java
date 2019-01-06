@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
-import org.wfrobotics.robot.commands.ConserveCompressor;
 
 public class SuperStructure extends SuperStructureBase
 {
@@ -17,6 +16,6 @@ public class SuperStructure extends SuperStructureBase
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new ConserveCompressor());
+
     }
 }
