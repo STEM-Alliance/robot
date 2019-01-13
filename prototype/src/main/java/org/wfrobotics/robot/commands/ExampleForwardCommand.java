@@ -1,6 +1,6 @@
-package org.wfrobotics.prototype.commands;
+package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.prototype.Robot;
+import org.wfrobotics.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 

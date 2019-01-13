@@ -24,6 +24,6 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'SAFM2019'
+rootProject.name = 'SAFM_2019'
 
-include 'reuse'
+include 'reuse', '4360', '4818', '7048', 'prototype'

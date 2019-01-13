@@ -1,6 +1,6 @@
-package org.wfrobotics.prototype.subsystems;
+package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.prototype.commands.ExampleStopCommand;
+import org.wfrobotics.robot.commands.ExampleStopCommand;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
