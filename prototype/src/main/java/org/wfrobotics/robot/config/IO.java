@@ -1,6 +1,6 @@
-package org.wfrobotics.prototype.config;
+package org.wfrobotics.robot.config;
 
-import org.wfrobotics.prototype.commands.ExampleForwardCommand;
+import org.wfrobotics.robot.commands.ExampleForwardCommand;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.Xbox;

@@ -1,7 +1,7 @@
-package org.wfrobotics.prototype;
+package org.wfrobotics.robot;
 
-import org.wfrobotics.prototype.config.IO;
-import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
+import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.robot.subsystems.ExampleSubsystem;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
