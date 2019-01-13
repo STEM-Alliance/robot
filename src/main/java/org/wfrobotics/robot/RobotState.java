@@ -45,7 +45,12 @@ public final class RobotState extends RobotStateBase
      *     |________________________________________________________________________|
      */
 
-    public final double kcameraAngle = 34.5;
+    private final double kcameraAngle = 34.5;
+
+    public double getKCameraAngle()
+    {
+        return kcameraAngle;
+    }
 
     // Robot-specific state
     public CoprocessorData update;
