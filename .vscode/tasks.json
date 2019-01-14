@@ -4,23 +4,23 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "4360 Build",
+            "label": "4360 Build & Deploy",
             "type": "shell",
-            "command": "./gradlew 4360:build",
+            "command": "./gradlew 4360:deploy",
             "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "4818 Build",
+            "label": "4818 Build & Deploy",
             "type": "shell",
-            "command": "./gradlew 4818:build",
+            "command": "./gradlew 4818:deploy",
             "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "7048 Build",
+            "label": "7048 Build & Deploy",
             "type": "shell",
-            "command": "./gradlew 7048:build",
+            "command": "./gradlew 7048:deploy",
             "group": "build",
             "problemMatcher": []
         },
