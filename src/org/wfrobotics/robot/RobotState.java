@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
+import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
 import org.wfrobotics.reuse.subsystems.vision.Point;
@@ -33,6 +34,24 @@ public final class RobotState extends RobotStateBase
         super.reportState();
         SmartDashboard.putNumber("angle", TankSubsystem.getInstance().getGryo());
         SmartDashboard.putNumber("real V", getMeasuredVelocity().dtheta);
+        //        try
+        //        {
+        //            SmartDashboard.putString("Message", update.toString());
+        //            SmartDashboard.putNumber("Message", points.size());
+        //
+        //        }
+        //        catch (Exception e)
+        //        {
+        //        }
+        try
+        {
+            SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        SmartDashboard.putBoolean("Target In View", visionInView);
     }
 
     protected synchronized void resetRobotSpecificState()
