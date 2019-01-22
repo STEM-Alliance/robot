@@ -19,7 +19,7 @@ public final class Robot extends EnhancedRobot
     {
         visionServer.register(processor);
         RobotState.getInstance().resetVisionState();
-
+        backgroundUpdater.register(processor);
     }
 
     @Override
