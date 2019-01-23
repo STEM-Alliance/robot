@@ -20,14 +20,9 @@ public final class Robot extends EnhancedRobot
         visionServer.register(processor);
         RobotState.getInstance().resetVisionState();
 
+        //        subsystems.register(Lift.getInstance());
     }
 
-    @Override
-    public void disabledPeriodic()
-    {
-
-        super.disabledPeriodic();
-    }
     @Override
     public void teleopPeriodic()
     {
