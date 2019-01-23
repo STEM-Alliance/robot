@@ -1,5 +1,7 @@
 package org.wfrobotics.robot.config;
 
+import java.util.Optional;
+
 import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
@@ -7,6 +9,7 @@ import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
 import org.wfrobotics.reuse.config.TankConfig.TankConfigSupplier;
+import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
 
 public class RobotConfig implements TankConfigSupplier
 {
@@ -47,6 +50,43 @@ public class RobotConfig implements TankConfigSupplier
 
         return config;
     }
+
+    //                       Lift
+    // _________________________________________________________________________________
+
+    // Hardware
+    public PositionConfig getLiftConfig()
+    {
+        int kTicksToTop = 27000;
+        double kLiftVelocityMaxUp = 2200.0;
+        int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
+        int kLiftAccelerationUp = (int) (kLiftCruiseUp * 6.0);
+
+        final PositionConfig c = new PositionConfig();
+
+        c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
+            new MasterConfig(10, false, true, new FollowerConfig(11, true, true)),
+        }, new Gains[] {
+            new Gains("Motion Magic", 0, 0.0, 0.000, 0.0, 1023.0 / kLiftVelocityMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
+        });
+        c.kHardwareLimitNormallyOpenB = false;
+        c.kHardwareLimitNormallyOpenT = false;
+        c.kTicksToTop = kTicksToTop;
+        c.kFullRangeInchesOrDegrees = 38.0;
+        c.kSoftwareLimitB = Optional.of(-500);
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        c.kTuning = Optional.of(false);
+
+        return c;
+    }
+
+    // Subsystem
+    public static double kLiftFeedForwardHasCube = 0.25;
+    public static double kLiftFeedForwardNoCube = 0.20;
+    public static final int kLiftTicksStartup = -1500;
+    public static int kLiftTickRateSlowVelocityObserved = 500;
+    public static int kLiftTickRateSlowEnough = kLiftTickRateSlowVelocityObserved + 200;
+
 
     public class DeepSpaceTankConfig extends TankConfig
     {

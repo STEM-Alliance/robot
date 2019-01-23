@@ -43,7 +43,7 @@ public final class IO
         ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance(12 * 3));
 
 
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget(10));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget());
 
 
 
@@ -61,13 +61,15 @@ public final class IO
 
     // ------------------- Robot-specific --------------------
 
+    public double getLiftStick()
+    {
+        return operator.getAxis(Xbox.AXIS.RIGHT_Y);
+    }
 
-
-    //    public double getWristStick()
-    //    {
-    //        return operator.getAxis(Xbox.AXIS.LEFT_Y);
-    //    }
-
+    public boolean isLiftOverrideRequested()
+    {
+        return  Math.abs(getLiftStick()) > .15;
+    }
 
     // ------------------------ Reuse ------------------------
 
