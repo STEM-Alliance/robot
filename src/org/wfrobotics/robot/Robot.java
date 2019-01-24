@@ -3,6 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
+import org.wfrobotics.robot.subsystems.IntakeSubsystem;
 
 /**
  * Robot: Victor - 2018
@@ -17,8 +18,11 @@ public final class Robot extends EnhancedRobot
 
     protected void registerRobotSpecific()
     {
-        visionServer.register(processor);
         RobotState.getInstance().resetVisionState();
+        visionServer.register(processor);
+        IntakeSubsystem.getInstance();
+
+
         backgroundUpdater.register(processor);
     }
 
