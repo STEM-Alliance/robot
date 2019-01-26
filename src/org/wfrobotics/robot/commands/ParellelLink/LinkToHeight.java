@@ -2,22 +2,22 @@ package org.wfrobotics.robot.commands.ParellelLink;
 
 
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
-import org.wfrobotics.robot.subsystems.Wrist;
+import org.wfrobotics.robot.subsystems.ParellelLink;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class LiftToHeight extends InstantCommand
+public class LinkToHeight extends InstantCommand
 {
-    private final Wrist wrist = Wrist.getInstance();
+    private final ParellelLink link = ParellelLink.getInstance();
     private final double angle;
 
     /**
      * lifts to distance from bottom to top
      * @param degrees 0(bottom) to 1 (top)
      */
-    public WristToHeight(double degrees)
+    public LinkToHeight(double degrees)
     {
-        requires(wrist);
+        requires(link);
         angle = degrees;
         if (degrees < -10.0 || degrees > 100.0)
         {
@@ -27,6 +27,6 @@ public class LiftToHeight extends InstantCommand
 
     protected void initialize()
     {
-        wrist.setClosedLoop(angle);
+        link.setClosedLoop(angle);
     }
 }
