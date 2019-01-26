@@ -1,9 +1,6 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.lift;
 
 import org.wfrobotics.reuse.commands.wrapper.SeriesCommand;
-import org.wfrobotics.robot.commands.lift.LiftGoHome;
-import org.wfrobotics.robot.commands.lift.LiftToHeight;
-import org.wfrobotics.robot.commands.lift.WaitForLiftHeight;
 import org.wfrobotics.robot.config.LiftHeight;
 
 import edu.wpi.first.wpilibj.command.Command;

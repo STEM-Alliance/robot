@@ -4,36 +4,25 @@ import org.wfrobotics.reuse.hardware.StallSense;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.robot.commands.wrist.WristZeroThenOpenLoop;
+import org.wfrobotics.robot.commands.ParellelLink.WristZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The wrist consists of a BAG motor to rotate the intake
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class Wrist extends PositionBasedSubsystem
+public class ParellelLink extends PositionBasedSubsystem
 {
-    public static Wrist getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new Wrist(RobotConfig.getInstance().getWristConfig());
-        }
-        return instance;
-    }
-
-    private static Wrist instance = null;
     private final StallSense stallSensor;
 
     private boolean stalled = false;
 
-    private Wrist(PositionConfig positionConfig)
+    private ParellelLink(PositionConfig positionConfig)
     {
         super(positionConfig);
 
@@ -66,7 +55,7 @@ public class Wrist extends PositionBasedSubsystem
     public void reportState()
     {
         super.reportState();
-        SmartDashboard.putBoolean("Wrist Stalled", stalled);
+        SmartDashboard.putBoolean("Parrel Link Stalled", stalled);
     }
 
     /** Current sense limit switch is set. Only the top can trigger this. */
@@ -110,6 +99,16 @@ public class Wrist extends PositionBasedSubsystem
         report.add(TalonChecker.checkSensorPhase(0.3, master));
 
         return report;
+    }
+
+    private static ParellelLink instance = null;
+    public static ParellelLink getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new ParellelLink(RobotConfig.getInstance().getWristConfig());
+        }
+        return instance;
     }
 }
 
