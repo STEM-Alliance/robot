@@ -1,26 +1,27 @@
 package org.wfrobotics.prototype.commands;
 
 import org.wfrobotics.prototype.Robot;
+import org.wfrobotics.prototype.config.IO;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 
 /** Sets ExampleSubsystem to a safe state */
-public class ExampleStopCommand extends Command
+public class LiftOpenLoop extends Command
 {
-    public ExampleStopCommand()
+    public LiftOpenLoop()
     {
         requires(Robot.prototypeSubsystem);
     }
 
     protected void execute()
     {
-        int percentForward = 0;
-
-        Robot.prototypeSubsystem.setSpeed(percentForward);
+        double percentForward = IO.controller.getY(Hand.kRight);
+        Robot.prototypeSubsystem.setOpenLoop(percentForward);
     }
 
     protected boolean isFinished()
     {
-        return true;
+        return false;
     }
 }
