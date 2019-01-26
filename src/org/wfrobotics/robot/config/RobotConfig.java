@@ -138,11 +138,10 @@ public class RobotConfig implements TankConfigSupplier
             new MasterConfig(15, false, true, new FollowerConfig(17, true)),
             new MasterConfig(16, true, true, new FollowerConfig(14, true)),
         }, new Gains[] {
-            new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
-            new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
-            // TODO Figure out if high acceleration > high PID?
-            // TODO Turning PID only works if slot < 2. Thought there were 4??? Is it aux only?
-            new Gains("Turn", 0, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
+            //            new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
+            new Gains("Velocity", 1, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
+            new Gains("Turn", 0, 3.0, 0.003, 30.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
+            //            new Gains("Turn", 0, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
             //            new Gains("Turn", 0, 1.0, 0.001, 9.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX
         });
 

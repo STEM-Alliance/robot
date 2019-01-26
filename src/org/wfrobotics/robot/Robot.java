@@ -1,8 +1,8 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.EnhancedRobot;
-import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.Blinkin;
+import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.lowleveldriver.BlinkinPatterns.PatternName;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;

@@ -1,7 +1,7 @@
 package org.wfrobotics.prototype;
 
 import org.wfrobotics.prototype.config.IO;
-import org.wfrobotics.prototype.subsystems.ExampleSubsystem;
+import org.wfrobotics.prototype.subsystems.LiftDemo;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -11,14 +11,14 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 @SuppressWarnings("deprecation")
 public class Robot extends SampleRobot
 {
-    public static ExampleSubsystem prototypeSubsystem;
+    public static LiftDemo prototypeSubsystem;
     public static IO controls;
 
     Command autonomousCommand = null;
 
     public void robotInit()
     {
-        prototypeSubsystem = new ExampleSubsystem();
+        prototypeSubsystem = new LiftDemo();
 
         controls = new IO();
     }
