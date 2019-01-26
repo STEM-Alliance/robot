@@ -66,7 +66,7 @@ public final class RobotState extends RobotStateBase
      *     |________________________________________________________________________|
      */
 
-    public final double kcameraAngle = 34.5;
+    public final double kcameraAngle = 61.0 / 2.0;
 
     // Robot-specific state
     public CoprocessorData update;
@@ -94,11 +94,13 @@ public final class RobotState extends RobotStateBase
         }
         else {
             visionInView = false;
+            //            points.clear();
         }
         if (points.size() > 2)
         {
             SmartDashboard.putNumber("vision Error", getExtrapolatedVisionError());
             SmartDashboard.putNumber("test", points.get(0).getXerror());
+            SmartDashboard.putNumber("Y error", points.get(0).getYerror());
         }
         reportState();
     }
