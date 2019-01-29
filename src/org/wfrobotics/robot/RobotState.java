@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.wfrobotics.reuse.RobotStateBase;
-import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
@@ -44,17 +43,6 @@ public final class RobotState extends RobotStateBase
     {
         super.reportState();
         SmartDashboard.putBoolean("Has Cube", robotHasCube);
-        SmartDashboard.putNumber("angle", TankSubsystem.getInstance().getGryo());
-        SmartDashboard.putNumber("real V", getMeasuredVelocity().dtheta);
-        //        try
-        //        {
-        //            SmartDashboard.putString("Message", update.toString());
-        //            SmartDashboard.putNumber("Message", points.size());
-        //
-        //        }
-        //        catch (Exception e)
-        //        {
-        //        }
         try
         {
             SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
@@ -63,7 +51,13 @@ public final class RobotState extends RobotStateBase
         {
             e.printStackTrace();
         }
-        SmartDashboard.putBoolean("Target In View", visionInView);
+        SmartDashboard.putBoolean("Vision Targets", visionInView);
+        if (visionPoints.size() > 2)
+        {
+            SmartDashboard.putNumber("Vision Error", getVisionError());
+            SmartDashboard.putNumber("Vision Extrapolated", getExtrapolatedVisionError());
+            SmartDashboard.putNumber("test", visionPoints.get(0).getXerror());
+        }
     }
 
     public void updateIntake(double distance)
@@ -123,50 +117,50 @@ public final class RobotState extends RobotStateBase
 
     public final double kcameraAngle = 34.5;
 
-    // Robot-specific state
-    public CoprocessorData update;
-    public  List<Point> points = new ArrayList<Point>();
+    public List<Point> visionPoints = new ArrayList<Point>();
     public boolean visionInView = false;
 
     public void addVisionUpdate(Double time, CoprocessorData coprocessorData)
     {
-        SmartDashboard.putString("Ran vision update", "Ran Vision Update");
-        update = coprocessorData;
-
-        if (coprocessorData.targets.size() > 0)
-        {
-            visionInView = true;
-
-            VisionTargetInfo largestTarget = update.targets.get(0);
-            for (VisionTargetInfo target : update.targets)
-            {
-                if ( target.area() > largestTarget.area() || largestTarget == null)
-                {
-                    largestTarget = target;
-                }
-            }
-            points.add(0, (new Point(time, largestTarget)));
-        }
-        else
+        if (coprocessorData.targets.size() == 0)
         {
             visionInView = false;
+            visionPoints.clear();
+            return;
         }
 
-        if (points.size() > 2)
+        visionInView = true;
+
+        VisionTargetInfo largestTarget = coprocessorData.targets.get(0);
+        for (VisionTargetInfo target : coprocessorData.targets)
         {
-            SmartDashboard.putNumber("vision Error", getExtrapolatedVisionError());
-            SmartDashboard.putNumber("test", points.get(0).getXerror());
+            if ( target.area() > largestTarget.area() || largestTarget == null)
+            {
+                largestTarget = target;
+            }
         }
-        reportState();
+        visionPoints.add(0, (new Point(time, largestTarget)));
     }
 
     public double getExtrapolatedVisionError()
     {
-        return points.get(0).extrapolate(points.get(1), Timer.getFPGATimestamp()).getXerror();
+        if (visionPoints.size() < 2)
+        {
+            return 0;
+        }
+
+        final Point errorBefore = visionPoints.get(1);
+        final Point errorCurrent = visionPoints.get(0);
+        final double now = Timer.getFPGATimestamp();
+        return errorCurrent.extrapolate(errorBefore, now).getXerror();
     }
 
     public double getVisionError()
     {
-        return points.get(0).getXerror();
+        if (visionPoints.size() == 0)
+        {
+            return 0;
+        }
+        return visionPoints.get(0).getXerror();
     }
 }

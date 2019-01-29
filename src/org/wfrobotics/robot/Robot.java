@@ -25,6 +25,7 @@ public final class Robot extends EnhancedRobot
     protected void registerRobotSpecific()
     {
         visionServer.register(processor);
+        backgroundUpdater.register(processor);
 
         RobotState.getInstance().resetVisionState();
 
