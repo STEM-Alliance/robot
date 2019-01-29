@@ -1,10 +1,8 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.drive.DriveDistance;
-import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
-import org.wfrobotics.robot.commands.intake.UpUntilLimitTop;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
 
@@ -39,22 +37,7 @@ public final class IO
 
         //----------------------Testing-------------------------------
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget(10));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new TurnToHeading(90));
         ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance(12 * 3));
-
-
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new UpUntilLimitTop());
-
-        //        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new stop());
-
-
-
-
-        //        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
-
-
-
-        // -------------------- Super Structure -------------------
 
         //        ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
 
@@ -64,11 +47,20 @@ public final class IO
 
 
 
-    //    public double getWristStick()
-    //    {
-    //        return operator.getAxis(Xbox.AXIS.LEFT_Y);
-    //    }
+    public double getLinkStick()
+    {
+        return operator.getAxis(Xbox.AXIS.LEFT_TRIGGER);
+    }
 
+    public double getLiftStick()
+    {
+        return operator.getAxis(Xbox.AXIS.RIGHT_TRIGGER);
+    }
+
+    public boolean isLiftOverrideRequested()
+    {
+        return  Math.abs(getLiftStick()) > .15;
+    }
 
     // ------------------------ Reuse ------------------------
 

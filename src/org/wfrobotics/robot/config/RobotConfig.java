@@ -32,10 +32,13 @@ public class RobotConfig implements TankConfigSupplier
         config.OPEN_LOOP_RAMP = 0.05; // how fast do you acellerate
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
             // Right
             new MasterConfig(15, true, true, new FollowerConfig(17,false), new FollowerConfig(19, false)),
             // Left
             new MasterConfig(14, false, true, new FollowerConfig(18, false), new FollowerConfig(16, false)),
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }, new Gains[] {
             new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
@@ -47,6 +50,36 @@ public class RobotConfig implements TankConfigSupplier
         config.SCRUB = 0.98;
         config.WHEEL_DIAMETER = 6 + 3/8;
         config.WIDTH = 27.0;
+
+        return config;
+    }
+    //                      Link
+    // _________________________________________________________________________________
+    public PositionConfig getLinkConfig()
+    {
+        PositionConfig config = new PositionConfig();
+
+        int kTicksToTop = 5000;
+        int kWristVelocityMax = 1100;
+        int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
+        int kWristAcceleration = (int) (kWristVelocityCruise * 3.0);
+
+        final PositionConfig c = new PositionConfig();
+
+        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] {
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            new MasterConfig(21, false, false, new FollowerConfig(22, true))
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        }, new Gains[] {
+            new Gains("Motion Magic", 0, 0.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
+        });
+        c.kHardwareLimitNormallyOpenB = true;
+        c.kHardwareLimitNormallyOpenT = true;
+        c.kTicksToTop = kTicksToTop;
+        c.kFullRangeInchesOrDegrees = 90.0;
+        c.kSoftwareLimitB = Optional.of(-500);
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        c.kTuning = Optional.of(false);
 
         return config;
     }
@@ -65,7 +98,10 @@ public class RobotConfig implements TankConfigSupplier
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             new MasterConfig(10, false, true, new FollowerConfig(11, true, true)),
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         }, new Gains[] {
             new Gains("Motion Magic", 0, 0.0, 0.000, 0.0, 1023.0 / kLiftVelocityMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
         });

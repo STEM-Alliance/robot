@@ -3,7 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.robot.commands.lift.LiftZeroThenOpenLoop;
+import org.wfrobotics.robot.commands.lift.LiftOpenLoop;
 import org.wfrobotics.robot.config.LiftHeight;
 import org.wfrobotics.robot.config.RobotConfig;
 
@@ -48,7 +48,7 @@ public class Lift extends PositionBasedSubsystem
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new LiftZeroThenOpenLoop());
+        setDefaultCommand(new LiftOpenLoop());
     }
 
     /** Inches off ground */
