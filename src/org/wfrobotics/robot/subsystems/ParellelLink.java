@@ -4,12 +4,13 @@ import org.wfrobotics.reuse.hardware.StallSense;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.robot.commands.ParellelLink.WristZeroThenOpenLoop;
+import org.wfrobotics.robot.commands.ParellelLink.SmartLink;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -41,7 +42,7 @@ public class ParellelLink extends PositionBasedSubsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new WristZeroThenOpenLoop());
+        setDefaultCommand(new SmartLink());
     }
 
     @Override
@@ -106,7 +107,7 @@ public class ParellelLink extends PositionBasedSubsystem
     {
         if (instance == null)
         {
-            instance = new ParellelLink(RobotConfig.getInstance().getWristConfig());
+            instance = new ParellelLink(RobotConfig.getInstance().getLinkConfig());
         }
         return instance;
     }

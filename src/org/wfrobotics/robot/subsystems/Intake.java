@@ -8,12 +8,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake extends EnhancedSubsystem
 {
     // TODO: move the tallon id and lmtsw to the robot config
     TalonSRX intakeMtr = new TalonSRX(10);
-    DigitalInput topLmtSwnew = new DigitalInput(0);
+    DigitalInput topLmt = new DigitalInput(0);
 
     public Intake()
     {
@@ -28,12 +29,12 @@ public class Intake extends EnhancedSubsystem
 
     public boolean hatchAtTop()
     {
-        return topLmtSw.get();
+        return topLmt.get();
     }
 
     public void reportState()
     {
-        SmartDashboard.putBoolean("HatchAtTop", topLmtSw.get());
+        SmartDashboard.putBoolean("HatchAtTop", topLmt.get());
     }
 
     public TestReport runFunctionalTest()
@@ -44,7 +45,7 @@ public class Intake extends EnhancedSubsystem
         report.add(TalonChecker.checkFirmware(intakeMtr));
         report.add(TalonChecker.checkFirmware(intakeMtr));
         report.add(TalonChecker.checkFrameRates(intakeMtr));
-        report.add(!topLmtSw.get());
+        report.add(!topLmt.get());
 
         return report;
     }
