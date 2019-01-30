@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SmartLink extends Command
 {
     //    private final RobotState state = RobotState.getInstance();
-    private final ParellelLink wrist = ParellelLink.getInstance();
+    private final ParellelLink link = ParellelLink.getInstance();
     private final IO io = IO.getInstance();
 
     public SmartLink()
     {
-        requires(wrist);
+        requires(link);
     }
 
     protected void execute()
@@ -33,9 +33,7 @@ public class SmartLink extends Command
             //            wrist.setPosition(1.0);
             //        }
             //        else
-            {
-                wrist.setOpenLoop(commanded);
-            }
+            link.setOpenLoop(commanded);
         }
     }
 

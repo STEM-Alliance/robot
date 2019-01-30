@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="reuse/lib/navx_frc.jar"/>
 	<classpathentry kind="lib" path="reuse/lib/sf2-frc.jar"/>
 	<classpathentry kind="lib" path="reuse/lib/Jama-1.0.3.jar"/>
+	<classpathentry kind="src" path="/WPILibWin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

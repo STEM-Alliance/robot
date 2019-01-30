@@ -19,6 +19,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class ParellelLink extends PositionBasedSubsystem
 {
+    public static ParellelLink getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new ParellelLink(RobotConfig.getInstance().getLinkConfig());
+        }
+        return instance;
+    }
+
+    private static ParellelLink instance = null;
     private final StallSense stallSensor;
 
     private boolean stalled = false;
@@ -26,8 +36,6 @@ public class ParellelLink extends PositionBasedSubsystem
     private ParellelLink(PositionConfig positionConfig)
     {
         super(positionConfig);
-
-        RobotConfig.getInstance();
 
         master.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
         master.configOpenloopRamp(.05, 10);
@@ -100,16 +108,6 @@ public class ParellelLink extends PositionBasedSubsystem
         report.add(TalonChecker.checkSensorPhase(0.3, master));
 
         return report;
-    }
-
-    private static ParellelLink instance = null;
-    public static ParellelLink getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new ParellelLink(RobotConfig.getInstance().getLinkConfig());
-        }
-        return instance;
     }
 }
 

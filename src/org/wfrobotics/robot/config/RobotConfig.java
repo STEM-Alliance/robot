@@ -35,9 +35,9 @@ public class RobotConfig implements TankConfigSupplier
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Right
-            new MasterConfig(15, true, true, new FollowerConfig(17,false), new FollowerConfig(19, false)),
+            new MasterConfig(18, true, true, new FollowerConfig(17,false), new FollowerConfig(16, false)),
             // Left
-            new MasterConfig(14, false, true, new FollowerConfig(18, false), new FollowerConfig(16, false)),
+            new MasterConfig(13, false, true, new FollowerConfig(14, false), new FollowerConfig(15, false)),
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }, new Gains[] {
@@ -57,18 +57,16 @@ public class RobotConfig implements TankConfigSupplier
     // _________________________________________________________________________________
     public PositionConfig getLinkConfig()
     {
-        PositionConfig config = new PositionConfig();
+        final PositionConfig c = new PositionConfig();
 
         int kTicksToTop = 5000;
         int kWristVelocityMax = 1100;
         int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
         int kWristAcceleration = (int) (kWristVelocityCruise * 3.0);
 
-        final PositionConfig c = new PositionConfig();
-
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(21, false, false, new FollowerConfig(22, true))
+            new MasterConfig(10, false, false, new FollowerConfig(21, true))
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }, new Gains[] {
             new Gains("Motion Magic", 0, 0.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
@@ -77,11 +75,11 @@ public class RobotConfig implements TankConfigSupplier
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 90.0;
-        c.kSoftwareLimitB = Optional.of(-500);
-        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        //        c.kSoftwareLimitB = Optional.of(-500);
+        //        c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kTuning = Optional.of(false);
 
-        return config;
+        return c;
     }
 
     //                       Lift
@@ -90,7 +88,7 @@ public class RobotConfig implements TankConfigSupplier
     // Hardware
     public PositionConfig getLiftConfig()
     {
-        int kTicksToTop = 27000;
+        int kTicksToTop = Integer.MAX_VALUE;
         double kLiftVelocityMaxUp = 2200.0;
         int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 6.0);
@@ -99,19 +97,21 @@ public class RobotConfig implements TankConfigSupplier
 
         c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(10, false, true, new FollowerConfig(11, true, true)),
+            new MasterConfig(11, false, true, new FollowerConfig(12, true, true),
+                                            new FollowerConfig(19, true, true),
+                                            new FollowerConfig(20, true, true)),
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }, new Gains[] {
             new Gains("Motion Magic", 0, 0.0, 0.000, 0.0, 1023.0 / kLiftVelocityMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
         });
-        c.kHardwareLimitNormallyOpenB = false;
-        c.kHardwareLimitNormallyOpenT = false;
+        c.kHardwareLimitNormallyOpenB = true;
+        c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 38.0;
-        c.kSoftwareLimitB = Optional.of(-500);
-        c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        c.kTuning = Optional.of(false);
+        //        c.kSoftwareLimitB = Optional.of(-500);
+        //        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        //        c.kTuning = Optional.of(false);
 
         return c;
     }
