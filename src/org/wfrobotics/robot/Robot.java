@@ -23,22 +23,10 @@ public final class Robot extends EnhancedRobot
         RobotState.getInstance().resetVisionState();
         visionServer.register(processor);
 
-        Intake.getInstance();
-        ParellelLink.getInstance();
-        Lift.getInstance();
+        subsystems.register(ParellelLink.getInstance());
+        subsystems.register(Intake.getInstance());
+        subsystems.register(Lift.getInstance());
 
         backgroundUpdater.register(processor);
-    }
-
-    @Override
-    public void disabledPeriodic()
-    {
-
-        super.disabledPeriodic();
-    }
-    @Override
-    public void teleopPeriodic()
-    {
-        subsystems.update();
     }
 }

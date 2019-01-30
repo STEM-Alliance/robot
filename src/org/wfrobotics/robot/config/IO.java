@@ -49,12 +49,12 @@ public final class IO
 
     public double getLinkStick()
     {
-        return operator.getAxis(Xbox.AXIS.LEFT_TRIGGER);
+        return operator.getX(Hand.kRight);
     }
 
     public double getLiftStick()
     {
-        return operator.getAxis(Xbox.AXIS.RIGHT_TRIGGER);
+        return operator.getY(Hand.kRight);
     }
 
     public boolean isLiftOverrideRequested()
@@ -75,7 +75,7 @@ public final class IO
 
     public double getThrottle()
     {
-        return -operator.getY(Hand.kRight);
+        return -operator.getY(Hand.kLeft);
     }
 
     public double getTurn()
