@@ -27,6 +27,6 @@ public class LinkToHeight extends InstantCommand
 
     protected void initialize()
     {
-        link.setClosedLoop(angle);
+        //        link.setClosedLoop(angle);
     }
 }

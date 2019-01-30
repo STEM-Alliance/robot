@@ -1,7 +1,5 @@
 package org.wfrobotics.robot.commands.ParellelLink;
 
-import org.wfrobotics.robot.subsystems.ParellelLink;
-
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
 public class WristZeroThenOpenLoop extends ConditionalCommand
@@ -13,6 +11,7 @@ public class WristZeroThenOpenLoop extends ConditionalCommand
 
     protected boolean condition()
     {
-        return ParellelLink.getInstance().hasZeroed();
+        return false;
+        //        return ParellelLink.getInstance().hasZeroed();
     }
 }
