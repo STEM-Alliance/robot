@@ -1,11 +1,7 @@
 package org.wfrobotics.robot;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.wfrobotics.reuse.RobotStateBase;
-import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
 import org.wfrobotics.reuse.subsystems.vision.Point;
@@ -43,20 +39,11 @@ public final class RobotState extends RobotStateBase
     {
         super.reportState();
         SmartDashboard.putBoolean("Has Cube", robotHasCube);
-        try
-        {
-            SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        SmartDashboard.putBoolean("Vision Targets", visionInView);
-        if (visionPoints.size() > 2)
+        // TODO Prints all vision based on if we have vision - Flag in VisionProcessor constructor?
+        SmartDashboard.putBoolean("Targets In View", visionInView);
+        if (visionInView)
         {
             SmartDashboard.putNumber("Vision Error", getVisionError());
-            SmartDashboard.putNumber("Vision Extrapolated", getExtrapolatedVisionError());
-            SmartDashboard.putNumber("test", visionPoints.get(0).getXerror());
         }
     }
 
@@ -108,7 +95,6 @@ public final class RobotState extends RobotStateBase
         robotHasCube = hasCubeCounts > kHasCubeCountThreshold;
     }
 
-
     /**    |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
      *     |             Now entering Vision code territory                         |
      *     |   WF robotic is not responsible for anything cased by confusion!       |
@@ -117,50 +103,16 @@ public final class RobotState extends RobotStateBase
 
     public final double kcameraAngle = 34.5;
 
-    public List<Point> visionPoints = new ArrayList<Point>();
-    public boolean visionInView = false;
-
-    public void addVisionUpdate(Double time, CoprocessorData coprocessorData)
+    public synchronized void addVisionUpdate(Double time, CoprocessorData coprocessorData)
     {
-        if (coprocessorData.targets.size() == 0)
+        visionInView = coprocessorData.targets.size() > 0;
+        if (!visionInView)
         {
-            visionInView = false;
-            visionPoints.clear();
+            visionObservations.clear();
             return;
         }
-
-        visionInView = true;
-
-        VisionTargetInfo largestTarget = coprocessorData.targets.get(0);
-        for (VisionTargetInfo target : coprocessorData.targets)
-        {
-            if ( target.area() > largestTarget.area() || largestTarget == null)
-            {
-                largestTarget = target;
-            }
-        }
-        visionPoints.add(0, (new Point(time, largestTarget)));
-    }
-
-    public double getExtrapolatedVisionError()
-    {
-        if (visionPoints.size() < 2)
-        {
-            return 0;
-        }
-
-        final Point errorBefore = visionPoints.get(1);
-        final Point errorCurrent = visionPoints.get(0);
-        final double now = Timer.getFPGATimestamp();
-        return errorCurrent.extrapolate(errorBefore, now).getXerror();
-    }
-
-    public double getVisionError()
-    {
-        if (visionPoints.size() == 0)
-        {
-            return 0;
-        }
-        return visionPoints.get(0).getXerror();
+        VisionTargetInfo largest = getLargestTarget(coprocessorData.targets);
+        // TODO circular buffer trim if this gets too big
+        visionObservations.add(0, (new Point(time, largest)));
     }
 }

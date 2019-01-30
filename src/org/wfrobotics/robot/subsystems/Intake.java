@@ -8,7 +8,7 @@ import org.wfrobotics.reuse.subsystems.background.BackgroundUpdate;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.robot.RobotState;
-import org.wfrobotics.robot.commands.intake.SmartIntake;
+import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -86,7 +86,7 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new SmartIntake());
+        setDefaultCommand(new IntakeManual());  // Changed from smartintake to make vision testing less annoying
     }
 
     public void cacheSensors(boolean isDisabled)
