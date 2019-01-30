@@ -29,7 +29,7 @@ public class RobotConfig implements TankConfigSupplier
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.05; // how fast do you acellerate
+        config.OPEN_LOOP_RAMP = 0.15; // how fast do you acellerate
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,8 +59,8 @@ public class RobotConfig implements TankConfigSupplier
     {
         final PositionConfig c = new PositionConfig();
 
-        int kTicksToTop = 5000;
-        int kWristVelocityMax = 1100;
+        int kTicksToTop = Integer.MAX_VALUE;
+        int kWristVelocityMax = Integer.MAX_VALUE;
         int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
         int kWristAcceleration = (int) (kWristVelocityCruise * 3.0);
 
@@ -74,7 +74,7 @@ public class RobotConfig implements TankConfigSupplier
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 90.0;
+        c.kFullRangeInchesOrDegrees = 360.0;
         //        c.kSoftwareLimitB = Optional.of(-500);
         //        c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kTuning = Optional.of(false);
