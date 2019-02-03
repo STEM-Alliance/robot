@@ -1,11 +1,12 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.SignalHumanPlayer;
-import org.wfrobotics.reuse.commands.drive.TurnToHeading;
-import org.wfrobotics.reuse.commands.drive.TurnToTarget;
+import org.wfrobotics.reuse.commands.drive.DoubleVision;
+import org.wfrobotics.reuse.commands.drive.DriveToTarget;
 import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
+import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 
 /** Maps controllers to Commands **/
-public final class IO
+public final class IO implements EnhancedIO
 {
     private static IO instance = null;
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
@@ -67,9 +68,9 @@ public final class IO
 
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeTestPathVelocity());
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DrivePathTest(17.0 * 12.0, 0.0 * 12.0));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new TurnToTarget());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new DoubleVision());
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ModeOppisitScalse());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(130.0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveToTarget());
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TuningTrajectory());
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.TOGGLE_WHEN_PRESSED, new BlinkInArea(60.0, 36.0, 36.0, 60.0));
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new CharacterizeDrivetrain());
@@ -143,6 +144,11 @@ public final class IO
     public boolean getDriveQuickTurn()
     {
         return Math.abs(getThrottle()) < 0.1;
+    }
+
+    public boolean isDriveOverrideRequested()
+    {
+        return Math.abs(getThrottle()) > 0.15 || Math.abs(getTurn()) > 0.15;
     }
 
     public void setRumble(boolean rumble)

@@ -113,6 +113,10 @@ public final class RobotState extends RobotStateBase
         }
         VisionTargetInfo largest = getLargestTarget(coprocessorData.targets);
         // TODO circular buffer trim if this gets too big
+        if (visionObservations.size() > 5)
+        {
+            visionObservations.remove(4);
+        }
         visionObservations.add(0, (new Point(time, largest)));
     }
 }
