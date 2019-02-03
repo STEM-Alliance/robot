@@ -25,6 +25,7 @@ public class ConserveCompressor extends Command
     protected void execute()
     {
         sp.setCompressor(isTeleop && lift.onTarget());
+        sp.setCompressor(false);  // vision testing
     }
 
     protected boolean isFinished()
