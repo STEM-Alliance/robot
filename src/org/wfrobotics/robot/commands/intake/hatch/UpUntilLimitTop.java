@@ -25,7 +25,7 @@ public class UpUntilLimitTop extends Command
 
     protected boolean isFinished()
     {
-        return !intake.hatchAtTop();
+        return !intake.isHatchAtTop();
     }
 
 }
