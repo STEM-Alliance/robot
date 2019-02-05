@@ -7,10 +7,6 @@ import org.wfrobotics.reuse.hardware.lowleveldriver.BlinkinPatterns.PatternName;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
 import org.wfrobotics.robot.config.MatchState2018;
-import org.wfrobotics.robot.subsystems.Intake;
-import org.wfrobotics.robot.subsystems.Lift;
-import org.wfrobotics.robot.subsystems.Winch;
-import org.wfrobotics.robot.subsystems.Wrist;
 
 /**
  * Robot: Victor - 2018
@@ -29,10 +25,10 @@ public final class Robot extends EnhancedRobot
 
         RobotState.getInstance().resetVisionState();
 
-        subsystems.register(Intake.getInstance());
-        subsystems.register(Lift.getInstance());
-        subsystems.register(Winch.getInstance());
-        subsystems.register(Wrist.getInstance());
+        //        subsystems.register(Intake.getInstance());
+        //        subsystems.register(Lift.getInstance());
+        //        subsystems.register(Winch.getInstance());
+        //        subsystems.register(Wrist.getInstance());
     }
 
     @Override
