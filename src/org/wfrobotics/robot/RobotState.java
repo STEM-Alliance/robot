@@ -1,17 +1,13 @@
 package org.wfrobotics.robot;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.wfrobotics.reuse.RobotStateBase;
-import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
-import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
 import org.wfrobotics.reuse.subsystems.vision.Point;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Preferred provider of global, formatted state about the robot. Commands can get information from one place rather than from multiple subsystems. **/
@@ -32,32 +28,20 @@ public final class RobotState extends RobotStateBase
     public void reportState()
     {
         super.reportState();
-        SmartDashboard.putNumber("angle", TankSubsystem.getInstance().getGryo());
-        SmartDashboard.putNumber("real V", getMeasuredVelocity().dtheta);
-        //        try
-        //        {
-        //            SmartDashboard.putString("Message", update.toString());
-        //            SmartDashboard.putNumber("Message", points.size());
-        //
-        //        }
-        //        catch (Exception e)
-        //        {
-        //        }
-        try
+        // TODO Prints all vision based on if we have vision - Flag in VisionProcessor constructor?
+        SmartDashboard.putBoolean("Targets In View", visionInView);
+        if (visionInView)
         {
-            SmartDashboard.putBoolean("Has VisionServer", (CameraServer.getInstance() != null));
+            SmartDashboard.putNumber("Vision Error", getVisionError());
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        SmartDashboard.putBoolean("Target In View", visionInView);
     }
 
     protected synchronized void resetRobotSpecificState()
     {
 
     }
+
+    // Robot-specific state
 
 
     /**    |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
@@ -66,50 +50,43 @@ public final class RobotState extends RobotStateBase
      *     |________________________________________________________________________|
      */
 
-    public final double kcameraAngle = 61.0 / 2.0;
+    public final double kcameraAngle = 34.5;
 
-    // Robot-specific state
-    public CoprocessorData update;
-    public  List<Point> points = new ArrayList<Point>();
-    public boolean visionInView = false;
-
-    public void addVisionUpdate(Double time, CoprocessorData coprocessorData)
+    public synchronized void addVisionUpdate(Double time, CoprocessorData coprocessorData)
     {
-        SmartDashboard.putString("Ran vision update", "Ran Vision Update");
-        update = coprocessorData;
-
-        if (coprocessorData.targets.size() > 0)
+        visionInView = coprocessorData.targets.size() >= 2;
+        if (!visionInView)
         {
-            visionInView = true;
+            visionObservations.clear();
+            return;
+        }
+        double center = getCenterOfTwoClosest(coprocessorData.targets);
+        // TODO circular buffer trim if this gets too big
+        if (visionObservations.size() > 5)
+        {
+            visionObservations.remove(4);
+        }
+        visionObservations.add(0, (new Point(time, center, 0.0)));
+    }
 
-            VisionTargetInfo largestTarget = update.targets.get(0);
-            for (VisionTargetInfo target : update.targets)
+    private double getCenterOfTwoClosest(List<VisionTargetInfo> targets)
+    {
+        double errorSmallest = Double.MAX_VALUE;
+        double errorNextSmallest = Double.MAX_VALUE;
+
+        for (VisionTargetInfo target : targets)
+        {
+            double error = target.getX();
+            if (Math.abs(error) < Math.abs(errorSmallest))
             {
-                if ( target.area() > largestTarget.area() || largestTarget == null)
-                {
-                    largestTarget = target;
-                }
+                errorNextSmallest = errorSmallest;  // Shift them down by one
+                errorSmallest = error;
             }
-            points.add(0, (new Point(time, largestTarget)));
+            else if (Math.abs(error) < Math.abs(errorNextSmallest))
+            {
+                errorNextSmallest = error;
+            }
         }
-        else {
-            visionInView = false;
-            //            points.clear();
-        }
-        if (points.size() > 2)
-        {
-            SmartDashboard.putNumber("vision Error", getExtrapolatedVisionError());
-            SmartDashboard.putNumber("test", points.get(0).getXerror());
-            SmartDashboard.putNumber("Y error", points.get(0).getYerror());
-        }
-        reportState();
-    }
-    public double getExtrapolatedVisionError()
-    {
-        return points.get(0).extrapolate(points.get(1), Timer.getFPGATimestamp()).getXerror();
-    }
-    public double getVisionError()
-    {
-        return points.get(0).getXerror();
+        return (errorSmallest + errorNextSmallest) / 2.0;
     }
 }
