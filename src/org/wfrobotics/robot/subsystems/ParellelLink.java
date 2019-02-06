@@ -2,34 +2,37 @@ package org.wfrobotics.robot.subsystems;
 
 import java.util.ArrayList;
 
+import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
-import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
+import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.ParellelLink.DumbLink;
+import org.wfrobotics.robot.config.RobotConfig;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
 /**
  * The wrist consists of a BAG motor to rotate the intake
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class ParellelLink extends EnhancedSubsystem
+public class ParellelLink extends PositionBasedSubsystem
 {
-    private static ParellelLink instance = null;
     public static ParellelLink getInstance()
     {
         if (instance == null)
         {
-            //            instance = new ParellelLink(RobotConfig.getInstance().getLinkConfig());
-            instance = new ParellelLink();
-
+            instance = new ParellelLink(RobotConfig.getInstance().getLinkConfig());
         }
         return instance;
     }
 
-    //    private ParellelLink(PositionConfig positionConfig)
+    private static ParellelLink instance = null;
+
+    //    private TalonSRX master;
+    private final ArrayList<BaseMotorController> followers = new ArrayList<BaseMotorController>();
+
+    private ParellelLink(PositionConfig positionConfig)
     {
-        //        super(positionConfig);
+        super(positionConfig);
 
         //        master.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
         //        master.configOpenloopRamp(.05, 100);
@@ -40,19 +43,9 @@ public class ParellelLink extends EnhancedSubsystem
         // TODO Try using Status_10_MotionMagic to improve motion?
 
         //        stallSensor = new StallSense(master, 25.0, 0.1);
-    }
 
-    TalonSRX master;
-    final ArrayList<TalonSRX> followers = new ArrayList<TalonSRX>();
-    public ParellelLink()
-    {
-        master = new TalonSRX(10);
-        followers.add(TalonFactory.makeFollowerTalon(21, master));
-    }
-
-    public void setPrecent(double speed)
-    {
-        master.set(ControlMode.PercentOutput, speed);
+        //        master = new TalonSRX(10);
+        followers.add(TalonFactory.makeFollowers(master, positionConfig.kClosedLoop.masters.get(0)).get(0));
     }
 
     protected void initDefaultCommand()
@@ -64,16 +57,16 @@ public class ParellelLink extends EnhancedSubsystem
     public void cacheSensors(boolean isDisabled)
     {
         //        stalled = stallSensor.isStalled();
-        //        super.cacheSensors(isDisabled);
+        super.cacheSensors(isDisabled);
     }
 
-    @Override
-    public void reportState()
-    {
-        //        super.reportState();
-        //        SmartDashboard.putBoolean("Parrel Link Stalled", stalled);
-        //        SmartDashboard.putString("Link Running", getCurrentCommand().getName());
-    }
+    //    @Override
+    //    public void reportState()
+    //    {
+    //        super.reportState();
+    //        SmartDashboard.putBoolean("Parrel Link Stalled", stalled);
+    //        SmartDashboard.putString("Link Running", getCurrentCommand().getName());
+    //    }
 
     /** Current sense limit switch is set. Only the top can trigger this. */
     //    public boolean isStalled()
@@ -99,11 +92,11 @@ public class ParellelLink extends EnhancedSubsystem
     {
         TestReport report = new TestReport();
 
-        //        report.add(getDefaultCommand().doesRequire(this));
-        //        report.add(TalonChecker.checkFirmware(master));
-        //        report.add(TalonChecker.checkEncoder(master));
-        //        report.add(TalonChecker.checkFrameRates(master));
-        //
+        report.add(getDefaultCommand().doesRequire(this));
+        report.add(TalonChecker.checkFirmware(master));
+        report.add(TalonChecker.checkEncoder(master));
+        report.add(TalonChecker.checkFrameRates(master));
+
         //        int retries = 10;
         //        while (!hasZeroed() && retries-- > 0)
         //        {

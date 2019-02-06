@@ -2,7 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
-import org.wfrobotics.robot.commands.intake.hatch.Stop;
+import org.wfrobotics.robot.commands.intake.hatch.JoyStickMove;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -26,7 +26,7 @@ public class Intake extends EnhancedSubsystem
     private static Intake instance;
 
     // TODO: move the tallon id and lmtsw to the robot config
-    TalonSRX intakeMtr = new TalonSRX(10);
+    TalonSRX intakeMtr = new TalonSRX(11);
     DigitalInput topLmt = new DigitalInput(0);
 
     DoubleSolenoid popper0 = new DoubleSolenoid(0, 0, 1);
@@ -37,7 +37,7 @@ public class Intake extends EnhancedSubsystem
 
     }
 
-    protected void initDefaultCommand(){ setDefaultCommand(new Stop());}
+    protected void initDefaultCommand(){ setDefaultCommand(new JoyStickMove()); }
 
     public void cacheSensors(boolean isDisabled)
     {

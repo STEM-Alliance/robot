@@ -13,13 +13,14 @@ public class DumbLink extends Command
     {
         requires(link);
     }
+
     protected void execute()
     {
-        link.setPrecent(IO.getInstance().getLinkStick());
+        link.setOpenLoop(IO.getInstance().getLinkStick());
     }
+
     protected boolean isFinished()
     {
         return false;
     }
-
 }

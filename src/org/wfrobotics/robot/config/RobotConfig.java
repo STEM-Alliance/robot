@@ -66,7 +66,7 @@ public class RobotConfig implements TankConfigSupplier
 
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(10, false, false, new FollowerConfig(21, true))
+            new MasterConfig(10, true, false, new FollowerConfig(21, true, true))
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }, new Gains[] {
             new Gains("Motion Magic", 0, 0.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),

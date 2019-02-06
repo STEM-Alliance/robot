@@ -53,8 +53,6 @@ public final class IO
 
     // ------------------- Robot-specific --------------------
 
-
-
     public double getLinkStick()
     {
         return operator.getX(Hand.kRight);
@@ -94,6 +92,11 @@ public final class IO
     public boolean getDriveQuickTurn()
     {
         return Math.abs(getThrottle()) < 0.1;
+    }
+
+    public boolean isDriveOverrideRequested()
+    {
+        return Math.abs(getThrottle()) > 0.15 || Math.abs(getTurn()) > 0.15;
     }
 
     public void setRumble(boolean rumble)
