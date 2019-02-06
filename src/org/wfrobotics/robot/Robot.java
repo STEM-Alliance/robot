@@ -3,7 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
-import org.wfrobotics.robot.subsystems.Lift;
+import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.ParellelLink;
 
 /**
@@ -23,8 +23,8 @@ public final class Robot extends EnhancedRobot
         visionServer.register(processor);
 
         subsystems.register(ParellelLink.getInstance());
-        //        subsystems.register(Intake.getInstance());
-        subsystems.register(Lift.getInstance());
+        subsystems.register(Intake.getInstance());
+        //        subsystems.register(Lift.getInstance());
 
         backgroundUpdater.register(processor);
     }
