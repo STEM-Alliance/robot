@@ -53,34 +53,38 @@ public class RobotConfig implements TankConfigSupplier
 
         return config;
     }
+
     //                      Link
     // _________________________________________________________________________________
     public PositionConfig getLinkConfig()
     {
         final PositionConfig c = new PositionConfig();
 
-        int kTicksToTop = Integer.MAX_VALUE;
-        int kWristVelocityMax = Integer.MAX_VALUE;
+        int kTicksToTop = 7000;
+        int kWristVelocityMax = 540;
         int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
-        int kWristAcceleration = (int) (kWristVelocityCruise * 3.0);
+        int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(10, true, false, new FollowerConfig(21, true, true))
+            new MasterConfig(8, true, true, new FollowerConfig(9, true, true))
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }, new Gains[] {
-            new Gains("Motion Magic", 0, 0.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
+            new Gains("Motion Magic", 0, 1.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
         });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 360.0;
+        c.kFullRangeInchesOrDegrees = 90.0;
         //        c.kSoftwareLimitB = Optional.of(-500);
-        //        c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        c.kTuning = Optional.of(false);
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        //        c.kTuning = Optional.of(true);
 
         return c;
     }
+
+    // Subsystem
+    public static double kLinkTopPosition = 90.0;
 
     //                       Lift
     // _________________________________________________________________________________

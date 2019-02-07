@@ -21,7 +21,12 @@ public class SmartLink extends Command
     {
         if (!DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
         {
-            io.getLiftStick();
+            final double commanded = io.getLinkStick();
+
+            if (Math.abs(commanded) > 0.1)
+            {
+                link.setOpenLoop(commanded);
+            }
 
             // TODO Need some sort of latched timeout since wrist stick overridden
 
