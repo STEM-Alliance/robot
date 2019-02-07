@@ -2,6 +2,7 @@ package org.wfrobotics.robot.commands.ParellelLink;
 
 
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
+import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.subsystems.ParellelLink;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
@@ -17,16 +18,19 @@ public class LinkToHeight extends InstantCommand
      */
     public LinkToHeight(double degrees)
     {
+        final double kMax = RobotConfig.getInstance().kLinkTopPosition;
+
         requires(link);
         angle = degrees;
-        if (degrees < -10.0 || degrees > 100.0)
+        if (degrees < -10.0 || degrees > kMax + 10.0)
         {
-            ConsoleLogger.warning(String.format("Wrist commanded to: %0.0f, range is 0-90 +/-10", angle));
+            String warning = String.format("Link commanded to: %0.0f, range is 0-%.0f +/-10", angle, kMax);
+            ConsoleLogger.warning(warning);
         }
     }
 
     protected void initialize()
     {
-        //        link.setClosedLoop(angle);
+        link.setClosedLoop(angle);
     }
 }

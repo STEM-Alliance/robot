@@ -16,17 +16,16 @@ public class LinkZero extends Command
 
     protected void execute()
     {
-        //        link.setOpenLoop(-0.3);
+        link.setOpenLoop(-0.3);
     }
 
     protected boolean isFinished()
     {
-        return false;
-        //        return link.hasZeroed() || isTimedOut();
+        return link.hasZeroed() || isTimedOut();
     }
 
     protected void end()
     {
-        //        link.setOpenLoop(0.0);
+        link.setOpenLoop(0.0);
     }
 }

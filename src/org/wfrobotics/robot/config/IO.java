@@ -1,10 +1,12 @@
 package org.wfrobotics.robot.config;
 
-import org.wfrobotics.reuse.commands.drive.DriveDistance;
+import org.wfrobotics.reuse.commands.drive.DriveToTarget;
+import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
+import org.wfrobotics.robot.commands.ParellelLink.LinkToHeight;
 import org.wfrobotics.robot.commands.intake.hatch.PopHatch;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -30,11 +32,12 @@ public final class IO
     public void assignButtons()
     {
         // ---------------------- Autonomous ----------------------
-        //        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
-        //        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
-        //        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
 
         //----------------------Driver-------------------------------
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
 
         //----------------------Intake-------------------------------
         ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new PopHatch(true));
@@ -43,7 +46,8 @@ public final class IO
 
         //----------------------Testing-------------------------------
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget(10));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new DriveDistance(12 * 3));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new LinkToHeight(0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new LinkToHeight(45));
 
 
 
@@ -81,12 +85,12 @@ public final class IO
 
     public double getThrottle()
     {
-        return -operator.getY(Hand.kLeft);
+        return -driverThrottle.getY();
     }
 
     public double getTurn()
     {
-        return operator.getX(Hand.kLeft);
+        return driverTurn.getRawAxis(0);
     }
 
     public boolean getDriveQuickTurn()

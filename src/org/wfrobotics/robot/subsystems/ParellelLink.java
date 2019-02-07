@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.robot.commands.ParellelLink.DumbLink;
+import org.wfrobotics.robot.commands.ParellelLink.LinkZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
@@ -50,7 +50,7 @@ public class ParellelLink extends PositionBasedSubsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new DumbLink());
+        setDefaultCommand(new LinkZeroThenOpenLoop());
     }
 
     @Override
