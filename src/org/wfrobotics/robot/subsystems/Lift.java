@@ -35,7 +35,7 @@ public class Lift extends PositionBasedSubsystem
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 0;  // TODO Tune
 
-    DoubleSolenoid popper0 = new DoubleSolenoid(0, 0, 1);
+    DoubleSolenoid popper0 = new DoubleSolenoid(0, 4, 5);
 
     private static Lift instance = null;
     private final BaseMotorController follower;

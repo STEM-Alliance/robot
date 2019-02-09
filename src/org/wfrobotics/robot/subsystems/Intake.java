@@ -30,7 +30,6 @@ public class Intake extends EnhancedSubsystem
     DigitalInput topLmt = new DigitalInput(0);
 
     DoubleSolenoid popper0 = new DoubleSolenoid(0, 0, 1);
-    DoubleSolenoid popper1 = new DoubleSolenoid(0, 2, 3);
 
     public Intake()
     {
@@ -53,7 +52,6 @@ public class Intake extends EnhancedSubsystem
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
         popper0.set(desired);
-        popper1.set(desired);
     }
 
     public void setSpeed(double speed)

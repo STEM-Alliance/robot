@@ -101,9 +101,9 @@ public class RobotConfig implements TankConfigSupplier
 
         c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(11, false, true, new FollowerConfig(12, true, true),
-                                            new FollowerConfig(19, true, true),
-                                            new FollowerConfig(20, true, true)),
+            new MasterConfig(10, false, true, new FollowerConfig(11, true, true),
+                                            new FollowerConfig(12, true, true),
+                                            new FollowerConfig(19, true, true)),
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }, new Gains[] {
