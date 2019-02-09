@@ -11,6 +11,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+
 /**
  * The elevator consists of two independently connected Mini CIM motors to raise/lower the intake and climber
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
@@ -32,6 +35,8 @@ public class Lift extends PositionBasedSubsystem
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 0;  // TODO Tune
 
+    DoubleSolenoid popper0 = new DoubleSolenoid(0, 0, 1);
+
     private static Lift instance = null;
     private final BaseMotorController follower;
 
@@ -44,6 +49,11 @@ public class Lift extends PositionBasedSubsystem
         master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
 
         follower = TalonFactory.makeFollowers(master, positionConfig.kClosedLoop.masters.get(0)).get(0);  // TODO
+    }
+    public void setPoppers(boolean out)
+    {
+        Value desired = (out) ? Value.kForward : Value.kReverse;
+        popper0.set(desired);
     }
 
     public void initDefaultCommand()
