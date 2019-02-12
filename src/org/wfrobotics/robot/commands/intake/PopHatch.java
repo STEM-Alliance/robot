@@ -2,21 +2,30 @@ package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.subsystems.Intake;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 
-public class PopHatch extends InstantCommand
+public class PopHatch extends Command
 {
     private final Intake intake = Intake.getInstance();
-    private final boolean desired;
 
-    public PopHatch(boolean out)
+    public PopHatch()
     {
         requires(intake);
-        desired = out;
+        setTimeout(.45);
     }
 
     protected void initialize()
     {
-        intake.setPoppers(desired);
+        intake.setPoppers(true);
+    }
+
+    protected void end()
+    {
+        intake.setPoppers(false);
+    }
+
+    protected boolean isFinished()
+    {
+        return isTimedOut();
     }
 }
