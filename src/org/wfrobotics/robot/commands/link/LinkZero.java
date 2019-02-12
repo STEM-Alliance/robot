@@ -1,12 +1,12 @@
-package org.wfrobotics.robot.commands.ParellelLink;
+package org.wfrobotics.robot.commands.link;
 
-import org.wfrobotics.robot.subsystems.ParellelLink;
+import org.wfrobotics.robot.subsystems.Link;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class LinkZero extends Command
 {
-    private final ParellelLink link = ParellelLink.getInstance();
+    private final Link link = Link.getInstance();
 
     public LinkZero()
     {

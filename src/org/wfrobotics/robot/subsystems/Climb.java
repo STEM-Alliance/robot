@@ -1,6 +1,8 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
+import org.wfrobotics.robot.commands.climb.ClimbNone;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -15,34 +17,42 @@ public class Climb extends EnhancedSubsystem
         }
         return instance;
     }
-    private static Climb instance;
 
-    DoubleSolenoid popper0 = new DoubleSolenoid(0, 4, 5);
+    private static Climb instance;
+    private final DoubleSolenoid grippers;
 
     public Climb()
     {
-    }
+        final RobotConfig config = RobotConfig.getInstance();
 
-    public void setPoppers(boolean out)
-    {
-        Value desired = (out) ? Value.kForward : Value.kReverse;
-        popper0.set(desired);
-    }
-
-    public void reportState()
-    {
-    }
-
-    public TestReport runFunctionalTest()
-    {
-        return null;
-    }
-
-    public void cacheSensors(boolean isDisabled)
-    {
+        grippers = new DoubleSolenoid(0, config.kAddressSolenoidGrippersF, config.kAddressSolenoidGrippersB);
     }
 
     protected void initDefaultCommand()
     {
+        setDefaultCommand(new ClimbNone());
+    }
+
+    public void cacheSensors(boolean isDisabled)
+    {
+
+    }
+
+    public void reportState()
+    {
+
+    }
+
+    public void setGrippers(boolean out)
+    {
+        Value desired = (out) ? Value.kForward : Value.kReverse;
+        grippers.set(desired);
+    }
+
+    public TestReport runFunctionalTest()
+    {
+        TestReport report = new TestReport();
+
+        return report;
     }
 }

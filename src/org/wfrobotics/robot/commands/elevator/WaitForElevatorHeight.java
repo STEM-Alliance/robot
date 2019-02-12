@@ -1,17 +1,17 @@
-package org.wfrobotics.robot.commands.lift;
+package org.wfrobotics.robot.commands.elevator;
 
-import org.wfrobotics.robot.subsystems.Lift;
+import org.wfrobotics.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /** Delay until lift is at height */
-public class WaitForLiftHeight extends Command
+public class WaitForElevatorHeight extends Command
 {
-    private final Lift lift = Lift.getInstance();
+    private final Elevator lift = Elevator.getInstance();
     private final double threshold;
     private final boolean wantAtLeast;
 
-    public WaitForLiftHeight(double inchesOffGround, boolean atOrAbove)
+    public WaitForElevatorHeight(double inchesOffGround, boolean atOrAbove)
     {
         threshold = inchesOffGround;
         wantAtLeast = atOrAbove;

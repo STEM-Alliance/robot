@@ -1,10 +1,12 @@
 package org.wfrobotics.robot.subsystems;
 
+import java.util.ArrayList;
+
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.robot.commands.lift.LiftOpenLoop;
-import org.wfrobotics.robot.config.LiftHeight;
+import org.wfrobotics.robot.commands.elevator.ElevatorOpenLoop;
+import org.wfrobotics.robot.config.FieldHeight;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -18,47 +20,50 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
  * The elevator consists of two independently connected Mini CIM motors to raise/lower the intake and climber
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class Lift extends PositionBasedSubsystem
+public class Elevator extends PositionBasedSubsystem
 {
-    public static Lift getInstance()
+    public static Elevator getInstance()
     {
         if (instance == null)
         {
-            instance = new Lift(RobotConfig.getInstance().getLiftConfig());
+            instance = new Elevator(RobotConfig.getInstance().getElevatorConfig());
         }
         return instance;
     }
 
     private static final double kFeedForwardHasCargo = 0.0;  // TODO Tune
     private static final double kFeedForwardNoCargo = 0.0;  // TODO Tune
-    private static final double kInchesGroundToZero = LiftHeight.HatchLow.get();
+    private static final double kInchesGroundToZero = FieldHeight.HatchLow.get();
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 0;  // TODO Tune
 
-    DoubleSolenoid popper0 = new DoubleSolenoid(0, 4, 5);
+    private static Elevator instance = null;
+    private final ArrayList<BaseMotorController> followers;
+    private final DoubleSolenoid shifter;
 
-    private static Lift instance = null;
-    private final BaseMotorController follower;
-
-    private Lift(PositionConfig positionConfig)
+    private Elevator(PositionConfig positionConfig)
     {
         super(positionConfig);
+        final RobotConfig config = RobotConfig.getInstance();
 
-        master.setSelectedSensorPosition(RobotConfig.kLiftTicksStartup, 0, 100);
+        master.setSelectedSensorPosition(RobotConfig.kElevatorTicksStartup, 0, 100);
         TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // TODO Tune
         master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
 
-        follower = TalonFactory.makeFollowers(master, positionConfig.kClosedLoop.masters.get(0)).get(0);  // TODO
+        followers = TalonFactory.makeFollowers(master, positionConfig.kClosedLoop.masters.get(0));
+
+        shifter = new DoubleSolenoid(0, config.kAddressSolenoidShifterF, config.kAddressSolenoidShifterB);
     }
-    public void setPoppers(boolean out)
+
+    public void setShifter(boolean liftNotClimb)
     {
-        Value desired = (out) ? Value.kForward : Value.kReverse;
-        popper0.set(desired);
+        Value desired = (liftNotClimb) ? Value.kForward : Value.kReverse;
+        shifter.set(desired);
     }
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new LiftOpenLoop());
+        setDefaultCommand(new ElevatorOpenLoop());
     }
 
     /** Inches off ground */
@@ -106,7 +111,7 @@ public class Lift extends PositionBasedSubsystem
 
         report.add(getDefaultCommand().doesRequire(this));
         report.add(TalonChecker.checkFirmware(master));
-        report.add(TalonChecker.checkFirmware(follower));
+        report.add(TalonChecker.checkFirmware(followers));
         report.add(TalonChecker.checkEncoder(master));
         report.add(TalonChecker.checkFrameRates(master));
         report.add(TalonChecker.checkSensorPhase(0.3, master));

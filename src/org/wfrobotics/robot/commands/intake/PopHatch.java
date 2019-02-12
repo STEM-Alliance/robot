@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands.intake.hatch;
+package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.subsystems.Intake;
 

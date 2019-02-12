@@ -1,17 +1,17 @@
-package org.wfrobotics.robot.commands.lift;
+package org.wfrobotics.robot.commands.elevator;
 
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.subsystems.Lift;
+import org.wfrobotics.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LiftToHeight extends Command
+public class ElevatorToHeight extends Command
 {
-    private final Lift lift = Lift.getInstance();
+    private final Elevator lift = Elevator.getInstance();
     private final IO io = IO.getInstance();
     protected final double desired;
 
-    public LiftToHeight(double desired)
+    public ElevatorToHeight(double desired)
     {
         requires(lift);
         this.desired = desired;
@@ -25,7 +25,7 @@ public class LiftToHeight extends Command
     protected boolean isFinished()
     {
         final boolean isClose = Math.abs(lift.getPosition() - desired) < 1.0;
-        return isClose || io.isLiftOverrideRequested();
+        return isClose || io.isElevatorOverrideRequested();
     }
 
     protected void end()

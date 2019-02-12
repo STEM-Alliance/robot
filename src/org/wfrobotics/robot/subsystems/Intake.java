@@ -1,8 +1,10 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.TalonChecker;
+import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
-import org.wfrobotics.robot.commands.intake.hatch.JoyStickMove;
+import org.wfrobotics.robot.commands.intake.IntakeOpenLoop;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -24,19 +26,23 @@ public class Intake extends EnhancedSubsystem
     }
 
     private static Intake instance;
-
-    // TODO: move the tallon id and lmtsw to the robot config
-    TalonSRX intakeMtr = new TalonSRX(11);
-    DigitalInput topLmt = new DigitalInput(0);
-
-    DoubleSolenoid popper0 = new DoubleSolenoid(0, 0, 1);
+    private final TalonSRX motorCargo, motorHatch;
+    private final DoubleSolenoid poppers;
+    private final DigitalInput topLmt = new DigitalInput(0);
 
     public Intake()
     {
+        final RobotConfig config = RobotConfig.getInstance();
 
+        motorCargo = TalonFactory.makeTalon(config.kAddressTalonCargo);
+        motorHatch = TalonFactory.makeTalon(config.kAddressTalonHatch);
+        poppers = new DoubleSolenoid(0, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
     }
 
-    protected void initDefaultCommand(){ setDefaultCommand(new JoyStickMove()); }
+    protected void initDefaultCommand()
+    {
+        setDefaultCommand(new IntakeOpenLoop());
+    }
 
     public void cacheSensors(boolean isDisabled)
     {
@@ -48,15 +54,20 @@ public class Intake extends EnhancedSubsystem
         SmartDashboard.putBoolean("HatchAtTop", topLmt.get());
     }
 
+    public void setCargoSpeed(double percent)
+    {
+        motorCargo.set(ControlMode.PercentOutput, percent);
+    }
+
+    public void setHatchSpeed(double percent)
+    {
+        motorHatch.set(ControlMode.PercentOutput, percent);
+    }
+
     public void setPoppers(boolean out)
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
-        popper0.set(desired);
-    }
-
-    public void setSpeed(double speed)
-    {
-        intakeMtr.set(ControlMode.PercentOutput, speed);
+        poppers.set(desired);
     }
 
     public boolean isHatchAtTop()
@@ -69,9 +80,9 @@ public class Intake extends EnhancedSubsystem
         TestReport report = new TestReport();
 
         report.add(getDefaultCommand().doesRequire(this));
-        report.add(TalonChecker.checkFirmware(intakeMtr));
-        report.add(TalonChecker.checkFirmware(intakeMtr));
-        report.add(TalonChecker.checkFrameRates(intakeMtr));
+        report.add(TalonChecker.checkFirmware(motorHatch));
+        report.add(TalonChecker.checkFirmware(motorHatch));
+        report.add(TalonChecker.checkFrameRates(motorHatch));
         report.add(!topLmt.get());
 
         return report;

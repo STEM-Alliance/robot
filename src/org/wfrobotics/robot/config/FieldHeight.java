@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.config;
 
 /** All heights are relative distances the lift must move from bottom limit switch */
-public enum LiftHeight
+public enum FieldHeight
 {
     HatchHigh(36.0),   // TODO Tune
     HatchMiddle(24.00),  // TODO Tune
@@ -9,6 +9,6 @@ public enum LiftHeight
 
     private final double value;
 
-    private LiftHeight(double value) { this.value = value; }
+    private FieldHeight(double value) { this.value = value; }
     public double get() { return value; }
 }
