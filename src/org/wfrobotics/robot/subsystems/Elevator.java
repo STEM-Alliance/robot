@@ -1,9 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
-import java.util.ArrayList;
-
 import org.wfrobotics.reuse.hardware.TalonChecker;
-import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.elevator.ElevatorOpenLoop;
 import org.wfrobotics.robot.config.FieldHeight;
@@ -11,7 +8,6 @@ import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -38,7 +34,6 @@ public class Elevator extends PositionBasedSubsystem
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 0;  // TODO Tune
 
     private static Elevator instance = null;
-    private final ArrayList<BaseMotorController> followers;
     private final DoubleSolenoid shifter;
 
     private Elevator(PositionConfig positionConfig)
@@ -47,18 +42,12 @@ public class Elevator extends PositionBasedSubsystem
         final RobotConfig config = RobotConfig.getInstance();
 
         master.setSelectedSensorPosition(RobotConfig.kElevatorTicksStartup, 0, 100);
-        TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // TODO Tune
-        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
-
-        followers = TalonFactory.makeFollowers(master, positionConfig.kClosedLoop.masters.get(0));
+        //        TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // TODO Tune
+        //        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
 
         shifter = new DoubleSolenoid(0, config.kAddressSolenoidShifterF, config.kAddressSolenoidShifterB);
-    }
 
-    public void setShifter(boolean liftNotClimb)
-    {
-        Value desired = (liftNotClimb) ? Value.kForward : Value.kReverse;
-        shifter.set(desired);
+        setShifter(false);
     }
 
     public void initDefaultCommand()
@@ -103,6 +92,12 @@ public class Elevator extends PositionBasedSubsystem
         final double feedforward = (getPosition() > kInchesGroundToZero || mode == ControlMode.MotionMagic) ? antigravity : 0.0;
 
         master.set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
+    }
+
+    public void setShifter(boolean liftNotClimb)
+    {
+        Value desired = (liftNotClimb) ? Value.kForward : Value.kReverse;
+        shifter.set(desired);
     }
 
     public TestReport runFunctionalTest()

@@ -64,8 +64,8 @@ public class RobotConfig implements TankConfigSupplier
     // _________________________________________________________________________________
 
     // Hardware
-    public final int kAddressSolenoidGrippersF = 4;
-    public final int kAddressSolenoidGrippersB = 5;
+    public final int kAddressSolenoidGrippersF = 2;
+    public final int kAddressSolenoidGrippersB = 3;
 
 
     //                       Elevator
@@ -101,8 +101,8 @@ public class RobotConfig implements TankConfigSupplier
 
         return c;
     }
-    public final int kAddressSolenoidClimbF = 2;
-    public final int kAddressSolenoidClimbB = 3;
+    public final int kAddressSolenoidShifterF = 4;
+    public final int kAddressSolenoidShifterB = 5;
 
     // Subsystem
     public static double kElevatorFeedForwardHasCube = 0.25;
@@ -120,7 +120,7 @@ public class RobotConfig implements TankConfigSupplier
     public final int kAddressTalonHatch = 21;
     public final int kAddressSolenoidPoppersF = 0;
     public final int kAddressSolenoidPoppersB = 1;
-
+    public final int kAddressDigitalHatchSensor = 0;
 
     //                      Link
     // _________________________________________________________________________________
@@ -157,8 +157,32 @@ public class RobotConfig implements TankConfigSupplier
 
     //                       Wrist
     // _________________________________________________________________________________
+    public PositionConfig getWristConfig()
+    {
+        final PositionConfig c = new PositionConfig();
 
-    public final int kAddressTalonWrist = 9;
+        int kTicksToTop = 99999;
+        int kWristVelocityMax = 99999;
+        int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
+        int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
+
+        c.kClosedLoop = new ClosedLoopConfig("Wrist", new MasterConfig[] {
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            new MasterConfig(9, false, false)
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        }, new Gains[] {
+            new Gains("Motion Magic", 0, 0.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
+        });
+        c.kHardwareLimitNormallyOpenB = true;
+        c.kHardwareLimitNormallyOpenT = true;
+        c.kTicksToTop = kTicksToTop;
+        c.kFullRangeInchesOrDegrees = 90.0;
+        //        c.kSoftwareLimitB = Optional.of(-500);
+        //        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        //        c.kTuning = Optional.of(true);
+
+        return c;
+    }
 
 
     //                      Helper Methods

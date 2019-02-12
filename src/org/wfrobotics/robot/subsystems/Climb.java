@@ -18,7 +18,7 @@ public class Climb extends EnhancedSubsystem
         return instance;
     }
 
-    private static Climb instance;
+    private static Climb instance = null;
     private final DoubleSolenoid grippers;
 
     public Climb()
@@ -26,6 +26,7 @@ public class Climb extends EnhancedSubsystem
         final RobotConfig config = RobotConfig.getInstance();
 
         grippers = new DoubleSolenoid(0, config.kAddressSolenoidGrippersF, config.kAddressSolenoidGrippersB);
+        setGrippers(false);
     }
 
     protected void initDefaultCommand()
@@ -45,7 +46,7 @@ public class Climb extends EnhancedSubsystem
 
     public void setGrippers(boolean out)
     {
-        Value desired = (out) ? Value.kForward : Value.kReverse;
+        final Value desired = (out) ? Value.kForward : Value.kReverse;
         grippers.set(desired);
     }
 
