@@ -25,7 +25,7 @@ public class IntakeUpUntilLimitTop extends Command
 
     protected boolean isFinished()
     {
-        return !intake.isHatchAtTop();
+        return !intake.hasHatch();
     }
 
 }

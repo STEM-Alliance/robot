@@ -25,10 +25,10 @@ public class Intake extends EnhancedSubsystem
         return instance;
     }
 
-    private static Intake instance;
+    private static Intake instance = null;
     private final TalonSRX motorCargo, motorHatch;
     private final DoubleSolenoid poppers;
-    private final DigitalInput topLmt = new DigitalInput(0);
+    private final DigitalInput hatchSensor;
 
     public Intake()
     {
@@ -37,6 +37,9 @@ public class Intake extends EnhancedSubsystem
         motorCargo = TalonFactory.makeTalon(config.kAddressTalonCargo);
         motorHatch = TalonFactory.makeTalon(config.kAddressTalonHatch);
         poppers = new DoubleSolenoid(0, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
+        hatchSensor = new DigitalInput(config.kAddressDigitalHatchSensor);
+
+        setPoppers(false);
     }
 
     protected void initDefaultCommand()
@@ -51,7 +54,7 @@ public class Intake extends EnhancedSubsystem
 
     public void reportState()
     {
-        SmartDashboard.putBoolean("HatchAtTop", topLmt.get());
+        SmartDashboard.putBoolean("HatchAtTop", hatchSensor.get());
     }
 
     public void setCargoSpeed(double percent)
@@ -70,9 +73,9 @@ public class Intake extends EnhancedSubsystem
         poppers.set(desired);
     }
 
-    public boolean isHatchAtTop()
+    public boolean hasHatch()
     {
-        return topLmt.get();
+        return hatchSensor.get();
     }
 
     public TestReport runFunctionalTest()
@@ -83,7 +86,6 @@ public class Intake extends EnhancedSubsystem
         report.add(TalonChecker.checkFirmware(motorHatch));
         report.add(TalonChecker.checkFirmware(motorHatch));
         report.add(TalonChecker.checkFrameRates(motorHatch));
-        report.add(!topLmt.get());
 
         return report;
     }

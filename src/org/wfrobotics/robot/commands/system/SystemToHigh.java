@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
+import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.config.FieldHeight;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -11,7 +12,7 @@ public class SystemToHigh extends CommandGroup
     {
         final double hatchHeight = FieldHeight.HatchHigh.get();
 
-        // TODO Other subsystems in parallel
+        this.addParallel(new LinkToHeight(90.0));
         addSequential(new ElevatorToHeight(hatchHeight));
     }
 }

@@ -17,7 +17,7 @@ public class WristOpenLoop extends Command
 
     protected void execute()
     {
-        wrist.setSpeed(io.getWristStick());
+        wrist.setOpenLoop(io.getWristStick());
     }
 
     protected boolean isFinished()

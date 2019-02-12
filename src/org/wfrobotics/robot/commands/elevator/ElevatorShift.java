@@ -4,12 +4,12 @@ import org.wfrobotics.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class ClimberShift extends InstantCommand
+public class ElevatorShift extends InstantCommand
 {
     private final Elevator lift = Elevator.getInstance();
     private final boolean desired;
 
-    public ClimberShift(boolean liftNotClimb)
+    public ElevatorShift(boolean liftNotClimb)
     {
         requires(lift);
         desired = liftNotClimb;
