@@ -2,9 +2,9 @@ package org.wfrobotics.robot.auto;
 
 import org.wfrobotics.reuse.commands.wrapper.AutoMode;
 
-public class ModeCenter extends AutoMode
+public class ModeLeavePlatform extends AutoMode
 {
-    public ModeCenter()
+    public ModeLeavePlatform()
     {
         //        addSequential(new WaitCommand(startingDelay));
         //

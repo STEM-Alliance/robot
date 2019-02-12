@@ -1,6 +1,6 @@
-package org.wfrobotics.robot.commands.ParellelLink;
+package org.wfrobotics.robot.commands.link;
 
-import org.wfrobotics.robot.subsystems.ParellelLink;
+import org.wfrobotics.robot.subsystems.Link;
 
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
@@ -8,11 +8,11 @@ public class LinkZeroThenOpenLoop extends ConditionalCommand
 {
     public LinkZeroThenOpenLoop()
     {
-        super(new SmartLink(), new LinkZero());
+        super(new LinkOpenLoop(), new LinkZero());
     }
 
     protected boolean condition()
     {
-        return ParellelLink.getInstance().hasZeroed();
+        return Link.getInstance().hasZeroed();
     }
 }

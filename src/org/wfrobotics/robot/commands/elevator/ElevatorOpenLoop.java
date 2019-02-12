@@ -1,19 +1,19 @@
-package org.wfrobotics.robot.commands.lift;
+package org.wfrobotics.robot.commands.elevator;
 
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.config.LiftHeight;
-import org.wfrobotics.robot.subsystems.Lift;
+import org.wfrobotics.robot.config.FieldHeight;
+import org.wfrobotics.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LiftOpenLoop extends Command
+public class ElevatorOpenLoop extends Command
 {
     private final double deadbandPercent = 0.1;
-    private final Lift lift = Lift.getInstance();
+    private final Elevator lift = Elevator.getInstance();
     private final IO io = IO.getInstance();
 
-    public LiftOpenLoop()
+    public ElevatorOpenLoop()
     {
         requires(lift);
     }
@@ -23,17 +23,17 @@ public class LiftOpenLoop extends Command
         if (!DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
         {
             final double liftHeight = lift.getPosition();
-            double setpoint = io.getLiftStick();
+            double setpoint = io.getElevatorStick();
 
             if (Math.abs(setpoint) < deadbandPercent)
             {
                 setpoint = 0.0;
             }
-            else if (liftHeight < LiftHeight.HatchLow.get() + 4.0 && setpoint < 0.0)
+            else if (liftHeight < FieldHeight.HatchLow.get() + 4.0 && setpoint < 0.0)
             {
                 setpoint /= 4.0;
             }
-            else if (liftHeight > LiftHeight.HatchHigh.get() - 0.5 && setpoint > 0.0)
+            else if (liftHeight > FieldHeight.HatchHigh.get() - 0.5 && setpoint > 0.0)
             {
                 setpoint /= 3.0;
             }

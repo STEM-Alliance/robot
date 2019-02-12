@@ -1,22 +1,24 @@
-package org.wfrobotics.robot.commands.intake.hatch;
+package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class JoyStickMove extends Command
+public class IntakeOpenLoop extends Command
 {
-    Intake intake = Intake.getInstance();
+    private final Intake intake = Intake.getInstance();
+    private final IO io = IO.getInstance();
 
-    public JoyStickMove()
+    public IntakeOpenLoop()
     {
         requires(Intake.getInstance());
     }
 
     protected void execute()
     {
-        Intake.getInstance().setSpeed(IO.getInstance().getLinkStick());
+        final double speed = io.getIntakeStick();
+        intake.setHatchSpeed(speed);
     }
 
     protected boolean isFinished()

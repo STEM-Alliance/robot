@@ -1,13 +1,17 @@
 package org.wfrobotics.robot.config;
 
+import org.wfrobotics.reuse.commands.SignalHumanPlayer;
 import org.wfrobotics.reuse.commands.drive.DriveToTarget;
 import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
-import org.wfrobotics.robot.commands.intake.hatch.PopHatch;
-import org.wfrobotics.robot.commands.lift.shift;
+import org.wfrobotics.robot.commands.elevator.ClimberShift;
+import org.wfrobotics.robot.commands.intake.PopHatch;
+import org.wfrobotics.robot.commands.system.SystemToHigh;
+import org.wfrobotics.robot.commands.system.SystemToLow;
+import org.wfrobotics.robot.commands.system.SystemToMiddle;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -19,6 +23,8 @@ public final class IO
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
     private final Joystick driverTurn;
     private final Xbox operator;
+    private final Xbox operator2;
+
 
     /** Create and configure controls for Drive Team */
     private IO()
@@ -26,6 +32,7 @@ public final class IO
         driverThrottle = new HerdJoystick(0);
         driverTurn = new Joystick(1);
         operator = new Xbox(2);
+        operator2 = new Xbox(3);
     }
 
     /** Configure each Button to run a Command */
@@ -36,40 +43,61 @@ public final class IO
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
 
-        //----------------------Driver-------------------------------
+        //----------------------- Climber -------------------------
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new ClimberShift(true));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new ClimberShift(false));
+
+        //----------------------- Driver --------------------------
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
 
-        //----------------------Intake-------------------------------
+        //----------------------- Elevator ------------------------
+
+        //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new PopHatch(true));
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new PopHatch(false));
 
+        //----------------------- System --------------------------
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToLow());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
 
-        //----------------------Testing-------------------------------
+        //----------------------- Wrist ---------------------------
+
+        //----------------------- Testing -------------------------
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget(10));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new shift(true));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new shift(false));
-
-
-
-        //        ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
-
     }
 
     // ------------------- Robot-specific --------------------
 
-    public double getLinkStick()
-    {
-        return operator.getX(Hand.kRight);
-    }
-
-    public double getLiftStick()
+    public double getElevatorStick()
     {
         return operator.getY(Hand.kRight);
     }
 
-    public boolean isLiftOverrideRequested()
+    public double getIntakeStick()
     {
-        return  Math.abs(getLiftStick()) > .15;
+        return operator.getX(Hand.kRight);
+    }
+
+    public double getLinkDown()
+    {
+        return operator.getTrigger(Hand.kLeft);
+    }
+
+    public double getLinkUp()
+    {
+        return operator.getTrigger(Hand.kRight);
+    }
+
+    public double getWristStick()
+    {
+        return operator2.getY(Hand.kRight);
+    }
+
+    public boolean isElevatorOverrideRequested()
+    {
+        return  Math.abs(getElevatorStick()) > .15;
     }
 
     // ------------------------ Reuse ------------------------

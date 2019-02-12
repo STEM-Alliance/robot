@@ -54,43 +54,25 @@ public class RobotConfig implements TankConfigSupplier
         return config;
     }
 
-    //                      Link
-    // _________________________________________________________________________________
-    public PositionConfig getLinkConfig()
+    public class DeepSpaceTankConfig extends TankConfig
     {
-        final PositionConfig c = new PositionConfig();
-
-        int kTicksToTop = 7000;
-        int kWristVelocityMax = 540;
-        int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
-        int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
-
-        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] {
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(8, true, true, new FollowerConfig(9, true, true))
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        }, new Gains[] {
-            new Gains("Motion Magic", 0, 1.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
-        });
-        c.kHardwareLimitNormallyOpenB = true;
-        c.kHardwareLimitNormallyOpenT = true;
-        c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 90.0;
-        //        c.kSoftwareLimitB = Optional.of(-500);
-        c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        //        c.kTuning = Optional.of(true);
-
-        return c;
+        // TODO Drive Cheesy which accelerates slower when elevator is up
     }
 
-    // Subsystem
-    public static double kLinkTopPosition = 90.0;
 
-    //                       Lift
+    //                      Climb
     // _________________________________________________________________________________
 
     // Hardware
-    public PositionConfig getLiftConfig()
+    public final int kAddressSolenoidGrippersF = 4;
+    public final int kAddressSolenoidGrippersB = 5;
+
+
+    //                       Elevator
+    // _________________________________________________________________________________
+
+    // Hardware
+    public PositionConfig getElevatorConfig()
     {
         int kTicksToTop = Integer.MAX_VALUE;
         double kLiftVelocityMaxUp = 2200.0;
@@ -119,19 +101,65 @@ public class RobotConfig implements TankConfigSupplier
 
         return c;
     }
+    public final int kAddressSolenoidClimbF = 2;
+    public final int kAddressSolenoidClimbB = 3;
 
     // Subsystem
-    public static double kLiftFeedForwardHasCube = 0.25;
-    public static double kLiftFeedForwardNoCube = 0.20;
-    public static final int kLiftTicksStartup = -1500;
-    public static int kLiftTickRateSlowVelocityObserved = 500;
-    public static int kLiftTickRateSlowEnough = kLiftTickRateSlowVelocityObserved + 200;
+    public static double kElevatorFeedForwardHasCube = 0.25;
+    public static double kElevatorFeedForwardNoCube = 0.20;
+    public static final int kElevatorTicksStartup = -1500;
+    public static int kElevatorTickRateSlowVelocityObserved = 500;
+    public static int kElevatorTickRateSlowEnough = kElevatorTickRateSlowVelocityObserved + 200;
 
 
-    public class DeepSpaceTankConfig extends TankConfig
+    //                      Intake
+    // _________________________________________________________________________________
+
+    // Hardware
+    public final int kAddressTalonCargo = 20;
+    public final int kAddressTalonHatch = 21;
+    public final int kAddressSolenoidPoppersF = 0;
+    public final int kAddressSolenoidPoppersB = 1;
+
+
+    //                      Link
+    // _________________________________________________________________________________
+    public PositionConfig getLinkConfig()
     {
+        final PositionConfig c = new PositionConfig();
 
+        int kTicksToTop = 7000;
+        int kWristVelocityMax = 540;
+        int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
+        int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
+
+        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] {
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            new MasterConfig(8, true, true)
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        }, new Gains[] {
+            new Gains("Motion Magic", 0, 1.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
+        });
+        c.kHardwareLimitNormallyOpenB = true;
+        c.kHardwareLimitNormallyOpenT = true;
+        c.kTicksToTop = kTicksToTop;
+        c.kFullRangeInchesOrDegrees = 90.0;
+        //        c.kSoftwareLimitB = Optional.of(-500);
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        //        c.kTuning = Optional.of(true);
+
+        return c;
     }
+
+    // Subsystem
+    public static double kLinkTopPosition = 90.0;
+
+
+    //                       Wrist
+    // _________________________________________________________________________________
+
+    public final int kAddressTalonWrist = 9;
+
 
     //                      Helper Methods
     // _________________________________________________________________________________

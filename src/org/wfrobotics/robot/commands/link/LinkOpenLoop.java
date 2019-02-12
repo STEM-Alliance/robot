@@ -1,18 +1,18 @@
-package org.wfrobotics.robot.commands.ParellelLink;
+package org.wfrobotics.robot.commands.link;
 
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.subsystems.ParellelLink;
+import org.wfrobotics.robot.subsystems.Link;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class SmartLink extends Command
+public class LinkOpenLoop extends Command
 {
     //    private final RobotState state = RobotState.getInstance();
-    private final ParellelLink link = ParellelLink.getInstance();
+    private final Link link = Link.getInstance();
     private final IO io = IO.getInstance();
 
-    public SmartLink()
+    public LinkOpenLoop()
     {
         requires(link);
     }
@@ -21,11 +21,11 @@ public class SmartLink extends Command
     {
         if (!DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
         {
-            final double commanded = io.getLinkStick();
+            double speed = io.getLinkUp() - io.getLinkDown();
 
-            if (Math.abs(commanded) > 0.1)
+            if (Math.abs(speed) > 0.1)
             {
-                link.setOpenLoop(commanded);
+                link.setOpenLoop(speed);
             }
 
             // TODO Need some sort of latched timeout since wrist stick overridden

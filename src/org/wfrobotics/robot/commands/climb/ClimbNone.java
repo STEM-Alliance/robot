@@ -2,15 +2,19 @@ package org.wfrobotics.robot.commands.climb;
 
 import org.wfrobotics.robot.subsystems.Climb;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 
-public class Release extends InstantCommand
+public class ClimbNone extends Command
 {
     private final Climb climb = Climb.getInstance();
 
-    public Release()
+    public ClimbNone()
     {
         requires(climb);
-        climb.setGrippers(true);
+    }
+
+    protected boolean isFinished()
+    {
+        return false;
     }
 }

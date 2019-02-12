@@ -1,17 +1,17 @@
-package org.wfrobotics.robot.commands.lift;
+package org.wfrobotics.robot.commands.elevator;
 
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.subsystems.Lift;
+import org.wfrobotics.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LiftGoHome extends Command
+public class ElevatorGoHome extends Command
 {
-    private final Lift lift = Lift.getInstance();
+    private final Elevator lift = Elevator.getInstance();
     private final IO io = IO.getInstance();
     private final double speed;
 
-    public LiftGoHome(double speed, double timeout)
+    public ElevatorGoHome(double speed, double timeout)
     {
         requires(lift);
         this.speed = speed;
@@ -25,7 +25,7 @@ public class LiftGoHome extends Command
 
     protected boolean isFinished()
     {
-        final boolean override = io.isLiftOverrideRequested();
+        final boolean override = io.isElevatorOverrideRequested();
         return lift.hasZeroed() || isTimedOut() || override;
     }
 

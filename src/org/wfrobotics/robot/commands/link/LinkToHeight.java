@@ -1,15 +1,15 @@
-package org.wfrobotics.robot.commands.ParellelLink;
+package org.wfrobotics.robot.commands.link;
 
 
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.robot.config.RobotConfig;
-import org.wfrobotics.robot.subsystems.ParellelLink;
+import org.wfrobotics.robot.subsystems.Link;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class LinkToHeight extends InstantCommand
 {
-    private final ParellelLink link = ParellelLink.getInstance();
+    private final Link link = Link.getInstance();
     private final double angle;
 
     /**
@@ -18,7 +18,7 @@ public class LinkToHeight extends InstantCommand
      */
     public LinkToHeight(double degrees)
     {
-        final double kMax = RobotConfig.getInstance().kLinkTopPosition;
+        final double kMax = RobotConfig.kLinkTopPosition;
 
         requires(link);
         angle = degrees;

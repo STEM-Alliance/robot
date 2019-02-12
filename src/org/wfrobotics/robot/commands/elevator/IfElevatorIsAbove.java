@@ -1,16 +1,16 @@
-package org.wfrobotics.robot.commands.lift;
+package org.wfrobotics.robot.commands.elevator;
 
-import org.wfrobotics.robot.subsystems.Lift;
+import org.wfrobotics.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
-public class IfLiftIsAbove extends ConditionalCommand
+public class IfElevatorIsAbove extends ConditionalCommand
 {
-    private final Lift lift = Lift.getInstance();
+    private final Elevator lift = Elevator.getInstance();
     private final double threshold;
 
-    public IfLiftIsAbove(Command onTrue, double heightFromGround)
+    public IfElevatorIsAbove(Command onTrue, double heightFromGround)
     {
         super(onTrue);
         threshold = heightFromGround;
