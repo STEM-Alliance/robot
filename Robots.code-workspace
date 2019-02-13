@@ -1,0 +1,48 @@
+{
+	"folders": [
+		{
+			"path": "4818"
+		},
+		{
+			"path": "4360"
+		},
+		{
+			"path": "7048"
+		},
+		{
+			"path": "prototype"
+		},
+		{
+			"path": "reuse"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"java.import.gradle.enabled": false,
+		"files.exclude": {
+			"**/.git": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true,
+			"bin/": true,
+			".classpath": true,
+			".project": true,
+			"**/.gradle": true,
+			"gradle": true,
+			".wpilib": true,
+			"build": true,
+			"**/.classpath": true,
+			"**/.project": true,
+			"**/.settings": true,
+			"**/.factorypath": true
+		},
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/**": true,
+			"**/.gradle/**": true
+		},
+		"wpilib.online": true
+	}
+}
