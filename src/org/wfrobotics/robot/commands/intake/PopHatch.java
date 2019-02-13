@@ -1,12 +1,15 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class PopHatch extends Command
 {
     private final Intake intake = Intake.getInstance();
+    private final Wrist wrist = Wrist.getInstance();
+    private boolean inHatchMode;
 
     public PopHatch()
     {
@@ -16,7 +19,12 @@ public class PopHatch extends Command
 
     protected void initialize()
     {
-        intake.setPoppers(true);
+        inHatchMode = wrist.inHatchMode();
+
+        if (inHatchMode)
+        {
+            intake.setPoppers(true);
+        }
     }
 
     protected void end()
@@ -26,6 +34,6 @@ public class PopHatch extends Command
 
     protected boolean isFinished()
     {
-        return isTimedOut();
+        return isTimedOut() || !inHatchMode;
     }
 }

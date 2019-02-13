@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.link.LinkZeroThenOpenLoop;
@@ -45,8 +46,10 @@ public class Link extends PositionBasedSubsystem
     public TestReport runFunctionalTest()
     {
         TestReport report = new TestReport();
+        ClosedLoopConfig config = RobotConfig.getInstance().getLinkConfig().kClosedLoop;
 
         report.add(getDefaultCommand().doesRequire(this));
+        report.add(TalonChecker.checkClosedLoopConfig(config));
         report.add(TalonChecker.checkFirmware(master));
         report.add(TalonChecker.checkEncoder(master));
         report.add(TalonChecker.checkFrameRates(master));
