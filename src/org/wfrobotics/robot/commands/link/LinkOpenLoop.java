@@ -19,26 +19,12 @@ public class LinkOpenLoop extends Command
 
     protected void execute()
     {
-        if (!DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
+        final boolean inAuto = DriverStation.getInstance().isAutonomous();
+        if (!inAuto)  // TODO ConditionalCommand cancels requirements
         {
-            double speed = io.getLinkUp() - io.getLinkDown();
+            final double speed = io.getLinkUp() - io.getLinkDown();
 
-            if (Math.abs(speed) > 0.1)
-            {
-                link.setOpenLoop(speed);
-            }
-
-            // TODO Need some sort of latched timeout since wrist stick overridden
-
-            //        final boolean liftIsDownWithCube = Math.abs(state.liftHeightInches) < 1 && state.robotHasCube;
-            //        final boolean movingFast = Math.abs(state.robotVelocity.getMag()) > 0.33;
-            //
-            //        if (Math.abs(commanded) < 0.1 && liftIsDownWithCube && movingFast)
-            //        {
-            //            wrist.setPosition(1.0);
-            //        }
-            //        else
-            //            link.setOpenLoop(commanded);
+            link.setOpenLoop(speed);
         }
     }
 
