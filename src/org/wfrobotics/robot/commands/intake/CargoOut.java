@@ -1,38 +1,34 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class CargoOut extends Command
 {
+    private final Intake intake = Intake.getInstance();
+    private final Wrist wrist = Wrist.getInstance();
+    private boolean inCargoMode;
 
-    Intake intake = Intake.getInstance();
-    double timeout;
     public CargoOut(double timeout)
     {
         requires(intake);
-        this.timeout = timeout;
+        setTimeout(timeout);
     }
 
     protected void initialize()
     {
-        intake.setCargoSpeed(0.6);
-        super.initialize();
-        setTimeout(timeout);
-    }
+        inCargoMode = wrist.inCargoMode();
 
-    protected void execute()
-    {
-
-        super.execute();
-
-
-
+        if (inCargoMode)
+        {
+            intake.setCargoSpeed(0.6);
+        }
     }
 
     protected boolean isFinished()
     {
-        return isTimedOut();
+        return isTimedOut() || !inCargoMode;
     }
 }

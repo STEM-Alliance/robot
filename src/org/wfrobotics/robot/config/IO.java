@@ -9,7 +9,7 @@ import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.robot.commands.climb.Hug;
 import org.wfrobotics.robot.commands.climb.Release;
 import org.wfrobotics.robot.commands.elevator.ElevatorShift;
-import org.wfrobotics.robot.commands.intake.PopHatch;
+import org.wfrobotics.robot.commands.intake.Score;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;
@@ -24,16 +24,12 @@ public final class IO
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
     private final Joystick driverTurn;
     private final Xbox operator;
-    private final Xbox operator2;
-
-
     /** Create and configure controls for Drive Team */
     private IO()
     {
         driverThrottle = new HerdJoystick(0);
         driverTurn = new Joystick(1);
         operator = new Xbox(2);
-        operator2 = new Xbox(3);
     }
 
     /** Configure each Button to run a Command */
@@ -56,7 +52,7 @@ public final class IO
         ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
 
         //----------------------- Intake --------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new PopHatch());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new Score());
 
         //----------------------- System --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());
@@ -74,7 +70,7 @@ public final class IO
 
     public double getElevatorStick()
     {
-        return operator.getY(Hand.kRight);
+        return -operator.getY(Hand.kRight);
     }
 
     public double getIntakeStick()
@@ -94,7 +90,7 @@ public final class IO
 
     public double getWristStick()
     {
-        return operator2.getY(Hand.kRight);
+        return operator.getY(Hand.kLeft);
     }
 
     public boolean isElevatorOverrideRequested()

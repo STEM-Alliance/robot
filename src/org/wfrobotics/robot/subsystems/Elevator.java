@@ -1,9 +1,9 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.elevator.ElevatorOpenLoop;
-import org.wfrobotics.robot.config.FieldHeight;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -29,7 +29,7 @@ public class Elevator extends PositionBasedSubsystem
 
     private static final double kFeedForwardHasCargo = 0.0;  // TODO Tune
     private static final double kFeedForwardNoCargo = 0.0;  // TODO Tune
-    private static final double kInchesGroundToZero = FieldHeight.HatchLow.get();
+    private static final double kInchesGroundToZero = 0.0;  // TODO Tune
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 0;  // TODO Tune
 
@@ -103,8 +103,10 @@ public class Elevator extends PositionBasedSubsystem
     public TestReport runFunctionalTest()
     {
         TestReport report = new TestReport();
+        ClosedLoopConfig config = RobotConfig.getInstance().getElevatorConfig().kClosedLoop;
 
         report.add(getDefaultCommand().doesRequire(this));
+        report.add(TalonChecker.checkClosedLoopConfig(config));
         report.add(TalonChecker.checkFirmware(master));
         report.add(TalonChecker.checkFirmware(followers));
         report.add(TalonChecker.checkEncoder(master));
