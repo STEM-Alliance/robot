@@ -1,58 +1,43 @@
 package org.wfrobotics.robot;
 
-import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.reuse.EnhancedRobot;
+import org.wfrobotics.reuse.subsystems.vision.CameraServer;
+import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
+import org.wfrobotics.robot.config.ProtoRobotConfig;
+import org.wfrobotics.robot.config.ProtoIO;
 import org.wfrobotics.robot.subsystems.ExampleSubsystem;
 
-import edu.wpi.first.wpilibj.SampleRobot;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-
-//TODO 2019 switch to non-deprecated RobotBase
-@SuppressWarnings("deprecation")
-public class Robot extends SampleRobot
+public final class Robot extends EnhancedRobot
 {
-    public static ExampleSubsystem prototypeSubsystem;
-    public static IO controls;
+    public final CameraServer visionServer = CameraServer.getInstance();
+    VisionProcessor processor = VisionProcessor.getInstance();
 
-    Command autonomousCommand = null;
+    public static ExampleSubsystem prototypeSubsystem = new ExampleSubsystem();
 
-    public void robotInit()
+    public Robot() 
     {
-        prototypeSubsystem = new ExampleSubsystem();
-
-        controls = new IO();
+        super(RobotState.getInstance(),
+              ProtoRobotConfig.getInstance(),
+              new ProtoIO());
     }
 
-    public void operatorControl()
+    protected void registerRobotSpecific()
     {
-        if (autonomousCommand != null) autonomousCommand.cancel();
-
-        while (isOperatorControl() && isEnabled())
-        {
-            Scheduler.getInstance().run();
-        }
+        //subsystems.register(SuperStructure.getInstance());
+        visionServer.register(processor);
+        backgroundUpdater.register(processor);
+        RobotState.getInstance().resetVisionState();
     }
 
-    public void autonomous()
+    @Override
+    public void disabledPeriodic()
     {
-        if (autonomousCommand != null) autonomousCommand.start();
-
-        while (isAutonomous() && isEnabled())
-        {
-            Scheduler.getInstance().run();
-        }
+        super.disabledPeriodic();
     }
 
-    public void disabled()
+    @Override
+    public void teleopPeriodic()
     {
-        while (isDisabled())
-        {
-            Scheduler.getInstance().run();
-        }
-    }
-
-    public void test()
-    {
-        while (isTest() && isEnabled()) { }
+        subsystems.update();
     }
 }

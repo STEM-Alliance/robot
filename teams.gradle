@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'edu.wpi.first.GradleRIO'
 
-def ROBOT_MAIN_CLASS = "org.wfrobotics.robot.Robot"
+def ROBOT_MAIN_CLASS = "org.wfrobotics.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmlearbeddedTools.

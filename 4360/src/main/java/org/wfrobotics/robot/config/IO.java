@@ -7,12 +7,13 @@ import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
+import org.wfrobotics.reuse.config.IOConfig;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 
 /** Maps controllers to Commands **/
-public final class IO
+public final class IO implements IOConfig
 {
     private static IO instance = null;
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
@@ -37,7 +38,7 @@ public final class IO
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
 
         //----------------------Testing-------------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget(10));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget());
 
         // -------------------- Super Structure -------------------
 
