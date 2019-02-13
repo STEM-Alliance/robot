@@ -10,7 +10,7 @@ import org.wfrobotics.reuse.config.IOConfig;
 import org.wfrobotics.robot.commands.climb.Hug;
 import org.wfrobotics.robot.commands.climb.Release;
 import org.wfrobotics.robot.commands.elevator.ElevatorShift;
-import org.wfrobotics.robot.commands.intake.Score;
+import org.wfrobotics.robot.commands.intake.ScoreGamepiece;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;
@@ -53,7 +53,7 @@ public final class IO implements IOConfig
         ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
 
         //----------------------- Intake --------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new Score());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreGamepiece());
 
         //----------------------- System --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());

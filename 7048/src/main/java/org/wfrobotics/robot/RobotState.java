@@ -1,6 +1,8 @@
 package org.wfrobotics.robot;
 
 
+import java.util.List;
+
 import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
@@ -38,7 +40,6 @@ public final class RobotState extends RobotStateBase
         if (visionInView)
         {
             SmartDashboard.putNumber("Vision Error", getVisionError());
-        }
         }
     }
 

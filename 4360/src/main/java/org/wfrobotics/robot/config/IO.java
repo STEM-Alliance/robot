@@ -88,4 +88,10 @@ public final class IO implements IOConfig
         operator.setRumble(Hand.kLeft, state);
         operator.setRumble(Hand.kRight, state);
     }
+
+	@Override
+	public boolean isDriveOverrideRequested() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

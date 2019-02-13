@@ -49,4 +49,10 @@ public class ProtoIO implements IOConfig
         return 0;
     }
 
+	@Override
+	public boolean isDriveOverrideRequested() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
