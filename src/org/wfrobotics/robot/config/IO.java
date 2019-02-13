@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.SignalHumanPlayer;
-import org.wfrobotics.reuse.commands.drive.DriveToTarget;
 import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
@@ -50,15 +49,14 @@ public final class IO
         ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new Release());
 
         //----------------------- Driver --------------------------
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
+        //        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
 
         //----------------------- Elevator ------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));
         ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
 
         //----------------------- Intake --------------------------
-        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new PopHatch(true));
-        ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new PopHatch(false));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new PopHatch());
 
         //----------------------- System --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());
