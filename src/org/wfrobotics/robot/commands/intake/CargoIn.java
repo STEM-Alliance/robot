@@ -1,12 +1,15 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class CargoIn extends Command
 {
     private final Intake intake = Intake.getInstance();
+    private final Wrist wrist = Wrist.getInstance();
+    private boolean inCargoMode;
 
     public CargoIn()
     {
@@ -15,11 +18,15 @@ public class CargoIn extends Command
 
     protected void initialize()
     {
-        intake.setCargoSpeed(-1);
+        inCargoMode = wrist.state;
+        if (inCargoMode)
+        {
+            intake.setCargoSpeed(-1);
+        }
     }
 
     protected boolean isFinished()
     {
-        return false;
+        return false || !wrist.state;
     }
 }

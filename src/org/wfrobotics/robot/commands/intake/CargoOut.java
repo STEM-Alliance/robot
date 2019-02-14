@@ -19,8 +19,7 @@ public class CargoOut extends Command
 
     protected void initialize()
     {
-        inCargoMode = wrist.inCargoMode();
-
+        inCargoMode = wrist.state;
         if (inCargoMode)
         {
             intake.setCargoSpeed(0.6);
