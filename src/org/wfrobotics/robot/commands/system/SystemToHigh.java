@@ -17,7 +17,7 @@ public class SystemToHigh extends ConditionalCommand
 
     protected boolean condition()
     {
-        return wrist.inCargoMode();
+        return wrist.isCloserToCargoModeThanHatchMode();
     }
 
     private static class SystemToCargo extends CommandGroup

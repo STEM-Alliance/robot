@@ -21,10 +21,10 @@ public class IntakeOpenLoop extends Command
     {
         final double speed = io.getIntakeStick();
 
-        if (wrist.inCargoMode())
+        if (wrist.isCloserToCargoModeThanHatchMode())
         {
-            intake.setHatchSpeed(speed);
-            intake.setCargoSpeed(0.0);
+            intake.setCargoSpeed(speed);
+            intake.setHatchSpeed(0.0);
         }
         else  // Hatch mode
         {

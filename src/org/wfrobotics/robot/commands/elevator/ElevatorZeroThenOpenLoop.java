@@ -8,7 +8,7 @@ public class ElevatorZeroThenOpenLoop extends ConditionalCommand
 {
     public ElevatorZeroThenOpenLoop()
     {
-        super(new ElevatorOpenLoop(), new ElevatorAutoZero());
+        super(new ElevatorOpenLoop(), new ElevatorZero());
     }
 
     protected boolean condition()

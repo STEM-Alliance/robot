@@ -18,10 +18,12 @@ public class ElevatorOpenLoop extends Command
 
     protected void execute()
     {
-        if (!DriverStation.getInstance().isAutonomous())  // TODO ConditionalCommand cancels requirements
+        final boolean inAuto = DriverStation.getInstance().isAutonomous();
+
+        if (!inAuto)  // TODO ConditionalCommand cancels requirements
         {
+            final double setpoint = io.getElevatorStick();
             elevator.getPosition();
-            double setpoint = io.getElevatorStick();
 
             //            if (Math.abs(setpoint) < deadbandPercent)
             //            {

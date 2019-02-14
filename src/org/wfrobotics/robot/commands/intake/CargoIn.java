@@ -19,9 +19,10 @@ public class CargoIn extends Command
     protected void initialize()
     {
         inCargoMode = wrist.inCargoMode();
+
         if (inCargoMode)
         {
-            intake.setCargoSpeed(-1);
+            intake.setCargoSpeed(-1.0);
         }
     }
 

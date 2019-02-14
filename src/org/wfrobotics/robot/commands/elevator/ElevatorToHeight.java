@@ -7,29 +7,29 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorToHeight extends Command
 {
-    private final Elevator lift = Elevator.getInstance();
+    private final Elevator elevator = Elevator.getInstance();
     private final IO io = IO.getInstance();
     protected final double desired;
 
     public ElevatorToHeight(double desired)
     {
-        requires(lift);
+        requires(elevator);
         this.desired = desired;
     }
 
     protected void initialize()
     {
-        lift.setClosedLoop(desired);
+        elevator.setClosedLoop(desired);
     }
 
     protected boolean isFinished()
     {
-        final boolean isClose = Math.abs(lift.getPosition() - desired) < 1.0;
+        final boolean isClose = Math.abs(elevator.getPosition() - desired) < 1.0;
         return isClose || io.isElevatorOverrideRequested();
     }
 
     protected void end()
     {
-        lift.setOpenLoop(0.0);  // In autonomous, this holds the current position
+        elevator.setOpenLoop(0.0);  // In autonomous, this holds the current position
     }
 }
