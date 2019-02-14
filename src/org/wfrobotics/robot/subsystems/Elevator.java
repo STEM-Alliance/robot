@@ -36,6 +36,18 @@ public class Elevator extends PositionBasedSubsystem
     private static Elevator instance = null;
     private final DoubleSolenoid shifter;
 
+    public enum LIFT_STATE {start, lowH, midH, highH, lowC, midC, highC}
+    LIFT_STATE liftState = LIFT_STATE.start;
+
+    public void setLiftState(LIFT_STATE state)
+    {
+        liftState = state;
+    }
+    public LIFT_STATE getLiftState()
+    {
+        return liftState;
+    }
+
     private Elevator(PositionConfig positionConfig)
     {
         super(positionConfig);
