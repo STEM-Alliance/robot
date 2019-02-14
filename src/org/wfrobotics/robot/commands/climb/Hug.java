@@ -7,10 +7,16 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 public class Hug extends InstantCommand
 {
     private final Climb climb = Climb.getInstance();
+    private final boolean setGrippers;
 
-    public Hug()
+    public Hug(boolean setGrippers)
     {
         requires(climb);
-        climb.setGrippers(true);
+        this.setGrippers = setGrippers;
+    }
+
+    protected void initialize()
+    {
+        climb.setGrippers(setGrippers);
     }
 }

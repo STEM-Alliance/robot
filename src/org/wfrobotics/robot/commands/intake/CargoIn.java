@@ -18,7 +18,7 @@ public class CargoIn extends Command
 
     protected void initialize()
     {
-        inCargoMode = wrist.state;
+        inCargoMode = wrist.inCargoMode();
         if (inCargoMode)
         {
             intake.setCargoSpeed(-1);
@@ -27,6 +27,6 @@ public class CargoIn extends Command
 
     protected boolean isFinished()
     {
-        return false || !wrist.state;
+        return false || !inCargoMode;
     }
 }

@@ -1,9 +1,11 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
+import org.wfrobotics.robot.commands.wrist.WristNone;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Wrist extends EnhancedSubsystem
 {
@@ -19,38 +21,44 @@ public class Wrist extends EnhancedSubsystem
     private static Wrist instance = null;
     private final DoubleSolenoid deployer;
 
+    private boolean inCargoMode = false;
+
+    public Wrist()
+    {
+        deployer = new DoubleSolenoid(0, 6, 7);
+        setDeployer(false);
+    }
+
+    protected void initDefaultCommand()
+    {
+        setDefaultCommand(new WristNone());
+    }
+
+    public void cacheSensors(boolean isDisabled)
+    {
+
+    }
+
+    public void reportState()
+    {
+        SmartDashboard.putBoolean("Wrist Cargo Mode", inCargoMode());
+        SmartDashboard.putBoolean("Wrist Hatch Mode", !inCargoMode());
+    }
 
     /**
      *    false = hatch mode
      *    true = cargo mode
      */
-    public boolean state = false;
-    public void setState(boolean state)
+    public synchronized boolean inCargoMode()
     {
-        this.state = state;
+        return inCargoMode;
     }
 
-    public Wrist()
+    public synchronized void setDeployer(boolean wantCargoMode)
     {
-        deployer = new DoubleSolenoid(0, 6, 7);
-
-    }
-
-    public void setPoppers(boolean out)
-    {
-        Value desired = (out) ? Value.kForward : Value.kReverse;
+        Value desired = (wantCargoMode) ? Value.kForward : Value.kReverse;
         deployer.set(desired);
-    }
-
-    protected void initDefaultCommand()
-    {
-        setDefaultCommand(new WristOpenLoop());
-    }
-
-    @Override
-    public void reportState()
-    {
-
+        inCargoMode = wantCargoMode;
     }
 
     public TestReport runFunctionalTest()
@@ -60,9 +68,5 @@ public class Wrist extends EnhancedSubsystem
         report.add(getDefaultCommand().doesRequire(this));
 
         return report;
-    }
-
-    public void cacheSensors(boolean isDisabled)
-    {
     }
 }
