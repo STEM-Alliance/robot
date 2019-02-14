@@ -1,18 +1,40 @@
 package org.wfrobotics.robot.commands.system;
 
-import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 import org.wfrobotics.robot.commands.link.LinkToHeight;
-import org.wfrobotics.robot.config.FieldHeight;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
-public class SystemToHigh extends CommandGroup
+public class SystemToHigh extends ConditionalCommand
 {
+    private final Wrist wrist = Wrist.getInstance();
+
     public SystemToHigh()
     {
-        final double hatchHeight = FieldHeight.HatchHigh.get();
+        super(new SystemToCargo(), new SystemToHatch());
+    }
 
-        this.addParallel(new LinkToHeight(90.0));
-        addSequential(new ElevatorToHeight(hatchHeight));
+    protected boolean condition()
+    {
+        return wrist.inCargoMode();
+    }
+
+    private static class SystemToCargo extends CommandGroup
+    {
+        public SystemToCargo()
+        {
+            //        addParallel(new ElevatorToHeight(0.0));
+            addSequential(new LinkToHeight(90.0));
+        }
+    }
+
+    private static class SystemToHatch extends CommandGroup
+    {
+        public SystemToHatch()
+        {
+            //        addParallel(new ElevatorToHeight(0.0));
+            addSequential(new LinkToHeight(90.0));
+        }
     }
 }

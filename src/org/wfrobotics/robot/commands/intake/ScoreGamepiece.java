@@ -15,7 +15,7 @@ public class ScoreGamepiece extends ConditionalCommand
 
     protected boolean condition()
     {
-        return wrist.state;
+        return wrist.inCargoMode;
     }
 
 }
