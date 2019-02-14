@@ -1,20 +1,19 @@
-package org.wfrobotics.robot.commands.link;
+package org.wfrobotics.robot.commands.wrist;
 
 import org.wfrobotics.robot.config.IO;
-import org.wfrobotics.robot.subsystems.Link;
+import org.wfrobotics.robot.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LinkOpenLoop extends Command
+public class WristOpenLoop extends Command
 {
-    //    private final RobotState state = RobotState.getInstance();
-    private final Link link = Link.getInstance();
+    private final Wrist wrist = Wrist.getInstance();
     private final IO io = IO.getInstance();
 
-    public LinkOpenLoop()
+    public WristOpenLoop()
     {
-        requires(link);
+        requires(wrist);
     }
 
     protected void execute()
@@ -23,9 +22,7 @@ public class LinkOpenLoop extends Command
 
         if (!inAuto)  // TODO ConditionalCommand cancels requirements
         {
-            final double speed = io.getLinkUp() - io.getLinkDown();
-
-            link.setOpenLoop(speed);
+            wrist.setOpenLoop(io.getWristStick());
         }
     }
 

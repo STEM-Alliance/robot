@@ -6,11 +6,11 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class IntakeUpUntilLimitTop extends Command
 {
-    Intake intake = Intake.getInstance();
+    private final Intake intake = Intake.getInstance();
 
     public IntakeUpUntilLimitTop()
     {
-        requires(Intake.getInstance());
+        requires(intake);
     }
 
     protected void initialize()
@@ -18,14 +18,13 @@ public class IntakeUpUntilLimitTop extends Command
         intake.setHatchSpeed(-0.4);
     }
 
-    protected void execute()
-    {
-
-    }
-
     protected boolean isFinished()
     {
         return !intake.hasHatch();
     }
 
+    protected void end()
+    {
+        intake.setHatchSpeed(0.0);
+    }
 }
