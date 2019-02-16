@@ -68,7 +68,10 @@ public final class IO implements IOConfig
     }
 
     // ------------------- Robot-specific --------------------
-
+    public double getCargoStick()
+    {
+    	return -operator.getX(Hand.kLeft);
+    }
     public double getElevatorStick()
     {
         return -operator.getY(Hand.kRight);
@@ -91,7 +94,7 @@ public final class IO implements IOConfig
 
     public double getWristStick()
     {
-        return operator.getY(Hand.kLeft);
+        return -operator.getY(Hand.kLeft);
     }
 
     public boolean isElevatorOverrideRequested()
@@ -117,7 +120,7 @@ public final class IO implements IOConfig
 
     public double getTurn()
     {
-        return driverTurn.getRawAxis(0);
+        return -driverTurn.getRawAxis(0);
     }
 
     public boolean getDriveQuickTurn()

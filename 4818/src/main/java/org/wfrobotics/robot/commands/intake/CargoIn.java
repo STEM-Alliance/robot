@@ -18,7 +18,7 @@ public class CargoIn extends Command
 
     protected void initialize()
     {
-        inCargoMode = wrist.inCargoMode();
+        inCargoMode = true;//wrist.inCargoMode();
 
         if (inCargoMode)
         {

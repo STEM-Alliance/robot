@@ -10,11 +10,11 @@ public class ScoreGamepiece extends ConditionalCommand
 
     public ScoreGamepiece()
     {
-        super(new PopHatchAndBackUp(), new CargoOut(0.75));
+        super(new CargoOut(0.75), new PopHatchAndBackUp());
     }
 
     protected boolean condition()
     {
-        return wrist.isCloserToCargoModeThanHatchMode();
+        return false;//wrist.isCloserToCargoModeThanHatchMode();
     }
 }
