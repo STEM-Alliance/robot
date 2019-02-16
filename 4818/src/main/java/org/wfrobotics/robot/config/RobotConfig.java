@@ -34,7 +34,6 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
             // Right
             new MasterConfig(18, true, true, new FollowerConfig(17,false), new FollowerConfig(16, false)),
             // Left
