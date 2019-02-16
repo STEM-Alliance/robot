@@ -3,6 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
+import org.wfrobotics.robot.commands.wrist.WristOpenLoop;
 import org.wfrobotics.robot.commands.wrist.WristZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
@@ -24,11 +25,12 @@ public class Wrist extends PositionBasedSubsystem
     public Wrist(PositionConfig positionConfig)
     {
         super(positionConfig);
+        master.configOpenloopRamp(.15, 100);
     }
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new WristZeroThenOpenLoop());
+        setDefaultCommand(new WristOpenLoop());
     }
 
     @Override
