@@ -30,6 +30,8 @@ public class IntakeOpenLoop extends Command
         {
             intake.setCargoSpeed(0.0);
             intake.setHatchSpeed(speed);
+            intake.setCargoSpeed(IO.getInstance().getCargoStick());
+
         }
     }
 
