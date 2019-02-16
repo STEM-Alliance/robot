@@ -7,27 +7,29 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class RelitiveWrist extends Command
 {
-    Wrist wrist = Wrist.getInstance();
-    Link link = Link.getInstance();
+    private final Wrist wrist = Wrist.getInstance();
+    private final Link link = Link.getInstance();
 
     public RelitiveWrist()
     {
         requires(wrist);
     }
 
-    double linkPos = 0;
     protected void execute()
     {
         if (wrist.hasZeroed() && link.hasZeroed())
         {
-            if (Math.abs(link.getPosition()) > 0.0)
+            final double linkPos = link.getPosition();
+            final double wristPos = wrist.getPosition();
+            final double delta = linkPos - linkPos;
+
+            if (Math.abs(linkPos) > 0.0)
             {
-                double deltaLinkPos = linkPos - link.getPosition();
-                wrist.setClosedLoop(wrist.getPosition() - deltaLinkPos);
+                wrist.setClosedLoop(wristPos - delta);
             }
-            linkPos = link.getPosition();
         }
     }
+
     protected boolean isFinished()
     {
         return false;

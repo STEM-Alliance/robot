@@ -10,19 +10,14 @@ import org.wfrobotics.reuse.subsystems.vision.Point;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** Preferred provider of global, formatted state about the robot. Commands can get information from one place rather than from multiple subsystems. **/
+/** Provider of global, formatted state about the robot. Consider calling subsystem instance instead. **/
 public final class RobotState extends RobotStateBase
 {
-
     private static final RobotState instance = new RobotState();
-
-    // Robot-specific state
-    
-    private double timeSinceRumbleOn;
 
     public RobotState()
     {
-        
+
     }
 
     public static RobotState getInstance()

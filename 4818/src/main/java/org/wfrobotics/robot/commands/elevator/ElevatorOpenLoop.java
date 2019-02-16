@@ -22,7 +22,7 @@ public class ElevatorOpenLoop extends Command
 
         if (!inAuto)  // TODO ConditionalCommand cancels requirements
         {
-            final double setpoint = io.getElevatorStick();
+            final double speed = io.getElevatorStick();
             elevator.getPosition();
 
             //            if (Math.abs(setpoint) < deadbandPercent)
@@ -37,7 +37,16 @@ public class ElevatorOpenLoop extends Command
             //            {
             //                setpoint /= 3.0;
             //            }
-            elevator.setOpenLoop(setpoint);
+
+            if (elevator.hasZeroed())
+            {
+                //                if (height < )
+                //                {
+                //
+                //                }
+            }
+
+            elevator.setOpenLoop(speed);
         }
     }
 
