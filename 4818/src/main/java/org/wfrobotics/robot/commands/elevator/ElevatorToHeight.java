@@ -30,6 +30,6 @@ public class ElevatorToHeight extends Command
 
     protected void end()
     {
-        elevator.setOpenLoop(0.0);  // In autonomous, this holds the current position
+        elevator.setOpenLoop(0.0);
     }
 }

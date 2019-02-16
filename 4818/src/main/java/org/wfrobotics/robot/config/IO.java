@@ -24,6 +24,7 @@ public final class IO implements IOConfig
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
     private final Joystick driverTurn;
     private final Xbox operator;
+
     /** Create and configure controls for Drive Team */
     private IO()
     {
