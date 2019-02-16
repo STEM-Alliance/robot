@@ -2,30 +2,18 @@ package org.wfrobotics.robot.commands.link;
 
 import org.wfrobotics.robot.subsystems.Link;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class LinkZero extends Command
+public class LinkZero extends CommandGroup
 {
-    private final Link link = Link.getInstance();
-
     public LinkZero()
     {
-        requires(link);
-        setTimeout(3.0);
-    }
-
-    protected void execute()
-    {
-        link.setOpenLoop(-0.3);
-    }
-
-    protected boolean isFinished()
-    {
-        return link.hasZeroed() || isTimedOut();
+        addSequential(new LinkGoHome());
+        addSequential(new LinkToHeight(15.0));
     }
 
     protected void end()
     {
-        link.setOpenLoop(0.0);
+        Link.getInstance().setOpenLoop(0.0);
     }
 }

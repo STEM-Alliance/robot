@@ -29,7 +29,7 @@ public class Elevator extends PositionBasedSubsystem
 
     private static final double kFeedForwardHasCargo = 0.0;  // TODO Tune
     private static final double kFeedForwardNoCargo = 0.0;  // TODO Tune
-    private static final double kInchesGroundToZero = 0.0;  // TODO Tune
+    private static final double kInchesGroundToZero = 26.5;  // Practice bot
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 0;  // TODO Tune
 
@@ -43,6 +43,7 @@ public class Elevator extends PositionBasedSubsystem
     {
         liftState = state;
     }
+
     public LIFT_STATE getLiftState()
     {
         return liftState;
