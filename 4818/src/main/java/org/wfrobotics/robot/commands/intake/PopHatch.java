@@ -19,7 +19,7 @@ public class PopHatch extends Command
 
     protected void initialize()
     {
-        inHatchMode = wrist.inHatchMode();
+        inHatchMode = true;//wrist.inHatchMode();
 
         if (inHatchMode)
         {
