@@ -1,8 +1,8 @@
 package org.wfrobotics.robot.config;
 
+import org.wfrobotics.reuse.config.IRobotConfig;
 import java.util.Optional;
 
-import org.wfrobotics.reuse.config.IRobotConfig;
 import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
@@ -30,12 +30,13 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.15; // how fast do you acellerate
+        config.OPEN_LOOP_RAMP = 0.30; // how fast do you acellerate
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
             // Right
-            new MasterConfig(18, true, true, new FollowerConfig(17,false), new FollowerConfig(16, false)),
+            new MasterConfig(18, false, true, new FollowerConfig(17, false), new FollowerConfig(16, false)),
             // Left
             new MasterConfig(13, false, true, new FollowerConfig(14, false), new FollowerConfig(15, false)),
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +84,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
 
         c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(10, true, false, new FollowerConfig(11, true, true),
+            new MasterConfig(10, false, false, new FollowerConfig(11, true, true),
                                             new FollowerConfig(12, true, true),
                                             new FollowerConfig(19, true, true)),
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,24 +162,24 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     {
         final PositionConfig c = new PositionConfig();
 
-        int kTicksToTop = 99999;
+        int kTicksToTop = 277;
         int kWristVelocityMax = 99999;
         int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
         int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Wrist", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(9, true, false)
+            new MasterConfig(9, true, true)
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }, new Gains[] {
             new Gains("Motion Magic", 0, 0.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
         });
-        c.kHardwareLimitNormallyOpenB = true;
+        c.kHardwareLimitNormallyOpenB = false;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 90.0;
         //        c.kSoftwareLimitB = Optional.of(-500);
-        //        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+//        c.kSoftwareLimitT = Optional.of(kTicksToTop);
         //        c.kTuning = Optional.of(true);
 
         return c;

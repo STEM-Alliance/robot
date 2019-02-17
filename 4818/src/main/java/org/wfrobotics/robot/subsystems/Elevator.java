@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
+import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
@@ -59,6 +60,7 @@ public class Elevator extends PositionBasedSubsystem
         final RobotConfig config = RobotConfig.getInstance();
 
         master.setSelectedSensorPosition(RobotConfig.kElevatorTicksStartup, 0, 100);
+        master.configOpenloopRamp(.15, 100);
         //        TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // TODO Tune
         //        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
 
@@ -124,6 +126,15 @@ public class Elevator extends PositionBasedSubsystem
     {
         Value desired = (liftNotClimb) ? Value.kForward : Value.kReverse;
         shifter.set(desired);
+        
+        if (liftNotClimb)
+        {
+        	master.overrideLimitSwitchesEnable(true);
+        }
+        else
+        {
+        	master.overrideLimitSwitchesEnable(false);
+        }
     }
 
     private boolean allFollowersAreTalons()

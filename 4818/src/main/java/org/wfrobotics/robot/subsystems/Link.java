@@ -3,6 +3,7 @@ package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
+import org.wfrobotics.robot.commands.link.LinkOpenLoop;
 import org.wfrobotics.robot.commands.link.LinkZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
@@ -28,7 +29,7 @@ public class Link extends PositionBasedSubsystem
         super(positionConfig);
 
         //        master.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
-        //        master.configOpenloopRamp(.05, 100);
+        master.configOpenloopRamp(.15, 100);
         //        TalonFactory.configCurrentLimiting(master, 20, 40, 200);  // Adding with high numbers just in case
         //        master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
         //        master.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 100);  // Slow down, doesn't make decisions off this
@@ -40,7 +41,7 @@ public class Link extends PositionBasedSubsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new LinkZeroThenOpenLoop());
+        setDefaultCommand(new LinkOpenLoop());
     }
 
     public TestReport runFunctionalTest()
