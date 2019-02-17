@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java">
+	<classpathentry kind="src" output="bin/main" path="src/main/java">
 		<attributes>
 			<attribute name="gradle_scope" value="main"/>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
@@ -10,26 +10,9 @@
 	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
 	<classpathentry kind="var" path="wpilib" sourcepath="wpilib.sources"/>
 	<classpathentry kind="var" path="networktables" sourcepath="networktables.sources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="var" path="opencv" sourcepath="opencv.sources"/>
 	<classpathentry kind="var" path="cscore" sourcepath="cscore.sources"/>
 	<classpathentry kind="var" path="wpiutil" sourcepath="wpiutil.sources"/>
-	<classpathentry kind="lib" path="/reuse/lib/CTRE_Phoenix.jar" sourcepath="/reuse/lib/CTRE_Phoenix-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/reuse/lib/CTRE_Phoenix-javadoc.jar!/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/reuse/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/reuse/lib/mindsensors.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/reuse/lib/mindsensors-javadoc.jar!/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/reuse/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/reuse/lib/navx_frc.jar"/>
-	<classpathentry kind="lib" path="/reuse/lib/sf2-frc.jar"/>
-	<classpathentry kind="lib" path="/reuse/lib/Jama-1.0.3.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/reuse"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="bin/default"/>
 </classpath>
