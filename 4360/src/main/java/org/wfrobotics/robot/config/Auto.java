@@ -35,3 +35,7 @@ public abstract class Auto
         protected void apply() { }
     }
 }
+
+        protected void apply() { }
+    }
+}
