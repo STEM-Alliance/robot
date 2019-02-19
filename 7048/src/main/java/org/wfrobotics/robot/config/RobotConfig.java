@@ -1,8 +1,8 @@
 package org.wfrobotics.robot.config;
 
-import org.wfrobotics.reuse.config.IRobotConfig;
 import java.util.Optional;
 
+import org.wfrobotics.reuse.config.IRobotConfig;
 import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
@@ -30,15 +30,16 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.15; // how fast do you acellerate
+		config.OPEN_LOOP_RAMP = 1.0; // how fast do you acellerate
+        config.OPEN_LOOP_PEAK_PERCENT = .75;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Right
-            new MasterConfig(18, true, true, new FollowerConfig(17,false), new FollowerConfig(16, false)),
+            new MasterConfig(14, true, true, new FollowerConfig(15,true), new FollowerConfig(16, true)),
             // Left
-            new MasterConfig(13, false, true, new FollowerConfig(14, false), new FollowerConfig(15, false)),
+            new MasterConfig(11, false, true, new FollowerConfig(12, true), new FollowerConfig(13, true)),
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }, new Gains[] {
@@ -65,8 +66,8 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     // _________________________________________________________________________________
 
     // Hardware
-    public final int kAddressSolenoidGrippersF = 2;
-    public final int kAddressSolenoidGrippersB = 3;
+    public final int kAddressSolenoidGrippersF = 4;
+    public final int kAddressSolenoidGrippersB = 5;
 
 
     //                       Elevator
@@ -75,7 +76,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     // Hardware
     public PositionConfig getElevatorConfig()
     {
-        int kTicksToTop = Integer.MAX_VALUE;
+        int kTicksToTop = 23300;
         double kLiftVelocityMaxUp = 2200.0;
         int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 6.0);
@@ -84,9 +85,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
 
         c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(10, false, true, new FollowerConfig(11, true, true),
-                                            new FollowerConfig(12, true, true),
-                                            new FollowerConfig(19, true, true)),
+            new MasterConfig(18, false, true, new FollowerConfig(17, true, true))
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }, new Gains[] {
@@ -97,20 +96,11 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 38.0;
         //        c.kSoftwareLimitB = Optional.of(-500);
-        //        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
         //        c.kTuning = Optional.of(false);
 
         return c;
     }
-    public final int kAddressSolenoidShifterF = 4;
-    public final int kAddressSolenoidShifterB = 5;
-
-    // Subsystem
-    public static double kElevatorFeedForwardHasCube = 0.25;
-    public static double kElevatorFeedForwardNoCube = 0.20;
-    public static final int kElevatorTicksStartup = -1500;
-    public static int kElevatorTickRateSlowVelocityObserved = 500;
-    public static int kElevatorTickRateSlowEnough = kElevatorTickRateSlowVelocityObserved + 200;
 
 
     //                      Intake
@@ -120,8 +110,8 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     public final int kAddressTalonCargo = 20;
     public final int kAddressTalonHatch = 21;
     public final int kAddressSolenoidPoppersF = 0;
-    public final int kAddressSolenoidPoppersB = 1;
-    public final int kAddressDigitalHatchSensor = 0;
+    public final int kAddressSolenoidPoppersB = 7;
+
 
     //                      Link
     // _________________________________________________________________________________
@@ -158,33 +148,33 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
 
     //                       Wrist
     // _________________________________________________________________________________
+
     public PositionConfig getWristConfig()
     {
         final PositionConfig c = new PositionConfig();
 
-        int kTicksToTop = 99999;
-        int kWristVelocityMax = 99999;
+        int kTicksToTop = 4356;
+        int kWristVelocityMax = 1200;
         int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
         int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Wrist", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(9, false, false)
+            new MasterConfig(19, true, false)
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }, new Gains[] {
-            new Gains("Motion Magic", 0, 0.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
+            new Gains("Motion Magic", 0, 1.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
         });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 90.0;
+        c.kFullRangeInchesOrDegrees = 120.0;
         //        c.kSoftwareLimitB = Optional.of(-500);
-        //        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
         //        c.kTuning = Optional.of(true);
 
         return c;
     }
-
 
     //                      Helper Methods
     // _________________________________________________________________________________
@@ -193,9 +183,8 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     {
         if (instance == null)
         {
-            instance = (RobotConfig) RobotConfigPicker.get(new IRobotConfig[] {
-                new RobotConfig(), // Competition robot
-                new PracticeConfig(), // Practice robot differences
+            instance = (RobotConfig) RobotConfigPicker.get(new RobotConfig[] {
+                new RobotConfig()    // Competition robot
             });
         }
         return instance;
