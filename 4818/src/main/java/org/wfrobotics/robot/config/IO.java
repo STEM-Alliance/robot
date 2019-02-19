@@ -5,7 +5,7 @@ import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.HerdJoystick;
-import org.wfrobotics.reuse.config.IOConfig;
+import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.robot.commands.climb.Hug;
 import org.wfrobotics.robot.commands.elevator.ElevatorShift;
@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 
 /** Maps controllers to Commands **/
-public final class IO implements IOConfig
+public final class IO implements EnhancedIO
 {
     private static IO instance = null;
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?

@@ -4,12 +4,12 @@ import org.wfrobotics.robot.commands.ExampleForwardCommand;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.Xbox;
-import org.wfrobotics.reuse.config.IOConfig;
+import org.wfrobotics.reuse.config.EnhancedIO;
 
 import edu.wpi.first.wpilibj.buttons.Button;
 
 /** Maps Buttons to Commands **/
-public class ProtoIO implements IOConfig
+public class ProtoIO implements EnhancedIO
 {
     public static Xbox controller;
 

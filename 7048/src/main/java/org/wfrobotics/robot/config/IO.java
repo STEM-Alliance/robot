@@ -1,22 +1,26 @@
 package org.wfrobotics.robot.config;
 
-import org.wfrobotics.reuse.commands.SignalHumanPlayer;
 import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
+import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
-import org.wfrobotics.reuse.config.IOConfig;
+import org.wfrobotics.robot.commands.intake.PopHatch;
+import org.wfrobotics.robot.commands.wrist.WristToHeight;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 
 /** Maps controllers to Commands **/
-public final class IO implements IOConfig
+public final class IO implements EnhancedIO
 {
     private static IO instance = null;
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
     private final Joystick driverTurn;
     private final Xbox operator;
+
+
     /** Create and configure controls for Drive Team */
     private IO()
     {
@@ -31,60 +35,48 @@ public final class IO implements IOConfig
         // ---------------------- Autonomous ----------------------
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
-
-        //----------------------- Climber -------------------------
-        //ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new Hug());
-        //ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new Release());
-
-        //----------------------- Driver --------------------------
-        //        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
 
         //----------------------- Elevator ------------------------
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
+        //ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchHigh.get()));
+        //ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchMiddle.get()));
+        //ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchLow.get()));
 
         //----------------------- Intake --------------------------
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new Score());
-
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new PopHatch());
 
         //----------------------- System --------------------------
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle());
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToLow());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
 
         //----------------------- Wrist ---------------------------
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristToHeight(30));
+
+        //ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle());
 
         //----------------------- Testing -------------------------
-        //        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget(10));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new WristToHeight(45.0));
+
+
     }
 
     // ------------------- Robot-specific --------------------
 
     public double getElevatorStick()
     {
-        return -operator.getY(Hand.kRight);
+        return operator.getY(Hand.kRight);
     }
 
-    public double getIntakeStick()
-    {
-        return operator.getX(Hand.kRight);
-    }
-
-    public double getLinkDown()
+    public double getIntakeIn()
     {
         return operator.getTrigger(Hand.kLeft);
     }
 
-    public double getLinkUp()
+    public double getIntakeOut()
     {
         return operator.getTrigger(Hand.kRight);
     }
 
     public double getWristStick()
     {
-        return operator.getY(Hand.kLeft);
+        return operator.getX(Hand.kRight);
     }
 
     public boolean isElevatorOverrideRequested()
@@ -105,17 +97,18 @@ public final class IO implements IOConfig
 
     public double getThrottle()
     {
-        return -driverThrottle.getY();
+        return driverThrottle.getY();
     }
 
     public double getTurn()
     {
-        return driverTurn.getRawAxis(0);
+        return driverTurn.getRawAxis(0)*0.25;
     }
 
     public boolean getDriveQuickTurn()
     {
         return Math.abs(getThrottle()) < 0.1;
+        //return true;
     }
 
     public boolean isDriveOverrideRequested()
