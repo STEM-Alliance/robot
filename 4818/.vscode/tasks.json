@@ -28,7 +28,7 @@
             "label": "Test",
             "type": "shell",
             "command": "../gradlew test",
-            "group": "build",
+            "group": "test",
             "problemMatcher": []
         },
     ]
