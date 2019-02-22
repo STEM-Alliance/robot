@@ -172,7 +172,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     {
         if (instance == null)
         {
-            instance = RobotConfigPicker.get(new IRobotConfig[] {
+            instance = (RobotConfig) RobotConfigPicker.get(new IRobotConfig[] {
                 new RobotConfig(),     // Competition robot
                 new PracticeConfig(),  // Practice robot differences
             });

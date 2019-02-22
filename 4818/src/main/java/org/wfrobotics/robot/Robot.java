@@ -6,7 +6,9 @@ import org.wfrobotics.reuse.hardware.LEDs;
 import org.wfrobotics.reuse.hardware.lowleveldriver.BlinkinPatterns.PatternName;
 import org.wfrobotics.reuse.subsystems.vision.CameraServer;
 import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
+import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.MatchState2018;
+import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Lift;
 import org.wfrobotics.robot.subsystems.Winch;
@@ -24,7 +26,7 @@ public final class Robot extends EnhancedRobot
 
     public Robot ()
     {
-        super(RobotState.getInstance(), RobotConfig.getInstance(), IO.getInstance())
+        super(RobotState.getInstance(), RobotConfig.getInstance(), IO.getInstance());
     }
 
     protected void registerRobotSpecific()
