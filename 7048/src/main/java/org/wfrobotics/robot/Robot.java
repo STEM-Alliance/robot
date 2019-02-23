@@ -13,6 +13,8 @@ import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.subsystems.Wrist;
+import org.wfrobotics.reuse.subsystems.vision.CameraServer;
+import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -20,21 +22,25 @@ import edu.wpi.first.wpilibj.command.Command;
 public class Robot extends EnhancedRobot
 {
     protected Robot() {
-    	super(RobotState.getInstance(), RobotConfig.getInstance(), IO.getInstance());
+        super(RobotState.getInstance(), RobotConfig.getInstance(), IO.getInstance());
 	}
 
-	public static LEDs leds = new Blinkin(9, PatternName.Breath_Red);
+    public static LEDs leds = new Blinkin(9, PatternName.Breath_Red);
+    public final CameraServer visionServer = CameraServer.getInstance();
+    VisionProcessor processor = VisionProcessor.getInstance();
     public static IO controls;
     Command autonomousCommand;
 
     protected void registerRobotSpecific()
     {
         RobotConfig.getInstance();
-
-        subsystems.register(Elevator.getInstance());
-        subsystems.register(Wrist.getInstance());
-        subsystems.register(Intake.getInstance());
-        subsystems.register(SuperStructure.getInstance());
+        visionServer.register(processor);
+        backgroundUpdater.register(processor);
+        RobotState.getInstance().resetVisionState();
+        //subsystems.register(Elevator.getInstance());
+        //subsystems.register(Wrist.getInstance());
+        //subsystems.register(Intake.getInstance());
+        //subsystems.register(SuperStructure.getInstance());
 
     }
 }
