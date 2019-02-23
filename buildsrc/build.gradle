@@ -1,12 +1,12 @@
 apply plugin: 'groovy'
 
 repositories {
+    mavenLocal()
     maven {
         url "https://plugins.gradle.org/m2/"
     }
-    mavenLocal()
 }
 
 dependencies {
-  compile 'edu.wpi.first:GradleRIO:2019.2.1'
+  compile 'edu.wpi.first:GradleRIO:2019.3.2'
 }
