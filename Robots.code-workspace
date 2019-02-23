@@ -18,7 +18,7 @@
 	],
 	"settings": {
 		"java.configuration.updateBuildConfiguration": "automatic",
-		"java.import.gradle.enabled": false,
+		"java.import.gradle.enabled": true,
 		"java.home": "C:\\Users\\Public\\frc2019\\jdk",
 		"files.exclude": {
 			"**/.git": true,
@@ -44,7 +44,8 @@
 			"**/node_modules/**": true,
 			"**/.gradle/**": true
 		},
-		"wpilib.online": true
+		"wpilib.online": true,
+		"java.dependency.packagePresentation": "hierarchical"
 	},
 	"extensions": {
 		"recommendations": [
