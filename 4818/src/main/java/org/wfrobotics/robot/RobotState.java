@@ -8,42 +8,29 @@ import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
 import org.wfrobotics.reuse.subsystems.vision.Point;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 /** Provider of global, formatted state about the robot. Consider calling subsystem instance instead. **/
 public final class RobotState extends RobotStateBase
 {
-    private static final RobotState instance = new RobotState();
-
-    public RobotState()
-    {
-
-    }
-
     public static RobotState getInstance()
     {
         return instance;
     }
 
+    private static final RobotState instance = new RobotState();
+
+    public RobotState()
+    {
+        super();
+    }
+
     public void reportState()
     {
         super.reportState();
-        // TODO Prints all vision based on if we have vision - Flag in VisionProcessor constructor?
-        SmartDashboard.putBoolean("Targets In View", visionInView);
-        if (visionInView)
-        {
-            SmartDashboard.putNumber("Vision Error", getVisionError());
-        }
     }
 
     protected synchronized void resetRobotSpecificState()
     {
 
-    }
-
-    @Override
-    public double getKCameraAngle() {
-        return 34.5;
     }
 
     /**    |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|
