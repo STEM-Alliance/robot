@@ -6,8 +6,8 @@ import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
-import org.wfrobotics.robot.commands.intake.PopHatch;
-import org.wfrobotics.robot.commands.wrist.WristToHeight;
+import org.wfrobotics.robot.commands.CanifierBlue;
+import org.wfrobotics.robot.commands.CanifierRed;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -42,17 +42,19 @@ public final class IO implements EnhancedIO
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchLow.get()));
 
         //----------------------- Intake --------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new PopHatch());
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new PopHatch());
 
         //----------------------- System --------------------------
 
         //----------------------- Wrist ---------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristToHeight(30));
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristToHeight(30));
 
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle());
 
         //----------------------- Testing -------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new WristToHeight(45.0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHILE_HELD, new CanifierRed());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHILE_HELD, new CanifierBlue());
+
 
 
     }
