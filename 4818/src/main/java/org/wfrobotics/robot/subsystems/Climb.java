@@ -25,7 +25,7 @@ public class Climb extends EnhancedSubsystem
     {
         final RobotConfig config = RobotConfig.getInstance();
 
-        grippers = new DoubleSolenoid(0, config.kAddressSolenoidGrippersF, config.kAddressSolenoidGrippersB);
+        grippers = new DoubleSolenoid(config.kAddressPCMGrippers, config.kAddressSolenoidGrippersF, config.kAddressSolenoidGrippersB);
         setGrippers(false);
     }
 

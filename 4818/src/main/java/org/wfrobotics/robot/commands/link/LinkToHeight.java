@@ -20,7 +20,7 @@ public class LinkToHeight extends Command
      */
     public LinkToHeight(double degrees)
     {
-        final double kMax = RobotConfig.kLinkTopPosition;
+        final double kMax = RobotConfig.getInstance().getLinkConfig().kTicksToTop;
 
         requires(link);
         desired = degrees;
