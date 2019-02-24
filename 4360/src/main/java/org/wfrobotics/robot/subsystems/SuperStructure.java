@@ -16,6 +16,6 @@ public class SuperStructure extends SuperStructureBase
 
     protected void initDefaultCommand()
     {
-
+        // TODO
     }
 }
