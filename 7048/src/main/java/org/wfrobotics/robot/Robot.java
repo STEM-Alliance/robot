@@ -28,16 +28,8 @@ public class Robot extends EnhancedRobot
         super(RobotState.getInstance(), RobotConfig.getInstance(), IO.getInstance());
 	}
 
-    public final CameraServer visionServer = CameraServer.getInstance();
-    VisionProcessor processor = VisionProcessor.getInstance();
-
     protected void registerRobotSpecific()
     {
-        EnhancedRobot.leds = new Canifier(6, new RGB(255, 255, 0));
-
-        visionServer.register(processor);
-        backgroundUpdater.register(processor);
-        RobotState.getInstance().resetVisionState();
         //subsystems.register(Elevator.getInstance());
         //subsystems.register(Wrist.getInstance());
         //subsystems.register(Intake.getInstance());

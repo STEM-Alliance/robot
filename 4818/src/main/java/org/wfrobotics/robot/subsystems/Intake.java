@@ -37,7 +37,7 @@ public class Intake extends EnhancedSubsystem
         final RobotConfig config = RobotConfig.getInstance();
 
         motorCargo = TalonFactory.makeTalon(config.kAddressTalonCargo);
-        grabber = new DoubleSolenoid(0, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
+        grabber = new DoubleSolenoid(config.kAddressPCMPoppers, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
         hatchSensor = new DigitalInput(config.kAddressDigitalHatchSensor);
 
         setGrabber(false);

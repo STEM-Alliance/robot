@@ -60,7 +60,6 @@ public class Elevator extends PositionBasedSubsystem
 
         master.setSelectedSensorPosition(RobotConfig.kElevatorTicksStartup, 0, 100);
         master.configOpenloopRamp(.15, 100);
-        //        TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // TODO Tune
         //        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
 
         if (allFollowersAreTalons())
@@ -72,7 +71,7 @@ public class Elevator extends PositionBasedSubsystem
             }
         }
 
-        shifter = new DoubleSolenoid(0, config.kAddressSolenoidShifterF, config.kAddressSolenoidShifterB);
+        shifter = new DoubleSolenoid(config.kAddressPCMShifter, config.kAddressSolenoidShifterF, config.kAddressSolenoidShifterB);
 
         setShifter(false);
     }

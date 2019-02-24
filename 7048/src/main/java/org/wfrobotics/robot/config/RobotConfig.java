@@ -46,7 +46,6 @@ public class RobotConfig extends EnhancedRobotConfig
             new Gains("Turn", 0, 0.175, 0.0004, 0.175 * 4.5 , 1023.0 / config.VELOCITY_MAX, 0, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
         });
 
-        config.GEAR_RATIO_HIGH = (54.0 / 32.0);
         config.GEAR_RATIO_LOW = (54.0 / 32.0);
         config.SCRUB = 0.98;
         config.WHEEL_DIAMETER = 6 + 3/8;
