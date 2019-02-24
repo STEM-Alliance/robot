@@ -37,9 +37,9 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Right
-            new MasterConfig(14, true, true, new FollowerConfig(15,true), new FollowerConfig(16, true)),
+            new MasterConfig(14, true, true, new FollowerConfig(15,true)),
             // Left
-            new MasterConfig(11, false, true, new FollowerConfig(12, true), new FollowerConfig(13, true)),
+            new MasterConfig(11, false, true, new FollowerConfig(12, true)),
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }, new Gains[] {
