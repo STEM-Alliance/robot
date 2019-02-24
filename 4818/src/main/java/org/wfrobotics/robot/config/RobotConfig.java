@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.config;
 
-import org.wfrobotics.reuse.config.IRobotConfig;
+import org.wfrobotics.reuse.config.EnhancedRobotConfig;
 import java.util.Optional;
 
 import org.wfrobotics.reuse.config.RobotConfigPicker;
@@ -9,10 +9,9 @@ import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
-import org.wfrobotics.reuse.config.TankConfig.TankConfigSupplier;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
 
-public class RobotConfig implements TankConfigSupplier, IRobotConfig
+public class RobotConfig extends EnhancedRobotConfig
 {
     private static RobotConfig instance = null;
 
@@ -83,12 +82,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(10, false, false, new FollowerConfig(11, true, true),
-                                            new FollowerConfig(12, true, true),
-                                            new FollowerConfig(19, true, true)),
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+            new MasterConfig(10, false, false, new FollowerConfig(11, true, true))
         }, new Gains[] {
             new Gains("Motion Magic", 0, 0.0, 0.000, 0.0, 1023.0 / kLiftVelocityMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
         });
@@ -118,7 +112,6 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
 
     // Hardware
     public final int kAddressTalonCargo = 20;
-    public final int kAddressTalonHatch = 21;
     public final int kAddressSolenoidPoppersF = 0;
     public final int kAddressSolenoidPoppersB = 1;
     public final int kAddressDigitalHatchSensor = 0;
@@ -156,36 +149,6 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     public static double kLinkTopPosition = 90.0;
 
 
-    //                       Wrist
-    // _________________________________________________________________________________
-    public PositionConfig getWristConfig()
-    {
-        final PositionConfig c = new PositionConfig();
-
-        int kTicksToTop = 277;
-        int kWristVelocityMax = 99999;
-        int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
-        int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
-
-        c.kClosedLoop = new ClosedLoopConfig("Wrist", new MasterConfig[] {
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            new MasterConfig(9, true, true)
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        }, new Gains[] {
-            new Gains("Motion Magic", 0, 0.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
-        });
-        c.kHardwareLimitNormallyOpenB = false;
-        c.kHardwareLimitNormallyOpenT = true;
-        c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 90.0;
-        //        c.kSoftwareLimitB = Optional.of(-500);
-//        c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        //        c.kTuning = Optional.of(true);
-
-        return c;
-    }
-
-
     //                      Helper Methods
     // _________________________________________________________________________________
 
@@ -193,7 +156,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     {
         if (instance == null)
         {
-            instance = (RobotConfig) RobotConfigPicker.get(new IRobotConfig[] {
+            instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] {
                 new RobotConfig(),     // Competition robot
                 new PracticeConfig(),  // Practice robot differences
             });
