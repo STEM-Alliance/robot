@@ -1,15 +1,14 @@
 package org.wfrobotics.robot.config;
 
-import org.wfrobotics.reuse.config.IRobotConfig;
+import org.wfrobotics.reuse.config.EnhancedRobotConfig;
 import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
-import org.wfrobotics.reuse.config.TankConfig.TankConfigSupplier;
 
-public class RobotConfig implements TankConfigSupplier, IRobotConfig
+public class RobotConfig extends EnhancedRobotConfig
 {
     private static RobotConfig instance = null;
 
@@ -62,7 +61,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     {
         if (instance == null)
         {
-            instance = (RobotConfig) RobotConfigPicker.get(new IRobotConfig[] {
+            instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] {
                 new RobotConfig(), // Competition robot
                 new PracticeConfig(), // Practice robot differences
             });

@@ -9,7 +9,9 @@ import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.robot.commands.climb.Hug;
 import org.wfrobotics.robot.commands.elevator.ElevatorShift;
-import org.wfrobotics.robot.commands.intake.PopHatch;
+import org.wfrobotics.robot.commands.intake.CargoIn;
+import org.wfrobotics.robot.commands.intake.CargoOut;
+import org.wfrobotics.robot.commands.intake.ScoreHatch;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;
@@ -53,8 +55,9 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
 
         //----------------------- Intake --------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new PopHatch());
-
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreHatch());
+        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new CargoIn());
+        ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
         //----------------------- System --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());

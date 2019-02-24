@@ -26,20 +26,21 @@ public class Intake extends EnhancedSubsystem
     }
 
     private static Intake instance = null;
-    private final TalonSRX motorCargo, motorHatch;
-    private final DoubleSolenoid poppers;
+    private final TalonSRX motorCargo;
+    private final DoubleSolenoid grabber;
     private final DigitalInput hatchSensor;
+    
+    protected CachedIO cachedIO = new CachedIO();
 
     public Intake()
     {
         final RobotConfig config = RobotConfig.getInstance();
 
         motorCargo = TalonFactory.makeTalon(config.kAddressTalonCargo);
-        motorHatch = TalonFactory.makeTalon(config.kAddressTalonHatch);
-        poppers = new DoubleSolenoid(0, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
+        grabber = new DoubleSolenoid(0, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
         hatchSensor = new DigitalInput(config.kAddressDigitalHatchSensor);
 
-        setPoppers(false);
+        setGrabber(false);
     }
 
     protected void initDefaultCommand()
@@ -49,12 +50,12 @@ public class Intake extends EnhancedSubsystem
 
     public void cacheSensors(boolean isDisabled)
     {
-
+        cachedIO.hasHatch = hatchSensor.get();
     }
 
     public void reportState()
     {
-        SmartDashboard.putBoolean("HatchAtTop", hatchSensor.get());
+        SmartDashboard.putBoolean("Has Hatch", hasHatch());
     }
 
     public void setCargoSpeed(double percent)
@@ -62,20 +63,15 @@ public class Intake extends EnhancedSubsystem
         motorCargo.set(ControlMode.PercentOutput, percent);
     }
 
-    public void setHatchSpeed(double percent)
-    {
-        motorHatch.set(ControlMode.PercentOutput, percent);
-    }
-
-    public void setPoppers(boolean out)
+    public void setGrabber(boolean out)
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
-        poppers.set(desired);
+        grabber.set(desired);
     }
 
     public boolean hasHatch()
     {
-        return hatchSensor.get();
+        return cachedIO.hasHatch;
     }
 
     public TestReport runFunctionalTest()
@@ -83,10 +79,14 @@ public class Intake extends EnhancedSubsystem
         TestReport report = new TestReport();
 
         report.add(getDefaultCommand().doesRequire(this));
-        report.add(TalonChecker.checkFirmware(motorHatch));
-        report.add(TalonChecker.checkFirmware(motorHatch));
-        report.add(TalonChecker.checkFrameRates(motorHatch));
+        report.add(TalonChecker.checkFirmware(motorCargo));
+        report.add(TalonChecker.checkFrameRates(motorCargo));
 
         return report;
+    }
+    
+    protected static class CachedIO
+    {
+        public boolean hasHatch;
     }
 }
