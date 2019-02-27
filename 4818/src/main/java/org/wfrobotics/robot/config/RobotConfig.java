@@ -97,18 +97,19 @@ public class RobotConfig extends EnhancedRobotConfig
     public final int kAddressSolenoidShifterF = 4;
     public final int kAddressSolenoidShifterB = 5;
 
-    // Subsystem
-    public static double kElevatorFeedForwardHasCube = 0.25;
-    public static double kElevatorFeedForwardNoCube = 0.20;
-    public static final int kElevatorTicksStartup = -1500;
-    public static int kElevatorTickRateSlowVelocityObserved = 500;
-    public static int kElevatorTickRateSlowEnough = kElevatorTickRateSlowVelocityObserved + 200;
+    // // Subsystem
+    // public static double kElevatorFeedForwardHasCube = 0.25;
+    // public static double kElevatorFeedForwardNoCube = 0.20;
+    // public static final int kElevatorTicksStartup = -1500;
+    // public static int kElevatorTickRateSlowVelocityObserved = 500;
+    // public static int kElevatorTickRateSlowEnough = kElevatorTickRateSlowVelocityObserved + 200;
 
     //                      Intake
     // _________________________________________________________________________________
 
     // Hardware
-    public final int kAddressTalonCargo = 20;
+    public final int kAddressTalonCargo = 8;
+    public final boolean kInvertTalonCargo = true;
     public final int kAddressPCMPoppers = 0;
     public final int kAddressSolenoidPoppersF = 0;
     public final int kAddressSolenoidPoppersB = 1;
@@ -154,8 +155,8 @@ public class RobotConfig extends EnhancedRobotConfig
         if (instance == null)
         {
             instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] {
-                new RobotConfig(),     // Competition robot
                 new PracticeConfig(),  // Practice robot differences
+                new RobotConfig(),     // Competition robot
             });
         }
         return instance;

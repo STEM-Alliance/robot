@@ -17,7 +17,8 @@ public class IntakeOpenLoop extends Command
 
     protected void execute()
     {
-        final double speed = io.getIntakeStick();
+        // final double speed = io.getIntakeStick();
+        final double speed = 0.0;
 
         intake.setCargoSpeed(speed);
     }

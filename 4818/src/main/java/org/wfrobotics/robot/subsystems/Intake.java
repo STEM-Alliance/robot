@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
+import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
@@ -7,9 +8,10 @@ import org.wfrobotics.robot.commands.intake.IntakeOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,9 +28,8 @@ public class Intake extends EnhancedSubsystem
     }
 
     private static Intake instance = null;
-    private final TalonSRX motorCargo;
+    private final TalonSRX motor;
     private final DoubleSolenoid grabber;
-    private final DigitalInput hatchSensor;
     
     protected CachedIO cachedIO = new CachedIO();
 
@@ -36,9 +37,13 @@ public class Intake extends EnhancedSubsystem
     {
         final RobotConfig config = RobotConfig.getInstance();
 
-        motorCargo = TalonFactory.makeTalon(config.kAddressTalonCargo);
+        motor = TalonFactory.makeTalon(config.kAddressTalonCargo);
+        motor.setInverted(config.kInvertTalonCargo);
         grabber = new DoubleSolenoid(config.kAddressPCMPoppers, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
-        hatchSensor = new DigitalInput(config.kAddressDigitalHatchSensor);
+        // motorCargo.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 100);
+        // motorCargo.overrideLimitSwitchesEnable(true);  // MUST be true to enable hardware limit switch feature
+        // motorCargo.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 100);
+        // motorCargo.overrideLimitSwitchesEnable(true);  // MUST be true to enable hardware limit switch feature
 
         setGrabber(false);
     }
@@ -50,17 +55,19 @@ public class Intake extends EnhancedSubsystem
 
     public void cacheSensors(boolean isDisabled)
     {
-        cachedIO.hasHatch = hatchSensor.get();
+        cachedIO.hasHatch = motor.getSensorCollection().isFwdLimitSwitchClosed();
     }
 
     public void reportState()
     {
         SmartDashboard.putBoolean("Has Hatch", hasHatch());
+        SmartDashboard.putBoolean("Forward", motor.getSensorCollection().isFwdLimitSwitchClosed());
+        SmartDashboard.putBoolean("Reverse", motor.getSensorCollection().isRevLimitSwitchClosed());
     }
 
     public void setCargoSpeed(double percent)
     {
-        motorCargo.set(ControlMode.PercentOutput, percent);
+        motor.set(ControlMode.PercentOutput, percent);
     }
 
     public void setGrabber(boolean out)
@@ -79,8 +86,8 @@ public class Intake extends EnhancedSubsystem
         TestReport report = new TestReport();
 
         report.add(getDefaultCommand().doesRequire(this));
-        report.add(TalonChecker.checkFirmware(motorCargo));
-        report.add(TalonChecker.checkFrameRates(motorCargo));
+        report.add(TalonChecker.checkFirmware(motor));
+        report.add(TalonChecker.checkFrameRates(motor));
 
         return report;
     }

@@ -56,7 +56,7 @@ public final class IO implements EnhancedIO
 
         //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreHatch());
-        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new CargoIn());
+        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHILE_HELD, new CargoIn());
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
         //----------------------- System --------------------------
@@ -78,7 +78,7 @@ public final class IO implements EnhancedIO
     }
     public double getElevatorStick()
     {
-        return -operator.getY(Hand.kRight);
+        return operator.getY(Hand.kRight);
     }
 
     public double getIntakeStick()
@@ -88,12 +88,12 @@ public final class IO implements EnhancedIO
 
     public double getLinkDown()
     {
-        return operator.getTrigger(Hand.kLeft);
+        return operator.getTrigger(Hand.kRight);
     }
 
     public double getLinkUp()
     {
-        return operator.getTrigger(Hand.kRight);
+        return operator.getTrigger(Hand.kLeft);
     }
 
     public double getWristStick()
@@ -124,7 +124,7 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return -driverTurn.getRawAxis(0);
+        return driverTurn.getRawAxis(0);
     }
 
     public boolean getDriveQuickTurn()
