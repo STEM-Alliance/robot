@@ -31,9 +31,9 @@ public class Elevator extends PositionBasedSubsystem
         return instance;
     }
 
-    private static final double kFeedForwardHasCargo = 0.0;  // TODO Tune
-    private static final double kFeedForwardNoCargo = 0.0;  // TODO Tune
-    private static final double kInchesGroundToZero = 26.5;  // Practice bot
+    private static final double kFeedForwardHasCargo = 0.15;  // Practice bot
+    private static final double kFeedForwardNoCargo = 0.15;  // Practice bot
+    private static final double kInchesGroundToZero = 15.5;  // Practice bot
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
 
@@ -58,7 +58,7 @@ public class Elevator extends PositionBasedSubsystem
         super(positionConfig);
         final RobotConfig config = RobotConfig.getInstance();
 
-        master.setSelectedSensorPosition(RobotConfig.kElevatorTicksStartup, 0, 100);
+        master.setSelectedSensorPosition(0, 0, 100);
         master.configOpenloopRamp(.15, 100);
         //        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
 
