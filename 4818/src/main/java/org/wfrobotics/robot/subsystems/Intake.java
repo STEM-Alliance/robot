@@ -96,4 +96,5 @@ public class Intake extends EnhancedSubsystem
     {
         public boolean hasHatch;
     }
+    
 }
