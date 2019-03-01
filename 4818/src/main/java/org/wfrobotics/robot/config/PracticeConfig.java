@@ -100,7 +100,7 @@ public final class PracticeConfig extends RobotConfig
 
     // Hardware
     public final int kAddressTalonCargo = 8;
-    public final boolean kInvertTalonCargo = true;
+    public final boolean kInvertTalonCargo = false;
     public final int kAddressPCMPoppers = 0;
     public final int kAddressSolenoidPoppersF = 0;
     public final int kAddressSolenoidPoppersB = 1;
@@ -112,13 +112,13 @@ public final class PracticeConfig extends RobotConfig
     {
         final PositionConfig c = new PositionConfig();
 
-        int kTicksToTop = 7200;
+        int kTicksToTop = -6000;
         int kWristVelocityMax = 540;
         int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
         int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] {
-            new MasterConfig(9, false, true)
+            new MasterConfig(9, false, false)
         }, new Gains[] {
             new Gains("Motion Magic", 0, 1.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
         });
@@ -126,7 +126,7 @@ public final class PracticeConfig extends RobotConfig
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 90.0;
-        c.kSoftwareLimitB = Optional.of(-kTicksToTop);
+        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
         //        c.kTuning = Optional.of(true);
 
         return c;

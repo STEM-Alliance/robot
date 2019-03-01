@@ -19,8 +19,12 @@ public class IntakeOpenLoop extends Command
     {
         // final double speed = io.getIntakeStick();
         final double speed = 0.0;
-
         intake.setCargoSpeed(speed);
+        if (intake.hasHatch())
+        {
+            intake.setGrabber(true);
+        }
+        else { intake.setGrabber(false); }
     }
 
     protected boolean isFinished()

@@ -11,7 +11,7 @@ import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Link;
-
+import edu.wpi.first.wpilibj.RobotBase;
 /**
  * Robot: <TBD Robot Name> - 2019
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
@@ -25,7 +25,7 @@ public final class Robot extends EnhancedRobot
 
     protected void registerRobotSpecific()
     {
-        EnhancedRobot.leds = new Canifier(6, new RGB(255, 255, 0));
+        EnhancedRobot.leds = SuperStructure.getInstance().getJeff();
 
 //        subsystems.register(Climb.getInstance());
         subsystems.register(Elevator.getInstance());

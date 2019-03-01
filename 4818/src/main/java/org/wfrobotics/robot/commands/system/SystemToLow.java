@@ -2,6 +2,7 @@ package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
@@ -24,7 +25,7 @@ public class SystemToLow extends ConditionalCommand
     {
         public SystemToCargo()
         {
-            //        addParallel(new ElevatorToHeight(0.0));
+            addParallel(new ElevatorToHeight(0.0));
             addSequential(new LinkToHeight(40.0));
         }
     }
@@ -33,7 +34,7 @@ public class SystemToLow extends ConditionalCommand
     {
         public SystemToHatch()
         {
-            //        addParallel(new ElevatorToHeight(0.0));
+            addParallel(new ElevatorToHeight(0.0));
             addSequential(new LinkToHeight(21.0));
         }
     }
