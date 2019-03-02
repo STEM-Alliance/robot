@@ -5,6 +5,7 @@ import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.commands.intake.IntakeOpenLoop;
+import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -50,19 +51,17 @@ public class Intake extends EnhancedSubsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new IntakeOpenLoop());
+        setDefaultCommand(new SmartIntake());
     }
 
     public void cacheSensors(boolean isDisabled)
     {
-        cachedIO.hasHatch = motor.getSensorCollection().isFwdLimitSwitchClosed();
+
     }
 
     public void reportState()
     {
-        SmartDashboard.putBoolean("Has Hatch", hasHatch());
-        SmartDashboard.putBoolean("Forward", motor.getSensorCollection().isFwdLimitSwitchClosed());
-        SmartDashboard.putBoolean("Reverse", motor.getSensorCollection().isRevLimitSwitchClosed());
+        SmartDashboard.putString("Intake Command", getCurrentCommandName());
     }
 
     public void setCargoSpeed(double percent)
@@ -74,11 +73,6 @@ public class Intake extends EnhancedSubsystem
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
         grabber.set(desired);
-    }
-
-    public boolean hasHatch()
-    {
-        return cachedIO.hasHatch;
     }
 
     public TestReport runFunctionalTest()
@@ -94,7 +88,7 @@ public class Intake extends EnhancedSubsystem
     
     protected static class CachedIO
     {
-        public boolean hasHatch;
+
     }
     
 }

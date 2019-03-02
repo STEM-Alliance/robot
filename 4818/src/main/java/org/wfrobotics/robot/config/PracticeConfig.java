@@ -12,14 +12,12 @@ import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
 
 /** Practice Robot Config. Override any settings that differ here */
-public final class PracticeConfig extends RobotConfig
-{
-    //                      Tank
+public final class PracticeConfig extends RobotConfig {
+    // Tank
     // _________________________________________________________________________________
 
     // Hardware
-    public TankConfig getTankConfig()
-    {
+    public TankConfig getTankConfig() {
         final TankConfig config = new DeepSpaceTankConfig();
 
         config.VELOCITY_MAX = 6250.0;
@@ -27,36 +25,35 @@ public final class PracticeConfig extends RobotConfig
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.30; // how fast do you acellerate
+        config.OPEN_LOOP_RAMP = 0.20; // how fast do you acellerate
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
-            // Left
-            new MasterConfig(10, true, true, new FollowerConfig(12, false), new FollowerConfig(14, false)),
-            // Right
-            new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)),
-        }, new Gains[] {
-            new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
-            new Gains("Turn", 0, 0.175, 0.0004, 0.175 * 4.5 , 1023.0 / config.VELOCITY_MAX, 0, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
-        });
+                // Left
+                new MasterConfig(10, true, true, new FollowerConfig(12, false), new FollowerConfig(14, false)),
+                // Right
+                new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)), },
+                new Gains[] { new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
+                        new Gains("Turn", 0, 0.175, 0.0004, 0.175 * 4.5, 1023.0 / config.VELOCITY_MAX, 0,
+                                (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)), });
 
         config.GEAR_RATIO_LOW = (54.0 / 32.0);
         config.SCRUB = 0.98;
-        config.WHEEL_DIAMETER = 6 + 3/8;
+        config.WHEEL_DIAMETER = 6 + 3 / 8;
         config.WIDTH = 27.0;
 
         return config;
     }
 
-    public class DeepSpaceTankConfig extends TankConfig
-    {
+    public class DeepSpaceTankConfig extends TankConfig {
         // @Override
         // public Command getTeleopCommand()
         // {
-        //     return new DriveCheesy();  // TODO DriveCarefully, accelerates slower when elevator is up
+        // return new DriveCheesy(); // TODO DriveCarefully, accelerates slower when
+        // elevator is up
         // }
     }
 
-    //                      Climb
+    // Climb
     // _________________________________________________________________________________
 
     // Hardware
@@ -64,12 +61,11 @@ public final class PracticeConfig extends RobotConfig
     public final int kAddressSolenoidGrippersF = 2;
     public final int kAddressSolenoidGrippersB = 3;
 
-    //                       Elevator
+    // Elevator
     // _________________________________________________________________________________
 
     // Hardware
-    public PositionConfig getElevatorConfig()
-    {
+    public PositionConfig getElevatorConfig() {
         int kTicksToTop = 137500;
         double kLiftVelocityMaxUp = 2200.0;
         int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
@@ -77,57 +73,55 @@ public final class PracticeConfig extends RobotConfig
 
         final PositionConfig c = new PositionConfig();
 
-        c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
-            new MasterConfig(17, false, true, new FollowerConfig(16, true, false))
-        }, new Gains[] {
-            new Gains("Motion Magic", 0, 0.0, 0.000, 0.0, 1023.0 / kLiftVelocityMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
-        });
+        c.kClosedLoop = new ClosedLoopConfig("Lift",
+                new MasterConfig[] { new MasterConfig(17, false, true, new FollowerConfig(16, true, false)) },
+                new Gains[] { new Gains("Motion Magic", 0, 0.0, 0.000, 0.0, 1023.0 / kLiftVelocityMaxUp, 0,
+                        kLiftCruiseUp, kLiftAccelerationUp), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 68.5;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        //        c.kTuning = Optional.of(false);
+        // c.kTuning = Optional.of(false);
 
         return c;
     }
+
     public final int kAddressPCMShifter = 0;
     public final int kAddressSolenoidShifterF = 4;
     public final int kAddressSolenoidShifterB = 5;
 
-    //                      Intake
+    // Intake
     // _________________________________________________________________________________
 
     // Hardware
     public final int kAddressTalonCargo = 8;
-    public final boolean kInvertTalonCargo = false;
+    public final boolean kInvertTalonCargo = true;
     public final int kAddressPCMPoppers = 0;
     public final int kAddressSolenoidPoppersF = 0;
     public final int kAddressSolenoidPoppersB = 1;
     public final int kAddressDigitalHatchSensor = 0;
 
-    //                      Link
+    // Link
     // _________________________________________________________________________________
-    public PositionConfig getLinkConfig()
-    {
+    public PositionConfig getLinkConfig() {
         final PositionConfig c = new PositionConfig();
 
-        int kTicksToTop = -6000;
-        int kWristVelocityMax = 540;
-        int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
-        int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
+        // good 6500
+        int kTicksToTop = 6500;
+        int kLinkVelocityMax = 2250;
+        int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.975);
+        int kLinkAcceleration = (int) (kLinkVelocityCruise * 6.0);
 
-        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] {
-            new MasterConfig(9, false, false)
-        }, new Gains[] {
-            new Gains("Motion Magic", 0, 1.0, 0.0000, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
-        });
+        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, false, false) },
+                new Gains[] { new Gains("Motion Magic", 0, 0, 0.0000, 0.0, 1023.0 / kLinkVelocityMax, 0,
+                        kLinkVelocityCruise, kLinkAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 90.0;
-        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        //        c.kTuning = Optional.of(true);
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        // c.kTuning = Optional.of(true);
 
         return c;
     }
@@ -135,7 +129,7 @@ public final class PracticeConfig extends RobotConfig
     // Constructor
     // protected RobotConfig()
     // {
-    //     this.vision = Optional.of(new VisionConfig(69.0));
+    // this.vision = Optional.of(new VisionConfig(69.0));
     // }
 
 }

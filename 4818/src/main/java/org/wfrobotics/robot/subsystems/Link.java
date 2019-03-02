@@ -23,13 +23,12 @@ public class Link extends PositionBasedSubsystem
     }
 
     private static Link instance = null;
-
     private Link(PositionConfig positionConfig)
     {
         super(positionConfig);
 
         //        master.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
-        master.configOpenloopRamp(.15, 100);
+        master.configOpenloopRamp(.3, 100);
         //        TalonFactory.configCurrentLimiting(master, 20, 40, 200);  // Adding with high numbers just in case
         //        master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
         //        master.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 100);  // Slow down, doesn't make decisions off this
@@ -41,7 +40,7 @@ public class Link extends PositionBasedSubsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new LinkOpenLoop());
+        setDefaultCommand(new LinkZeroThenOpenLoop());
     }
 
     public TestReport runFunctionalTest()

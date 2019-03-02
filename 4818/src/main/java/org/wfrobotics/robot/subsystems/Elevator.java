@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.robot.commands.elevator.ElevatorOpenLoop;
+import org.wfrobotics.robot.commands.elevator.ElevatorZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -78,7 +79,7 @@ public class Elevator extends PositionBasedSubsystem
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new ElevatorOpenLoop());
+        setDefaultCommand(new ElevatorZeroThenOpenLoop());
     }
 
     /** Inches off ground */

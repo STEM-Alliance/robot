@@ -11,17 +11,17 @@ public class ScoreHatch extends Command
     public ScoreHatch()
     {
         requires(intake);
-        setTimeout(.45);
+        setTimeout(5);
     }
 
     protected void initialize()
     {
-        intake.setGrabber(true);
+        intake.setGrabber(false);
     }
 
     protected void end()
     {
-        intake.setGrabber(false);
+        intake.setGrabber(true);
     }
 
     protected boolean isFinished()

@@ -5,29 +5,29 @@ import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class IntakeOpenLoop extends Command
+public class SmartIntake extends Command
 {
     private final Intake intake = Intake.getInstance();
-    private final SuperStructure superStructure  = SuperStructure.getInstance();
 
-    private final IO io = IO.getInstance();
-
-    public IntakeOpenLoop()
+    public SmartIntake()
     {
         requires(intake);
     }
 
     protected void execute()
     {
-        // final double speed = io.getIntakeStick();
-        final double speed = 0.0;
-        intake.setCargoSpeed(speed);
-        if (superStructure.getHasHatch())
+        SmartDashboard.putBoolean("ran this one this time", false);
+        if (SuperStructure.getInstance().getHasHatch())
         {
             intake.setGrabber(true);
         }
-        else { intake.setGrabber(false); }
+        else
+        {
+            intake.setGrabber(false);
+        }
+
     }
 
     protected boolean isFinished()

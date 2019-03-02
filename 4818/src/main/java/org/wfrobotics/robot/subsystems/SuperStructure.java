@@ -18,6 +18,7 @@ public class SuperStructure extends SuperStructureBase
     {
         return jeff;
     }
+
     static class SingletonHolder
     {
         static SuperStructure instance = new SuperStructure();
@@ -31,7 +32,6 @@ public class SuperStructure extends SuperStructureBase
     public void cacheSensors(boolean isDisabled)
     {
         cachedIO.hasHatch = jeff.getLimitSwitchF();
-
         cachedIO.cargoLeft = jeff.getPWM0();
         cachedIO.cargoRight = jeff.getPWM1();
     }
@@ -53,5 +53,9 @@ public class SuperStructure extends SuperStructureBase
         public boolean hasHatch;
         public boolean cargoRight;
         public boolean cargoLeft;
+    }
+    public boolean getHasHatch()
+    {
+        return cachedIO.hasHatch;
     }
 }

@@ -26,8 +26,8 @@ public class LinkToHeight extends Command
         desired = degrees;
         if (degrees < 0.0 || degrees > kMax)
         {
-            String warning = String.format("Link commanded to: %0.0f, range is 0-%.0f", desired, kMax);
-            ConsoleLogger.warning(warning);
+            // String warning = String.format("Link commanded to: %0.0f, range is 0-%.0f", desired, kMax);
+            // ConsoleLogger.warning(warning);
         }
     }
 

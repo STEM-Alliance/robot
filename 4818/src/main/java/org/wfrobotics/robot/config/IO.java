@@ -96,11 +96,6 @@ public final class IO implements EnhancedIO
         return operator.getTrigger(Hand.kLeft);
     }
 
-    public double getWristStick()
-    {
-        return -operator.getY(Hand.kLeft);
-    }
-
     public boolean isElevatorOverrideRequested()
     {
         return  Math.abs(getElevatorStick()) > .15;
