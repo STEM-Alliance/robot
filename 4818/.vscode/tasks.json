@@ -6,7 +6,7 @@
         {
             "label": "Build & Deploy",
             "type": "shell",
-            "command": "../gradlew deploy",
+            "command": "../gradlew build;../gradlew deploy",
             "group": "build",
             "problemMatcher": []
         },
