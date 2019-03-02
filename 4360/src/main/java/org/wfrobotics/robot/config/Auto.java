@@ -5,6 +5,7 @@ import org.wfrobotics.reuse.config.AutoFactory.DelaySelect;
 import org.wfrobotics.reuse.config.AutoFactory.ModeSafetyOff;
 import org.wfrobotics.reuse.config.AutoFactory.ModeSelectBase;
 import org.wfrobotics.reuse.config.AutoSelection;
+import org.wfrobotics.robot.auto.TestAuto;
 
 /** Configuration of {@link AutoMode} can be run in autonomous mode*/
 public abstract class Auto
@@ -19,6 +20,7 @@ public abstract class Auto
         {
             return new AutoMode[] {
                 new ModeSafetyOff(),
+                new TestAuto(),
             };
         }
     }

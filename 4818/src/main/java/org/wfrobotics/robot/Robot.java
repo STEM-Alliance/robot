@@ -6,6 +6,9 @@ import org.wfrobotics.robot.subsystems.Climb;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.subsystems.SuperStructure;
+
+import edu.wpi.first.cameraserver.CameraServer;
+
 import org.wfrobotics.reuse.hardware.Canifier;
 import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.robot.subsystems.Elevator;
@@ -21,6 +24,7 @@ public final class Robot extends EnhancedRobot
     public Robot()
     {
         super(RobotState.getInstance(), RobotConfig.getInstance(), IO.getInstance());
+        
     }
 
     protected void registerRobotSpecific()
@@ -33,5 +37,6 @@ public final class Robot extends EnhancedRobot
         subsystems.register(Intake.getInstance());
         subsystems.register(SuperStructure.getInstance());
         DashboardView.startPerformanceCamera();
+        
     }
 }
