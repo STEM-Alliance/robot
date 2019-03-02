@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
+import org.wfrobotics.reuse.commands.drive.DriveToTarget;
 import org.wfrobotics.robot.commands.intake.PopHatch;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
 
@@ -36,6 +37,8 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
 
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_BOTTOM_LEFT, TRIGGER.WHEN_PRESSED, new DriveToTarget());
+
         //----------------------- Elevator ------------------------
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchHigh.get()));
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchMiddle.get()));
@@ -52,7 +55,7 @@ public final class IO implements EnhancedIO
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle());
 
         //----------------------- Testing -------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new WristToHeight(45.0));
+        //ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new WristToHeight(45.0));
 
 
     }
@@ -61,7 +64,7 @@ public final class IO implements EnhancedIO
 
     public double getElevatorStick()
     {
-        return operator.getY(Hand.kRight);
+        return operator.getY(Hand.kLeft);
     }
 
     public double getIntakeIn()
@@ -76,7 +79,7 @@ public final class IO implements EnhancedIO
 
     public double getWristStick()
     {
-        return operator.getX(Hand.kRight);
+        return operator.getY(Hand.kRight);
     }
 
     public boolean isElevatorOverrideRequested()

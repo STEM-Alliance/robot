@@ -87,7 +87,7 @@ public class RobotConfig extends EnhancedRobotConfig
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         }, new Gains[] {
-            new Gains("Motion Magic", 0, 0.0, 0.000, 0.0, 1023.0 / kLiftVelocityMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
+            new Gains("Motion Magic", 0, 0.0, 0.0, 0.0, 1023.0 / kLiftVelocityMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
         });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
