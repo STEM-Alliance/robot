@@ -8,7 +8,7 @@ public class ElevatorZero extends CommandGroup
 {
     public ElevatorZero()
     {
-        this.addSequential(new ElevatorGoHome(0.5, 0.5));
+        this.addSequential(new ElevatorGoHome(0.5, 0.1));
         this.addSequential(new ElevatorGoHome(-0.2, 15.0));
     }
 

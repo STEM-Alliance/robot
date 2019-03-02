@@ -12,6 +12,8 @@ import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Link;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Robot: <TBD Robot Name> - 2019
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
@@ -26,12 +28,11 @@ public final class Robot extends EnhancedRobot
     protected void registerRobotSpecific()
     {
         EnhancedRobot.leds = SuperStructure.getInstance().getJeff();
-
 //        subsystems.register(Climb.getInstance());
         subsystems.register(Elevator.getInstance());
         subsystems.register(Link.getInstance());
         subsystems.register(Intake.getInstance());
         subsystems.register(SuperStructure.getInstance());
-        DashboardView.startPerformanceCamera();
+        // DashboardView.startPerformanceCamera();
     }
 }

@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
-import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
 public class SystemToLow extends ConditionalCommand
 {
-    private final Intake intake = Intake.getInstance();
+    private final SuperStructure superStructure = SuperStructure.getInstance();
 
     public SystemToLow()
     {
@@ -18,7 +18,7 @@ public class SystemToLow extends ConditionalCommand
 
     protected boolean condition()
     {
-        return !intake.hasHatch();
+        return !superStructure.getHasHatch();
     }
 
     private static class SystemToCargo extends CommandGroup
