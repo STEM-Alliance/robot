@@ -2,21 +2,21 @@ package org.wfrobotics.robot.config;
 
 import java.util.Optional;
 
-import org.wfrobotics.reuse.config.IRobotConfig;
+import org.wfrobotics.reuse.config.EnhancedRobotConfig;
 import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
-import org.wfrobotics.reuse.config.TankConfig.TankConfigSupplier;
+import org.wfrobotics.reuse.config.VisionConfig;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
 import org.wfrobotics.robot.commands.DriveCarefully;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /** Robot Name: Herd Victor */
-public class RobotConfig implements TankConfigSupplier, IRobotConfig
+public class RobotConfig extends EnhancedRobotConfig
 {
     private static RobotConfig instance = null;
 
@@ -53,7 +53,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift", new MasterConfig[] {
-            new MasterConfig(10, false, true, new FollowerConfig(11, true, true)),
+            new MasterConfig(10, false, true) //new FollowerConfig(11, true, true)),
         }, new Gains[] {
             new Gains("Up", 0, 5.6, 0.001, 0.0, 1023.0 / kLiftVelocityMaxUp, 0, kLiftCruiseUp, kLiftAccelerationUp),
             new Gains("Down", 1, 0.0, 0.001, 0.0, 1023.0 / kLiftVelocityMaxUp, 0),
@@ -147,7 +147,6 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
             //            new Gains("Turn", 0, 1.0, 0.001, 9.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX
         });
 
-        config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);
         config.GEAR_RATIO_LOW = (36.0 / 15.0) * (40.0 / 24.0);
         config.SCRUB = 0.96;
         config.WHEEL_DIAMETER = 6.25;
@@ -165,6 +164,12 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
         }
     }
 
+    protected RobotConfig()
+    {
+        cameraStream = Optional.of(false);
+        vision = Optional.of(new VisionConfig(69.0));
+    }
+
     //                      Helper Methods
     // _________________________________________________________________________________
 
@@ -172,7 +177,7 @@ public class RobotConfig implements TankConfigSupplier, IRobotConfig
     {
         if (instance == null)
         {
-            instance = (RobotConfig) RobotConfigPicker.get(new IRobotConfig[] {
+            instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] {
                 new RobotConfig(),     // Competition robot
                 new PracticeConfig(),  // Practice robot differences
             });

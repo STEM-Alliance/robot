@@ -28,18 +28,18 @@ public class Winch extends EnhancedSubsystem
         return SingletonHolder.instance;
     }
 
-    private final TalonSRX motor;
+    // private final TalonSRX motor;
 
     private Winch()
     {
         RobotConfig config = RobotConfig.getInstance();
-        motor = TalonFactory.makeTalon(config.kWinchAddress);
-        motor.setInverted(config.kWinchInvert);
-        motor.setNeutralMode(NeutralMode.Brake);
-        TalonFactory.configCurrentLimiting(motor, 25, 35, 200);  // TODO Added this, is okay?
-        TalonFactory.configOpenLoopOnly(motor);
-        motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);  // Responsiveness non-critical
-        motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, 100);  // TODO Okay to slow down?
+        // motor = TalonFactory.makeTalon(config.kWinchAddress);
+        // motor.setInverted(config.kWinchInvert);
+        // motor.setNeutralMode(NeutralMode.Brake);
+        // TalonFactory.configCurrentLimiting(motor, 25, 35, 200);  // TODO Added this, is okay?
+        // TalonFactory.configOpenLoopOnly(motor);
+        // motor.setControlFramePeriod(ControlFrame.Control_3_General, 50);  // Responsiveness non-critical
+        // motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20, 100);  // TODO Okay to slow down?
     }
 
     protected void initDefaultCommand()
@@ -59,7 +59,7 @@ public class Winch extends EnhancedSubsystem
 
     public void winch(double percentWinch)
     {
-        motor.set(ControlMode.PercentOutput, percentWinch);
+        //motor.set(ControlMode.PercentOutput, percentWinch);
     }
 
     public TestReport runFunctionalTest()
@@ -67,8 +67,8 @@ public class Winch extends EnhancedSubsystem
         TestReport report = new TestReport();
 
         report.add(getDefaultCommand().doesRequire(this));
-        report.add(TalonChecker.checkFirmware(motor));
-        report.add(TalonChecker.checkFrameRates(motor), false);  // intentionally slow rates
+        //report.add(TalonChecker.checkFirmware(motor));
+        //report.add(TalonChecker.checkFrameRates(motor), false);  // intentionally slow rates
 
         return report;
     }

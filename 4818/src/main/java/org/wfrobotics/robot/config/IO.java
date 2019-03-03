@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.SignalHumanPlayer;
+import org.wfrobotics.reuse.commands.drive.DriveToTarget;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.drive.TurnToTarget;
 import org.wfrobotics.reuse.config.AutoFactory;
@@ -10,11 +11,11 @@ import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
-import org.wfrobotics.robot.auto.ModeScale;
 import org.wfrobotics.robot.commands.AutoLiftToScale;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.SmartOutake;
+import org.wfrobotics.robot.commands.VisionScore;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -45,6 +46,8 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
 
         // ------------------------- Drive ------------------------
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_LEFT, TRIGGER.WHILE_HELD, new TurnToTarget());
 
         // ------------------------ Intake ------------------------
 
@@ -67,7 +70,7 @@ public final class IO implements EnhancedIO
 
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeTestPathVelocity());
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DrivePathTest(17.0 * 12.0, 0.0 * 12.0));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ModeScale());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new VisionScore());
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ModeOppisitScalse());
         ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(130.0));
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TuningTrajectory());
@@ -145,16 +148,15 @@ public final class IO implements EnhancedIO
         return Math.abs(getThrottle()) < 0.1;
     }
 
+    public boolean isDriveOverrideRequested() 
+    {
+		return false;
+    }
+    
     public void setRumble(boolean rumble)
     {
         float state = (rumble) ? 1 : 0;
         operator.setRumble(Hand.kLeft, state);
         operator.setRumble(Hand.kRight, state);
     }
-
-	@Override
-	public boolean isDriveOverrideRequested() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

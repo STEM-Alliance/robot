@@ -8,6 +8,8 @@ import org.wfrobotics.robot.config.LiftHeight;
 import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.RobotState;
 
+import java.util.List;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
@@ -35,7 +37,7 @@ public class Lift extends PositionBasedSubsystem
     private final int kSlotUp, kSlotDown;
 
     private static Lift instance = null;
-    private final BaseMotorController follower;
+    private final List<BaseMotorController> followers;
 
     private Lift(PositionConfig positionConfig)
     {
@@ -51,7 +53,7 @@ public class Lift extends PositionBasedSubsystem
         master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint
         // TODO Try using Status_10_MotionMagic to improve motion?
 
-        follower = TalonFactory.makeFollowers(master, positionConfig.kClosedLoop.masters.get(0)).get(0);
+        followers = TalonFactory.makeFollowers(master, positionConfig.kClosedLoop.masters.get(0));
     }
 
     public void initDefaultCommand()
@@ -105,7 +107,10 @@ public class Lift extends PositionBasedSubsystem
 
         report.add(getDefaultCommand().doesRequire(this));
         report.add(TalonChecker.checkFirmware(master));
-        report.add(TalonChecker.checkFirmware(follower));
+        for (BaseMotorController follower : followers)
+        {
+            report.add(TalonChecker.checkFirmware(follower));
+        }
         report.add(TalonChecker.checkEncoder(master));
         report.add(TalonChecker.checkFrameRates(master));
         report.add(TalonChecker.checkSensorPhase(0.3, master));
