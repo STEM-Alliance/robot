@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
-import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 

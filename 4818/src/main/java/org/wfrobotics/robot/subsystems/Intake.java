@@ -66,6 +66,7 @@ public class Intake extends EnhancedSubsystem
 
     public void setCargoSpeed(double percent)
     {
+        SmartDashboard.putNumber("intake Speed", percent);
         motor.set(ControlMode.PercentOutput, percent);
     }
 

@@ -38,8 +38,9 @@ public class LinkToHeight extends Command
 
     protected boolean isFinished()
     {
+        final boolean slowEnough = Math.abs(link.getVelocityNative()) < 5.0;
         final boolean isClose = Math.abs(link.getPosition() - desired) < 1.0;
-        return isClose || io.isElevatorOverrideRequested();
+        return (isClose && slowEnough)|| io.isElevatorOverrideRequested();
     }
 
     protected void end()

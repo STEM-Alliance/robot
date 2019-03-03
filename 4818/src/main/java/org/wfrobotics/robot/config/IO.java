@@ -12,6 +12,7 @@ import org.wfrobotics.robot.commands.elevator.ElevatorShift;
 import org.wfrobotics.robot.commands.intake.CargoIn;
 import org.wfrobotics.robot.commands.intake.CargoOut;
 import org.wfrobotics.robot.commands.intake.ScoreHatch;
+import org.wfrobotics.robot.commands.system.SystemPickup;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;
@@ -56,13 +57,13 @@ public final class IO implements EnhancedIO
 
         //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreHatch());
-        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHILE_HELD, new CargoIn());
+        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHILE_HELD, new CargoIn() );
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
         //----------------------- System --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());
         ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToLow());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemPickup());
         ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
 
         //----------------------- Wrist ---------------------------
@@ -88,12 +89,12 @@ public final class IO implements EnhancedIO
 
     public double getLinkDown()
     {
-        return operator.getTrigger(Hand.kRight);
+        return Math.pow(operator.getTrigger(Hand.kRight), 2) * 0.8;
     }
 
     public double getLinkUp()
     {
-        return operator.getTrigger(Hand.kLeft);
+        return Math.pow(operator.getTrigger(Hand.kLeft), 2) * 0.8;
     }
 
     public boolean isElevatorOverrideRequested()
@@ -119,7 +120,7 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return driverTurn.getRawAxis(0);
+        return (driverTurn.getRawAxis(0) * 0.8);
     }
 
     public boolean getDriveQuickTurn()
