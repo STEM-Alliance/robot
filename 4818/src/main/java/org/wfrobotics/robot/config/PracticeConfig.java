@@ -25,7 +25,7 @@ public final class PracticeConfig extends RobotConfig {
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.20; // how fast do you acellerate
+        config.OPEN_LOOP_RAMP = 0.30; // how fast do you acellerate
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
                 // Left
@@ -82,6 +82,7 @@ public final class PracticeConfig extends RobotConfig {
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 68.5;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        c.kSoftwareLimitB = Optional.of(100);
         // c.kTuning = Optional.of(false);
 
         return c;
@@ -108,18 +109,18 @@ public final class PracticeConfig extends RobotConfig {
         final PositionConfig c = new PositionConfig();
 
         // good 6500
-        int kTicksToTop = 6500;
-        int kLinkVelocityMax = 2250;
+        int kTicksToTop = 6750;
+        int kLinkVelocityMax = 1100;
         int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.975);
         int kLinkAcceleration = (int) (kLinkVelocityCruise * 6.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, false, false) },
-                new Gains[] { new Gains("Motion Magic", 0, 0, 0.0000, 0.0, 1023.0 / kLinkVelocityMax, 0,
+                new Gains[] { new Gains("Motion Magic", 0, 25.5, 0.0004, 0.08, 1023.0 / kLinkVelocityMax, 0,
                         kLinkVelocityCruise, kLinkAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 90.0;
+        c.kFullRangeInchesOrDegrees = 100.0;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kTuning = Optional.of(true);
 

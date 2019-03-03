@@ -27,7 +27,7 @@ public class SmartIntake extends Command
         {
             intake.setGrabber(false);
         }
-
+        intake.setCargoSpeed(0.0);
     }
 
     protected boolean isFinished()

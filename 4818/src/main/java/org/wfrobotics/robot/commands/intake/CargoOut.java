@@ -16,9 +16,12 @@ public class CargoOut extends Command
 
     protected void initialize()
     {
-        intake.setCargoSpeed(0.6);
+        intake.setCargoSpeed(-0.6);
     }
-
+    protected void end()
+    {
+        intake.setCargoSpeed(0.0);
+    }
     protected boolean isFinished()
     {
         return isTimedOut();

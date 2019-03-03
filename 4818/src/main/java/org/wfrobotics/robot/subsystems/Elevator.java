@@ -32,27 +32,14 @@ public class Elevator extends PositionBasedSubsystem
         return instance;
     }
 
-    private static final double kFeedForwardHasCargo = 0.15;  // Practice bot
-    private static final double kFeedForwardNoCargo = 0.15;  // Practice bot
+    private static final double kFeedForwardHasCargo = 0.0;  // Practice bot
+    private static final double kFeedForwardNoCargo = 0.0;  // Practice bot
     private static final double kInchesGroundToZero = 15.5;  // Practice bot
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
 
     private static Elevator instance = null;
     private final DoubleSolenoid shifter;
-
-    public enum LIFT_STATE {start, lowH, midH, highH, lowC, midC, highC}
-    LIFT_STATE liftState = LIFT_STATE.start;
-
-    public void setLiftState(LIFT_STATE state)
-    {
-        liftState = state;
-    }
-
-    public LIFT_STATE getLiftState()
-    {
-        return liftState;
-    }
 
     private Elevator(PositionConfig positionConfig)
     {
@@ -82,7 +69,7 @@ public class Elevator extends PositionBasedSubsystem
         setDefaultCommand(new ElevatorZeroThenOpenLoop());
     }
 
-    /** Inches off ground */
+    // /** Inches off ground */
     @Override
     public double getPosition()
     {

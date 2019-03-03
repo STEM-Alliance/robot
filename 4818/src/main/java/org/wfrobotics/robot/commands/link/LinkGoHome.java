@@ -11,12 +11,12 @@ public class LinkGoHome extends Command
     public LinkGoHome()
     {
         requires(link);
-        setTimeout(3.0);
+        setTimeout(5.0);
     }
 
     protected void execute()
     {
-        link.setOpenLoop(-0.3);
+        link.setOpenLoop(-0.4);
     }
 
     protected boolean isFinished()

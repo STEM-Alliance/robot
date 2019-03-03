@@ -15,9 +15,12 @@ public class CargoIn extends Command
 
     protected void initialize()
     {
-        intake.setCargoSpeed(-1.0);
+        intake.setCargoSpeed(1.0);
     }
-
+    protected void end()
+    {
+        intake.setCargoSpeed(0.0);
+    }
     protected boolean isFinished()
     {
         return false;
