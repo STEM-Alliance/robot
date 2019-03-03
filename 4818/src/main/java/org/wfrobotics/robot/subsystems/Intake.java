@@ -7,7 +7,7 @@ import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.reuse.subsystems.background.BackgroundUpdate;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
-import org.wfrobotics.robot.RobotState;
+import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -41,7 +41,6 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
     private final double kDistanceSensorPluggedIn = 3000.0;  // TODO Tune me
     private final double kJawsTimeout;
 
-    private final RobotState state = RobotState.getInstance();
     private final TalonSRX master, follower;
     private final DoubleSolenoid cylinders;
     private final SharpDistance distanceSensor;
@@ -85,6 +84,7 @@ public class Intake extends EnhancedSubsystem implements BackgroundUpdate
 
     public void initDefaultCommand()
     {
+        setDefaultCommand(new IntakeManual());
         //        setDefaultCommand(new SmartIntake());
     }
 
