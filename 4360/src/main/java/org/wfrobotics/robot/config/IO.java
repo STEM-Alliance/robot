@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj.Joystick;
 public final class IO implements EnhancedIO
 {
     private static IO instance = null;
-    private final SpudJoystick driverThrottle;
-    private final SpudJoystick driverTurn;
+    private final HerdJoystick driverThrottle;
+    private final HerdJoystick driverTurn;
     private final Xbox operator;
     private final Xbox drive;
     public final double inSpeed = 1;
@@ -28,8 +28,10 @@ public final class IO implements EnhancedIO
 
     private IO()
     {
-        driverThrottle = new SpudJoystick(0);
-        driverTurn = new SpudJoystick(1);
+        // driverThrottle = new SpudJoystick(0);
+        // driverTurn = new SpudJoystick(1);
+        driverThrottle = new HerdJoystick(0);
+        driverTurn = new HerdJoystick(1);
         operator = new Xbox(2);
     	drive = new Xbox(2);
     }
@@ -58,8 +60,8 @@ public final class IO implements EnhancedIO
     	//------Joysticks--------
 
 
-            ButtonFactory.makeButton(driverTurn, SpudJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new Testbutton());
-
+            // ButtonFactory.makeButton(driverTurn, SpudJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new Testbutton());
+            ButtonFactory.makeButton(driverTurn, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new Testbutton());
  
         // -------------------- Super Structure -------------------
 //test        ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
@@ -95,7 +97,7 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return Math.signum(-driverTurn.getRawAxis(0))*Math.pow(driverTurn.getRawAxis(0), 2);
+        return Math.signum(-driverTurn.getX())*Math.pow(driverTurn.getX(), 2);
 //    	return  0.0;
     }
 

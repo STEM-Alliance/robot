@@ -45,7 +45,7 @@ public final class Respawn extends RobotConfig
             new Gains("Velocity", 2, 0.05, 0.0, 0, 1023.0 / config.VELOCITY_MAX, 0),
         });
 
-        config.GEAR_RATIO_HIGH = 1; // (36.0 / 15.0) * (24.0 / 40.0);
+        // config.GEAR_RATIO_HIGH = 1; // (36.0 / 15.0) * (24.0 / 40.0);
         config.GEAR_RATIO_LOW = 1; // (36.0 / 15.0) * (40.0 / 24.0);
         config.SCRUB = 0.96;
         config.WHEEL_DIAMETER = 6.25;
