@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.robot.commands.ConserveCompressor;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SuperStructure extends SuperStructureBase
@@ -60,6 +61,7 @@ public class SuperStructure extends SuperStructureBase
     }
     public boolean getHasCargo()
     {
-        return cachedIO.cargoLeft && cachedIO.cargoRight;
+
+        return cachedIO.cargoLeft || cachedIO.cargoRight;
     }
 }

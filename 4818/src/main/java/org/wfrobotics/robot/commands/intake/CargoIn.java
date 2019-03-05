@@ -13,7 +13,7 @@ public class CargoIn extends Command
     public CargoIn()
     {
         requires(intake);
-        setTimeout(3);
+        setTimeout(1);
     }
 
     protected void initialize()
@@ -27,6 +27,6 @@ public class CargoIn extends Command
     protected boolean isFinished()
     {
         // return isCanceled() || isTimedOut() || Link.getInstance().getPosition() > 90 || SuperStructure.getInstance().getHasCargo();
-        return isCanceled() || isTimedOut();
+        return isCanceled() || isTimedOut() || SuperStructure.getInstance().getHasCargo();
     }
 }

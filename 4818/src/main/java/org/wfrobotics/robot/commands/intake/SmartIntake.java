@@ -2,6 +2,7 @@ package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.Link;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -27,7 +28,10 @@ public class SmartIntake extends Command
         {
             intake.setGrabber(false);
         }
-        intake.setCargoSpeed(0.0);
+        if (SuperStructure.getInstance().getHasCargo() && Link.getInstance().getPosition() > 98)
+        {
+            intake.setCargoSpeed(0.0);
+        }
     }
 
     protected boolean isFinished()
