@@ -9,15 +9,18 @@ import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.robot.commands.climb.Hug;
 import org.wfrobotics.robot.commands.elevator.ElevatorShift;
+import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 import org.wfrobotics.robot.commands.intake.CargoIn;
 import org.wfrobotics.robot.commands.intake.CargoOut;
 import org.wfrobotics.robot.commands.intake.ScoreHatch;
-import org.wfrobotics.robot.commands.system.SystemPickup;
+import org.wfrobotics.robot.commands.link.LinkToHeight;
+import org.wfrobotics.robot.commands.system.SystemIntakeCargo;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 
 /** Maps controllers to Commands **/
@@ -57,13 +60,13 @@ public final class IO implements EnhancedIO
 
         //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreHatch());
-        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHILE_HELD, new CargoIn() );
+        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new CargoIn() );
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
         //----------------------- System --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());
         ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemPickup());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToLow());
         ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
 
         //----------------------- Wrist ---------------------------
@@ -89,17 +92,21 @@ public final class IO implements EnhancedIO
 
     public double getLinkDown()
     {
-        return Math.pow(operator.getTrigger(Hand.kRight), 2) * 0.8;
+        return operator.getTrigger(Hand.kRight) * 1.0;
     }
 
     public double getLinkUp()
     {
-        return Math.pow(operator.getTrigger(Hand.kLeft), 2) * 0.8;
+        return operator.getTrigger(Hand.kLeft) * 1.0;
     }
 
     public boolean isElevatorOverrideRequested()
     {
         return  Math.abs(getElevatorStick()) > .15;
+    }
+    public boolean isLinkOverrideRequested()
+    {
+        return  (Math.abs(getLinkDown()) > 0.15) || (Math.abs(getLinkUp()) > 0.15);
     }
 
     // ------------------------ Reuse ------------------------

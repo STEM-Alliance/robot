@@ -1,6 +1,8 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.subsystems.Intake;
+import org.wfrobotics.robot.subsystems.Link;
+import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -11,6 +13,7 @@ public class CargoIn extends Command
     public CargoIn()
     {
         requires(intake);
+        setTimeout(3);
     }
 
     protected void initialize()
@@ -23,6 +26,7 @@ public class CargoIn extends Command
     }
     protected boolean isFinished()
     {
-        return false;
+        // return isCanceled() || isTimedOut() || Link.getInstance().getPosition() > 90 || SuperStructure.getInstance().getHasCargo();
+        return isCanceled() || isTimedOut();
     }
 }

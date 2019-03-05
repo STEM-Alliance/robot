@@ -4,7 +4,6 @@ import org.wfrobotics.reuse.config.TankConfig;
 
 import java.util.Optional;
 
-import org.wfrobotics.reuse.config.RobotConfigPicker;
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
@@ -67,15 +66,15 @@ public final class PracticeConfig extends RobotConfig {
     // Hardware
     public PositionConfig getElevatorConfig() {
         int kTicksToTop = 137500;
-        double kLiftVelocityMaxUp = 2200.0;
+        double kLiftVelocityMaxUp = 12250.0;
         int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
-        int kLiftAccelerationUp = (int) (kLiftCruiseUp * 6.0);
+        int kLiftAccelerationUp = (int) (kLiftCruiseUp * 3.50);
 
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift",
                 new MasterConfig[] { new MasterConfig(17, false, true, new FollowerConfig(16, true, false)) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.0, 0.000, 0.0, 1023.0 / kLiftVelocityMaxUp, 0,
+                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.6, 1023.0 / kLiftVelocityMaxUp, 0,
                         kLiftCruiseUp, kLiftAccelerationUp), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
@@ -109,13 +108,13 @@ public final class PracticeConfig extends RobotConfig {
         final PositionConfig c = new PositionConfig();
 
         // good 6500
-        int kTicksToTop = 6750;
-        int kLinkVelocityMax = 1100;
-        int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.975);
-        int kLinkAcceleration = (int) (kLinkVelocityCruise * 6.0);
+        int kTicksToTop = 6500;
+        int kLinkVelocityMax = 1750;
+        int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.95);
+        int kLinkAcceleration = (int) (kLinkVelocityCruise * 4.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, false, false) },
-                new Gains[] { new Gains("Motion Magic", 0, 25.5, 0.0004, 0.08, 1023.0 / kLinkVelocityMax, 0,
+                new Gains[] { new Gains("Motion Magic", 0, 6.0, 0.0000, 0.04, 1023.0 / kLinkVelocityMax, 0,
                         kLinkVelocityCruise, kLinkAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;

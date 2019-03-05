@@ -25,8 +25,8 @@ public class SystemToHigh extends ConditionalCommand
     {
         public SystemToCargo()
         {
-            addParallel(new ElevatorToHeight(0.0));
-            addSequential(new LinkToHeight(90.0));
+            addParallel(new ElevatorToHeight(71.5));
+            addSequential(new LinkToHeight(4.0));
         }
     }
 
@@ -34,8 +34,8 @@ public class SystemToHigh extends ConditionalCommand
     {
         public SystemToHatch()
         {
-            addParallel(new ElevatorToHeight(0.0));
-            addSequential(new LinkToHeight(90.0));
+            addParallel(new ElevatorToHeight(84.0));
+            addSequential(new LinkToHeight(88.0));
         }
     }
 }

@@ -23,6 +23,7 @@ public class LinkToHeight extends Command
         final double kMax = RobotConfig.getInstance().getLinkConfig().kTicksToTop;
 
         requires(link);
+        setTimeout(3);
         desired = degrees;
         if (degrees < 0.0 || degrees > kMax)
         {
@@ -39,8 +40,8 @@ public class LinkToHeight extends Command
     protected boolean isFinished()
     {
         final boolean slowEnough = Math.abs(link.getVelocityNative()) < 5.0;
-        final boolean isClose = Math.abs(link.getPosition() - desired) < 1.0;
-        return (isClose && slowEnough)|| io.isElevatorOverrideRequested();
+        final boolean isClose = Math.abs(link.getPosition() - desired) < 2.0;
+        return (isClose && slowEnough) || io.isLinkOverrideRequested() || isTimedOut();
     }
 
     protected void end()
