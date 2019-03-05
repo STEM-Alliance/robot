@@ -6,6 +6,8 @@ import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.link.LinkOpenLoop;
 import org.wfrobotics.robot.commands.link.LinkZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 /**
  * The wrist consists of a BAG motor to rotate the intake
@@ -20,6 +22,12 @@ public class Link extends PositionBasedSubsystem
             instance = new Link(RobotConfig.getInstance().getLinkConfig());
         }
         return instance;
+    }
+    
+    public void reportState()
+    {
+        super.reportState();
+        SmartDashboard.putString("Link Command", getCurrentCommandName());
     }
 
     private static Link instance = null;

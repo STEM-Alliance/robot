@@ -34,8 +34,8 @@ public class SystemToLow extends ConditionalCommand
     {
         public SystemToHatch()
         {
-            addParallel(new ElevatorToHeight(0.0));
-            addSequential(new LinkToHeight(21.0));
+            addSequential(new LinkToHeight(95.5));
+            addSequential(new ElevatorToHeight(0.0));
         }
     }
 }

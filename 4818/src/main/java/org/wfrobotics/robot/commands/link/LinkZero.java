@@ -9,7 +9,7 @@ public class LinkZero extends CommandGroup
     public LinkZero()
     {
         addSequential(new LinkGoHome());
-        // addSequential(new LinkToHeight(15.0));
+        addSequential(new LinkToHeight(10.0));
     }
 
     protected void end()

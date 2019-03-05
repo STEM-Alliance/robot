@@ -58,4 +58,8 @@ public class SuperStructure extends SuperStructureBase
     {
         return cachedIO.hasHatch;
     }
+    public boolean getHasCargo()
+    {
+        return cachedIO.cargoLeft && cachedIO.cargoRight;
+    }
 }

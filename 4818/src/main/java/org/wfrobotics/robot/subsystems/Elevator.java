@@ -32,8 +32,8 @@ public class Elevator extends PositionBasedSubsystem
         return instance;
     }
 
-    private static final double kFeedForwardHasCargo = 0.0;  // Practice bot
-    private static final double kFeedForwardNoCargo = 0.0;  // Practice bot
+    private static final double kFeedForwardHasCargo = 0.15;  // Practice bot
+    private static final double kFeedForwardNoCargo = 0.15;  // Practice bot
     private static final double kInchesGroundToZero = 15.5;  // Practice bot
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
