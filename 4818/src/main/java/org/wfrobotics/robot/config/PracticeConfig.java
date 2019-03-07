@@ -55,10 +55,33 @@ public final class PracticeConfig extends RobotConfig {
     // Climb
     // _________________________________________________________________________________
 
-    // Hardware
-    public final int kAddressPCMGrippers = 0;
-    public final int kAddressSolenoidGrippersF = 2;
-    public final int kAddressSolenoidGrippersB = 3;
+        public PnuaticConfig getPnumaticConfig()
+        {
+            final PnuaticConfig config = new PnuaticConfig();
+            
+                // Hardware
+                 config.kAddressPCMGrippers = 0;
+                 config.kAddressPCMShifter = 0;
+                 config.kAddressPCMPoppers = 0;
+//   6,7
+     // intake
+                  config.kAddressSolenoidPoppersF = 0;
+                  config.kAddressSolenoidPoppersB = 1;
+                  // drive
+                  config.kAddressSolenoidShifterF = 6;
+                  config.kAddressSolenoidShifterB = 7;
+     //climb
+                  config.kAddressSolenoidGrippersF = 4;
+                  config.kAddressSolenoidGrippersB = 5;
+        //elevator
+
+                  config.kAddressSolenoidLockersF = 0;
+                  config.kAddressSolenoidLockersB = 1;
+                  config.KAddressSolenoidPushUpF = 2;
+                  config.KAddressSolenoidPushUpB = 3;
+
+            return config;
+        }
 
     // Elevator
     // _________________________________________________________________________________
@@ -87,9 +110,7 @@ public final class PracticeConfig extends RobotConfig {
         return c;
     }
 
-    public final int kAddressPCMShifter = 0;
-    public final int kAddressSolenoidShifterF = 4;
-    public final int kAddressSolenoidShifterB = 5;
+
 
     // Intake
     // _________________________________________________________________________________
@@ -97,9 +118,6 @@ public final class PracticeConfig extends RobotConfig {
     // Hardware
     public final int kAddressTalonCargo = 8;
     public final boolean kInvertTalonCargo = true;
-    public final int kAddressPCMPoppers = 0;
-    public final int kAddressSolenoidPoppersF = 0;
-    public final int kAddressSolenoidPoppersB = 1;
     public final int kAddressDigitalHatchSensor = 0;
 
     // Link

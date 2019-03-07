@@ -16,6 +16,30 @@ public class RobotConfig extends EnhancedRobotConfig
 {
     private static RobotConfig instance = null;
 
+    public PnuaticConfig getPnumaticConfig()
+    {
+        final PnuaticConfig config = new PnuaticConfig();
+               // Hardware
+               config.kAddressPCMGrippers = 0;
+               config.kAddressPCMShifter = 0;
+               config.kAddressPCMPoppers = 0;
+               // intake
+                config.kAddressSolenoidPoppersF = 0;
+                config.kAddressSolenoidPoppersB = 1;
+                // drive
+                config.kAddressSolenoidShifterF = 6;
+                config.kAddressSolenoidShifterB = 7;
+   //climb
+                config.kAddressSolenoidGrippersF = 4;
+                config.kAddressSolenoidGrippersB = 5;
+      //elevator
+
+                config.kAddressSolenoidLockersF = 0;
+                config.kAddressSolenoidLockersB = 1;
+                config.KAddressSolenoidPushUpF = 2;
+                config.KAddressSolenoidPushUpB = 3;
+                return config;
+    }
     //                      Tank
     // _________________________________________________________________________________
 
@@ -57,15 +81,6 @@ public class RobotConfig extends EnhancedRobotConfig
         //     return new DriveCheesy();  // TODO DriveCarefully, accelerates slower when elevator is up
         // }
     }
-
-    //                      Climb
-    // _________________________________________________________________________________
-
-    // Hardware
-    public final int kAddressPCMGrippers = 0;
-    public final int kAddressSolenoidGrippersF = 2;
-    public final int kAddressSolenoidGrippersB = 3;
-
     //                       Elevator
     // _________________________________________________________________________________
 
@@ -93,10 +108,6 @@ public class RobotConfig extends EnhancedRobotConfig
 
         return c;
     }
-    public final int kAddressPCMShifter = 0;
-    public final int kAddressSolenoidShifterF = 4;
-    public final int kAddressSolenoidShifterB = 5;
-
     // // Subsystem
     // public static double kElevatorFeedForwardHasCube = 0.25;
     // public static double kElevatorFeedForwardNoCube = 0.20;
@@ -110,9 +121,6 @@ public class RobotConfig extends EnhancedRobotConfig
     // Hardware
     public final int kAddressTalonCargo = 8;
     public final boolean kInvertTalonCargo = true;
-    public final int kAddressPCMPoppers = 0;
-    public final int kAddressSolenoidPoppersF = 0;
-    public final int kAddressSolenoidPoppersB = 1;
     public final int kAddressDigitalHatchSensor = 0;
 
     //                      Link
