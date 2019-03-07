@@ -28,10 +28,14 @@ public class SmartIntake extends Command
         {
             intake.setGrabber(false);
         }
-        if (SuperStructure.getInstance().getHasCargo() && Link.getInstance().getPosition() > 98)
+        boolean intakeCargoMode = Link.getInstance().getPosition() > 98 || 
+                                  SuperStructure.getInstance().getHasCargo();
+
+        SmartDashboard.putBoolean("Intake Cargo mode?", intakeCargoMode);
+        if (intakeCargoMode)
         {
-            intake.setCargoSpeed(0.0);
-        }
+            intake.setCargoSpeed(1.0);
+        } else { intake.setCargoSpeed(0.0); }
     }
 
     protected boolean isFinished()

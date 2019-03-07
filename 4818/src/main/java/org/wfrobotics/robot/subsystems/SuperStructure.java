@@ -5,6 +5,7 @@ import org.wfrobotics.reuse.hardware.Canifier;
 import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.robot.commands.ConserveCompressor;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,6 +41,8 @@ public class SuperStructure extends SuperStructureBase
     public void reportState()
     {
         SmartDashboard.putBoolean("hasHatch", cachedIO.hasHatch);
+
+        SmartDashboard.putBoolean("Cargo In", getHasCargo());
         SmartDashboard.putBoolean("Cargo L", cachedIO.cargoLeft);
         SmartDashboard.putBoolean("Cargo R", cachedIO.cargoRight);
     }
@@ -59,9 +62,17 @@ public class SuperStructure extends SuperStructureBase
     {
         return cachedIO.hasHatch;
     }
+    double cargoTimeout = 0;
     public boolean getHasCargo()
     {
-
-        return cachedIO.cargoLeft || cachedIO.cargoRight;
+        if (cachedIO.cargoRight || cachedIO.cargoLeft)
+        {
+            cargoTimeout = Timer.getFPGATimestamp();
+            if ((Timer.getFPGATimestamp() - cargoTimeout) >= RobotConfig.getInstance().kIntakeDistanceTimeout)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
