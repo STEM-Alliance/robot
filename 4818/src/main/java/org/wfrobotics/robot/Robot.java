@@ -23,7 +23,6 @@ public final class Robot extends EnhancedRobot
     public Robot()
     {
         super(RobotConfig.getInstance(),RobotState.getInstance(), IO.getInstance());
-        // super(RobotState.getInstance(), RobotConfig.getInstance(), IO.getInstance());
     }
 
     protected void registerRobotSpecific()
