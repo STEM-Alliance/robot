@@ -62,17 +62,26 @@ public class SuperStructure extends SuperStructureBase
     {
         return cachedIO.hasHatch;
     }
+    boolean lastCargo = false;
     double cargoTimeout = 0;
     public boolean getHasCargo()
     {
-        if (cachedIO.cargoRight || cachedIO.cargoLeft)
+        if (cachedIO.cargoRight && cachedIO.cargoLeft)
         {
-            cargoTimeout = Timer.getFPGATimestamp();
+            if(lastCargo == false)
+            {
+                cargoTimeout = Timer.getFPGATimestamp();
+            }
+            lastCargo = true;
+        } else{ lastCargo = false; }
+
+        boolean output = false;
+        if(lastCargo){
             if ((Timer.getFPGATimestamp() - cargoTimeout) >= RobotConfig.getInstance().kIntakeDistanceTimeout)
             {
-                return true;
+                output = true;
             }
         }
-        return false;
+        return output;
     }
 }
