@@ -7,13 +7,11 @@ public final class PracticeConfig extends RobotConfig
 {
     public PracticeConfig()
     {
-
     }
 
     public TankConfig getTankConfig()
     {
         TankConfig config = new TankConfig();
-
         return config;
     }
 }

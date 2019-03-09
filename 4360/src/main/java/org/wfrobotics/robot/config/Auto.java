@@ -18,7 +18,8 @@ public abstract class Auto
     {
         protected AutoMode[] options()
         {
-            return new AutoMode[] {
+            return new AutoMode[] 
+            {
                 new ModeSafetyOff(),
                 new TestAuto(),
             };
@@ -34,6 +35,6 @@ public abstract class Auto
             return new POSITION[] {POSITION.LEFT, POSITION.CENTER, POSITION.RIGHT};
         }
 
-        protected void apply() { }
+        protected void apply() {}
     }
 }

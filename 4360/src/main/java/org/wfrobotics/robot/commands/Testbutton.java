@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.config.IO;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.command.Command;
 
