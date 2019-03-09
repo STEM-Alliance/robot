@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.subsystems.SuperStructure;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 

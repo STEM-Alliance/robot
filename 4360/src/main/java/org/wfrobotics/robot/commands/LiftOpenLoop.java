@@ -1,10 +1,9 @@
 package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.subsystems.Lift;
-
 import edu.wpi.first.wpilibj.command.Command;
 
-/** Sets ExampleSubsystem to a safe state */
+//Sets ExampleSubsystem to a safe state
 public class LiftOpenLoop extends Command
 {
     public LiftOpenLoop()
@@ -15,7 +14,6 @@ public class LiftOpenLoop extends Command
     protected void execute()
     {
         int speed = 0;
-
         Lift.getInstance().setSpeed(speed);
     }
 

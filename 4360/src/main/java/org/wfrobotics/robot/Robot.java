@@ -9,12 +9,8 @@ import org.wfrobotics.robot.subsystems.IntakeMotor;
 import org.wfrobotics.robot.subsystems.Lift;
 import org.wfrobotics.robot.subsystems.ParallelLink;
 
-
-
-
 public final class Robot extends EnhancedRobot
 {
-	
     public Robot()
     {
         super( RobotConfig.getInstance(), RobotState.getInstance(), IO.getInstance());
@@ -27,6 +23,5 @@ public final class Robot extends EnhancedRobot
 	    subsystems.register(IntakeMotor.getInstance());
 		subsystems.register(ParallelLink.getInstance());
 		DashboardView.startPerformanceCamera();
-		
     }
 }

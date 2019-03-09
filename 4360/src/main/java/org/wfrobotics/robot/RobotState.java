@@ -10,7 +10,6 @@ public final class RobotState extends RobotStateBase
     public static double kcameraAngle = 0;
 
     // Robot-specific state
-
     public static RobotState getInstance()
     {
         return instance;
@@ -23,14 +22,11 @@ public final class RobotState extends RobotStateBase
 
     protected synchronized void resetRobotSpecificState()
     {
-
     }
 
-
-
 	@Override
-	public void addVisionUpdate(Double time, CoprocessorData coprocessorData) {
+    public void addVisionUpdate(Double time, CoprocessorData coprocessorData) 
+    {
 		// TODO Auto-generated method stub
-		
 	}
 }

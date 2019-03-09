@@ -43,22 +43,23 @@ public class RobotConfig extends EnhancedRobotConfig
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
         config.OPEN_LOOP_RAMP = 0.05;
-
+        
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
-            // new MasterConfig(11, false, true, new FollowerConfig(10, true), new FollowerConfig(12, false)),
-            // new MasterConfig(14, true, true, new FollowerConfig(13, false), new FollowerConfig(15, true)),
-            new MasterConfig(17, false, true, new FollowerConfig(10, false)),
-            new MasterConfig(11, false, true, new FollowerConfig(22, false)),
-        }, new Gains[] {
+            new MasterConfig(11, false, true, new FollowerConfig(10, true), new FollowerConfig(12, false)),
+            new MasterConfig(14, true, true, new FollowerConfig(13, false), new FollowerConfig(15, true)),
+        //  new MasterConfig(17, false, true, new FollowerConfig(10, false)),
+        //  new MasterConfig(11, false, true, new FollowerConfig(22, false)),
+        },  new Gains[] 
+        {
             new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
             new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
-            // TODO Figure out if high acceleration > high PID?
-            // TODO Turning PID only works if slot < 2. Thought there were 4??? Is it aux only?
+            //TODO Figure out if high acceleration > high PID?
+            //TODO Turning PID only works if slot < 2. Thought there were 4??? Is it aux only?
             new Gains("Turn", 0, 4.0, 0.004, 18.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)),
-            //            new Gains("Turn", 0, 1.0, 0.001, 9.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX
+        //  new Gains("Turn", 0, 1.0, 0.001, 9.0, 1023.0 / config.VELOCITY_MAX, 35, (int) (config.VELOCITY_MAX
         });
 
-        // config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);
+    //  config.GEAR_RATIO_HIGH = (36.0 / 15.0) * (24.0 / 40.0);
         config.GEAR_RATIO_LOW = (36.0 / 15.0) * (40.0 / 24.0);
         config.SCRUB = 0.96;
         config.WHEEL_DIAMETER = 6.25;
@@ -93,11 +94,11 @@ public class RobotConfig extends EnhancedRobotConfig
     {
         if (instance == null)
         {
-            instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] {
+            instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] 
+            {
                 new RobotConfig(),
             });
         }
         return instance;
     }
 }
-

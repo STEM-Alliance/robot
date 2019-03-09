@@ -2,7 +2,6 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.commands.IntakeDefault;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -23,26 +22,22 @@ public class Intake extends EnhancedSubsystem
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 	
-	public void Forward()  // TODO pass any parameters needed to each method
+	public void Forward()  
     {
-     
-		// TODO create any methods needed to control this Subsystem, called by Commands
 		SmartDashboard.putBoolean("command", true);
 		SmartDashboard.putString("Current Command Intake", this.getCurrentCommandName());
 		exampleDouble.set(DoubleSolenoid.Value.kForward);
     }
 	
-	public void Reverse()  // TODO pass any parameters needed to each method
+	public void Reverse() 
     {
-        // TODO create any methods needed to control this Subsystem, called by Commands
 		SmartDashboard.putBoolean("command", false);
 		SmartDashboard.putString("Current Command Intake", this.getCurrentCommandName());
 		exampleDouble.set(DoubleSolenoid.Value.kReverse);
     }
 	
-	public void Off()  // TODO pass any parameters needed to each method
+	public void Off()  
     {
-        // TODO create any methods needed to control this Subsystem, called by Commands
 		SmartDashboard.putBoolean("command", true);
 		exampleDouble.set(DoubleSolenoid.Value.kOff);
     }
@@ -60,13 +55,14 @@ public class Intake extends EnhancedSubsystem
     }
 	
     @Override
-	public void reportState() {
+	public void reportState() 
+	{
 		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
-	public TestReport runFunctionalTest() {
+	public TestReport runFunctionalTest() 
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -74,7 +70,5 @@ public class Intake extends EnhancedSubsystem
 	@Override
 	public void cacheSensors(boolean isDisabled)
 	{
-		
 	}
 }
-
