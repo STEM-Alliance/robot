@@ -28,12 +28,12 @@ public final class IO implements EnhancedIO
 
     private IO()
     {
-        // driverThrottle = new SpudJoystick(0);
+      //   driverThrottle = new SpudJoystick(0);
         // driverTurn = new SpudJoystick(1);
-        driverThrottle = new HerdJoystick(0);
-        driverTurn = new HerdJoystick(1);
+       driverThrottle = new HerdJoystick(1);
+        driverTurn = new HerdJoystick(0);
         operator = new Xbox(2);
-    	drive = new Xbox(2);
+    	drive = new Xbox(0);
     }
 
     public void assignButtons()

@@ -47,8 +47,8 @@ public class RobotConfig extends EnhancedRobotConfig
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
             // new MasterConfig(11, false, true, new FollowerConfig(10, true), new FollowerConfig(12, false)),
             // new MasterConfig(14, true, true, new FollowerConfig(13, false), new FollowerConfig(15, true)),
-            new MasterConfig(17, false, true, new FollowerConfig(10, false)),
-            new MasterConfig(11, false, true, new FollowerConfig(22, false)),
+            new MasterConfig(17, false, false, new FollowerConfig(10, false)),
+            new MasterConfig(11, true, false, new FollowerConfig(22, false)),
         }, new Gains[] {
             new Gains("Motion Magic", 0, 2.25, 0.006, 4.0, 1023.0 / config.VELOCITY_MAX, 35, config.VELOCITY_PATH, config.ACCELERATION),
             new Gains("Velocity", 2, 0.175, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 20),
