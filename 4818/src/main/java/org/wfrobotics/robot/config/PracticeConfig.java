@@ -95,7 +95,7 @@ public final class PracticeConfig extends RobotConfig {
     // _________________________________________________________________________________
 
     // Hardware
-    public final double kIntakeDistanceTimeout = 1.5; // time in secounds 
+    public final double kIntakeDistanceTimeout = 0.10; // time in secounds 
     public final int kAddressTalonCargo = 8;
     public final boolean kInvertTalonCargo = true;
     public final int kAddressPCMPoppers = 0;
