@@ -9,6 +9,10 @@ import org.wfrobotics.robot.subsystems.IntakeMotor;
 import org.wfrobotics.robot.subsystems.Lift;
 import org.wfrobotics.robot.subsystems.ParallelLink;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 
 
@@ -26,7 +30,7 @@ public final class Robot extends EnhancedRobot
 		subsystems.register(Lift.getInstance());
 	    subsystems.register(IntakeMotor.getInstance());
 		subsystems.register(ParallelLink.getInstance());
-		DashboardView.startPerformanceCamera();
-		
+	    DashboardView.startPerformanceCamera();
+     
     }
 }
