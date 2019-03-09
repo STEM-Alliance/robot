@@ -83,7 +83,7 @@ public class SuperStructure extends SuperStructureBase
     
     public boolean getHasCargo()
     {
-        if (cachedIO.cargoRight && cachedIO.cargoLeft)
+        if (cachedIO.cargoRight || cachedIO.cargoLeft)
         {
             if(lastCargo == false)
             {

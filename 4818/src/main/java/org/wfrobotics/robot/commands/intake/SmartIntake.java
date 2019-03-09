@@ -19,7 +19,6 @@ public class SmartIntake extends Command
 
     protected void execute()
     {
-        SmartDashboard.putBoolean("ran this one this time", false);
         if (SuperStructure.getInstance().getHasHatch())
         {
             intake.setGrabber(true);
@@ -28,8 +27,8 @@ public class SmartIntake extends Command
         {
             intake.setGrabber(false);
         }
-        boolean intakeCargoMode = Link.getInstance().getPosition() > 98 || 
-                                  SuperStructure.getInstance().getHasCargo();
+        boolean intakeCargoMode = Link.getInstance().getPosition() > 98 &&
+                                  !SuperStructure.getInstance().getHasCargo();
 
         SmartDashboard.putBoolean("Intake Cargo mode?", intakeCargoMode);
         if (intakeCargoMode)

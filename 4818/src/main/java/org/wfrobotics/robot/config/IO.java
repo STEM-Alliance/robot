@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.SignalHumanPlayer;
+import org.wfrobotics.reuse.commands.drive.*;
 import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
@@ -18,6 +19,7 @@ import org.wfrobotics.robot.commands.system.SystemIntakeCargo;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;
+import org.wfrobotics.robot.commands.system.SystemPickup;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,13 +32,16 @@ public final class IO implements EnhancedIO
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
     private final Joystick driverTurn;
     private final Xbox operator;
+    private final Xbox rocketPlate;
+
 
     /** Create and configure controls for Drive Team */
     private IO()
     {
         driverThrottle = new HerdJoystick(0);
         driverTurn = new Joystick(1);
-        operator = new Xbox(2);
+        operator = new Xbox(3);
+        rocketPlate = new Xbox(2);
     }
 
     /** Configure each Button to run a Command */
@@ -64,10 +69,15 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
         //----------------------- System --------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToLow());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToHigh()); // top button on rocket
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle()); // middle button on rocket
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new SystemToLow()); // bottem button on rocket
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new SystemPickup()); // bottem button on breakout board
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new DriveDistance(10.0 * 12.0)); // middle button on breakout board
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new  DriveDistance(2.0 * 12.0)); // middle button on breakout board
+
+
+
 
         //----------------------- Wrist ---------------------------
 
