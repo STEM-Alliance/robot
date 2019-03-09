@@ -108,5 +108,27 @@ public class SuperStructure extends SuperStructureBase
 
 	public double getDistanceFromWall() {
 		return (cachedIO.distanceLeft + cachedIO.distanceRight) / 2.0;
-	}
+    }
+    
+    @Override
+    public TestReport runFunctionalTest(){
+        TestReport report;
+        report = super.runFunctionalTest();
+
+        boolean faults = jeff.testFault();
+        boolean stickyFaults = jeff.testStickyFault();
+
+        System.out.println(String.format("Canifier is %s showing faults", (faults) ? "not" : ""));
+        System.out.println(String.format("Canifier is %s showing sticky faults", (stickyFaults) ? "not" : ""));
+        System.out.println(String.format("Hatch %s active", (cachedIO.hasHatch) ? "is" : "is not"));
+        System.out.println(String.format("Cargo left %s active", (cachedIO.cargoLeft) ? "is" : "is not"));
+        System.out.println(String.format("Cargo right %s active", (cachedIO.cargoRight) ? "is" : "is not"));
+
+        jeff.testRobotSpecificColors();
+
+        report.add(faults);
+        report.add(stickyFaults);
+
+        return report;
+    }
 }
