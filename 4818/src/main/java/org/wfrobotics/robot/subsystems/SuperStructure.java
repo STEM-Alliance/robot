@@ -1,15 +1,17 @@
 package org.wfrobotics.robot.subsystems;
 
-import java.util.ArrayList;
-
-import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.reuse.hardware.Canifier;
 import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.robot.commands.ConserveCompressor;
 import org.wfrobotics.robot.config.RobotConfig;
+import org.wfrobotics.robot.subsystems.SuperStructure.CachedIO;
+import org.wfrobotics.robot.subsystems.SuperStructure.SingletonHolder;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -108,5 +110,45 @@ public class SuperStructure extends SuperStructureBase
 
 	public double getDistanceFromWall() {
 		return (cachedIO.distanceLeft + cachedIO.distanceRight) / 2.0;
-	}
+    }
+
+    NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
+    NetworkTable chickenVision = netInstance.getTable("ChickenVision");
+
+    private boolean driverVision, tapeVision, cargoVision, cargoSeen, tapeSeen;
+    private NetworkTableEntry tapeDetected, cargoDetected, tapeYaw, cargoYaw,
+        videoTimestamp;
+
+    public boolean getTapeInView()
+    {
+        return chickenVision.getEntry("tapeDetected").getBoolean(false);
+    }
+    public boolean getCargoInView()
+    {
+        return chickenVision.getEntry("cargoDetected").getBoolean(false);
+    }
+    public double getTapeYaw()
+    {
+        return chickenVision.getEntry("tapeYaw").getDouble(0.0);
+    }
+    public double getCargoYaw()
+    {
+        return chickenVision.getEntry("cargoYaw").getDouble(0.0);
+    }
+    public boolean getDriveCamera()
+    {
+        return chickenVision.getEntry("Driver").getBoolean(false);
+    }
+    public boolean getTapeCamera()
+    {
+        return chickenVision.getEntry("Tape").getBoolean(false);
+    }
+    public boolean getCargoCamera()
+    {
+        return chickenVision.getEntry("Cargo").getBoolean(false);
+    }
+    public double getLastTimestamp()
+    {
+        return chickenVision.getEntry("VideoTimestamp").getDouble(0.0);
+    }
 }
