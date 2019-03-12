@@ -25,8 +25,15 @@ public class SystemToLow extends ConditionalCommand
     {
         public SystemToCargo()
         {
-            addParallel(new ElevatorToHeight(0.0));
-            addSequential(new LinkToHeight(40.0));
+            if (SuperStructure.getInstance().getHasCargo())
+            {
+                addParallel(new ElevatorToHeight(0.0));
+                addSequential(new LinkToHeight(40.0));
+            }
+            else
+            {
+                addSequential(new LinkToHeight(95.5));
+            }
         }
     }
 
@@ -34,8 +41,8 @@ public class SystemToLow extends ConditionalCommand
     {
         public SystemToHatch()
         {
-            addSequential(new LinkToHeight(95.5));
-            addSequential(new ElevatorToHeight(0.0));
+                addSequential(new LinkToHeight(95.5));
+                addSequential(new ElevatorToHeight(0.0));
         }
     }
 }

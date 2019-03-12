@@ -74,6 +74,7 @@ public class Intake extends EnhancedSubsystem
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
         grabber.set(desired);
+        SuperStructure.getInstance().setStoreHatch(out);
     }
 
     public TestReport runFunctionalTest()

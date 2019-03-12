@@ -24,7 +24,7 @@ public final class PracticeConfig extends RobotConfig {
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.30; // how fast do you acellerate
+        config.OPEN_LOOP_RAMP = 0.45; // how fast do you acellerate
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
                 // Left
@@ -95,12 +95,12 @@ public final class PracticeConfig extends RobotConfig {
     // _________________________________________________________________________________
 
     // Hardware
-    public final double kIntakeDistanceTimeout = 0.10; // time in secounds 
+    public final double kIntakeDistanceTimeout = 0.025; // time in secounds 
     public final int kAddressTalonCargo = 8;
     public final boolean kInvertTalonCargo = true;
     public final int kAddressPCMPoppers = 0;
-    public final int kAddressSolenoidPoppersF = 0;
-    public final int kAddressSolenoidPoppersB = 1;
+    public final int kAddressSolenoidPoppersF = 6;
+    public final int kAddressSolenoidPoppersB = 7;
     public final int kAddressDigitalHatchSensor = 0;
 
     // Link

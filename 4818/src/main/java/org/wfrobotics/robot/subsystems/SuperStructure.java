@@ -51,10 +51,15 @@ public class SuperStructure extends SuperStructureBase
     public void reportState()
     {
         SmartDashboard.putBoolean("hasHatch", cachedIO.hasHatch);
+        SmartDashboard.putBoolean("Reported Hatch", getHasHatch());
+        SmartDashboard.putBoolean("Storing hatch", storedHatch);
+
+
+
 
         SmartDashboard.putBoolean("Cargo In", getHasCargo());
         SmartDashboard.putBoolean("Cargo L", cachedIO.cargoLeft);
-        SmartDashboard.putBoolean("Cargo R", cachedIO.cargoRight);
+        
 
         SmartDashboard.putNumber("Distance L", cachedIO.distanceLeft);
         SmartDashboard.putNumber("Distance R", cachedIO.distanceRight);
@@ -75,10 +80,14 @@ public class SuperStructure extends SuperStructureBase
         public double distanceLeft;
         public double distanceRight;
     }
-
+    private boolean storedHatch = false;
+    public void setStoreHatch(boolean storing)
+    {
+        storedHatch = storing;
+    }
     public boolean getHasHatch()
     {
-        return cachedIO.hasHatch;
+        return cachedIO.hasHatch || storedHatch;
     }
     boolean lastCargo = false;
     double cargoTimeout = 0;
@@ -96,7 +105,7 @@ public class SuperStructure extends SuperStructureBase
 
         boolean output = false;
         if(lastCargo){
-            if ((Timer.getFPGATimestamp() - cargoTimeout) >= RobotConfig.getInstance().kIntakeDistanceTimeout)
+            if ((Timer.getFPGATimestamp() - cargoTimeout) >= 0.05)
             {
                 output = true;
             }
