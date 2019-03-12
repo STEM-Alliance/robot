@@ -54,6 +54,8 @@ public class SuperStructure extends SuperStructureBase
         SmartDashboard.putBoolean("Reported Hatch", getHasHatch());
         SmartDashboard.putBoolean("Storing hatch", storedHatch);
 
+        SmartDashboard.putNumber("Tape Vision Angle", getTapeYaw());
+        SmartDashboard.putBoolean("Tape In view", getTapeInView());
 
 
 

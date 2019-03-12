@@ -28,7 +28,7 @@ public class SystemToLow extends ConditionalCommand
             if (SuperStructure.getInstance().getHasCargo())
             {
                 addParallel(new ElevatorToHeight(0.0));
-                addSequential(new LinkToHeight(40.0));
+                addSequential(new LinkToHeight(95.5));
             }
             else
             {

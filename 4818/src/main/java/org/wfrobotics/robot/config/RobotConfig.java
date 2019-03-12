@@ -110,10 +110,10 @@ public class RobotConfig extends EnhancedRobotConfig
     // Hardware
     public final int kAddressTalonCargo = 8;
     public final boolean kInvertTalonCargo = true;
-    public final double kIntakeDistanceTimeout = 1.5; // time in secounds 
+    public final double kIntakeDistanceTimeout = 0.05; // time in secounds 
     public final int kAddressPCMPoppers = 0;
-    public final int kAddressSolenoidPoppersF = 0;
-    public final int kAddressSolenoidPoppersB = 1;
+    public final int kAddressSolenoidPoppersF = 6;
+    public final int kAddressSolenoidPoppersB = 7;
     public final int kAddressDigitalHatchSensor = 0;
 
     //                      Link

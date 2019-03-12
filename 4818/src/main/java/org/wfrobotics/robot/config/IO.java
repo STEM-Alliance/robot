@@ -65,6 +65,8 @@ public final class IO implements EnhancedIO
 
         //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreHatch());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new TurnToHeading(90) );
+
         ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new CargoIn() );
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
@@ -137,7 +139,7 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return (driverTurn.getRawAxis(0) * 0.5);
+        return (driverTurn.getRawAxis(0) * 0.45);
     }
 
     public boolean getDriveQuickTurn()
