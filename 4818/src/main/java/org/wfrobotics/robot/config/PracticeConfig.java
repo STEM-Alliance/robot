@@ -112,11 +112,11 @@ public final class PracticeConfig extends RobotConfig {
 
         // good 6500
         int kTicksToTop = 6500;
-        int kLinkVelocityMax = 1750;
+        int kLinkVelocityMax = 2100;
         int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.95);
         int kLinkAcceleration = (int) (kLinkVelocityCruise * 4.0);
 
-        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, false, false) },
+        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, true, false) },
                 new Gains[] { new Gains("Motion Magic", 0, 6.0, 0.0000, 0.04, 1023.0 / kLinkVelocityMax, 0,
                         kLinkVelocityCruise, kLinkAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
@@ -125,7 +125,6 @@ public final class PracticeConfig extends RobotConfig {
         c.kFullRangeInchesOrDegrees = 100.0;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kTuning = Optional.of(true);
-
         return c;
     }
 
