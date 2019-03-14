@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.commands.intake.IntakeOpenLoop;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
+import org.wfrobotics.robot.config.PnuaticConfig;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -37,16 +38,12 @@ public class Intake extends EnhancedSubsystem
     public Intake()
     {
         final RobotConfig config = RobotConfig.getInstance();
-
+        final PnuaticConfig pConfig = RobotConfig.getInstance().getPnumaticConfig();
         motor = TalonFactory.makeTalon(config.kAddressTalonCargo);
         motor.setInverted(config.kInvertTalonCargo);
-        grabber = new DoubleSolenoid(config.kAddressPCMPoppers, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
-        // motorCargo.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 100);
-        // motorCargo.overrideLimitSwitchesEnable(true);  // MUST be true to enable hardware limit switch feature
-        // motorCargo.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 100);
-        // motorCargo.overrideLimitSwitchesEnable(true);  // MUST be true to enable hardware limit switch feature
+        grabber = new DoubleSolenoid(pConfig.kAddressPCMPoppers, pConfig.kAddressSolenoidPoppersF, pConfig.kAddressSolenoidPoppersB);
 
-        setGrabber(false);
+        setGrabber(true);
     }
 
     protected void initDefaultCommand()

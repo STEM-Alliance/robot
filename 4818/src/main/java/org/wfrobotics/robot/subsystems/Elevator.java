@@ -7,6 +7,7 @@ import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.robot.commands.elevator.ElevatorOpenLoop;
 import org.wfrobotics.robot.commands.elevator.ElevatorZeroThenOpenLoop;
+import org.wfrobotics.robot.config.PnuaticConfig;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -45,6 +46,7 @@ public class Elevator extends PositionBasedSubsystem
     {
         super(positionConfig);
         final RobotConfig config = RobotConfig.getInstance();
+        final PnuaticConfig pConfig = RobotConfig.getInstance().getPnumaticConfig();
 
         master.setSelectedSensorPosition(0, 0, 100);
         master.configOpenloopRamp(.15, 100);
@@ -59,7 +61,7 @@ public class Elevator extends PositionBasedSubsystem
             }
         }
 
-        shifter = new DoubleSolenoid(config.kAddressPCMShifter, config.kAddressSolenoidShifterF, config.kAddressSolenoidShifterB);
+        shifter = new DoubleSolenoid(pConfig.kAddressPCMGrippers, pConfig.kAddressSolenoidShifterF, pConfig.kAddressSolenoidShifterB);
 
         setShifter(false);
     }
