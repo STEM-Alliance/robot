@@ -48,8 +48,8 @@ public class Link extends PositionBasedSubsystem
 
     protected void initDefaultCommand()
     {
-        // setDefaultCommand(new LinkOpenLoop());
         setDefaultCommand(new LinkZeroThenOpenLoop());
+        // setDefaultCommand(new LinkZeroThenOpenLoop());
     }
 
     public TestReport runFunctionalTest()

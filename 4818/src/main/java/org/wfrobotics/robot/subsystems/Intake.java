@@ -43,7 +43,7 @@ public class Intake extends EnhancedSubsystem
         motor.setInverted(config.kInvertTalonCargo);
         grabber = new DoubleSolenoid(pConfig.kAddressPCMPoppers, pConfig.kAddressSolenoidPoppersF, pConfig.kAddressSolenoidPoppersB);
 
-        setGrabber(true);
+        setGrabber(false);
     }
 
     protected void initDefaultCommand()

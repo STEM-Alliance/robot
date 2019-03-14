@@ -68,7 +68,7 @@ public class Elevator extends PositionBasedSubsystem
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new ElevatorZeroThenOpenLoop());
+        setDefaultCommand(new ElevatorOpenLoop());
     }
 
     // /** Inches off ground */

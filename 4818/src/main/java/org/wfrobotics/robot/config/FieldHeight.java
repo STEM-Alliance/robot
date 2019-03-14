@@ -11,7 +11,7 @@ public enum FieldHeight
     CargoMiddle(36.0, 4.0),  
     CargoLow(0.0, 4.0),
     
-    CargoPickup(0.0, 100.2),
+    CargoPickup(0.0, 140.2),
     HatchPickup(0.0, 95.2);
 
     private final double elevator;

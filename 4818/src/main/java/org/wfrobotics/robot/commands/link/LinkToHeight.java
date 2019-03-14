@@ -7,6 +7,7 @@ import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.subsystems.Link;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LinkToHeight extends Command
 {
@@ -41,6 +42,9 @@ public class LinkToHeight extends Command
     {
         final boolean slowEnough = Math.abs(link.getVelocityNative()) < 5.0;
         final boolean isClose = Math.abs(link.getPosition() - desired) < 2.0;
+        SmartDashboard.putBoolean("LinkToHeight IsClose", isClose);
+        SmartDashboard.putBoolean("LinkToHeight slowEnough", isClose);
+        SmartDashboard.putNumber("LinkToHeight IsClose Distance", link.getPosition() - desired);
         return (isClose && slowEnough) || io.isLinkOverrideRequested() || isTimedOut();
     }
 
