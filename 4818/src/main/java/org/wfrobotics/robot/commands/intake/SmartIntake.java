@@ -24,7 +24,7 @@ public class SmartIntake extends Command
             intake.setGrabber(true);
         }
 
-        boolean intakeCargoMode = Link.getInstance().getPosition() > 98 &&
+        boolean intakeCargoMode = Link.getInstance().getPosition() > 125 &&
                                   !SuperStructure.getInstance().getHasCargo() &&
                                   !SuperStructure.getInstance().getHasHatch();
 

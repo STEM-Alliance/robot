@@ -4,7 +4,6 @@ import org.wfrobotics.robot.config.PnuaticConfig;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.commands.climb.ClimbNone;
 import org.wfrobotics.robot.config.RobotConfig;
-import org.wfrobotics.robot.config.PracticeConfig;
 
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -36,7 +35,7 @@ public class Climb extends EnhancedSubsystem
         grippers = new DoubleSolenoid(Pconfig.kAddressPCMGrippers, Pconfig.kAddressSolenoidGrippersF, Pconfig.kAddressSolenoidGrippersB);
         lockers = new DoubleSolenoid(Pconfig.kAddressPCMLockers, Pconfig.kAddressSolenoidLockersF, Pconfig.kAddressSolenoidLockersB);
         pushUP = new DoubleSolenoid(Pconfig.kAddressPCMPushUp, Pconfig.KAddressSolenoidPushUpF, Pconfig.KAddressSolenoidPushUpB);
-        deployer = new DoubleSolenoid(Pconfig.kAddressPCMDeployer, Pconfig.KAddressSolenoidPushUpF, Pconfig.KAddressSolenoidPushUpB);
+        deployer = new DoubleSolenoid(Pconfig.kAddressPCMDeployer, Pconfig.KAddressSolenoidDeployerF, Pconfig.KAddressSolenoidDeployerB);
 
 
         setGrippers(true);

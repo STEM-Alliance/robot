@@ -2,6 +2,7 @@ package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.config.FieldHeight;
+import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 
@@ -35,6 +36,10 @@ public class SystemToLow extends ConditionalCommand
                 addSequential(new SystemToHatch());
             }
         }
+        // public boolean isFinished()
+        // {
+        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
+        // }
     }
 
     private static class SystemToHatch extends CommandGroup
@@ -44,5 +49,9 @@ public class SystemToLow extends ConditionalCommand
                 addSequential(new LinkToHeight(FieldHeight.HatchLow.getL()));
                 addSequential(new ElevatorToHeight(FieldHeight.HatchLow.getE()));
         }
+        // public boolean isFinished()
+        // {
+        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
+        // }
     }
 }

@@ -65,16 +65,16 @@ public class RobotConfig extends EnhancedRobotConfig
                  final PnuaticConfig config = new PnuaticConfig();
                  
                        config.kAddressPCMPoppers = 0;
-                       config.kAddressSolenoidPoppersF = 0;
-                       config.kAddressSolenoidPoppersB = 1;
+                       config.kAddressSolenoidPoppersF = 2; // HATCH
+                       config.kAddressSolenoidPoppersB = 3; // HATCH
 
                        config.kAddressPCMShifter = 0;
-                       config.kAddressSolenoidShifterF = 2;
-                       config.kAddressSolenoidShifterB = 3;
+                       config.kAddressSolenoidShifterF = 4; // SHIFTER
+                       config.kAddressSolenoidShifterB = 1; 
 
                        config.kAddressPCMGrippers = 0;
-                       config.kAddressSolenoidGrippersF = 4;
-                       config.kAddressSolenoidGrippersB = 5;
+                       config.kAddressSolenoidGrippersF = 0;
+                       config.kAddressSolenoidGrippersB = 5; 
                        
                        config.kAddressPCMLockers = 0;
                        config.kAddressSolenoidLockersF = 6;
@@ -114,9 +114,10 @@ public class RobotConfig extends EnhancedRobotConfig
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 68.5;
-        c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        c.kSoftwareLimitB = Optional.of(100);
+        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        // c.kSoftwareLimitB = Optional.of(100);
         // c.kTuning = Optional.of(false);
+        c.kFeedForward = Optional.of(.5);
 
         return c;
     }
@@ -147,7 +148,7 @@ public class RobotConfig extends EnhancedRobotConfig
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 100.0;
-        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kTuning = Optional.of(true);
         return c;
     }
@@ -155,7 +156,7 @@ public class RobotConfig extends EnhancedRobotConfig
     // Constructor
     protected RobotConfig()
     {
-        cameraStream = Optional.of(false);
+        cameraStream = Optional.of(true);
         vision = Optional.of(new VisionConfig(69.0));
     }
 
@@ -168,7 +169,7 @@ public class RobotConfig extends EnhancedRobotConfig
         {
             instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] {
                 new RobotConfig(),     // Competition robot
-                new PracticeConfig(),  // Practice robot difference
+                // new PracticeConfig(),  // Practice robot difference
             });
         }
         return instance;

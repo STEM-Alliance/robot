@@ -2,6 +2,7 @@ package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.config.FieldHeight;
+import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.commands.elevator.ElevatorGoHome;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
@@ -15,7 +16,7 @@ public class SystemPickup extends ConditionalCommand
 
     public SystemPickup()
     {
-        super(new SystemToCargo(), new SystemToHatch());
+        super(new SystemToHatch(), new SystemToCargo());
     }
 
     protected boolean condition()
@@ -27,18 +28,26 @@ public class SystemPickup extends ConditionalCommand
     {
         public SystemToCargo()
         {
-            addSequential(new LinkToHeight(105.0));
-            addSequential(new ElevatorToHeight(0.0));
+            addParallel(new LinkToHeight(FieldHeight.CargoPickup.getL()));
+            addSequential(new ElevatorToHeight(FieldHeight.CargoPickup.getE()));
         }
+        // public boolean isFinished()
+        // {
+        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
+        // }
     }
 
     private static class SystemToHatch extends CommandGroup
     {
         public SystemToHatch()
         {
-            addSequential(new LinkToHeight(FieldHeight.HatchLow.getL()));
+            addParallel(new LinkToHeight(FieldHeight.HatchLow.getL()));
             addSequential(new ElevatorToHeight(FieldHeight.HatchLow.getE()));
             
         }
+        // public boolean isFinished()
+        // {
+        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
+        // }
     }
 }
