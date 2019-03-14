@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
+import org.wfrobotics.robot.config.FieldHeight;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
@@ -27,8 +28,8 @@ public class SystemToMiddle extends ConditionalCommand
     {
         public SystemToCargo()
         {
-            addParallel(new ElevatorToHeight(36.6));
-            addSequential(new LinkToHeight(4.0));
+            addParallel(new ElevatorToHeight(FieldHeight.CargoMiddle.getE()));
+            addSequential(new LinkToHeight(FieldHeight.CargoMiddle.getL()));
         }
     }
 
@@ -36,8 +37,8 @@ public class SystemToMiddle extends ConditionalCommand
     {
         public SystemToHatch()
         {
-            addParallel(new ElevatorToHeight(53.8));
-            addSequential(new LinkToHeight(95.5));
+            addParallel(new ElevatorToHeight(FieldHeight.HatchMiddle.getE()));
+            addSequential(new LinkToHeight(FieldHeight.HatchMiddle.getL()));
         }
     }
 }
