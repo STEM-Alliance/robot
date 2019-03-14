@@ -19,19 +19,20 @@ public class SmartIntake extends Command
 
     protected void execute()
     {
-        SmartDashboard.putBoolean("ran this one this time", false);
         if (SuperStructure.getInstance().getHasHatch())
         {
             intake.setGrabber(true);
         }
-        else
+
+        boolean intakeCargoMode = Link.getInstance().getPosition() > 98 &&
+                                  !SuperStructure.getInstance().getHasCargo() &&
+                                  !SuperStructure.getInstance().getHasHatch();
+
+        SmartDashboard.putBoolean("Intake Cargo mode?", intakeCargoMode);
+        if (intakeCargoMode)
         {
-            intake.setGrabber(false);
-        }
-        if (SuperStructure.getInstance().getHasCargo() && Link.getInstance().getPosition() > 98)
-        {
-            intake.setCargoSpeed(0.0);
-        }
+            intake.setCargoSpeed(1.0);
+        } else { intake.setCargoSpeed(0.0); }
     }
 
     protected boolean isFinished()

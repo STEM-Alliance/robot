@@ -19,12 +19,14 @@ public final class PracticeConfig extends RobotConfig {
     public TankConfig getTankConfig() {
         final TankConfig config = new DeepSpaceTankConfig();
 
-        config.VELOCITY_MAX = 6250.0;
-        config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.8);
-        config.ACCELERATION = config.VELOCITY_PATH;
+        config.VELOCITY_MAX = 3500.0 / 2;
+        config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.2);
+        config.ACCELERATION = config.VELOCITY_PATH ;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.30; // how fast do you acellerate
+        config.OPEN_LOOP_RAMP = 0.8; // how fast do you acellerate
+
+        double TURN_SCALING = .35;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
                 // Left
@@ -32,12 +34,12 @@ public final class PracticeConfig extends RobotConfig {
                 // Right
                 new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)), },
                 new Gains[] { new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
-                        new Gains("Turn", 0, 0.175, 0.0004, 0.175 * 4.5, 1023.0 / config.VELOCITY_MAX, 0,
-                                (int) (config.VELOCITY_MAX * 0.95), (int) (config.VELOCITY_MAX * 0.95)), });
+                        new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 0,
+                                (int) (config.VELOCITY_MAX * TURN_SCALING), (int) (config.VELOCITY_MAX * TURN_SCALING)), });
 
         config.GEAR_RATIO_LOW = (54.0 / 32.0);
         config.SCRUB = 0.98;
-        config.WHEEL_DIAMETER = 6 + 3 / 8;
+        config.WHEEL_DIAMETER = 6  + 3.0 / 8.0;
         config.WIDTH = 27.0;
 
         return config;
@@ -55,34 +57,33 @@ public final class PracticeConfig extends RobotConfig {
     // Climb
     // _________________________________________________________________________________
 
-        public PnuaticConfig getPnumaticConfig()
-        {
-            final PnuaticConfig config = new PnuaticConfig();
-            
-                // Hardware
-                 config.kAddressPCMGrippers = 0;
-                 config.kAddressPCMShifter = 0;
-                 config.kAddressPCMPoppers = 0;
-//   6,7
-     // intake
-                  config.kAddressSolenoidPoppersF = 0;
-                  config.kAddressSolenoidPoppersB = 1;
-                  // drive
-                  config.kAddressSolenoidShifterF = 6;
-                  config.kAddressSolenoidShifterB = 7;
-     //climb
-                  config.kAddressSolenoidGrippersF = 4;
-                  config.kAddressSolenoidGrippersB = 5;
-        //elevator
-
-                  config.kAddressSolenoidLockersF = 0;
-                  config.kAddressSolenoidLockersB = 1;
-                  config.KAddressSolenoidPushUpF = 2;
-                  config.KAddressSolenoidPushUpB = 3;
-
-            return config;
-        }
-
+             public PnuaticConfig getPnumaticConfig()
+             {
+                 final PnuaticConfig config = new PnuaticConfig();
+                 
+                     // Hardware
+                      config.kAddressPCMGrippers = 0;
+                      config.kAddressPCMShifter = 0;
+                      config.kAddressPCMPoppers = 0;
+     //   6,7
+          // intake
+                       config.kAddressSolenoidPoppersF = 0;
+                       config.kAddressSolenoidPoppersB = 1;
+                       // drive
+                       config.kAddressSolenoidShifterF = 6;
+                       config.kAddressSolenoidShifterB = 7;
+          //climb
+                       config.kAddressSolenoidGrippersF = 4;
+                       config.kAddressSolenoidGrippersB = 5;
+             //elevator
+     
+                       config.kAddressSolenoidLockersF = 0;
+                       config.kAddressSolenoidLockersB = 1;
+                       config.KAddressSolenoidPushUpF = 2;
+                       config.KAddressSolenoidPushUpB = 3;
+     
+                 return config;
+             }
     // Elevator
     // _________________________________________________________________________________
 
@@ -110,15 +111,13 @@ public final class PracticeConfig extends RobotConfig {
         return c;
     }
 
-
-
     // Intake
     // _________________________________________________________________________________
 
     // Hardware
+    public final double kIntakeDistanceTimeout = 0.025; // time in secounds 
     public final int kAddressTalonCargo = 8;
     public final boolean kInvertTalonCargo = true;
-    public final int kAddressDigitalHatchSensor = 0;
 
     // Link
     // _________________________________________________________________________________
@@ -127,11 +126,11 @@ public final class PracticeConfig extends RobotConfig {
 
         // good 6500
         int kTicksToTop = 6500;
-        int kLinkVelocityMax = 1750;
+        int kLinkVelocityMax = 2100;
         int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.95);
         int kLinkAcceleration = (int) (kLinkVelocityCruise * 4.0);
 
-        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, false, false) },
+        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, true, false) },
                 new Gains[] { new Gains("Motion Magic", 0, 6.0, 0.0000, 0.04, 1023.0 / kLinkVelocityMax, 0,
                         kLinkVelocityCruise, kLinkAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
@@ -140,7 +139,6 @@ public final class PracticeConfig extends RobotConfig {
         c.kFullRangeInchesOrDegrees = 100.0;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kTuning = Optional.of(true);
-
         return c;
     }
 

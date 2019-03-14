@@ -1,11 +1,8 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.robot.config.PnuaticConfig;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.commands.climb.ClimbNone;
 import org.wfrobotics.robot.config.RobotConfig;
-import org.wfrobotics.robot.config.PracticeConfig;
-
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -23,25 +20,13 @@ public class Climb extends EnhancedSubsystem
 
     private static Climb instance = null;
     private final DoubleSolenoid grippers;
-    // private final DoubleSolenoid deployer;
-    private final DoubleSolenoid lockers;
-    private final DoubleSolenoid pushUP;;
-
 
     public Climb()
     {
         final RobotConfig config = RobotConfig.getInstance();
-        final PnuaticConfig Pconfig = config.getPnumaticConfig();
 
-        grippers = new DoubleSolenoid(Pconfig.kAddressPCMGrippers, Pconfig.kAddressSolenoidGrippersF, Pconfig.kAddressSolenoidGrippersB);
-        lockers = new DoubleSolenoid(Pconfig.kAddressPCMGrippers, Pconfig.kAddressSolenoidLockersF, Pconfig.kAddressSolenoidLockersB);
-        pushUP = new DoubleSolenoid(Pconfig.kAddressPCMGrippers, Pconfig.KAddressSolenoidPushUpF, Pconfig.KAddressSolenoidPushUpB);
-
-
+        grippers = new DoubleSolenoid(config.kAddressPCMGrippers, config.kAddressSolenoidGrippersF, config.kAddressSolenoidGrippersB);
         setGrippers(false);
-        setLockers(false);
-        setPushUp(false);
-        
     }
 
     protected void initDefaultCommand()
@@ -64,19 +49,6 @@ public class Climb extends EnhancedSubsystem
         final Value desired = (out) ? Value.kForward : Value.kReverse;
         grippers.set(desired);
     }
-
-    public void setPushUp(boolean out)
-    {
-        final Value desired = (out) ? Value.kForward : Value.kReverse;
-        pushUP.set(desired);
-    }
-
-    public void setLockers(boolean out)
-    {
-        final Value desired = (out) ? Value.kForward : Value.kReverse;
-        lockers.set(desired);
-    }
-    
 
     public TestReport runFunctionalTest()
     {
