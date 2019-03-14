@@ -20,12 +20,12 @@ public class Climb extends EnhancedSubsystem
         }
         return instance;
     }
-
     private static Climb instance = null;
+
     private final DoubleSolenoid grippers;
-    // private final DoubleSolenoid deployer;
+    private final DoubleSolenoid deployer;
     private final DoubleSolenoid lockers;
-    private final DoubleSolenoid pushUP;;
+    private final DoubleSolenoid pushUP;
 
 
     public Climb()
@@ -34,12 +34,13 @@ public class Climb extends EnhancedSubsystem
         final PnuaticConfig Pconfig = config.getPnumaticConfig();
 
         grippers = new DoubleSolenoid(Pconfig.kAddressPCMGrippers, Pconfig.kAddressSolenoidGrippersF, Pconfig.kAddressSolenoidGrippersB);
-        lockers = new DoubleSolenoid(Pconfig.kAddressPCMGrippers, Pconfig.kAddressSolenoidLockersF, Pconfig.kAddressSolenoidLockersB);
-        pushUP = new DoubleSolenoid(Pconfig.kAddressPCMGrippers, Pconfig.KAddressSolenoidPushUpF, Pconfig.KAddressSolenoidPushUpB);
+        lockers = new DoubleSolenoid(Pconfig.kAddressPCMLockers, Pconfig.kAddressSolenoidLockersF, Pconfig.kAddressSolenoidLockersB);
+        pushUP = new DoubleSolenoid(Pconfig.kAddressPCMPushUp, Pconfig.KAddressSolenoidPushUpF, Pconfig.KAddressSolenoidPushUpB);
+        deployer = new DoubleSolenoid(Pconfig.kAddressPCMDeployer, Pconfig.KAddressSolenoidPushUpF, Pconfig.KAddressSolenoidPushUpB);
 
 
-        setGrippers(false);
-        setLockers(false);
+        setGrippers(true);
+        setLockers(true);
         setPushUp(false);
         
     }
@@ -77,7 +78,6 @@ public class Climb extends EnhancedSubsystem
         lockers.set(desired);
     }
     
-
     public TestReport runFunctionalTest()
     {
         TestReport report = new TestReport();

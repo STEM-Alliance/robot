@@ -13,6 +13,7 @@ import org.wfrobotics.robot.commands.elevator.ElevatorShift;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 import org.wfrobotics.robot.commands.intake.CargoIn;
 import org.wfrobotics.robot.commands.intake.CargoOut;
+import org.wfrobotics.robot.commands.intake.ScoreGamepiece;
 import org.wfrobotics.robot.commands.intake.ScoreHatch;
 import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.commands.system.SystemIntakeCargo;
@@ -78,7 +79,7 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle()); // middle button on rocket
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new SystemToLow()); // bottem button on rocket
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new SystemPickup()); // bottem button on breakout board
-        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new TurnToHeading(90)); // middle button on breakout board
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new ScoreGamepiece()); // middle button on breakout board
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  DriveDistance(2.0 * 12.0)); // top button on breakout board
 
 

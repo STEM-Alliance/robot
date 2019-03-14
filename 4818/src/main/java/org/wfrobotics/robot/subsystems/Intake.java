@@ -66,7 +66,6 @@ public class Intake extends EnhancedSubsystem
         SmartDashboard.putNumber("intake Speed", percent);
         motor.set(ControlMode.PercentOutput, percent);
     }
-
     public void setGrabber(boolean out)
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
