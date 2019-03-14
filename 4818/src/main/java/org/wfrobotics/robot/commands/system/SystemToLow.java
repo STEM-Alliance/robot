@@ -32,7 +32,7 @@ public class SystemToLow extends ConditionalCommand
             }
             else
             {
-                addSequential(new LinkToHeight(95.5));
+                addSequential(new SystemToHatch());
             }
         }
     }

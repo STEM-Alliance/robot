@@ -61,7 +61,7 @@ public class Elevator extends PositionBasedSubsystem
             }
         }
 
-        shifter = new DoubleSolenoid(pConfig.kAddressPCMGrippers, pConfig.kAddressSolenoidShifterF, pConfig.kAddressSolenoidShifterB);
+        shifter = new DoubleSolenoid(pConfig.kAddressPCMShifter, pConfig.kAddressSolenoidShifterF, pConfig.kAddressSolenoidShifterB);
 
         setShifter(false);
     }

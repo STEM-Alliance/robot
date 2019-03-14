@@ -37,7 +37,7 @@ public class RobotConfig extends EnhancedRobotConfig
                 // Right
                 new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)), },
                 new Gains[] { new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
-                        new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 0,
+                             new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 0,
                                 (int) (config.VELOCITY_MAX * TURN_SCALING), (int) (config.VELOCITY_MAX * TURN_SCALING)), });
 
         config.GEAR_RATIO_LOW = (54.0 / 32.0);
@@ -64,26 +64,33 @@ public class RobotConfig extends EnhancedRobotConfig
              {
                  final PnuaticConfig config = new PnuaticConfig();
                  
-                     // Hardware
-                      config.kAddressPCMGrippers = 0;
-                      config.kAddressPCMShifter = 0;
-                      config.kAddressPCMPoppers = 0;
-     //   6,7
-          // intake
+                       config.kAddressPCMPoppers = 0;
                        config.kAddressSolenoidPoppersF = 0;
                        config.kAddressSolenoidPoppersB = 1;
-                       // drive
-                       config.kAddressSolenoidShifterF = 6;
-                       config.kAddressSolenoidShifterB = 7;
-          //climb
+
+                       config.kAddressPCMShifter = 0;
+                       config.kAddressSolenoidShifterF = 2;
+                       config.kAddressSolenoidShifterB = 3;
+
+                       config.kAddressPCMGrippers = 0;
                        config.kAddressSolenoidGrippersF = 4;
                        config.kAddressSolenoidGrippersB = 5;
-             //elevator
-     
-                       config.kAddressSolenoidLockersF = 0;
-                       config.kAddressSolenoidLockersB = 1;
-                       config.KAddressSolenoidPushUpF = 2;
-                       config.KAddressSolenoidPushUpB = 3;
+                       
+                       config.kAddressPCMLockers = 0;
+                       config.kAddressSolenoidLockersF = 6;
+                       config.kAddressSolenoidLockersB = 7;
+
+                       config.kAddressPCMPushUp = 1;
+                       config.KAddressSolenoidPushUpF = 0;
+                       config.KAddressSolenoidPushUpB = 1;
+
+                       config.kAddressPCMDeployer = 1;
+                       config.KAddressSolenoidDeployerF = 2;
+                       config.KAddressSolenoidDeployerB = 3;
+
+                       config.kAddressPCMMystory = 1;
+                       config.KAddressSolenoidMystoryF = 4;
+                       config.KAddressSolenoidMystoryB = 5;
      
                  return config;
              }
