@@ -16,7 +16,7 @@ public class CargoOut extends Command
 
     protected void initialize()
     {
-        intake.setCargoSpeed(-0.6);
+        intake.setCargoSpeed(-1.0);
     }
     protected void end()
     {

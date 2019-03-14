@@ -21,7 +21,7 @@ public class ScoreHatch extends Command
 
     protected void end()
     {
-        intake.setGrabber(true);
+        // intake.setGrabber(true);
     }
 
     protected boolean isFinished()
