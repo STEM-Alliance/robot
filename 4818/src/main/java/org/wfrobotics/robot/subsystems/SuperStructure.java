@@ -1,5 +1,8 @@
 package org.wfrobotics.robot.subsystems;
 
+import java.util.ArrayList;
+
+import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.reuse.hardware.Canifier;
 import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
@@ -62,6 +65,7 @@ public class SuperStructure extends SuperStructureBase
         SmartDashboard.putBoolean("Cargo In", getHasCargo());
         SmartDashboard.putBoolean("Cargo L", cachedIO.cargoLeft);
         
+        SmartDashboard.putBoolean("Cargo R", cachedIO.cargoRight);
 
         SmartDashboard.putNumber("Distance L", cachedIO.distanceLeft);
         SmartDashboard.putNumber("Distance R", cachedIO.distanceRight);
@@ -107,7 +111,7 @@ public class SuperStructure extends SuperStructureBase
 
         boolean output = false;
         if(lastCargo){
-            if ((Timer.getFPGATimestamp() - cargoTimeout) >= 0.05)
+            if ((Timer.getFPGATimestamp() - cargoTimeout) >= RobotConfig.getInstance().kIntakeDistanceTimeout)
             {
                 output = true;
             }
@@ -144,6 +148,28 @@ public class SuperStructure extends SuperStructureBase
     }
     public double getCargoYaw()
     {
+    
+    @Override
+    public TestReport runFunctionalTest(){
+        TestReport report;
+        report = super.runFunctionalTest();
+
+        boolean faults = jeff.testFault();
+        boolean stickyFaults = jeff.testStickyFault();
+
+        System.out.println(String.format("Canifier is %s showing faults", (faults) ? "not" : ""));
+        System.out.println(String.format("Canifier is %s showing sticky faults", (stickyFaults) ? "not" : ""));
+        System.out.println(String.format("Hatch %s active", (cachedIO.hasHatch) ? "is" : "is not"));
+        System.out.println(String.format("Cargo left %s active", (cachedIO.cargoLeft) ? "is" : "is not"));
+        System.out.println(String.format("Cargo right %s active", (cachedIO.cargoRight) ? "is" : "is not"));
+
+        jeff.testRobotSpecificColors();
+
+        report.add(faults);
+        report.add(stickyFaults);
+
+        return report;
+    }
         return chickenVision.getEntry("cargoYaw").getDouble(0.0);
     }
     public boolean getDriveCamera()
