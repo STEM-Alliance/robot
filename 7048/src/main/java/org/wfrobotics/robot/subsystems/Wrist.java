@@ -2,6 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
+import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.wrist.WristOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
@@ -22,6 +23,9 @@ public class Wrist extends PositionBasedSubsystem
     private Wrist(PositionConfig positionConfig)
     {
         super(positionConfig);
+
+        TalonFactory.configCurrentLimiting(master, 15
+        , 25, 200);  // TODO Tune
     }
 
     protected void initDefaultCommand()

@@ -21,9 +21,9 @@ public class Robot extends EnhancedRobot
 
     protected void registerRobotSpecific()
     {
-        //subsystems.register(Elevator.getInstance());
-        //subsystems.register(Wrist.getInstance());
-        //subsystems.register(Intake.getInstance());
-        //subsystems.register(SuperStructure.getInstance());
+        subsystems.register(Elevator.getInstance());
+        subsystems.register(Wrist.getInstance());
+        subsystems.register(Intake.getInstance());
+        subsystems.register(SuperStructure.getInstance());
     }
 }

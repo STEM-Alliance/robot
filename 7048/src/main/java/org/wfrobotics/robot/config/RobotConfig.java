@@ -16,6 +16,11 @@ public class RobotConfig extends EnhancedRobotConfig
     private static RobotConfig instance = null;
 
 
+    public RobotConfig()
+    {
+        cameraStream = Optional.ofNullable(false);
+    }
+
     //                      Tank
     // _________________________________________________________________________________
 
@@ -47,7 +52,7 @@ public class RobotConfig extends EnhancedRobotConfig
         });
 
         config.GEAR_RATIO_LOW = (54.0 / 32.0);
-        config.SCRUB = 0.98;
+        config.SCRUB = 0.98; 
         config.WHEEL_DIAMETER = 6 + 3/8;
         config.WIDTH = 27.0;
 
