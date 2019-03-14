@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
+import org.wfrobotics.robot.config.FieldHeight;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 
@@ -20,15 +21,14 @@ public class SystemToLow extends ConditionalCommand
     {
         return !superStructure.getHasHatch();
     }
-
     private static class SystemToCargo extends CommandGroup
     {
         public SystemToCargo()
         {
             if (SuperStructure.getInstance().getHasCargo())
             {
-                addParallel(new ElevatorToHeight(0.0));
-                addSequential(new LinkToHeight(95.5));
+                addParallel(new ElevatorToHeight(FieldHeight.CargoLow.getE()));
+                addSequential(new LinkToHeight(FieldHeight.CargoLow.getL()));
             }
             else
             {
@@ -41,8 +41,8 @@ public class SystemToLow extends ConditionalCommand
     {
         public SystemToHatch()
         {
-                addSequential(new LinkToHeight(95.5));
-                addSequential(new ElevatorToHeight(0.0));
+                addSequential(new LinkToHeight(FieldHeight.HatchLow.getL()));
+                addSequential(new ElevatorToHeight(FieldHeight.HatchLow.getE()));
         }
     }
 }

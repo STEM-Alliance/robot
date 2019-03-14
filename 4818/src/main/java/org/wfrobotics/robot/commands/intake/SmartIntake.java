@@ -31,7 +31,7 @@ public class SmartIntake extends Command
         SmartDashboard.putBoolean("Intake Cargo mode?", intakeCargoMode);
         if (intakeCargoMode)
         {
-            intake.setCargoSpeed(1.0);
+            intake.setCargoSpeed(0.8);
         } else { intake.setCargoSpeed(0.0); }
     }
 

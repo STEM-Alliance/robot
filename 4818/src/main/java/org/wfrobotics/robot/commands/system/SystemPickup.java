@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
+import org.wfrobotics.robot.config.FieldHeight;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.commands.elevator.ElevatorGoHome;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
@@ -35,6 +36,8 @@ public class SystemPickup extends ConditionalCommand
     {
         public SystemToHatch()
         {
+            addSequential(new LinkToHeight(FieldHeight.HatchLow.getL()));
+            addSequential(new ElevatorToHeight(FieldHeight.HatchLow.getE()));
             
         }
     }

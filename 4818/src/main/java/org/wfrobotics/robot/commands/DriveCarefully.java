@@ -6,7 +6,7 @@ import org.wfrobotics.robot.subsystems.Elevator;
 
 public class DriveCarefully extends DriveCheesy
 {
-    private static final double kFast = 0.05;
+    private static final double kFast = 0.3;
     private static final double kSlow = 1.0;
     private static final double kElevatorBottom = 0.0;  // Inches
     private static final double kElevatorTop = 0.0;  // Inches
