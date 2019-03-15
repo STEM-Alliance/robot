@@ -37,11 +37,9 @@ public class Climb extends EnhancedSubsystem
         pushUP = new DoubleSolenoid(Pconfig.kAddressPCMPushUp, Pconfig.KAddressSolenoidPushUpF, Pconfig.KAddressSolenoidPushUpB);
         deployer = new DoubleSolenoid(Pconfig.kAddressPCMDeployer, Pconfig.KAddressSolenoidDeployerF, Pconfig.KAddressSolenoidDeployerB);
 
-
         setGrippers(true);
         setLockers(true);
-        setPushUp(false);
-        
+        setPushUp(false);   
     }
 
     protected void initDefaultCommand()

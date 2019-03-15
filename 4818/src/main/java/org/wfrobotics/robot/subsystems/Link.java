@@ -33,7 +33,6 @@ public class Link extends PositionBasedSubsystem
     public void reportState()
     {
         super.reportState();
-        SmartDashboard.putString("Link Command", getCurrentCommandName());
     }
 
     private static Link instance = null;
@@ -70,6 +69,42 @@ public class Link extends PositionBasedSubsystem
         SmartDashboard.putNumber("Lift FeedForward", feedforward);
         master.set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
     }
+    
+    /**
+     * Control the {@link PositionBasedSubsystem} with a <b>setpoint, with PID feedback</b>.
+     * Override if your Subsystem needs special logic to determine setpoint or gain scheduling.
+     * */
+    @Override
+    public void setClosedLoop(double positionSetpoint)
+    {
+        master.configVoltageCompSaturation(10.0);
+        
+        setMotor(ControlMode.MotionMagic, PositionToNative(positionSetpoint));
+    }
+
+    /**
+     * Control the {@link PositionBasedSubsystem} with the <b>Joystick, without PID feedback</b>.
+     * Override if your Subsystem needs special logic to determine percent.
+     */
+    @Override
+    public void setOpenLoop(double percent)
+    {
+        master.configVoltageCompSaturation(10.0);
+        setMotor(ControlMode.PercentOutput, percent);
+    }
+
+    
+    /**
+     * Control the {@link PositionBasedSubsystem} with a <b>setpoint, with PID feedback</b>.
+     * Override if your Subsystem needs special logic to determine setpoint or gain scheduling.
+     * */
+    public void holdAtHeight(double position)
+    {
+        master.configVoltageCompSaturation(4.0);
+        
+        setMotor(ControlMode.MotionMagic, PositionToNative(position));
+    }
+
     public TestReport runFunctionalTest()
     {
         TestReport report = new TestReport();

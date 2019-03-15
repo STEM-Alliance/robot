@@ -12,6 +12,7 @@ import org.wfrobotics.robot.config.RobotConfig;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -32,18 +33,21 @@ public class Intake extends EnhancedSubsystem
     private static Intake instance = null;
     private final TalonSRX motor;
     private final DoubleSolenoid grabber;
-    
-    protected CachedIO cachedIO = new CachedIO();
-
+    private Boolean hasHatch = true;
+    public Boolean getHasHatch()
+    {
+        return hasHatch;
+    }
     public Intake()
     {
         final RobotConfig config = RobotConfig.getInstance();
         final PnuaticConfig pConfig = RobotConfig.getInstance().getPnumaticConfig();
         motor = TalonFactory.makeTalon(config.kAddressTalonCargo);
+        motor.setNeutralMode(NeutralMode.Brake);
         motor.setInverted(config.kInvertTalonCargo);
         grabber = new DoubleSolenoid(pConfig.kAddressPCMPoppers, pConfig.kAddressSolenoidPoppersF, pConfig.kAddressSolenoidPoppersB);
 
-        setGrabber(false);
+        setGrabber(true);
     }
 
     protected void initDefaultCommand()
@@ -58,19 +62,19 @@ public class Intake extends EnhancedSubsystem
 
     public void reportState()
     {
-        SmartDashboard.putString("Intake Command", getCurrentCommandName());
+        // SmartDashboard.putString("Intake Command", getCurrentCommandName());
     }
 
     public void setCargoSpeed(double percent)
     {
-        SmartDashboard.putNumber("intake Speed", percent);
         motor.set(ControlMode.PercentOutput, percent);
     }
+    
     public void setGrabber(boolean out)
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
         grabber.set(desired);
-        SuperStructure.getInstance().setStoreHatch(out);
+        hasHatch = out;
     }
 
     public TestReport runFunctionalTest()
@@ -82,11 +86,5 @@ public class Intake extends EnhancedSubsystem
         report.add(TalonChecker.checkFrameRates(motor));
 
         return report;
-    }
-    
-    protected static class CachedIO
-    {
-
-    }
-    
+    }  
 }

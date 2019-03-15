@@ -4,7 +4,9 @@ import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.config.FieldHeight;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.SuperStructure;
+import org.wfrobotics.robot.commands.elevator.ElevatorGoHome;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
+import org.wfrobotics.robot.commands.elevator.IfElevatorIsAbove;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
@@ -22,19 +24,14 @@ public class SystemToLow extends ConditionalCommand
     {
         return !superStructure.getHasHatch();
     }
+
     private static class SystemToCargo extends CommandGroup
     {
         public SystemToCargo()
         {
-            if (SuperStructure.getInstance().getHasCargo())
-            {
-                addParallel(new ElevatorToHeight(FieldHeight.CargoLow.getE()));
-                addSequential(new LinkToHeight(FieldHeight.CargoLow.getL()));
-            }
-            else
-            {
-                addSequential(new SystemToHatch());
-            }
+            // addSequential(new IfElevatorIsAbove(new ElevatorToHeight(FieldHeight.CargoLow.getE() + 4.0), 10.0));
+            addSequential(new ElevatorToHeight(FieldHeight.CargoLow.getE()));
+            addSequential(new LinkToHeight(FieldHeight.CargoLow.getL()));
         }
         // public boolean isFinished()
         // {
@@ -46,8 +43,8 @@ public class SystemToLow extends ConditionalCommand
     {
         public SystemToHatch()
         {
-                addSequential(new LinkToHeight(FieldHeight.HatchLow.getL()));
-                addSequential(new ElevatorToHeight(FieldHeight.HatchLow.getE()));
+            addSequential(new ElevatorToHeight(FieldHeight.HatchLow.getE()));
+            addSequential(new LinkToHeight(FieldHeight.HatchLow.getL()));
         }
         // public boolean isFinished()
         // {

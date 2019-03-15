@@ -9,17 +9,22 @@ import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.robot.commands.climb.Hug;
+import org.wfrobotics.robot.commands.elevator.ElevatorGoHome;
 import org.wfrobotics.robot.commands.elevator.ElevatorShift;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 import org.wfrobotics.robot.commands.intake.CargoIn;
 import org.wfrobotics.robot.commands.intake.CargoOut;
+import org.wfrobotics.robot.commands.intake.IntakeHatch;
 import org.wfrobotics.robot.commands.intake.ScoreGamepiece;
 import org.wfrobotics.robot.commands.intake.ScoreHatch;
 import org.wfrobotics.robot.commands.link.LinkToHeight;
+import org.wfrobotics.robot.commands.link.LinkZero;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;
 import org.wfrobotics.robot.commands.system.SystemPickup;
+import org.wfrobotics.robot.commands.system.SystemToCargoBay;
+import org.wfrobotics.robot.commands.system.SystemToCargoBoxPickup;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -48,9 +53,9 @@ public final class IO implements EnhancedIO
     public void assignButtons()
     {
         // ---------------------- Autonomous ----------------------
-        // ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
-        // ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
-        // ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
 
         //----------------------- Climber -------------------------
         ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new Hug(true));
@@ -60,18 +65,21 @@ public final class IO implements EnhancedIO
         //        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
 
         //----------------------- Elevator ------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
 
         //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreHatch());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new TurnToHeading(90) );
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new  ElevatorGoHome(0.2, 2));
 
         ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new CargoIn() );
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
         ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new LinkToHeight(90) );
         ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(40.0));
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new LinkZero());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeHatch());
+
 
 
 
@@ -80,9 +88,11 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle()); // middle button on rocket
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new SystemToLow()); // bottem button on rocket
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new SystemPickup()); // bottem button on breakout board
-        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new ScoreGamepiece()); // middle button on breakout board
-        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  DriveDistance(2.0 * 12.0)); // top button on breakout board
+        //ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new ScoreGamepiece()); // middle button on breakout board
+        //ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  IntakeHatch()); // top button on breakout board
 
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToCargoBoxPickup()); // middle button on breakout board
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  SystemToCargoBay()); // top button on breakout board
 
 
 
