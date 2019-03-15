@@ -9,7 +9,6 @@ import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
-import org.wfrobotics.reuse.config.VisionConfig;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
 
 public class RobotConfig extends EnhancedRobotConfig
@@ -19,7 +18,8 @@ public class RobotConfig extends EnhancedRobotConfig
     // _________________________________________________________________________________
 
     // Hardware
-    public TankConfig getTankConfig() {
+    public TankConfig getTankConfig() 
+    {
         final TankConfig config = new DeepSpaceTankConfig();
 
         config.VELOCITY_MAX = 3500.0 / 2;
@@ -36,8 +36,8 @@ public class RobotConfig extends EnhancedRobotConfig
                 new MasterConfig(10, true, true, new FollowerConfig(12, false), new FollowerConfig(14, false)),
                 // Right
                 new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)), },
-                new Gains[] { new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
-                             new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 0,
+                new Gains[] { new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 100),
+                             new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 100,
                                 (int) (config.VELOCITY_MAX * TURN_SCALING), (int) (config.VELOCITY_MAX * TURN_SCALING)), });
 
         config.GEAR_RATIO_LOW = (54.0 / 32.0);
@@ -60,61 +60,63 @@ public class RobotConfig extends EnhancedRobotConfig
     // Pnumatics
     // _________________________________________________________________________________
 
-             public PnuaticConfig getPnumaticConfig()
-             {
-                 final PnuaticConfig config = new PnuaticConfig();
-                 
-                       config.kAddressPCMPoppers = 0;
-                       config.kAddressSolenoidPoppersF = 2; // HATCH
-                       config.kAddressSolenoidPoppersB = 3; // HATCH
+    public PnuaticConfig getPnumaticConfig()
+    {
+        final PnuaticConfig config = new PnuaticConfig();
+        
+            config.kAddressPCMPoppers = 0;
+            config.kAddressSolenoidPoppersF = 2; // HATCH
+            config.kAddressSolenoidPoppersB = 3; // HATCH
 
-                       config.kAddressPCMShifter = 0;
-                       config.kAddressSolenoidShifterF = 4; // SHIFTER
-                       config.kAddressSolenoidShifterB = 1; 
+            config.kAddressPCMShifter = 0;
+            config.kAddressSolenoidShifterF = 4; // SHIFTER
+            config.kAddressSolenoidShifterB = 1; 
 
-                       config.kAddressPCMGrippers = 0;
-                       config.kAddressSolenoidGrippersF = 0;
-                       config.kAddressSolenoidGrippersB = 5; 
-                       
-                       config.kAddressPCMLockers = 0;
-                       config.kAddressSolenoidLockersF = 6;
-                       config.kAddressSolenoidLockersB = 7;
+            config.kAddressPCMGrippers = 0;
+            config.kAddressSolenoidGrippersF = 0;
+            config.kAddressSolenoidGrippersB = 5; 
+            
+            config.kAddressPCMLockers = 0;
+            config.kAddressSolenoidLockersF = 6;
+            config.kAddressSolenoidLockersB = 7;
 
-                       config.kAddressPCMPushUp = 1;
-                       config.KAddressSolenoidPushUpF = 0;
-                       config.KAddressSolenoidPushUpB = 1;
+            config.kAddressPCMPushUp = 1;
+            config.KAddressSolenoidPushUpF = 0;
+            config.KAddressSolenoidPushUpB = 1;
 
-                       config.kAddressPCMDeployer = 1;
-                       config.KAddressSolenoidDeployerF = 2;
-                       config.KAddressSolenoidDeployerB = 3;
+            config.kAddressPCMDeployer = 1;
+            config.KAddressSolenoidDeployerF = 2;
+            config.KAddressSolenoidDeployerB = 3;
 
-                       config.kAddressPCMMystory = 1;
-                       config.KAddressSolenoidMystoryF = 4;
-                       config.KAddressSolenoidMystoryB = 5;
-     
-                 return config;
-             }
+            config.kAddressPCMMystory = 1;
+            config.KAddressSolenoidMystoryF = 4;
+            config.KAddressSolenoidMystoryB = 5;
+
+        return config;
+    }
+
     // Elevator
     // _________________________________________________________________________________
 
     // Hardware
-    public PositionConfig getElevatorConfig() {
-        int kTicksToTop = 137500;
-        double kLiftVelocityMaxUp = 12250.0;
+    public PositionConfig getElevatorConfig()
+    {
+        int kTicksToTop = 156624;
+        double kLiftVelocityMaxUp = 12750.0;
         int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
-        int kLiftAccelerationUp = (int) (kLiftCruiseUp * 3.50);
+        int kLiftAccelerationUp = (int) (kLiftCruiseUp * 8);
 
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift",
                 new MasterConfig[] { new MasterConfig(17, false, true, new FollowerConfig(16, true, false)) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.6, 1023.0 / kLiftVelocityMaxUp, 0,
+                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.7, 1023.0 / kLiftVelocityMaxUp, 100,
                         kLiftCruiseUp, kLiftAccelerationUp), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 68.5;
-        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kSoftwareLimitB = Optional.of(100);
         // c.kTuning = Optional.of(false);
 
@@ -131,7 +133,8 @@ public class RobotConfig extends EnhancedRobotConfig
 
     // Link
     // _________________________________________________________________________________
-    public PositionConfig getLinkConfig() {
+    public PositionConfig getLinkConfig() 
+    {
         final PositionConfig c = new PositionConfig();
 
         // good 6500
@@ -141,7 +144,7 @@ public class RobotConfig extends EnhancedRobotConfig
         int kLinkAcceleration = (int) (kLinkVelocityCruise * 4.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, true, false) },
-                new Gains[] { new Gains("Motion Magic", 0, 6.0, 0.0000, 0.04, 1023.0 / kLinkVelocityMax, 0,
+                new Gains[] { new Gains("Motion Magic", 0, 0.25, 0.0000, 0.0, 1023.0 / kLinkVelocityMax, 100,
                         kLinkVelocityCruise, kLinkAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
@@ -156,7 +159,7 @@ public class RobotConfig extends EnhancedRobotConfig
     protected RobotConfig()
     {
         cameraStream = Optional.of(true);
-        vision = Optional.of(new VisionConfig(69.0));
+        // vision = Optional.of(new VisionConfig(69.0));
     }
 
     //                      Helper Methods

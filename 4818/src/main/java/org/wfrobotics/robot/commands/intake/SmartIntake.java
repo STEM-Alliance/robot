@@ -1,6 +1,5 @@
 package org.wfrobotics.robot.commands.intake;
 
-import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Link;
 import org.wfrobotics.robot.subsystems.SuperStructure;
@@ -11,6 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SmartIntake extends Command
 {
     private final Intake intake = Intake.getInstance();
+    private final Link link = Link.getInstance();
+    private final SuperStructure superStructure = SuperStructure.getInstance();
 
     public SmartIntake()
     {
@@ -19,20 +20,29 @@ public class SmartIntake extends Command
 
     protected void execute()
     {
-        if (SuperStructure.getInstance().getHasHatch())
+        final boolean isLinkTooHigh = link.getPosition() < 10.0;
+        final boolean isLinkDown = link.getPosition() > 145.0;
+        final boolean intakeCargoMode = isLinkDown && 
+                                  !superStructure.getHasCargo() &&
+                                  !superStructure.getHasHatch();
+
+        // Set Hatch Intake
+        if (superStructure.getHasHatch() && !isLinkTooHigh)
         {
             intake.setGrabber(true);
         }
 
-        boolean intakeCargoMode = Link.getInstance().getPosition() > 125 &&
-                                  !SuperStructure.getInstance().getHasCargo() &&
-                                  !SuperStructure.getInstance().getHasHatch();
-
-        SmartDashboard.putBoolean("Intake Cargo mode?", intakeCargoMode);
+        // Set Cargo Intake
         if (intakeCargoMode)
         {
             intake.setCargoSpeed(0.8);
-        } else { intake.setCargoSpeed(0.0); }
+        }
+        else 
+        {
+            intake.setCargoSpeed(0.0);
+        }
+        
+        // SmartDashboard.putBoolean("Intake Cargo mode?", intakeCargoMode);
     }
 
     protected boolean isFinished()

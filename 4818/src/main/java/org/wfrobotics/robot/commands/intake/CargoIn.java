@@ -18,15 +18,16 @@ public class CargoIn extends Command
 
     protected void initialize()
     {
-        intake.setCargoSpeed(0.8);
+        intake.setCargoSpeed(1.0);
     }
+
     protected void end()
     {
         intake.setCargoSpeed(0.0);
     }
+    
     protected boolean isFinished()
     {
-        return isCanceled() || isTimedOut() || Link.getInstance().getPosition() > 90 || SuperStructure.getInstance().getHasCargo();
-        // return isCanceled() || isTimedOut() || SuperStructure.getInstance().getHasCargo();
+        return isTimedOut() ||  SuperStructure.getInstance().getHasCargo();
     }
 }

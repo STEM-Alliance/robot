@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LinkOpenLoop extends Command
 {
+    private static final double kHoldTimeStart = 0.5;  // seconds
+    private static final double kOperatorPresent = 0.05;  // percent output
+
     //    private final RobotState state = RobotState.getInstance();
     private final Link link = Link.getInstance();
     private final IO io = IO.getInstance();
@@ -24,7 +27,7 @@ public class LinkOpenLoop extends Command
     private double lastHeight = 0;
     private boolean lastHeightValid;
 
-    protected void init()
+    protected void initialize()
     {   
         lastHeightValid = false;
         lastHeight = link.getPosition();
@@ -36,42 +39,59 @@ public class LinkOpenLoop extends Command
 
         if (!inAuto)  // TODO ConditionalCommand cancels requirements
         {
-            final double speed = io.getLinkUp() - io.getLinkDown();
+            final double linkHeight = link.getPosition();
+            double speed = io.getLinkUp() - io.getLinkDown();
+            boolean inOpenLoop = true;
+            String mode = "open";
             
-            
-            if(Math.abs(speed) > .05)
+            if(Math.abs(speed) > kOperatorPresent)
+            {
+                inOpenLoop = true;
+
+                if (linkHeight < 4.0)
+                {
+                    // TODO slow down if near top and maybe bottom
+                    speed /= 2.0;
+                }
+                
+                resetHoldTimer();
+            }
+            else if((Timer.getFPGATimestamp() - holdTimer > kHoldTimeStart) && !lastHeightValid)
+            {
+                inOpenLoop = false;
+                mode = "save";
+
+                lastHeight = linkHeight;
+                lastHeightValid = true;
+            }
+            else if(lastHeightValid)
+            {
+                inOpenLoop = false;
+                mode = "hold";
+            }
+
+            if (inOpenLoop)
             {
                 link.setOpenLoop(speed);
-                SmartDashboard.putString("Link Open Mode", "open");
-
-                { 
-                    holdTimer = Timer.getFPGATimestamp();
-                    lastHeightValid = false;
-                }
-            }
-            else if((Timer.getFPGATimestamp() - holdTimer > .75) && !lastHeightValid)
-            {
-                lastHeight = link.getPosition();
-                lastHeightValid = true;
-                link.holdAtHeight(lastHeight);
-                SmartDashboard.putString("Link Open Mode", "save");
-            }
-            else if(lastHeightValid) {
-                link.holdAtHeight(lastHeight);
-                SmartDashboard.putString("Link Open Mode", "hold");
             }
             else
             {
-                link.setOpenLoop(speed);
+                link.holdAtHeight(lastHeight);
             }
 
-            SmartDashboard.putNumber("Link Hold", lastHeight);
-            SmartDashboard.putString("Link Open Mode", "open");
+            // SmartDashboard.putString("Link Open Mode", mode);
+            // SmartDashboard.putNumber("Link Hold", lastHeight);
         }
     }
 
     protected boolean isFinished()
     {
         return false;
+    }
+
+    private void resetHoldTimer()
+    {
+        holdTimer = Timer.getFPGATimestamp();
+        lastHeightValid = false;
     }
 }

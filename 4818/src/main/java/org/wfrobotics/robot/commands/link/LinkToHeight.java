@@ -42,14 +42,9 @@ public class LinkToHeight extends Command
     {
         final boolean slowEnough = Math.abs(link.getVelocityNative()) < 5.0;
         final boolean isClose = Math.abs(link.getPosition() - desired) < 2.0;
-        SmartDashboard.putBoolean("LinkToHeight IsClose", isClose);
-        SmartDashboard.putBoolean("LinkToHeight slowEnough", isClose);
-        SmartDashboard.putNumber("LinkToHeight IsClose Distance", link.getPosition() - desired);
+        // SmartDashboard.putBoolean("LinkToHeight IsClose", isClose);
+        // SmartDashboard.putBoolean("LinkToHeight slowEnough", isClose);
+        // SmartDashboard.putNumber("LinkToHeight IsClose Distance", link.getPosition() - desired);
         return (isClose && slowEnough) || io.isLinkOverrideRequested() || isTimedOut();
-    }
-
-    protected void end()
-    {
-        link.setOpenLoop(0.0);
     }
 }
