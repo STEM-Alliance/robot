@@ -117,7 +117,6 @@ public class RobotConfig extends EnhancedRobotConfig
         // c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kSoftwareLimitB = Optional.of(100);
         // c.kTuning = Optional.of(false);
-        c.kFeedForward = Optional.of(.5);
 
         return c;
     }
