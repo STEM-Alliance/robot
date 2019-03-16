@@ -18,6 +18,7 @@ import org.wfrobotics.robot.commands.intake.IntakeHatch;
 import org.wfrobotics.robot.commands.intake.IntakeHatchManual;
 import org.wfrobotics.robot.commands.intake.ScoreGamepiece;
 import org.wfrobotics.robot.commands.intake.ScoreHatch;
+import org.wfrobotics.robot.commands.intake.SmartHatch;
 import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.commands.link.LinkZero;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
@@ -28,7 +29,6 @@ import org.wfrobotics.robot.commands.system.SystemToCargoBay;
 import org.wfrobotics.robot.commands.system.SystemToCargoBoxPickup;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 
 /** Maps controllers to Commands **/
@@ -81,6 +81,9 @@ public final class IO implements EnhancedIO
         // ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new LinkZero());
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeHatch());
         ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new IntakeHatchManual(false));
+
+        // Testing
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new SmartHatch());
 
 
 
@@ -156,12 +159,12 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return (driverTurn.getRawAxis(0) * 0.8);
+        return (driverTurn.getRawAxis(0) * 0.5);
     }
 
     public boolean getDriveQuickTurn()
     {
-        return Math.abs(getThrottle()) < 0.8;
+        return Math.abs(getThrottle()) < 0.5;
     }
 
     public boolean isDriveOverrideRequested()
