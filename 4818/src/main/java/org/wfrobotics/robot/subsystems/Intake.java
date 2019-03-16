@@ -34,9 +34,15 @@ public class Intake extends EnhancedSubsystem
     private final TalonSRX motor;
     private final DoubleSolenoid grabber;
     private Boolean hasHatch = true;
+
     public Boolean getHasHatch()
     {
-        return hasHatch;
+        boolean out  = false;
+        if (SuperStructure.getInstance().getUltraDistance() <= 11)
+        {
+            out = true;
+        }
+        return out;
     }
     public Intake()
     {
@@ -74,7 +80,6 @@ public class Intake extends EnhancedSubsystem
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
         grabber.set(desired);
-        hasHatch = out;
     }
 
     public TestReport runFunctionalTest()

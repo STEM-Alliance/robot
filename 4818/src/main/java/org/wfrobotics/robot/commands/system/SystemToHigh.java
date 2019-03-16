@@ -2,7 +2,6 @@ package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.config.FieldHeight;
-import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 
@@ -20,7 +19,7 @@ public class SystemToHigh extends ConditionalCommand
 
     protected boolean condition()
     {
-        return !superStructure.getHasHatch();
+        return superStructure.getHasCargo();
     }
 
     private static class SystemToCargo extends CommandGroup

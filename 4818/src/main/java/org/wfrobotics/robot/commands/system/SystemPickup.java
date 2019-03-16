@@ -2,9 +2,7 @@ package org.wfrobotics.robot.commands.system;
 
 import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.config.FieldHeight;
-import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.SuperStructure;
-import org.wfrobotics.robot.commands.elevator.ElevatorGoHome;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -16,12 +14,12 @@ public class SystemPickup extends ConditionalCommand
 
     public SystemPickup()
     {
-        super(new SystemToHatch(), new SystemToCargo());
+        super(new SystemToCargo(),new SystemToHatch());
     }
 
     protected boolean condition()
     {
-        return !superStructure.getHasHatch();
+        return !superStructure.getHasCargo();
     }
 
     private static class SystemToCargo extends CommandGroup

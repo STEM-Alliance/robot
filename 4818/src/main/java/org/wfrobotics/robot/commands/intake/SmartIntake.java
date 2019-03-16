@@ -5,7 +5,6 @@ import org.wfrobotics.robot.subsystems.Link;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SmartIntake extends Command
 {
@@ -27,8 +26,8 @@ public class SmartIntake extends Command
                                   !superStructure.getHasHatch();
 
         // Set Hatch Intake
-        if (superStructure.getHasHatch() && !isLinkTooHigh)
         {
+            //if (superStructure.getHasHatch() && !isLinkTooHigh)
             intake.setGrabber(true);
         }
 
