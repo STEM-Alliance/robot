@@ -10,6 +10,7 @@ import org.wfrobotics.robot.commands.ConserveCompressor;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SuperStructure extends SuperStructureBase
@@ -31,10 +32,19 @@ public class SuperStructure extends SuperStructureBase
     private final CircularBuffer cargoBuffer = new CircularBuffer(3);
     private final CircularBuffer hatchBuffer = new CircularBuffer(3);
 
+    public AnalogInput ultra3;
+
+
     public SuperStructure()
     {
         cargoBuffer.addFirst(kSensorOff);
         hatchBuffer.addFirst(kSensorOff);
+        ultra3 = new AnalogInput(3);
+    }
+    public double getUltraDistance()
+    {
+        double m_conversionToInches = 1000.0 / .977 / 25.4;
+        return (ultra3.getVoltage() *m_conversionToInches);
     }
 
     protected void initDefaultCommand()
@@ -50,6 +60,7 @@ public class SuperStructure extends SuperStructureBase
 
         hatchBuffer.addFirst((hatch) ? kSensorOn : kSensorOff);
         cargoBuffer.addFirst((cargoRight || cargoLeft) ? kSensorOn : kSensorOff);
+        
     }
 
     public void reportState()
@@ -57,6 +68,9 @@ public class SuperStructure extends SuperStructureBase
         SmartDashboard.putBoolean("Cargo", getHasCargo());
         SmartDashboard.putBoolean("Hatch", getHasHatch());
 
+        SmartDashboard.putNumber("Ultra3 value", getUltraDistance() );
+
+        
         // SmartDashboard.putNumber("Tape Vision Angle", getTapeYaw());
         // SmartDashboard.putBoolean("Tape In view", getTapeInView());
     }
@@ -68,7 +82,8 @@ public class SuperStructure extends SuperStructureBase
 
     public boolean getHasHatch()
     {
-        return (hatchBuffer.getAverage() >= .75) || Intake.getInstance().getHasHatch();
+        // return (hatchBuffer.getAverage() >= .75) || Intake.getInstance().getHasHatch();
+        return false;
     }
 
     public Canifier getJeff()
