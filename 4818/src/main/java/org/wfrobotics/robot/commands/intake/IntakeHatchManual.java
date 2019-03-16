@@ -19,6 +19,7 @@ public class IntakeHatchManual extends Command
     protected void initialize()
     {
         intake.setGrabber(setValue);
+        intake.setCargoSpeed(0.0);
     }
 
     protected void end()

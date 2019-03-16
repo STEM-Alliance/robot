@@ -41,6 +41,7 @@ public class SuperStructure extends SuperStructureBase
         hatchBuffer.addFirst(kSensorOff);
         ultra3 = new AnalogInput(3);
     }
+
     public double getUltraDistance()
     {
         double m_conversionToInches = 1000.0 / .977 / 25.4;
@@ -54,13 +55,12 @@ public class SuperStructure extends SuperStructureBase
     
     public void cacheSensors(boolean isDisabled)
     {
-        final boolean hatch = jeff.getLimitSwitchF();
+        final boolean hatch = getUltraDistance() < 12.0;
         final boolean cargoLeft = jeff.getPWM0();
         final boolean cargoRight = jeff.getPWM1();
 
         hatchBuffer.addFirst((hatch) ? kSensorOn : kSensorOff);
-        cargoBuffer.addFirst((cargoRight || cargoLeft) ? kSensorOn : kSensorOff);
-        
+        cargoBuffer.addFirst((cargoRight || cargoLeft) ? kSensorOn : kSensorOff);        
     }
 
     public void reportState()
@@ -82,8 +82,8 @@ public class SuperStructure extends SuperStructureBase
 
     public boolean getHasHatch()
     {
-        // return (hatchBuffer.getAverage() >= .75) || Intake.getInstance().getHasHatch();
-        return false;
+        return hatchBuffer.getAverage() >= .75;
+        //return false;
     }
 
     public Canifier getJeff()

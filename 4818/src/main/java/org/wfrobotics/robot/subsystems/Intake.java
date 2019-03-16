@@ -38,7 +38,7 @@ public class Intake extends EnhancedSubsystem
     public Boolean getHasHatch()
     {
         boolean out  = false;
-        if (SuperStructure.getInstance().getUltraDistance() <= 11)
+        if (SuperStructure.getInstance().getUltraDistance() <= 12)
         {
             out = true;
         }
