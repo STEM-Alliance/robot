@@ -158,7 +158,7 @@ public class RobotConfig extends EnhancedRobotConfig
     // Constructor
     protected RobotConfig()
     {
-        cameraStream = Optional.of(true);
+        cameraStream = Optional.of(false);
         // vision = Optional.of(new VisionConfig(69.0));
     }
 
