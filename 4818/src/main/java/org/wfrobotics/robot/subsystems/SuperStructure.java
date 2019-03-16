@@ -2,7 +2,6 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.Canifier;
 import org.wfrobotics.reuse.hardware.Canifier.RGB;
-import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.robot.commands.ConserveCompressor;
@@ -25,27 +24,27 @@ public class SuperStructure extends SuperStructureBase
         return SingletonHolder.instance;
     }    
 
-    private final double kSensorOff = 0.0;
-    private final double kSensorOn = 1.0;
+    private static final double kCargoInPercent = 0.75;
+    private static final double kHatchInInches = 12.0;
+    private static final double kSensorOff = 0.0;
+    private static final double kSensorOn = 1.0;
 
     private final Canifier jeff = new Canifier(6, new RGB(255, 255, 0));
+    private final AnalogInput ultra3;
     private final CircularBuffer cargoBuffer = new CircularBuffer(3);
     private final CircularBuffer hatchBuffer = new CircularBuffer(3);
 
-    public AnalogInput ultra3;
-
-
     public SuperStructure()
     {
+        ultra3 = new AnalogInput(3);
+
         cargoBuffer.addFirst(kSensorOff);
         hatchBuffer.addFirst(kSensorOff);
-        ultra3 = new AnalogInput(3);
     }
 
     public double getUltraDistance()
     {
-        double m_conversionToInches = 1000.0 / .977 / 25.4;
-        return (ultra3.getVoltage() *m_conversionToInches);
+        return hatchBuffer.getAverage();
     }
 
     protected void initDefaultCommand()
@@ -55,11 +54,11 @@ public class SuperStructure extends SuperStructureBase
     
     public void cacheSensors(boolean isDisabled)
     {
-        final boolean hatch = getUltraDistance() < 12.0;
+        final double hatchDistance = getUltraDistanceRaw();
         final boolean cargoLeft = jeff.getPWM0();
         final boolean cargoRight = jeff.getPWM1();
 
-        hatchBuffer.addFirst((hatch) ? kSensorOn : kSensorOff);
+        hatchBuffer.addFirst(hatchDistance);
         cargoBuffer.addFirst((cargoRight || cargoLeft) ? kSensorOn : kSensorOff);        
     }
 
@@ -77,18 +76,23 @@ public class SuperStructure extends SuperStructureBase
     
     public boolean getHasCargo()
     {
-        return cargoBuffer.getAverage() >= .75;
+        return cargoBuffer.getAverage() >= kCargoInPercent;
     }
 
     public boolean getHasHatch()
     {
-        return hatchBuffer.getAverage() >= .75;
-        //return false;
+        return hatchBuffer.getAverage() < kHatchInInches;
     }
 
     public Canifier getJeff()
     {
         return jeff;
+    }
+
+    public double getUltraDistanceRaw()
+    {
+        double m_conversionToInches = 1000.0 / .977 / 25.4;
+        return (ultra3.getVoltage() *m_conversionToInches);
     }
     
     @Override
@@ -112,16 +116,19 @@ public class SuperStructure extends SuperStructureBase
 
         return report;
     }
+
     public double getDistanceFromWall()
     {
         return 0.0;
     }
+
     public double getAngleFromWall( )
     {
         return 0.0;   
     }
-    NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
-    NetworkTable chickenVision = netInstance.getTable("ChickenVision");
+
+    final NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
+    final NetworkTable chickenVision = netInstance.getTable("ChickenVision");
 
     private boolean driverVision, 
                     tapeVision, 

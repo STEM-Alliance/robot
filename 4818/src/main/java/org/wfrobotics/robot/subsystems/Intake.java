@@ -33,7 +33,7 @@ public class Intake extends EnhancedSubsystem
     private static Intake instance = null;
     private final TalonSRX motor;
     private final DoubleSolenoid grabber;
-    private Boolean hasHatch = true;
+    private Boolean isGrabbersExtended = true;
 
     public Boolean getHasHatch()
     {
@@ -68,7 +68,7 @@ public class Intake extends EnhancedSubsystem
 
     public void reportState()
     {
-        // SmartDashboard.putString("Intake Command", getCurrentCommandName());
+        SmartDashboard.putString("Intake Command", getCurrentCommandName());
     }
 
     public void setCargoSpeed(double percent)
@@ -80,6 +80,12 @@ public class Intake extends EnhancedSubsystem
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
         grabber.set(desired);
+        isGrabbersExtended = out;
+    }
+
+    public boolean getGrabbersExtended()
+    {
+        return isGrabbersExtended;
     }
 
     public TestReport runFunctionalTest()
