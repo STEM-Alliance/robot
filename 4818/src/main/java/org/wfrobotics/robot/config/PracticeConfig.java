@@ -90,15 +90,15 @@ public final class PracticeConfig extends RobotConfig {
     // Hardware
     public PositionConfig getElevatorConfig() {
         int kTicksToTop = 137500;
-        double kLiftVelocityMaxUp = 12250.0;
-        int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
+        double kLiftVelocityMax = 12250.0;
+        int kLiftCruiseUp = (int) (kLiftVelocityMax * 0.975);
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 3.50);
 
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift",
                 new MasterConfig[] { new MasterConfig(17, false, true, new FollowerConfig(16, true, false)) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.6, 1023.0 / kLiftVelocityMaxUp, 0,
+                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.6, 1023.0 / kLiftVelocityMax, 0,
                         kLiftCruiseUp, kLiftAccelerationUp), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;

@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.drive;
 
 import org.wfrobotics.reuse.commands.drive.DriveOpenLoop;
 import org.wfrobotics.robot.commands.intake.ScoreGamepiece;

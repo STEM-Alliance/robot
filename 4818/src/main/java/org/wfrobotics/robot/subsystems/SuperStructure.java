@@ -26,20 +26,15 @@ public class SuperStructure extends SuperStructureBase
 
     private static final double kCargoInPercent = 0.75;
     private static final double kHatchInInches = 12.0;
-    private static final double kSensorOff = 0.0;
-    private static final double kSensorOn = 1.0;
 
     private final Canifier jeff = new Canifier(6, new RGB(255, 255, 0));
     private final AnalogInput ultra3;
-    private final CircularBuffer cargoBuffer = new CircularBuffer(3);
-    private final CircularBuffer hatchBuffer = new CircularBuffer(3);
+    private final CircularBuffer cargoBuffer = new CircularBuffer(3, false);
+    private final CircularBuffer hatchBuffer = new CircularBuffer(3, false);
 
     public SuperStructure()
     {
         ultra3 = new AnalogInput(3);
-
-        cargoBuffer.addFirst(kSensorOff);
-        hatchBuffer.addFirst(kSensorOff);
     }
 
     public double getUltraDistance()
@@ -59,7 +54,7 @@ public class SuperStructure extends SuperStructureBase
         final boolean cargoRight = jeff.getPWM1();
 
         hatchBuffer.addFirst(hatchDistance);
-        cargoBuffer.addFirst((cargoRight || cargoLeft) ? kSensorOn : kSensorOff);        
+        cargoBuffer.addFirst(cargoRight || cargoLeft);        
     }
 
     public void reportState()
