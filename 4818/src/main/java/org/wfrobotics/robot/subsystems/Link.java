@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
@@ -9,12 +9,8 @@ import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.link.LinkZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * The wrist consists of a BAG motor to rotate the intake
- * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
- */
+/** @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead */
 public class Link extends PositionBasedSubsystem
 {
     public static Link getInstance()
@@ -26,41 +22,21 @@ public class Link extends PositionBasedSubsystem
         return instance;
     }
 
-    private static final double kFeedForwardHasLink = 0.0;  // Practice bot
-
     private static Link instance = null;
     private Link(PositionConfig positionConfig)
     {
         super(positionConfig);
 
-        //        master.setSelectedSensorPosition(kTicksToTop, 0, 100);  // Start able to always reach limit switch
         master.configOpenloopRamp(0.5, 100);
-        
-        //        TalonFactory.configCurrentLimiting(master, 20, 40, 200);  // Adding with high numbers just in case
-        //        master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, wrist responsiveness not critical
-        //        master.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20, 100);  // Slow down, doesn't make decisions off this
-        //        // TODO Try configAllowableClosedloopError()
-        // TODO Try using Status_10_MotionMagic to improve motion?
-
-        //        stallSensor = new StallSense(master, 25.0, 0.1);
-
+        master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, responsiveness not critical
         TalonFactory.configCurrentLimiting(master, 15, 25, 30);
+
+        // TODO Try using Status_10_MotionMagic to improve motion?
     }
 
     protected void initDefaultCommand()
     {
         setDefaultCommand(new LinkZeroThenOpenLoop());
-    }
-
-    @Override
-    protected void setMotor(ControlMode mode, double val)
-    {
-        final boolean hasGamePiece = true;  // TODO get from intake
-        final double antigravity = kFeedForwardHasLink;
-        final double feedforward = (getPosition() < kFullRangeInchesOrDegrees || mode == ControlMode.MotionMagic) ? antigravity : 0.0;
-
-        SmartDashboard.putNumber("Lift FeedForward", feedforward);
-        master.set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
     }
     
     /**
@@ -71,7 +47,6 @@ public class Link extends PositionBasedSubsystem
     public void setClosedLoop(double positionSetpoint)
     {
         master.configVoltageCompSaturation(10.0);
-        
         setMotor(ControlMode.MotionMagic, PositionToNative(positionSetpoint));
     }
 
@@ -93,7 +68,6 @@ public class Link extends PositionBasedSubsystem
     public void holdAtHeight(double position)
     {
         master.configVoltageCompSaturation(4.0);
-        
         setMotor(ControlMode.MotionMagic, PositionToNative(position));
     }
 
@@ -112,4 +86,3 @@ public class Link extends PositionBasedSubsystem
         return report;
     }
 }
-

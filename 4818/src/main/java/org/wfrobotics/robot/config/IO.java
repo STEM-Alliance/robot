@@ -20,7 +20,6 @@ import org.wfrobotics.robot.commands.intake.ScoreGamepiece;
 import org.wfrobotics.robot.commands.intake.ScoreHatch;
 import org.wfrobotics.robot.commands.intake.SmartHatch;
 import org.wfrobotics.robot.commands.link.LinkToHeight;
-import org.wfrobotics.robot.commands.link.LinkZero;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;

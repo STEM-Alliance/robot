@@ -3,10 +3,8 @@ package org.wfrobotics.robot.commands.drive;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.EnhancedRobot;
-import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.robot.subsystems.SuperStructure;
-import org.wfrobotics.reuse.RobotStateBase;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -48,7 +46,7 @@ public class TurnToTarget extends Command
             */
            if (state.getTapeInView())
            {
-               if ( Math.abs(robotstate.robotHeading() - state.getTapeYaw()) < tol)
+               if ( Math.abs(drive.getGryo() - state.getTapeYaw()) < tol)
                {
                    return true;
                }
@@ -64,7 +62,7 @@ public class TurnToTarget extends Command
 
     private void doTurn()
     {
-        double angle = robotstate.robotHeading() + state.getTapeYaw();
+        double angle = drive.getGryo() + state.getTapeYaw();
         SmartDashboard.putNumber("Vision Heading", angle);
         drive.turnToHeading(angle);
     }
