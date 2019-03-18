@@ -7,11 +7,9 @@ import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.robot.commands.link.LinkOpenLoop;
 import org.wfrobotics.robot.commands.link.LinkZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 
 /**
  * The wrist consists of a BAG motor to rotate the intake
@@ -19,8 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Link extends PositionBasedSubsystem
 {
-    private static final double kFeedForwardHasLink = 0;  // Practice bot
-
     public static Link getInstance()
     {
         if (instance == null)
@@ -29,11 +25,8 @@ public class Link extends PositionBasedSubsystem
         }
         return instance;
     }
-    
-    public void reportState()
-    {
-        super.reportState();
-    }
+
+    private static final double kFeedForwardHasLink = 0.0;  // Practice bot
 
     private static Link instance = null;
     private Link(PositionConfig positionConfig)
@@ -57,8 +50,8 @@ public class Link extends PositionBasedSubsystem
     protected void initDefaultCommand()
     {
         setDefaultCommand(new LinkZeroThenOpenLoop());
-        // setDefaultCommand(new LinkZeroThenOpenLoop());
     }
+
     @Override
     protected void setMotor(ControlMode mode, double val)
     {
@@ -92,7 +85,6 @@ public class Link extends PositionBasedSubsystem
         master.configVoltageCompSaturation(10.0);
         setMotor(ControlMode.PercentOutput, percent);
     }
-
     
     /**
      * Control the {@link PositionBasedSubsystem} with a <b>setpoint, with PID feedback</b>.

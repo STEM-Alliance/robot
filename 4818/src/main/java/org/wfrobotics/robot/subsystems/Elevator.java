@@ -40,6 +40,7 @@ public class Elevator extends PositionBasedSubsystem
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
 
     private static Elevator instance = null;
+    private final SuperStructure superStructure;
     private final DoubleSolenoid shifter;
 
     private Elevator(PositionConfig positionConfig)
@@ -62,6 +63,7 @@ public class Elevator extends PositionBasedSubsystem
         }
 
         shifter = new DoubleSolenoid(pConfig.kAddressPCMShifter, pConfig.kAddressSolenoidShifterF, pConfig.kAddressSolenoidShifterB);
+        superStructure = SuperStructure.getInstance();
 
         setShifter(false);
     }
@@ -103,7 +105,7 @@ public class Elevator extends PositionBasedSubsystem
     @Override
     protected void setMotor(ControlMode mode, double val)
     {
-        final boolean hasGamePiece = true;  // TODO get from intake
+        final boolean hasGamePiece = superStructure.getHasCargo();
         final double antigravity= (hasGamePiece) ? kFeedForwardHasCargo : kFeedForwardNoCargo;
         final double feedforward = (getPosition() > kInchesGroundToZero || mode == ControlMode.MotionMagic) ? antigravity : 0.0;
 
@@ -115,14 +117,15 @@ public class Elevator extends PositionBasedSubsystem
         Value desired = (liftNotClimb) ? Value.kForward : Value.kReverse;
         shifter.set(desired);
         
-        if (liftNotClimb)
-        {
-        	master.overrideLimitSwitchesEnable(true);
-        }
-        else
-        {
-        	master.overrideLimitSwitchesEnable(false);
-        }
+        // DRL - This was causing bottom limit switch not to stop motor
+        // if (liftNotClimb)
+        // {
+        // 	master.overrideLimitSwitchesEnable(true);
+        // }
+        // else
+        // {
+        // 	master.overrideLimitSwitchesEnable(false);
+        // }
     }
 
     private boolean allFollowersAreTalons()

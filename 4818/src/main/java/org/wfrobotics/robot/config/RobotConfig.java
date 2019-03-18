@@ -48,7 +48,8 @@ public class RobotConfig extends EnhancedRobotConfig
         return config;
     }
 
-    public class DeepSpaceTankConfig extends TankConfig {
+    public class DeepSpaceTankConfig extends TankConfig
+    {
         // @Override
         // public Command getTeleopCommand()
         // {
@@ -102,15 +103,15 @@ public class RobotConfig extends EnhancedRobotConfig
     public PositionConfig getElevatorConfig()
     {
         int kTicksToTop = 156624;
-        double kLiftVelocityMaxUp = 12750.0;
-        int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
+        double kLiftVelocityMax = 12750.0;
+        int kLiftCruiseUp = (int) (kLiftVelocityMax * 0.975);
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 8);
 
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift",
                 new MasterConfig[] { new MasterConfig(17, false, true, new FollowerConfig(16, true, false)) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.7, 1023.0 / kLiftVelocityMaxUp, 100,
+                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.7, 1023.0 / kLiftVelocityMax, 100,
                         kLiftCruiseUp, kLiftAccelerationUp), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
@@ -118,6 +119,7 @@ public class RobotConfig extends EnhancedRobotConfig
         c.kFullRangeInchesOrDegrees = 68.5;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kSoftwareLimitB = Optional.of(100);
+        // c.kFeedForward = 0.0;
         // c.kTuning = Optional.of(false);
 
         return c;
@@ -151,6 +153,7 @@ public class RobotConfig extends EnhancedRobotConfig
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 100.0;
         // c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        // c.kFeedForward = 0.0;
         // c.kTuning = Optional.of(true);
         return c;
     }
@@ -170,8 +173,8 @@ public class RobotConfig extends EnhancedRobotConfig
         if (instance == null)
         {
             instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] {
-                new RobotConfig(),     // Competition robot
-                // new PracticeConfig(),  // Practice robot difference
+                // new RobotConfig(),     // Competition robot
+                new PracticeConfig(),  // Practice robot difference
             });
         }
         return instance;

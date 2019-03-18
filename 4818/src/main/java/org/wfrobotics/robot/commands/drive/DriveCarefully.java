@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands;
+package org.wfrobotics.robot.commands.drive;
 
 import org.wfrobotics.reuse.commands.drive.DriveCheesy;
 import org.wfrobotics.reuse.math.Util;
