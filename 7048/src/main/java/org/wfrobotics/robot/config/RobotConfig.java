@@ -30,7 +30,6 @@ public class RobotConfig extends EnhancedRobotConfig
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
 		config.OPEN_LOOP_RAMP = 1.0; // how fast do you acellerate
-        config.OPEN_LOOP_PEAK_PERCENT = .75;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
