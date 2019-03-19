@@ -34,10 +34,10 @@ public final class IO implements EnhancedIO
     public void assignButtons()
     {
         // ---------------------- Autonomous ----------------------
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON7, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON8, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
 
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_BOTTOM_LEFT, TRIGGER.WHEN_PRESSED, new DriveToTarget());
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON4, TRIGGER.WHEN_PRESSED, new DriveToTarget());
 
         //----------------------- Elevator ------------------------
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchHigh.get()));
