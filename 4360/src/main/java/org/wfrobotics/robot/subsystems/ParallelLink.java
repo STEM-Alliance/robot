@@ -9,6 +9,7 @@ import org.wfrobotics.robot.commands.StopParallelLink;
 import org.wfrobotics.robot.subsystems.IntakeMotor.SingletonHolder;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -34,7 +35,8 @@ public class ParallelLink extends EnhancedSubsystem {
     public VictorSPX LinkMotor1;
     public ParallelLink()
     {
-    	LinkMotor1 = new VictorSPX(16);
+		LinkMotor1 = new VictorSPX(20);
+		LinkMotor1.setNeutralMode(NeutralMode.Coast);
     	
     	
     }
