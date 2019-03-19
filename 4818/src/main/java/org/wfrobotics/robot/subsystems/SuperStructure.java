@@ -5,6 +5,7 @@ import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.robot.commands.ConserveCompressor;
+import org.wfrobotics.robot.config.RobotConfig;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -34,7 +35,9 @@ public class SuperStructure extends SuperStructureBase
 
     public SuperStructure()
     {
-        ultra3 = new AnalogInput(3);
+        final RobotConfig config = RobotConfig.getInstance();
+        
+        ultra3 = new AnalogInput(config.kAddressUltrasonic);
     }
 
     public double getUltraDistance()

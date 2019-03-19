@@ -11,10 +11,6 @@ public class PnuaticConfig
         public  int kAddressPCMPushUp;
         public  int kAddressPCMDeployer;
         public  int kAddressPCMMystory;
-
-
-
-
     
         // intake
         public  int kAddressSolenoidPoppersF;
