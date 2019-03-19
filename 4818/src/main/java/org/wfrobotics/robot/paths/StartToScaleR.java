@@ -8,7 +8,7 @@ import org.wfrobotics.reuse.config.PathContainer;
 import org.wfrobotics.reuse.math.geometry.Pose2d;
 import org.wfrobotics.reuse.math.geometry.Rotation2d;
 import org.wfrobotics.reuse.math.geometry.Translation2d;
-import org.wfrobotics.reuse.subsystems.control.Path;
+import org.wfrobotics.reuse.subsystems.drive.Path;
 import org.wfrobotics.reuse.subsystems.drive.TankMaths;
 
 public class StartToScaleR implements PathContainer {

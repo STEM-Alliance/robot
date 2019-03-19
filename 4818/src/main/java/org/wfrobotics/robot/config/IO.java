@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.SignalHumanPlayer;
-import org.wfrobotics.reuse.commands.drive.DriveToTarget;
 import org.wfrobotics.reuse.commands.drive.TurnToHeading;
 import org.wfrobotics.reuse.commands.drive.TurnToTarget;
 import org.wfrobotics.reuse.config.AutoFactory;
@@ -12,6 +11,7 @@ import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.config.Xbox.DPAD;
 import org.wfrobotics.robot.commands.AutoLiftToScale;
+import org.wfrobotics.robot.commands.DriveToTarget;
 import org.wfrobotics.robot.commands.intake.IntakeManual;
 import org.wfrobotics.robot.commands.intake.JawsToggle;
 import org.wfrobotics.robot.commands.intake.SmartOutake;
@@ -40,14 +40,25 @@ public final class IO implements EnhancedIO
     public void assignButtons()
     {
         // ---------------------- Autonomous ----------------------
-
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_TOP_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_BOTTOM_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
+        // THUMB_TOP_RIGHT(1),
+        // THUMB_BOTTOM_RIGHT(2),
+        // THUMB_TOP_LEFT(3),
+        // THUMB_BOTTOM_LEFT(4),
+        // TRIGGER(5),
+        // THUMB_SIDE(6),
+        // BASE_TOP_RIGHT(7),
+        // BASE_MIDDLE_RIGHT(8),
+        // BASE_BOTTOM_RIGHT(9),
+        // BASE_TOP_LEFT(10),
+        // BASE_MIDDLE_LEFT(11),
+        // BASE_BOTTOM_LEFT(12);
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON7, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON8, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON9, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
 
         // ------------------------- Drive ------------------------
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_LEFT, TRIGGER.WHILE_HELD, new TurnToTarget());
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON1, TRIGGER.WHILE_HELD, new DriveToTarget());
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON3, TRIGGER.WHILE_HELD, new TurnToTarget());
 
         // ------------------------ Intake ------------------------
 
@@ -72,7 +83,7 @@ public final class IO implements EnhancedIO
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new DrivePathTest(17.0 * 12.0, 0.0 * 12.0));
         ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new VisionScore());
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ModeOppisitScalse());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(130.0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TurnToHeading(90.0));
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new TuningTrajectory());
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.TOGGLE_WHEN_PRESSED, new BlinkInArea(60.0, 36.0, 36.0, 60.0));
         //        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new CharacterizeDrivetrain());

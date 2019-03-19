@@ -6,18 +6,12 @@ import java.util.List;
 import org.wfrobotics.reuse.RobotStateBase;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 import org.wfrobotics.reuse.subsystems.vision.CoprocessorData.VisionTargetInfo;
-import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.reuse.subsystems.vision.Point;
 
 /** Provider of global, formatted state about the robot. Consider calling subsystem instance instead. **/
 public final class RobotState extends RobotStateBase
 {
     private static final RobotState instance = new RobotState();
-
-    public RobotState()
-    {
-        super(RobotConfig.getInstance());
-    }
 
     public static RobotState getInstance()
     {
