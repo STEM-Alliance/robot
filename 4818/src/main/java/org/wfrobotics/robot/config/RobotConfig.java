@@ -28,6 +28,7 @@ public class RobotConfig extends EnhancedRobotConfig
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
         config.OPEN_LOOP_RAMP = 0.3; // how fast do you acellerate
+        config.MAX_PERCENT_OUT = 0.85;
 
         double TURN_SCALING = .35;
 
@@ -157,6 +158,10 @@ public class RobotConfig extends EnhancedRobotConfig
         // c.kTuning = Optional.of(true);
         return c;
     }
+
+    // SuperStructure
+    // _________________________________________________________________________________
+    public final int kAddressUltrasonic = 3;
 
     // Constructor
     protected RobotConfig()
