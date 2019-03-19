@@ -8,6 +8,7 @@ import org.wfrobotics.robot.commands.intake.IntakeOpenLoop;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.config.PnuaticConfig;
 import org.wfrobotics.robot.config.RobotConfig;
+import org.wfrobotics.robot.config.PracticeConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -35,15 +36,6 @@ public class Intake extends EnhancedSubsystem
     private final DoubleSolenoid grabber;
     private Boolean isGrabbersExtended = true;
 
-    public Boolean getHasHatch()
-    {
-        boolean out  = false;
-        if (SuperStructure.getInstance().getUltraDistance() <= 12)
-        {
-            out = true;
-        }
-        return out;
-    }
     public Intake()
     {
         final RobotConfig config = RobotConfig.getInstance();
