@@ -7,6 +7,8 @@ import org.wfrobotics.robot.commands.elevator.ElevatorOpenLoop;
 import org.wfrobotics.robot.config.ArmHeight;
 import org.wfrobotics.robot.config.RobotConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 
@@ -28,6 +30,8 @@ public class Elevator extends PositionBasedSubsystem
     private static final double kInchesGroundToZero = ArmHeight.BottomLimit.get();
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
+
+    double rampSpeed = 1;
 
     private static Elevator instance = null;
 
@@ -61,8 +65,42 @@ public class Elevator extends PositionBasedSubsystem
     @Override
     public void setOpenLoop(double percent)
     {
-        final double speed = (AtHardwareLimitTop() && percent > 0.0) ? 0.0 : percent;
+        // double posMax = 21800;
+        // rampSpeed=1;
+        // SmartDashboard.putString("liftRamping?", "None");
+        // if(getPositionNative()>posMax-5000&&percent>0.1){
+        //     SmartDashboard.putString("liftRamping?", "Top");
+        //     rampSpeed = (posMax-getPositionNative())/5000.0;
+        //     if(rampSpeed*percent<0.1)
+        //         rampSpeed = 0.1/percent;
+        // }
+        // if(getPositionNative()<3000&&percent<-0.1){
+        //     SmartDashboard.putString("liftRamping?", "Bottom");
+        //     rampSpeed = (getPositionNative()+2000)/5000.0;
+        //     if(rampSpeed*percent<0.1)
+        //         rampSpeed = 0.1/percent;
+        // }
 
+
+        // if(getPositionNative()>22000&&percent>0)
+        // {
+        //     rampSpeed=((24250-getPositionNative())/4250);
+        //     if(rampSpeed<=.1){
+        //         rampSpeed=.1;
+        //     }
+        // }
+
+        // if(getPositionNative()<4250&&percent<0)
+        // {
+        //     rampSpeed=((getPositionNative()+1000)/4250);
+        //     if(rampSpeed<=.1){
+        //         rampSpeed=.1;
+        //     }
+        // }
+
+        final double speed = (AtHardwareLimitTop() && percent > 0.0) ? 0.0 : percent*rampSpeed;
+        SmartDashboard.putNumber("liftSpeed", speed);
+        SmartDashboard.putNumber("liftRamping", rampSpeed);
         setMotor(ControlMode.PercentOutput, speed);
     }
 

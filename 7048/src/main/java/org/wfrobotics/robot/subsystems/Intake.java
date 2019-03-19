@@ -6,6 +6,7 @@ import org.wfrobotics.robot.config.RobotConfig;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake extends EnhancedSubsystem
 {
@@ -49,6 +50,7 @@ public class Intake extends EnhancedSubsystem
         hatchOut = out;
         Value desired = (out) ? Value.kForward : Value.kReverse;
         holder.set(desired);
+        SmartDashboard.putBoolean("Intake grabber open", hatchOut);
     }
 
     public TestReport runFunctionalTest()

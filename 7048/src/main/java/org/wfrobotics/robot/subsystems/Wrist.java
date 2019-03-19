@@ -1,5 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
@@ -24,14 +26,22 @@ public class Wrist extends PositionBasedSubsystem
     {
         super(positionConfig);
 
-        TalonFactory.configCurrentLimiting(master, 15
-        , 25, 200);  // TODO Tune
+        TalonFactory.configCurrentLimiting(master, 15, 25, 200);  // TODO Tune
+        master.configOpenloopRamp(.3, 100);
     }
 
     protected void initDefaultCommand()
     {
         setDefaultCommand(new WristOpenLoop());
-        master.configOpenloopRamp(.3, 100);
+    }
+
+    @Override
+    public void setOpenLoop(double percent)
+    {
+
+        final double speed = (AtHardwareLimitTop() && percent > 0.0) ? 0.0 : percent;
+
+        setMotor(ControlMode.PercentOutput, speed);
     }
 
     public TestReport runFunctionalTest()

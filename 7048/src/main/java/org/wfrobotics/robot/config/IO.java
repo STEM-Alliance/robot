@@ -6,7 +6,9 @@ import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
+import org.wfrobotics.reuse.commands.config.Brake;
 import org.wfrobotics.reuse.commands.drive.DriveToTarget;
+import org.wfrobotics.robot.commands.SetBrake;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 import org.wfrobotics.robot.commands.intake.PopHatch;
 import org.wfrobotics.robot.commands.intake.SetHatch;
@@ -21,7 +23,7 @@ public final class IO implements EnhancedIO
 {
     private static IO instance = null;
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
-    private final Joystick driverTurn;
+    private final HerdJoystick driverTurn;
     private final Xbox operator;
 
 
@@ -29,7 +31,7 @@ public final class IO implements EnhancedIO
     private IO()
     {
         driverThrottle = new HerdJoystick(0);
-        driverTurn = new Joystick(1);
+        driverTurn = new HerdJoystick(1);
         operator = new Xbox(2);
     }
 
@@ -41,6 +43,9 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BASE_MIDDLE_RIGHT, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
 
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_BOTTOM_LEFT, TRIGGER.WHEN_PRESSED, new DriveToTarget());
+
+        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.TRIGGER, TRIGGER.WHEN_PRESSED, new SetBrake(true));
+        ButtonFactory.makeButton(driverTurn, HerdJoystick.BUTTON.TRIGGER, TRIGGER.WHEN_PRESSED, new SetBrake(false));
 
         //----------------------- Elevator ------------------------
         ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchHigh.get()));
@@ -55,7 +60,7 @@ public final class IO implements EnhancedIO
         //----------------------- System --------------------------
 
         //----------------------- Wrist ---------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristToHeight(30));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristToHeight(36));
         ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new WristToHeight(0));
 
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle());
@@ -106,17 +111,17 @@ public final class IO implements EnhancedIO
 
     public double getThrottle()
     {
-        return driverThrottle.getY();
+        return driverThrottle.getY() * .9;
     }
 
     public double getTurn()
     {
-        return driverTurn.getRawAxis(0)*0.25;
+        return driverTurn.getX()*0.375;
     }
 
     public boolean getDriveQuickTurn()
     {
-        return Math.abs(getThrottle()) < 0.1;
+        return Math.abs(getThrottle()) < 0.15;
         //return true;
     }
 

@@ -18,7 +18,7 @@ public class RobotConfig extends EnhancedRobotConfig
 
     public RobotConfig()
     {
-        cameraStream = Optional.ofNullable(false);
+        cameraStream = Optional.ofNullable(true);
     }
 
     //                      Tank
@@ -34,8 +34,8 @@ public class RobotConfig extends EnhancedRobotConfig
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-		config.OPEN_LOOP_RAMP = 1.0; // how fast do you acellerate
-        config.OPEN_LOOP_PEAK_PERCENT = .75;
+		config.OPEN_LOOP_RAMP = .3; // how fast do you acellerate
+        config.OPEN_LOOP_PEAK_PERCENT = 1;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ public class RobotConfig extends EnhancedRobotConfig
     // Hardware
     public PositionConfig getElevatorConfig()
     {
-        int kTicksToTop = 23300;
+        int kTicksToTop = 21800;
         double kLiftVelocityMaxUp = 2200.0;
         int kLiftCruiseUp = (int) (kLiftVelocityMaxUp * 0.975);
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 6.0);
@@ -122,7 +122,7 @@ public class RobotConfig extends EnhancedRobotConfig
     {
         final PositionConfig c = new PositionConfig();
 
-        int kTicksToTop = 7000;
+        int kTicksToTop = 3300;
         int kWristVelocityMax = 540;
         int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
         int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
