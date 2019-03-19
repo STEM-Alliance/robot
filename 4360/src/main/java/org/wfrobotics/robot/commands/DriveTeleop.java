@@ -23,6 +23,13 @@ public class DriveTeleop extends Command
         requires(drive);
     }
 
+    public void init()
+    {
+        
+
+        SmartDashboard.putString("Controller", "Xbox");
+    }
+
     protected void execute()
     {
         /*final DriveSignal s = helper.cheesyDrive(io.getThrottle(), io.getTurn(), io.getDriveQuickTurn(), false);
@@ -33,6 +40,12 @@ public class DriveTeleop extends Command
 //    	drive.driveOpenLoop(io.getLeft());
     	SmartDashboard.putNumber("Left", io.getLeft());
     	SmartDashboard.putNumber("Right", io.getRight());
+    }
+
+    protected void end()
+    {
+        
+        SmartDashboard.putString("Controller", "Joystick");
     }
 
     protected boolean isFinished()

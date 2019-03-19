@@ -47,7 +47,7 @@ public class Lift extends EnhancedSubsystem
         //master = TalonFactory.makeClosedLoopVictor(kClosedLoop).get(18);  
         //master.setSelectedSensorPosition(0, 0, 100);
        master = new VictorSPX(19);
-       follower = TalonFactory.makeFollowerVictor(20, master);
+       //follower = TalonFactory.makeFollowerVictor(20, master);
     }
 
     protected void initDefaultCommand()

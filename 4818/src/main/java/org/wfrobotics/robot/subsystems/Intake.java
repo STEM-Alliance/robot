@@ -29,7 +29,7 @@ public class Intake extends EnhancedSubsystem
 
     private static Intake instance = null;
     private final TalonSRX motor;
-    private final DoubleSolenoid grabber;
+    //private final DoubleSolenoid grabber;
     
     protected CachedIO cachedIO = new CachedIO();
 
@@ -39,7 +39,7 @@ public class Intake extends EnhancedSubsystem
 
         motor = TalonFactory.makeTalon(config.kAddressTalonCargo);
         motor.setInverted(config.kInvertTalonCargo);
-        grabber = new DoubleSolenoid(config.kAddressPCMPoppers, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
+        //grabber = new DoubleSolenoid(config.kAddressPCMPoppers, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
         // motorCargo.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 100);
         // motorCargo.overrideLimitSwitchesEnable(true);  // MUST be true to enable hardware limit switch feature
         // motorCargo.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 100);
@@ -73,7 +73,7 @@ public class Intake extends EnhancedSubsystem
     public void setGrabber(boolean out)
     {
         Value desired = (out) ? Value.kForward : Value.kReverse;
-        grabber.set(desired);
+        //grabber.set(desired);
     }
 
     public boolean hasHatch()

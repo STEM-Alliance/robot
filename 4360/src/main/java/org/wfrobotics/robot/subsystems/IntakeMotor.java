@@ -35,13 +35,14 @@ public class IntakeMotor extends EnhancedSubsystem
     {
     	
     	motor1 = new VictorSPX(17);
-    	motor2 = TalonFactory.makeFollowerVictor(18, motor1);
+    	motor2 = new VictorSPX(18);//TalonFactory.makeFollowerVictor(18, motor1);
     	motor2.setInverted(true);
     	
     }
     
     public void setspeed(double speed) {
     	motor1.set(ControlMode.PercentOutput, speed);
+    	motor2.set(ControlMode.PercentOutput, speed);
     	
         
     }

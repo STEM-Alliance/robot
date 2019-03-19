@@ -17,6 +17,6 @@ public class SuperStructure extends SuperStructureBase
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new ConserveCompressor());
+        //setDefaultCommand(new ConserveCompressor());
     }
 }
