@@ -58,7 +58,7 @@ public final class IO implements EnhancedIO
    		
     	//------Joysticks--------
          // ButtonFactory.makeButton(driverTurn, SpudJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new Testbutton());
-            ButtonFactory.makeButton(driverTurn, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new Testbutton());
+            ButtonFactory.makeButton(driverTurn, HerdJoystick.BUTTON.BUTTON1, TRIGGER.WHILE_HELD, new Testbutton());
  
         // -------------------- Super Structure -------------------
          //test ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer());

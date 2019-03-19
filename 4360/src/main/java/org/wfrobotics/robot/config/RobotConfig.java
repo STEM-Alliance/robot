@@ -8,9 +8,9 @@ import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
 import org.wfrobotics.reuse.config.TankConfig.TankConfigSupplier;
-import org.wfrobotics.reuse.subsystems.control.Lookahead;
-import org.wfrobotics.reuse.subsystems.control.PathFollower;
-import org.wfrobotics.reuse.subsystems.control.PathFollower.Parameters;
+import org.wfrobotics.reuse.subsystems.drive.Lookahead;
+import org.wfrobotics.reuse.subsystems.drive.PathFollower;
+import org.wfrobotics.reuse.subsystems.drive.PathFollower.Parameters;
 import org.wfrobotics.reuse.subsystems.drive.TankMaths;
 
 public class RobotConfig extends EnhancedRobotConfig
