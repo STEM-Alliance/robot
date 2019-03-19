@@ -15,6 +15,12 @@ public final class PracticeConfig extends RobotConfig {
     // Tank
     // _________________________________________________________________________________
 
+    protected PracticeConfig()
+    {
+        cameraStream = Optional.of(false);
+        // vision = Optional.of(new VisionConfig(69.0));
+    }
+
     // Hardware
     public TankConfig getTankConfig() {
         final TankConfig config = new DeepSpaceTankConfig();
@@ -24,7 +30,7 @@ public final class PracticeConfig extends RobotConfig {
         config.ACCELERATION = config.VELOCITY_PATH ;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.8; // how fast do you acellerate
+        config.OPEN_LOOP_RAMP = 0.05; // how fast do you acellerate
 
         double TURN_SCALING = .35;
 
@@ -61,27 +67,37 @@ public final class PracticeConfig extends RobotConfig {
              {
                  final PnuaticConfig config = new PnuaticConfig();
                  
-                     // Hardware
-                      config.kAddressPCMGrippers = 0;
-                      config.kAddressPCMShifter = 0;
-                      config.kAddressPCMPoppers = 0;
-     //   6,7
-          // intake
-                       config.kAddressSolenoidPoppersF = 0;
-                       config.kAddressSolenoidPoppersB = 1;
-                       // drive
-                       config.kAddressSolenoidShifterF = 6;
-                       config.kAddressSolenoidShifterB = 7;
-          //climb
-                       config.kAddressSolenoidGrippersF = 4;
-                       config.kAddressSolenoidGrippersB = 5;
-             //elevator
-     
-                       config.kAddressSolenoidLockersF = 0;
-                       config.kAddressSolenoidLockersB = 1;
-                       config.KAddressSolenoidPushUpF = 2;
-                       config.KAddressSolenoidPushUpB = 3;
-     
+                              // Hardware
+        config.kAddressPCMGrippers =5;
+        config.kAddressPCMShifter =0;
+        config.kAddressPCMPoppers = 0;
+        config.kAddressPCMLockers = 1;
+        config.kAddressPCMPushUp =2;
+        config.kAddressPCMDeployer=3;
+        config.kAddressPCMMystory=4;
+    
+        // intake
+        config.kAddressSolenoidPoppersF =7;
+        config.kAddressSolenoidPoppersB=6;
+        //climb -> Hug
+        config.kAddressSolenoidGrippersF=4;
+        config.kAddressSolenoidGrippersB=5;
+        //elevator -> Shift
+        config.kAddressSolenoidShifterF=3;
+        config.kAddressSolenoidShifterB=2;
+        // climb -> lock
+        config.kAddressSolenoidLockersF =0;
+        config.kAddressSolenoidLockersB=1;
+        // climb -> Push Bumpers Above
+        config.KAddressSolenoidPushUpF=2;
+        config.KAddressSolenoidPushUpB=3;
+        // climb -> shove the mech down
+        config.KAddressSolenoidDeployerF=0;
+        config.KAddressSolenoidDeployerB=1;
+        // unknown
+        config.KAddressSolenoidMystoryF=3;
+        config.KAddressSolenoidMystoryB=4;
+
                  return config;
              }
     // Elevator
@@ -121,7 +137,8 @@ public final class PracticeConfig extends RobotConfig {
 
     // Link
     // _________________________________________________________________________________
-    public PositionConfig getLinkConfig() {
+    public PositionConfig getLinkConfig() 
+    {
         final PositionConfig c = new PositionConfig();
 
         // good 6500
@@ -131,16 +148,21 @@ public final class PracticeConfig extends RobotConfig {
         int kLinkAcceleration = (int) (kLinkVelocityCruise * 4.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, true, false) },
-                new Gains[] { new Gains("Motion Magic", 0, 6.0, 0.0000, 0.04, 1023.0 / kLinkVelocityMax, 0,
+                new Gains[] { new Gains("Motion Magic", 0, 0.25, 0.0000, 0.0, 1023.0 / kLinkVelocityMax, 100,
                         kLinkVelocityCruise, kLinkAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 100.0;
-        c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        // c.kTuning = Optional.of(true);
+        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        // c.kFeedForward = 0.0;
+        c.kTuning = Optional.of(true);
         return c;
     }
+
+    // SuperStructure
+    // _________________________________________________________________________________
+    public final int kAddressUltrasonic = 3;
 
     // Constructor
     // protected RobotConfig()

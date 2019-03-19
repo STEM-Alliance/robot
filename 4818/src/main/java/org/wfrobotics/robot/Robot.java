@@ -28,9 +28,10 @@ public final class Robot extends EnhancedRobot
     protected void registerRobotSpecific()
     {
         EnhancedRobot.leds = SuperStructure.getInstance().getJeff();
-       subsystems.register(Climb.getInstance());
+    //    subsystems.register(Climb.getInstance());
         subsystems.register(Elevator.getInstance());
         subsystems.register(Link.getInstance());
         subsystems.register(Intake.getInstance());
-        subsystems.register(SuperStructure.getInstance());    }
+        subsystems.register(SuperStructure.getInstance());    
+    }
 }
