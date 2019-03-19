@@ -1,16 +1,16 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.hardware.TalonChecker;
-import org.wfrobotics.reuse.hardware.TalonFactory;
+// import org.wfrobotics.reuse.hardware.TalonChecker;
+// import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.commands.WinchOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
-import com.ctre.phoenix.motorcontrol.ControlFrame;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+// import com.ctre.phoenix.motorcontrol.ControlFrame;
+// import com.ctre.phoenix.motorcontrol.ControlMode;
+// import com.ctre.phoenix.motorcontrol.NeutralMode;
+// import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+// import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 /**
  * The winch consists of one Mini CIM motor to pull up the robot after our hook is deployed

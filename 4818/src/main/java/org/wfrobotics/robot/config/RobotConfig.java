@@ -9,9 +9,8 @@ import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
-import org.wfrobotics.reuse.config.VisionConfig;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
-import org.wfrobotics.robot.commands.DriveCarefully;
+import org.wfrobotics.robot.commands.DriveToTarget;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -36,7 +35,7 @@ public class RobotConfig extends EnhancedRobotConfig
     public static final int kIntakeBufferSize = 3;
     public static final double kIntakeDistanceSensorPluggedIn = 3000.0;  // TODO Tune me
     public static final double kIntakeDistanceReboot = kIntakeDistanceSensorPluggedIn * 3;
-    public double kIntakeDistanceToCube = 6.5;
+    public final double kIntakeDistanceToCube = 6.5;
     public final double kJawsTimeoutSeconds = 0.5;
 
     //                       Lift
@@ -160,14 +159,15 @@ public class RobotConfig extends EnhancedRobotConfig
     {
         public Command getTeleopCommand()
         {
-            return new DriveCarefully();
+            // return new DriveCarefully();
+            return new DriveToTarget();
         }
     }
 
     protected RobotConfig()
     {
         cameraStream = Optional.of(false);
-        vision = Optional.of(new VisionConfig(69.0));
+        // vision = Optional.of(new VisionConfig(69.0));
     }
 
     //                      Helper Methods
@@ -178,8 +178,9 @@ public class RobotConfig extends EnhancedRobotConfig
         if (instance == null)
         {
             instance = (RobotConfig) RobotConfigPicker.get(new EnhancedRobotConfig[] {
+                // new PracticeConfig(),  // Practice robot differences
                 new RobotConfig(),     // Competition robot
-                new PracticeConfig(),  // Practice robot differences
+
             });
         }
         return instance;
