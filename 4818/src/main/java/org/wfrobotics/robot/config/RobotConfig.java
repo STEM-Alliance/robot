@@ -10,6 +10,9 @@ import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.config.TankConfig;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
+import org.wfrobotics.robot.commands.drive.DriveToTarget;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 public class RobotConfig extends EnhancedRobotConfig
 {
@@ -49,15 +52,22 @@ public class RobotConfig extends EnhancedRobotConfig
         return config;
     }
 
-    public class DeepSpaceTankConfig extends TankConfig
+    public class DeepSpaceTankConfig extends TankConfig 
     {
-        // @Override
-        // public Command getTeleopCommand()
-        // {
-        // return new DriveCheesy(); // TODO DriveCarefully, accelerates slower when
-        // elevator is up
-        // }
+        @Override
+        public Command getTeleopCommand()
+        {
+            return new DriveToTarget();
+        }
     }
+
+    public final double kVisionP = 0.0;
+    public final double kVisionI = 0.0;
+    public final double kVisionD = 0.0;
+    public final double kVisionIZone = 0.0;
+    public final double kVisionElevatorHeightToShiny = 25.0;
+    public final double kVisionLinkAngleToShiny = 60.0;
+    public final boolean kVisionBrakeMode = false;
 
     // Pnumatics
     // _________________________________________________________________________________

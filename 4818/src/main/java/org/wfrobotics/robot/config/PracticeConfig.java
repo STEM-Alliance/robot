@@ -9,9 +9,13 @@ import org.wfrobotics.reuse.config.TalonConfig.FollowerConfig;
 import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem.PositionConfig;
+import org.wfrobotics.robot.commands.drive.DriveToTarget;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 /** Practice Robot Config. Override any settings that differ here */
-public final class PracticeConfig extends RobotConfig {
+public final class PracticeConfig extends RobotConfig
+{
     // Tank
     // _________________________________________________________________________________
 
@@ -51,21 +55,28 @@ public final class PracticeConfig extends RobotConfig {
         return config;
     }
 
-    public class DeepSpaceTankConfig extends TankConfig {
-        // @Override
-        // public Command getTeleopCommand()
-        // {
-        // return new DriveCheesy(); // TODO DriveCarefully, accelerates slower when
-        // elevator is up
-        // }
+    public class DeepSpaceTankConfig extends TankConfig 
+    {
+        @Override
+        public Command getTeleopCommand()
+        {
+            return new DriveToTarget();
+        }
     }
+
+    public final double kVisionP = 0.0;
+    public final double kVisionI = 0.0;
+    public final double kVisionD = 0.0;
+    public final double kVisionIZone = 0.0;
+    public final double kVisionElevatorHeightToShiny = 25.0;
+    public final double kVisionLinkAngleToShiny = 60.0;
+    public final boolean kVisionBrakeMode = false;
 
     // Climb
     // _________________________________________________________________________________
-
-             public PnuaticConfig getPnumaticConfig()
-             {
-                 final PnuaticConfig config = new PnuaticConfig();
+    public PnuaticConfig getPnumaticConfig()
+    {
+        final PnuaticConfig config = new PnuaticConfig();
                  
                               // Hardware
         config.kAddressPCMGrippers =5;
@@ -98,8 +109,8 @@ public final class PracticeConfig extends RobotConfig {
         config.KAddressSolenoidMystoryF=3;
         config.KAddressSolenoidMystoryB=4;
 
-                 return config;
-             }
+        return config;
+    }
     // Elevator
     // _________________________________________________________________________________
 
@@ -122,6 +133,7 @@ public final class PracticeConfig extends RobotConfig {
         c.kFullRangeInchesOrDegrees = 68.5;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kSoftwareLimitB = Optional.of(100);
+        c.kFeedForward = Optional.of(0.25);
         // c.kTuning = Optional.of(false);
 
         return c;
@@ -156,7 +168,7 @@ public final class PracticeConfig extends RobotConfig {
         c.kFullRangeInchesOrDegrees = 100.0;
         // c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kFeedForward = 0.0;
-        c.kTuning = Optional.of(true);
+        // c.kTuning = Optional.of(true);
         return c;
     }
 

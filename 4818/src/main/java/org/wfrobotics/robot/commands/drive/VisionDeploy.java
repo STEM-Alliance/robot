@@ -23,7 +23,7 @@ public class VisionDeploy extends Command
     protected final EnhancedIO io = EnhancedRobot.getIO();
     protected final SuperStructure ss = SuperStructure.getInstance();
     protected static final CheesyDriveHelper helper = new CheesyDriveHelper();
-    protected final PID pid = new PID(0.15, 0.00125);
+    protected final PID pid = new PID(0.15, 0.00125, 0.0);
     protected final double maxThrottle;
 
     public VisionDeploy(double maxSpeed)

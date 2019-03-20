@@ -32,17 +32,14 @@ public class SuperStructure extends SuperStructureBase
     private final AnalogInput ultra3;
     private final CircularBuffer cargoBuffer = new CircularBuffer(3, false);
     private final CircularBuffer hatchBuffer = new CircularBuffer(3, false);
+    private boolean firstHatch = true;
 
     public SuperStructure()
     {
         final RobotConfig config = RobotConfig.getInstance();
         
         ultra3 = new AnalogInput(config.kAddressUltrasonic);
-    }
-
-    public double getUltraDistance()
-    {
-        return hatchBuffer.getAverage();
+        reset();
     }
 
     protected void initDefaultCommand()
@@ -68,8 +65,13 @@ public class SuperStructure extends SuperStructureBase
         SmartDashboard.putNumber("Ultra3 value", getUltraDistance() );
 
         
-        // SmartDashboard.putNumber("Tape Vision Angle", getTapeYaw());
-        // SmartDashboard.putBoolean("Tape In view", getTapeInView());
+        SmartDashboard.putNumber("Tape Vision Angle", getTapeYaw());
+        SmartDashboard.putBoolean("Tape In view", getTapeInView());
+    }
+
+    public void reset()
+    {
+        firstHatch = true;
     }
     
     public boolean getHasCargo()
@@ -82,12 +84,22 @@ public class SuperStructure extends SuperStructureBase
         return hatchBuffer.getAverage() < kHatchInInches;
     }
 
+    public boolean isAutoModeHatch()
+    {
+        return firstHatch;
+    }
+
     public Canifier getJeff()
     {
         return jeff;
     }
 
-    public double getUltraDistanceRaw()
+    public double getUltraDistance()
+    {
+        return hatchBuffer.getAverage();
+    }
+
+    private double getUltraDistanceRaw()
     {
         double m_conversionToInches = 1000.0 / .977 / 25.4;
         return (ultra3.getVoltage() *m_conversionToInches);
