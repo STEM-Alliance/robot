@@ -16,7 +16,7 @@ public final class Robot extends EnhancedRobot
 {
     public Robot()
     {
-        super(RobotConfig.getInstance(),RobotState.getInstance(), IO.getInstance());
+        super(RobotConfig.getInstance(), RobotState.getInstance(), IO.getInstance());
     }
 
     protected void registerRobotSpecific()
@@ -32,6 +32,6 @@ public final class Robot extends EnhancedRobot
     @Override
     public void autonomousInit()
     {
-        Intake.getInstance().reset();
+        Intake.getInstance().resetAutoModeHatch();
     }
 }

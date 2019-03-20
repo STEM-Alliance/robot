@@ -18,16 +18,11 @@ public final class PracticeConfig extends RobotConfig
 {
     // Tank
     // _________________________________________________________________________________
-
-    protected PracticeConfig()
+    public TankConfig getTankConfig()
     {
-        cameraStream = Optional.of(false);
-        // vision = Optional.of(new VisionConfig(69.0));
-    }
-
-    // Hardware
-    public TankConfig getTankConfig() {
         final TankConfig config = new DeepSpaceTankConfig();
+        
+        config.CLOSED_LOOP_ENABLED = false;
 
         config.VELOCITY_MAX = 3500.0 / 2;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.2);
@@ -35,6 +30,7 @@ public final class PracticeConfig extends RobotConfig
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
         config.OPEN_LOOP_RAMP = 0.05; // how fast do you acellerate
+        config.MAX_PERCENT_OUT = 0.85;
 
         double TURN_SCALING = .35;
 
@@ -64,8 +60,8 @@ public final class PracticeConfig extends RobotConfig
         }
     }
 
-    public final double kVisionP = 0.0;
-    public final double kVisionI = 0.0;
+    public final double kVisionP = 0.0;  // TODO get from preferences
+    public final double kVisionI = 0.0;  // TODO get from preferences
     public final double kVisionD = 0.0;
     public final double kVisionIZone = 0.0;
     public final double kVisionElevatorHeightToShiny = 25.0;
@@ -78,7 +74,7 @@ public final class PracticeConfig extends RobotConfig
     {
         final PnuaticConfig config = new PnuaticConfig();
                  
-                              // Hardware
+        // Hardware
         config.kAddressPCMGrippers =5;
         config.kAddressPCMShifter =0;
         config.kAddressPCMPoppers = 0;
@@ -115,7 +111,8 @@ public final class PracticeConfig extends RobotConfig
     // _________________________________________________________________________________
 
     // Hardware
-    public PositionConfig getElevatorConfig() {
+    public PositionConfig getElevatorConfig()
+    {
         int kTicksToTop = 137500;
         double kLiftVelocityMax = 12250.0;
         int kLiftCruiseUp = (int) (kLiftVelocityMax * 0.975);
@@ -132,12 +129,14 @@ public final class PracticeConfig extends RobotConfig
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 68.5;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        c.kSoftwareLimitB = Optional.of(100);
+        c.kSoftwareLimitB = Optional.of(-100);
         c.kFeedForward = Optional.of(0.25);
         // c.kTuning = Optional.of(false);
 
         return c;
     }
+    
+    public final double kElevatorHeightCloseEnoughDegrees = 2.0;
 
     // Intake
     // _________________________________________________________________________________
@@ -166,20 +165,22 @@ public final class PracticeConfig extends RobotConfig
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 100.0;
-        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        // c.kFeedForward = 0.0;
+        // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // TODO don't hit the ground, just pick something a little too big?
+        // c.kFeedForward = Optional.of(0.0);  // TODO - add a small one
         // c.kTuning = Optional.of(true);
         return c;
     }
+
+    public final double kLinkCloseEnoughDegrees = 2.0;
 
     // SuperStructure
     // _________________________________________________________________________________
     public final int kAddressUltrasonic = 3;
 
     // Constructor
-    // protected RobotConfig()
-    // {
-    // this.vision = Optional.of(new VisionConfig(69.0));
-    // }
-
+    // _________________________________________________________________________________
+    protected PracticeConfig()
+    {
+        cameraStream = Optional.of(false);
+    }
 }

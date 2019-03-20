@@ -21,8 +21,12 @@ public final class Link extends PositionBasedSubsystem
         }
         return instance;
     }
+    
+    private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
+    private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
 
     private static Link instance = null;
+
     private Link(PositionConfig positionConfig)
     {
         super(positionConfig);
@@ -39,21 +43,13 @@ public final class Link extends PositionBasedSubsystem
         setDefaultCommand(new LinkZeroThenOpenLoop());
     }
     
-    /**
-     * Control the {@link PositionBasedSubsystem} with a <b>setpoint, with PID feedback</b>.
-     * Override if your Subsystem needs special logic to determine setpoint or gain scheduling.
-     * */
     @Override
     public void setClosedLoop(double positionSetpoint)
     {
-        master.configVoltageCompSaturation(10.0);
+        master.configVoltageCompSaturation(10.0);  // TODO DO we want this larger so we move faster?
         setMotor(ControlMode.MotionMagic, PositionToNative(positionSetpoint));
     }
 
-    /**
-     * Control the {@link PositionBasedSubsystem} with the <b>Joystick, without PID feedback</b>.
-     * Override if your Subsystem needs special logic to determine percent.
-     */
     @Override
     public void setOpenLoop(double percent)
     {
@@ -61,14 +57,17 @@ public final class Link extends PositionBasedSubsystem
         setMotor(ControlMode.PercentOutput, percent);
     }
     
-    /**
-     * Control the {@link PositionBasedSubsystem} with a <b>setpoint, with PID feedback</b>.
-     * Override if your Subsystem needs special logic to determine setpoint or gain scheduling.
-     * */
     public void holdAtHeight(double position)
     {
         master.configVoltageCompSaturation(4.0);
         setMotor(ControlMode.MotionMagic, PositionToNative(position));
+    }
+
+    /** Velocity slow enough. Use to improve isFinished() criteria for closed loop commands */
+    public boolean onTarget()
+    {
+        return true;  // TODO will improve performance
+        //return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
     }
 
     public TestReport runFunctionalTest()

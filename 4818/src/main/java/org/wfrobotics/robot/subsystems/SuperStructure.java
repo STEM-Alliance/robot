@@ -23,7 +23,7 @@ public final class SuperStructure extends SuperStructureBase
     public static SuperStructure getInstance()
     {
         return SingletonHolder.instance;
-    }    
+    }
 
     private static final double kCargoInPercent = 0.75;
     private static final double kHatchInInches = 12.0;
@@ -47,6 +47,7 @@ public final class SuperStructure extends SuperStructureBase
     
     public void cacheSensors(boolean isDisabled)
     {
+        jeff.cacheSensors(false);  // Read PWM0 & PWM1
         final double hatchDistance = getUltraDistanceRaw();
         final boolean cargoLeft = jeff.getPWM0();
         final boolean cargoRight = jeff.getPWM1();
@@ -62,7 +63,7 @@ public final class SuperStructure extends SuperStructureBase
 
         SmartDashboard.putNumber("Ultra3", getUltraDistance() );
         
-        SmartDashboard.putNumber("Tape Vision Angle", getTapeYaw());
+        // SmartDashboard.putNumber("Tape Vision Angle", getTapeYaw());
         SmartDashboard.putBoolean("Tape In view", getTapeInView());
     }
     
@@ -95,21 +96,12 @@ public final class SuperStructure extends SuperStructureBase
     @Override
     public TestReport runFunctionalTest()
     {
-        TestReport report;
-        report = super.runFunctionalTest();
-
-        boolean faults = jeff.testFault();
-        boolean stickyFaults = jeff.testStickyFault();
-
-        System.out.println(String.format("Canifier is %s showing faults", (faults) ? "not" : ""));
-        System.out.println(String.format("Canifier is %s showing sticky faults", (stickyFaults) ? "not" : ""));
-        System.out.println(String.format("Hatch %s active", (hatchBuffer.getAverage() > 0.0) ? "is" : "is not"));
-        System.out.println(String.format("Cargo %s active", (cargoBuffer.getAverage() > 0.0) ? "is" : "is not"));
+        TestReport report = super.runFunctionalTest();
+        
+        report.add(jeff.runFunctionalTest());
 
         jeff.testRobotSpecificColors();
-
-        report.add(faults);
-        report.add(stickyFaults);
+        report.addManualTest("Tested Jeff's LED's");
 
         return report;
     }
