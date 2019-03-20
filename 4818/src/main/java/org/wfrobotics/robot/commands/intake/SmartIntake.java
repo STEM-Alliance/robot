@@ -19,12 +19,34 @@ public class SmartIntake extends Command
         requires(intake);
     }
 
-    protected void initialize()
+    protected void execute()
     {
-        intake.setGrabber(true);
+        autoHatch();
+        autoCargo();
     }
 
-    protected void execute()
+    protected boolean isFinished()
+    {
+        return false;
+    }
+
+    private void autoHatch()
+    {
+        if (superStructure.isAutoModeHatch())
+        {
+            intake.setGrabber(true);
+        }
+        else if (superStructure.getHasCargo())
+        {
+            intake.setGrabber(true);
+        }
+        else if (superStructure.getHasHatch())
+        {
+            intake.setGrabber(false);
+        }
+    }
+
+    private void autoCargo()
     {
         final boolean isLinkDown = link.getPosition() > 145.0;
         final boolean intakeCargoMode = isLinkDown && 
@@ -33,10 +55,5 @@ public class SmartIntake extends Command
         final double speed = (intakeCargoMode) ? kSpeedCargoOut : 0.0;
 
         intake.setCargoSpeed(speed);
-    }
-
-    protected boolean isFinished()
-    {
-        return false;
     }
 }

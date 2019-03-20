@@ -102,15 +102,16 @@ public class Elevator extends PositionBasedSubsystem
         setMotor(ControlMode.MotionMagic, PositionToNative(inchesFromZero));  // Stalls motors
     }
 
-    @Override
-    protected void setMotor(ControlMode mode, double val)
-    {
-        final boolean hasGamePiece = superStructure.getHasCargo();
-        final double antigravity= (hasGamePiece) ? kFeedForwardHasCargo : kFeedForwardNoCargo;
-        final double feedforward = (getPosition() > kInchesGroundToZero || mode == ControlMode.MotionMagic) ? antigravity : 0.0;
+    // DRL trying feedforward in superclass
+    // @Override
+    // protected void setMotor(ControlMode mode, double val)
+    // {
+    //     final boolean hasGamePiece = superStructure.getHasCargo();
+    //     final double antigravity= (hasGamePiece) ? kFeedForwardHasCargo : kFeedForwardNoCargo;
+    //     final double feedforward = (getPosition() > kInchesGroundToZero || mode == ControlMode.MotionMagic) ? antigravity : 0.0;
 
-        master.set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
-    }
+    //     master.set(mode, val, DemandType.ArbitraryFeedForward, feedforward);
+    // }
 
     public void setShifter(boolean liftNotClimb)
     {

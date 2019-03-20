@@ -61,6 +61,7 @@ public class Intake extends EnhancedSubsystem
     public void reportState()
     {
         SmartDashboard.putString("Intake Command", getCurrentCommandName());
+        SmartDashboard.putBoolean("Intake Grabber", isGrabbersExtended);
     }
 
     public void setCargoSpeed(double percent)
