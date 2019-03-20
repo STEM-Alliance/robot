@@ -1,13 +1,9 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.EnhancedRobot;
-import org.wfrobotics.reuse.utilities.DashboardView;
-import org.wfrobotics.robot.subsystems.Climb;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.subsystems.SuperStructure;
-import org.wfrobotics.reuse.hardware.Canifier;
-import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Link;
@@ -36,12 +32,6 @@ public final class Robot extends EnhancedRobot
     @Override
     public void autonomousInit()
     {
-        SuperStructure.getInstance().reset();
-    }
-
-    @Override
-    public void teleopInit()
-    {
-        SuperStructure.getInstance().reset();
+        Intake.getInstance().reset();
     }
 }

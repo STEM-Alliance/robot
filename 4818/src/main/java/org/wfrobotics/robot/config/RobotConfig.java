@@ -25,6 +25,8 @@ public class RobotConfig extends EnhancedRobotConfig
     {
         final TankConfig config = new DeepSpaceTankConfig();
 
+        config.CLOSED_LOOP_ENABLED = false;
+
         config.VELOCITY_MAX = 3500.0 / 2;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.85);
         config.ACCELERATION = config.VELOCITY_PATH ;

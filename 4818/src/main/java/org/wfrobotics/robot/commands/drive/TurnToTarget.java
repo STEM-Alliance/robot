@@ -6,19 +6,15 @@ import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import org.wfrobotics.robot.RobotState;
 
 /** Turn until reaching the target, or get to the expected heading it should be at **/
 public class TurnToTarget extends Command
 {
-    SuperStructure state = SuperStructure.getInstance();
-    RobotState robotstate = RobotState.getInstance();
-    protected final TankSubsystem drive = TankSubsystem.getInstance();
-    protected final EnhancedIO io = EnhancedRobot.getIO();
+    private final SuperStructure state = SuperStructure.getInstance();
+    private final  TankSubsystem drive = TankSubsystem.getInstance();
+    private final  EnhancedIO io = EnhancedRobot.getIO();
     protected boolean targetAvailable = false;
-    double tol = 3;
+    double tol = 3.0;
 
     public TurnToTarget()
     {
@@ -38,22 +34,23 @@ public class TurnToTarget extends Command
             doTurn();
         }
     }
-       protected boolean isFinished()
-       {
-           /**
-            *  ------if the target isn't in the frame
-            *  if the robot is within tol of the target
-            */
-           if (state.getTapeInView())
-           {
-               if ( Math.abs(drive.getGryo() - state.getTapeYaw()) < tol)
-               {
-                   return true;
-               }
-               return false;
-           }
-           return true;
-       }
+    
+    protected boolean isFinished()
+    {
+        /**
+        *  ------if the target isn't in the frame
+        *  if the robot is within tol of the target
+        */
+        if (state.getTapeInView())
+        {
+            if ( Math.abs(drive.getGryo() - state.getTapeYaw()) < tol)
+            {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
 
     // protected boolean isFinished()
     // {
@@ -63,7 +60,6 @@ public class TurnToTarget extends Command
     private void doTurn()
     {
         double angle = drive.getGryo() + state.getTapeYaw();
-        SmartDashboard.putNumber("Vision Heading", angle);
         drive.turnToHeading(angle);
     }
 }

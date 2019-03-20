@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class SmartIntake extends Command
 {
+    private static final double kLinkDownForCargoDegrees = 145.0;
     private static final double kSpeedCargoOut = 0.8;
 
     private final Intake intake = Intake.getInstance();
@@ -32,7 +33,7 @@ public class SmartIntake extends Command
 
     private void autoHatch()
     {
-        if (superStructure.isAutoModeHatch())
+        if (intake.hasAutoModeHatch())
         {
             intake.setGrabber(true);
         }
@@ -48,7 +49,7 @@ public class SmartIntake extends Command
 
     private void autoCargo()
     {
-        final boolean isLinkDown = link.getPosition() > 145.0;
+        final boolean isLinkDown = link.getPosition() > kLinkDownForCargoDegrees;
         final boolean intakeCargoMode = isLinkDown && 
                                   !superStructure.getHasCargo() &&
                                   !superStructure.getHasHatch();

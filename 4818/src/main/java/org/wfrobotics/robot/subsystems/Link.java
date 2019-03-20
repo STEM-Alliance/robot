@@ -11,7 +11,7 @@ import org.wfrobotics.robot.commands.link.LinkZeroThenOpenLoop;
 import org.wfrobotics.robot.config.RobotConfig;
 
 /** @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead */
-public class Link extends PositionBasedSubsystem
+public final class Link extends PositionBasedSubsystem
 {
     public static Link getInstance()
     {
