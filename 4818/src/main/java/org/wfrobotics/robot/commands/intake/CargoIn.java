@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.commands.intake;
 
 import org.wfrobotics.robot.subsystems.Intake;
-import org.wfrobotics.robot.subsystems.Link;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -13,7 +12,7 @@ public class CargoIn extends Command
     public CargoIn()
     {
         requires(intake);
-        setTimeout(1);
+        setTimeout(1.0);
     }
 
     protected void initialize()

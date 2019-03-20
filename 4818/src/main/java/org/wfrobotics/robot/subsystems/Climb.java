@@ -9,7 +9,7 @@ import org.wfrobotics.robot.config.RobotConfig;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class Climb extends EnhancedSubsystem
+public final class Climb extends EnhancedSubsystem
 {
     public static Climb getInstance()
     {

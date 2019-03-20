@@ -1,18 +1,13 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
-import org.wfrobotics.robot.commands.intake.IntakeOpenLoop;
 import org.wfrobotics.robot.commands.intake.SmartIntake;
 import org.wfrobotics.robot.config.PnuaticConfig;
 import org.wfrobotics.robot.config.RobotConfig;
-import org.wfrobotics.robot.config.PracticeConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -20,7 +15,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Intake extends EnhancedSubsystem
+public final class Intake extends EnhancedSubsystem
 {
     public static Intake getInstance()
     {
@@ -34,6 +29,7 @@ public class Intake extends EnhancedSubsystem
     private static Intake instance = null;
     private final TalonSRX motor;
     private final DoubleSolenoid grabber;
+    private boolean hasAutoModeHatch = true;
     private Boolean isGrabbersExtended = true;
 
     public Intake()
@@ -46,6 +42,7 @@ public class Intake extends EnhancedSubsystem
         grabber = new DoubleSolenoid(pConfig.kAddressPCMPoppers, pConfig.kAddressSolenoidPoppersF, pConfig.kAddressSolenoidPoppersB);
 
         setGrabber(true);
+        reset();
     }
 
     protected void initDefaultCommand()
@@ -74,11 +71,23 @@ public class Intake extends EnhancedSubsystem
         Value desired = (out) ? Value.kForward : Value.kReverse;
         grabber.set(desired);
         isGrabbersExtended = out;
+        hasAutoModeHatch = false;
+    }
+
+    public void reset()
+    {
+        hasAutoModeHatch = true;
     }
 
     public boolean getGrabbersExtended()
     {
         return isGrabbersExtended;
+    }
+
+    /** Are the grabbers holding the first hatch for autonomous mode? */
+    public boolean hasAutoModeHatch()
+    {
+        return hasAutoModeHatch;
     }
 
     public TestReport runFunctionalTest()

@@ -7,7 +7,6 @@ import org.wfrobotics.reuse.math.control.CheesyDriveHelper;
 import org.wfrobotics.reuse.math.control.CheesyDriveHelper.DriveSignal;
 import org.wfrobotics.reuse.math.control.PID;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
-import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -25,7 +24,6 @@ public class DistanceSensorDeploy extends Command
     protected static final CheesyDriveHelper helper = new CheesyDriveHelper();
     protected final PID pid = new PID(0.15, 0.00125, 0.0);
     protected final double maxThrottle;
-
 
     public DistanceSensorDeploy(double maxSpeed)
     {

@@ -6,26 +6,23 @@ import org.wfrobotics.robot.subsystems.Link;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LinkOpenLoop extends Command
 {
     private static final double kHoldTimeStart = 0.5;  // seconds
     private static final double kOperatorPresent = 0.05;  // percent output
 
-    //    private final RobotState state = RobotState.getInstance();
     private final Link link = Link.getInstance();
     private final IO io = IO.getInstance();
 
     private double holdTimer;
+    private double lastHeight = 0;
+    private boolean lastHeightValid;
 
     public LinkOpenLoop()
     {
         requires(link);
     }
-
-    private double lastHeight = 0;
-    private boolean lastHeightValid;
 
     protected void initialize()
     {   
@@ -42,7 +39,6 @@ public class LinkOpenLoop extends Command
             final double linkHeight = link.getPosition();
             double speed = io.getLinkUp() - io.getLinkDown();
             boolean inOpenLoop = true;
-            String mode = "open";
             
             if(Math.abs(speed) > kOperatorPresent)
             {
@@ -59,7 +55,6 @@ public class LinkOpenLoop extends Command
             else if((Timer.getFPGATimestamp() - holdTimer > kHoldTimeStart) && !lastHeightValid)
             {
                 inOpenLoop = false;
-                mode = "save";
 
                 lastHeight = linkHeight;
                 lastHeightValid = true;
@@ -67,7 +62,6 @@ public class LinkOpenLoop extends Command
             else if(lastHeightValid)
             {
                 inOpenLoop = false;
-                mode = "hold";
             }
 
             if (inOpenLoop)
@@ -78,9 +72,6 @@ public class LinkOpenLoop extends Command
             {
                 link.holdAtHeight(lastHeight);
             }
-
-            // SmartDashboard.putString("Link Open Mode", mode);
-            // SmartDashboard.putNumber("Link Hold", lastHeight);
         }
     }
 

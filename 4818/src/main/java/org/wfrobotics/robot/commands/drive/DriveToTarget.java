@@ -4,7 +4,6 @@ import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.math.control.CheesyDriveHelper;
 import org.wfrobotics.reuse.math.control.CheesyDriveHelper.DriveSignal;
-import org.wfrobotics.reuse.math.control.PID;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.subsystems.Elevator;
@@ -15,21 +14,21 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
 
 /** Turn until reaching the target, or get to the expected heading it should be at **/
-public class DriveToTarget extends Command
+public final class DriveToTarget extends Command
 {
-    private final double kVisionDeadband = 0.02;
-    private final double kLinkToShinyDegrees;
-
     private final boolean kBrakeMode;
+    private final double kLinkToShinyDegrees;
+    private final double kVisionDeadband = 0.02;
+
     private final Elevator elevator = Elevator.getInstance();
     private final Link link = Link.getInstance();
     private final SuperStructure ss = SuperStructure.getInstance();
     private final TankSubsystem drive = TankSubsystem.getInstance();
     private final EnhancedIO io = EnhancedRobot.getIO();
     private static final CheesyDriveHelper helper = new CheesyDriveHelper();
-    private final PID pid;
-    // protected final PID pid = new PID(0.025, 0.004, 0.0);  // Tuned pretty good for coast mode
-    // protected final PID pid = new PID(0.16, 0.00001, 0.0);  // Tuned well for brake mode
+    private final SimplePID pid;
+    // protected final SimplePID pid = new SimplePID(0.025, 0.004, 0.0);  // Tuned pretty good for coast mode
+    // protected final SimplePID pid = new SimplePID(0.16, 0.00001, 0.0);  // Tuned well for brake mode
     // protected final PID pid = new PID(0.008, 0.0008, 0.0);  // Tuned well for actual PID implementation
 
     public DriveToTarget()
@@ -37,16 +36,16 @@ public class DriveToTarget extends Command
         requires(drive);
 
         final RobotConfig config = RobotConfig.getInstance();
-        
+        final Preferences prefs = Preferences.getInstance();
+        final double p = prefs.getDouble("p", config.kVisionP);
+        final double i = prefs.getDouble("i", config.kVisionI);
+        // final double d = prefs.getDouble("d", config.kVisionD);
+        // final double izone = prefs.getDouble("izone", config.kVisionIZone);
+
         kLinkToShinyDegrees = config.kVisionLinkAngleToShiny;
         kBrakeMode = config.kVisionBrakeMode;
 
-        Preferences prefs = Preferences.getInstance();
-        double p = prefs.getDouble("p", 0.0);
-        double i = prefs.getDouble("i", 0.0);
-        double d = prefs.getDouble("d", 0.0);
-        double izone = prefs.getDouble("izone", 0.0);
-        pid = new PID(p, i, d, izone);
+        pid = new SimplePID(p, i);
         //pid = new PID(config.kVisionP, config.kVisionI, config.kVisionD, config.kVisionIZone);
     }
 
@@ -92,7 +91,7 @@ public class DriveToTarget extends Command
                 pid.reset();
             }
 
-            visionAngle = pid.update(timeSinceInitialized(), sign);
+            visionAngle = pid.update(sign);
         }
         else
         {
@@ -100,5 +99,33 @@ public class DriveToTarget extends Command
         }
 
         return visionAngle;
+    }
+
+    private final class SimplePID
+    {
+        private final double kP;
+        private final double kI;
+        private double accum;
+
+        /** Proportional, Integral, Derivative */
+        public SimplePID(double p, double i)
+        {
+            kP = p;
+            kI = i;
+            reset();
+        }
+
+        /** Input new error, returns new motor output to reduce the error based on PID constants */
+        public double update(double error)
+        {
+            accum += error;
+            return kP * error + kI * accum;
+        }
+
+        /** Call when your setpoint (desired value) changes */
+        public void reset()
+        {
+            accum = 0.0;
+        }
     }
 }

@@ -4,7 +4,6 @@ import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.robot.commands.elevator.ElevatorOpenLoop;
 import org.wfrobotics.robot.commands.elevator.ElevatorZeroThenOpenLoop;
 import org.wfrobotics.robot.config.PnuaticConfig;
@@ -22,7 +21,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
  * The elevator consists of two independently connected Mini CIM motors to raise/lower the intake and climber
  * @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead
  */
-public class Elevator extends PositionBasedSubsystem
+public final class Elevator extends PositionBasedSubsystem
 {
     public static Elevator getInstance()
     {
@@ -33,44 +32,36 @@ public class Elevator extends PositionBasedSubsystem
         return instance;
     }
 
-    private static final double kFeedForwardHasCargo = 0.0;  // Practice bot
-    private static final double kFeedForwardNoCargo = 0.0;  // Practice bot
     private static final double kInchesGroundToZero = 15.5;  // Practice bot
     private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
 
     private static Elevator instance = null;
-    private final SuperStructure superStructure;
     private final DoubleSolenoid shifter;
 
     private Elevator(PositionConfig positionConfig)
     {
         super(positionConfig);
-        final RobotConfig config = RobotConfig.getInstance();
         final PnuaticConfig pConfig = RobotConfig.getInstance().getPnumaticConfig();
 
         master.setSelectedSensorPosition(0, 0, 100);
         master.configOpenloopRamp(.15, 100);
         //        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
 
-        if (allFollowersAreTalons())
+        TalonFactory.configCurrentLimiting(master, 30, 35, 20);
+        for (BaseMotorController follower : followers)
         {
-            TalonFactory.configCurrentLimiting(master, 30, 35, 20);
-            for (BaseMotorController follower : followers)
-            {
-                TalonFactory.configCurrentLimiting(((TalonSRX) follower), 30, 35, 20);
-            }
+            TalonFactory.configCurrentLimiting(((TalonSRX) follower), 30, 35, 20);
         }
 
         shifter = new DoubleSolenoid(pConfig.kAddressPCMShifter, pConfig.kAddressSolenoidShifterF, pConfig.kAddressSolenoidShifterB);
-        superStructure = SuperStructure.getInstance();
 
         setShifter(false);
     }
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new ElevatorOpenLoop());
+        setDefaultCommand(new ElevatorOpenLoop());  // TODO
     }
 
     // /** Inches off ground */
@@ -84,14 +75,6 @@ public class Elevator extends PositionBasedSubsystem
     public boolean onTarget()
     {
         return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
-    }
-
-    @Override
-    public void setOpenLoop(double percent)
-    {
-        final double speed = (AtHardwareLimitTop() && percent > 0.0) ? 0.0 : percent;
-
-        setMotor(ControlMode.PercentOutput, speed);
     }
 
     @Override
@@ -129,19 +112,6 @@ public class Elevator extends PositionBasedSubsystem
         // }
     }
 
-    private boolean allFollowersAreTalons()
-    {
-        ClosedLoopConfig config = RobotConfig.getInstance().getElevatorConfig().kClosedLoop;
-        boolean result = config.masters.get(0).areFollowersAllTalons();
-
-        if (!result)
-        {
-            ConsoleLogger.warning("Followers are not all talons, cannot config current limiting");
-        }
-
-        return result;
-    }
-
     public TestReport runFunctionalTest()
     {
         TestReport report = new TestReport();
@@ -149,7 +119,6 @@ public class Elevator extends PositionBasedSubsystem
 
         report.add(getDefaultCommand().doesRequire(this));
         report.add(TalonChecker.checkClosedLoopConfig(config));
-        report.add(allFollowersAreTalons());
         report.add(TalonChecker.checkFirmware(master));
         report.add(TalonChecker.checkFirmware(followers));
         report.add(TalonChecker.checkEncoder(master));

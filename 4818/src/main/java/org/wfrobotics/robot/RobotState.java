@@ -18,16 +18,6 @@ public final class RobotState extends RobotStateBase
 
     private static final RobotState instance = new RobotState();
 
-    public RobotState()
-    {
-        super();
-    }
-
-    public void reportState()
-    {
-        super.reportState();
-    }
-
     protected synchronized void resetRobotSpecificState()
     {
 
