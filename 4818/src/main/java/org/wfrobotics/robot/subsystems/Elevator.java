@@ -10,9 +10,6 @@ import org.wfrobotics.robot.config.PnuaticConfig;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -45,14 +42,9 @@ public final class Elevator extends PositionBasedSubsystem
         final PnuaticConfig pConfig = RobotConfig.getInstance().getPnumaticConfig();
 
         master.setSelectedSensorPosition(0, 0, 100);
-        master.configOpenloopRamp(.15, 100);
+        master.configOpenloopRamp(.15, 100);  // TODO Tune because we switched to miniCIMs
         //        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
-
-        TalonFactory.configCurrentLimiting(master, 30, 35, 20);
-        for (BaseMotorController follower : followers)
-        {
-            TalonFactory.configCurrentLimiting(((TalonSRX) follower), 30, 35, 20);
-        }
+        TalonFactory.configCurrentLimiting(master, 25, 30, 20);
 
         shifter = new DoubleSolenoid(pConfig.kAddressPCMShifter, pConfig.kAddressSolenoidShifterF, pConfig.kAddressSolenoidShifterB);
 
@@ -61,7 +53,8 @@ public final class Elevator extends PositionBasedSubsystem
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new ElevatorOpenLoop());  // TODO
+        setDefaultCommand(new ElevatorOpenLoop());
+        // setDefaultCommand(new ElevatorZeroThenOpenLoop());  // TODO
     }
 
     // /** Inches off ground */
@@ -71,17 +64,17 @@ public final class Elevator extends PositionBasedSubsystem
         return NativeToPosition(getPositionNative()) + kInchesGroundToZero;
     }
 
-    /** Use to improve isFinished() criteria for closed loop commands? */
+    /** Velocity slow enough. Use to improve isFinished() criteria for closed loop commands */
     public boolean onTarget()
     {
-        return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
+        return true;  // TODO will improve performance
+        //return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
     }
 
     @Override
     public void setClosedLoop(double inchesOffGround)
     {
         final double inchesFromZero = inchesOffGround - kInchesGroundToZero;
-
         setMotor(ControlMode.MotionMagic, PositionToNative(inchesFromZero));  // Stalls motors
     }
 

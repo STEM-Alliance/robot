@@ -17,25 +17,26 @@ import edu.wpi.first.wpilibj.command.Command;
 public class RobotConfig extends EnhancedRobotConfig
 {
     private static RobotConfig instance = null;
+
      // Tank
     // _________________________________________________________________________________
-
-    // Hardware
     public TankConfig getTankConfig() 
     {
         final TankConfig config = new DeepSpaceTankConfig();
 
-        config.CLOSED_LOOP_ENABLED = false;
+        config.CLOSED_LOOP_ENABLED = false;  // TODO remove after making closed loop an Optional
 
         config.VELOCITY_MAX = 3500.0 / 2;
         config.VELOCITY_PATH = (int) (config.VELOCITY_MAX * 0.85);
         config.ACCELERATION = config.VELOCITY_PATH ;
-        config.STEERING_DRIVE_DISTANCE_P = 0.000022;
+        config.STEERING_DRIVE_DISTANCE_P = 0.000022;  // TODO Make drive distance a Optional and its owm config
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-        config.OPEN_LOOP_RAMP = 0.3; // how fast do you acellerate
+        config.OPEN_LOOP_RAMP = 0.05; // how fast do you acellerate
         config.MAX_PERCENT_OUT = 0.85;
 
         double TURN_SCALING = .35;
+
+        // TODO Make closed loop an Optional
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
                 // Left
@@ -78,33 +79,33 @@ public class RobotConfig extends EnhancedRobotConfig
     {
         final PnuaticConfig config = new PnuaticConfig();
         
-            config.kAddressPCMPoppers = 0;
-            config.kAddressSolenoidPoppersF = 2; // HATCH
-            config.kAddressSolenoidPoppersB = 3; // HATCH
+        config.kAddressPCMPoppers = 0;
+        config.kAddressSolenoidPoppersF = 2; // HATCH
+        config.kAddressSolenoidPoppersB = 3; // HATCH
 
-            config.kAddressPCMShifter = 0;
-            config.kAddressSolenoidShifterF = 4; // SHIFTER
-            config.kAddressSolenoidShifterB = 1; 
+        config.kAddressPCMShifter = 0;
+        config.kAddressSolenoidShifterF = 4; // SHIFTER
+        config.kAddressSolenoidShifterB = 1; 
 
-            config.kAddressPCMGrippers = 0;
-            config.kAddressSolenoidGrippersF = 0;
-            config.kAddressSolenoidGrippersB = 5; 
-            
-            config.kAddressPCMLockers = 0;
-            config.kAddressSolenoidLockersF = 6;
-            config.kAddressSolenoidLockersB = 7;
+        config.kAddressPCMGrippers = 0;
+        config.kAddressSolenoidGrippersF = 0;
+        config.kAddressSolenoidGrippersB = 5; 
+        
+        config.kAddressPCMLockers = 0;
+        config.kAddressSolenoidLockersF = 6;
+        config.kAddressSolenoidLockersB = 7;
 
-            config.kAddressPCMPushUp = 1;
-            config.KAddressSolenoidPushUpF = 0;
-            config.KAddressSolenoidPushUpB = 1;
+        config.kAddressPCMPushUp = 1;
+        config.KAddressSolenoidPushUpF = 0;
+        config.KAddressSolenoidPushUpB = 1;
 
-            config.kAddressPCMDeployer = 1;
-            config.KAddressSolenoidDeployerF = 2;
-            config.KAddressSolenoidDeployerB = 3;
+        config.kAddressPCMDeployer = 1;
+        config.KAddressSolenoidDeployerF = 2;
+        config.KAddressSolenoidDeployerB = 3;
 
-            config.kAddressPCMMystory = 1;
-            config.KAddressSolenoidMystoryF = 4;
-            config.KAddressSolenoidMystoryB = 5;
+        config.kAddressPCMMystory = 1;
+        config.KAddressSolenoidMystoryF = 4;
+        config.KAddressSolenoidMystoryB = 5;
 
         return config;
     }
@@ -131,12 +132,14 @@ public class RobotConfig extends EnhancedRobotConfig
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 68.5;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        // c.kSoftwareLimitB = Optional.of(100);
-        // c.kFeedForward = 0.0;
+        c.kSoftwareLimitB = Optional.of(-100);
+        c.kFeedForward = Optional.of(0.25);
         // c.kTuning = Optional.of(false);
 
         return c;
     }
+    
+    public final double kElevatorOnTargetDegrees = 2.0;
 
     // Intake
     // _________________________________________________________________________________
@@ -165,21 +168,23 @@ public class RobotConfig extends EnhancedRobotConfig
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 100.0;
-        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        // c.kFeedForward = 0.0;
+        // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // TODO don't hit the ground, just pick something a little too big?
+        // c.kFeedForward = Optional.of(0.0);  // TODO - add a small one
         // c.kTuning = Optional.of(true);
         return c;
     }
+    
+    public final double kLinkOnTargetDegrees = 2.0;
 
     // SuperStructure
     // _________________________________________________________________________________
     public final int kAddressUltrasonic = 3;
 
     // Constructor
+    // _________________________________________________________________________________
     protected RobotConfig()
     {
         cameraStream = Optional.of(false);
-        // vision = Optional.of(new VisionConfig(69.0));
     }
 
     //                      Helper Methods

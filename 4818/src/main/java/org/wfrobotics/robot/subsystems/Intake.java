@@ -17,18 +17,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class Intake extends EnhancedSubsystem
 {
-    public static Intake getInstance()
+    static class SingletonHolder
     {
-        if (instance == null)
-        {
-            instance = new Intake();
-        }
-        return instance;
+        static Intake instance = new Intake();
     }
 
-    private static Intake instance = null;
+    public static Intake getInstance()
+    {
+        return SingletonHolder.instance;
+    }
+
     private final TalonSRX motor;
     private final DoubleSolenoid grabber;
+
     private boolean hasAutoModeHatch = true;
     private Boolean isGrabbersExtended = true;
 
@@ -36,13 +37,16 @@ public final class Intake extends EnhancedSubsystem
     {
         final RobotConfig config = RobotConfig.getInstance();
         final PnuaticConfig pConfig = RobotConfig.getInstance().getPnumaticConfig();
+
         motor = TalonFactory.makeTalon(config.kAddressTalonCargo);
+        TalonFactory.configOpenLoopOnly(motor);
         motor.setNeutralMode(NeutralMode.Brake);
         motor.setInverted(config.kInvertTalonCargo);
+
         grabber = new DoubleSolenoid(pConfig.kAddressPCMPoppers, pConfig.kAddressSolenoidPoppersF, pConfig.kAddressSolenoidPoppersB);
 
         setGrabber(true);
-        reset();
+        resetAutoModeHatch();  //  Do last in constructor
     }
 
     protected void initDefaultCommand()
@@ -58,7 +62,7 @@ public final class Intake extends EnhancedSubsystem
     public void reportState()
     {
         SmartDashboard.putString("Intake Command", getCurrentCommandName());
-        SmartDashboard.putBoolean("Intake Grabber", isGrabbersExtended);
+        SmartDashboard.putBoolean("Hatch Grabber", isGrabbersExtended);
     }
 
     public void setCargoSpeed(double percent)
@@ -74,7 +78,7 @@ public final class Intake extends EnhancedSubsystem
         hasAutoModeHatch = false;
     }
 
-    public void reset()
+    public void resetAutoModeHatch()
     {
         hasAutoModeHatch = true;
     }
