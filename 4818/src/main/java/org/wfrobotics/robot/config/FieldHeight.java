@@ -3,7 +3,7 @@ package org.wfrobotics.robot.config;
 /** All heights are relative distances from zero */
 public enum FieldHeight
 {
-    HatchHigh(86, 181.5),   
+    HatchHigh(86, 175.5),   
     HatchMiddle(57, 181.5),  
     HatchLow(15.0, 181.0),
 

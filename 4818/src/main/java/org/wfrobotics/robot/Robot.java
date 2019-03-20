@@ -11,8 +11,6 @@ import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Link;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Robot: <TBD Robot Name> - 2019
@@ -33,5 +31,17 @@ public final class Robot extends EnhancedRobot
         subsystems.register(Link.getInstance());
         subsystems.register(Intake.getInstance());
         subsystems.register(SuperStructure.getInstance());    
+    }
+
+    @Override
+    public void autonomousInit()
+    {
+        SuperStructure.getInstance().reset();
+    }
+
+    @Override
+    public void teleopInit()
+    {
+        SuperStructure.getInstance().reset();
     }
 }
