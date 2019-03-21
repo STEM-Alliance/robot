@@ -27,7 +27,7 @@ public class Wrist extends PositionBasedSubsystem
         super(positionConfig);
 
         TalonFactory.configCurrentLimiting(master, 15, 25, 200);  // TODO Tune
-        master.configOpenloopRamp(.3, 100);
+        master.configOpenloopRamp(.8, 100);
     }
 
     protected void initDefaultCommand()
@@ -38,7 +38,6 @@ public class Wrist extends PositionBasedSubsystem
     @Override
     public void setOpenLoop(double percent)
     {
-
         final double speed = (AtHardwareLimitTop() && percent > 0.0) ? 0.0 : percent;
 
         setMotor(ControlMode.PercentOutput, speed);
