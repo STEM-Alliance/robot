@@ -170,7 +170,8 @@ public class RobotConfig extends EnhancedRobotConfig
         c.kFullRangeInchesOrDegrees = 100.0;
         // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // TODO don't hit the ground, just pick something a little too big?
         // c.kFeedForward = Optional.of(0.0);  // TODO - add a small one
-        // c.kTuning = Optional.of(true);
+        c.kTuning = Optional.of(true);
+
         return c;
     }
     
@@ -178,6 +179,8 @@ public class RobotConfig extends EnhancedRobotConfig
 
     // SuperStructure
     // _________________________________________________________________________________
+    public final int kAddressInfraredL = 1;
+    public final int kAddressInfraredR = 2;
     public final int kAddressUltrasonic = 3;
 
     // Constructor

@@ -3,6 +3,7 @@ package org.wfrobotics.robot.config;
 import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
+import org.wfrobotics.reuse.config.HerdJoystick.BUTTON;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.Xbox;
@@ -147,12 +148,12 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return (driverTurn.getRawAxis(0) * 0.5);
+        return driverTurn.getRawAxis(0);
     }
 
     public boolean getDriveQuickTurn()
     {
-        return Math.abs(getThrottle()) < 0.1;
+        return driverThrottle.getButtonPressed(BUTTON.BUTTON1);
     }
 
     public boolean isDriveOverrideRequested()

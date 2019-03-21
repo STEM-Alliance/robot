@@ -3,12 +3,14 @@ package org.wfrobotics.robot.config;
 /** All heights are relative distances from zero */
 public enum FieldHeight
 {
-    HatchHigh(86, 175.5),   
-    HatchMiddle(57, 181.5),  
-    HatchLow(15.0, 181.0),
 
-    CargoHigh(80.5, 78),   
-    CargoMiddle(48.2, 78.0),  
+    HatchHigh(62, 100.0),   
+    HatchMiddle(39.0, 100.0),  
+    HatchLow(15.0, 100.0),
+
+    // Cargo are ~9 inches above hatch with the same link angle
+    CargoHigh(70.0, 92.0),
+    CargoMiddle(48.0, 78.0),
     CargoLow(15.0, 78),
     
     CargoPickup(15.0, 180),

@@ -2,6 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.Canifier;
 import org.wfrobotics.reuse.hardware.Canifier.RGB;
+import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
 import org.wfrobotics.robot.commands.ConserveCompressor;
@@ -30,6 +31,8 @@ public final class SuperStructure extends SuperStructureBase
 
     private final Canifier jeff = new Canifier(6, new RGB(255, 255, 0));
     private final AnalogInput ultra3;
+    private final SharpDistance distanceL;
+    private final SharpDistance distanceR;
     private final CircularBuffer cargoBuffer = new CircularBuffer(3, false);
     private final CircularBuffer hatchBuffer = new CircularBuffer(3, false);
 
@@ -37,6 +40,8 @@ public final class SuperStructure extends SuperStructureBase
     {
         final RobotConfig config = RobotConfig.getInstance();
         
+        distanceL = new SharpDistance(config.kAddressInfraredL);
+        distanceR = new SharpDistance(config.kAddressInfraredR);
         ultra3 = new AnalogInput(config.kAddressUltrasonic);
     }
 

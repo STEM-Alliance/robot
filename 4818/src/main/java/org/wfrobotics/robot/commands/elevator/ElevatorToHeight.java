@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorToHeight extends Command
 {
-    private static final double kHeightOnTargetInches = 1.0;
+    private static final double kOnTargetInches = 1.0;
 
     private final Elevator elevator = Elevator.getInstance();
     private final IO io = IO.getInstance();
@@ -26,9 +26,9 @@ public class ElevatorToHeight extends Command
 
     protected boolean isFinished()
     {
-        final boolean isSlowEnough = elevator.onTarget();
-        final boolean isClose = Math.abs(elevator.getPosition() - desired) < kHeightOnTargetInches;
-        return isClose || isSlowEnough || io.isElevatorOverrideRequested();
+        final boolean slowEnough = elevator.onTarget();
+        final boolean isClose = Math.abs(elevator.getPosition() - desired) < kOnTargetInches;
+        return (isClose && slowEnough) || io.isElevatorOverrideRequested();
     }
 
     protected void end()

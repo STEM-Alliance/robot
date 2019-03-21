@@ -70,7 +70,8 @@ public final class DriveToTarget extends Command
 
     private double getVisionCorrection()
     {
-        final boolean elevatorObstructing = elevator.getPosition() > 25.0;
+        final double height = elevator.getPosition();
+        final boolean elevatorObstructing = height > 25.0 && height < 55.0;
         final boolean linkToShiny = link.getPosition() < kLinkToShinyDegrees;
         double visionAngle = 0.0;
 

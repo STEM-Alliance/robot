@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class LinkToHeight extends Command
 {
-    private final double kHeightCloseEnoughDegrees;
+    private final double kOnTargetDegrees;
 
     private final Link link = Link.getInstance();
     private final IO io = IO.getInstance();
@@ -20,7 +20,7 @@ public class LinkToHeight extends Command
 
         final RobotConfig config = RobotConfig.getInstance();
 
-        kHeightCloseEnoughDegrees = config.kLinkHeightCloseEnoughDegrees;
+        kOnTargetDegrees = config.kLinkOnTargetDegrees;
         desired = degrees;
         setTimeout(3.0);
     }
@@ -33,7 +33,7 @@ public class LinkToHeight extends Command
     protected boolean isFinished()
     {
         final boolean slowEnough = link.onTarget();
-        final boolean isClose = Math.abs(link.getPosition() - desired) < kHeightCloseEnoughDegrees;
+        final boolean isClose = Math.abs(link.getPosition() - desired) < kOnTargetDegrees;
         return (isClose && slowEnough) || io.isLinkOverrideRequested() || isTimedOut();
     }
 }
