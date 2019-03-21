@@ -1,4 +1,4 @@
-package org.wfrobotics.robot.commands.intake;
+package org.wfrobotics.robot.commands.experimental;
 
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.SuperStructure;

@@ -10,8 +10,8 @@ public class SystemIntakeCargo extends CommandGroup
 {
     public SystemIntakeCargo()
     {
-        addParallel(new ElevatorToHeight(0));
-        addSequential(new LinkToHeight(98));
+        addParallel(new ElevatorToHeight(0.0));
+        addSequential(new LinkToHeight(98.0));
         addSequential(new CargoIn());
     }
 }

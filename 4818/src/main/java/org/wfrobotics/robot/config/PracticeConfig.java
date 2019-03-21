@@ -113,8 +113,8 @@ public final class PracticeConfig extends RobotConfig
     // Hardware
     public PositionConfig getElevatorConfig()
     {
-        int kTicksToTop = 143000;
-        double kLiftVelocityMax = 12250.0;
+        int kTicksToTop = 143000;  // Good as of March 20th
+        double kLiftVelocityMax = 12250.0;  // TODO Retune for MiniCIM's? 
         int kLiftCruiseUp = (int) (kLiftVelocityMax * 0.975);
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 3.50);
 
@@ -127,7 +127,7 @@ public final class PracticeConfig extends RobotConfig
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 70.0 - 15.5;  // substract inches to ground
+        c.kFullRangeInchesOrDegrees = 70.0 - 15.5;  // TODO Retune since switching to bottom of intake height convention
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kSoftwareLimitB = Optional.of(-100);
         c.kFeedForward = Optional.of(0.10);
@@ -153,8 +153,8 @@ public final class PracticeConfig extends RobotConfig
         final PositionConfig c = new PositionConfig();
 
         // good 6500
-        int kTicksToTop = 6500;
-        int kLinkVelocityMax = 2100;
+        int kTicksToTop = 6500;  // Retune for kFullRangeInchesOrDegrees = 90.0
+        int kLinkVelocityMax = 2100;  // Retune for 775 pro?
         int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.95);
         int kLinkAcceleration = (int) (kLinkVelocityCruise * 4.0);
 
@@ -164,9 +164,9 @@ public final class PracticeConfig extends RobotConfig
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 100.0;
-        // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // TODO don't hit the ground, just pick something a little too big?
-        c.kFeedForward = Optional.of(-0.05);  // TODO - add a small one
+        c.kFullRangeInchesOrDegrees = 100.0;  // TODO Make this 90 and retune
+        // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // Don't hit the ground, just pick something a little too big?
+        c.kFeedForward = Optional.of(-0.05);  // TODO try -0.1, not sure if large enough
         // c.kTuning = Optional.of(true);
         return c;
     }
@@ -175,6 +175,8 @@ public final class PracticeConfig extends RobotConfig
 
     // SuperStructure
     // _________________________________________________________________________________
+    public final int kAddressInfraredL = 1;
+    public final int kAddressInfraredR = 2;
     public final int kAddressUltrasonic = 3;
 
     // Constructor

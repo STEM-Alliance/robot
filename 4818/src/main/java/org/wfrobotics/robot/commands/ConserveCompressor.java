@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ConserveCompressor extends Command
 {
-    // private final Elevator elevator = Elevator.getInstance();
+    private final Elevator elevator = Elevator.getInstance();
     private final SuperStructure sp = SuperStructure.getInstance();
     private boolean isTeleop = true;
 
@@ -24,11 +24,8 @@ public class ConserveCompressor extends Command
 
     protected void execute()
     {
-        // TODO Turn of when lift is tuned
-        // if (elevator.onTarget())
-        {
-            sp.setCompressor(isTeleop);
-        }
+        final boolean elevatorNotMovingFast = elevator.onTarget();
+        sp.setCompressor(isTeleop && elevatorNotMovingFast);
     }
 
     protected boolean isFinished()

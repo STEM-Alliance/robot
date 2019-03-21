@@ -30,10 +30,6 @@ public class SystemToLow extends ConditionalCommand
             addSequential(new ElevatorToHeight(FieldHeight.CargoLow.getE()));
             addSequential(new LinkToHeight(FieldHeight.CargoLow.getL()));
         }
-        // public boolean isFinished()
-        // {
-        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
-        // }
     }
 
     private static class SystemToHatch extends CommandGroup
@@ -43,9 +39,5 @@ public class SystemToLow extends ConditionalCommand
             addSequential(new ElevatorToHeight(FieldHeight.HatchLow.getE()));
             addSequential(new LinkToHeight(FieldHeight.HatchLow.getL()));
         }
-        // public boolean isFinished()
-        // {
-        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
-        // }
     }
 }

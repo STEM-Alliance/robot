@@ -35,15 +35,15 @@ public class SmartIntake extends Command
     {
         if (intake.hasAutoModeHatch())
         {
-            intake.setGrabber(true);
+            // intake.setGrabber(true);  // Enable after they fix hatch wont stand up
         }
         else if (superStructure.getHasCargo())
         {
-            intake.setGrabber(true);
+            // intake.setGrabber(true);
         }
         else if (superStructure.getHasHatch())
         {
-            intake.setGrabber(false);
+            // intake.setGrabber(false);
         }
     }
 

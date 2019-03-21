@@ -29,10 +29,6 @@ public class SystemPickup extends ConditionalCommand
             addParallel(new LinkToHeight(FieldHeight.CargoPickup.getL()));
             addSequential(new ElevatorToHeight(FieldHeight.CargoPickup.getE()));
         }
-        // public boolean isFinished()
-        // {
-        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
-        // }
     }
 
     private static class SystemToHatch extends CommandGroup
@@ -41,11 +37,6 @@ public class SystemPickup extends ConditionalCommand
         {
             addParallel(new LinkToHeight(FieldHeight.HatchLow.getL()));
             addSequential(new ElevatorToHeight(FieldHeight.HatchLow.getE()));
-            
         }
-        // public boolean isFinished()
-        // {
-        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
-        // }
     }
 }
