@@ -45,7 +45,7 @@ public final class Intake extends EnhancedSubsystem
 
         grabber = new DoubleSolenoid(pConfig.kAddressPCMPoppers, pConfig.kAddressSolenoidPoppersF, pConfig.kAddressSolenoidPoppersB);
 
-        setGrabber(true);
+        setGrabber(false);
         resetAutoModeHatch();  //  Do last in constructor
     }
 

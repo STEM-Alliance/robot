@@ -21,8 +21,8 @@ public class ElevatorZeroThenOpenLoop extends ConditionalCommand
     {
         public ElevatorZero()
         {
-            this.addSequential(new ElevatorGoHome(0.5, 0.1));
-            this.addSequential(new ElevatorGoHome(-0.5, 15.0));
+            this.addSequential(new ElevatorGoHome(0.4, 0.1));
+            this.addSequential(new ElevatorGoHome(-0.4, 7.0));
         }
 
         protected void end()

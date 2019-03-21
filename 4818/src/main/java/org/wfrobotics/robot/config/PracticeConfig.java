@@ -113,7 +113,7 @@ public final class PracticeConfig extends RobotConfig
     // Hardware
     public PositionConfig getElevatorConfig()
     {
-        int kTicksToTop = 137500;
+        int kTicksToTop = 143000;
         double kLiftVelocityMax = 12250.0;
         int kLiftCruiseUp = (int) (kLiftVelocityMax * 0.975);
         int kLiftAccelerationUp = (int) (kLiftCruiseUp * 3.50);
@@ -127,11 +127,11 @@ public final class PracticeConfig extends RobotConfig
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 68.5;
+        c.kFullRangeInchesOrDegrees = 70.0 - 15.5;  // substract inches to ground
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kSoftwareLimitB = Optional.of(-100);
-        c.kFeedForward = Optional.of(0.25);
-        // c.kTuning = Optional.of(false);
+        c.kFeedForward = Optional.of(0.10);
+        // c.kTuning = Optional.of(true);
 
         return c;
     }
@@ -166,7 +166,7 @@ public final class PracticeConfig extends RobotConfig
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 100.0;
         // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // TODO don't hit the ground, just pick something a little too big?
-        // c.kFeedForward = Optional.of(0.0);  // TODO - add a small one
+        c.kFeedForward = Optional.of(-0.05);  // TODO - add a small one
         // c.kTuning = Optional.of(true);
         return c;
     }

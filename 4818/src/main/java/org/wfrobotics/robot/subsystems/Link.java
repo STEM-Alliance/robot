@@ -33,6 +33,8 @@ public final class Link extends PositionBasedSubsystem
 
         master.configOpenloopRamp(0.5, 100);
         master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, responsiveness not critical
+        // master.configPeakOutputForward(.33);
+        // master.configPeakOutputForward(-.33);
         TalonFactory.configCurrentLimiting(master, 15, 25, 30);
 
         // TODO Try using Status_10_MotionMagic to improve motion?

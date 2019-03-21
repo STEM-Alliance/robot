@@ -30,7 +30,7 @@ public final class Elevator extends PositionBasedSubsystem
     }
 
     private static final double kInchesGroundToZero = 15.5;  // Practice bot
-    private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
+    private static final int kTickRateBrakeModeObserved = 400;  // Practice bot
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
 
     private static Elevator instance = null;
@@ -41,7 +41,7 @@ public final class Elevator extends PositionBasedSubsystem
         super(positionConfig);
         final PnuaticConfig pConfig = RobotConfig.getInstance().getPnumaticConfig();
 
-        master.setSelectedSensorPosition(0, 0, 100);
+        master.setSelectedSensorPosition((int) (positionConfig.kTicksToTop * 2.0), 0, 100);
         master.configOpenloopRamp(.15, 100);  // TODO Tune because we switched to miniCIMs
         //        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
         TalonFactory.configCurrentLimiting(master, 25, 30, 20);
@@ -54,7 +54,7 @@ public final class Elevator extends PositionBasedSubsystem
     public void initDefaultCommand()
     {
         setDefaultCommand(new ElevatorOpenLoop());
-        // setDefaultCommand(new ElevatorZeroThenOpenLoop());  // TODO
+        // setDefaultCommand(new ElevatorZeroThenOpenLoop());  // TODO works but need sensor fixed on practice bot first
     }
 
     // /** Inches off ground */
@@ -67,8 +67,7 @@ public final class Elevator extends PositionBasedSubsystem
     /** Velocity slow enough. Use to improve isFinished() criteria for closed loop commands */
     public boolean onTarget()
     {
-        return true;  // TODO will improve performance
-        //return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
+        return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
     }
 
     @Override
