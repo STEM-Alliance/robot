@@ -52,7 +52,7 @@ public final class SuperStructure extends SuperStructureBase
     
     public void cacheSensors(boolean isDisabled)
     {
-        jeff.cacheSensors(false);  // Read PWM0 & PWM1
+        jeff.cacheSensors(false);  // Reads PWM0 & PWM1
         final double hatchDistance = getUltraDistanceRaw();
         final boolean cargoLeft = jeff.getPWM0();
         final boolean cargoRight = jeff.getPWM1();

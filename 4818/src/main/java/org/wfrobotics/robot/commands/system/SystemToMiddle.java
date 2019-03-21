@@ -29,10 +29,6 @@ public class SystemToMiddle extends ConditionalCommand
             addParallel(new ElevatorToHeight(FieldHeight.CargoMiddle.getE()));
             addSequential(new LinkToHeight(FieldHeight.CargoMiddle.getL()));
         }
-        // public boolean isFinished()
-        // {
-        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
-        // }
     }
 
     private static class SystemToHatch extends CommandGroup
@@ -42,9 +38,5 @@ public class SystemToMiddle extends ConditionalCommand
             addParallel(new ElevatorToHeight(FieldHeight.HatchMiddle.getE()));
             addSequential(new LinkToHeight(FieldHeight.HatchMiddle.getL()));
         }
-        // public boolean isFinished()
-        // {
-        //     return IO.getInstance().isLinkOverrideRequested() || IO.getInstance().isLinkOverrideRequested();
-        // }
     }
 }

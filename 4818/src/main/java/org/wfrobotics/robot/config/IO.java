@@ -10,11 +10,11 @@ import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.robot.commands.drive.DriveToTarget;
 import org.wfrobotics.robot.commands.elevator.ElevatorGoHome;
 import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
+import org.wfrobotics.robot.commands.experimental.SmartHatch;
 import org.wfrobotics.robot.commands.intake.CargoIn;
 import org.wfrobotics.robot.commands.intake.CargoOut;
 import org.wfrobotics.robot.commands.intake.IntakeHatchManual;
 import org.wfrobotics.robot.commands.intake.ScoreHatch;
-import org.wfrobotics.robot.commands.intake.SmartHatch;
 import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
@@ -35,7 +35,6 @@ public final class IO implements EnhancedIO
     private final Xbox operator;
     private final Xbox rocketPlate;
 
-
     /** Create and configure controls for Drive Team */
     private IO()
     {
@@ -52,18 +51,12 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON7, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON8, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
         ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON9, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON1, TRIGGER.WHILE_HELD, new DriveToTarget());
 
         //----------------------- Climber -------------------------
-        // ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new Hug(true));
-        // ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.WHEN_PRESSED, new Hug(false));
 
         //----------------------- Driver --------------------------
-        //        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new DriveToTarget());
 
         //----------------------- Elevator ------------------------
-        // ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));
-        // ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
         ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(40.0));
 
         //----------------------- Intake --------------------------
@@ -73,7 +66,6 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new CargoIn() );
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.TOGGLE_WHEN_PRESSED, new IntakeHatch());
         ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new IntakeHatchManual(true));
 
         //----------------------- Link ----------------------------
@@ -84,8 +76,6 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle()); // middle button on rocket
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new SystemToLow()); // bottem button on rocket
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new SystemPickup()); // bottem button on breakout board
-        //ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new ScoreGamepiece()); // middle button on breakout board
-        //ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  IntakeHatch()); // top button on breakout board
 
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToCargoBoxPickup()); // middle button on breakout board
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  SystemToCargoBay()); // top button on breakout board
@@ -95,6 +85,7 @@ public final class IO implements EnhancedIO
     }
 
     // ------------------- Robot-specific --------------------
+
     public double getCargoStick()
     {
     	return -operator.getX(Hand.kLeft);
@@ -112,17 +103,17 @@ public final class IO implements EnhancedIO
 
     public double getLinkDown()
     {
-        return operator.getTrigger(Hand.kRight) * 1.0;
+        return operator.getTrigger(Hand.kRight);
     }
 
     public double getLinkUp()
     {
-        return operator.getTrigger(Hand.kLeft) * 1.0;
+        return operator.getTrigger(Hand.kLeft);
     }
 
     public boolean isElevatorOverrideRequested()
     {
-        return  Math.abs(getElevatorStick()) > .15;
+        return  Math.abs(getElevatorStick()) > 0.15;
     }
 
     public boolean isLinkOverrideRequested()
@@ -163,7 +154,7 @@ public final class IO implements EnhancedIO
 
     public void setRumble(boolean rumble)
     {
-        float state = (rumble) ? 1 : 0;
+        double state = (rumble) ? 1.0 : 0.0;
         operator.setRumble(Hand.kLeft, state);
         operator.setRumble(Hand.kRight, state);
     }
