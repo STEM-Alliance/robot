@@ -111,12 +111,12 @@ public final class IO implements EnhancedIO
 
     public double getThrottle()
     {
-        return driverThrottle.getY() * .9;
+        return driverThrottle.getY();
     }
 
     public double getTurn()
     {
-        return driverTurn.getX()*0.375;
+        return Math.pow(driverTurn.getX(), 0.272727); //3/11
     }
 
     public boolean getDriveQuickTurn()

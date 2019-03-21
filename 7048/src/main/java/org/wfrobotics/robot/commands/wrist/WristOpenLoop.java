@@ -23,10 +23,6 @@ public class WristOpenLoop extends Command
         if (!inAuto)  // TODO ConditionalCommand cancels requirements
         {
             double speed = io.getWristStick();
-            if(wrist.getPosition() < 2.5 )
-            {
-                speed/=16;
-            }
             wrist.setOpenLoop(speed);
         }
     }
