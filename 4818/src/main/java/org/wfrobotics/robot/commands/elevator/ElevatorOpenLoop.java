@@ -18,36 +18,31 @@ public class ElevatorOpenLoop extends Command
 
     protected void execute()
     {
-        final boolean inAuto = DriverStation.getInstance().isAutonomous();
+        final double speed = io.getElevatorStick();
+        elevator.getPosition();
 
-        if (!inAuto)  // TODO ConditionalCommand cancels requirements
+        //            if (Math.abs(setpoint) < deadbandPercent)
+        //            {
+        //                setpoint = 0.0;
+        //            }
+        //            else if (height < FieldHeight.HatchLow.get() + 4.0 && setpoint < 0.0)
+        //            {
+        //                setpoint /= 4.0;
+        //            }
+        //            else if (height > FieldHeight.HatchHigh.get() - 0.5 && setpoint > 0.0)
+        //            {
+        //                setpoint /= 3.0;
+        //            }
+
+        if (elevator.hasZeroed())
         {
-            final double speed = io.getElevatorStick();
-            elevator.getPosition();
-
-            //            if (Math.abs(setpoint) < deadbandPercent)
-            //            {
-            //                setpoint = 0.0;
-            //            }
-            //            else if (height < FieldHeight.HatchLow.get() + 4.0 && setpoint < 0.0)
-            //            {
-            //                setpoint /= 4.0;
-            //            }
-            //            else if (height > FieldHeight.HatchHigh.get() - 0.5 && setpoint > 0.0)
-            //            {
-            //                setpoint /= 3.0;
-            //            }
-
-            if (elevator.hasZeroed())
-            {
-                //                if (height < )
-                //                {
-                //
-                //                }
-            }
-
-            elevator.setOpenLoop(speed);
+            //                if (height < )
+            //                {
+            //
+            //                }
         }
+
+        elevator.setOpenLoop(speed);
     }
 
     protected boolean isFinished()

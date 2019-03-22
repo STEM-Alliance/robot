@@ -57,7 +57,6 @@ public final class IO implements EnhancedIO
         //----------------------- Driver --------------------------
 
         //----------------------- Elevator ------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(40.0));
 
         //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreHatch());
@@ -82,6 +81,8 @@ public final class IO implements EnhancedIO
 
         //----------------------- Testing -------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new SmartHatch());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new LinkToHeight(45.0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new LinkToHeight(10.0));
     }
 
     // ------------------- Robot-specific --------------------

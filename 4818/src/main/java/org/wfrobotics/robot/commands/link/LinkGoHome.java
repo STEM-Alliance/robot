@@ -7,16 +7,23 @@ import edu.wpi.first.wpilibj.command.Command;
 public class LinkGoHome extends Command
 {
     private final Link link = Link.getInstance();
+    private final double kSpeed;
 
     public LinkGoHome()
     {
+        this(-0.35);
+    }
+
+    public LinkGoHome(double speed)
+    {
         requires(link);
-        setTimeout(5.0);
+        kSpeed = speed;
+        setTimeout(4.0);
     }
 
     protected void execute()
     {
-        link.setOpenLoop(-0.4);
+        link.setOpenLoop(kSpeed);
     }
 
     protected boolean isFinished()
