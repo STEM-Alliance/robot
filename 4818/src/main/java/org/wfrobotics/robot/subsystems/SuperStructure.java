@@ -5,7 +5,7 @@ import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
-import org.wfrobotics.robot.commands.ConserveCompressor;
+import org.wfrobotics.robot.commands.UpdateSuperStructure;
 import org.wfrobotics.robot.config.RobotConfig;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -43,11 +43,14 @@ public final class SuperStructure extends SuperStructureBase
         distanceL = new SharpDistance(config.kAddressInfraredL);
         distanceR = new SharpDistance(config.kAddressInfraredR);
         ultra3 = new AnalogInput(config.kAddressUltrasonic);
+
+        setVisionCamera(true);
+        setVisionTapeMode();
     }
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new ConserveCompressor());
+        setDefaultCommand(new UpdateSuperStructure());
     }
     
     public void cacheSensors(boolean isDisabled)
@@ -143,4 +146,31 @@ public final class SuperStructure extends SuperStructureBase
     public boolean getTapeCamera()  {   return chickenVision.getEntry("Tape").getBoolean(false);    }
     public boolean getCargoCamera() {   return chickenVision.getEntry("Cargo").getBoolean(false);   }
     public double getLastTimestamp(){   return chickenVision.getEntry("VideoTimestamp").getDouble(0.0); }
+
+    public void setVisionCamera(boolean elevatorCamera)
+    {
+        final int index = (elevatorCamera) ? 1 : 0; 
+        chickenVision.getEntry("CameraIndex").setNumber(index);
+    }
+
+    public void setVisionCargoMode()
+    {
+        chickenVision.getEntry("Driver").setBoolean(false);
+        chickenVision.getEntry("Tape").setBoolean(false);
+        chickenVision.getEntry("Cargo").setBoolean(true);
+    }
+
+    public void setVisionTapeMode()
+    {
+        chickenVision.getEntry("Driver").setBoolean(false);
+        chickenVision.getEntry("Cargo").setBoolean(false);
+        chickenVision.getEntry("Tape").setBoolean(true);
+    }
+
+    public void setVisionDriverMode()
+    {
+        chickenVision.getEntry("Cargo").setBoolean(false);
+        chickenVision.getEntry("Tape").setBoolean(false);
+        chickenVision.getEntry("Driver").setBoolean(true);
+    }
 }

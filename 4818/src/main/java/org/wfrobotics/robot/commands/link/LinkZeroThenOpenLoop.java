@@ -25,9 +25,9 @@ public class LinkZeroThenOpenLoop extends ConditionalCommand
             addSequential(new LinkToHeight(10.0));
         }
 
-        protected void end()
-        {
-            Link.getInstance().setOpenLoop(0.0);
-        }
+        // protected void end()
+        // {
+        //     Link.getInstance().setOpenLoop(0.0);
+        // }
     }
 }

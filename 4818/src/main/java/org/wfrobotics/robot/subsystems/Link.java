@@ -22,7 +22,7 @@ public final class Link extends PositionBasedSubsystem
         return instance;
     }
     
-    private static final int kTickRateBrakeModeObserved = 0;  // TODO Tune
+    private static final int kTickRateBrakeModeObserved = 200;  // TODO Tune
     private static final int kTickRateSlowEnough = kTickRateBrakeModeObserved + 200;  // TODO Tune
 
     private static Link instance = null;
@@ -31,10 +31,9 @@ public final class Link extends PositionBasedSubsystem
     {
         super(positionConfig);
 
-        master.configOpenloopRamp(0.5, 100);
+        master.configClosedloopRamp(0.05, 100);
+        master.configOpenloopRamp(0.05, 100);
         master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, responsiveness not critical
-        // master.configPeakOutputForward(.33);
-        // master.configPeakOutputForward(-.33);
         TalonFactory.configCurrentLimiting(master, 15, 25, 30);
 
         // TODO Try using Status_10_MotionMagic to improve motion?
@@ -68,8 +67,7 @@ public final class Link extends PositionBasedSubsystem
     /** Velocity slow enough. Use to improve isFinished() criteria for closed loop commands */
     public boolean onTarget()
     {
-        return true;  // TODO will improve performance
-        //return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
+        return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
     }
 
     public TestReport runFunctionalTest()

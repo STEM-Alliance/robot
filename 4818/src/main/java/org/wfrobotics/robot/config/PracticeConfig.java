@@ -114,23 +114,23 @@ public final class PracticeConfig extends RobotConfig
     public PositionConfig getElevatorConfig()
     {
         int kTicksToTop = 143000;  // Good as of March 20th
-        double kLiftVelocityMax = 12250.0;  // TODO Retune for MiniCIM's? 
-        int kLiftCruiseUp = (int) (kLiftVelocityMax * 0.975);
-        int kLiftAccelerationUp = (int) (kLiftCruiseUp * 3.50);
+        double kVelocityMax = 8500.0;  // Good as of March 21st
+        int kCruise = (int) (kVelocityMax * 0.975);
+        int kAcceleration = (int) (kCruise * 3.50);
 
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift",
                 new MasterConfig[] { new MasterConfig(17, false, true, new FollowerConfig(16, true, false)) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.6, 1023.0 / kLiftVelocityMax, 0,
-                        kLiftCruiseUp, kLiftAccelerationUp), });
+                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.6, 1023.0 / kVelocityMax, 20,
+                        kCruise, kAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 70.0 - 15.5;  // TODO Retune since switching to bottom of intake height convention
+        c.kFullRangeInchesOrDegrees = 56.0;  // Good as of March 21st
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kSoftwareLimitB = Optional.of(-100);
-        c.kFeedForward = Optional.of(0.10);
+        c.kFeedForward = Optional.of(0.125);
         // c.kTuning = Optional.of(true);
 
         return c;
@@ -153,20 +153,20 @@ public final class PracticeConfig extends RobotConfig
         final PositionConfig c = new PositionConfig();
 
         // good 6500
-        int kTicksToTop = 6500;  // Retune for kFullRangeInchesOrDegrees = 90.0
-        int kLinkVelocityMax = 2100;  // Retune for 775 pro?
-        int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.95);
-        int kLinkAcceleration = (int) (kLinkVelocityCruise * 4.0);
+        int kTicksToTop = 10950;  // Good as of March 21st
+        int kVelocityMax = 2000;  // Good as of March 21st
+        int kVelocityCruise = (int) (kVelocityMax * 0.95);
+        int kAcceleration = (int) (kVelocityCruise * 4.0);
 
         c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, true, false) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.25, 0.0000, 0.0, 1023.0 / kLinkVelocityMax, 100,
-                        kLinkVelocityCruise, kLinkAcceleration), });
+                new Gains[] { new Gains("Motion Magic", 0, 0.25, 0.0001, 1.0, 1023.0 / kVelocityMax, 40,
+                        kVelocityCruise, kAcceleration), });
         c.kHardwareLimitNormallyOpenB = true;
         c.kHardwareLimitNormallyOpenT = true;
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 100.0;  // TODO Make this 90 and retune
-        // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // Don't hit the ground, just pick something a little too big?
-        c.kFeedForward = Optional.of(-0.05);  // TODO try -0.1, not sure if large enough
+        c.kFullRangeInchesOrDegrees = 90.0;
+        c.kSoftwareLimitT = Optional.of(c.kTicksToTop);
+        c.kFeedForward = Optional.of(-0.075);  // Good as of March 21st
         // c.kTuning = Optional.of(true);
         return c;
     }

@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.commands.intake;
 
+import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Link;
 import org.wfrobotics.robot.subsystems.SuperStructure;
@@ -12,6 +13,7 @@ public class SmartIntake extends Command
     private static final double kSpeedCargoOut = 0.8;
 
     private final Intake intake = Intake.getInstance();
+    private final Elevator elevator = Elevator.getInstance();
     private final Link link = Link.getInstance();
     private final SuperStructure superStructure = SuperStructure.getInstance();
 
@@ -50,7 +52,9 @@ public class SmartIntake extends Command
     private void autoCargo()
     {
         final boolean isLinkDown = link.getPosition() > kLinkDownForCargoDegrees;
+        final boolean isElevatorDown = elevator.getPosition() < 10.0;
         final boolean intakeCargoMode = isLinkDown && 
+                                  isElevatorDown && 
                                   !superStructure.getHasCargo() &&
                                   !superStructure.getHasHatch();
         final double speed = (intakeCargoMode) ? kSpeedCargoOut : 0.0;

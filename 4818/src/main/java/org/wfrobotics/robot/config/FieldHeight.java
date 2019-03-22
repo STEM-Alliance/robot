@@ -22,22 +22,24 @@ package org.wfrobotics.robot.config;
  */
 public enum FieldHeight
 {
-    HatchHigh(62, 100.0),   
-    HatchMiddle(39.0, 100.0),  
-    HatchLow(15.0, 100.0),
+    //      Elevator Link
+    HatchHigh(46.5, 100.0),
+    HatchMiddle(23.5, 100.0),
+    HatchLow(0.5, 90.0),
 
-    CargoHigh(70.0, 92.0),
-    CargoMiddle(48.0, 78.0),
-    CargoLow(15.0, 78),
+    CargoHigh(56.0, 62.5),
+    CargoMiddle(45.0, 78.0),
+    CargoLow(15.5, 78),
     
-    CargoPickup(15.0, 180),
-    HatchPickup(15.0, 181.1),
+    CargoPickup(0.5, 180),
+    HatchPickup(0.5, 181.1),
 
-    CargoBay(15.0, 20),
-    CargoBoxPickup(15.0, 158);
+    CargoBay(0.5, 20),
+    CargoBoxPickup(0.5, 158);
 
     private final double elevator;
     private final double link;
+    
 
     private FieldHeight(double elevator, double link) 
     {

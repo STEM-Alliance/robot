@@ -175,7 +175,7 @@ public class RobotConfig extends EnhancedRobotConfig
         return c;
     }
     
-    public final double kLinkOnTargetDegrees = 2.0;
+    public final double kLinkOnTargetDegrees = 3.0;
 
     // SuperStructure
     // _________________________________________________________________________________

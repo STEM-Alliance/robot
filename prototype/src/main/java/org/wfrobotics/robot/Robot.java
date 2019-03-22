@@ -9,35 +9,15 @@ import org.wfrobotics.robot.subsystems.ExampleSubsystem;
 
 public final class Robot extends EnhancedRobot
 {
-    public final CameraServer visionServer = CameraServer.getInstance();
-    VisionProcessor processor = VisionProcessor.getInstance();
-
     public static ExampleSubsystem prototypeSubsystem = new ExampleSubsystem();
 
     public Robot() 
     {
-        super(RobotState.getInstance(),
-              ProtoRobotConfig.getInstance(),
-              new ProtoIO());
+        super(RobotState.getInstance(), ProtoRobotConfig.getInstance(), new ProtoIO());
     }
 
     protected void registerRobotSpecific()
     {
-        //subsystems.register(SuperStructure.getInstance());
-        visionServer.register(processor);
-        backgroundUpdater.register(processor);
-        RobotState.getInstance().resetVisionState();
-    }
-
-    @Override
-    public void disabledPeriodic()
-    {
-        super.disabledPeriodic();
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-        subsystems.update();
+        subsystems.register(prototypeSubsystem);
     }
 }
