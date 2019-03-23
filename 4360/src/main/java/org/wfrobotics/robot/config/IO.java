@@ -58,7 +58,7 @@ public final class IO implements EnhancedIO
    		
     	//------Joysticks--------
          // ButtonFactory.makeButton(driverTurn, SpudJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new Testbutton());
-            ButtonFactory.makeButton(driverTurn, HerdJoystick.BUTTON.BUTTON1, TRIGGER.WHILE_HELD, new Testbutton());
+            ButtonFactory.makeButton(driverTurn, BUTTON.BUTTON1.value, TRIGGER.WHILE_HELD, new Testbutton());
  
         // -------------------- Super Structure -------------------
          //test ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
@@ -124,4 +124,39 @@ public final class IO implements EnhancedIO
     {
     	return -0.65*(drive.getY(Hand.kLeft));
     }
+
+    public static enum BUTTON
+    {
+        THUMB_TOP_RIGHT(1),
+        THUMB_BOTTOM_RIGHT(2),
+        THUMB_TOP_LEFT(3),
+        THUMB_BOTTOM_LEFT(4),
+        TRIGGER(5),
+        THUMB_SIDE(6),
+        BASE_TOP_RIGHT(7),
+        BASE_MIDDLE_RIGHT(8),
+        BASE_BOTTOM_RIGHT(9),
+        BASE_TOP_LEFT(10),
+        BASE_MIDDLE_LEFT(11),
+        BASE_BOTTOM_LEFT(12),
+
+        BUTTON1(1),
+        BUTTON2(2),
+        BUTTON3(3),
+        BUTTON4(4),
+        BUTTON5(5),
+        BUTTON6(6),
+        BUTTON7(7),
+        BUTTON8(8),
+        BUTTON9(9),
+        BUTTON10(10),
+        BUTTON11(11),
+        BUTTON12(12);
+
+        private final int value;
+
+        private BUTTON(int value) { this.value = value; }
+        public int get() { return value; }
+    }
 }
+
