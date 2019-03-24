@@ -4,6 +4,7 @@ import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.subsystems.SuperStructure;
+import org.wfrobotics.robot.subsystems.Vision;
 import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.Intake;
 import org.wfrobotics.robot.subsystems.Link;
@@ -26,7 +27,8 @@ public final class Robot extends EnhancedRobot
         subsystems.register(Elevator.getInstance());
         subsystems.register(Link.getInstance());
         subsystems.register(Intake.getInstance());
-        subsystems.register(SuperStructure.getInstance());    
+        subsystems.register(SuperStructure.getInstance());  
+        subsystems.register(Vision.getInstance());
     }
 
     @Override

@@ -53,8 +53,8 @@ public final class Elevator extends PositionBasedSubsystem
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new ElevatorOpenLoop());
-        // setDefaultCommand(new ElevatorZeroThenOpenLoop());  // TODO works but need sensor fixed on practice bot first
+        // setDefaultCommand(new ElevatorOpenLoop());
+        setDefaultCommand(new ElevatorZeroThenOpenLoop());  // TODO works but need sensor fixed on practice bot first
     }
 
     /** Velocity slow enough. Use to improve isFinished() criteria for closed loop commands */

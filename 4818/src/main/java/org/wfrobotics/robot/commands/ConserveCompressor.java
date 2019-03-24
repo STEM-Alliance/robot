@@ -3,23 +3,23 @@ package org.wfrobotics.robot.commands;
 import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class UpdateSuperStructure extends Command
+public final class ConserveCompressor extends Command
 {
     private final Elevator elevator = Elevator.getInstance();
     private final SuperStructure sp = SuperStructure.getInstance();
     private boolean isTeleop = true;
 
-    public UpdateSuperStructure()
+    public ConserveCompressor()
     {
         requires(sp);
     }
 
     protected void initialize()
     {
-        isTeleop = DriverStation.getInstance().isOperatorControl();
+        // isTeleop = DriverStation.getInstance().isOperatorControl();
+        isTeleop = true;  // Doing teleop in sandstorm
     }
 
     protected void execute()

@@ -5,7 +5,7 @@ import org.wfrobotics.robot.subsystems.Link;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.ConditionalCommand;
 
-public class LinkZeroThenOpenLoop extends ConditionalCommand
+public final class LinkZeroThenOpenLoop extends ConditionalCommand
 {
     public LinkZeroThenOpenLoop()
     {

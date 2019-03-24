@@ -4,13 +4,14 @@ import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
 import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.reuse.config.EnhancedIO;
-import org.wfrobotics.robot.subsystems.SuperStructure;
+import org.wfrobotics.robot.subsystems.Vision;
+
 import edu.wpi.first.wpilibj.command.Command;
 
 /** Turn until reaching the target, or get to the expected heading it should be at **/
 public class TurnToTarget extends Command
 {
-    private final SuperStructure state = SuperStructure.getInstance();
+    private final Vision vision = Vision.getInstance();
     private final  TankSubsystem drive = TankSubsystem.getInstance();
     private final  EnhancedIO io = EnhancedRobot.getIO();
     protected boolean targetAvailable = false;
@@ -23,7 +24,7 @@ public class TurnToTarget extends Command
 
     protected void initialize()
     {
-        if (!state.getTapeInView())
+        if (!vision.getModeTape() && vision.getInView())
         {
             ConsoleLogger.warning("Cannot turn to target, target not in view");
             targetAvailable = false;
@@ -41,9 +42,9 @@ public class TurnToTarget extends Command
         *  ------if the target isn't in the frame
         *  if the robot is within tol of the target
         */
-        if (state.getTapeInView())
+        if (vision.getModeTape() && vision.getInView())
         {
-            if ( Math.abs(drive.getGryo() - state.getTapeYaw()) < tol)
+            if ( Math.abs(drive.getGryo() - vision.getError()) < tol)
             {
                 return true;
             }
@@ -59,7 +60,7 @@ public class TurnToTarget extends Command
 
     private void doTurn()
     {
-        double angle = drive.getGryo() + state.getTapeYaw();
+        double angle = drive.getGryo() + vision.getError();
         drive.turnToHeading(angle);
     }
 }

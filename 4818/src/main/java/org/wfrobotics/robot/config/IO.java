@@ -3,13 +3,10 @@ package org.wfrobotics.robot.config;
 import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
-import org.wfrobotics.reuse.config.HerdJoystick.BUTTON;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.Xbox;
-import org.wfrobotics.robot.commands.drive.DriveToTarget;
 import org.wfrobotics.robot.commands.elevator.ElevatorGoHome;
-import org.wfrobotics.robot.commands.elevator.ElevatorToHeight;
 import org.wfrobotics.robot.commands.experimental.SmartHatch;
 import org.wfrobotics.robot.commands.intake.CargoIn;
 import org.wfrobotics.robot.commands.intake.CargoOut;
@@ -48,9 +45,9 @@ public final class IO implements EnhancedIO
     public void assignButtons()
     {
         // ---------------------- Autonomous ----------------------
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON7, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON8, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON9, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
+        ButtonFactory.makeButton(driverThrottle, 7, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
+        ButtonFactory.makeButton(driverThrottle, 8, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
+        ButtonFactory.makeButton(driverThrottle, 9, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
 
         //----------------------- Climber -------------------------
 
@@ -145,7 +142,7 @@ public final class IO implements EnhancedIO
 
     public boolean getDriveQuickTurn()
     {
-        return driverThrottle.getButtonPressed(BUTTON.BUTTON1);
+        return driverThrottle.getButtonPressed(1);
     }
 
     public boolean isDriveOverrideRequested()

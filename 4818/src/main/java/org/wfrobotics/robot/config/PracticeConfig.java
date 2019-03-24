@@ -34,14 +34,19 @@ public final class PracticeConfig extends RobotConfig
 
         double TURN_SCALING = .35;
 
-        config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
+        config.CLOSED_LOOP = new ClosedLoopConfig("Tank",
+            new MasterConfig[] {
                 // Left
                 new MasterConfig(10, true, true, new FollowerConfig(12, false), new FollowerConfig(14, false)),
                 // Right
-                new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)), },
-                new Gains[] { new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
-                        new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 0,
-                                (int) (config.VELOCITY_MAX * TURN_SCALING), (int) (config.VELOCITY_MAX * TURN_SCALING)), });
+                new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)),
+            },
+            new Gains[] { 
+                new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
+                new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 0,
+                              (int) (config.VELOCITY_MAX * TURN_SCALING), (int) (config.VELOCITY_MAX * TURN_SCALING)),
+            }
+        );
 
         config.GEAR_RATIO_LOW = (54.0 / 32.0);
         config.SCRUB = 0.98;
@@ -59,14 +64,6 @@ public final class PracticeConfig extends RobotConfig
             return new DriveToTarget();
         }
     }
-
-    public final double kVisionP = 0.0;  // TODO get from preferences
-    public final double kVisionI = 0.0;  // TODO get from preferences
-    public final double kVisionD = 0.0;
-    public final double kVisionIZone = 0.0;
-    public final double kVisionElevatorHeightToShiny = 25.0;
-    public final double kVisionLinkAngleToShiny = 60.0;
-    public final boolean kVisionBrakeMode = false;
 
     // Climb
     // _________________________________________________________________________________
@@ -121,16 +118,18 @@ public final class PracticeConfig extends RobotConfig
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift",
-                new MasterConfig[] { new MasterConfig(17, false, true, new FollowerConfig(16, true, false)) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.6, 1023.0 / kVelocityMax, 20,
-                        kCruise, kAcceleration), });
-        c.kHardwareLimitNormallyOpenB = true;
-        c.kHardwareLimitNormallyOpenT = true;
+            new MasterConfig[] {
+                new MasterConfig(17, false, true, new FollowerConfig(16, true, false)),
+            },
+            new Gains[] {
+                new Gains("Motion Magic", 0, 0.55, 0.0001, 0.6, 1023.0 / kVelocityMax, 20, kCruise, kAcceleration),
+            }
+        );
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 56.0;  // Good as of March 21st
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kSoftwareLimitB = Optional.of(-100);
-        c.kFeedForward = Optional.of(0.125);
+        c.kFeedForward = Optional.of(0.11);
         // c.kTuning = Optional.of(true);
 
         return c;
@@ -152,17 +151,19 @@ public final class PracticeConfig extends RobotConfig
     {
         final PositionConfig c = new PositionConfig();
 
-        // good 6500
         int kTicksToTop = 10950;  // Good as of March 21st
         int kVelocityMax = 2000;  // Good as of March 21st
         int kVelocityCruise = (int) (kVelocityMax * 0.95);
         int kAcceleration = (int) (kVelocityCruise * 4.0);
 
-        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, true, false) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.25, 0.0001, 1.0, 1023.0 / kVelocityMax, 40,
-                        kVelocityCruise, kAcceleration), });
-        c.kHardwareLimitNormallyOpenB = true;
-        c.kHardwareLimitNormallyOpenT = true;
+        c.kClosedLoop = new ClosedLoopConfig("Link",
+            new MasterConfig[] {
+                new MasterConfig(9, true, false),
+            },
+            new Gains[] {
+                new Gains("Motion Magic", 0, 0.25, 0.0001, 1.0, 1023.0 / kVelocityMax, 40, kVelocityCruise, kAcceleration),
+            }
+        );
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 90.0;
         c.kSoftwareLimitT = Optional.of(c.kTicksToTop);
@@ -177,7 +178,12 @@ public final class PracticeConfig extends RobotConfig
     // _________________________________________________________________________________
     public final int kAddressInfraredL = 1;
     public final int kAddressInfraredR = 2;
-    public final int kAddressUltrasonic = 3;
+
+    // Vision
+    // _________________________________________________________________________________
+    public final double kVisionP = 0.055;  // March 23rd, linear PID
+    public final double kVisionI = 0.0002;  // March 23rd, linear PID
+    public final double kVisionD = 0.0;  // March 23rd, linear PID
 
     // Constructor
     // _________________________________________________________________________________

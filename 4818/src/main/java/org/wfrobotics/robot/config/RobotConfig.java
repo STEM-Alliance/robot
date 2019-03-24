@@ -32,20 +32,25 @@ public class RobotConfig extends EnhancedRobotConfig
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;  // TODO Make drive distance a Optional and its owm config
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
         config.OPEN_LOOP_RAMP = 0.05; // how fast do you acellerate
-        config.MAX_PERCENT_OUT = 0.85;
+        config.MAX_PERCENT_OUT = 1.0;
 
         double TURN_SCALING = .35;
 
         // TODO Make closed loop an Optional
 
-        config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
+        config.CLOSED_LOOP = new ClosedLoopConfig("Tank", 
+            new MasterConfig[] {
                 // Left
                 new MasterConfig(10, true, true, new FollowerConfig(12, false), new FollowerConfig(14, false)),
                 // Right
-                new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)), },
-                new Gains[] { new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 100),
-                             new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 100,
-                                (int) (config.VELOCITY_MAX * TURN_SCALING), (int) (config.VELOCITY_MAX * TURN_SCALING)), });
+                new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)),
+            },
+            new Gains[] {
+                new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 100),
+                new Gains("Turn", 0, 1.0, 0.0000, 0.0 * 4.5, 1023.0 / config.VELOCITY_MAX, 100,
+                                (int) (config.VELOCITY_MAX * TURN_SCALING), (int) (config.VELOCITY_MAX * TURN_SCALING)),
+            }
+        );
 
         config.GEAR_RATIO_LOW = (54.0 / 32.0);
         config.SCRUB = 0.98;
@@ -63,14 +68,6 @@ public class RobotConfig extends EnhancedRobotConfig
             return new DriveToTarget();
         }
     }
-
-    public final double kVisionP = 0.0;
-    public final double kVisionI = 0.0;
-    public final double kVisionD = 0.0;
-    public final double kVisionIZone = 0.0;
-    public final double kVisionElevatorHeightToShiny = 25.0;
-    public final double kVisionLinkAngleToShiny = 60.0;
-    public final boolean kVisionBrakeMode = false;
 
     // Pnumatics
     // _________________________________________________________________________________
@@ -117,23 +114,26 @@ public class RobotConfig extends EnhancedRobotConfig
     public PositionConfig getElevatorConfig()
     {
         int kTicksToTop = 156624;
-        double kLiftVelocityMax = 12750.0;
-        int kLiftCruiseUp = (int) (kLiftVelocityMax * 0.975);
-        int kLiftAccelerationUp = (int) (kLiftCruiseUp * 8);
+        double kVelocityMax = 12750.0;
+        int kCruise = (int) (kVelocityMax * 0.975);
+        int kAcceleration = (int) (kCruise * 3.50);
 
         final PositionConfig c = new PositionConfig();
 
         c.kClosedLoop = new ClosedLoopConfig("Lift",
-                new MasterConfig[] { new MasterConfig(17, false, true, new FollowerConfig(16, true, false)) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.55, 0.0001, 0.7, 1023.0 / kLiftVelocityMax, 100,
-                        kLiftCruiseUp, kLiftAccelerationUp), });
-        c.kHardwareLimitNormallyOpenB = true;
-        c.kHardwareLimitNormallyOpenT = true;
+            new MasterConfig[] {
+                new MasterConfig(17, false, true, new FollowerConfig(16, true, false))
+            },
+            new Gains[] {
+                new Gains("Motion Magic", 0, 0.55, 0.0001, 0.7, 1023.0 / kVelocityMax, 20,
+                                 kCruise, kAcceleration),
+            }
+        );
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 68.5;
+        c.kFullRangeInchesOrDegrees = 56.0;  // Good as of March 21st;
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kSoftwareLimitB = Optional.of(-100);
-        c.kFeedForward = Optional.of(0.25);
+        c.kFeedForward = Optional.of(0.11);
         // c.kTuning = Optional.of(false);
 
         return c;
@@ -155,17 +155,20 @@ public class RobotConfig extends EnhancedRobotConfig
     {
         final PositionConfig c = new PositionConfig();
 
-        // good 6500
         int kTicksToTop = 6500;
-        int kLinkVelocityMax = 2100;
-        int kLinkVelocityCruise = (int) (kLinkVelocityMax * 0.95);
-        int kLinkAcceleration = (int) (kLinkVelocityCruise * 4.0);
+        int kVelocityMax = 2100;
+        int kVelocityCruise = (int) (kVelocityMax * 0.95);
+        int kAcceleration = (int) (kVelocityCruise * 4.0);
 
-        c.kClosedLoop = new ClosedLoopConfig("Link", new MasterConfig[] { new MasterConfig(9, true, false) },
-                new Gains[] { new Gains("Motion Magic", 0, 0.25, 0.0000, 0.0, 1023.0 / kLinkVelocityMax, 100,
-                        kLinkVelocityCruise, kLinkAcceleration), });
-        c.kHardwareLimitNormallyOpenB = true;
-        c.kHardwareLimitNormallyOpenT = true;
+        c.kClosedLoop = new ClosedLoopConfig("Link",
+            new MasterConfig[] { 
+                new MasterConfig(9, true, false)
+            },
+            new Gains[] {
+                new Gains("Motion Magic", 0, 0.25, 0.0001, 1.0, 1023.0 / kVelocityMax, 40,
+                                        kVelocityCruise, kAcceleration),
+            }
+        );
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 100.0;
         // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // TODO don't hit the ground, just pick something a little too big?
@@ -181,7 +184,12 @@ public class RobotConfig extends EnhancedRobotConfig
     // _________________________________________________________________________________
     public final int kAddressInfraredL = 1;
     public final int kAddressInfraredR = 2;
-    public final int kAddressUltrasonic = 3;
+
+    // Vision
+    // _________________________________________________________________________________
+    public final double kVisionP = 0.055;  // March 23rd, linear PID
+    public final double kVisionI = 0.0002;  // March 23rd, linear PID
+    public final double kVisionD = 0.0;  // March 23rd, linear PID
 
     // Constructor
     // _________________________________________________________________________________
@@ -190,7 +198,7 @@ public class RobotConfig extends EnhancedRobotConfig
         cameraStream = Optional.of(false);
     }
 
-    //                      Helper Methods
+    //  Helper Methods
     // _________________________________________________________________________________
 
     public static RobotConfig getInstance()
