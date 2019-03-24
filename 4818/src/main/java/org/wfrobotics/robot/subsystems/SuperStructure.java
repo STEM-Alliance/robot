@@ -2,16 +2,10 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.Canifier;
 import org.wfrobotics.reuse.hardware.Canifier.RGB;
-import org.wfrobotics.reuse.hardware.sensors.SharpDistance;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
-import org.wfrobotics.robot.commands.UpdateSuperStructure;
-import org.wfrobotics.robot.config.RobotConfig;
+import org.wfrobotics.robot.commands.ConserveCompressor;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public final class SuperStructure extends SuperStructureBase
@@ -30,33 +24,23 @@ public final class SuperStructure extends SuperStructureBase
     private static final double kHatchInInches = 12.0;
 
     private final Canifier jeff = new Canifier(6, new RGB(255, 255, 0));
-    private final AnalogInput ultra3;
-    private final SharpDistance distanceL;
-    private final SharpDistance distanceR;
     private final CircularBuffer cargoBuffer = new CircularBuffer(3, false);
     private final CircularBuffer hatchBuffer = new CircularBuffer(3, false);
 
     public SuperStructure()
     {
-        final RobotConfig config = RobotConfig.getInstance();
-        
-        distanceL = new SharpDistance(config.kAddressInfraredL);
-        distanceR = new SharpDistance(config.kAddressInfraredR);
-        ultra3 = new AnalogInput(config.kAddressUltrasonic);
-
-        setVisionCamera(true);
-        setVisionTapeMode();
+        jeff.setDigitalInputFramePeriod(5);  // Faster cargo digitals
     }
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new UpdateSuperStructure());
+        setDefaultCommand(new ConserveCompressor());
     }
-    
+
     public void cacheSensors(boolean isDisabled)
     {
         jeff.cacheSensors(false);  // Reads PWM0 & PWM1
-        final double hatchDistance = getUltraDistanceRaw();
+        final double hatchDistance = 0.0;
         final boolean cargoLeft = jeff.getPWM0();
         final boolean cargoRight = jeff.getPWM1();
 
@@ -68,11 +52,6 @@ public final class SuperStructure extends SuperStructureBase
     {
         SmartDashboard.putBoolean("Cargo", getHasCargo());
         SmartDashboard.putBoolean("Hatch", getHasHatch());
-
-        SmartDashboard.putNumber("Ultra3", getUltraDistance() );
-        
-        // SmartDashboard.putNumber("Tape Vision Angle", getTapeYaw());
-        SmartDashboard.putBoolean("Tape In view", getTapeInView());
     }
     
     public boolean getHasCargo()
@@ -90,15 +69,14 @@ public final class SuperStructure extends SuperStructureBase
         return jeff;
     }
 
-    public double getUltraDistance()
+    public double getDistanceFromWall()
     {
-        return hatchBuffer.getAverage();
+        return 0.0;
     }
 
-    private double getUltraDistanceRaw()
+    public double getAngleFromWall( )
     {
-        double m_conversionToInches = 1000.0 / .977 / 25.4;
-        return (ultra3.getVoltage() *m_conversionToInches);
+        return 0.0;   
     }
     
     @Override
@@ -112,65 +90,5 @@ public final class SuperStructure extends SuperStructureBase
         report.addManualTest("Tested Jeff's LED's");
 
         return report;
-    }
-
-    public double getDistanceFromWall()
-    {
-        return 0.0;
-    }
-
-    public double getAngleFromWall( )
-    {
-        return 0.0;   
-    }
-
-    final NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
-    final NetworkTable chickenVision = netInstance.getTable("ChickenVision");
-
-    private boolean driverVision, 
-                    tapeVision, 
-                    cargoVision, 
-                    cargoSeen, 
-                    tapeSeen;
-    private NetworkTableEntry tapeDetected, 
-                              cargoDetected,    
-                              tapeYaw, 
-                              cargoYaw,
-                              videoTimestamp;
-
-    public boolean getTapeInView()  {   return chickenVision.getEntry("tapeDetected").getBoolean(false);    }
-    public boolean getCargoInView() {   return chickenVision.getEntry("cargoDetected").getBoolean(false);   }
-    public double getTapeYaw()  {   return chickenVision.getEntry("tapeYaw").getDouble(0.0);    }
-    public double getCargoYaw() {   return chickenVision.getEntry("cargoYaw").getDouble(0.0);   }
-    public boolean getDriveCamera() {   return chickenVision.getEntry("Driver").getBoolean(false);  }
-    public boolean getTapeCamera()  {   return chickenVision.getEntry("Tape").getBoolean(false);    }
-    public boolean getCargoCamera() {   return chickenVision.getEntry("Cargo").getBoolean(false);   }
-    public double getLastTimestamp(){   return chickenVision.getEntry("VideoTimestamp").getDouble(0.0); }
-
-    public void setVisionCamera(boolean elevatorCamera)
-    {
-        final int index = (elevatorCamera) ? 1 : 0; 
-        chickenVision.getEntry("CameraIndex").setNumber(index);
-    }
-
-    public void setVisionCargoMode()
-    {
-        chickenVision.getEntry("Driver").setBoolean(false);
-        chickenVision.getEntry("Tape").setBoolean(false);
-        chickenVision.getEntry("Cargo").setBoolean(true);
-    }
-
-    public void setVisionTapeMode()
-    {
-        chickenVision.getEntry("Driver").setBoolean(false);
-        chickenVision.getEntry("Cargo").setBoolean(false);
-        chickenVision.getEntry("Tape").setBoolean(true);
-    }
-
-    public void setVisionDriverMode()
-    {
-        chickenVision.getEntry("Cargo").setBoolean(false);
-        chickenVision.getEntry("Tape").setBoolean(false);
-        chickenVision.getEntry("Driver").setBoolean(true);
     }
 }

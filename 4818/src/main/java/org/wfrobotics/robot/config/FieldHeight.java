@@ -28,7 +28,7 @@ public enum FieldHeight
     HatchLow(0.5, 90.0),
 
     CargoHigh(56.0, 62.5),
-    CargoMiddle(45.0, 78.0),
+    CargoMiddle(46.0, 78.0),
     CargoLow(15.5, 78),
     
     CargoPickup(0.5, 180),

@@ -6,9 +6,7 @@ import org.wfrobotics.reuse.math.control.CheesyDriveHelper;
 import org.wfrobotics.reuse.math.control.CheesyDriveHelper.DriveSignal;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.robot.config.RobotConfig;
-import org.wfrobotics.robot.subsystems.Elevator;
-import org.wfrobotics.robot.subsystems.Link;
-import org.wfrobotics.robot.subsystems.SuperStructure;
+import org.wfrobotics.robot.subsystems.Vision;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
@@ -16,20 +14,15 @@ import edu.wpi.first.wpilibj.command.Command;
 /** Turn until reaching the target, or get to the expected heading it should be at **/
 public final class DriveToTarget extends Command
 {
-    private final boolean kBrakeMode;
-    private final double kLinkToShinyDegrees;
-    private final double kVisionDeadband = 0.02;
+    private static final double kVisionIZone = 25.0;  // Degrees Error
 
-    private final Elevator elevator = Elevator.getInstance();
-    private final Link link = Link.getInstance();
-    private final SuperStructure ss = SuperStructure.getInstance();
+    private final Vision vision = Vision.getInstance();
     private final TankSubsystem drive = TankSubsystem.getInstance();
     private final EnhancedIO io = EnhancedRobot.getIO();
     private static final CheesyDriveHelper helper = new CheesyDriveHelper();
-    private final SimplePID pid;
-    // protected final SimplePID pid = new SimplePID(0.025, 0.004, 0.0);  // Tuned pretty good for coast mode
-    // protected final SimplePID pid = new SimplePID(0.16, 0.00001, 0.0);  // Tuned well for brake mode
-    // protected final PID pid = new PID(0.008, 0.0008, 0.0);  // Tuned well for actual PID implementation
+    private final PID pid;
+    // private final SimplePID pid = new SimplePID(0.025, 0.004);  // Tuned pretty good for coast mode
+    // private final SimplePID pid = new SimplePID(0.16, 0.00001);  // Tuned well for brake mode
 
     public DriveToTarget()
     {
@@ -39,27 +32,25 @@ public final class DriveToTarget extends Command
         final Preferences prefs = Preferences.getInstance();
         final double p = prefs.getDouble("p", config.kVisionP);
         final double i = prefs.getDouble("i", config.kVisionI);
-        // final double d = prefs.getDouble("d", config.kVisionD);
-        // final double izone = prefs.getDouble("izone", config.kVisionIZone);
+        final double d = prefs.getDouble("d", config.kVisionD);
 
-        kLinkToShinyDegrees = config.kVisionLinkAngleToShiny;
-        kBrakeMode = config.kVisionBrakeMode;
-
-        pid = new SimplePID(p, i);
-        //pid = new PID(config.kVisionP, config.kVisionI, config.kVisionD, config.kVisionIZone);
+        pid = new PID(p, i, d, kVisionIZone, 0.02);
     }
 
     protected void initialize()
     {
-        drive.setBrake(kBrakeMode);
+        drive.setBrake(false);
     }
 
     protected void execute()
     {
-        final double turnCorrection = getVisionCorrection();
-        final double turn = io.getTurn() + turnCorrection;
+        final boolean quickTurn = io.getDriveQuickTurn() || (driverPassive() && visionAvailable());  // Can turn in place
+        final double quickTurnCompensation = (quickTurn) ? 1.0 : 2.0;  // Normal turn needs more "I" than quick turn
 
-        final DriveSignal s = helper.cheesyDrive(io.getThrottle(), turn, io.getDriveQuickTurn(), false);
+        final double turnCorrection = getVisionCorrection() * quickTurnCompensation;
+        final double turn = io.getTurn() + turnCorrection;
+        
+        final DriveSignal s = helper.cheesyDrive(io.getThrottle(), turn, quickTurn, false);
         drive.driveOpenLoop(s.getLeft(), s.getRight());
     }
 
@@ -70,63 +61,37 @@ public final class DriveToTarget extends Command
 
     private double getVisionCorrection()
     {
-        final double height = elevator.getPosition();
-        final boolean elevatorObstructing = height > 25.0 && height < 55.0;
-        final boolean linkToShiny = link.getPosition() < kLinkToShinyDegrees;
-        double visionAngle = 0.0;
+        double percentOutput = 0.0;
 
-        if (elevatorObstructing || linkToShiny)  // TODO - Switch between cameras instead
+        if (!visionAvailable())
         {
             pid.reset();
+            return percentOutput;
         }
-        else if (ss.getTapeInView())
+
+        final double error = vision.getError();
+        final double sign = Math.signum(error);
+        final double correction = pid.update(sign);
+
+        if (Math.abs(correction) > 0.01)
         {
-            // final double error = ss.getTapeYaw();
-            // visionAngle = pid.update(timeSinceInitialized(), error);
-
-            final double error = ss.getTapeYaw();
-            final double sign = Math.signum(error);
-
-            if (Math.abs(error) < kVisionDeadband)  // Don't wind up if really close
-            {
-                pid.reset();
-            }
-
-            visionAngle = pid.update(sign);
+            percentOutput = correction;
         }
         else
         {
             pid.reset();
         }
 
-        return visionAngle;
+        return percentOutput;
     }
 
-    private final class SimplePID
+    private boolean driverPassive()
     {
-        private final double kP;
-        private final double kI;
-        private double accum;
+        return Math.abs(io.getThrottle()) < 0.02 && Math.abs(io.getTurn()) < 0.02;
+    }
 
-        /** Proportional, Integral, Derivative */
-        public SimplePID(double p, double i)
-        {
-            kP = p;
-            kI = i;
-            reset();
-        }
-
-        /** Input new error, returns new motor output to reduce the error based on PID constants */
-        public double update(double error)
-        {
-            accum += error;
-            return kP * error + kI * accum;
-        }
-
-        /** Call when your setpoint (desired value) changes */
-        public void reset()
-        {
-            accum = 0.0;
-        }
+    private boolean visionAvailable()
+    {
+        return vision.getModeTape() && vision.getInView();
     }
 }

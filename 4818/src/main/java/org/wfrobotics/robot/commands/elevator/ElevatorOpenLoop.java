@@ -3,10 +3,9 @@ package org.wfrobotics.robot.commands.elevator;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.subsystems.Elevator;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ElevatorOpenLoop extends Command
+public final class ElevatorOpenLoop extends Command
 {
     private final Elevator elevator = Elevator.getInstance();
     private final IO io = IO.getInstance();
@@ -19,7 +18,7 @@ public class ElevatorOpenLoop extends Command
     protected void execute()
     {
         final double speed = io.getElevatorStick();
-        elevator.getPosition();
+        // elevator.getPosition();
 
         //            if (Math.abs(setpoint) < deadbandPercent)
         //            {
@@ -34,13 +33,13 @@ public class ElevatorOpenLoop extends Command
         //                setpoint /= 3.0;
         //            }
 
-        if (elevator.hasZeroed())
-        {
+        // if (elevator.hasZeroed())
+        // {
             //                if (height < )
             //                {
             //
             //                }
-        }
+        // }
 
         elevator.setOpenLoop(speed);
     }

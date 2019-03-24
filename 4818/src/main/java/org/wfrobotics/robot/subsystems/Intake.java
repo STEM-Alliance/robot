@@ -61,7 +61,7 @@ public final class Intake extends EnhancedSubsystem
 
     public void reportState()
     {
-        SmartDashboard.putString("Intake Command", getCurrentCommandName());
+        // SmartDashboard.putString("Intake Command", getCurrentCommandName());
         SmartDashboard.putBoolean("Hatch Grabber", isGrabbersExtended);
     }
 

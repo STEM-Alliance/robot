@@ -7,7 +7,7 @@ import org.wfrobotics.robot.subsystems.Link;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
-public class LinkOpenLoop extends Command
+public final class LinkOpenLoop extends Command
 {
     private static final double kHoldTimeStart = 0.5;  // seconds
     private static final double kOperatorPresent = 0.05;  // percent output
