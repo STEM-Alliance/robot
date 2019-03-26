@@ -1,83 +1,78 @@
 package org.wfrobotics.robot.subsystems;
 
-import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
+import com.ctre.phoenix.motorcontrol.ControlFrame;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
+import org.wfrobotics.reuse.hardware.TalonChecker;
+import org.wfrobotics.reuse.hardware.TalonFactory;
+import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.climb.ClimbNone;
-// import org.wfrobotics.robot.config.PnuaticConfig;
-// import org.wfrobotics.robot.config.RobotConfig;
+import org.wfrobotics.robot.config.RobotConfig;
 
-// import edu.wpi.first.wpilibj.DoubleSolenoid;
-// import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-
-public final class Climb extends EnhancedSubsystem
+/** @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead */
+public final class Climb extends PositionBasedSubsystem
 {
-    static class SingletonHolder
-    {
-        static Climb instance = new Climb();
-    }
-
     public static Climb getInstance()
     {
-        return SingletonHolder.instance;
+        if (instance == null)
+        {
+            instance = new Climb(RobotConfig.getInstance().getClimbConfig());
+        }
+        return instance;
     }
+    private static Climb instance = null;
 
-    // private final DoubleSolenoid grippers;
-    // private final DoubleSolenoid deployer;
-    // private final DoubleSolenoid lockers;
-    // private final DoubleSolenoid pushUP;
 
-    public Climb()
+    TalonSRX pullMaster;
+    TalonSRX pullSlave;
+
+    private Climb(PositionConfig positionConfig)
     {
-        // final RobotConfig config = RobotConfig.getInstance();
-        // final PnuaticConfig Pconfig = config.getPnumaticConfig();
+        super(positionConfig);
+        pullMaster = TalonFactory.makeTalon(31);
+        pullSlave = TalonFactory.makeFollowerTalon(32, pullMaster);
+        pullSlave.setInverted(false);
+        pullMaster.setInverted(true);
 
-        // grippers = new DoubleSolenoid(Pconfig.kAddressPCMGrippers, Pconfig.kAddressSolenoidGrippersF, Pconfig.kAddressSolenoidGrippersB);
-        // lockers = new DoubleSolenoid(Pconfig.kAddressPCMLockers, Pconfig.kAddressSolenoidLockersF, Pconfig.kAddressSolenoidLockersB);
-        // pushUP = new DoubleSolenoid(Pconfig.kAddressPCMPushUp, Pconfig.KAddressSolenoidPushUpF, Pconfig.KAddressSolenoidPushUpB);
-        // deployer = new DoubleSolenoid(Pconfig.kAddressPCMDeployer, Pconfig.KAddressSolenoidDeployerF, Pconfig.KAddressSolenoidDeployerB);
-
-        setGrippers(true);
-        setLockers(true);
-        setPushUp(false);
+        master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, responsiveness not critical
     }
 
+    public void setPullers(Double speed)
+    {
+        pullMaster.set(ControlMode.PercentOutput, speed);
+    }
     protected void initDefaultCommand()
     {
         setDefaultCommand(new ClimbNone());
     }
-
-    public void cacheSensors(boolean isDisabled)
-    {
-
-    }
-
-    public void reportState()
-    {
-
-    }
-
-    public void setGrippers(boolean out)
-    {
-        // final Value desired = (out) ? Value.kForward : Value.kReverse;
-        // grippers.set(desired);
-    }
-
-    public void setPushUp(boolean out)
-    {
-        // final Value desired = (out) ? Value.kForward : Value.kReverse;
-        // pushUP.set(desired);
-    }
-
-    public void setLockers(boolean out)
-    {
-        // final Value desired = (out) ? Value.kForward : Value.kReverse;
-        // lockers.set(desired);
-    }
     
+    @Override
+    public void setClosedLoop(double positionSetpoint)
+    {
+        master.configVoltageCompSaturation(10.0);  // TODO DO we want this larger so we move faster?
+        setMotor(ControlMode.MotionMagic, PositionToNative(positionSetpoint));
+    }
+
+    @Override
+    public void setOpenLoop(double percent)
+    {
+        master.configVoltageCompSaturation(10.0);
+        setMotor(ControlMode.PercentOutput, percent);
+    }
+
     public TestReport runFunctionalTest()
     {
         TestReport report = new TestReport();
+        ClosedLoopConfig config = RobotConfig.getInstance().getClimbConfig().kClosedLoop;
 
         report.add(getDefaultCommand().doesRequire(this));
+        report.add(TalonChecker.checkClosedLoopConfig(config));
+        report.add(TalonChecker.checkFirmware(master));
+        report.add(TalonChecker.checkEncoder(master));
+        report.add(TalonChecker.checkFrameRates(master));
+        report.add(TalonChecker.checkSensorPhase(0.3, master));
 
         return report;
     }

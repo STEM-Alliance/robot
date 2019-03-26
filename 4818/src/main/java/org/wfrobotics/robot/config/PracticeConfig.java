@@ -67,40 +67,49 @@ public final class PracticeConfig extends RobotConfig
 
     // Climb
     // _________________________________________________________________________________
+    public  int CLIMBER_ARMS_MASTER = 31;
+    public  int CLIMBER_ARMS_SLAVE = 32;
+
+    public PositionConfig getClimbConfig()
+    {
+        int kTicksToTop = 143000;  // Good as of March 20th
+        double kVelocityMax = 8500.0;  // Good as of March 21st
+        int kCruise = (int) (kVelocityMax * 0.975);
+        int kAcceleration = (int) (kCruise * 3.50);
+        int kVelocityCruise = (int) (kVelocityMax * 0.95);
+
+        final PositionConfig c = new PositionConfig();
+
+        c.kClosedLoop = new ClosedLoopConfig("Link",
+        new MasterConfig[] {
+            new MasterConfig(26, true, false),
+        },
+        new Gains[] {
+            new Gains("Motion Magic", 0, 0.25, 0.0001, 1.0, 1023.0 / kVelocityMax, 40, kVelocityCruise, kAcceleration),
+        }
+         );
+        c.kTicksToTop = kTicksToTop;
+        c.kFullRangeInchesOrDegrees = 56.0;  // Good as of March 21st
+        c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        c.kSoftwareLimitB = Optional.of(-100);
+        c.kFeedForward = Optional.of(0.11);
+        // c.kTuning = Optional.of(true);
+
+        return c;
+    }
     public PnuaticConfig getPnumaticConfig()
     {
         final PnuaticConfig config = new PnuaticConfig();
                  
         // Hardware
-        config.kAddressPCMGrippers =5;
         config.kAddressPCMShifter =0;
         config.kAddressPCMPoppers = 0;
-        config.kAddressPCMLockers = 1;
-        config.kAddressPCMPushUp =2;
-        config.kAddressPCMDeployer=3;
-        config.kAddressPCMMystory=4;
-    
         // intake
         config.kAddressSolenoidPoppersF =7;
         config.kAddressSolenoidPoppersB=6;
-        //climb -> Hug
-        config.kAddressSolenoidGrippersF=4;
-        config.kAddressSolenoidGrippersB=5;
         //elevator -> Shift
-        config.kAddressSolenoidShifterF=3;
-        config.kAddressSolenoidShifterB=2;
-        // climb -> lock
-        config.kAddressSolenoidLockersF =0;
-        config.kAddressSolenoidLockersB=1;
-        // climb -> Push Bumpers Above
-        config.KAddressSolenoidPushUpF=2;
-        config.KAddressSolenoidPushUpB=3;
-        // climb -> shove the mech down
-        config.KAddressSolenoidDeployerF=0;
-        config.KAddressSolenoidDeployerB=1;
-        // unknown
-        config.KAddressSolenoidMystoryF=3;
-        config.KAddressSolenoidMystoryB=4;
+        config.kAddressSolenoidShifterF=4;
+        config.kAddressSolenoidShifterB=5;
 
         return config;
     }
@@ -129,7 +138,7 @@ public final class PracticeConfig extends RobotConfig
         c.kFullRangeInchesOrDegrees = 56.0;  // Good as of March 21st
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         c.kSoftwareLimitB = Optional.of(-100);
-        c.kFeedForward = Optional.of(0.11);
+        // c.kFeedForward = Optional.of(0.11);
         // c.kTuning = Optional.of(true);
 
         return c;
