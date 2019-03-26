@@ -68,41 +68,51 @@ public class RobotConfig extends EnhancedRobotConfig
             return new DriveToTarget();
         }
     }
-
-    // Pnumatics
+    // Climb
     // _________________________________________________________________________________
+    public int CLIMBER_ARMS_MASTER = 6;
+    public int CLIMBER_ARMS_SLAVE = 7;
 
+    public PositionConfig getClimbConfig()
+    {
+        int kTicksToTop = 143000;  
+        double kVelocityMax = 8500.0;  
+        int kCruise = (int) (kVelocityMax * 0.975);
+        int kAcceleration = (int) (kCruise * 3.50);
+
+        final PositionConfig c = new PositionConfig();
+
+        c.kClosedLoop = new ClosedLoopConfig("Climb",
+            new MasterConfig[] { 
+                new MasterConfig(9, true, false)
+            },
+            new Gains[] {
+                new Gains("Motion Magic", 0, 0.25, 0.0001, 1.0, 1023.0 / kVelocityMax, 40,
+                                         kCruise, kAcceleration),
+            }
+        );
+        c.kTicksToTop = kTicksToTop;
+        // c.kFullRangeInchesOrDegrees = 56.0;  
+        // c.kSoftwareLimitT = Optional.of(kTicksToTop);
+        c.kSoftwareLimitB = Optional.of(-100);
+        c.kFeedForward = Optional.of(0.11);
+        // c.kTuning = Optional.of(true);   
+
+        return c;
+    }
     public PnuaticConfig getPnumaticConfig()
     {
         final PnuaticConfig config = new PnuaticConfig();
-        
+                 
+        // Hardware
+        config.kAddressPCMShifter =0;
         config.kAddressPCMPoppers = 0;
-        config.kAddressSolenoidPoppersF = 2; // HATCH
-        config.kAddressSolenoidPoppersB = 3; // HATCH
-
-        config.kAddressPCMShifter = 0;
-        config.kAddressSolenoidShifterF = 4; // SHIFTER
-        config.kAddressSolenoidShifterB = 1; 
-
-        config.kAddressPCMGrippers = 0;
-        config.kAddressSolenoidGrippersF = 0;
-        config.kAddressSolenoidGrippersB = 5; 
-        
-        config.kAddressPCMLockers = 0;
-        config.kAddressSolenoidLockersF = 6;
-        config.kAddressSolenoidLockersB = 7;
-
-        config.kAddressPCMPushUp = 1;
-        config.KAddressSolenoidPushUpF = 0;
-        config.KAddressSolenoidPushUpB = 1;
-
-        config.kAddressPCMDeployer = 1;
-        config.KAddressSolenoidDeployerF = 2;
-        config.KAddressSolenoidDeployerB = 3;
-
-        config.kAddressPCMMystory = 1;
-        config.KAddressSolenoidMystoryF = 4;
-        config.KAddressSolenoidMystoryB = 5;
+        // intake
+        config.kAddressSolenoidPoppersF =7;
+        config.kAddressSolenoidPoppersB=6;
+        //elevator -> Shift
+        config.kAddressSolenoidShifterF=4;
+        config.kAddressSolenoidShifterB=5;
 
         return config;
     }

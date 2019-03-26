@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.Xbox;
+import org.wfrobotics.robot.commands.climb.PullForward;
 import org.wfrobotics.robot.commands.elevator.ElevatorGoHome;
 import org.wfrobotics.robot.commands.experimental.SmartHatch;
 import org.wfrobotics.robot.commands.intake.CargoIn;
@@ -19,6 +20,7 @@ import org.wfrobotics.robot.commands.system.SystemToMiddle;
 import org.wfrobotics.robot.commands.system.SystemPickup;
 import org.wfrobotics.robot.commands.system.SystemToCargoBay;
 import org.wfrobotics.robot.commands.system.SystemToCargoBoxPickup;
+import org.wfrobotics.robot.commands.elevator.ElevatorShift;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -65,7 +67,9 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new IntakeHatchManual(true));
 
         //----------------------- Link ----------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new LinkToHeight(90.0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
+
 
         //----------------------- System --------------------------
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToHigh()); // top button on rocket
@@ -78,8 +82,10 @@ public final class IO implements EnhancedIO
 
         //----------------------- Testing -------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new SmartHatch());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new LinkToHeight(45.0));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new LinkToHeight(10.0));
+        ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.TOGGLE_WHEN_PRESSED, new PullForward());
+
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new LinkToHeight(45.0));
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new LinkToHeight(10.0));
     }
 
     // ------------------- Robot-specific --------------------
@@ -92,6 +98,10 @@ public final class IO implements EnhancedIO
     public double getElevatorStick()
     {
         return operator.getY(Hand.kRight);
+    }
+    public double getClimbArmsStick()
+    {
+        return operator.getY(Hand.kLeft);
     }
 
     public double getIntakeStick()
