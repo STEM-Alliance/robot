@@ -26,13 +26,13 @@ public class IntakeMotor extends EnhancedSubsystem
         return SingletonHolder.instance;
     }
     
-    public VictorSPX motor1;
-    public VictorSPX motor2;
+    private VictorSPX motor1;
+    private VictorSPX motor2;
    
     public IntakeMotor()
     {
     	motor1 = new VictorSPX(17);
-    	motor2 = TalonFactory.makeFollowerVictor(18, motor1);
+    	 motor2 = TalonFactory.makeFollowerVictor(20, motor1);
     	motor2.setInverted(true);
     }
     

@@ -25,11 +25,11 @@ public class ParallelLink extends EnhancedSubsystem
         return SingletonHolder.instance;
     }
     
-	public VictorSPX LinkMotor1;
+	private VictorSPX LinkMotor1;
 	
     public ParallelLink()
     {
-    	LinkMotor1 = new VictorSPX(16);
+    	LinkMotor1 = new VictorSPX(19);
     }
     
 	public void setlink(double speed) 
