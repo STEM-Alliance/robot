@@ -5,6 +5,7 @@ import org.wfrobotics.reuse.config.TalonConfig.Gains;
 import org.wfrobotics.reuse.config.TalonConfig.MasterConfig;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
+import org.wfrobotics.robot.Robot;
 import org.wfrobotics.robot.commands.LiftOpenLoop;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -36,17 +37,18 @@ public class Lift extends EnhancedSubsystem
     	int kWristVelocityCruise = (int) (kWristVelocityMax * .9);
         int kWristAcceleration = (int) (kWristVelocityMax * .9);
         
-        ClosedLoopConfig kClosedLoop = new ClosedLoopConfig("prototype", new MasterConfig[] 
-        {
-            new MasterConfig(14, false, false),
-        },  new Gains[] {
-            new Gains("Motion Magic", 0, 1.0, 0.004, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
-        });
+        // ClosedLoopConfig kClosedLoop = new ClosedLoopConfig("prototype", new MasterConfig[] 
+        // {
+        //     new MasterConfig(14, false, false),
+        // },  new Gains[] {
+        //     new Gains("Motion Magic", 0, 1.0, 0.004, 0.0, 1023.0 / kWristVelocityMax, 0, kWristVelocityCruise, kWristAcceleration),
+        // });
 
     //  master = TalonFactory.makeClosedLoopVictor(kClosedLoop).get(18);  
     //  master.setSelectedSensorPosition(0, 0, 100);
-        master = new VictorSPX(19);
-        follower = TalonFactory.makeFollowerVictor(20, master);
+        master = new VictorSPX(23);
+        follower = TalonFactory.makeFollowerVictor(24, master);
+        
     }
 
     protected void initDefaultCommand()

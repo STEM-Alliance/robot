@@ -49,16 +49,22 @@ public final class IO implements EnhancedIO
          // ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new IntakeOpenClose(false));
 
     	
-    		ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new IntakeMotorControl(0.25));
-    		ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new IntakeMotorControl(-0.25));
-    		ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new ParallelLinkControl(1.0));
-    		ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ParallelLinkControl(-1.0));
-    		ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHILE_HELD, new LiftManual(0.5));
-    		ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftManual(-0.5));
+    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new IntakeMotorControl(0.25));
+    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new IntakeMotorControl(-0.25));
+    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new ParallelLinkControl(1.0));
+    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ParallelLinkControl(-1.0));
+    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHILE_HELD, new LiftManual(0.5));
+    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftManual(-0.5));
    		
     	//------Joysticks--------
          // ButtonFactory.makeButton(driverTurn, SpudJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new Testbutton());
-            ButtonFactory.makeButton(driverTurn, BUTTON.BUTTON1.value, TRIGGER.WHILE_HELD, new Testbutton());
+            // ButtonFactory.makeButton(driverTurn, BUTTON.BUTTON1.value, TRIGGER.WHILE_HELD, new Testbutton());
+            ButtonFactory.makeButton(driverThrottle, 1, TRIGGER.WHILE_HELD, new IntakeMotorControl(0.25));
+    		ButtonFactory.makeButton(driverTurn, 1, TRIGGER.WHILE_HELD, new IntakeMotorControl(-0.25));
+    		ButtonFactory.makeButton(driverThrottle, 3, TRIGGER.WHILE_HELD, new ParallelLinkControl(1.0));
+    		ButtonFactory.makeButton(driverTurn, 3, TRIGGER.WHILE_HELD, new ParallelLinkControl(-1.0));
+    		// ButtonFactory.makeButton(driverThrottle, 3, TRIGGER.WHILE_HELD, new LiftManual(0.5));
+    		// ButtonFactory.makeButton(driverTurn, 3, TRIGGER.WHILE_HELD, new LiftManual(-0.5));
  
         // -------------------- Super Structure -------------------
          //test ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
