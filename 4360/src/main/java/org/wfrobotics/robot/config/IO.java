@@ -5,9 +5,10 @@ import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.SpudJoystick;
 import org.wfrobotics.reuse.config.Xbox;
+import org.wfrobotics.robot.commands.DriveTeleop;
 import org.wfrobotics.robot.commands.IntakeMotorControl;
 import org.wfrobotics.robot.commands.IntakeOpenClose;
-import org.wfrobotics.robot.commands.LiftManual;
+//import org.wfrobotics.robot.commands.LiftManual;
 import org.wfrobotics.robot.commands.ParallelLinkControl;
 import org.wfrobotics.robot.commands.Testbutton;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
@@ -24,6 +25,12 @@ public final class IO implements EnhancedIO
     private final Xbox drive;
     public final double inSpeed = 1;
     public final double outSpeed = -1;
+    
+    public final double Pspeed = 1.0;
+    public final double Lspeed = 0.5;
+    public final double Ispeed = 0.25;
+    public final double qspeed = 0.50;
+    public final double Sspeed = 0.50;
 
     private IO()
     {
@@ -32,7 +39,7 @@ public final class IO implements EnhancedIO
         driverThrottle = new HerdJoystick(0);
         driverTurn = new HerdJoystick(1);
         operator = new Xbox(2);
-    	drive = new Xbox(2);
+        drive = new Xbox(2);
     }
 
     public void assignButtons()
@@ -48,23 +55,24 @@ public final class IO implements EnhancedIO
     	 //	ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new IntakeOpenClose(true));
          // ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new IntakeOpenClose(false));
 
-    	
-    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new IntakeMotorControl(0.25));
-    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new IntakeMotorControl(-0.25));
-    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new ParallelLinkControl(1.0));
-    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ParallelLinkControl(-1.0));
-    		// ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHILE_HELD, new LiftManual(0.5));
+    		 ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new IntakeMotorControl(Ispeed));
+    		 ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new IntakeMotorControl(-Ispeed));
+    		 ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHILE_HELD, new ParallelLinkControl(Pspeed));
+    		 ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHILE_HELD, new ParallelLinkControl(-Pspeed));
+            
+             ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveTeleop());
+             // ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHILE_HELD, new LiftManual(0.5));
     		// ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHILE_HELD, new LiftManual(-0.5));
-   		
+            ButtonFactory.makeButton(driverThrottle, 11, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveTeleop());
     	//------Joysticks--------
          // ButtonFactory.makeButton(driverTurn, SpudJoystick.BUTTON.THUMB_TOP_RIGHT, TRIGGER.WHILE_HELD, new Testbutton());
             // ButtonFactory.makeButton(driverTurn, BUTTON.BUTTON1.value, TRIGGER.WHILE_HELD, new Testbutton());
-            ButtonFactory.makeButton(driverThrottle, 1, TRIGGER.WHILE_HELD, new IntakeMotorControl(0.25));
-    		ButtonFactory.makeButton(driverTurn, 1, TRIGGER.WHILE_HELD, new IntakeMotorControl(-0.25));
-    		ButtonFactory.makeButton(driverThrottle, 3, TRIGGER.WHILE_HELD, new ParallelLinkControl(1.0));
-    		ButtonFactory.makeButton(driverTurn, 3, TRIGGER.WHILE_HELD, new ParallelLinkControl(-1.0));
-    		// ButtonFactory.makeButton(driverThrottle, 3, TRIGGER.WHILE_HELD, new LiftManual(0.5));
-    		// ButtonFactory.makeButton(driverTurn, 3, TRIGGER.WHILE_HELD, new LiftManual(-0.5));
+           ButtonFactory.makeButton(driverThrottle, 1, TRIGGER.WHILE_HELD, new IntakeMotorControl(Ispeed));
+    		ButtonFactory.makeButton(driverTurn, 1, TRIGGER.WHILE_HELD, new IntakeMotorControl(-Ispeed));
+    		ButtonFactory.makeButton(driverThrottle, 5, TRIGGER.WHILE_HELD, new ParallelLinkControl(Pspeed));
+    	ButtonFactory.makeButton(driverThrottle, 3, TRIGGER.WHILE_HELD, new ParallelLinkControl(-Pspeed));
+    		// ButtonFactory.makeButton(driverThrottle, 1, TRIGGER.WHILE_HELD, new LiftManual(0.5));
+    		 //ButtonFactory.makeButton(driverTurn, 1, TRIGGER.WHILE_HELD, new LiftManual(-0.5));
  
         // -------------------- Super Structure -------------------
          //test ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHILE_HELD, new SignalHumanPlayer());
@@ -94,13 +102,13 @@ public final class IO implements EnhancedIO
 
     public double getThrottle()
     {
-        return driverThrottle.getY();
+        return driverThrottle.getY() * Sspeed;
     //  return 0.0;
     }
 
     public double getTurn()
     {
-        return Math.signum(-driverTurn.getX())*Math.pow(driverTurn.getX(), 2);
+        return Math.signum(-driverTurn.getX())*Math.pow(driverTurn.getX(), 2) * Sspeed;
     //	return  0.0;
     }
 
@@ -123,12 +131,12 @@ public final class IO implements EnhancedIO
     
     public double getRight() 
     {
-    	return -0.65*(drive.getY(Hand.kRight));
+    	return -qspeed*(drive.getY(Hand.kRight));
     }
     
     public double getLeft() 
     {
-    	return -0.65*(drive.getY(Hand.kLeft));
+    	return -qspeed*(drive.getY(Hand.kLeft));
     }
 
     public static enum BUTTON
