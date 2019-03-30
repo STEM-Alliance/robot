@@ -116,24 +116,22 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return Math.pow(driverTurn.getX(), 0.272727); //3/11
+        return driverTurn.getX()*0.7;
     }
 
     public boolean getDriveQuickTurn()
     {
-        return Math.abs(getThrottle()) < 0.15;
+        return driverTurn.getButtonPressed(HerdJoystick.BUTTON.THUMB_TOP_RIGHT);
         //return true;
     }
 
     public boolean isDriveOverrideRequested()
     {
-        return Math.abs(getThrottle()) > 0.15 || Math.abs(getTurn()) > 0.15;
+        return Math.abs(getThrottle()) 
+        > 0.15 || Math.abs(getTurn()) > 0.15;
     }
 
     public void setRumble(boolean rumble)
     {
-        float state = (rumble) ? 1 : 0;
-        operator.setRumble(Hand.kLeft, state);
-        operator.setRumble(Hand.kRight, state);
     }
 }
