@@ -45,8 +45,8 @@ public class RobotConfig extends EnhancedRobotConfig
         config.OPEN_LOOP_RAMP = 0.05;
         
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
-            new MasterConfig(11, false, true, new FollowerConfig(10, true), new FollowerConfig(12, false)),
-            new MasterConfig(14, true, true, new FollowerConfig(13, false), new FollowerConfig(15, true)),
+            new MasterConfig(11, false, true, new FollowerConfig(10, true)/*, new FollowerConfig(12, false)*/),
+            new MasterConfig(14, true, true, new FollowerConfig(13, false)/*, new FollowerConfig(15, true)*/),
         //  new MasterConfig(17, false, true, new FollowerConfig(10, false)),
         //  new MasterConfig(11, false, true, new FollowerConfig(22, false)),
         },  new Gains[] 

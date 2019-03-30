@@ -19,7 +19,7 @@ public final class Robot extends EnhancedRobot
     protected void registerRobotSpecific()
     {
 		subsystems.register(Intake.getInstance());
-		subsystems.register(Lift.getInstance());
+	//	subsystems.register(Lift.getInstance());
 	    subsystems.register(IntakeMotor.getInstance());
 		subsystems.register(ParallelLink.getInstance());
 		DashboardView.startPerformanceCamera();
