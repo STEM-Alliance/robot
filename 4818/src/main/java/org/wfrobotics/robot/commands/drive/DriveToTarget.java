@@ -6,6 +6,7 @@ import org.wfrobotics.reuse.math.control.CheesyDriveHelper;
 import org.wfrobotics.reuse.math.control.CheesyDriveHelper.DriveSignal;
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.robot.config.RobotConfig;
+import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.subsystems.Vision;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -72,8 +73,8 @@ public final class DriveToTarget extends Command
         final double error = vision.getError();
         final double sign = Math.signum(error);
         final double correction = pid.update(sign);
-
-        if (Math.abs(correction) > 0.01)
+        
+        if (Math.abs(correction) > 0.01 && Elevator.getInstance().getLiftNotClimb())
         {
             percentOutput = correction;
         }

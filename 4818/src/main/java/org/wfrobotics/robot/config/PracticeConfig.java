@@ -72,7 +72,7 @@ public final class PracticeConfig extends RobotConfig
 
     public PositionConfig getClimbConfig()
     {
-        int kTicksToTop = 143000;  // Good as of March 20th
+        int kTicksToTop = 2250;  // Good as of March 20th
         double kVelocityMax = 8500.0;  // Good as of March 21st
         int kCruise = (int) (kVelocityMax * 0.975);
         int kAcceleration = (int) (kCruise * 3.50);
@@ -82,18 +82,18 @@ public final class PracticeConfig extends RobotConfig
 
         c.kClosedLoop = new ClosedLoopConfig("Link",
         new MasterConfig[] {
-            new MasterConfig(26, true, false),
+            new MasterConfig(26, false, true),
         },
         new Gains[] {
             new Gains("Motion Magic", 0, 0.25, 0.0001, 1.0, 1023.0 / kVelocityMax, 40, kVelocityCruise, kAcceleration),
         }
          );
         c.kTicksToTop = kTicksToTop;
-        c.kFullRangeInchesOrDegrees = 56.0;  // Good as of March 21st
-        c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        c.kSoftwareLimitB = Optional.of(-100);
-        c.kFeedForward = Optional.of(0.11);
-        // c.kTuning = Optional.of(true);
+        c.kFullRangeInchesOrDegrees = 90.0;
+        c.kSoftwareLimitT = Optional.of(3000);
+        // c.kSoftwareLimitB = Optional.of(-100);
+        // c.kFeedForward = Optional.of(0.11);
+        c.kTuning = Optional.of(true);
 
         return c;
     }

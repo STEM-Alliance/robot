@@ -6,10 +6,11 @@ import org.wfrobotics.robot.subsystems.Link;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SmartIntake extends Command
 {
-    private static final double kLinkDownForCargoDegrees = 145.0;
+    private static final double kLinkDownForCargoDegrees = 80.0;
     private static final double kSpeedCargoOut = 0.8;
 
     private final Intake intake = Intake.getInstance();
@@ -55,10 +56,13 @@ public class SmartIntake extends Command
         final boolean isElevatorDown = elevator.getPosition() < 10.0;
         final boolean intakeCargoMode = isLinkDown && 
                                   isElevatorDown && 
-                                  !superStructure.getHasCargo() &&
-                                  !superStructure.getHasHatch();
+                                  !superStructure.getHasCargo() ;
+                                //   &&
+                                //   !superStructure.getHasHatch()
         final double speed = (intakeCargoMode) ? kSpeedCargoOut : 0.0;
-
+        SmartDashboard.putBoolean("isLinkDown", isLinkDown);
+        SmartDashboard.putBoolean("isElevatorDown", isElevatorDown);
+        SmartDashboard.putBoolean("intakeCargoMode", intakeCargoMode);
         intake.setCargoSpeed(speed);
     }
 }
