@@ -93,6 +93,7 @@ public final class Vision extends EnhancedSubsystem
             chickenVision.getEntry("CameraIndex").setNumber(index);
             this.elevatorCamera = elevatorCamera; 
         }
+        
     }
 
     public void setModeCargo()

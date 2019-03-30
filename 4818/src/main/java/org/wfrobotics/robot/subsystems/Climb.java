@@ -8,7 +8,7 @@ import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.robot.commands.climb.ClimbNone;
+import org.wfrobotics.robot.commands.climb.ClimbZeroThenNone;
 import org.wfrobotics.robot.config.RobotConfig;
 
 /** @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead */
@@ -31,8 +31,8 @@ public final class Climb extends PositionBasedSubsystem
     private Climb(PositionConfig positionConfig)
     {
         super(positionConfig);
-        pullMaster = TalonFactory.makeTalon(31);
-        pullSlave = TalonFactory.makeFollowerTalon(32, pullMaster);
+        pullMaster = TalonFactory.makeTalon(32);
+        pullSlave = TalonFactory.makeFollowerTalon(31, pullMaster);
         pullSlave.setInverted(false);
         pullMaster.setInverted(true);
 
@@ -45,7 +45,7 @@ public final class Climb extends PositionBasedSubsystem
     }
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new ClimbNone());
+        setDefaultCommand(new ClimbZeroThenNone());
     }
     
     @Override

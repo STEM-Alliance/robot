@@ -62,21 +62,28 @@ public final class Elevator extends PositionBasedSubsystem
     {
         return Math.abs(getVelocityNative()) < kTickRateSlowEnough;
     }
+    public boolean getLiftNotClimb( )
+    {
+        return liftNotClimb;
+    }
+    private boolean liftNotClimb = true;
 
     public void setShifter(boolean liftNotClimb)
     {
         Value desired = (liftNotClimb) ? Value.kForward : Value.kReverse;
+        this.liftNotClimb = !liftNotClimb;
+
         shifter.set(desired);
         
         // DRL - This was causing bottom limit switch not to stop motor
-        // if (liftNotClimb)
-        // {
-        // 	master.overrideLimitSwitchesEnable(true);
-        // }
-        // else
-        // {
-        // 	master.overrideLimitSwitchesEnable(false);
-        // }
+        if (!liftNotClimb)
+        {
+        	master.overrideLimitSwitchesEnable(true);
+        }
+        else
+        {
+        	master.overrideLimitSwitchesEnable(false);
+        }
     }
 
     public TestReport runFunctionalTest()
