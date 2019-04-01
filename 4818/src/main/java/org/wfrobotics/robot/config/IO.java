@@ -21,6 +21,7 @@ import org.wfrobotics.robot.commands.system.SystemPickup;
 import org.wfrobotics.robot.commands.system.SystemToCargoBay;
 import org.wfrobotics.robot.commands.system.SystemToCargoBoxPickup;
 import org.wfrobotics.robot.commands.elevator.ElevatorShift;
+import org.wfrobotics.robot.commands.elevator.PIDClimb;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -69,6 +70,9 @@ public final class IO implements EnhancedIO
         //----------------------- Link ----------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));
         ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
+        ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new PIDClimb(true));
+
+        
 
 
         //----------------------- System --------------------------

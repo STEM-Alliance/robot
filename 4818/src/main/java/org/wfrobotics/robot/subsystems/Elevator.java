@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The elevator consists of two independently connected Mini CIM motors to raise/lower the intake and climber
@@ -68,6 +69,18 @@ public final class Elevator extends PositionBasedSubsystem
     }
     private boolean liftNotClimb = true;
 
+    @Override
+    public void zeroIfAtLimit()
+    {
+        if(AtHardwareLimitBottom() && liftNotClimb)
+        {
+            zeroEncoder();
+        }
+    }
+    public void reportState()
+    {
+                SmartDashboard.putString("Elevator Command", getCurrentCommandName());
+    }
     public void setShifter(boolean liftNotClimb)
     {
         Value desired = (liftNotClimb) ? Value.kForward : Value.kReverse;
@@ -78,7 +91,9 @@ public final class Elevator extends PositionBasedSubsystem
         // DRL - This was causing bottom limit switch not to stop motor
         if (!liftNotClimb)
         {
-        	master.overrideLimitSwitchesEnable(true);
+            master.overrideLimitSwitchesEnable(true);
+            // master.configForwardSoftLimitThreshold(79000);
+            // master.configReverseSoftLimitThreshold(-15867);
         }
         else
         {
