@@ -90,7 +90,7 @@ public final class PracticeConfig extends RobotConfig
          );
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 90.0;
-        c.kSoftwareLimitT = Optional.of(3000);
+        // c.kSoftwareLimitT = Optional.of(3000);
         // c.kSoftwareLimitB = Optional.of(-100);
         // c.kFeedForward = Optional.of(0.11);
         c.kTuning = Optional.of(true);
@@ -137,9 +137,9 @@ public final class PracticeConfig extends RobotConfig
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 56.0;  // Good as of March 21st
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
-        c.kSoftwareLimitB = Optional.of(-100);
+        // c.kSoftwareLimitB = Optional.of(-100);
         // c.kFeedForward = Optional.of(0.11);
-        // c.kTuning = Optional.of(true);
+        c.kTuning = Optional.of(true);
 
         return c;
     }
