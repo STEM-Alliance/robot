@@ -42,11 +42,11 @@ public class PIDClimb extends Command
         SmartDashboard.putNumber("Gyro Pitch", TankSubsystem.getInstance().getGyroPitch() );
         climb.setOpenLoop(IO.getInstance().getClimbArmsStick());
         elevator.setOpenLoop(IO.getInstance().getElevatorStick());
-        // climb.setPullers(1.0);
+        climb.setPullers(1.0);
 
         final double elevatorCorrection = getPitchCorrection();
         
-        elevator.setOpenLoop(-elevatorCorrection);
+        elevator.setOpenLoop(elevatorCorrection);
     }
     private double getPitchCorrection()
     {
