@@ -33,8 +33,8 @@ public final class SmartVision extends Command
         final double height = elevator.getPosition();
         final double angle = link.getPosition();
         
-        final boolean elevatorIsDown = height < 25.0;
-        final boolean elevatorIsUp = height > 21.0;
+        final boolean elevatorIsDown = height < 10.0;
+        final boolean elevatorIsUp = height > 10.0;
         final boolean linkNotToShiny = angle > 60.0;
 
         return elevatorIsUp || (elevatorIsDown && linkNotToShiny);
