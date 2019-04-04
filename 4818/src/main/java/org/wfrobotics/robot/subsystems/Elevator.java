@@ -87,7 +87,11 @@ public final class Elevator extends PositionBasedSubsystem
         this.liftNotClimb = !liftNotClimb;
 
         shifter.set(desired);
-        
+        configureClimbMode();
+
+    }
+    public void configureClimbMode()
+    {
         // DRL - This was causing bottom limit switch not to stop motor
         if (!liftNotClimb)
         {

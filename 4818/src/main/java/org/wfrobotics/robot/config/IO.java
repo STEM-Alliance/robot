@@ -17,6 +17,7 @@ import org.wfrobotics.robot.commands.link.LinkToHeight;
 import org.wfrobotics.robot.commands.system.SystemToHigh;
 import org.wfrobotics.robot.commands.system.SystemToLow;
 import org.wfrobotics.robot.commands.system.SystemToMiddle;
+import org.wfrobotics.robot.subsystems.Elevator;
 import org.wfrobotics.robot.commands.system.SystemPickup;
 import org.wfrobotics.robot.commands.system.SystemToCargoBay;
 import org.wfrobotics.robot.commands.system.SystemToCargoBoxPickup;
@@ -40,6 +41,7 @@ public final class IO implements EnhancedIO
     {
         driverThrottle = new HerdJoystick(0);
         driverTurn = new Joystick(1);
+
         operator = new Xbox(3);
         rocketPlate = new Xbox(2);
     }
@@ -59,19 +61,18 @@ public final class IO implements EnhancedIO
         //----------------------- Elevator ------------------------
 
         //----------------------- Intake --------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ScoreHatch());
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new  ElevatorGoHome(0.2, 2.0));
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED,);
+        // ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, );
 
         ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new CargoIn() );
         ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new CargoOut(.75));
 
         ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHILE_HELD, new IntakeHatchManual(true));
-
-        //----------------------- Link ----------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new ElevatorShift(true));//into climb mode
         ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new ElevatorShift(false));
-        ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new PIDClimb(true));
 
+        ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new PIDClimb(true)); // into climb mode
+        ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.TOGGLE_WHEN_PRESSED, new PullForward());
         
 
 
@@ -83,13 +84,15 @@ public final class IO implements EnhancedIO
 
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToCargoBoxPickup()); // middle button on breakout board
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  SystemToCargoBay()); // top button on breakout board
+        // mystory button added!!!!
+
+
 
         //----------------------- Testing -------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHILE_HELD, new SmartHatch());
-        ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.TOGGLE_WHEN_PRESSED, new PullForward());
 
         // ButtonFactory.makeButton(operator, Xbox.BUTTON.START, TRIGGER.WHEN_PRESSED, new LinkToHeight(45.0));
         // ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new LinkToHeight(10.0));
+
     }
 
     // ------------------- Robot-specific --------------------

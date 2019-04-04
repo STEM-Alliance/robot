@@ -25,7 +25,6 @@ public final class SuperStructure extends SuperStructureBase
 
     private final Canifier jeff = new Canifier(6, new RGB(255, 255, 0));
     private final CircularBuffer cargoBuffer = new CircularBuffer(3, false);
-    private final CircularBuffer hatchBuffer = new CircularBuffer(3, false);
 
     public SuperStructure()
     {
@@ -44,7 +43,6 @@ public final class SuperStructure extends SuperStructureBase
         final boolean cargoLeft = jeff.getPWM0();
         final boolean cargoRight = jeff.getPWM1();
 
-        hatchBuffer.addFirst(hatchDistance);
         cargoBuffer.addFirst(cargoRight || cargoLeft);        
     }
 
@@ -61,7 +59,7 @@ public final class SuperStructure extends SuperStructureBase
 
     public boolean getHasHatch()
     {
-        return hatchBuffer.getAverage() < kHatchInInches;
+        return !Intake.getInstance().getGrabbersExtended();
     }
 
     public Canifier getJeff()
