@@ -56,9 +56,9 @@ public class SmartIntake extends Command
         final boolean isElevatorDown = elevator.getPosition() < 10.0;
         final boolean intakeCargoMode = isLinkDown && 
                                   isElevatorDown && 
-                                  !superStructure.getHasCargo() ;
-                                //   &&
-                                //   !superStructure.getHasHatch()
+                                  !superStructure.getHasCargo() &&
+                                  !superStructure.getHasHatch();
+  
         final double speed = (intakeCargoMode) ? kSpeedCargoOut : 0.0;
         SmartDashboard.putBoolean("isLinkDown", isLinkDown);
         SmartDashboard.putBoolean("isElevatorDown", isElevatorDown);

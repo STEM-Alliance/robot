@@ -52,7 +52,7 @@ public class PIDClimb extends Command
     {
         double percentOutput = 0.0;
             
-        if (Elevator.getInstance().getPosition() == 0)
+        if (TankSubsystem.getInstance().getGyroPitch() == 0)
         {
             pid.reset();
         }
