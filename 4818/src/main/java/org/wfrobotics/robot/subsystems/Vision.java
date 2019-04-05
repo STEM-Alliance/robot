@@ -6,6 +6,7 @@ import org.wfrobotics.robot.commands.SmartVision;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.CircularBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Raspberry Pi running modified Chicken Vision */
@@ -37,6 +38,7 @@ public final class Vision extends EnhancedSubsystem
     private CAMERA_MODE modeWhenCaching = CAMERA_MODE.UNKNOWN;
     /** Will store this - Commands set the mode, then cachedIO is incorrect for the new mode */
     private CAMERA_MODE modeActual = CAMERA_MODE.UNKNOWN;
+    private double timestampLast = Double.MAX_VALUE;
     private boolean elevatorCamera;
 
     public Vision()
@@ -55,7 +57,10 @@ public final class Vision extends EnhancedSubsystem
     {
         if (!isDisabled)
         {
+            final double timestampNow = _getLastTimestamp();
+
             modeWhenCaching = modeActual;
+            
             switch (modeWhenCaching)
             {
                 case DETECT_TAPE:
@@ -72,6 +77,9 @@ public final class Vision extends EnhancedSubsystem
                     cachedIO = new CachedIO();
                     break;
             }
+            cachedIO.connected = timestampNow - timestampLast > 0.000001;  // Changed more than 1ms?
+            
+            timestampLast = timestampNow;
         }
     }
 
@@ -79,6 +87,7 @@ public final class Vision extends EnhancedSubsystem
     {
         SmartDashboard.putBoolean("Vision Camera Elevator", getCamera());
         SmartDashboard.putBoolean("Vision Mode Tape", getModeTape());
+        SmartDashboard.putBoolean("Vision Connected", getConnected());
         SmartDashboard.putBoolean("Vision In view", getInView());
         SmartDashboard.putNumber("Vision Angle", -getError());  // Invert so Smartdash radial reads correctly
         SmartDashboard.putNumber("Vision Size", getSize());
@@ -92,8 +101,7 @@ public final class Vision extends EnhancedSubsystem
             final int index = (elevatorCamera) ? 0 : 1;
             chickenVision.getEntry("CameraIndex").setNumber(index);
             this.elevatorCamera = elevatorCamera; 
-        }
-        
+        }        
     }
 
     public void setModeCargo()
@@ -115,6 +123,12 @@ public final class Vision extends EnhancedSubsystem
     public boolean getCamera()
     {
         return elevatorCamera;
+    }
+
+    /** Based on if timestamps are updating */
+    public boolean getConnected()
+    {
+        return cachedIO.connected;
     }
 
     public double getError()
@@ -192,6 +206,7 @@ public final class Vision extends EnhancedSubsystem
 
     private class CachedIO
     {
+        public boolean connected = false;
         public boolean inView = false;
         public double error = 0.0;
         public double size = 0.0;

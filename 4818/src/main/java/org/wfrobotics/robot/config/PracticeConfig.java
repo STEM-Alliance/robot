@@ -30,16 +30,16 @@ public final class PracticeConfig extends RobotConfig
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
         config.OPEN_LOOP_RAMP = 0.05; // how fast do you acellerate
-        config.MAX_PERCENT_OUT = 0.85;
+        config.MAX_PERCENT_OUT = 1.0; // total max open loop speed percentage
 
         double TURN_SCALING = .35;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank",
             new MasterConfig[] {
                 // Left
-                new MasterConfig(10, true, true, new FollowerConfig(12, false), new FollowerConfig(14, false)),
+                new MasterConfig(10, true, true, new FollowerConfig(14, false)),
                 // Right
-                new MasterConfig(11, false, true, new FollowerConfig(13, false), new FollowerConfig(15, false)),
+                new MasterConfig(11, false, true, new FollowerConfig(15, false)),
             },
             new Gains[] { 
                 new Gains("Velocity", 1, 0.0, 0.0, 0.0, 1023.0 / config.VELOCITY_MAX, 0),
@@ -52,6 +52,7 @@ public final class PracticeConfig extends RobotConfig
         config.SCRUB = 0.98;
         config.WHEEL_DIAMETER = 6  + 3.0 / 8.0;
         config.WIDTH = 27.0;
+        // config.TUNING = true;
 
         return config;
     }
@@ -91,9 +92,9 @@ public final class PracticeConfig extends RobotConfig
         c.kTicksToTop = kTicksToTop;
         c.kFullRangeInchesOrDegrees = 90.0;
         // c.kSoftwareLimitT = Optional.of(3000);
-        // c.kSoftwareLimitB = Optional.of(-100);
+        // c.kSoftwareLimitB = Optional.of(100);
         // c.kFeedForward = Optional.of(0.11);
-        c.kTuning = Optional.of(true);
+        // c.kTuning = Optional.of(true);
 
         return c;
     }
@@ -105,11 +106,11 @@ public final class PracticeConfig extends RobotConfig
         config.kAddressPCMShifter =0;
         config.kAddressPCMPoppers = 0;
         // intake
-        config.kAddressSolenoidPoppersF =7;
-        config.kAddressSolenoidPoppersB=6;
+        config.kAddressSolenoidPoppersF =4;
+        config.kAddressSolenoidPoppersB=5;
         //elevator -> Shift
-        config.kAddressSolenoidShifterF=4;
-        config.kAddressSolenoidShifterB=5;
+        config.kAddressSolenoidShifterF=7;
+        config.kAddressSolenoidShifterB=6;
 
         return config;
     }
@@ -138,8 +139,8 @@ public final class PracticeConfig extends RobotConfig
         c.kFullRangeInchesOrDegrees = 56.0;  // Good as of March 21st
         c.kSoftwareLimitT = Optional.of(kTicksToTop);
         // c.kSoftwareLimitB = Optional.of(-100);
-        // c.kFeedForward = Optional.of(0.11);
-        c.kTuning = Optional.of(true);
+        c.kFeedForward = Optional.of(0.11);
+        // c.kTuning = Optional.of(true);
 
         return c;
     }

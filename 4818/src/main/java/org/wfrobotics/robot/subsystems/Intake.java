@@ -72,7 +72,7 @@ public final class Intake extends EnhancedSubsystem
     
     public void setGrabber(boolean out)
     {
-        Value desired = (out) ? Value.kForward : Value.kReverse;
+        Value desired = (out) ? Value.kReverse : Value.kForward;
         grabber.set(desired);
         isGrabbersExtended = out;
         hasAutoModeHatch = false;

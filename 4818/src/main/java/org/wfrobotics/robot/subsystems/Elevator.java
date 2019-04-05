@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
+import org.wfrobotics.reuse.hardware.LimitSwitch;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
@@ -42,14 +43,14 @@ public final class Elevator extends PositionBasedSubsystem
         final PnuaticConfig pConfig = RobotConfig.getInstance().getPnumaticConfig();
 
         //        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
-        master.configOpenloopRamp(.15, 100);  // TODO Tune because we switched to miniCIMs
-        master.setSelectedSensorPosition((int) (positionConfig.kTicksToTop * 2.0), 0, 100);  // Always be able to zero
-        master.setStatusFramePeriod(StatusFrame.Status_1_General, 10, 100);  // Faster for limit switch
+        master.configOpenloopRamp(.15, 20);  // TODO Tune because we switched to miniCIMs
+        master.setSelectedSensorPosition((int) (positionConfig.kTicksToTop * 2.0), 0, 20);  // Always be able to zero
+        master.setStatusFramePeriod(StatusFrame.Status_1_General, 10, 20);  // Faster for limit switch
         TalonFactory.configCurrentLimiting(master, 25, 30, 20);
 
         shifter = new DoubleSolenoid(pConfig.kAddressPCMShifter, pConfig.kAddressSolenoidShifterF, pConfig.kAddressSolenoidShifterB);
 
-        setShifter(false);
+        setShifter(true);
     }
 
     public void initDefaultCommand()
@@ -79,7 +80,8 @@ public final class Elevator extends PositionBasedSubsystem
     }
     public void reportState()
     {
-                SmartDashboard.putString("Elevator Command", getCurrentCommandName());
+        super.reportState();
+        SmartDashboard.putString("Elevator Command", getCurrentCommandName());
     }
     public void setShifter(boolean liftNotClimb)
     {
@@ -96,12 +98,14 @@ public final class Elevator extends PositionBasedSubsystem
         if (!liftNotClimb)
         {
             master.overrideLimitSwitchesEnable(true);
+            master.overrideSoftLimitsEnable(true);
             // master.configForwardSoftLimitThreshold(79000);
             // master.configReverseSoftLimitThreshold(-15867);
         }
         else
         {
-        	master.overrideLimitSwitchesEnable(false);
+            master.overrideLimitSwitchesEnable(false);
+            master.overrideSoftLimitsEnable(false);
         }
     }
 

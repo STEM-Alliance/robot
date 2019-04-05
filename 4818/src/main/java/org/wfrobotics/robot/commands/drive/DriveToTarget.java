@@ -11,6 +11,7 @@ import org.wfrobotics.robot.subsystems.Vision;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Turn until reaching the target, or get to the expected heading it should be at **/
 public final class DriveToTarget extends Command
@@ -41,6 +42,7 @@ public final class DriveToTarget extends Command
     protected void initialize()
     {
         drive.setBrake(false);
+        SmartDashboard.putBoolean("Vision Driving", true);
     }
 
     protected void execute()
@@ -53,11 +55,21 @@ public final class DriveToTarget extends Command
         
         final DriveSignal s = helper.cheesyDrive(io.getThrottle(), turn, quickTurn, false);
         drive.driveOpenLoop(s.getLeft(), s.getRight());
+
+        
+        
+        // SmartDashboard.putNumber("throttle", io.getThrottle());
+        // SmartDashboard.putNumber("throttle 2", s.getLeft());
     }
 
     protected boolean isFinished()
     {
         return false;
+    }
+
+    protected void end()
+    {
+        SmartDashboard.putBoolean("Vision Driving", false);
     }
 
     private double getVisionCorrection()
@@ -93,6 +105,7 @@ public final class DriveToTarget extends Command
 
     private boolean visionAvailable()
     {
+        // TODO once timestamps work:  return vision.connected() && vision.getModeTape() && vision.getInView();
         return vision.getModeTape() && vision.getInView();
     }
 }

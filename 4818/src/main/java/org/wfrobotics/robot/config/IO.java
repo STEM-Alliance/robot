@@ -1,5 +1,6 @@
 package org.wfrobotics.robot.config;
 
+import org.wfrobotics.reuse.commands.drive.DriveCheesy;
 import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
@@ -32,7 +33,7 @@ public final class IO implements EnhancedIO
 {
     private static IO instance = null;
     private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
-    private final Joystick driverTurn;
+    private final HerdJoystick driverTurn;
     private final Xbox operator;
     private final Xbox rocketPlate;
 
@@ -40,7 +41,7 @@ public final class IO implements EnhancedIO
     private IO()
     {
         driverThrottle = new HerdJoystick(0);
-        driverTurn = new Joystick(1);
+        driverTurn = new HerdJoystick(1);
 
         operator = new Xbox(3);
         rocketPlate = new Xbox(2);
@@ -57,6 +58,8 @@ public final class IO implements EnhancedIO
         //----------------------- Climber -------------------------
 
         //----------------------- Driver --------------------------
+
+        ButtonFactory.makeButton(driverTurn, 1, TRIGGER.TOGGLE_WHEN_PRESSED, new DriveCheesy());
 
         //----------------------- Elevator ------------------------
 
@@ -75,15 +78,24 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(operator, Xbox.DPAD.LEFT, TRIGGER.TOGGLE_WHEN_PRESSED, new PullForward());
         
 
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToHigh()); // into climb mode
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle()); // into climb mode
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToLow()); // into climb mode
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new SystemToCargoBay()); // into climb mode
+
+
 
         //----------------------- System --------------------------
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new SystemToHigh()); // top button on rocket
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new SystemToMiddle()); // middle button on rocket
         ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new SystemToLow()); // bottem button on rocket
-        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new SystemPickup()); // bottem button on breakout board
 
-        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToCargoBoxPickup()); // middle button on breakout board
-        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  SystemToCargoBay()); // top button on breakout board
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new SystemPickup()); // 1
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new SystemToCargoBoxPickup()); // 2
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  SystemToCargoBay()); // 3
+        ButtonFactory.makeButton(rocketPlate, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new  SystemToCargoBay()); // 4
+
+
         // mystory button added!!!!
 
 
@@ -154,7 +166,7 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return driverTurn.getRawAxis(0);
+        return driverTurn.getX();
     }
 
     public boolean getDriveQuickTurn()

@@ -28,7 +28,7 @@ public final class SuperStructure extends SuperStructureBase
 
     public SuperStructure()
     {
-        jeff.setDigitalInputFramePeriod(5);  // Faster cargo digitals
+        jeff.setDigitalInputFramePeriod(10);  // Faster cargo digitals
     }
 
     protected void initDefaultCommand()
@@ -39,7 +39,6 @@ public final class SuperStructure extends SuperStructureBase
     public void cacheSensors(boolean isDisabled)
     {
         jeff.cacheSensors(false);  // Reads PWM0 & PWM1
-        final double hatchDistance = 0.0;
         final boolean cargoLeft = jeff.getPWM0();
         final boolean cargoRight = jeff.getPWM1();
 
