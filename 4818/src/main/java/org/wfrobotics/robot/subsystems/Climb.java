@@ -2,13 +2,14 @@ package org.wfrobotics.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
 import org.wfrobotics.reuse.hardware.TalonChecker;
 import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
-import org.wfrobotics.robot.commands.climb.ClimbZeroThenNone;
+import org.wfrobotics.robot.commands.climb.ClimbNone;
 import org.wfrobotics.robot.config.RobotConfig;
 
 /** @author Team 4818 The Herd<p>STEM Alliance of Fargo Moorhead */
@@ -33,20 +34,26 @@ public final class Climb extends PositionBasedSubsystem
         super(positionConfig);
         pullMaster = TalonFactory.makeTalon(32);
         pullSlave = TalonFactory.makeFollowerTalon(31, pullMaster);
+        
         pullSlave.setInverted(false);
         pullMaster.setInverted(true);
 
-        master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, responsiveness not critical
+        master.setControlFramePeriod(ControlFrame.Control_3_General, 20);  // Slow down, responsiveness not critical
+        master.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 25);  // Slow down, responsiveness not critical
+        master.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 25);  // Slow down, responsiveness not critical
+        master.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 25);  // Slow down, responsiveness not critical
+        
+        TalonFactory.configOpenLoopOnly(pullMaster);
+        pullMaster.setControlFramePeriod(ControlFrame.Control_3_General, 50);  // Slow down, responsiveness not critical
+        pullSlave.setControlFramePeriod(ControlFrame.Control_3_General, 50);  // Slow down, responsiveness not critical
     }
 
-    public void setPullers(Double speed)
-    {
-        pullMaster.set(ControlMode.PercentOutput, speed);
-    }
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new ClimbZeroThenNone());
+        setDefaultCommand(new ClimbNone());
     }
+
+    
     
     @Override
     public void setClosedLoop(double positionSetpoint)
@@ -60,6 +67,11 @@ public final class Climb extends PositionBasedSubsystem
     {
         master.configVoltageCompSaturation(10.0);
         setMotor(ControlMode.PercentOutput, percent);
+    }
+
+    public void setPullers(Double speed)
+    {
+        pullMaster.set(ControlMode.PercentOutput, speed);
     }
 
     public TestReport runFunctionalTest()

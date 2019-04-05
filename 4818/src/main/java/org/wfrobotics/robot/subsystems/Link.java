@@ -31,8 +31,8 @@ public final class Link extends PositionBasedSubsystem
     {
         super(positionConfig);
 
-        master.configClosedloopRamp(0.05, 100);
-        master.configOpenloopRamp(0.05, 100);
+        master.configClosedloopRamp(0.05, 20);
+        master.configOpenloopRamp(0.05, 20);
         master.setControlFramePeriod(ControlFrame.Control_3_General, 10);  // Slow down, responsiveness not critical
         TalonFactory.configCurrentLimiting(master, 15, 25, 30);
 

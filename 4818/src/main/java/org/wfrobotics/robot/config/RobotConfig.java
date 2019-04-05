@@ -183,7 +183,7 @@ public class RobotConfig extends EnhancedRobotConfig
         c.kFullRangeInchesOrDegrees = 100.0;
         // c.kSoftwareLimitT = Optional.of(kTicksToTop);  // TODO don't hit the ground, just pick something a little too big?
         // c.kFeedForward = Optional.of(0.0);  // TODO - add a small one
-        c.kTuning = Optional.of(true);
+        // c.kTuning = Optional.of(true);
 
         return c;
     }

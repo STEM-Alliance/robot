@@ -21,6 +21,7 @@ public class ElevatorShift extends Command
 
         desired = liftNotClimb;
     }
+    
     protected void execute()
     {
         climb.setOpenLoop(IO.getInstance().getClimbArmsStick());
