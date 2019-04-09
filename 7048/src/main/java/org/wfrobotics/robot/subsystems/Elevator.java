@@ -39,14 +39,14 @@ public class Elevator extends PositionBasedSubsystem
     {
         super(positionConfig);
 
-        master.setSelectedSensorPosition(0, 0, 100);
-        TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // TODO Tune
-        master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
+        //master.setSelectedSensorPosition(0, 0, 100);
+        //TalonFactory.configCurrentLimiting(master, 15, 30, 200);  // TODO Tune
+        //master.configClosedloopRamp(0.15, 100);  // Soften reaching setpoint TODO Tune
     }
 
     public void initDefaultCommand()
     {
-        setDefaultCommand(new ElevatorOpenLoop());
+        //setDefaultCommand(new ElevatorOpenLoop());
     }
 
     /** Inches off ground */

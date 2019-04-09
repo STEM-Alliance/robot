@@ -7,7 +7,7 @@ public final class PracticeConfig extends RobotConfig
 {
     public PracticeConfig()
     {
-
+        super();
     }
 
     public TankConfig getTankConfig()

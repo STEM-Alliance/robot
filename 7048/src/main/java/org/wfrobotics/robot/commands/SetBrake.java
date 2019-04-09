@@ -1,35 +1,33 @@
 package org.wfrobotics.robot.commands;
 
+import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ConserveCompressor extends Command
+public class SetBrake extends Command
 {
     private final SuperStructure sp = SuperStructure.getInstance();
     //    private final LiftSubsystem lift = LiftSubsystem.getInstance();
-    private boolean isTeleop = true;
+    private boolean enable;
 
-    public ConserveCompressor()
+    public SetBrake(boolean value)
     {
-        requires(sp);
+        enable = value;
+        //requires(sp);
     }
 
     protected void initialize()
     {
-        //isTeleop = DriverStation.getInstance().isOperatorControl();
-        sp.setCompressor(true);
+        TankSubsystem.getInstance().setBrake(enable);
+        SmartDashboard.putBoolean("Drive Brake", enable);
     }
 
-    protected void execute()
-    {
-        //        sp.setCompressor(isTeleop && lift.onTarget());
-        sp.setCompressor(true);
-    }
 
     protected boolean isFinished()
     {
-        return false;
+        return true;
     }
 }

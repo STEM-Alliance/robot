@@ -14,6 +14,7 @@ import org.wfrobotics.robot.commands.intake.PopHatch;
 import org.wfrobotics.robot.commands.intake.SetHatch;
 import org.wfrobotics.robot.commands.intake.ToggleHatch;
 import org.wfrobotics.robot.commands.wrist.WristToHeight;
+import org.wfrobotics.robot.commands.wrist.WristPneumaticToggle;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -48,9 +49,9 @@ public final class IO implements EnhancedIO
         ButtonFactory.makeButton(driverTurn, HerdJoystick.BUTTON.TRIGGER, TRIGGER.WHEN_PRESSED, new SetBrake(false));
 
         //----------------------- Elevator ------------------------
-        ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchHigh.get()));
-        ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchMiddle.get()));
-        ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchLow.get()));
+        //ButtonFactory.makeButton(operator, Xbox.DPAD.UP, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchHigh.get()));
+        //ButtonFactory.makeButton(operator, Xbox.DPAD.RIGHT, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchMiddle.get()));
+        //ButtonFactory.makeButton(operator, Xbox.DPAD.DOWN, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchLow.get()));
 
         //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ToggleHatch());
@@ -60,8 +61,8 @@ public final class IO implements EnhancedIO
         //----------------------- System --------------------------
 
         //----------------------- Wrist ---------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristToHeight(36));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new WristToHeight(0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristPneumaticToggle());
+
 
         //ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle());
 
@@ -116,13 +117,12 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return driverTurn.getX()*0.7;
+        return driverTurn.getX() * 0.7;
     }
 
     public boolean getDriveQuickTurn()
     {
-        return driverTurn.getButtonPressed(HerdJoystick.BUTTON.THUMB_TOP_RIGHT);
-        //return true;
+        return driverThrottle.getButtonPressed(HerdJoystick.BUTTON.THUMB_TOP_RIGHT);
     }
 
     public boolean isDriveOverrideRequested()
