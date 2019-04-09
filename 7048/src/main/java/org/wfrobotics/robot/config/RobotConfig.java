@@ -18,7 +18,7 @@ public class RobotConfig extends EnhancedRobotConfig
 
     public RobotConfig()
     {
-        cameraStream = Optional.ofNullable(true);
+        cameraStream = Optional.ofNullable(false);
     }
 
     //Fargo competition config
@@ -163,7 +163,7 @@ public class RobotConfig extends EnhancedRobotConfig
         int kWristVelocityCruise = (int) (kWristVelocityMax * 0.975);
         int kWristAcceleration = (int) (kWristVelocityCruise * 6.0);
 
-        c.kClosedLoop = new ClosedLoopConfig("Wrist", new MasterConfig[] {
+        c.kClosedLoop = new ClosedLoopConfig("Wrist", new MasterConfcaig[] {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             new MasterConfig(19, true, false)
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +209,7 @@ public class RobotConfig extends EnhancedRobotConfig
         config.ACCELERATION = config.VELOCITY_PATH;
         config.STEERING_DRIVE_DISTANCE_P = 0.000022;
         config.STEERING_DRIVE_DISTANCE_I = 0.000005;
-		config.OPEN_LOOP_RAMP = .3; // how fast do you acellerate
+		config.OPEN_LOOP_RAMP = .1;   // Wisconsin
         config.OPEN_LOOP_PEAK_PERCENT = 1;
 
         config.CLOSED_LOOP = new ClosedLoopConfig("Tank", new MasterConfig[] {
@@ -326,6 +326,9 @@ public class RobotConfig extends EnhancedRobotConfig
 
     //                       Wrist
     // _________________________________________________________________________________
+    public final int kAddressSolenoidWristF = 1;
+    public final int kAddressSolenoidWristB = 6;
+    /////////////////////////////////;8  
 
     public PositionConfig getWristConfig()
     {
