@@ -6,6 +6,7 @@ import org.wfrobotics.robot.config.RobotConfig;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake extends EnhancedSubsystem
 {
@@ -19,13 +20,14 @@ public class Intake extends EnhancedSubsystem
     }
 
     private static Intake instance = null;
-    private final DoubleSolenoid poppers;
+    private final DoubleSolenoid holder;
+    private boolean hatchOut;
 
     private Intake()
     {
         final RobotConfig config = RobotConfig.getInstance();
 
-        poppers = new DoubleSolenoid(0, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
+        holder = new DoubleSolenoid(0, config.kAddressSolenoidPoppersF, config.kAddressSolenoidPoppersB);
     }
 
     protected void initDefaultCommand()
@@ -45,8 +47,10 @@ public class Intake extends EnhancedSubsystem
 
     public void setPoppers(boolean out)
     {
+        hatchOut = out;
         Value desired = (out) ? Value.kForward : Value.kReverse;
-        poppers.set(desired);
+        holder.set(desired);
+        SmartDashboard.putBoolean("Intake grabber open", hatchOut);
     }
 
     public TestReport runFunctionalTest()
@@ -57,4 +61,9 @@ public class Intake extends EnhancedSubsystem
 
         return report;
     }
+
+	public boolean getPoppers() {
+		return hatchOut;
+	}
 }
+
