@@ -1,14 +1,13 @@
 package org.wfrobotics.robot.config;
 
-import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
-import org.wfrobotics.reuse.commands.drive.DriveToTarget;
-import org.wfrobotics.robot.commands.intake.PopHatch;
-import org.wfrobotics.robot.commands.wrist.WristToHeight;
+import org.wfrobotics.reuse.commands.drive.FollowTarget;
+import org.wfrobotics.robot.commands.wrist.WristPneumaticToggle;
+import org.wfrobotics.robot.commands.intake.ToggleHatch;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -33,31 +32,14 @@ public final class IO implements EnhancedIO
     /** Configure each Button to run a Command */
     public void assignButtons()
     {
-        // ---------------------- Autonomous ----------------------
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON7, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.modes));
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON8, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
-
-        ButtonFactory.makeButton(driverThrottle, HerdJoystick.BUTTON.BUTTON4, TRIGGER.WHEN_PRESSED, new DriveToTarget());
-
-        //----------------------- Elevator ------------------------
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchHigh.get()));
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchMiddle.get()));
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new ElevatorToHeight(ArmHeight.HatchLow.get()));
+        //Hat up
+        ButtonFactory.makeButton(driverThrottle, 1, TRIGGER.WHEN_PRESSED, new FollowTarget());
 
         //----------------------- Intake --------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new PopHatch());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ToggleHatch());
 
-        //----------------------- System --------------------------
-
-        //----------------------- Wrist ---------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristToHeight(30));
-
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.WHEN_PRESSED, new WristToggle());
-
-        //----------------------- Testing -------------------------
-        //ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new WristToHeight(45.0));
-
-
+        //----------------------- Wrist --------------------------
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristPneumaticToggle());
     }
 
     // ------------------- Robot-specific --------------------
@@ -110,8 +92,8 @@ public final class IO implements EnhancedIO
 
     public boolean getDriveQuickTurn()
     {
-        return Math.abs(getThrottle()) < 0.1;
-        //return true;
+        //Turn joystick trigger
+        return driverTurn.getRawButtonPressed(0);
     }
 
     public boolean isDriveOverrideRequested()
