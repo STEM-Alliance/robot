@@ -21,6 +21,14 @@ public class RobotConfig extends EnhancedRobotConfig
         cameraStream = Optional.ofNullable(false);
     }
 
+    // Vision
+    // _________________________________________________________________________________
+
+    //TODO: West Fargo PID fix this at competition on the practice field
+    public final double kVisionP = 0.055;  
+    public final double kVisionI = 0.0002; 
+    public final double kVisionD = 0.0; 
+
     //Fargo competition config
     /*
     //                      Tank
