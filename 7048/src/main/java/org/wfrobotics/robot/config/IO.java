@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public final class IO implements EnhancedIO
 {
     private static IO instance = null;
-    private final HerdJoystick driverThrottle;  // TODO Refactor - Make Button from JoyStick instead?
+    private final HerdJoystick driverThrottle;
     private final Joystick driverTurn;
     private final Xbox operator;
 
@@ -32,7 +32,7 @@ public final class IO implements EnhancedIO
     /** Configure each Button to run a Command */
     public void assignButtons()
     {
-        //Hat up
+        //Hat down
         ButtonFactory.makeButton(driverThrottle, 1, TRIGGER.WHEN_PRESSED, new FollowTarget());
 
         //----------------------- Intake --------------------------
@@ -87,7 +87,7 @@ public final class IO implements EnhancedIO
 
     public double getTurn()
     {
-        return driverTurn.getRawAxis(0)*0.25;
+        return driverTurn.getRawAxis(0)*0.75;
     }
 
     public boolean getDriveQuickTurn()
