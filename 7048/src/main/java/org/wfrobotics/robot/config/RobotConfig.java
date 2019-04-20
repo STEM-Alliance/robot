@@ -251,6 +251,11 @@ public class RobotConfig extends EnhancedRobotConfig
     //                      Climb
     // _________________________________________________________________________________
 
+    public final int kAddressClimb1F = 4;
+    public final int kAddressClimb1B = 5;
+    public final int kAddressClimb2F = 6;
+    public final int kAddressClimb2B = 7;
+
     // Hardware
     public final int kAddressSolenoidGrippersF = 4;
     public final int kAddressSolenoidGrippersB = 5;
