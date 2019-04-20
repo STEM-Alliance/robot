@@ -12,25 +12,27 @@ import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.config.RobotConfig;
 
-public class WristPneumatic extends EnhancedSubsystem
+public class PneumaticClimb extends EnhancedSubsystem
 {
-    public static WristPneumatic getInstance()
+    public static PneumaticClimb getInstance()
     {
         if(instance == null)
         {
-            instance = new WristPneumatic();
+            instance = new PneumaticClimb();
         }
         return instance;
     }
 
-    private static WristPneumatic instance = null;
-    private final DoubleSolenoid wrist;
-    private boolean wristUp = true;
+    private static PneumaticClimb instance = null;
+    private DoubleSolenoid climbPiston1 = null;
+    private DoubleSolenoid climbPiston2 = null;
+    private boolean climbUp = false;
 
-    private WristPneumatic()
+    private PneumaticClimb()
     {
         final RobotConfig config = RobotConfig.getInstance();
-        wrist = new DoubleSolenoid(0, config.kAddressSolenoidWristB, config.kAddressSolenoidWristF);
+        climbPiston1 = new DoubleSolenoid(0, config.kAddressClimb1B, config.kAddressClimb1F);
+        climbPiston2 = new DoubleSolenoid(0, config.kAddressClimb2B, config.kAddressClimb2F);
     }
 
     public void initDefaultCommand()
@@ -45,14 +47,15 @@ public class WristPneumatic extends EnhancedSubsystem
 
     public void setWrist(boolean up)
     {
-        wristUp = up;
+        climbUp = up;
         Value desired = (up) ? Value.kForward : Value.kReverse;
-        wrist.set(desired);
+        climbPiston1.set(desired);
+        climbPiston2.set(desired);
     }
 
-    public boolean getWrist()
+    public boolean getClimb()
     {
-        return wristUp;
+        return climbUp;
     }
 
     public void cacheSensors(boolean a)

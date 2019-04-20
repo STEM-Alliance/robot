@@ -8,6 +8,7 @@ import org.wfrobotics.reuse.config.Xbox;
 import org.wfrobotics.reuse.commands.drive.FollowTarget;
 import org.wfrobotics.robot.commands.wrist.WristPneumaticToggle;
 import org.wfrobotics.robot.commands.intake.ToggleHatch;
+import org.wfrobotics.robot.commands.climb.ClimbTogglePneumatic;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -40,6 +41,9 @@ public final class IO implements EnhancedIO
 
         //----------------------- Wrist --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new WristPneumaticToggle());
+
+        //-----------------------  --------------------------
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.LB, TRIGGER.WHEN_PRESSED, new ClimbTogglePneumatic());
     }
 
     // ------------------- Robot-specific --------------------
