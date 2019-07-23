@@ -1,7 +1,7 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
-import org.wfrobotics.robot.commands.SmartVision;
+import org.wfrobotics.robot.commands.CommandTemplate;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -48,7 +48,7 @@ public final class Vision extends EnhancedSubsystem
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new SmartVision());
+        setDefaultCommand(new CommandTemplate());
     }
     
     public void cacheSensors(boolean isDisabled)
