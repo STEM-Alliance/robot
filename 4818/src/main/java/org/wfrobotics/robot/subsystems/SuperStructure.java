@@ -4,7 +4,7 @@ import org.wfrobotics.reuse.hardware.Canifier;
 import org.wfrobotics.reuse.hardware.Canifier.RGB;
 import org.wfrobotics.reuse.subsystems.SuperStructureBase;
 import org.wfrobotics.reuse.utilities.CircularBuffer;
-import org.wfrobotics.robot.commands.ConserveCompressor;
+import org.wfrobotics.robot.commands.CommandTemplate;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,73 +20,31 @@ public final class SuperStructure extends SuperStructureBase
         return SingletonHolder.instance;
     }
 
-    private static final double kCargoInPercent = 0.75;
-    private static final double kHatchInInches = 12.0;
-
-    private final Canifier jeff = new Canifier(6, new RGB(255, 255, 0));
-    private final CircularBuffer cargoBuffer = new CircularBuffer(3, false);
-    private final CircularBuffer hatchBuffer = new CircularBuffer(3, false);
-
     public SuperStructure()
     {
-        jeff.setDigitalInputFramePeriod(5);  // Faster cargo digitals
+
     }
 
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new ConserveCompressor());
+        setDefaultCommand(new CommandTemplate());
     }
 
     public void cacheSensors(boolean isDisabled)
     {
-        jeff.cacheSensors(false);  // Reads PWM0 & PWM1
-        final double hatchDistance = 0.0;
-        final boolean cargoLeft = jeff.getPWM0();
-        final boolean cargoRight = jeff.getPWM1();
-
-        hatchBuffer.addFirst(hatchDistance);
-        cargoBuffer.addFirst(cargoRight || cargoLeft);        
+              
     }
 
     public void reportState()
     {
-        SmartDashboard.putBoolean("Cargo", getHasCargo());
-        SmartDashboard.putBoolean("Hatch", getHasHatch());
-    }
-    
-    public boolean getHasCargo()
-    {
-        return cargoBuffer.getAverage() >= kCargoInPercent;
+        
     }
 
-    public boolean getHasHatch()
-    {
-        return hatchBuffer.getAverage() < kHatchInInches;
-    }
-
-    public Canifier getJeff()
-    {
-        return jeff;
-    }
-
-    public double getDistanceFromWall()
-    {
-        return 0.0;
-    }
-
-    public double getAngleFromWall( )
-    {
-        return 0.0;   
-    }
-    
     @Override
     public TestReport runFunctionalTest()
     {
         TestReport report = super.runFunctionalTest();
         
-        report.add(jeff.runFunctionalTest());
-
-        jeff.testRobotSpecificColors();
         report.addManualTest("Tested Jeff's LED's");
 
         return report;
