@@ -1,6 +1,7 @@
 package org.wfrobotics.robot.commands;
 
 import org.wfrobotics.robot.config.IO;
+import org.wfrobotics.robot.subsystems.ArmSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -11,7 +12,7 @@ public class CommandTemplate extends Command
 
     public CommandTemplate()
     {
-        // requires(subsystem);
+        requires(ArmSubsystem.getInstance());
     }
     protected void execute()
     {
