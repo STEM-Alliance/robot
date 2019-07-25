@@ -3,6 +3,7 @@ package org.wfrobotics.robot;
 import org.wfrobotics.reuse.EnhancedRobot;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
+import org.wfrobotics.robot.subsystems.ArmSubsystem;
 import org.wfrobotics.robot.subsystems.SuperStructure;
 import org.wfrobotics.robot.subsystems.Vision;
 
@@ -20,8 +21,9 @@ public final class Robot extends EnhancedRobot
     protected void registerRobotSpecific()
     {
 
-        subsystems.register(SuperStructure.getInstance());  
-        subsystems.register(Vision.getInstance());
+        // subsystems.register(SuperStructure.getInstance());  
+        // subsystems.register(Vision.getInstance());
+        subsystems.register(ArmSubsystem.getInstance());
     }
 
     @Override
