@@ -5,7 +5,7 @@ import org.wfrobotics.robot.subsystems.ArmSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Move extends Command
+public class MoveBottom extends Command
 {
     // private final 'Subsystem' subsystem = Subsystem.getInstance();
     ArmSubsystem armSubsystem = ArmSubsystem.getInstance();
@@ -13,17 +13,17 @@ public class Move extends Command
 
     Double angle = 0.0;
 
-    public Move(Double x)
+    public MoveBottom(Double x)
     {
         requires(armSubsystem);
         angle = x;
     }
     protected void initialize() {
-        armSubsystem.moveToAngle(angle);
+        armSubsystem.moveBottom(angle);
     }
     protected void end()
     {
-        armSubsystem.moveToAngle(0.0);
+        armSubsystem.moveBottom(0.0);
     }
     protected boolean isFinished()
     {
