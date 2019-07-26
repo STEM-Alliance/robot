@@ -1,9 +1,8 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
-import org.wfrobotics.robot.commands.Move;
 import org.wfrobotics.robot.commands.CommandTemplate;
-
+import org.wfrobotics.robot.commands.JoystickMove;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,24 +14,32 @@ public final class ArmSubsystem extends EnhancedSubsystem
         static ArmSubsystem instance = new ArmSubsystem();
     }
     
-    Servo one;
     public static ArmSubsystem getInstance()
     {
         return SingletonHolder.instance;
     }
-
+    Servo one;
+    Servo two;
     public ArmSubsystem()
     {
         one = new Servo(0);
+        two = new Servo(1);
+    
+        
     }
-    public void moveToAngle(Double angle)
+    public void moveBottom(Double angle)
     {
         one.set(angle); 
     }
 
+    public void moveTop(Double angle)
+    {
+        two.set(angle); 
+    }
+
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new CommandTemplate());
+        setDefaultCommand(new JoystickMove());
     }
 
     public void reportState()

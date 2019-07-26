@@ -4,11 +4,14 @@ import org.wfrobotics.reuse.config.AutoFactory;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.Xbox.AXIS;
+import org.wfrobotics.robot.commands.CommandTemplate;
+import org.wfrobotics.robot.commands.ControlDirection;
+import org.wfrobotics.robot.commands.MoveBottom;
+import org.wfrobotics.robot.commands.MoveTop;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.Xbox;
 
-import org.wfrobotics.robot.commands.Move;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
@@ -33,11 +36,10 @@ public final class IO implements EnhancedIO
         // ButtonFactory.makeButton(driverThrottle, 8, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.delays));
         // ButtonFactory.makeButton(driverThrottle, 9, TRIGGER.WHEN_PRESSED, AutoFactory.getInstance().makeCommand(Auto.positions));
 
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.BACK, TRIGGER.WHEN_PRESSED, new Move(0.0));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new Move(0.25));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.B, TRIGGER.WHEN_PRESSED, new Move(0.5));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new Move(0.75));
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.Y, TRIGGER.WHEN_PRESSED, new Move(1.0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.RB, TRIGGER.TOGGLE_WHEN_PRESSED, new CommandTemplate());
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.A, TRIGGER.WHEN_PRESSED, new MoveTop(1.0));
+        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHILE_HELD, new ControlDirection());
+        
 
     }
 
@@ -53,10 +55,28 @@ public final class IO implements EnhancedIO
         }
         return instance;
     }
+    public double getThrottle(){
+        return 0.0;
+    }
 
-    public double getThrottle()
+
+    public double getY()
     {
-        return -operator.getAxis(AXIS.RIGHT_TRIGGER);
+        double pos = (-operator.getY(Hand.kRight));
+        if (pos < 0){
+            return -Math.pow(pos, 2);
+        }
+        return Math.pow(pos, 2);
+
+    }
+
+    public double getX()
+    {
+        double pos = -operator.getX(Hand.kRight);
+        if (pos < 0){
+            return -Math.pow(pos, 2);
+        }
+        return Math.pow(pos, 2);
     }
 
     public double getTurn()
