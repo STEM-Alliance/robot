@@ -60,26 +60,37 @@ public final class IO implements EnhancedIO
     }
 
 
-    public double getY()
+    public double getReach()
     {
-        double pos = (-operator.getY(Hand.kRight));
+        double pos = (operator.getY(Hand.kLeft));
         return pos;
 
     }
 
-    public double getX()
+    public double getBase()
     {
         double pos = -operator.getX(Hand.kRight);
         
         return pos;
     }
 
-    public double getZ()
+    public double getLift()
     {
-        double pos = -operator.getX(Hand.kLeft);
+        double pos = -operator.getY(Hand.kRight);
         
         return pos;
     }
+
+    public double getClaw(){
+        double posR = operator.getTrigger(Hand.kRight);
+        double posL = -operator.getTrigger(Hand.kLeft);
+
+        if (posR > -posL){
+            return posR;
+        }
+        return posL;
+    }
+
 
     public double getTurn()
     {

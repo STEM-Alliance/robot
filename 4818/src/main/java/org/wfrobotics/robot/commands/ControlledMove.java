@@ -20,47 +20,62 @@ public class ControlledMove extends Command
     protected void initialize() {
        
     }
-    Double bottomA = 0.5;
-    Double horizontalA = 0.5;
-    Double vertA = 0.5;
+    Double baseAngle = 0.5;
+    Double reachAngle = 0.5;
+    Double liftAngle = 0.5;
+    Double clawAngle = 0.5;
     protected void execute()
     {
-        vertA = vertA + 0.01 * io.getZ();
-        if(vertA <= 1 && vertA>= 0) {
-            armSubsystem.moveThree(vertA);
+        clawAngle = clawAngle + 0.005 * io.getClaw();
+        if(clawAngle <= 1 && clawAngle>= 0) {
+            armSubsystem.pinch(clawAngle);
         }
         else {
-            if(vertA < 0){
-                vertA = 0.0;
+            if(clawAngle < 0){
+                clawAngle = 0.0;
             }
             else{
-                vertA = 1.0;
+                clawAngle = 1.0;
             }
         }
 
-        bottomA = bottomA + 0.01 * io.getX();
-        if(bottomA <= 1 && bottomA>= 0) {
-            armSubsystem.moveBottom(bottomA);
+
+        liftAngle = liftAngle + 0.01 * io.getLift();
+        if(liftAngle <= 1 && liftAngle>= 0) {
+            armSubsystem.lift(liftAngle);
         }
         else {
-            if(bottomA < 0){
-                bottomA = 0.0;
+            if(liftAngle < 0){
+                liftAngle = 0.0;
             }
             else{
-                bottomA = 1.0;
+                liftAngle = 1.0;
+            }
+        }
+
+        baseAngle = baseAngle + 0.01 * io.getBase();
+        if(baseAngle <= 1 && baseAngle>= 0) {
+            armSubsystem.rotateBase(baseAngle);
+        }
+        else {
+            if(baseAngle < 0){
+                baseAngle = 0.0;
+            }
+            else{
+                baseAngle = 1.0;
             }
         }
         
-        horizontalA = horizontalA + 0.01 * io.getY();
-        if(horizontalA <= 1 && horizontalA>= 0) {
-            armSubsystem.moveTop(horizontalA);
+        reachAngle = reachAngle + 0.01 * io.getReach();
+        if(reachAngle <= 1 && reachAngle>= 0) {
+            armSubsystem.reach(reachAngle);
         }
         else {
-            if(horizontalA < 0){
-                horizontalA = 0.0;
+            if(reachAngle < 0){
+                reachAngle = 0.0;
             }
             else{
-                horizontalA = 1.0;
+                reachAngle = 1.0;
             }
         }
 

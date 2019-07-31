@@ -19,31 +19,39 @@ public final class ArmSubsystem extends EnhancedSubsystem
     {
         return SingletonHolder.instance;
     }
-    Servo one;
-    Servo two;
-    Servo three;
+    Servo base;
+    Servo reach;
+    Servo lift;
+    Servo claw;
     public ArmSubsystem()
     {
-        one = new Servo(0);
-        two = new Servo(1);
-        three = new Servo(2);
+        base = new Servo(0);
+        reach = new Servo(1);
+        lift = new Servo(2);
+        claw = new Servo(3);
     
         
     }
-    public void moveBottom(Double angle)
+    public void rotateBase(Double angle)
     {
-        one.set(angle); 
+        base.set(angle); 
     }
 
-    public void moveTop(Double angle)
+    public void reach(Double angle)
     {
-        two.set(angle); 
+        reach.set(angle); 
     }
 
-    public void moveThree (Double angle)
+    public void lift (Double angle)
     {
-        three.set(angle);
+        lift.set(angle);
     }
+
+    public void pinch (double angle)
+    {
+        claw.set(angle);
+    }
+
 
     protected void initDefaultCommand()
     {
