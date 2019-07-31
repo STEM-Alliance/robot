@@ -24,10 +24,10 @@ public class JoystickMove extends Command
     }
     protected void execute()
     {
-        posX = io.getX() + 0.5;
-        posY = io.getY() + 0.5;
-        armSubsystem.moveBottom(posX);
-        armSubsystem.moveTop(posY);
+        posX = io.getBase() + 0.5;
+        posY = io.getReach() + 0.5;
+        armSubsystem.rotateBase(posX);
+        armSubsystem.reach(posY);
         SmartDashboard.putNumber("x", posX);
         SmartDashboard.putNumber("Y", posY);
 
@@ -35,8 +35,8 @@ public class JoystickMove extends Command
     }
     protected void end()
     {
-        armSubsystem.moveBottom(posX);
-        armSubsystem.moveTop(posY);
+        armSubsystem.rotateBase(posX);
+        armSubsystem.reach(posY);
     }
     protected boolean isFinished()
     {

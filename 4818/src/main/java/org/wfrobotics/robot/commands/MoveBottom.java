@@ -19,11 +19,11 @@ public class MoveBottom extends Command
         angle = x;
     }
     protected void initialize() {
-        armSubsystem.moveBottom(angle);
+        armSubsystem.rotateBase(angle);
     }
     protected void end()
     {
-        armSubsystem.moveBottom(0.0);
+        armSubsystem.rotateBase(0.0);
     }
     protected boolean isFinished()
     {

@@ -23,7 +23,7 @@ public class ControlDirection extends Command
     Double angle = 0.0;
     protected void execute()
     {
-        armSubsystem.moveBottom(angle);
+        armSubsystem.rotateBase(angle);
         angle = angle + 0.01;
         if (angle >= 1.0){
             angle = 0.0;

@@ -19,11 +19,11 @@ public class MoveTop extends Command
         angle = x;
     }
     protected void initialize() {
-        armSubsystem.moveTop(angle);
+        armSubsystem.reach(angle);
     }
     protected void end()
     {
-        armSubsystem.moveTop(0.0);
+        armSubsystem.reach(0.0);
     }
     protected boolean isFinished()
     {
