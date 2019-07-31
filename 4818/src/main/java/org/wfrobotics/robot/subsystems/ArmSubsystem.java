@@ -2,6 +2,7 @@ package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
 import org.wfrobotics.robot.commands.CommandTemplate;
+import org.wfrobotics.robot.commands.ControlledMove;
 import org.wfrobotics.robot.commands.JoystickMove;
 
 import edu.wpi.first.wpilibj.Servo;
@@ -20,10 +21,12 @@ public final class ArmSubsystem extends EnhancedSubsystem
     }
     Servo one;
     Servo two;
+    Servo three;
     public ArmSubsystem()
     {
         one = new Servo(0);
         two = new Servo(1);
+        three = new Servo(2);
     
         
     }
@@ -37,9 +40,14 @@ public final class ArmSubsystem extends EnhancedSubsystem
         two.set(angle); 
     }
 
+    public void moveThree (Double angle)
+    {
+        three.set(angle);
+    }
+
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new JoystickMove());
+        setDefaultCommand(new ControlledMove());
     }
 
     public void reportState()

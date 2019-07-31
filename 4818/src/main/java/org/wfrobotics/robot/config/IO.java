@@ -63,20 +63,22 @@ public final class IO implements EnhancedIO
     public double getY()
     {
         double pos = (-operator.getY(Hand.kRight));
-        if (pos < 0){
-            return -Math.pow(pos, 2);
-        }
-        return Math.pow(pos, 2);
+        return pos;
 
     }
 
     public double getX()
     {
         double pos = -operator.getX(Hand.kRight);
-        if (pos < 0){
-            return -Math.pow(pos, 2);
-        }
-        return Math.pow(pos, 2);
+        
+        return pos;
+    }
+
+    public double getZ()
+    {
+        double pos = -operator.getX(Hand.kLeft);
+        
+        return pos;
     }
 
     public double getTurn()
