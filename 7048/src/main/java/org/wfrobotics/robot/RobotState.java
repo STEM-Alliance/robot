@@ -1,7 +1,6 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.RobotStateBase;
-import org.wfrobotics.reuse.subsystems.vision.CoprocessorData;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -30,8 +29,4 @@ public final class RobotState extends RobotStateBase
 
     }
 
-    public void addVisionUpdate(Double time, CoprocessorData coprocessorData)
-    {
-        DriverStation.reportWarning("RobotState not configured to receive and parse vision updates right now", true);
-    }
 }
