@@ -2,8 +2,6 @@ package org.wfrobotics.robot.commands.experimental;
 
 import org.wfrobotics.reuse.subsystems.drive.TankSubsystem;
 import org.wfrobotics.reuse.utilities.ConsoleLogger;
-import org.wfrobotics.reuse.EnhancedRobot;
-import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.robot.subsystems.Vision;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -13,7 +11,6 @@ public class TurnToTarget extends Command
 {
     private final Vision vision = Vision.getInstance();
     private final  TankSubsystem drive = TankSubsystem.getInstance();
-    private final  EnhancedIO io = EnhancedRobot.getIO();
     protected boolean targetAvailable = false;
     double tol = 3.0;
 

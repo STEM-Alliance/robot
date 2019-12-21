@@ -1,8 +1,6 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.EnhancedRobot;
-import org.wfrobotics.reuse.subsystems.vision.CameraServer;
-import org.wfrobotics.reuse.subsystems.vision.VisionProcessor;
 import org.wfrobotics.robot.config.ProtoRobotConfig;
 import org.wfrobotics.robot.config.ProtoIO;
 import org.wfrobotics.robot.subsystems.ExampleSubsystem;
@@ -13,7 +11,7 @@ public final class Robot extends EnhancedRobot
 
     public Robot() 
     {
-        super(RobotState.getInstance(), ProtoRobotConfig.getInstance(), new ProtoIO());
+        super(ProtoRobotConfig.getInstance(),RobotState.getInstance(), new ProtoIO());
     }
 
     protected void registerRobotSpecific()
