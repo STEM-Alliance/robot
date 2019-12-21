@@ -1,15 +1,10 @@
 package org.wfrobotics.robot.subsystems;
 import org.wfrobotics.reuse.subsystems.EnhancedSubsystem;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import org.wfrobotics.robot.commands.wrist.WristNone;
-import org.wfrobotics.reuse.config.TalonConfig.ClosedLoopConfig;
-import org.wfrobotics.reuse.hardware.TalonChecker;
-import org.wfrobotics.reuse.hardware.TalonFactory;
-import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.config.RobotConfig;
 
 public class PneumaticClimb extends EnhancedSubsystem

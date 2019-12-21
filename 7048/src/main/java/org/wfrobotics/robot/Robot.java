@@ -1,10 +1,6 @@
 package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.EnhancedRobot;
-import org.wfrobotics.reuse.hardware.Blinkin;
-import org.wfrobotics.reuse.hardware.LEDs;
-import org.wfrobotics.reuse.hardware.lowleveldriver.BlinkinPatterns.PatternName;
-import org.wfrobotics.reuse.utilities.DashboardView;
 import org.wfrobotics.robot.config.IO;
 import org.wfrobotics.robot.config.RobotConfig;
 import org.wfrobotics.robot.subsystems.Intake;

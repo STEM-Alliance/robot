@@ -1,7 +1,5 @@
 package org.wfrobotics.robot.config;
 
-import edu.wpi.first.wpilibj.Preferences;
-
 /**
  * Elevator height:    Inches from ground to bottom of intake when link is horizontal
  *                     Meaning it's zero when intake is resting on floor

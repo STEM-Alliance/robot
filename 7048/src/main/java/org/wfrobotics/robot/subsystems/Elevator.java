@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.subsystems;
 
 import org.wfrobotics.reuse.hardware.TalonChecker;
-import org.wfrobotics.reuse.hardware.TalonFactory;
 import org.wfrobotics.reuse.subsystems.PositionBasedSubsystem;
 import org.wfrobotics.robot.commands.climb.ElevatorOpenLoop;
 import org.wfrobotics.robot.config.ArmHeight;

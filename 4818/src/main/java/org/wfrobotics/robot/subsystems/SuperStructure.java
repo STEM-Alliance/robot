@@ -21,7 +21,6 @@ public final class SuperStructure extends SuperStructureBase
     }
 
     private static final double kCargoInPercent = 0.75;
-    private static final double kHatchInInches = 12.0;
 
     private final Canifier jeff = new Canifier(6, new RGB(255, 255, 0));
     private final CircularBuffer cargoBuffer = new CircularBuffer(3, false);
@@ -39,7 +38,6 @@ public final class SuperStructure extends SuperStructureBase
     public void cacheSensors(boolean isDisabled)
     {
         jeff.cacheSensors(false);  // Reads PWM0 & PWM1
-        final double hatchDistance = 0.0;
         final boolean cargoLeft = jeff.getPWM0();
         final boolean cargoRight = jeff.getPWM1();
 
