@@ -1,7 +1,6 @@
 package org.wfrobotics.robot.config;
 
 import org.wfrobotics.reuse.commands.SignalHumanPlayer;
-import org.wfrobotics.reuse.commands.drive.TurnToTarget;
 import org.wfrobotics.reuse.config.ButtonFactory;
 import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.HerdJoystick;
@@ -35,7 +34,6 @@ public final class IO implements EnhancedIO
 
 
         //----------------------Testing-------------------------------
-        ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new TurnToTarget());
 
         // -------------------- Super Structure -------------------
 

@@ -13,7 +13,6 @@ public class VisionScore extends CommandGroup
 
     public VisionScore()
     {
-        this.addSequential(new VisionDeploy(kThrottleApproachMax));
         this.addParallel(new ScoreGamepiece());  // Pretending to score cargo
         this.addSequential(new DriveOpenLoop(kThrottleBackUp), kBackUpSeconds);
     }

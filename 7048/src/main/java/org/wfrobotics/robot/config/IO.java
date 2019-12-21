@@ -5,7 +5,6 @@ import org.wfrobotics.reuse.config.ButtonFactory.TRIGGER;
 import org.wfrobotics.reuse.config.EnhancedIO;
 import org.wfrobotics.reuse.config.HerdJoystick;
 import org.wfrobotics.reuse.config.Xbox;
-import org.wfrobotics.reuse.commands.drive.FollowTarget;
 import org.wfrobotics.robot.commands.wrist.WristPneumaticToggle;
 import org.wfrobotics.robot.commands.intake.ToggleHatch;
 import org.wfrobotics.robot.commands.climb.ClimbTogglePneumatic;
@@ -33,9 +32,6 @@ public final class IO implements EnhancedIO
     /** Configure each Button to run a Command */
     public void assignButtons()
     {
-        //Hat down
-        ButtonFactory.makeButton(driverThrottle, 1, TRIGGER.WHEN_PRESSED, new FollowTarget());
-
         //----------------------- Intake --------------------------
         ButtonFactory.makeButton(operator, Xbox.BUTTON.X, TRIGGER.WHEN_PRESSED, new ToggleHatch());
 
