@@ -2,8 +2,6 @@ package org.wfrobotics.robot;
 
 import org.wfrobotics.reuse.RobotStateBase;
 
-import edu.wpi.first.wpilibj.DriverStation;
-
 /** Preferred provider of global, formatted state about the robot. Commands can get information from one place rather than from multiple subsystems. **/
 public final class RobotState extends RobotStateBase
 {

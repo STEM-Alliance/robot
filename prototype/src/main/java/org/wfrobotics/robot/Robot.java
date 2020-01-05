@@ -7,7 +7,7 @@ import org.wfrobotics.robot.subsystems.ExampleSubsystem;
 
 public final class Robot extends PrototypeEnhancedRobot
 {
-    public static ExampleSubsystem prototypeSubsystem = new ExampleSubsystem();
+    public static ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 
     public Robot() 
     {
@@ -16,6 +16,6 @@ public final class Robot extends PrototypeEnhancedRobot
 
     protected void registerRobotSpecific()
     {
-        subsystems.register(prototypeSubsystem);
+        subsystems.register(exampleSubsystem);
     }
 }

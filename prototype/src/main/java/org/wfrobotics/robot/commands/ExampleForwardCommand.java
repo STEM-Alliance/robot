@@ -1,6 +1,6 @@
 package org.wfrobotics.robot.commands;
 
-import org.wfrobotics.robot.Robot;
+import org.wfrobotics.robot.subsystems.ExampleSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -9,12 +9,14 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ExampleForwardCommand extends Command
 {
     // TODO create any objects this Command needs to remember for later
+    double speed;
 
-    public ExampleForwardCommand()  // TODO pass any parameters needed to setup the command
+    
+    public ExampleForwardCommand(double speed)  // TODO pass any parameters needed to setup the command
     {
-        requires(Robot.prototypeSubsystem);
-
+        requires(ExampleSubsystem.getInstance());
         // TODO save off any objects needed to remember for later
+        this.speed = speed;
     }
 
     protected void initialize()
@@ -25,11 +27,15 @@ public class ExampleForwardCommand extends Command
     protected void execute()
     {
         // TODO do anything this Command needs to happen REPEATEDLY until it's finished
+        ExampleSubsystem.getInstance().setSpeed(speed);
+
     }
 
     protected boolean isFinished()
     {
         // TODO return 'true' whenever this Command has COMPLETED it's purpose
+        ExampleSubsystem.getInstance().setSpeed(0);
+        
         return false;
     }
 }
