@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>7048</name>
-	<comment></comment>
+	<comment>Project 7048 created by Buildship.</comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -18,7 +18,6 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>edu.wpi.first.wpilib.plugins.core.nature.FRCProjectNature</nature>
 		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
 	</natures>
 </projectDescription>
