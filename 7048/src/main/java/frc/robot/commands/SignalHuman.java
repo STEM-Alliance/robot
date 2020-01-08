@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -16,8 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  * An example command that uses an example subsystem.
  */
 public class SignalHuman extends CommandBase {
-  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private final LedSubsystem m_subsystem;
+  private final LedSubsystem led;
 
   /**
    * Creates a new ExampleCommand.
@@ -25,7 +23,7 @@ public class SignalHuman extends CommandBase {
    * @param subsystem The subsystem used by this command.
    */
   public SignalHuman(LedSubsystem subsystem) {
-    m_subsystem = subsystem;
+    led = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -38,14 +36,14 @@ public class SignalHuman extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.setColor();
+    led.setColor();
     SmartDashboard.putString("Led", "value");
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.off();
+    led.off();
   }
 
   // Returns true when the command should end.

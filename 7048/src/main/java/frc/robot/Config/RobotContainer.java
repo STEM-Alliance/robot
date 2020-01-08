@@ -9,11 +9,11 @@ package frc.robot.Config;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.SignalHuman;
 import frc.robot.reuse.config.Xbox;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LedSubsystem;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -26,11 +26,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final LedSubsystem ledSubsystem = new LedSubsystem();
+  private final Drivetrain driveSubsystem = new Drivetrain(this);
+  private final Vision vision = new Vision();
 
-  private final SignalHuman signalHuman = new SignalHuman(ledSubsystem);
 
-
-  XboxController xbox;
+  public XboxController xbox;
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -54,12 +54,18 @@ public class RobotContainer {
 
 
   /**
+   * 
+   * This is where you load in your auto command!
+   */
+  private final SignalHuman autoCommand = new SignalHuman(ledSubsystem);
+
+  /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return signalHuman;
+    return autoCommand;
   }
 }
