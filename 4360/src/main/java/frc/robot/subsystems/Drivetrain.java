@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -15,10 +16,10 @@ import frc.robot.reuse.hardware.sensors.GyroNavx;
 public class Drivetrain extends SubsystemBase {
 
     // Create drive component objects
-    private WPI_VictorSPX left1;
-    private WPI_VictorSPX left2;
-    private WPI_VictorSPX right1;
-    private WPI_VictorSPX right2;
+    private WPI_TalonSRX left1;
+    private WPI_TalonSRX left2;
+    private WPI_TalonSRX right1;
+    private WPI_TalonSRX right2;
     public DifferentialDrive robotDrive;
     private GyroNavx navx;
 
@@ -31,10 +32,10 @@ public class Drivetrain extends SubsystemBase {
         navx = new GyroNavx();
 
         // Create motors
-        left1 = new WPI_VictorSPX(14);
-        left2 = new WPI_VictorSPX(15);
-        right1 = new WPI_VictorSPX(10);
-        right2 = new WPI_VictorSPX(11);
+        left1 = new WPI_TalonSRX(14);
+        left2 = new WPI_TalonSRX(15);
+        right1 = new WPI_TalonSRX(10);
+        right2 = new WPI_TalonSRX(11);
         
         // Clear any residual bad values
    
