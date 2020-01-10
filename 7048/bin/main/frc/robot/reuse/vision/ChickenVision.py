@@ -203,8 +203,6 @@ def threshold_video(lower_color, upper_color, blur):
 
     return mask
 
-
-
 # Finds the tape targets from the masked image and displays them on original stream + network tales
 def findTargets(frame, mask):
     # Finds contours
@@ -235,7 +233,7 @@ def findTape(contours, image, centerX, centerY):
         #Sort contours by area size (biggest to smallest)
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
 
-        biggestCnts = []
+        biggestCnt = []
         for cnt in cntsSorted:
             # Get moments of contour; mainly for centroid
             M = cv2.moments(cnt)
@@ -254,13 +252,10 @@ def findTape(contours, image, centerX, centerY):
                     cy = int(M["m01"] / M["m00"])
                 else:
                     cx, cy = 0, 0
-                if(len(biggestCnts) < 13):
-                    #### CALCULATES ROTATION OF CONTOUR BY FITTING ELLIPSE ##########
-                    rotation = getEllipseRotation(image, cnt)
-
+                if(len(biggestCnt) < 13):
                     # Calculates yaw of contour (horizontal position in degrees)
                     yaw = calculateYaw(cx, centerX, H_FOCAL_LENGTH)
-                    # Calculates yaw of contour (horizontal position in degrees)
+                    # Calculates pitch of contour (horizontal position in degrees)
                     pitch = calculatePitch(cy, centerY, V_FOCAL_LENGTH)
 
                     ##### DRAWS CONTOUR######
@@ -276,9 +271,9 @@ def findTape(contours, image, centerX, centerY):
 
                     # Calculates yaw of contour (horizontal position in degrees)
                     yaw = calculateYaw(cx, centerX, H_FOCAL_LENGTH)
-                    # Calculates yaw of contour (horizontal position in degrees)
+                    # Calculates pitch of contour (vertical position in degrees)
                     pitch = calculatePitch(cy, centerY, V_FOCAL_LENGTH)
-
+                    networkTable.putNumber("tapeDistance", calculateDistance(12,98.25,pitch))
 
                     # Draws a vertical white line passing through center of contour
                     cv2.line(image, (cx, screenHeight), (cx, 0), (255, 255, 255))
@@ -288,62 +283,31 @@ def findTape(contours, image, centerX, centerY):
                     # Draws the contours
                     cv2.drawContours(image, [cnt], 0, (23, 184, 80), 1)
 
-                    # Gets the (x, y) and radius of the enclosing circle of contour
-                    (x, y), radius = cv2.minEnclosingCircle(cnt)
-                    # Rounds center of enclosing circle
-                    center = (int(x), int(y))
-                    # Rounds radius of enclosning circle
-                    radius = int(radius)
                     # Makes bounding rectangle of contour
                     rx, ry, rw, rh = cv2.boundingRect(cnt)
                     boundingRect = cv2.boundingRect(cnt)
                     # Draws countour of bounding rectangle and enclosing circle in green
                     cv2.rectangle(image, (rx, ry), (rx + rw, ry + rh), (23, 184, 80), 1)
 
-                    cv2.circle(image, center, radius, (23, 184, 80), 1)
-
-                    # Appends important info to array
-                    if not biggestCnts:
-                         biggestCnts.append([cx, cy, rotation])
-                    elif [cx, cy, rotation] not in biggestCnts:
-                         biggestCnts.append([cx, cy, rotation])
-
-
         # Sorts array based on coordinates (leftmost to rightmost) to make sure contours are adjacent
-        biggestCnts = sorted(biggestCnts, key=lambda x: x[0])
+        biggestCnt = sorted(biggestCnt, key=lambda x: x[0])
         # Target Checking
-        for i in range(len(biggestCnts) - 1):
-            #Rotation of two adjacent contours
-            tilt1 = biggestCnts[i][2]
-            tilt2 = biggestCnts[i + 1][2]
-
+        for i in range(len(biggestCnt) - 1):
             #x coords of contours
-            cx1 = biggestCnts[i][0]
-            cx2 = biggestCnts[i + 1][0]
+            cx1 = biggestCnt[i][0]
 
-            cy1 = biggestCnts[i][1]
-            cy2 = biggestCnts[i + 1][1]
-            # If contour angles are opposite
-            if (np.sign(tilt1) != np.sign(tilt2)):
-                centerOfTarget = math.floor((cx1 + cx2) / 2)
-                #ellipse negative tilt means rotated to right
-                #Note: if using rotated rect (min area rectangle)
-                #      negative tilt means rotated to left
-                # If left contour rotation is tilted to the left then skip iteration
-                if (tilt1 > 0):
-                    if (cx1 < cx2):
-                        continue
-                # If left contour rotation is tilted to the left then skip iteration
-                if (tilt2 > 0):
-                    if (cx2 < cx1):
-                        continue
-                #Angle from center of camera to target (what you should pass into gyro)
-                yawToTarget = calculateYaw(centerOfTarget, centerX, H_FOCAL_LENGTH)
-                #Make sure no duplicates, then append
-                if not targets:
-                    targets.append([centerOfTarget, yawToTarget])
-                elif [centerOfTarget, yawToTarget] not in targets:
-                    targets.append([centerOfTarget, yawToTarget])
+            centerOfTarget = math.floor(cx1 / 2)
+            #Angle from center of camera to target (what you should pass into gyro)
+            yawToTarget = calculateYaw(centerOfTarget, centerX, H_FOCAL_LENGTH)
+            pitchToTarget = calculatePitch(centerOfTarget,centerY,H_FOCAL_LENGTH)
+            #Make sure no duplicates, then append
+            if not targets:
+                targets.append([centerOfTarget, yawToTarget])
+                targets.append([centerOfTarget, pitchToTarget])
+            elif [centerOfTarget, yawToTarget] not in targets:
+                targets.append([centerOfTarget, yawToTarget])
+                targets.append([centerOfTarget, pitchToTarget])
+
     #Check if there are targets seen
     if (len(targets) > 0):
         # pushes that it sees vision target to network tables
@@ -355,11 +319,15 @@ def findTape(contours, image, centerX, centerY):
         #Draws yaw of target + line where center of target is
         cv2.putText(image, "Yaw: " + str(finalTarget[1]), (40, 40), cv2.FONT_HERSHEY_COMPLEX, .6,
                     (255, 255, 255))
+        cv2.putText(image, "Pitch: " + str(finalTarget[1]), (100, 40), cv2.FONT_HERSHEY_COMPLEX, .6,
+                    (255, 255, 255))
         cv2.line(image, (finalTarget[0], screenHeight), (finalTarget[0], 0), (255, 0, 0), 2)
 
         currentAngleError = finalTarget[1]
         # pushes vision target angle to network tables
         networkTable.putNumber("tapeYaw", currentAngleError)
+        networkTable.putNumber("tapePitch", currentAngleError)
+
     else:
         # pushes that it deosn't see vision target to network tables
         networkTable.putBoolean("tapeDetected", False)
@@ -372,20 +340,6 @@ def findTape(contours, image, centerX, centerY):
 # Checks if tape contours are worthy based off of contour area and (not currently) hull area
 def checkContours(cntSize, hullSize):
     return cntSize > (image_width / 6)
-
-# Checks if ball contours are worthy based off of contour area and (not currently) hull area
-def checkBall(cntSize, cntAspectRatio):
-    return (cntSize > (image_width / 2)) and (round(cntAspectRatio) == 1)
-
-#Forgot how exactly it works, but it works!
-def translateRotation(rotation, width, height):
-    if (width < height):
-        rotation = -1 * (rotation - 90)
-    if (rotation > 90):
-        rotation = -1 * (rotation - 180)
-    rotation *= -1
-    return round(rotation)
-
 
 def calculateDistance(heightOfCamera, heightOfTarget, pitch):
     heightOfTargetFromCamera = heightOfTarget - heightOfCamera
@@ -408,8 +362,10 @@ def calculateDistance(heightOfCamera, heightOfTarget, pitch):
               camera -----
                        d
     '''
-    distance = math.fabs(heightOfTargetFromCamera / math.tan(math.radians(pitch)))
-
+    if(pitch != 0):
+        distance = math.fabs(heightOfTargetFromCamera / math.tan(math.radians(pitch)))
+    else:
+        distance = 0
     return distance
 
 
@@ -426,39 +382,6 @@ def calculatePitch(pixelY, centerY, vFocalLength):
     # Just stopped working have to do this:
     pitch *= -1
     return round(pitch)
-
-def getEllipseRotation(image, cnt):
-    try:
-        # Gets rotated bounding ellipse of contour
-        ellipse = cv2.fitEllipse(cnt)
-        centerE = ellipse[0]
-        # Gets rotation of ellipse; same as rotation of contour
-        rotation = ellipse[2]
-        # Gets width and height of rotated ellipse
-        widthE = ellipse[1][0]
-        heightE = ellipse[1][1]
-        # Maps rotation to (-90 to 90). Makes it easier to tell direction of slant
-        rotation = translateRotation(rotation, widthE, heightE)
-
-        cv2.ellipse(image, ellipse, (23, 184, 80), 3)
-        return rotation
-    except:
-        # Gets rotated bounding rectangle of contour
-        rect = cv2.minAreaRect(cnt)
-        # Creates box around that rectangle
-        box = cv2.boxPoints(rect)
-        # Not exactly sure
-        box = np.int0(box)
-        # Gets center of rotated rectangle
-        center = rect[0]
-        # Gets rotation of rectangle; same as rotation of contour
-        rotation = rect[2]
-        # Gets width and height of rotated rectangle
-        width = rect[1][0]
-        height = rect[1][1]
-        # Maps rotation to (-90 to 90). Makes it easier to tell direction of slant
-        rotation = translateRotation(rotation, width, height)
-        return rotation
 
 #################### FRC VISION PI Image Specific #############
 configFile = "/boot/frc.json"
@@ -578,6 +501,8 @@ if __name__ == "__main__":
     networkTable.putBoolean("Driver", False)
     networkTable.putBoolean("tapeDetected", False)
     networkTable.putNumber("tapeYaw", 0)
+    networkTable.putNumber("tapePitch", 0)
+    networkTable.putNumber("tapeDistance", 0)
 
     # start cameras
     cameras = []
