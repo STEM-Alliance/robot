@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config.RobotContainer;
 import frc.robot.commands.Driving;
@@ -60,6 +61,8 @@ public class Drivetrain extends SubsystemBase {
 
     public void driveeeee() {
         robotDrive.arcadeDrive(container.xbox.getRawAxis(1) * -1, container.xbox.getRawAxis(4), true);
+        SmartDashboard.putNumber("x", container.xbox.getRawAxis(1));
+        SmartDashboard.putNumber("y", container.xbox.getRawAxis(4));
 
         // robotDrive.tankDrive(Robot.oi.driver.getRawAxis(1)* -1,
         // Robot.oi.driver.getRawAxis(5)* -1, true);
