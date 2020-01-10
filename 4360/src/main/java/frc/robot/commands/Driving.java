@@ -1,7 +1,7 @@
-package frc.robot.commands; 
+package frc.robot.commands;
 
-
-import edu.wpi.first.wpilibj2.command.CommandBase; 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain; 
 
 /**
@@ -25,6 +25,7 @@ public class Driving extends CommandBase {
     @Override
     public void execute() {
         driveSubsystem.driveeeee(); 
+        SmartDashboard.putString("test", "it worked");
     }
 
     // Make this return true when this Command no longer needs to run execute()
