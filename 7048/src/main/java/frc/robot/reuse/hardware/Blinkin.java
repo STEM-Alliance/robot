@@ -38,6 +38,10 @@ public class Blinkin implements LEDs
     {
         led.set(BlinkinPatterns.getValue((isAuto) ? kAlliance : kDriveTeam));  // Override in auto
     }
+    
+    public void setColor(PatternName color){
+        led.set(BlinkinPatterns.getValue(color));
+    }
 
     public void signalHumanPlayer()
     {
