@@ -180,11 +180,11 @@ verticalView = math.atan(math.tan(diagonalView / 2) * (verticalAspect / diagonal
 H_FOCAL_LENGTH = image_width / (2 * math.tan((horizontalView / 2)))
 V_FOCAL_LENGTH = image_height / (2 * math.tan((verticalView / 2)))
 # blurs have to be odd
-green_blur = 4
+green_blur = 2
 
 # define range of green of retroreflective tape in HSV
-lower_green = np.array([47.17369028132597, 190.00513, 0.0])
-upper_green = np.array([144.89517810, 255, 88.39834701486008])
+lower_green = np.array([40.69886550628882, 225.0, 41.58786943490556])
+upper_green = np.array([77.31838629921143, 255.0, 201.05557789981572])
 
 
 # Flip image if camera mounted upside down

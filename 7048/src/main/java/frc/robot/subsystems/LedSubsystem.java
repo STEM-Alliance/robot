@@ -19,9 +19,12 @@ public class LedSubsystem extends SubsystemBase {
   public LedSubsystem() {
     led = new Blinkin(0, PatternName.Color_1_Light_Chase);
   }
-  public void setColor() {
-   led.signalDriveTeam();
+  
+  
+  public void setColor(PatternName color) {
+    led.setColor(color);
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
