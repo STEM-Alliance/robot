@@ -29,9 +29,9 @@ public final class DriveToTarget extends CommandBase
         this.OI = OI;
         
         final Preferences prefs = Preferences.getInstance();
-        final double p = prefs.getDouble("p", 0.50);
+        final double p = prefs.getDouble("p", 0.58);
         final double i = prefs.getDouble("i", 0.0);
-        final double d = prefs.getDouble("d", 0.0);
+        final double d = prefs.getDouble("d", 0.001);
 
         pid = new PID(p, i, d, kVisionIZone, 0.02);
     }
