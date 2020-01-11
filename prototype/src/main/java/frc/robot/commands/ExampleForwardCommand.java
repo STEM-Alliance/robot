@@ -36,13 +36,13 @@ public class ExampleForwardCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.move(1.0);
+    //call substystem method here
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // m_subsystem.move(0);
+    //canf add ending condition here
   }
 
   // Returns true when the command should end.

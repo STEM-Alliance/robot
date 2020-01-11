@@ -18,15 +18,13 @@ public class ExampleSubsystem extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private WPI_TalonSRX motor;
+  //declare private variables here
   public ExampleSubsystem() {
-    motor = new WPI_TalonSRX(8); 
-    setDefaultCommand(new ExampleStopCommand(this));
+    //add varable declarations here
+    // set default command here
   }
 
-  public void move(double input) {
-    motor.set( ControlMode.PercentOutput, input );
-  }
+//Create method for controlling motor
 
   @Override
   public void periodic() {

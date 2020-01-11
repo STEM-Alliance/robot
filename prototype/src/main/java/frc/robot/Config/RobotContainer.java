@@ -35,7 +35,8 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    xbox = new XboxController(0);
+    //Add controller here
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -50,8 +51,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // JoystickButton ledButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
     // ledButton.whileHeld(new SignalHuman(ledSubsystem));
-    JoystickButton motorRun = new JoystickButton(xbox, Xbox.BUTTON.A.get());
-    motorRun.whileHeld( new ExampleForwardCommand(sub));
+    //Add IO input logic here
   }
 
 
