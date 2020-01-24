@@ -21,7 +21,7 @@ public class HerdJoystick
         private AXIS(int value) { this.value = value; }
         public int get() { return value; }
     }
-
+   
     public static enum HAT
     {
         NONE(-1),

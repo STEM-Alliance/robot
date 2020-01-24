@@ -7,7 +7,9 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -15,11 +17,14 @@ public class ExampleSubsystem extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
- 
+ private WPI_VictorSPX motor;
   public ExampleSubsystem() {
+  motor = new WPI_VictorSPX(12);
   
   }
- 
+  public void move(double input){
+    motor.set(ControlMode.PercentOutput, input);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

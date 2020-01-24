@@ -17,9 +17,9 @@ public class Drivetrain extends SubsystemBase {
 
     // Create drive component objects
     private WPI_TalonSRX left1;
-    private WPI_TalonSRX left2;
+    private WPI_VictorSPX left2;
     private WPI_TalonSRX right1;
-    private WPI_TalonSRX right2;
+    private WPI_VictorSPX right2;
     public DifferentialDrive robotDrive;
     private GyroNavx navx;
 
@@ -33,9 +33,9 @@ public class Drivetrain extends SubsystemBase {
 
         // Create motors
         left1 = new WPI_TalonSRX(14);
-        left2 = new WPI_TalonSRX(15);
+        left2 = new WPI_VictorSPX(15);
         right1 = new WPI_TalonSRX(10);
-        right2 = new WPI_TalonSRX(11);
+        right2 = new WPI_VictorSPX(11);
         
         // Clear any residual bad values
    
@@ -61,12 +61,12 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void driveeeee() {
-        robotDrive.arcadeDrive(container.xbox.getRawAxis(1) * -1, container.xbox.getRawAxis(4), true);
-        SmartDashboard.putNumber("x", container.xbox.getRawAxis(1));
-        SmartDashboard.putNumber("y", container.xbox.getRawAxis(4));
+     robotDrive.tankDrive(container.xbox.getRawAxis(1) *1, container.xbox.getRawAxis(5) * 1, true);
+     //robotDrive.arcadeDrive(container.go.getY() * 1, container.turn.getX() * -1, true);
+        SmartDashboard.putNumber("left", container.xbox.getRawAxis(1));
+        SmartDashboard.putNumber("rickwr", container.xbox.getRawAxis(5));
 
-        // robotDrive.tankDrive(Robot.oi.driver.getRawAxis(1)* -1,
-        // Robot.oi.driver.getRawAxis(5)* -1, true);
+         //robotDrive.tankDrive(Robot.oi.driver.getRawAxis(1)* -1,Robot.oi.driver.getRawAxis(5)* -1, true);
         // System.out.println(Robot.oi.driver.getY());
         // \System.out.println(Robot.oi.driver.getX());
     }
