@@ -7,31 +7,29 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.reuse.hardware.Blinkin;
-import frc.robot.reuse.hardware.lowleveldriver.BlinkinPatterns.PatternName;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-public class LedSubsystem extends SubsystemBase {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.BrushlessCommand;
+
+public class BrushlessMotor extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  Blinkin led;
-  public LedSubsystem() {
-    led = new Blinkin(0, PatternName.Color_1_Light_Chase);
+  private CANSparkMax spark;
+  public BrushlessMotor() {
+    // BrushlessCommand brushlesscommand = new BrushlessCommand(this);
+    // setDefaultCommand(brushlesscommand);
+    spark = new CANSparkMax(9, MotorType.kBrushless);
   }
-  
-  
-  
-  public void setColor(PatternName color) {
-    led.setColor(color);
-  }
+  public void driveNeo( double speed){
+    spark.set(speed);
+   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
-  public void off() {
-    led.off();
   }
 }

@@ -9,14 +9,20 @@ package frc.robot.Config;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.AimToTarget;
+import frc.robot.commands.BrushlessCommand;
 import frc.robot.commands.DriveToTarget;
+import frc.robot.commands.MotorCommand;
 import frc.robot.commands.SetColor;
 import frc.robot.commands.SignalHuman;
 import frc.robot.reuse.config.Xbox;
+import frc.robot.subsystems.Aiming;
+import frc.robot.subsystems.BrushlessMotor;
 import frc.robot.subsystems.ColorSensor;
 //import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LedSubsystem;
+import frc.robot.subsystems.MotorExercise;
 import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -32,6 +38,9 @@ public class RobotContainer {
   private final LedSubsystem ledSubsystem = new LedSubsystem();
   private final ColorSensor colorSensor = new ColorSensor();
   private final Drivetrain drivetrain = new Drivetrain(this);
+  private final MotorExercise motorExercise = new MotorExercise();
+  private final BrushlessMotor brushlessMotor = new BrushlessMotor();
+  private final Aiming aiming = new Aiming(this);
 
   //private final Drivetrain driveSubsystem = new Drivetrain(this);
   private final Vision vision = new Vision();
@@ -60,6 +69,12 @@ public class RobotContainer {
 
     JoystickButton visonDrive = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
+
+    JoystickButton neoDrive = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+    neoDrive.whileHeld(new BrushlessCommand(brushlessMotor));
+
+    JoystickButton visonAim = new JoystickButton(xbox, Xbox.BUTTON.LB.get());
+    visonDrive.whileHeld(new AimToTarget(vision, aiming, this));
   }
 
 

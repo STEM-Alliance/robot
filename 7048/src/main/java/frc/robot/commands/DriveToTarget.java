@@ -43,11 +43,14 @@ public final class DriveToTarget extends CommandBase
 
     public void execute()
     {
+        // Cache new vision values
         vision.visionUpdate();
 
+        // Get error correction
         final double turnCorrection = getVisionCorrection();
         final double turn = OI.xbox.getRawAxis(4) + turnCorrection;
         
+        // Move towards target
         drive.robotDrive.arcadeDrive(OI.xbox.getRawAxis(1) * -1, -turn, true);
 
         SmartDashboard.putNumber("Error", turnCorrection);
