@@ -10,10 +10,12 @@ package frc.robot.Config;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DriveToTarget;
+import frc.robot.commands.MotionStuff;
 import frc.robot.commands.SetColor;
 import frc.robot.commands.SignalHuman;
 import frc.robot.reuse.config.Xbox;
 import frc.robot.subsystems.ColorSensor;
+import frc.robot.subsystems.DriveMotion;
 //import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LedSubsystem;
@@ -32,6 +34,7 @@ public class RobotContainer {
   private final LedSubsystem ledSubsystem = new LedSubsystem();
   private final ColorSensor colorSensor = new ColorSensor();
   private final Drivetrain drivetrain = new Drivetrain(this);
+  private final DriveMotion driveMotion = new DriveMotion(this);
 
   //private final Drivetrain driveSubsystem = new Drivetrain(this);
   private final Vision vision = new Vision();
@@ -60,6 +63,9 @@ public class RobotContainer {
 
     JoystickButton visonDrive = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
+  
+    JoystickButton magicDrive = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+    magicDrive.whenPressed(new MotionStuff(driveMotion));
   }
 
 
