@@ -12,7 +12,9 @@ public class StaticAim extends CommandBase {
     private Aiming aiming;
 
     public StaticAim(Aiming aiming) {
+        addRequirements(aiming);
         this.aiming = aiming;
+
     }
 
     // Called just before this Command runs the first time
