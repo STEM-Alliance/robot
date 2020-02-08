@@ -13,8 +13,13 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.reuse.config.Xbox;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.LoadingSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.Shooter;
+import frc.robot.commands.LoadingCommand;
+import frc.robot.commands.ReverseLoadingCommand;
+import frc.robot.subsystems.MotorSubsystem;;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -25,9 +30,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  private final Drivetrain drivetrain  = new Drivetrain(this);
+  private final LoadingSubsystem loadingSubsystem = new LoadingSubsystem();
+  // private final Drivetrain drivetrain    = new Drivetrain(this);
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
-
+  private final MotorSubsystem motorSubsystem = new MotorSubsystem(this);
 
   public XboxController xbox;
   /**
@@ -49,6 +55,15 @@ public class RobotContainer {
   private void configureButtonBindings() {
     JoystickButton exampleButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
     exampleButton.whenPressed(new ExampleCommand(m_exampleSubsystem));
+    
+    JoystickButton loadButton = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+    loadButton.whileHeld(new LoadingCommand(loadingSubsystem));
+
+    JoystickButton reverseLoadButton = new JoystickButton(xbox, Xbox.BUTTON.B.get());
+    reverseLoadButton.whileHeld(new ReverseLoadingCommand(loadingSubsystem));
+    
+    // JoystickButton shooterButton = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+    // shooterButton.whileHeld(new Shooter(motorSubsystem));
   }
 
 
