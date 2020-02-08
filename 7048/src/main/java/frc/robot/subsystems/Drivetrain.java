@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config.RobotContainer;
 import frc.robot.commands.Driving;
+import frc.robot.reuse.config.HerdJoystick;
 import frc.robot.reuse.hardware.sensors.GyroNavx;
 
 // This is the way we brush our teeth, brush our teeth, brush our teeth
@@ -65,7 +66,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void driveeeee() {
-        robotDrive.arcadeDrive(container.xbox.getRawAxis(1), container.xbox.getRawAxis(4), true);
+        robotDrive.arcadeDrive(container.herdJoystickLeft.getY(), container.herdJoystickRight.getX() * -1, true);
         SmartDashboard.putNumber("x", container.xbox.getRawAxis(1));
         SmartDashboard.putNumber("y", container.xbox.getRawAxis(4));
 
