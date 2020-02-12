@@ -10,11 +10,13 @@ package frc.robot.Config;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.reuse.config.Xbox;
 import frc.robot.reuse.config.HerdJoystick;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -27,19 +29,22 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final Vision vision = new Vision();
   private final Drivetrain drivetrain  = new Drivetrain(this);
+ 
+  private final DriveToTarget c_vision = new DriveToTarget(vision, drivetrain,this);
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem,0);
 
   public Joystick go;
-  public HerdJoystick turn;  
+  public Joystick turn;  
   public XboxController xbox;
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     xbox = new XboxController(0);
-    go = new Joystick(1);
-    turn = new HerdJoystick(2);
+    //go = new Joystick(1);
+    //turn = new Joystick(2);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -52,11 +57,11 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    JoystickButton exampleButton = new JoystickButton(go, 1);
-    exampleButton.whileHeld(new ExampleCommand(m_exampleSubsystem,1));
+ //JoystickButton visionbutton = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
+ //visionbutton.whenPressed(new DriveToTarget(vision, drivetrain,this));
+    JoystickButton exampleButton = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+  exampleButton.whileHeld(new ExampleCommand(m_exampleSubsystem,0.5));
   
-    JoystickButton exampleButton2 = new JoystickButton(xbox, Xbox.BUTTON.A.get());
-    exampleButton.whileHeld(new ExampleCommand(m_exampleSubsystem,1));
   
 }
 

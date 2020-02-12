@@ -7,30 +7,26 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.reuse.hardware.Blinkin;
+import frc.robot.reuse.hardware.lowleveldriver.BlinkinPatterns.PatternName;
 
-public class ExampleSubsystem extends SubsystemBase {
+public class LedSubsystem extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
- private WPI_TalonSRX motor;
- private WPI_VictorSPX motor2;
-  public ExampleSubsystem() {
-  motor = new WPI_TalonSRX(15);
-  motor2= new WPI_VictorSPX(9);
-  motor2.follow(motor);
+  Blinkin led;
+  public LedSubsystem() {
+    led = new Blinkin(0, PatternName.Color_1_Light_Chase);
   }
-  public void move(double input){
-    motor.set(ControlMode.PercentOutput, input);
+  public void setColor() {
+   led.signalDriveTeam();
   }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
-
+  public void off() {
+    led.off();
+  }
 }
