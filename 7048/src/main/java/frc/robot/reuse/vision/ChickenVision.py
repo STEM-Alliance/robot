@@ -183,8 +183,8 @@ V_FOCAL_LENGTH = image_height / (2 * math.tan((verticalView / 2)))
 green_blur = 2
 
 # define range of green of retroreflective tape in HSV
-lower_green = np.array([40.69886550628882, 225.0, 41.58786943490556])
-upper_green = np.array([77.31838629921143, 255.0, 201.05557789981572])
+lower_green = np.array([80.93524330811535, 148.29136107465345, 155.93525726589365])
+upper_green = np.array([180.0, 255.0, 255.0])
 
 
 # Flip image if camera mounted upside down

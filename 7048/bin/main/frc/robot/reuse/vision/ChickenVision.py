@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Copyright (c) 2018 FIRST. All Rights Reserved.
 # Open Source Software - may be modified and shared by FRC teams. The code
 # must be accompanied by the FIRST BSD license file in the root directory of
@@ -9,7 +9,7 @@
 # Credit to Screaming Chickens 3997
 
 # This is meant to be used in conjuction with WPILib Raspberry Pi image: https://github.com/wpilibsuite/FRCVision-pi-gen
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 import json
 import time
@@ -28,38 +28,41 @@ import math
 # import the necessary packages
 import datetime
 
-#Class to examine Frames per second of camera stream. Currently not used.
+
+# Class to examine Frames per second of camera stream. Currently not used.
 class FPS:
-	def __init__(self):
-		# store the start time, end time, and total number of frames
-		# that were examined between the start and end intervals
-		self._start = None
-		self._end = None
-		self._numFrames = 0
+    def __init__(self):
+        # store the start time, end time, and total number of frames
+        # that were examined between the start and end intervals
+        self._start = None
+        self._end = None
+        self._numFrames = 0
 
-	def start(self):
-		# start the timer
-		self._start = datetime.datetime.now()
-		return self
+    def start(self):
+        # start the timer
+        self._start = datetime.datetime.now()
+        return self
 
-	def stop(self):
-		# stop the timer
-		self._end = datetime.datetime.now()
+    def stop(self):
+        # stop the timer
+        self._end = datetime.datetime.now()
 
-	def update(self):
-		# increment the total number of frames examined during the
-		# start and end intervals
-		self._numFrames += 1
+    def update(self):
+        # increment the total number of frames examined during the
+        # start and end intervals
+        self._numFrames += 1
 
-	def elapsed(self):
-		# return the total number of seconds between the start and
-		# end interval
-		return (self._end - self._start).total_seconds()
+    def elapsed(self):
+        # return the total number of seconds between the start and
+        # end interval
+        return (self._end - self._start).total_seconds()
 
-	def fps(self):
-		# compute the (approximate) frames per second
-		return self._numFrames / self.elapsed()
-#class that runs separate thread for showing video,
+    def fps(self):
+        # compute the (approximate) frames per second
+        return self._numFrames / self.elapsed()
+
+
+# class that runs separate thread for showing video,
 class VideoShow:
     """
     Class that continuously shows a frame using a dedicated thread.
@@ -70,7 +73,7 @@ class VideoShow:
             self.outputStream = cameraServer.getServer(name="stream")
         except:
             self.outputStream = cameraServer.putVideo("stream", imgWidth, imgHeight)
-        
+
         self.frame = frame
         self.stopped = False
 
@@ -84,8 +87,10 @@ class VideoShow:
 
     def stop(self):
         self.stopped = True
+
     def notifyError(self, error):
         self.outputStream.notifyError(error)
+
 
 # Class that runs a separate thread for reading  camera server also controlling exposure.
 class WebcamVideoStream:
@@ -93,15 +98,15 @@ class WebcamVideoStream:
         # initialize the video camera stream and read the first frame
         # from the stream
 
-        #Automatically sets exposure to 0 to track tape
+        # Automatically sets exposure to 0 to track tape
         self.webcam = camera
         self.webcam.setExposureManual(0)
-        #Some booleans so that we don't keep setting exposure over and over to the same value
+        # Some booleans so that we don't keep setting exposure over and over to the same value
         self.autoExpose = False
         self.prevValue = self.autoExpose
-        #Make a blank image to write on
+        # Make a blank image to write on
         self.img = np.zeros(shape=(frameWidth, frameHeight, 3), dtype=np.uint8)
-        #Gets the video
+        # Gets the video
         self.stream = cameraServer.getVideo(camera=camera)
         (self.timestamp, self.img) = self.stream.grabFrame(self.img)
 
@@ -125,16 +130,16 @@ class WebcamVideoStream:
             # if the thread indicator variable is set, stop the thread
             if self.stopped:
                 return
-            #Boolean logic we don't keep setting exposure over and over to the same value
+            # Boolean logic we don't keep setting exposure over and over to the same value
             if self.autoExpose:
-                if(self.autoExpose != self.prevValue):
+                if (self.autoExpose != self.prevValue):
                     self.prevValue = self.autoExpose
                     self.webcam.setExposureAuto()
             else:
                 if (self.autoExpose != self.prevValue):
                     self.prevValue = self.autoExpose
                     self.webcam.setExposureManual(0)
-            #gets the image and timestamp from cameraserver
+            # gets the image and timestamp from cameraserver
             (self.timestamp, self.img) = self.stream.grabFrame(self.img)
 
     def read(self):
@@ -144,51 +149,55 @@ class WebcamVideoStream:
     def stop(self):
         # indicate that the thread should be stopped
         self.stopped = True
+
     def getError(self):
         return self.stream.getError()
 
+
 ###################### PROCESSING OPENCV ################################
 
-#Angles in radians
+# Angles in radians
 
-#image size ratioed to 16:9
+# image size ratioed to 16:9
 image_width = 256
 image_height = 144
 
-#Lifecam 3000 from datasheet
-#Datasheet: https://dl2jx7zfbtwvr.cloudfront.net/specsheets/WEBC1010.pdf
+# Lifecam 3000 from datasheet
+# Datasheet: https://dl2jx7zfbtwvr.cloudfront.net/specsheets/WEBC1010.pdf
 diagonalView = math.radians(68.5)
 
-#16:9 aspect ratio
+# 16:9 aspect ratio
 horizontalAspect = 16
 verticalAspect = 9
 
-#Reasons for using diagonal aspect is to calculate horizontal field of view.
+# Reasons for using diagonal aspect is to calculate horizontal field of view.
 diagonalAspect = math.hypot(horizontalAspect, verticalAspect)
-#Calculations: http://vrguy.blogspot.com/2013/04/converting-diagonal-field-of-view-and.html
-horizontalView = math.atan(math.tan(diagonalView/2) * (horizontalAspect / diagonalAspect)) * 2
-verticalView = math.atan(math.tan(diagonalView/2) * (verticalAspect / diagonalAspect)) * 2
+# Calculations: http://vrguy.blogspot.com/2013/04/converting-diagonal-field-of-view-and.html
+horizontalView = math.atan(math.tan(diagonalView / 2) * (horizontalAspect / diagonalAspect)) * 2
+verticalView = math.atan(math.tan(diagonalView / 2) * (verticalAspect / diagonalAspect)) * 2
 
-#Focal Length calculations: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_165
-H_FOCAL_LENGTH = image_width / (2*math.tan((horizontalView/2)))
-V_FOCAL_LENGTH = image_height / (2*math.tan((verticalView/2)))
-#blurs have to be odd
-green_blur = 7
-orange_blur = 27
+# Focal Length calculations: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_165
+H_FOCAL_LENGTH = image_width / (2 * math.tan((horizontalView / 2)))
+V_FOCAL_LENGTH = image_height / (2 * math.tan((verticalView / 2)))
+# blurs have to be odd
+green_blur = 2
 
 # define range of green of retroreflective tape in HSV
-lower_green = np.array([0,220,25])
-upper_green = np.array([101, 255, 255])
+lower_green = np.array([80.93524330811535, 148.29136107465345, 155.93525726589365])
+upper_green = np.array([180.0, 255.0, 255.0])
 
-#Flip image if camera mounted upside down
+
+# Flip image if camera mounted upside down
 def flipImage(frame):
-    return cv2.flip( frame, -1 )
+    return cv2.flip(frame, -1)
 
-#Blurs frame
+
+# Blurs frame
 def blurImg(frame, blur_radius):
     img = frame.copy()
-    blur = cv2.blur(img,(blur_radius,blur_radius))
+    blur = cv2.blur(img, (blur_radius, blur_radius))
     return blur
+
 
 # Masks the video based on a range of hsv colors
 # Takes in a frame, range of color, and a blurred frame, returns a masked frame
@@ -202,6 +211,7 @@ def threshold_video(lower_color, upper_color, blur):
     # Returns the masked imageBlurs video to smooth out image
 
     return mask
+
 
 # Finds the tape targets from the masked image and displays them on original stream + network tales
 def findTargets(frame, mask):
@@ -221,30 +231,30 @@ def findTargets(frame, mask):
     # Shows the contours overlayed on the original video
     return image
 
-# Draws Contours and finds center and yaw of vision targets
+# Draws Contours and finds center and yaw of orange ball
 # centerX is center x coordinate of image
 # centerY is center y coordinate of image
 def findTape(contours, image, centerX, centerY):
     screenHeight, screenWidth, channels = image.shape;
-    #Seen vision targets (correct angle, adjacent to each other)
-    targets = []
+    # Seen vision targets (correct angle, adjacent to each other)
+    tape = []
 
-    if len(contours) >= 2:
-        #Sort contours by area size (biggest to smallest)
+    if len(contours) > 0:
+        # Sort contours by area size (biggest to smallest)
         cntsSorted = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
 
-        biggestCnt = []
+        biggestTape = []
         for cnt in cntsSorted:
+            x, y, w, h = cv2.boundingRect(cnt)
+            aspect_ratio = float(w) / h
             # Get moments of contour; mainly for centroid
             M = cv2.moments(cnt)
             # Get convex hull (bounding polygon on contour)
             hull = cv2.convexHull(cnt)
             # Calculate Contour area
             cntArea = cv2.contourArea(cnt)
-            # calculate area of convex hull
-            hullArea = cv2.contourArea(hull)
             # Filters contours based off of size
-            if (checkContours(cntArea, hullArea)):
+            if (checkContours(cntArea, aspect_ratio)):
                 ### MOSTLY DRAWING CODE, BUT CALCULATES IMPORTANT INFO ###
                 # Gets the centeroids of contour
                 if M["m00"] != 0:
@@ -252,11 +262,7 @@ def findTape(contours, image, centerX, centerY):
                     cy = int(M["m01"] / M["m00"])
                 else:
                     cx, cy = 0, 0
-                if(len(biggestCnt) < 13):
-                    # Calculates yaw of contour (horizontal position in degrees)
-                    yaw = calculateYaw(cx, centerX, H_FOCAL_LENGTH)
-                    # Calculates pitch of contour (horizontal position in degrees)
-                    pitch = calculatePitch(cy, centerY, V_FOCAL_LENGTH)
+                if (len(biggestTape) < 3):
 
                     ##### DRAWS CONTOUR######
                     # Gets rotated bounding rectangle of contour
@@ -268,82 +274,68 @@ def findTape(contours, image, centerX, centerY):
                     # Draws rotated rectangle
                     cv2.drawContours(image, [box], 0, (23, 184, 80), 3)
 
-
-                    # Calculates yaw of contour (horizontal position in degrees)
-                    yaw = calculateYaw(cx, centerX, H_FOCAL_LENGTH)
-                    # Calculates pitch of contour (vertical position in degrees)
-                    pitch = calculatePitch(cy, centerY, V_FOCAL_LENGTH)
-                    networkTable.putNumber("tapeDistance", calculateDistance(12,98.25,pitch))
-
                     # Draws a vertical white line passing through center of contour
                     cv2.line(image, (cx, screenHeight), (cx, 0), (255, 255, 255))
-                    # Draws a white circle at center of contour
-                    cv2.circle(image, (cx, cy), 6, (255, 255, 255))
-
                     # Draws the contours
                     cv2.drawContours(image, [cnt], 0, (23, 184, 80), 1)
 
                     # Makes bounding rectangle of contour
                     rx, ry, rw, rh = cv2.boundingRect(cnt)
-                    boundingRect = cv2.boundingRect(cnt)
+
                     # Draws countour of bounding rectangle and enclosing circle in green
                     cv2.rectangle(image, (rx, ry), (rx + rw, ry + rh), (23, 184, 80), 1)
 
-        # Sorts array based on coordinates (leftmost to rightmost) to make sure contours are adjacent
-        biggestCnt = sorted(biggestCnt, key=lambda x: x[0])
-        # Target Checking
-        for i in range(len(biggestCnt) - 1):
-            #x coords of contours
-            cx1 = biggestCnt[i][0]
+                    # Appends important info to array
+                    if not biggestTape:
+                        biggestTape.append([cx, cy, cnt])
+                    elif [cx, cy, cnt] not in biggestTape:
+                        biggestTape.append([cx, cy, cnt])
 
-            centerOfTarget = math.floor(cx1 / 2)
-            #Angle from center of camera to target (what you should pass into gyro)
-            yawToTarget = calculateYaw(centerOfTarget, centerX, H_FOCAL_LENGTH)
-            pitchToTarget = calculatePitch(centerOfTarget,centerY,H_FOCAL_LENGTH)
-            #Make sure no duplicates, then append
-            if not targets:
-                targets.append([centerOfTarget, yawToTarget])
-                targets.append([centerOfTarget, pitchToTarget])
-            elif [centerOfTarget, yawToTarget] not in targets:
-                targets.append([centerOfTarget, yawToTarget])
-                targets.append([centerOfTarget, pitchToTarget])
+        # Check if there are tape seen
+        if (len(biggestTape) > 0):
+            # pushes that it sees tape to network tables
+            networkTable.putBoolean("tapeDetected", True)
 
-    #Check if there are targets seen
-    if (len(targets) > 0):
-        # pushes that it sees vision target to network tables
-        networkTable.putBoolean("tapeDetected", True)
-        #Sorts targets based on x coords to break any angle tie
-        targets.sort(key=lambda x: math.fabs(x[0]))
-        finalTarget = min(targets, key=lambda x: math.fabs(x[1]))
-        # Puts the yaw on screen
-        #Draws yaw of target + line where center of target is
-        cv2.putText(image, "Yaw: " + str(finalTarget[1]), (40, 40), cv2.FONT_HERSHEY_COMPLEX, .6,
-                    (255, 255, 255))
-        cv2.putText(image, "Pitch: " + str(finalTarget[1]), (100, 40), cv2.FONT_HERSHEY_COMPLEX, .6,
-                    (255, 255, 255))
-        cv2.line(image, (finalTarget[0], screenHeight), (finalTarget[0], 0), (255, 0, 0), 2)
+            # Sorts targets based on x coords to break any angle tie
+            biggestTape.sort(key=lambda x: math.fabs(x[0]))
+            biggestTape.sort(key=lambda y: math.fabs(y[0]))
 
-        currentAngleError = finalTarget[1]
-        # pushes vision target angle to network tables
-        networkTable.putNumber("tapeYaw", currentAngleError)
-        networkTable.putNumber("tapePitch", currentAngleError)
+            closestTape = min(biggestTape, key=lambda x: (math.fabs(x[0] - centerX)))
 
-    else:
-        # pushes that it deosn't see vision target to network tables
-        networkTable.putBoolean("tapeDetected", False)
 
-    cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), (255, 255, 255), 2)
+            xCoord = closestTape[0]
+            finalTarget = calculateYaw(xCoord, centerX, H_FOCAL_LENGTH)
 
-    return image
+            print("Yaw: " + str(finalTarget))
+            # Puts the yaw on screen
+            # Draws yaw of target + line where center of target is
+            cv2.putText(image, "Yaw: " + str(finalTarget), (40, 40), cv2.FONT_HERSHEY_COMPLEX, .6,
+                        (255, 255, 255))
+            cv2.line(image, (xCoord, screenHeight), (xCoord, 0), (255, 0, 0), 2)
+            currentAngleError = finalTarget
 
+            # pushes tape angle to network tables
+            networkTable.putNumber("tapeYaw", currentAngleError)
+
+        else:
+            # pushes that it doesn't see cargo to network tables
+            networkTable.putBoolean("tapeDetected", False)
+
+        cv2.line(image, (round(centerX), screenHeight), (round(centerX), 0), (255, 255, 255), 2)
+
+
+        return image
 
 # Checks if tape contours are worthy based off of contour area and (not currently) hull area
 def checkContours(cntSize, hullSize):
-    return cntSize > (image_width / 6)
+    return cntSize > (image_width / 12)
 
 def calculateDistance(heightOfCamera, heightOfTarget, pitch):
-    heightOfTargetFromCamera = heightOfTarget - heightOfCamera
-
+    if ( pitch != 0):
+        heightOfTargetFromCamera = heightOfTarget - heightOfCamera
+        distance = math.fabs(heightOfTargetFromCamera / math.tan(math.radians(pitch)))
+    else:
+        distance = 0
     # Uses trig and pitch to find distance to target
     '''
     d = distance
@@ -362,12 +354,8 @@ def calculateDistance(heightOfCamera, heightOfTarget, pitch):
               camera -----
                        d
     '''
-    if(pitch != 0):
-        distance = math.fabs(heightOfTargetFromCamera / math.tan(math.radians(pitch)))
-    else:
-        distance = 0
-    return distance
 
+    return distance
 
 # Uses trig and focal length of camera to find yaw.
 # Link to further explanation: https://docs.google.com/presentation/d/1ediRsI-oR3-kwawFJZ34_ZTlQS2SDBLjZasjzZ-eXbQ/pub?start=false&loop=false&slide=id.g12c083cffa_0_298
@@ -386,17 +374,24 @@ def calculatePitch(pixelY, centerY, vFocalLength):
 #################### FRC VISION PI Image Specific #############
 configFile = "/boot/frc.json"
 
+
 class CameraConfig: pass
+
 
 team = None
 server = False
 cameraConfigs = []
 
 """Report parse error."""
+
+
 def parseError(str):
     print("config error in '" + configFile + "': " + str, file=sys.stderr)
 
+
 """Read single camera configuration."""
+
+
 def readCameraConfig(config):
     cam = CameraConfig()
 
@@ -419,7 +414,10 @@ def readCameraConfig(config):
     cameraConfigs.append(cam)
     return True
 
+
 """Read configuration file."""
+
+
 def readConfig():
     global team
     global server
@@ -466,7 +464,10 @@ def readConfig():
 
     return True
 
+
 """Start running the camera."""
+
+
 def startCamera(config):
     print("Starting camera '{}' on {}".format(config.name, config.path))
     cs = CameraServer.getInstance()
@@ -475,8 +476,10 @@ def startCamera(config):
 
     return camera
 
+
 def configCamera(camera, config):
     camera.setConfigJson(json.dumps(config.config))
+
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
@@ -487,7 +490,7 @@ if __name__ == "__main__":
 
     # start NetworkTables
     ntinst = NetworkTablesInstance.getDefault()
-    #Name of network table - this is how it communicates with robot. IMPORTANT
+    # Name of network table - this is how it communicates with robot. IMPORTANT
     networkTable = NetworkTables.getTable('ChickenVision')
 
     if server:
@@ -501,15 +504,13 @@ if __name__ == "__main__":
     networkTable.putBoolean("Driver", False)
     networkTable.putBoolean("tapeDetected", False)
     networkTable.putNumber("tapeYaw", 0)
-    networkTable.putNumber("tapePitch", 0)
-    networkTable.putNumber("tapeDistance", 0)
 
     # start cameras
     cameras = []
     for cameraConfig in cameraConfigs:
         cameraCapture = startCamera(cameraConfig)
         cameras.append(cameraCapture)
-    #Get the first camera
+    # Get the first camera
 
     cameraIndex = 0
     newCameraIndex = -1
@@ -520,30 +521,30 @@ if __name__ == "__main__":
     img = np.zeros(shape=(image_height, image_width, 3), dtype=np.uint8)
 
     cameraServer = CameraServer.getInstance()
-    #Start thread outputing stream
+    # Start thread outputing stream
     streamViewer = VideoShow(image_width, image_height, cameraServer, frame=img).start()
 
-    while True:    
+    while True:
         cameraChange = False
         print("[INFO] camera: {:d}".format(cameraIndex))
         webcam = cameras[cameraIndex]
-        #Start thread reading camera
+        # Start thread reading camera
         cap = WebcamVideoStream(webcam, cameraServer, image_width, image_height).start()
 
-        #cap.autoExpose=True;
+        # cap.autoExpose=True;
         tape = False
         fps = FPS().start()
 
-        #TOTAL_FRAMES = 200;
+        # TOTAL_FRAMES = 200;
         # loop forever
         while not cameraChange:
             # Tell the CvSink to grab a frame from the camera and put it
             # in the source image.  If there is an error notify the output.
             timestamp, img = cap.read()
 
-            #Uncomment if camera is mounted upside down
-            #frame = flipImage(img)
-            #Comment out if camera is mounted upside down
+            # Uncomment if camera is mounted upside down
+            # frame = flipImage(img)
+            # Comment out if camera is mounted upside down
             frame = img
 
             if timestamp == 0:
@@ -560,27 +561,26 @@ if __name__ == "__main__":
                 state = 1
                 networkTable.putBoolean("Driver", False)
 
-            #Checks if you just want camera for driver (No processing), False by default
+            # Checks if you just want camera for driver (No processing), False by default
             if state == 0:
                 cap.autoExpose = True
                 processed = frame
 
-            elif state == 1:
+            else:
                 # Checks if you just want camera for Tape processing , False by default
-                #Lowers exposure to 0
+                # Lowers exposure to 0
                 cap.autoExpose = False
                 boxBlur = blurImg(frame, green_blur)
                 threshold = threshold_video(lower_green, upper_green, boxBlur)
                 processed = findTargets(frame, threshold)
 
-
-            #Puts timestamp of camera on netowrk tables
+            # Puts timestamp of camera on netowrk tables
             networkTable.putNumber("VideoTimestamp", timestamp)
             streamViewer.frame = processed
 
             # update the FPS counter
             fps.update()
-            #Flushes camera values to reduce latency
+            # Flushes camera values to reduce latency
             ntinst.flush()
 
             newCameraIndex = int(networkTable.getNumber("CameraIndex", cameraIndex))
@@ -590,13 +590,8 @@ if __name__ == "__main__":
                 cameraChange = True
                 cap.stop()
 
-        #Doesn't do anything at the moment. You can easily get this working by indenting these three lines
+        # Doesn't do anything at the moment. You can easily get this working by indenting these three lines
         # and setting while loop to: while fps._numFrames < TOTAL_FRAMES
         fps.stop()
         print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
         print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
-
-
-
-
-
