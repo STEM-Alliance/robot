@@ -8,6 +8,7 @@
 package frc.robot.Config;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.SetColor;
@@ -39,8 +40,8 @@ public class RobotContainer {
 
 
   public XboxController xbox;
-  public HerdJoystick herdJoystickLeft;
-  public HerdJoystick herdJoystickRight;
+  public Joystick herdJoystickLeft;
+  public Joystick herdJoystickRight;
 
 
   /**
@@ -48,9 +49,9 @@ public class RobotContainer {
    */
   public RobotContainer() {
     xbox = new XboxController(0);
-    herdJoystickLeft = new HerdJoystick(0);
-    herdJoystickRight = new HerdJoystick(1);
-
+    herdJoystickLeft = new Joystick(0);
+    herdJoystickRight = new Joystick(1);
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -66,7 +67,7 @@ public class RobotContainer {
     JoystickButton ledButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
     ledButton.whileHeld(new SetColor(ledSubsystem, colorSensor));
 
-    JoystickButton visonDrive = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
+    JoystickButton visonDrive = new JoystickButton(herdJoystickRight,1);
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
   }
 

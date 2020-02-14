@@ -183,7 +183,7 @@ V_FOCAL_LENGTH = image_height / (2 * math.tan((verticalView / 2)))
 green_blur = 2
 
 # define range of green of retroreflective tape in HSV
-lower_green = np.array([80.93524330811535, 148.29136107465345, 155.93525726589365])
+lower_green = np.array([58.27338361054016, 94.78417630675885, 55.62949494492235])
 upper_green = np.array([180.0, 255.0, 255.0])
 
 
