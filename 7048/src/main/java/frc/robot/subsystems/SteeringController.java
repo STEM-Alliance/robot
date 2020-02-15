@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import org.wfrobotics.reuse.math.HerdAngle;
+import frc.robot.reuse.math.HerdAngle;
 import frc.robot.EnhancedRobot;
 
 /** Controller (does the math) to heading correct (steer) the robot */

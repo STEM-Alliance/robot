@@ -25,23 +25,22 @@ public class DriveDistance extends CommandBase
         desired = inchesForward;
     }
 
-    public void initialize()
-    {
+    public void initialize() {
         drive.setBrake(true);
         settledSamples = 0;
+    }
+
+    public void execute() {
         drive.driveDistance(desired);
     }
 
-    public boolean isFinished()
-    {
+    public boolean isFinished() {
         final double error = (desired - state.getDistanceDriven()) / desired;
 
-        if (Math.abs(error) < tol)
-        {
+        if (Math.abs(error) < tol) {
             settledSamples++;
         }
-        else
-        {
+        else {
             settledSamples = 0;
         }
         return settledSamples > 5  || io.isDriveOverrideRequested();

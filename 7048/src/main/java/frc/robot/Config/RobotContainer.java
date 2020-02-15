@@ -11,10 +11,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.SetColor;
-import frc.robot.commands.SignalHuman;
 import frc.robot.reuse.config.Xbox;
 import frc.robot.subsystems.ColorSensor;
-//import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.Vision;
@@ -31,9 +29,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final LedSubsystem ledSubsystem = new LedSubsystem();
   private final ColorSensor colorSensor = new ColorSensor();
-  private final Drivetrain drivetrain = new Drivetrain(this);
+  private final Drivetrain drivetrain = new Drivetrain();
 
-  //private final Drivetrain driveSubsystem = new Drivetrain(this);
   private final Vision vision = new Vision();
 
 
