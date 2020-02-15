@@ -14,13 +14,16 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ColorSensor extends SubsystemBase {
+  ColorSensorV3 colorSensor;
+  
   /**
    * Creates a new ExampleSubsystem.
    */
   public ColorSensor() {
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   }
-  public Color getColor(){
+
+  public Color getColor() {
       return colorSensor.getColor(); 
   }
 
@@ -29,5 +32,4 @@ public class ColorSensor extends SubsystemBase {
     // This method will be called once per scheduler run
     
   }
-    ColorSensorV3 colorSensor;
 }
