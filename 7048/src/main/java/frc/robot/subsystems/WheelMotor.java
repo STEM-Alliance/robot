@@ -7,15 +7,24 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ExampleSubsystem extends SubsystemBase {
+public class WheelMotor extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  public ExampleSubsystem() {
+  private WPI_TalonSRX spinnyMotor;
+  
+  public WheelMotor() {
+    //Change number
+    spinnyMotor=new WPI_TalonSRX(330);
 
   }
+ public void setMotor(double speed){
+   spinnyMotor.set(speed);
+ }
 
   @Override
   public void periodic() {

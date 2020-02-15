@@ -12,7 +12,7 @@ import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
- * An example command that uses an example subsystem.
+ * Moves Piston both up and down contrary to the name
  */
 public class PistonUp extends CommandBase {
   
@@ -48,6 +48,6 @@ public class PistonUp extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

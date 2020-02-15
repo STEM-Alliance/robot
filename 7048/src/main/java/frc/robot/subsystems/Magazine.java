@@ -21,6 +21,10 @@ public class Magazine extends SubsystemBase {
     //Change Device Number
     magazineMover=new WPI_TalonSRX(20000);
   }
+  public void moveBalls(){
+    //change dis eventually
+    magazineMover.set(1.0);
+  }
 
   @Override
   public void periodic() {

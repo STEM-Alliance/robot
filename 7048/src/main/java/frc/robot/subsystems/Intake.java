@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
     crash=new DoubleSolenoid(44,43);
     intaker=new WPI_TalonSRX(99);
     
-    isUp=false;
+    isUp=true;
   }
   public void pushPiston(){
     crash.set(isUp?Value.kForward:Value.kReverse);

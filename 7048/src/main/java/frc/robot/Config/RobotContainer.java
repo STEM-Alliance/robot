@@ -13,6 +13,7 @@ import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.PistonUp;
 import frc.robot.commands.SetColor;
 import frc.robot.commands.SignalHuman;
+import frc.robot.commands.turnWheelRotations;
 import frc.robot.reuse.config.Xbox;
 import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -20,6 +21,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.WheelMotor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Intake;
@@ -40,7 +42,8 @@ public class RobotContainer {
   private final ShooterSubsystem shooter=new ShooterSubsystem();
   private final Intake intake=new Intake();
   private final Magazine magazine=new Magazine();
-  private final WheelOfFortune controlPanel=new WheelOfFortune();
+  private final WheelMotor wheelMotor=new WheelMotor();
+  private final WheelOfFortune controlPanel=new WheelOfFortune(wheelMotor,colorSensor);
 
   //private final Drivetrain driveSubsystem = new Drivetrain(this);
   private final Vision vision = new Vision();
@@ -64,6 +67,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    //figure out how controller wants things controlled
     JoystickButton ledButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
     ledButton.whileHeld(new SetColor(ledSubsystem, colorSensor));
 
@@ -72,6 +76,9 @@ public class RobotContainer {
 
     JoystickButton pistonUp=new JoystickButton(xbox, Xbox.BUTTON.LB.get());
     pistonUp.whenPressed(new PistonUp(intake));
+
+    JoystickButton turner=new JoystickButton(xbox,Xbox.BUTTON.LEFT_STICK.get());
+    turner.whileHeld(new turnWheelRotations(controlPanel));
   }
 
 
