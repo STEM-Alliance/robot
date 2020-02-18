@@ -1,7 +1,7 @@
 {
     "cameras": [
         {
-            "brightness": 30,
+            "brightness": 44,
             "exposure": 10,
             "fps": 20,
             "height": 240,
@@ -74,7 +74,7 @@
             "width": 416
         },
         {
-            "brightness": 30,
+            "brightness": 44,
             "exposure": 10,
             "fps": 20,
             "height": 240,
@@ -147,7 +147,7 @@
             "width": 416
         },
         {
-            "brightness": 30,
+            "brightness": 44,
             "exposure": 10,
             "fps": 20,
             "height": 240,

@@ -18,14 +18,26 @@ public class WheelOfFortune extends SubsystemBase {
    * Control Panel for the uninitiated.
    */
   //Change if wanted
+  /**Colors Blue G255 B255 R0
+   * Green G255 B0 R0
+   * Yellow G255 B0 R255
+   * Red G0 B0 R255
+  */
+  public enum Colors{
+    YELLOW,RED,GREEN,BLUE
+  }
   private double numOfRotations=3.0;
   
-  private Color coloration;
+  private Colors previousColor;
   private int rotationsAccomplished=0;
   //subsystem used to run the motor
   private WheelMotor wheelSubsystem;
   //used to read the color
   private ColorSensor sensor;
+  //not sure how we will get that yet
+  private Colors mainColor;
+  private Colors currentColor;
+
   public WheelOfFortune(WheelMotor wheely,ColorSensor sensor) {
     wheelSubsystem=wheely;
     this.sensor=sensor;
@@ -34,10 +46,10 @@ public class WheelOfFortune extends SubsystemBase {
    public void runTurnsForRotation(){
      //change value as appropriate
     wheelSubsystem.setMotor(1.0);
-    if(sensor.getColor()!=coloration){
+    if(currentColor!=previousColor){
       rotationsAccomplished+=0.125;
     }
-    coloration=sensor.getColor();
+    previousColor=currentColor;
    }
    public boolean reachedRotations(){
      return rotationsAccomplished>=numOfRotations;
@@ -48,6 +60,39 @@ public class WheelOfFortune extends SubsystemBase {
    }
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    updateColor();
+  }
+  public void setTheMotor(){
+    wheelSubsystem.setMotor(1.0);
+  }
+  /**Colors Blue G255 B255 R0
+   * Green G255 B0 R0
+   * Yellow G255 B0 R255
+   * Red G0 B0 R255
+  */
+  public void updateColor(){
+    //Color sensorColor=sensor.getColor();
+    Color sensorColor = sensor.getColor();
+    if(sensorColor.blue>=250.0){
+      currentColor=Colors.BLUE;
+    }
+    else if(sensorColor.green<=5.0){
+      currentColor=Colors.RED;
+    }
+    else if(sensorColor.red<=5.0){
+      currentColor=Colors.GREEN;
+    }
+    else{
+      currentColor=Colors.YELLOW;
+    }
+  }
+  public void setToColor(){
+     if(currentColor.equals(mainColor)){
+      wheelSubsystem.setMotor(0.0);
+     }
+     else{
+       wheelSubsystem.setMotor(1.0);
+     }
+
   }
 }

@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Magazine extends SubsystemBase {
@@ -16,14 +17,20 @@ public class Magazine extends SubsystemBase {
    * Creates a new ExampleSubsystem.
    */
   private WPI_TalonSRX magazineMover;
+  private DoubleSolenoid stopper;
   public Magazine() {
 
     //Change Device Number
     magazineMover=new WPI_TalonSRX(20000);
+    stopper=new DoubleSolenoid(20,34);
   }
   public void moveBalls(){
     //change dis eventually
     magazineMover.set(1.0);
+  }
+  //not sure how to be worked yet
+  public void setMagStopper(){
+
   }
 
   @Override

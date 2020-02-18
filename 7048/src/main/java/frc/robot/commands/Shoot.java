@@ -8,22 +8,22 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.WheelOfFortune;
+import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class turnWheelRotations extends CommandBase {
+public class Shoot extends CommandBase {
   
-  private final WheelOfFortune m_subsystem;
+  private final ShooterSubsystem m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public turnWheelRotations(WheelOfFortune subsystem) {
+  public Shoot(ShooterSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -32,24 +32,26 @@ public class turnWheelRotations extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_subsystem.setTheMotor();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.runTurnsForRotation();
+    aim();
+    m_subsystem.shoot();
+  }
+  public void aim(){
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.stopMotor();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   return m_subsystem.reachedRotations();
+    return false;
   }
 }

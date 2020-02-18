@@ -23,6 +23,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private WPI_TalonSRX aimMotor;
   // Might be using the wrong class for the spark
   private Spark shootyMotor;
+  //make sure to set this value
   private double shooterSpeed;
   public ShooterSubsystem() {
     //Please Change these constructor values to the correct one
@@ -31,8 +32,11 @@ public class ShooterSubsystem extends SubsystemBase {
     euro=new GyroNavx();
 
   }
-  public void Shoot(){
+  public void shoot(){
     shootyMotor.set(shooterSpeed);
+  }
+  public void moveAimMotor(double speed){
+    aimMotor.set(speed);
   }
 
 
