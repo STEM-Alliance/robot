@@ -8,12 +8,15 @@
 package frc.robot.Config;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.PistonUp;
 import frc.robot.commands.SetColor;
 import frc.robot.commands.SignalHuman;
 import frc.robot.commands.turnWheelRotations;
+import frc.robot.commands.WinchCommand;
+import frc.robot.reuse.config.HerdJoystick;
 import frc.robot.reuse.config.Xbox;
 import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -22,6 +25,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.WheelMotor;
+import frc.robot.subsystems.Winch;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Intake;
@@ -44,17 +48,25 @@ public class RobotContainer {
   private final Magazine magazine=new Magazine();
   private final WheelMotor wheelMotor=new WheelMotor();
   private final WheelOfFortune controlPanel=new WheelOfFortune(wheelMotor,colorSensor);
+  private final Winch winch = new Winch();
 
   //private final Drivetrain driveSubsystem = new Drivetrain(this);
   private final Vision vision = new Vision();
 
 
   public XboxController xbox;
+  public Joystick herdJoystickLeft;
+  public Joystick herdJoystickRight;
+
+
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     xbox = new XboxController(0);
+    herdJoystickLeft = new Joystick(0);
+    herdJoystickRight = new Joystick(1);
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -71,7 +83,7 @@ public class RobotContainer {
     JoystickButton ledButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
     ledButton.whileHeld(new SetColor(ledSubsystem, colorSensor));
 
-    JoystickButton visonDrive = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
+    JoystickButton visonDrive = new JoystickButton(herdJoystickRight,1);
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
 
     JoystickButton pistonUp=new JoystickButton(xbox, Xbox.BUTTON.LB.get());
@@ -79,6 +91,8 @@ public class RobotContainer {
 
     JoystickButton turner=new JoystickButton(xbox,Xbox.BUTTON.LEFT_STICK.get());
     turner.whileHeld(new turnWheelRotations(controlPanel));
+    JoystickButton Winch = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+    visonDrive.whileHeld(new WinchCommand(winch));
   }
 
 
