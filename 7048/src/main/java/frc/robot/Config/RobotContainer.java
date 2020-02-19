@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.SetColor;
 import frc.robot.commands.SignalHuman;
+import frc.robot.commands.WinchCommand;
 import frc.robot.reuse.config.HerdJoystick;
 import frc.robot.reuse.config.Xbox;
 import frc.robot.subsystems.ColorSensor;
@@ -20,6 +21,7 @@ import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Winch;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -34,6 +36,7 @@ public class RobotContainer {
   private final LedSubsystem ledSubsystem = new LedSubsystem();
   private final ColorSensor colorSensor = new ColorSensor();
   private final Drivetrain drivetrain = new Drivetrain(this);
+  private final Winch winch = new Winch();
 
   //private final Drivetrain driveSubsystem = new Drivetrain(this);
   private final Vision vision = new Vision();
@@ -69,6 +72,9 @@ public class RobotContainer {
 
     JoystickButton visonDrive = new JoystickButton(herdJoystickRight,1);
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
+
+    JoystickButton Winch = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+    visonDrive.whileHeld(new WinchCommand(winch));
   }
 
 
