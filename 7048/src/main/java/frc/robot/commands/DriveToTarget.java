@@ -29,9 +29,9 @@ public final class DriveToTarget extends CommandBase
         this.OI = OI;
         
         final Preferences prefs = Preferences.getInstance();
-        final double p = prefs.getDouble("p", 0.58);
+        final double p = prefs.getDouble("p", 0.2);
         final double i = prefs.getDouble("i", 0.0);
-        final double d = prefs.getDouble("d", 0.001);
+        final double d = prefs.getDouble("d", 0.0);
 
         pid = new PID(p, i, d, kVisionIZone, 0.02);
     }
@@ -46,9 +46,9 @@ public final class DriveToTarget extends CommandBase
         vision.visionUpdate();
 
         final double turnCorrection = getVisionCorrection();
-        final double turn = OI.xbox.getRawAxis(4) + turnCorrection;
+        final double turn = OI.herdJoystickRight.getX() + turnCorrection;
         
-        drive.robotDrive.arcadeDrive(OI.xbox.getRawAxis(1) * -1, -turn, true);
+        drive.robotDrive.arcadeDrive(OI.herdJoystickRight.getX() * -1, -turn, true);
 
         SmartDashboard.putNumber("Error", turnCorrection);
     }
