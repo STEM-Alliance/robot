@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
@@ -38,11 +39,13 @@ public class PistonUp extends CommandBase {
   @Override
   public void execute() {
     m_subsystem.pushPiston();
+    SmartDashboard.putString("piston", "piston intake set don't forget the values");
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    
   }
 
   // Returns true when the command should end.

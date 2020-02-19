@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,11 +26,12 @@ public class WheelOfFortune extends SubsystemBase {
   */
   public enum Colors{
     YELLOW,RED,GREEN,BLUE
+    
   }
   private double numOfRotations=3.0;
   
   private Colors previousColor;
-  private int rotationsAccomplished=0;
+  private double rotationsAccomplished=0;
   //subsystem used to run the motor
   private WheelMotor wheelSubsystem;
   //used to read the color
@@ -42,17 +44,21 @@ public class WheelOfFortune extends SubsystemBase {
     wheelSubsystem=wheely;
     this.sensor=sensor;
     
+    
   }
    public void runTurnsForRotation(){
      //change value as appropriate
     wheelSubsystem.setMotor(1.0);
     if(currentColor!=previousColor){
       rotationsAccomplished+=0.125;
+      SmartDashboard.putString("Number", Double.toString(rotationsAccomplished)+" rotations have been accomplished");
     }
     previousColor=currentColor;
    }
    public boolean reachedRotations(){
+    SmartDashboard.putString("rots", "Rotations have been reached");
      return rotationsAccomplished>=numOfRotations;
+     
    }
    public void stopMotor(){
      wheelSubsystem.setMotor(0.0);
@@ -85,7 +91,9 @@ public class WheelOfFortune extends SubsystemBase {
     else{
       currentColor=Colors.YELLOW;
     }
+    
   }
+  //add a command for this
   public void setToColor(){
      if(currentColor.equals(mainColor)){
       wheelSubsystem.setMotor(0.0);

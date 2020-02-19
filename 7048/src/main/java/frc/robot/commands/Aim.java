@@ -8,23 +8,21 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Magazine;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class MagStopperCommand extends CommandBase {
+public class ExampleCommand extends CommandBase {
   
-  private final Magazine m_subsystem;
+  private final ExampleSubsystem m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public MagStopperCommand(Magazine subsystem) {
+  public ExampleCommand(ExampleSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -38,8 +36,6 @@ public class MagStopperCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.setMagStopper();
-    SmartDashboard.putString("magazine", "Stopper Executed");
   }
 
   // Called once the command ends or is interrupted.

@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
@@ -33,10 +34,14 @@ public class Intake extends SubsystemBase {
     crash.set(isUp?Value.kForward:Value.kReverse);
    //Make sure to change to the correct values not sure what it is yet but it is some combination of kForward,kReverse, and kOff
    //We also need 
+   isUp= !isUp;
   }
-  public void intakeBalls(){}
+  //make command
+  public void intakeBalls(){intaker.set(1.0);}
   @Override
   public void periodic() {
+    //talk about this with driver
     intaker.set(isUp?0.0:1.0);
+    SmartDashboard.putString("boolean", Boolean.toString(isUp));
   }
 }
