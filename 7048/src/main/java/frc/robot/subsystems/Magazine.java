@@ -24,6 +24,7 @@ public class Magazine extends SubsystemBase {
     magazineMover=new WPI_TalonSRX(20000);
     stopper=new DoubleSolenoid(20,34);
   }
+  //make command
   public void moveBalls(){
     //change dis eventually
     magazineMover.set(1.0);
