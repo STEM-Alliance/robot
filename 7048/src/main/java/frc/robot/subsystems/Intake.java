@@ -39,6 +39,7 @@ public class Intake extends SubsystemBase {
   }
   //make command
   public void intakeBalls(){intaker.set(Constants.intakeSpeed);}
+  public void stopMotor(){intaker.set(0.0);}
   @Override
   public void periodic() {
     //talk about this with driver

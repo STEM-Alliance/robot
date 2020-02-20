@@ -24,6 +24,7 @@ public class WheelOfFortune extends SubsystemBase {
    * Yellow G255 B0 R255
    * Red G0 B0 R255
   */
+  private boolean colorSet;
   public enum Colors{
     YELLOW,RED,GREEN,BLUE
     
@@ -76,6 +77,9 @@ public class WheelOfFortune extends SubsystemBase {
    * Yellow G255 B0 R255
    * Red G0 B0 R255
   */
+  public boolean colorSet(){
+    return colorSet;
+  }
   public void updateColor(){
     //Color sensorColor=sensor.getColor();
     Color sensorColor = sensor.getColor();
@@ -96,7 +100,7 @@ public class WheelOfFortune extends SubsystemBase {
   //add a command for this
   public void setToColor(){
      if(currentColor.equals(mainColor)){
-      wheelSubsystem.stopMotor();;
+      wheelSubsystem.stopMotor();colorSet=true;
      }
      else{
        wheelSubsystem.setMotor();

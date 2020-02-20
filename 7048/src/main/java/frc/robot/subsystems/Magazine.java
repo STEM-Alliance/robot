@@ -31,6 +31,9 @@ public class Magazine extends SubsystemBase {
     //change dis eventually
     magazineMover.set(Constants.magazineSpeed);
   }
+  public void stopMotor(){
+    magazineMover.set(0.0);
+  }
   //not sure how to be worked yet
   public void setMagStopper(){
     stopper.set(stopperInPlace?Constants.stopperOff:Constants.stopperOn);

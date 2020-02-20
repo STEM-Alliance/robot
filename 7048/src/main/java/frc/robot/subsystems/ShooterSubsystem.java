@@ -36,9 +36,13 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   public void shoot(){
     shootyMotor.set(Constants.shootMotorSpeed);
+
   }
-  public void moveAimMotor(){
-    aimMotor.set(Constants.aimMotorSpeed);
+  public void stopShooter(){
+    shootyMotor.set(0.0);
+  }
+  public void moveAimMotor(double speed){
+    aimMotor.set(speed);
   }
 
 
