@@ -77,7 +77,7 @@ public class WheelOfFortune extends SubsystemBase {
    * Yellow G255 B0 R255
    * Red G0 B0 R255
   */
-  public boolean colorSet(){
+  public boolean toColor(){
     return colorSet;
   }
   public void updateColor(){
