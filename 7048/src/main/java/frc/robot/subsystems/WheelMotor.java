@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Config.Constants;
 
 public class WheelMotor extends SubsystemBase {
   /**
@@ -19,11 +20,15 @@ public class WheelMotor extends SubsystemBase {
   
   public WheelMotor() {
     //Change number
-    spinnyMotor=new WPI_TalonSRX(330);
+    spinnyMotor=new WPI_TalonSRX(Constants.pizzaMotorNumber);
 
   }
- public void setMotor(double speed){
-   spinnyMotor.set(speed);
+ public void setMotor(){
+   spinnyMotor.set(Constants.pizzaMotorSpeed);
+ }
+ public void stopMotor(){
+   spinnyMotor.set(0.0);
+   
  }
 
   @Override

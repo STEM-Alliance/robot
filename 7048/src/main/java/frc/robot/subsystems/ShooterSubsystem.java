@@ -12,7 +12,9 @@ import com.revrobotics.SparkMax;
 
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Config.Constants;
 import frc.robot.reuse.hardware.sensors.GyroNavx;
+
 
 public class ShooterSubsystem extends SubsystemBase {
   /**
@@ -27,16 +29,16 @@ public class ShooterSubsystem extends SubsystemBase {
   private double shooterSpeed;
   public ShooterSubsystem() {
     //Please Change these constructor values to the correct one
-    aimMotor=new WPI_TalonSRX(69);
-    shootyMotor=new Spark(420);
+    aimMotor=new WPI_TalonSRX(Constants.aimMotorNumber);
+    shootyMotor=new Spark(Constants.shootMotorNumber);
     euro=new GyroNavx();
 
   }
   public void shoot(){
-    shootyMotor.set(shooterSpeed);
+    shootyMotor.set(Constants.shootMotorSpeed);
   }
-  public void moveAimMotor(double speed){
-    aimMotor.set(speed);
+  public void moveAimMotor(){
+    aimMotor.set(Constants.aimMotorSpeed);
   }
 
 

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Config.Constants;
 
 public class Intake extends SubsystemBase {
   /**
@@ -25,23 +26,23 @@ public class Intake extends SubsystemBase {
   private boolean isUp;
   public Intake() {
     //change device numbers
-    crash=new DoubleSolenoid(44,43);
-    intaker=new WPI_TalonSRX(99);
+    crash=new DoubleSolenoid(Constants.intakePistonNumbers[0],Constants.intakePistonNumbers[1]);
+    intaker=new WPI_TalonSRX(Constants.intakerNumber);
     
     isUp=true;
   }
   public void pushPiston(){
-    crash.set(isUp?Value.kForward:Value.kReverse);
+    crash.set(isUp?Constants.intakePistonOn:Constants.intakePistonOff);
    //Make sure to change to the correct values not sure what it is yet but it is some combination of kForward,kReverse, and kOff
    //We also need 
    isUp= !isUp;
   }
   //make command
-  public void intakeBalls(){intaker.set(1.0);}
+  public void intakeBalls(){intaker.set(Constants.intakeSpeed);}
   @Override
   public void periodic() {
     //talk about this with driver
-    intaker.set(isUp?0.0:1.0);
+    intaker.set(isUp?0.0:Constants.intakeSpeed);
     SmartDashboard.putString("boolean", Boolean.toString(isUp));
   }
 }

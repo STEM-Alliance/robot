@@ -48,7 +48,7 @@ public class WheelOfFortune extends SubsystemBase {
   }
    public void runTurnsForRotation(){
      //change value as appropriate
-    wheelSubsystem.setMotor(1.0);
+    wheelSubsystem.setMotor();
     if(currentColor!=previousColor){
       rotationsAccomplished+=0.125;
       SmartDashboard.putString("Number", Double.toString(rotationsAccomplished)+" rotations have been accomplished");
@@ -61,7 +61,7 @@ public class WheelOfFortune extends SubsystemBase {
      
    }
    public void stopMotor(){
-     wheelSubsystem.setMotor(0.0);
+     wheelSubsystem.stopMotor();
 
    }
   @Override
@@ -69,7 +69,7 @@ public class WheelOfFortune extends SubsystemBase {
     updateColor();
   }
   public void setTheMotor(){
-    wheelSubsystem.setMotor(1.0);
+    wheelSubsystem.setMotor();
   }
   /**Colors Blue G255 B255 R0
    * Green G255 B0 R0
@@ -96,10 +96,10 @@ public class WheelOfFortune extends SubsystemBase {
   //add a command for this
   public void setToColor(){
      if(currentColor.equals(mainColor)){
-      wheelSubsystem.setMotor(0.0);
+      wheelSubsystem.stopMotor();;
      }
      else{
-       wheelSubsystem.setMotor(1.0);
+       wheelSubsystem.setMotor();
      }
 
   }

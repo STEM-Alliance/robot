@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Config.Constants;
 
 public class Magazine extends SubsystemBase {
   /**
@@ -18,20 +19,23 @@ public class Magazine extends SubsystemBase {
    */
   private WPI_TalonSRX magazineMover;
   private DoubleSolenoid stopper;
+  private boolean stopperInPlace;
   public Magazine() {
 
     //Change Device Number
-    magazineMover=new WPI_TalonSRX(20000);
-    stopper=new DoubleSolenoid(20,34);
+    magazineMover=new WPI_TalonSRX(Constants.magazineBeltNumber);
+    stopper=new DoubleSolenoid(Constants.stopperNumbers[0],Constants.stopperNumbers[1]);
   }
   //make command
   public void moveBalls(){
     //change dis eventually
-    magazineMover.set(1.0);
+    magazineMover.set(Constants.magazineSpeed);
   }
   //not sure how to be worked yet
   public void setMagStopper(){
+    stopper.set(stopperInPlace?Constants.stopperOff:Constants.stopperOn);
 
+    
   }
 
   @Override
