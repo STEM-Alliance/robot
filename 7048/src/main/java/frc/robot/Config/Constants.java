@@ -37,8 +37,7 @@ public final class Constants {
     //on makes it so magazine moves
     public static Value stopperOn;
     public static Value stopperOff;
-    //on makes it extend
-    public static Value hookOnValue;
-    public static Value hookOffValue;
+    public static Value hookUpValue;
+    public static Value hookDownValue;
     public static int[] hook;
 }
