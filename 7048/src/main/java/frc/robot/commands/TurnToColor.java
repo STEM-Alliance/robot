@@ -8,22 +8,22 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Magazine;
+import frc.robot.subsystems.WheelOfFortune;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class MoveMagazineBalls extends CommandBase {
+public class TurnToColor extends CommandBase {
   
-  private final Magazine m_subsystem;
+  private final WheelOfFortune m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public MoveMagazineBalls(Magazine subsystem) {
+  public TurnToColor(WheelOfFortune subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -36,19 +36,20 @@ public class MoveMagazineBalls extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    m_subsystem.moveBalls();
+  public void execute() {m_subsystem.setToColor();
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_subsystem.stopMotor();
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_subsystem.toColor();
   }
 }

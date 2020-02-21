@@ -35,4 +35,7 @@ public final class Constants {
     public static Value intakePistonOff;
     public static Value stopperOn;
     public static Value stopperOff;
+    public static Value hookOnValue;
+    public static Value hookOffValue;
+    public static int[] hook;
 }

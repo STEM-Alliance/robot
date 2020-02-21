@@ -8,7 +8,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Config.Constants;
 
 public class RaiseHook extends SubsystemBase {
   /**
@@ -18,15 +20,15 @@ public class RaiseHook extends SubsystemBase {
    private  boolean up;
   public RaiseHook() {
    up = true;
-    raisePiston =  new DoubleSolenoid(0, 0);
+    raisePiston =  new DoubleSolenoid(Constants.hook[0], Constants.hook[1]);
   }
 
   public void raise(){ 
     if(up){
-    raisePiston.set(DoubleSolenoid.Value.kForward);
+    raisePiston.set(Constants.hookOffValue);
   }
   else{
-   raisePiston.set(DoubleSolenoid.Value.kReverse) ;
+   raisePiston.set(Constants.hookOnValue) ;
   }
   up = !up;
 }
