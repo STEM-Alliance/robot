@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.RaiseHook;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -38,7 +37,7 @@ public class RaiseMethodHook extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.raise();
+    m_subsystem.moveHook();
   }
 
   // Called once the command ends or is interrupted.

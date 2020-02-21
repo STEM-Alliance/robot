@@ -16,22 +16,29 @@ public class RaiseHook extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-   private DoubleSolenoid raisePiston;
-   private  boolean up;
+  enum HookPosition {
+    UP,
+    DOWN
+  };
+  private DoubleSolenoid raisePiston;
+  private HookPosition position;
+  
   public RaiseHook() {
-   up = true;
-    raisePiston =  new DoubleSolenoid(Constants.hook[0], Constants.hook[1]);
+    position = HookPosition.DOWN;
+    raisePiston = new DoubleSolenoid(Constants.hook[0], Constants.hook[1]);
   }
 
-  public void raise(){ 
-    if(up){
-    raisePiston.set(Constants.hookOffValue);
+  public void moveHook() {
+    switch(position) {
+      case UP: // if(position == UP)
+        raisePiston.set(Constants.hookDownValue);
+        position = HookPosition.DOWN;
+      case DOWN: // if(position == DOWN)
+        raisePiston.set(Constants.hookUpValue);
+        position = HookPosition.UP;
+    }
   }
-  else{
-   raisePiston.set(Constants.hookOnValue) ;
-  }
-  up = !up;
-}
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
