@@ -28,6 +28,7 @@ public class RaiseHook extends SubsystemBase {
   else{
    raisePiston.set(DoubleSolenoid.Value.kReverse) ;
   }
+  up = !up;
 }
   @Override
   public void periodic() {
