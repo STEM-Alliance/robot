@@ -10,6 +10,7 @@ package frc.robot.Config;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.DriveOffLine;
 import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.PistonUp;
 import frc.robot.commands.SetColor;
@@ -100,8 +101,8 @@ public class RobotContainer {
    * 
    * This is where you load in your auto command!
    */
-  private final SetColor autoCommand = new SetColor(ledSubsystem, colorSensor);
-
+  //private final SetColor autoCommand = new SetColor(ledSubsystem, colorSensor);
+  private final DriveOffLine autoCommand=new DriveOffLine(drivetrain);
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

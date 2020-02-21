@@ -28,7 +28,7 @@ public class Intake extends SubsystemBase {
     //change device numbers
     crash=new DoubleSolenoid(Constants.intakePistonNumbers[0],Constants.intakePistonNumbers[1]);
     intaker=new WPI_TalonSRX(Constants.intakerNumber);
-    
+    crash.set(Constants.intakePistonOff);
     isUp=true;
   }
   public void pushPiston(){

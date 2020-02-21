@@ -31,10 +31,13 @@ public final class Constants {
     public static int shootMotorNumber;
     public static double pizzaMotorSpeed;
     public static int pizzaMotorNumber;
+    //on puts it to ground
     public static Value intakePistonOn;
     public static Value intakePistonOff;
+    //on makes it so magazine moves
     public static Value stopperOn;
     public static Value stopperOff;
+    //on makes it extend
     public static Value hookOnValue;
     public static Value hookOffValue;
     public static int[] hook;
