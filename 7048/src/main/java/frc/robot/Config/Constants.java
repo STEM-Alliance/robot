@@ -31,6 +31,7 @@ public final class Constants {
     public static int shootMotorNumber;
     public static double pizzaMotorSpeed;
     public static int pizzaMotorNumber;
+    public static double intakeMagSpeed;
     // public static Value intakePistonOn;
     // public static Value intakePistonOff;
     // public static Value stopperOn;
