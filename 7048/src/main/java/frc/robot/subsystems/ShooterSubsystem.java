@@ -10,7 +10,9 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.SparkMax;
 
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config.Constants;
 import frc.robot.reuse.hardware.sensors.GyroNavx;
@@ -22,16 +24,19 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   //Used to find angle of aimMotor
    private GyroNavx euro;
-  private WPI_TalonSRX aimMotor;
+  private Relay aimMotor;
   // Might be using the wrong class for the spark
   private Spark shootyMotor;
   //make sure to set this value
   private double shooterSpeed;
+  private Value aimMotorClockwiseDirection;
+  private Value aimMotorCCWDirection;
   public ShooterSubsystem() {
     //Please Change these constructor values to the correct one
-    aimMotor=new WPI_TalonSRX(Constants.aimMotorNumber);
+    aimMotor=new Relay(Constants.aimMotorNumber);
     shootyMotor=new Spark(Constants.shootMotorNumber);
     euro=new GyroNavx();
+    aimMotor.set(Value.kOn);
 
   }
   public void shoot(){
@@ -41,10 +46,15 @@ public class ShooterSubsystem extends SubsystemBase {
   public void stopShooter(){
     shootyMotor.set(0.0);
   }
-  public void moveAimMotor(double speed){
-    aimMotor.set(speed);
+  public void moveAimMotorClockwise(){
+    aimMotor.set(aimMotorClockwiseDirection);
   }
-
+  public void moveAimMotorCCW(){
+    aimMotor.set(aimMotorCCWDirection);
+  }
+  public void stopAimMotor(){
+    aimMotor.set(Value.kOn);
+  }
 
   @Override
   public void periodic() {
