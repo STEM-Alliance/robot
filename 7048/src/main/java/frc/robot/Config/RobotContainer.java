@@ -10,12 +10,17 @@ package frc.robot.Config;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.Aim;
 import frc.robot.commands.DriveOffLine;
 import frc.robot.commands.DriveToTarget;
+import frc.robot.commands.MagStopperCommand;
+import frc.robot.commands.MoveMagazineBalls;
+import frc.robot.commands.MoveMagazineBallsDown;
 import frc.robot.commands.PistonDown;
 import frc.robot.commands.PistonDown;
 import frc.robot.commands.PistonUp;
 import frc.robot.commands.SetColor;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.SignalHuman;
 import frc.robot.commands.turnWheelRotations;
 import frc.robot.commands.WinchCommand;
@@ -33,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Magazine;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.WheelOfFortune;;
 
 /**
@@ -48,7 +54,7 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain(this);
   private final ShooterSubsystem shooter=new ShooterSubsystem();
   private final Intake intake=new Intake();
-  private final Magazine magazine=new Magazine();
+  private final Magazine magaziner=new Magazine();
   private final WheelMotor wheelMotor=new WheelMotor();
   private final WheelOfFortune controlPanel=new WheelOfFortune(wheelMotor,colorSensor);
   private final Winch winch = new Winch();
@@ -89,7 +95,7 @@ public class RobotContainer {
     JoystickButton visonDrive = new JoystickButton(herdJoystickRight,1);
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
 
-    JoystickButton pistonDown=new JoystickButton(xbox, Xbox.BUTTON.LB.get());
+    JoystickButton pistonDown=new JoystickButton(xbox, Xbox.AXIS.RIGHT_TRIGGER.get());
     pistonDown.whileHeld(new PistonDown(intake));
 
     JoystickButton turner=new JoystickButton(xbox,Xbox.BUTTON.LEFT_STICK.get());
@@ -97,6 +103,23 @@ public class RobotContainer {
 
     JoystickButton Winch = new JoystickButton(xbox, Xbox.BUTTON.A.get());
     Winch.whileHeld(new WinchCommand(winch));
+
+    JoystickButton magazine = new JoystickButton(xbox, Xbox.DPAD.UP.get());
+    magazine.whileHeld(new MoveMagazineBalls(magaziner));
+
+    JoystickButton magazineDownButton = new JoystickButton(xbox, Xbox.DPAD.DOWN.get());
+    magazineDownButton.whileHeld(new MoveMagazineBallsDown(magaziner));
+
+    JoystickButton magStopperButton = new JoystickButton(xbox, Xbox.BUTTON.LB.get());
+    magStopperButton.whileHeld(new MagStopperCommand(magaziner));
+
+    JoystickButton shootButton = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
+    shootButton.whileHeld(new Shoot(shooter, magaziner));
+
+    JoystickButton aimButton=new JoystickButton(xbox, Xbox.AXIS.RIGHT_Y.get());
+    aimButton.whileHeld(new Aim(shooter));
+
+
   }
 
 
