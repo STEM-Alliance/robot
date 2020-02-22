@@ -30,13 +30,12 @@ public class Magazine extends SubsystemBase {
     stopper=new DoubleSolenoid(Constants.stopperNumbers[0],Constants.stopperNumbers[1]);
   }
   //make command
-  public void moveBalls(){
+  public void moveBalls(double speed){
     //change dis eventually
-    magazineMover.set(Constants.magazineSpeed);
+    magazineMover.set(speed);
   }
-  public void stopMotor(){
-    magazineMover.set(0.0);
-  }
+  
+ 
   //not sure how to be worked yet
   public void setMagStopper(){
     stopper.set(stopperInPlace?stopperOff:stopperOn);

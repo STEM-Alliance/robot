@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DriveOffLine;
 import frc.robot.commands.DriveToTarget;
+import frc.robot.commands.PistonDown;
+import frc.robot.commands.PistonDown;
 import frc.robot.commands.PistonUp;
 import frc.robot.commands.SetColor;
 import frc.robot.commands.SignalHuman;
@@ -88,7 +90,7 @@ public class RobotContainer {
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
 
     JoystickButton pistonDown=new JoystickButton(xbox, Xbox.BUTTON.LB.get());
-    pistonDown.whileheld(new PistonDown(intake));
+    pistonDown.whileHeld(new PistonDown(intake));
 
     JoystickButton turner=new JoystickButton(xbox,Xbox.BUTTON.LEFT_STICK.get());
     turner.whileHeld(new turnWheelRotations(controlPanel));
