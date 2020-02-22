@@ -38,6 +38,4 @@ public final class Constants {
     // public static Value hookUpValue;
     // public static Value hookDownValue;
     public static int[] hook = { 0,0,1 };
-
-
 }

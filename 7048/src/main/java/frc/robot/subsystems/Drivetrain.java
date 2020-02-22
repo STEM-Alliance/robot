@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -83,6 +84,13 @@ public class Drivetrain extends SubsystemBase {
     }
 	public void setBrake(boolean b) {
       
-	}
+    }
+    public void driveAuto(){
+       left1.set(ControlMode.MotionMagic, 50000.0);
+       right1.set(ControlMode.MotionMagic, 50000.0);
+
+
+    }
+    
 
 }
