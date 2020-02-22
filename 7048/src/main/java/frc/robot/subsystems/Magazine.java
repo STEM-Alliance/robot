@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config.Constants;
 
@@ -20,6 +21,8 @@ public class Magazine extends SubsystemBase {
   private WPI_TalonSRX magazineMover;
   private DoubleSolenoid stopper;
   private boolean stopperInPlace;
+  public static Value stopperOn;
+   public static Value stopperOff;
   public Magazine() {
 
     //Change Device Number
@@ -36,7 +39,7 @@ public class Magazine extends SubsystemBase {
   }
   //not sure how to be worked yet
   public void setMagStopper(){
-    stopper.set(stopperInPlace?Constants.stopperOff:Constants.stopperOn);
+    stopper.set(stopperInPlace?stopperOff:stopperOn);
 
     
   }

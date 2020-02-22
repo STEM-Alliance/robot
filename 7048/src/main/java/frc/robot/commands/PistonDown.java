@@ -8,23 +8,23 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Winch;
+import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
- * An example command that uses an example subsystem.
+ * Moves Piston both up and down contrary to the name
  */
-public class WinchCommand extends CommandBase {
+public class PistonDown extends CommandBase {
   
-  private final Winch m_subsystem;
+  private final Intake m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public WinchCommand(Winch subsystem) {
+  public PistonDown(Intake subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -38,18 +38,21 @@ public class WinchCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.SpinWinch(1.0);
+    m_subsystem.pushPistonDown();
+    SmartDashboard.putString("piston", "piston intake set don't forget the values");
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.SpinWinch(0.0);
+    m_subsystem.pushPistonUp();
+
+    
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

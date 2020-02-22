@@ -24,32 +24,39 @@ public class Intake extends SubsystemBase {
   //Takes balls in
   private WPI_TalonSRX intaker;
   private boolean isUp;
+  public static Value intakePistonOn;
+   public static Value intakePistonOff;
   public Intake() {
     //change device numbers
     crash=new DoubleSolenoid(Constants.intakePistonNumbers[0],Constants.intakePistonNumbers[1]);
     intaker=new WPI_TalonSRX(Constants.intakerNumber);
-    crash.set(Constants.intakePistonOff);
-    isUp=true;
+    crash.set(intakePistonOff);
+    
   }
-  public void pushPiston(){
+  public void pushPistonUp(){
     // crash.set(isUp?Constants.intakePistonOn:Constants.intakePistonOff);
-    if(up){
-    crash.set(DoubleSolenoid.Value.kForward);
-    }
-    else{
-      crash.set(DoubleSolenoid.Value.kReverse);
-    }
+   
+    stopMotor();
+    
+    
+      crash.set(intakePistonOff);
+    
+
    //Make sure to change to the correct values not sure what it is yet but it is some combination of kForward,kReverse, and kOff
    //We also need 
-   isUp= !isUp;
+   
+  }
+  public void pushPistonDown(){
+    
+    crash.set(intakePistonOn);
+    intakeBalls();
+    
   }
   //make command
   public void intakeBalls(){intaker.set(Constants.intakeSpeed);}
   public void stopMotor(){intaker.set(0.0);}
   @Override
   public void periodic() {
-    //talk about this with driver
-    intaker.set(isUp?0.0:Constants.intakeSpeed);
-    SmartDashboard.putString("boolean", Boolean.toString(isUp));
+   
   }
 }

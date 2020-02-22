@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.config;
+package frc.robot.Config;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -87,13 +87,14 @@ public class RobotContainer {
     JoystickButton visonDrive = new JoystickButton(herdJoystickRight,1);
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
 
-    JoystickButton pistonUp=new JoystickButton(xbox, Xbox.BUTTON.LB.get());
-    pistonUp.whenPressed(new PistonUp(intake));
+    JoystickButton pistonDown=new JoystickButton(xbox, Xbox.BUTTON.LB.get());
+    pistonDown.whileheld(new PistonDown(intake));
 
     JoystickButton turner=new JoystickButton(xbox,Xbox.BUTTON.LEFT_STICK.get());
     turner.whileHeld(new turnWheelRotations(controlPanel));
+
     JoystickButton Winch = new JoystickButton(xbox, Xbox.BUTTON.A.get());
-    visonDrive.whileHeld(new WinchCommand(winch));
+    Winch.whileHeld(new WinchCommand(winch));
   }
 
 
