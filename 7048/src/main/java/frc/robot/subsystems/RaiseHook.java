@@ -18,24 +18,34 @@ public class RaiseHook extends SubsystemBase {
    */
   enum HookPosition {
     UP,
+    MIDDLE,
     DOWN
   };
-  private DoubleSolenoid raisePiston;
+  private DoubleSolenoid raisePiston1;
+  private DoubleSolenoid raisePiston2;
   private HookPosition position;
   
   public RaiseHook() {
     position = HookPosition.DOWN;
-    raisePiston = new DoubleSolenoid(Constants.hook[0], Constants.hook[1]);
+    raisePiston1 = new DoubleSolenoid(Constants.hook[0], Constants.hook[1]);
+    raisePiston2 = new DoubleSolenoid(Constants.hook[0], Constants.hook[2]);
   }
 
   public void moveHook() {
     switch(position) {
       case UP: // if(position == UP)
-        raisePiston.set(Constants.hookDownValue);
+        // raisePiston.set(Constants.hookDownValue);
+        raisePiston2.set(DoubleSolenoid.Value.kForward);
         position = HookPosition.DOWN;
+      case MIDDLE:
+      // raisePiston.set(Constants.hookDownValue);
+      raisePiston1.set(DoubleSolenoid.Value.kForward);
+      position = HookPosition.UP;
       case DOWN: // if(position == DOWN)
-        raisePiston.set(Constants.hookUpValue);
-        position = HookPosition.UP;
+        // raisePiston.set(Constants.hookUpValue);
+        raisePiston1.set(DoubleSolenoid.Value.kReverse);
+        raisePiston2.set(DoubleSolenoid.Value.kReverse);
+        position = HookPosition.MIDDLE;
     }
   }
 

@@ -32,7 +32,13 @@ public class Intake extends SubsystemBase {
     isUp=true;
   }
   public void pushPiston(){
-    crash.set(isUp?Constants.intakePistonOn:Constants.intakePistonOff);
+    // crash.set(isUp?Constants.intakePistonOn:Constants.intakePistonOff);
+    if(up){
+    crash.set(DoubleSolenoid.Value.kForward);
+    }
+    else{
+      crash.set(DoubleSolenoid.Value.kReverse);
+    }
    //Make sure to change to the correct values not sure what it is yet but it is some combination of kForward,kReverse, and kOff
    //We also need 
    isUp= !isUp;

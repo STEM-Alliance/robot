@@ -31,11 +31,13 @@ public final class Constants {
     public static int shootMotorNumber;
     public static double pizzaMotorSpeed;
     public static int pizzaMotorNumber;
-    public static Value intakePistonOn;
-    public static Value intakePistonOff;
-    public static Value stopperOn;
-    public static Value stopperOff;
-    public static Value hookUpValue;
-    public static Value hookDownValue;
-    public static int[] hook;
+    // public static Value intakePistonOn;
+    // public static Value intakePistonOff;
+    // public static Value stopperOn;
+    // public static Value stopperOff;
+    // public static Value hookUpValue;
+    // public static Value hookDownValue;
+    public static int[] hook = { 0,0,1 };
+
+
 }
