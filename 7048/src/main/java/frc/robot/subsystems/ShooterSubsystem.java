@@ -35,7 +35,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //Please Change these constructor values to the correct one
     aimMotor=new Relay(Constants.aimMotorNumber);
     shootyMotor=new Spark(Constants.shootMotorNumber);
-    euro=new GyroNavx();
+    // euro=new GyroNavx();
     aimMotor.set(Value.kOn);
 
   }
@@ -47,6 +47,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shootyMotor.set(0.0);
   }
   public void moveAimMotorClockwise(){
+    
     aimMotor.set(aimMotorClockwiseDirection);
   }
   public void moveAimMotorCCW(){

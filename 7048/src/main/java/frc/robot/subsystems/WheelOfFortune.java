@@ -29,7 +29,7 @@ public class WheelOfFortune extends SubsystemBase {
     YELLOW,RED,GREEN,BLUE
     
   }
-  private double numOfRotations=3.0;
+  private double numOfRotations=4.0;
   
   private Colors previousColor;
   private double rotationsAccomplished=0;
