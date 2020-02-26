@@ -66,7 +66,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void driveeeee() {
-        robotDrive.arcadeDrive(container.herdJoystickLeft.getY(), container.herdJoystickRight.getX() * -1, true);
+        robotDrive.arcadeDrive(container.herdJoystickLeft.getY() * -1, container.herdJoystickRight.getX(), true);
         SmartDashboard.putNumber("x", container.xbox.getRawAxis(1));
         SmartDashboard.putNumber("y", container.xbox.getRawAxis(4));
 
@@ -86,7 +86,11 @@ public class Drivetrain extends SubsystemBase {
     }
     public void driveAuto(){
        left1.set(ControlMode.MotionMagic, 30000.0);
+right1.follow(left1);
+
        right1.set(ControlMode.MotionMagic, 30000.0);
+    // left1.set(ControlMode.PercentOutput, .);
+    // right1.set(ControlMode.PercentOutput, -.6);
 
 
     }

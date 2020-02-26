@@ -74,7 +74,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     xbox = new XboxController(0);
-    herdJoystickLeft = new Joystick(0);
+    herdJoystickLeft = new Joystick(2);
     herdJoystickRight = new Joystick(1);
     
     // Configure the button bindings
@@ -106,7 +106,7 @@ public class RobotContainer {
    // Winch.whileHeld(new WinchCommand(winch));
 
     JoystickButton magazine = new JoystickButton(xbox, Xbox.BUTTON.B.get());
-    SmartDashboard.putNumber("test1", Xbox.DPAD.UP.get());
+    // SmartDashboard.putNumber("test1", Xbox.DPAD.UP.get());
     magazine.whileHeld(new MoveMagazineBalls(magaziner));
 
     JoystickButton magazineDownButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
@@ -139,6 +139,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     
-    return autoCommand;
+    // return autoCommand;
+    return null;
   }
 }

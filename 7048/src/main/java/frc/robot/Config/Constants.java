@@ -26,7 +26,7 @@ public final class Constants {
     public static int[] stopperNumbers={2,3};
     public static double magazineSpeed=0.5;
     public static double aimMotorSpeed=0.5;
-    public static double shootMotorSpeed=0.5;
+    public static double shootMotorSpeed=1;
     public static int aimMotorNumber;
     public static int shootMotorNumber=10;
     public static double pizzaMotorSpeed=0.5;
