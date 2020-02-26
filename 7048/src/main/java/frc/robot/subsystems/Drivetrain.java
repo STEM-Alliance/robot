@@ -34,12 +34,12 @@ public class Drivetrain extends SubsystemBase {
         navx = new GyroNavx();
 
         // Create motors
-        left1 = new WPI_TalonSRX(11);
-        left2 = new WPI_TalonSRX(12);
-        left3 = new WPI_TalonSRX(13);
-        right1 = new WPI_TalonSRX(14);
-        right2 = new WPI_TalonSRX(15);
-        right3 = new WPI_TalonSRX(16);
+        left1 = new WPI_TalonSRX(6);
+        left2 = new WPI_TalonSRX(4);
+        
+        right1 = new WPI_TalonSRX(2);
+        right2 = new WPI_TalonSRX(5);
+       
         
         // Clear any residual bad values
    
@@ -47,8 +47,7 @@ public class Drivetrain extends SubsystemBase {
         // Set master-slave bindings
         left2.follow(left1);
         right2.follow(right1);
-        left3.follow(left1);
-        right3.follow(right1);
+        
 
         // Initialize the WPI drivetrain object with our motors
         robotDrive = new DifferentialDrive(left1, right1); // only need to set the masters

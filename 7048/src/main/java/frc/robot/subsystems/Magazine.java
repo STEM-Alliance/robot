@@ -21,8 +21,8 @@ public class Magazine extends SubsystemBase {
   private WPI_TalonSRX magazineMover;
   private DoubleSolenoid stopper;
   private boolean stopperInPlace;
-  public static Value stopperOn;
-   public static Value stopperOff;
+  public static Value stopperOn=Value.kForward;
+   public static Value stopperOff=Value.kReverse;
   public Magazine() {
 
     //Change Device Number

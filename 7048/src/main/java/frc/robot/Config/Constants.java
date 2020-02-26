@@ -19,24 +19,25 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static int[] intakePistonNumbers;
-    public static int intakerNumber;
-    public static double intakeSpeed;
-    public static int magazineBeltNumber;
-    public static int[] stopperNumbers;
-    public static double magazineSpeed;
-    public static double aimMotorSpeed;
-    public static double shootMotorSpeed;
+    public static int[] intakePistonNumbers={0,1};
+    public static int intakerNumber=7;
+    public static double intakeSpeed=0.5;
+    public static int magazineBeltNumber=3;
+    public static int[] stopperNumbers={2,3};
+    public static double magazineSpeed=0.5;
+    public static double aimMotorSpeed=0.5;
+    public static double shootMotorSpeed=0.5;
     public static int aimMotorNumber;
-    public static int shootMotorNumber;
-    public static double pizzaMotorSpeed;
+    public static int shootMotorNumber=10;
+    public static double pizzaMotorSpeed=0.5;
     public static int pizzaMotorNumber;
-    public static double intakeMagSpeed;
+    public static double intakeMagSpeed=0.5;
+    
     // public static Value intakePistonOn;
     // public static Value intakePistonOff;
     // public static Value stopperOn;
     // public static Value stopperOff;
     // public static Value hookUpValue;
     // public static Value hookDownValue;
-    public static int[] hook = { 0,0,1 };
+    public static int[] hook=  { 4,5 };
 }

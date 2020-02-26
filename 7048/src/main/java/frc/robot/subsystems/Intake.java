@@ -24,8 +24,8 @@ public class Intake extends SubsystemBase {
   //Takes balls in
   private WPI_TalonSRX intaker;
   private boolean isUp;
-  public static Value intakePistonOn;
-   public static Value intakePistonOff;
+  public static Value intakePistonOn=Value.kForward;
+   public static Value intakePistonOff=Value.kReverse;
   public Intake() {
     //change device numbers
     crash=new DoubleSolenoid(Constants.intakePistonNumbers[0],Constants.intakePistonNumbers[1]);
