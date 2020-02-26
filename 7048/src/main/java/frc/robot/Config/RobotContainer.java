@@ -10,6 +10,7 @@ package frc.robot.Config;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.Aim;
 import frc.robot.commands.DriveOffLine;
 import frc.robot.commands.DriveToTarget;
@@ -89,8 +90,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //figure out how controller wants things controlled
-    JoystickButton ledButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
-    ledButton.whileHeld(new SetColor(ledSubsystem, colorSensor));
+    //JoystickButton ledButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
+    //ledButton.whileHeld(new SetColor(ledSubsystem, colorSensor));
 
     JoystickButton visonDrive = new JoystickButton(herdJoystickRight,1);
     visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
@@ -101,13 +102,14 @@ public class RobotContainer {
     JoystickButton turner=new JoystickButton(xbox,Xbox.BUTTON.LEFT_STICK.get());
     turner.whileHeld(new turnWheelRotations(controlPanel));
 
-    JoystickButton Winch = new JoystickButton(xbox, Xbox.BUTTON.A.get());
-    Winch.whileHeld(new WinchCommand(winch));
+   // JoystickButton Winch = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+   // Winch.whileHeld(new WinchCommand(winch));
 
-    JoystickButton magazine = new JoystickButton(xbox, Xbox.DPAD.UP.get());
+    JoystickButton magazine = new JoystickButton(xbox, Xbox.BUTTON.B.get());
+    SmartDashboard.putNumber("test1", Xbox.DPAD.UP.get());
     magazine.whileHeld(new MoveMagazineBalls(magaziner));
 
-    JoystickButton magazineDownButton = new JoystickButton(xbox, Xbox.DPAD.DOWN.get());
+    JoystickButton magazineDownButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
     magazineDownButton.whileHeld(new MoveMagazineBallsDown(magaziner));
 
     JoystickButton magStopperButton = new JoystickButton(xbox, Xbox.BUTTON.LB.get());
@@ -119,7 +121,7 @@ public class RobotContainer {
     JoystickButton aimButton=new JoystickButton(xbox, Xbox.AXIS.RIGHT_Y.get());
     aimButton.whileHeld(new Aim(shooter));
 
-
+    SmartDashboard.putString("fine", "control");
   }
 
 
@@ -136,6 +138,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
+    
     return autoCommand;
   }
 }

@@ -8,9 +8,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config.Constants;
 
@@ -18,7 +20,7 @@ public class Magazine extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private WPI_TalonSRX magazineMover;
+  private WPI_VictorSPX magazineMover;
   private DoubleSolenoid stopper;
   private boolean stopperInPlace;
   public static Value stopperOn=Value.kForward;
@@ -26,7 +28,8 @@ public class Magazine extends SubsystemBase {
   public Magazine() {
 
     //Change Device Number
-    magazineMover=new WPI_TalonSRX(Constants.magazineBeltNumber);
+    SmartDashboard.putString("magazine", "made");
+    magazineMover=new WPI_VictorSPX(Constants.magazineBeltNumber);
     stopper=new DoubleSolenoid(Constants.stopperNumbers[0],Constants.stopperNumbers[1]);
   }
   //make command

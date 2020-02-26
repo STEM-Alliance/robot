@@ -22,7 +22,7 @@ public final class Constants {
     public static int[] intakePistonNumbers={0,1};
     public static int intakerNumber=7;
     public static double intakeSpeed=0.5;
-    public static int magazineBeltNumber=3;
+    public static int magazineBeltNumber=30;
     public static int[] stopperNumbers={2,3};
     public static double magazineSpeed=0.5;
     public static double aimMotorSpeed=0.5;

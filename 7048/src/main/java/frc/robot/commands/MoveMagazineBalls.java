@@ -10,6 +10,7 @@ package frc.robot.commands;
 import frc.robot.Config.Constants;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Magazine;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
@@ -38,13 +39,15 @@ public class MoveMagazineBalls extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putString("Dpad", "true");
     m_subsystem.moveBalls(Constants.magazineSpeed);
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-   
+   m_subsystem.moveBalls(0.0);
   }
 
   // Returns true when the command should end.
