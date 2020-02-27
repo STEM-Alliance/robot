@@ -7,6 +7,7 @@
 
 package frc.robot.Config;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,6 +28,7 @@ import frc.robot.commands.turnWheelRotations;
 import frc.robot.commands.WinchCommand;
 import frc.robot.reuse.config.HerdJoystick;
 import frc.robot.reuse.config.Xbox;
+import frc.robot.subsystems.AimMotor;
 import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.ShooterSubsystem;
 //import frc.robot.subsystems.Drivetrain;
@@ -59,9 +61,10 @@ public class RobotContainer {
   private final WheelMotor wheelMotor=new WheelMotor();
   private final WheelOfFortune controlPanel=new WheelOfFortune(wheelMotor,colorSensor);
   private final Winch winch = new Winch();
-
+private final Compressor compressor = new Compressor(31);
   //private final Drivetrain driveSubsystem = new Drivetrain(this);
   private final Vision vision = new Vision();
+  private final AimMotor aimMotor;
 
 
   public XboxController xbox;
@@ -76,7 +79,8 @@ public class RobotContainer {
     xbox = new XboxController(0);
     herdJoystickLeft = new Joystick(2);
     herdJoystickRight = new Joystick(1);
-    
+    compressor.start();
+    aimMotor = new AimMotor(xbox);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -118,8 +122,8 @@ public class RobotContainer {
     JoystickButton shootButton = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
     shootButton.whileHeld(new Shoot(shooter, magaziner));
 
-    JoystickButton aimButton=new JoystickButton(xbox, Xbox.AXIS.RIGHT_Y.get());
-    aimButton.whileHeld(new Aim(shooter));
+    //JoystickButton aimButton=new JoystickButton(xbox, Xbox.AXIS.RIGHT_Y.get());
+    //aimButton.whileHeld(new Aim(shooter));
 
     SmartDashboard.putString("fine", "control");
   }

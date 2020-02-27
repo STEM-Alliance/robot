@@ -86,7 +86,7 @@ public class Drivetrain extends SubsystemBase {
     }
     public void driveAuto(){
        left1.set(ControlMode.MotionMagic, 30000.0);
-right1.follow(left1);
+       right1.follow(left1);
 
        right1.set(ControlMode.MotionMagic, 30000.0);
     // left1.set(ControlMode.PercentOutput, .);

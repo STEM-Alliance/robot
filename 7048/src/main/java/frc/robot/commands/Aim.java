@@ -8,6 +8,7 @@
 package frc.robot.commands;
 
 import frc.robot.Config.Constants;
+import frc.robot.subsystems.AimMotor;
 import frc.robot.subsystems.ExampleSubsystem;
 
 import frc.robot.subsystems.ShooterSubsystem;
@@ -19,14 +20,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class Aim extends CommandBase {
   
-  private final ShooterSubsystem m_subsystem;
+  private final AimMotor m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Aim(ShooterSubsystem subsystem) {
+  public Aim(AimMotor subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -40,7 +41,8 @@ public class Aim extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.moveAimMotorCCW();
+    m_subsystem.moveAimMotorClockwise();
+    
 
   }
 

@@ -8,7 +8,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Spark;
@@ -22,21 +24,17 @@ public class ShooterSubsystem extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  //Used to find angle of aimMotor
-   private GyroNavx euro;
-  private Relay aimMotor;
+  
   // Might be using the wrong class for the spark
-  private Spark shootyMotor;
-  //make sure to set this value
-  private double shooterSpeed;
-  private Value aimMotorClockwiseDirection;
-  private Value aimMotorCCWDirection;
+  private CANSparkMax shootyMotor;
+  
+
   public ShooterSubsystem() {
     //Please Change these constructor values to the correct one
-    aimMotor=new Relay(Constants.aimMotorNumber);
-    shootyMotor=new Spark(Constants.shootMotorNumber);
+    
+    shootyMotor=new CANSparkMax(Constants.shootMotorNumber, MotorType.kBrushless);
     // euro=new GyroNavx();
-    aimMotor.set(Value.kOn);
+   
 
   }
   public void shoot(){
@@ -45,16 +43,6 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   public void stopShooter(){
     shootyMotor.set(0.0);
-  }
-  public void moveAimMotorClockwise(){
-    
-    aimMotor.set(aimMotorClockwiseDirection);
-  }
-  public void moveAimMotorCCW(){
-    aimMotor.set(aimMotorCCWDirection);
-  }
-  public void stopAimMotor(){
-    aimMotor.set(Value.kOn);
   }
 
   @Override
