@@ -33,9 +33,9 @@ public class Drivetrain extends SubsystemBase {
 
         // Create motors
         left1 = new WPI_TalonSRX(11);
-        left2 = new WPI_VictorSPX(12);
-        right1 = new WPI_TalonSRX(14);
-        right2 = new WPI_VictorSPX(13);
+        left2 = new WPI_VictorSPX(13);
+        right1 = new WPI_TalonSRX(10);
+        right2 = new WPI_VictorSPX(15);
         
         // Clear any residual bad values
    
@@ -61,12 +61,13 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void driveeeee() {
-    robotDrive.arcadeDrive(container.xbox.getRawAxis(1) *.70, container.xbox.getRawAxis(4) * -.90, true);
-     //robotDrive.arcadeDrive(container.xbox.getRawAxis(1) * 1, container.go.getX() * -1, true);
+        
+    //robotDrive.arcadeDrive(container.go.getY(), container.turn.getX(), true);
+    // robotDrive.arcadeDrive(container.xbox.getRawAxis(1) * 1, container.go.getX() * -1, true);
         SmartDashboard.putNumber("left", container.xbox.getRawAxis(1));
         SmartDashboard.putNumber("rickwr", container.xbox.getRawAxis(5));
 
-         //robotDrive.tankDrive(Robot.oi.driver.getRawAxis(1)* -1,Robot.oi.driver.getRawAxis(5)* -1, true);
+    //    robotDrive.tankDrive(container.xbox.getRawAxis(1)* -1,Robot.oi.driver.getRawAxis(5)* -1, true);
         // System.out.println(Robot.oi.driver.getY());
         // \System.out.println(Robot.oi.driver.getX());
     }

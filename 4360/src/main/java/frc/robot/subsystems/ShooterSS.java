@@ -14,15 +14,17 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ExampleSubsystem extends SubsystemBase {
+public class ShooterSS extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
  private WPI_VictorSPX motor;
- 
-  public ExampleSubsystem() {
-  motor = new WPI_VictorSPX(4);
-  
+ private WPI_VictorSPX motor2;
+  public ShooterSS() {
+  motor = new WPI_VictorSPX(18);
+  motor2 = new WPI_VictorSPX(16);
+  motor.setInverted(true);
+  motor2.follow(motor);
   }
   public void move(double input){
     motor.set(ControlMode.PercentOutput, input);

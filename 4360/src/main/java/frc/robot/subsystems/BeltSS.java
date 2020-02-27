@@ -12,17 +12,19 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.BeltC;
 
-public class ExampleSubsystem extends SubsystemBase {
+public class BeltSS extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
  private WPI_VictorSPX motor;
  
-  public ExampleSubsystem() {
-  motor = new WPI_VictorSPX(4);
-  
+  public BeltSS(Joystick joystick) {
+  motor = new WPI_VictorSPX(19);
+  setDefaultCommand(new BeltC(this, joystick));
   }
   public void move(double input){
     motor.set(ControlMode.PercentOutput, input);

@@ -14,14 +14,14 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ExampleSubsystem extends SubsystemBase {
+public class IntakeSS extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
  private WPI_VictorSPX motor;
  
-  public ExampleSubsystem() {
-  motor = new WPI_VictorSPX(4);
+  public IntakeSS() {
+  motor = new WPI_VictorSPX(01);
   
   }
   public void move(double input){
