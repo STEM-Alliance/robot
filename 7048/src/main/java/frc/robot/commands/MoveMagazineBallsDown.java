@@ -38,13 +38,13 @@ public class MoveMagazineBallsDown extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.moveBalls(-Constants.magazineSpeed);
+    m_subsystem.moveBalls();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.moveBalls(0.0);
+    m_subsystem.moveBalls();
   }
 
   // Returns true when the command should end.

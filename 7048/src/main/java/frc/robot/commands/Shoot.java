@@ -43,7 +43,7 @@ public class Shoot extends CommandBase {
   public void execute() {
     mag.setMagStopperOutOfPlace();
     m_subsystem.shoot();
-    mag.moveBalls(Constants.magazineSpeed);
+    mag.moveBalls();
   }
   
 
@@ -52,7 +52,7 @@ public class Shoot extends CommandBase {
   public void end(boolean interrupted) {
     m_subsystem.stopShooter();
     mag.setMagStopperInPlace();
-    mag.moveBalls(0.0);
+    mag.moveBalls();
   }
 
   // Returns true when the command should end.

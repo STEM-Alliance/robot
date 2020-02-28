@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 /**
  * An example command that uses an example subsystem.
  */
-public class RaiseMethodHook extends CommandBase {
+public class LowerMethodHook extends CommandBase {
   
   private final RaiseHook m_subsystem;
 
@@ -22,7 +22,7 @@ public class RaiseMethodHook extends CommandBase {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public RaiseMethodHook(RaiseHook subsystem) {
+  public LowerMethodHook(RaiseHook subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -37,8 +37,7 @@ public class RaiseMethodHook extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.hookUp();
-    
+    m_subsystem.hookDown();
   }
 
   // Called once the command ends or is interrupted.
