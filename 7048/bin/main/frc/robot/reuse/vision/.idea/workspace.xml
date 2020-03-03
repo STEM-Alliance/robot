@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="33d7dbaa-29ae-47f9-9bb9-2cde06a2949c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/ChickenVision.py" beforeDir="false" afterPath="$PROJECT_DIR$/ChickenVision.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../../../bin/main/frc/robot/reuse/vision/frc.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../../../../bin/main/frc/robot/reuse/vision/frc.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -57,6 +57,6 @@
   </component>
   <component name="hg4idea.settings">
     <option name="CHECK_INCOMING_OUTGOING" value="true" />
-    <option name="RECENT_HG_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_HG_ROOT_PATH" value="$PROJECT_DIR$/../../../../../../../.." />
   </component>
 </project>
