@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Config.Constants;
 
 public class Winch extends SubsystemBase {
   /**
@@ -20,7 +21,7 @@ public class Winch extends SubsystemBase {
   private CANSparkMax spark;
 
   public Winch() {
-    spark = new CANSparkMax(9, MotorType.kBrushless);
+    spark = new CANSparkMax(Constants.winchNumber, MotorType.kBrushless);
 
   }
   public void SpinWinch(double speed){

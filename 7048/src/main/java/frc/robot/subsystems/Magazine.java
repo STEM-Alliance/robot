@@ -11,10 +11,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config.Constants;
+import frc.robot.commands.MoveMagazineBalls;
+import frc.robot.reuse.config.Xbox;
 
 public class Magazine extends SubsystemBase {
   /**
@@ -24,18 +27,23 @@ public class Magazine extends SubsystemBase {
   private DoubleSolenoid stopper;
   private boolean stopperInPlace;
   public static Value stopperOn=Value.kForward;
-   public static Value stopperOff=Value.kReverse;
-  public Magazine() {
+  public static Value stopperOff=Value.kReverse;
+  public XboxController xbox;
+
+  public Magazine(XboxController xboxIn) {
 
     //Change Device Number
     SmartDashboard.putString("magazine", "made");
     magazineMover=new WPI_VictorSPX(Constants.magazineBeltNumber);
-    stopper=new DoubleSolenoid(Constants.stopperNumbers[0],Constants.stopperNumbers[1]);
+    stopper=new DoubleSolenoid(1, Constants.stopperNumbers[0],Constants.stopperNumbers[1]);
+    xbox = xboxIn;
+    setDefaultCommand(new MoveMagazineBalls(this));
+
   }
   //make command
-  public void moveBalls(double speed){
-    //change dis eventually
-    magazineMover.set(speed);
+  public void moveBalls(){
+    SmartDashboard.putNumber("MagNumber", xbox.getRawAxis(Xbox.AXIS.RIGHT_TRIGGER.get())-xbox.getRawAxis(Xbox.AXIS.LEFT_TRIGGER.get()));
+    magazineMover.set(xbox.getRawAxis(Xbox.AXIS.RIGHT_TRIGGER.get())-xbox.getRawAxis(Xbox.AXIS.LEFT_TRIGGER.get()));
   }
   
  

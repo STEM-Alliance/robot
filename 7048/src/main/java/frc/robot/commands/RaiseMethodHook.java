@@ -26,7 +26,7 @@ public class RaiseMethodHook extends CommandBase {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
-    initialize();
+    //initialize();
   }
 
   // Called when the command is initially scheduled.
@@ -37,7 +37,8 @@ public class RaiseMethodHook extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.moveHook();
+    m_subsystem.hookUp();
+    
   }
 
   // Called once the command ends or is interrupted.

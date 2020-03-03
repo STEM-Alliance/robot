@@ -42,7 +42,7 @@ public class IntakeBalls extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mag.moveBalls(Constants.intakeMagSpeed);
+    mag.moveBalls();
     m_subsystem.intakeBalls();
   }
 
@@ -50,7 +50,7 @@ public class IntakeBalls extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_subsystem.stopMotor();
-    mag.moveBalls(0.0);
+    mag.moveBalls();
   }
 
   // Returns true when the command should end.

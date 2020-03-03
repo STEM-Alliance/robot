@@ -3,9 +3,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Config.Constants;
 import frc.robot.Config.RobotContainer;
 import frc.robot.commands.Driving;
 import frc.robot.reuse.config.HerdJoystick;
@@ -24,6 +26,7 @@ public class Drivetrain extends SubsystemBase {
     private WPI_TalonSRX right3;
     public DifferentialDrive robotDrive;
     private GyroNavx navx;
+    private Relay cameraRelay;
 
     private RobotContainer container;
 
@@ -32,6 +35,8 @@ public class Drivetrain extends SubsystemBase {
 
         // creates gyro
         navx = new GyroNavx();
+
+        cameraRelay =new Relay(Constants.cameraRelayNumber);
 
         // Create motors
         left1 = new WPI_TalonSRX(6);
@@ -64,7 +69,13 @@ public class Drivetrain extends SubsystemBase {
     {
         return navx.getAngle();
     }
-
+    public void lightOn(){
+        cameraRelay.set(Relay.Value.kOn);
+        cameraRelay.set(Relay.Value.kReverse);
+    }
+    public void lightOff(){
+        cameraRelay.set(Relay.Value.kOff);
+    }
     public void driveeeee() {
         robotDrive.arcadeDrive(container.herdJoystickLeft.getY() * -1, container.herdJoystickRight.getX(), true);
         SmartDashboard.putNumber("x", container.xbox.getRawAxis(1));
@@ -86,7 +97,7 @@ public class Drivetrain extends SubsystemBase {
     }
     public void driveAuto(){
        left1.set(ControlMode.MotionMagic, 30000.0);
-right1.follow(left1);
+       right1.follow(left1);
 
        right1.set(ControlMode.MotionMagic, 30000.0);
     // left1.set(ControlMode.PercentOutput, .);

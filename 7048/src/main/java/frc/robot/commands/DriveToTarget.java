@@ -1,8 +1,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Config.Constants;
 import frc.robot.Config.RobotContainer;
     import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
@@ -16,6 +18,7 @@ public final class DriveToTarget extends CommandBase
     private final Drivetrain drive;
     private final RobotContainer OI;
     private final PID pid;
+    private Relay cameraRelay; 
     // private final SimplePID pid = new SimplePID(0.025, 0.004);  // Tuned pretty good for coast mode
     // private final SimplePID pid = new SimplePID(0.16, 0.00001);  // Tuned well for brake mode
 
@@ -28,27 +31,30 @@ public final class DriveToTarget extends CommandBase
         this.drive = drive;
         this.OI = OI;
         
+        
         final Preferences prefs = Preferences.getInstance();
         final double p = prefs.getDouble("p", 0.2);
         final double i = prefs.getDouble("i", 0.0);
         final double d = prefs.getDouble("d", 0.0);
 
         pid = new PID(p, i, d, kVisionIZone, 0.02);
+        
     }
 
     public void initialize()
     {
         drive.setBrake(false);
+        drive.lightOn();
     }
 
     public void execute()
-    {
-        vision.visionUpdate();
+    {        vision.visionUpdate();
 
         final double turnCorrection = getVisionCorrection();
         final double turn = OI.herdJoystickRight.getX() + turnCorrection;
         
         drive.robotDrive.arcadeDrive(OI.herdJoystickRight.getX() * -1, -turn, true);
+        
 
         SmartDashboard.putNumber("Error", turnCorrection);
     }

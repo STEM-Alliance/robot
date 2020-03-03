@@ -13,12 +13,13 @@ public class Driving extends CommandBase {
     public Driving(Drivetrain drive) {
         addRequirements(drive);
         driveSubsystem = drive;
+        
     }
 
     // Called just before this Command runs the first time
     @Override
     public void initialize() {
-
+        driveSubsystem.lightOff();
     }
 
     // Called repeatedly when this Command is scheduled to run
