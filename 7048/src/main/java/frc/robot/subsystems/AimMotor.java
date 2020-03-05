@@ -13,6 +13,7 @@ import com.revrobotics.CANDigitalInput.LimitSwitch;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config.Constants;
 import frc.robot.commands.Aim;
@@ -34,10 +35,10 @@ public class AimMotor extends SubsystemBase {
   }
   public void moveAimMotorClockwise(){
     aimMotor.set(Relay.Value.kForward);
-    if(xbox.getRawAxis(Xbox.AXIS.RIGHT_Y.get()) > 0.5){
+    if((xbox.getRawAxis(Xbox.AXIS.RIGHT_Y.get()) > 0.5) && limitSwitch.get()){ 
       aimMotor.set(Relay.Value.kReverse);
     }
-    else if(xbox.getRawAxis(Xbox.AXIS.RIGHT_Y.get()) < -0.5){
+    else if((xbox.getRawAxis(Xbox.AXIS.RIGHT_Y.get()) < -0.5)){
       aimMotor.set(Relay.Value.kForward);
     }
     else{

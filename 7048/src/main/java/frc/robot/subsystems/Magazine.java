@@ -49,9 +49,7 @@ public class Magazine extends SubsystemBase {
  
   //not sure how to be worked yet
   public void setMagStopperInPlace(){
-    stopper.set(stopperOn);
-
-    
+    //stopper.set(stopperOn);
   }
   public void setMagStopperOutOfPlace(){
     stopper.set(stopperOff);

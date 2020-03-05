@@ -41,8 +41,10 @@ public class RaiseHook extends SubsystemBase {
       raisePiston2.set(DoubleSolenoid.Value.kForward);
       position=HookPosition.UP;
     } else {
+      raisePiston2.set(DoubleSolenoid.Value.kReverse);
       raisePiston1.set(DoubleSolenoid.Value.kForward);
       position=HookPosition.MIDDLE;
+      
     }
   }
   public void hookDown(){

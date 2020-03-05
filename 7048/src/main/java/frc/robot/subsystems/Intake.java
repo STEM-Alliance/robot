@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -22,14 +23,14 @@ public class Intake extends SubsystemBase {
   //piston that moves up if we are going to get in a armPiston
   private DoubleSolenoid intakePiston;
   //Takes balls in
-  private WPI_TalonSRX intakeMotor;
+  private WPI_VictorSPX intakeMotor;
   private boolean isUp;
   public static Value intakePistonOn=Value.kForward;
    public static Value intakePistonOff=Value.kReverse;
   public Intake() {
     //change device numbers
     intakePiston=new DoubleSolenoid(1, Constants.intakePistonNumbers[0],Constants.intakePistonNumbers[1]);
-    intakeMotor=new WPI_TalonSRX(Constants.intakerNumber);
+    intakeMotor=new WPI_VictorSPX(Constants.intakerNumber);
     intakePiston.set(intakePistonOff);
     
   }

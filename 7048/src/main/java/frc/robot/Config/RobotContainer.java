@@ -143,7 +143,7 @@ private final Compressor compressor = new Compressor(1);
    * This is where you load in your auto command!
    */
   //private final SetColor autoCommand = new SetColor(ledSubsystem, colorSensor);
-  private final DriveOffLine autoCommand=new DriveOffLine(drivetrain);
+  // private final DriveOffLine autoCommand=new DriveOffLine(drivetrain);
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -152,7 +152,7 @@ private final Compressor compressor = new Compressor(1);
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     
-    // return autoCommand;
-    return null;
+    return new DriveOffLine(drivetrain).withTimeout(.4); //autoCommand.withTimeout(0.4);
+    // return null;
   }
 }

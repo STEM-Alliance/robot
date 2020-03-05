@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -19,11 +20,11 @@ public class Drivetrain extends SubsystemBase {
 
     // Create drive component objects
     private WPI_TalonSRX left1;
-    private WPI_TalonSRX left2;
-    private WPI_TalonSRX left3;
+    private WPI_VictorSPX left2;
+    // private WPI_TalonSRX left3;
     private WPI_TalonSRX right1;
-    private WPI_TalonSRX right2;
-    private WPI_TalonSRX right3;
+    private WPI_VictorSPX right2;
+    // private WPI_TalonSRX right3;
     public DifferentialDrive robotDrive;
     private GyroNavx navx;
     private Relay cameraRelay;
@@ -40,10 +41,10 @@ public class Drivetrain extends SubsystemBase {
 
         // Create motors
         left1 = new WPI_TalonSRX(6);
-        left2 = new WPI_TalonSRX(4);
+        left2 = new WPI_VictorSPX(4);
         
         right1 = new WPI_TalonSRX(2);
-        right2 = new WPI_TalonSRX(5);
+        right2 = new WPI_VictorSPX(5);
        
         
         // Clear any residual bad values
@@ -96,12 +97,14 @@ public class Drivetrain extends SubsystemBase {
       
     }
     public void driveAuto(){
-       left1.set(ControlMode.MotionMagic, 30000.0);
-       right1.follow(left1);
+    //    left1.set(ControlMode.MotionMagic, 30000.0);
+    //    right1.follow(left1);
 
-       right1.set(ControlMode.MotionMagic, 30000.0);
-    // left1.set(ControlMode.PercentOutput, .);
-    // right1.set(ControlMode.PercentOutput, -.6);
+    //    right1.set(ControlMode.MotionMagic, 30000.0);
+    // right1.follow(left1);
+    left1.set(ControlMode.PercentOutput, 1.0);
+    
+    right1.set(ControlMode.PercentOutput, -1.0);
 
 
     }
