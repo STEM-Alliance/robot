@@ -16,6 +16,14 @@ package frc.robot.Config;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
-    
+public static int frdT = 10;
+public static int brdT = 15;
+public static int fldT = 11;
+public static int bldT = 13;
+public static int beltT = 17;
+public static int intakeT = 3;
+public static int topshootT = 1;
+public static int bottomshootT = 2;
+public static int winchT = 19;
+public static int elevatorT = 4;
 }
