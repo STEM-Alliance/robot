@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Config.Constants;
 import frc.robot.Config.RobotContainer;
     import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
@@ -31,7 +30,6 @@ public final class DriveToTarget extends CommandBase
         this.drive = drive;
         this.OI = OI;
         
-        
         final Preferences prefs = Preferences.getInstance();
         final double p = prefs.getDouble("p", 0.2);
         final double i = prefs.getDouble("i", 0.0);
@@ -55,7 +53,6 @@ public final class DriveToTarget extends CommandBase
         
         drive.robotDrive.arcadeDrive(OI.herdJoystickRight.getX() * -1, -turn, true);
         
-
         SmartDashboard.putNumber("Error", turnCorrection);
     }
 

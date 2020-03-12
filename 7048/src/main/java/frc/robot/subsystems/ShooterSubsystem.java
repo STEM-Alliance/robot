@@ -7,18 +7,11 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config.Constants;
-import frc.robot.reuse.hardware.sensors.GyroNavx;
-
 
 public class ShooterSubsystem extends SubsystemBase {
   /**
@@ -28,13 +21,11 @@ public class ShooterSubsystem extends SubsystemBase {
   // Might be using the wrong class for the spark
   private CANSparkMax shootyMotor;
   
-
   public ShooterSubsystem() {
     //Please Change these constructor values to the correct one
     
     shootyMotor=new CANSparkMax(Constants.shootMotorNumber, MotorType.kBrushless);
     // euro=new GyroNavx();
-   
 
   }
   public void shoot(){

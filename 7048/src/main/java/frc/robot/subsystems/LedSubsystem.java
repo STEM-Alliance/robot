@@ -20,7 +20,6 @@ public class LedSubsystem extends SubsystemBase {
     led = new Blinkin(0, PatternName.Color_1_Light_Chase);
   }
   
-  
   public void setColor(PatternName color) {
     led.setColor(color);
   }

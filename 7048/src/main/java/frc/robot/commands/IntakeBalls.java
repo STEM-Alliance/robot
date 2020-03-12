@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import frc.robot.Config.Constants;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Magazine;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  */
 //don't use necessarily
 public class IntakeBalls extends CommandBase {
-  
   
   private final Intake m_subsystem;
   private final Magazine mag;

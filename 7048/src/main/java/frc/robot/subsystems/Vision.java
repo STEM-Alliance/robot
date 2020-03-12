@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -128,8 +127,6 @@ public final class Vision extends SubsystemBase
     public boolean _getTapeCamera()  {   return chickenVision.getEntry("Tape").getBoolean(false);    }
     public double _getLastTimestamp(){   return chickenVision.getEntry("VideoTimestamp").getDouble(0.0); }
     public double _tapeDistance(){   return chickenVision.getEntry("tapeDistance").getDouble(0.0); }
-
-
 
     private class CachedIO
     {

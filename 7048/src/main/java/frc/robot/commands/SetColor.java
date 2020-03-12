@@ -11,7 +11,6 @@ import frc.robot.reuse.hardware.lowleveldriver.BlinkinPatterns;
 import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.LedSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**

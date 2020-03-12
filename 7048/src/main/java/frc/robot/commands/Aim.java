@@ -7,11 +7,8 @@
 
 package frc.robot.commands;
 
-import frc.robot.Config.Constants;
 import frc.robot.subsystems.AimMotor;
-import frc.robot.subsystems.ExampleSubsystem;
 
-import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
@@ -41,8 +38,7 @@ public class Aim extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.moveAimMotorClockwise();
-    
+    m_subsystem.moveAimMotorClockwise(); 
 
   }
 
