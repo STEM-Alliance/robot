@@ -7,7 +7,7 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.Magazine;
+// import frc.robot.subsystems.Magazine;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -17,16 +17,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class Shoot extends CommandBase {
   
   private final ShooterSubsystem m_subsystem;
-  private final Magazine mag;
+  // private final Magazine mag;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Shoot(ShooterSubsystem subsystem,Magazine m) {
+  public Shoot(ShooterSubsystem subsystem) { //,Magazine m) {
     m_subsystem = subsystem;
-    mag=m;
+    // mag=m;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -39,9 +39,9 @@ public class Shoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mag.setMagStopperOutOfPlace();
+    // mag.setMagStopperOutOfPlace();
     m_subsystem.shoot();
-    mag.moveBalls();
+    // mag.moveBalls();
   }
   
 
@@ -49,8 +49,8 @@ public class Shoot extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_subsystem.stopShooter();
-    mag.setMagStopperInPlace();
-    mag.moveBalls();
+    // mag.setMagStopperInPlace();
+    // mag.moveBalls();
   }
 
   // Returns true when the command should end.

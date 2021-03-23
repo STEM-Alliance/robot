@@ -12,40 +12,40 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.Aim;
-import frc.robot.commands.DriveOffLine;
-import frc.robot.commands.DriveToTarget;
-import frc.robot.commands.LowerMethodHook;
-import frc.robot.commands.MagStopperCommand;
-import frc.robot.commands.MoveMagazineBalls;
-import frc.robot.commands.MoveMagazineBallsDown;
-import frc.robot.commands.PistonDown;
-import frc.robot.commands.PistonDown;
-import frc.robot.commands.PistonUp;
-import frc.robot.commands.RaiseMethodHook;
-import frc.robot.commands.SetColor;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.SignalHuman;
-import frc.robot.commands.turnWheelRotations;
-import frc.robot.commands.WinchCommand;
+// import frc.robot.commands.Aim;
+// import frc.robot.commands.DriveOffLine;
+// import frc.robot.commands.DriveToTarget;
+// import frc.robot.commands.LowerMethodHook;
+// import frc.robot.commands.MagStopperCommand;
+// import frc.robot.commands.MoveMagazineBalls;
+// import frc.robot.commands.MoveMagazineBallsDown;
+// import frc.robot.commands.PistonDown;
+// import frc.robot.commands.PistonDown;
+// import frc.robot.commands.PistonUp;
+// import frc.robot.commands.RaiseMethodHook;
+// import frc.robot.commands.SetColor;
+// import frc.robot.commands.Shoot;
+// import frc.robot.commands.SignalHuman;
+// import frc.robot.commands.turnWheelRotations;
+// import frc.robot.commands.WinchCommand;
 import frc.robot.reuse.config.HerdJoystick;
 import frc.robot.reuse.config.Xbox;
-import frc.robot.subsystems.AimMotor;
-import frc.robot.subsystems.ColorSensor;
+// import frc.robot.subsystems.AimMotor;
+// import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.ShooterSubsystem;
 //import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.LedSubsystem;
-import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.WheelMotor;
-import frc.robot.subsystems.Winch;
+// import frc.robot.subsystems.Drivetrain;
+// import frc.robot.subsystems.LedSubsystem;
+// import frc.robot.subsystems.Vision;
+// import frc.robot.subsystems.WheelMotor;
+// import frc.robot.subsystems.Winch;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Magazine;
-import frc.robot.subsystems.RaiseHook;
+// import frc.robot.subsystems.Intake;
+// import frc.robot.subsystems.Magazine;
+// import frc.robot.subsystems.RaiseHook;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.WheelOfFortune;
+// import frc.robot.subsystems.WheelOfFortune;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -55,21 +55,21 @@ import frc.robot.subsystems.WheelOfFortune;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final LedSubsystem ledSubsystem = new LedSubsystem();
-  private final ColorSensor colorSensor = new ColorSensor();
-  private final Drivetrain drivetrain = new Drivetrain(this);
+  // private final LedSubsystem ledSubsystem = new LedSubsystem();
+  // private final ColorSensor colorSensor = new ColorSensor();
+  // private final Drivetrain drivetrain = new Drivetrain(this);
   private final ShooterSubsystem shooter=new ShooterSubsystem();
-  private final Intake intake=new Intake();
-  private final Magazine magaziner;
-  private final WheelMotor wheelMotor=new WheelMotor();
-  private final WheelOfFortune controlPanel=new WheelOfFortune(wheelMotor,colorSensor);
-  private final Winch winch = new Winch();
+  // private final Intake intake=new Intake();
+  // private final Magazine magaziner;
+  // private final WheelMotor wheelMotor=new WheelMotor();
+  // private final WheelOfFortune controlPanel=new WheelOfFortune(wheelMotor,colorSensor);
+  // private final Winch winch = new Winch();
 private final Compressor compressor = new Compressor(1);
-  private final RaiseHook raiseHook = new RaiseHook();
+  // private final RaiseHook raiseHook = new RaiseHook();
   
   //private final Drivetrain driveSubsystem = new Drivetrain(this);
-  private final Vision vision = new Vision();
-  private final AimMotor aimMotor;
+  // private final Vision vision = new Vision();
+  // private final AimMotor aimMotor;
 
 
   public XboxController xbox;
@@ -85,8 +85,8 @@ private final Compressor compressor = new Compressor(1);
     herdJoystickLeft = new Joystick(2);
     herdJoystickRight = new Joystick(1);
     compressor.start();
-    aimMotor = new AimMotor(xbox);
-    magaziner = new Magazine(xbox);
+    // aimMotor = new AimMotor(xbox);
+    // magaziner = new Magazine(xbox);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -103,33 +103,33 @@ private final Compressor compressor = new Compressor(1);
     //JoystickButton ledButton = new JoystickButton(xbox, Xbox.BUTTON.X.get());
     //ledButton.whileHeld(new SetColor(ledSubsystem, colorSensor));
 
-    JoystickButton visonDrive = new JoystickButton(herdJoystickRight,1);
-    visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
+  //   JoystickButton visonDrive = new JoystickButton(herdJoystickRight,1);
+  //   visonDrive.whileHeld(new DriveToTarget(vision, drivetrain, this));
 
-    JoystickButton pistonDown=new JoystickButton(xbox, Xbox.BUTTON.B.get());
-    pistonDown.whileHeld(new PistonDown(intake));
+  //   JoystickButton pistonDown=new JoystickButton(xbox, Xbox.BUTTON.B.get());
+  //   pistonDown.whileHeld(new PistonDown(intake));
 
-    JoystickButton turner=new JoystickButton(xbox,Xbox.BUTTON.LEFT_STICK.get());
-    turner.whileHeld(new turnWheelRotations(controlPanel));
+  //   JoystickButton turner=new JoystickButton(xbox,Xbox.BUTTON.LEFT_STICK.get());
+  //   turner.whileHeld(new turnWheelRotations(controlPanel));
 
-   JoystickButton Winch = new JoystickButton(xbox, Xbox.BUTTON.X.get());
-   Winch.whileHeld(new WinchCommand(winch));
+  //  JoystickButton Winch = new JoystickButton(xbox, Xbox.BUTTON.X.get());
+  //  Winch.whileHeld(new WinchCommand(winch));
 
     // JoystickButton magazine = new JoystickButton(xbox, Xbox..g;
     // // SmartDashboard.putNumber("test1", Xbox.DPAD.UP.get());
     // magazine.whileHeld(new MoveMagazineBalls(magaziner));
 
-    JoystickButton magStopperButton = new JoystickButton(xbox, Xbox.BUTTON.LB.get());
-    magStopperButton.whileHeld(new MagStopperCommand(magaziner));
+    // JoystickButton magStopperButton = new JoystickButton(xbox, Xbox.BUTTON.LB.get());
+    // magStopperButton.whileHeld(new MagStopperCommand(magaziner));
 
-    JoystickButton shootButton = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
-    shootButton.whileHeld(new Shoot(shooter, magaziner));
+    // JoystickButton shootButton = new JoystickButton(xbox, Xbox.BUTTON.RB.get());
+    // shootButton.whileHeld(new Shoot(shooter, magaziner));
 
-    JoystickButton climbButton = new JoystickButton(xbox, Xbox.BUTTON.Y.get());
-    climbButton.whenPressed(new RaiseMethodHook(raiseHook));
+    // JoystickButton climbButton = new JoystickButton(xbox, Xbox.BUTTON.Y.get());
+    // climbButton.whenPressed(new RaiseMethodHook(raiseHook));
 
-    JoystickButton unclimbButton = new JoystickButton(xbox, Xbox.BUTTON.A.get());
-    unclimbButton.whenPressed(new LowerMethodHook(raiseHook));
+    // JoystickButton unclimbButton = new JoystickButton(xbox, Xbox.BUTTON.A.get());
+    // unclimbButton.whenPressed(new LowerMethodHook(raiseHook));
 
     //JoystickButton aimButton=new JoystickButton(xbox, Xbox.AXIS.RIGHT_Y.get());
     //aimButton.whileHeld(new Aim(shooter));
@@ -152,7 +152,7 @@ private final Compressor compressor = new Compressor(1);
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     
-    return new DriveOffLine(drivetrain).withTimeout(.4); //autoCommand.withTimeout(0.4);
+    return null; //new DriveOffLine(drivetrain).withTimeout(.4); //autoCommand.withTimeout(0.4);
     // return null;
   }
 }
