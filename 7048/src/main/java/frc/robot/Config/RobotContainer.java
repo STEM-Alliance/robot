@@ -73,8 +73,8 @@ private final Compressor compressor = new Compressor(1);
 
 
   public XboxController xbox;
-  public Joystick herdJoystickLeft;
-  public Joystick herdJoystickRight;
+  // public Joystick herdJoystickLeft;
+  // public Joystick herdJoystickRight;
 
 
   /**
@@ -82,8 +82,8 @@ private final Compressor compressor = new Compressor(1);
    */
   public RobotContainer() {
     xbox = new XboxController(0);
-    herdJoystickLeft = new Joystick(2);
-    herdJoystickRight = new Joystick(1);
+    // herdJoystickLeft = new Joystick(2);
+    // herdJoystickRight = new Joystick(1);
     compressor.start();
     // aimMotor = new AimMotor(xbox);
     // magaziner = new Magazine(xbox);

@@ -7,16 +7,23 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class example_subsystem extends SubsystemBase {
+public class ExampleSubsystem extends SubsystemBase {
   /**
    * Creates a new example_subsystem.
    */
-  public example_subsystem() {
-
+  public ExampleSubsystem() 
+  { 
   }
+public void talonSpeed(double speed) 
 
+{
+
+}
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

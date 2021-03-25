@@ -18,21 +18,21 @@ package frc.robot.Config;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static int[] intakePistonNumbers={7,6};
-    public static int intakerNumber=7;
-    public static double intakeSpeed=0.5;
-    public static int magazineBeltNumber=30;
-    public static int[] stopperNumbers={4,5};
-    public static double magazineSpeed=0.5;
-    public static double aimMotorSpeed=0.5;
-    public static double shootMotorSpeed=1.0;
-    public static int aimMotorNumber = 1;
-    public static int shootMotorNumber=8;
-    public static double pizzaMotorSpeed=0.5;
-    public static int pizzaMotorNumber;
-    public static double intakeMagSpeed=0.5;
-    public static int winchNumber=9;
-    public static int cameraRelayNumber=0;
+    // public static int[] intakePistonNumbers={7,6};
+    // public static int intakerNumber=7;
+    // public static double intakeSpeed=0.5;
+    // public static int magazineBeltNumber=30;
+    // public static int[] stopperNumbers={4,5};
+    // public static double magazineSpeed=0.5;
+    // public static double aimMotorSpeed=0.5;
+    // public static double shootMotorSpeed=1.0;
+    // public static int aimMotorNumber = 1;
+    // public static int shootMotorNumber=8;
+    // public static double pizzaMotorSpeed=0.5;
+    // public static int pizzaMotorNumber;
+    // public static double intakeMagSpeed=0.5;
+    // public static int winchNumber=9;
+    // public static int cameraRelayNumber=0;
 
     // public static Value intakePistonOn;
     // public static Value intakePistonOff;
@@ -40,7 +40,9 @@ public final class Constants {
     // public static Value stopperOff;
     // public static Value hookUpValue;
     // public static Value hookDownValue;
-    public static int[] hookOne = { 3,2 };
-    public static int[] hookTwo = { 0,1};
-    public static int hoodSwitch = 6;
+    // public static int[] hookOne = { 3,2 };
+    // public static int[] hookTwo = { 0,1};
+    // public static int hoodSwitch = 6;
+
+    
 }

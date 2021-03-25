@@ -9,11 +9,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class example_command extends CommandBase {
+public class ExampleCommand extends CommandBase {
   /**
    * Creates a new example_command.
-   */
-  public example_command() {
+   */ 
+  public  ExampleCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -24,7 +24,9 @@ public class example_command extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
+  public void execute() 
+  {
+
   }
 
   // Called once the command ends or is interrupted.

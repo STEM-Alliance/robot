@@ -24,12 +24,12 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     //Please Change these constructor values to the correct one
     
-    shootyMotor=new CANSparkMax(Constants.shootMotorNumber, MotorType.kBrushless);
+    // shootyMotor=new CANSparkMax(Constants.shootMotorNumber, MotorType.kBrushless);
     // euro=new GyroNavx();
 
   }
   public void shoot(){
-    shootyMotor.set(Constants.shootMotorSpeed);
+    // shootyMotor.set(Constants.shootMotorSpeed);
 
   }
   public void stopShooter(){
