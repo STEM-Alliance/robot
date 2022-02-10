@@ -1,6 +1,6 @@
 package frc.robot.reuse.utilities;
 
-import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 
 public class DashboardView
@@ -25,7 +25,7 @@ public class DashboardView
     private static void startStream(int width, int height, int fps)
     {
         new Thread(() -> {
-            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            UsbCamera camera = CameraServer.startAutomaticCapture();
             camera.setResolution(width, height);
             camera.setFPS(fps);
             

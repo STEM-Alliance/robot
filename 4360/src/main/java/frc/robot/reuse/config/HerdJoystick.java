@@ -1,6 +1,5 @@
 package frc.robot.reuse.config;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 /**
@@ -111,9 +110,10 @@ public class HerdJoystick
         return hw.getPOV(0);
     }
 
-    public void setRumble(Hand side, double value)
-    {
-        RumbleType r = (side == Hand.kLeft) ? RumbleType.kLeftRumble : RumbleType.kRightRumble;
-        hw.setRumble(r, value);
-    }
+    // TODO: No one calls this
+    // public void setRumble(Hand side, double value)
+    // {
+    //     RumbleType r = (side == Hand.kLeft) ? RumbleType.kLeftRumble : RumbleType.kRightRumble;
+    //     hw.setRumble(r, value);
+    // }
 }

@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -74,7 +74,7 @@ public abstract class PositionBasedSubsystem extends SubsystemBase
         kTuning = config.kTuning.orElse(false);
 
         master = TalonFactory.makeClosedLoopTalon(config.kClosedLoop).get(0);
-        master.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms, 20);
+        master.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_10Ms, 20);
         master.configVelocityMeasurementWindow(1, 20);
         master.configNeutralDeadband(.05, 20);  // Assume open loop on joystick needs small deadband, set in child constructor if a different value is needed
         TalonFactory.configFastErrorReporting(master, kTuning);
@@ -204,8 +204,8 @@ public abstract class PositionBasedSubsystem extends SubsystemBase
 
     protected static class PositionCachedIO
     {
-        public int positionTicks = 0;
-        public int velocityTicksPer100ms = 0;
+        public double positionTicks = 0;
+        public double velocityTicksPer100ms = 0;
         public boolean limitSwitchB = false;
     }
 }

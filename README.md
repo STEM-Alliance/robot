@@ -1,4 +1,4 @@
-# SAFM 2019 Code
+# SAFM 2022 Code
 
 
 ## Setup
@@ -8,6 +8,18 @@
   - Internet is required to first download the Vendor libraries (CTRE/NavX)
 - Install [NI FRC Update Suite](http://www.ni.com/download/labview-for-frc-18.0/7841/en/), following the included instructions.
   - FRC Driver Station
+
+## Install Third Party Librariers
+
+1. In VSCode: `CTRL+SHIFT+P` 
+2. then type `WPILib: Manage`
+3. then go down to `Install New librariers (online)`
+4. Paste the following into the dialog box:
+`https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix-frc2022-latest.json`
+
+Repeat steps 1 through 3 then paste:
+`https://www.kauailabs.com/dist/frc/2022/navx_frc.json`
+
 
 ## Commands
 

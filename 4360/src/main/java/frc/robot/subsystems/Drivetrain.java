@@ -50,7 +50,8 @@ public class Drivetrain extends SubsystemBase {
         robotDrive.setSafetyEnabled(true); // enable motor safety
         robotDrive.setExpiration(0.1); // timeout for motor safety checks
         robotDrive.setMaxOutput(.8); // default is FULL SEND
-        robotDrive.setRightSideInverted(true); // maybe will need to do this
+        // TODO: This function doesn't exist. Do we need to invert one side?
+        //robotDrive.setRightSideInverted(true); // maybe will need to do this
         robotDrive.setDeadband(0.06);
 
         setDefaultCommand(new Driving(this));

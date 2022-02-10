@@ -3,7 +3,7 @@ package frc.robot.reuse.hardware.lowleveldriver;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 /**
  * REV Blinkin LED pattern lookup utility.

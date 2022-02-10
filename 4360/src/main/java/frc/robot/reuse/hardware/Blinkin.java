@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.reuse.hardware.lowleveldriver.BlinkinPatterns;
 import frc.robot.reuse.hardware.lowleveldriver.BlinkinPatterns.PatternName;
-import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.Timer;
 
 /** @author STEM Alliance of Fargo Moorhead */
@@ -86,7 +86,7 @@ public class Blinkin implements LEDs
         {
             led.set(BlinkinPatterns.getValue(color));
             Timer.delay(secondsBetweenColors);
-            if (DriverStation.getInstance().isDisabled())
+            if (DriverStation.isDisabled())
             {
                 break;  // Otherwise reset robot or stuck scrolling
             }

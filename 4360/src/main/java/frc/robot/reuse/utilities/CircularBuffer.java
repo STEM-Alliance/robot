@@ -1,6 +1,6 @@
 package frc.robot.reuse.utilities;
 
-public class CircularBuffer extends  edu.wpi.first.wpiutil.CircularBuffer
+public class CircularBuffer extends  edu.wpi.first.util.CircularBuffer
 {
     int size;
 

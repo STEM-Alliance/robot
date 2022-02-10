@@ -1,6 +1,6 @@
 package frc.robot.reuse.hardware.sensors;
 
-import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.navx.frc.*;
 
 import edu.wpi.first.wpilibj.SPI;
 import frc.robot.reuse.math.HerdAngle;
