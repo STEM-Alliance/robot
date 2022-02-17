@@ -55,3 +55,16 @@ Via the VSCode Command Palette (`CTRL+SHFT+P`), type `Test` (or `Tasks: Run Test
     ```
 3. The new project can be built and deployed manually via a Command Prompt with `.\\gradlew :new folder name:deploy`
 4. Or the command can be added to [.vscode\tasks.json](.vscode\tasks.json)
+
+# Robot Control
+
+This code currently implements a two motor differential drive chassis using Spark MAX motor controllers. It uses an XBox and an arcade drive.
+
+The left joystick drives the robot forward/back and left/right. Although I may have things backwards, we will need to test that. 
+
+The shooter is also configured to use the buttons:
+|Button|Description|
+|---|---|
+|A | 80% |
+|B | 60% |
+|X | 40% |
