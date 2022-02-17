@@ -58,23 +58,22 @@ public class Robot extends TimedRobot {
     
     if (m_xbox.getAButton())
     {
-      m_leftMotor2.set(0.8);
+      m_launcher.set(0.8);
       System.out.println("Launcher to 80%");
     }
     else if (m_xbox.getBButton())
     {
-      m_leftMotor2.set(0.6);
+      m_launcher.set(0.6);
       System.out.println("Launcher to 60%");
     }
     else if (m_xbox.getXButton())
     {
-      m_leftMotor2.set(0.4);
+      m_launcher.set(0.4);
       System.out.println("Launcher to 40%");
     }
     else
     {
-      m_leftMotor2.set(0);
-      System.out.println("Launcher to idle");
+      m_launcher.set(0);
     }
   }
 }
