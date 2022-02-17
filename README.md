@@ -20,6 +20,7 @@
 Repeat steps 1 through 3 then paste:
 `https://www.kauailabs.com/dist/frc/2022/navx_frc.json`
 
+`https://software-metadata.revrobotics.com/REVLib.json`
 
 ## Commands
 
