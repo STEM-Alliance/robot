@@ -13,11 +13,14 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 
 import javax.lang.model.util.ElementScanner6;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 
 
 /**
@@ -37,6 +40,11 @@ public class Robot extends TimedRobot {
   private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
 
   private final MotorController m_launcher = new CANSparkMax(5, MotorType.kBrushless);
+
+  private final TalonSRX m_harvester = new TalonSRX(10);
+  private final TalonSRX m_climber = new TalonSRX(11);
+  private final TalonSRX m_indexer = new TalonSRX(12);
+  private final TalonSRX m_arm = new TalonSRX(13);
 
   @Override
   public void robotInit() {
@@ -74,6 +82,39 @@ public class Robot extends TimedRobot {
     else
     {
       m_launcher.set(0);
+    }
+
+    if (m_xbox.getLeftBumper())
+    {
+      m_harvester.set(TalonSRXControlMode.PercentOutput, 1.0);
+    }
+    else
+    {
+      m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
+    }
+    if (m_xbox.getRightBumper())
+    {
+      m_climber.set(TalonSRXControlMode.PercentOutput, 1.0);
+    }
+    else
+    {
+      m_climber.set(TalonSRXControlMode.PercentOutput, 0);
+    }
+    if (m_xbox.getLeftTriggerAxis() > 0.5)
+    {
+      m_indexer.set(TalonSRXControlMode.PercentOutput, 1.0);
+    }
+    else
+    {
+      m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
+    }
+    if (m_xbox.getRightTriggerAxis() > 0.5)
+    {
+      m_arm.set(TalonSRXControlMode.PercentOutput, 1.0);
+    }
+    else
+    {
+      m_arm.set(TalonSRXControlMode.PercentOutput, 0);
     }
   }
 }
