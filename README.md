@@ -40,7 +40,7 @@ Repeat steps 1 through 3 then paste:
 I'm still trying to figure out the simulator, but you can test out your control scheme and see how PWM motors respond. The SPARK Max motors don't show up.
 
 
-# Robot Control
+# Fargo Robot Control
 
 This code currently implements a two motor differential drive chassis using Spark MAX motor controllers. It uses an XBox and an arcade drive.
 
@@ -49,6 +49,18 @@ The left joystick drives the robot forward/back and left/right. Although I may h
 The shooter is also configured to use the buttons:
 |Button|Description|
 |---|---|
-|A | 80% |
+|Y | 80% |
 |B | 60% |
-|X | 40% |
+|A | 40% |
+
+The Right Y axis (down) controls the speed of the harvester rollers. 
+
+The right bumper (RB) controls the indexer. This runs at a slow fixed speed. 
+
+
+# Robot positioning
+
+The motor to gearbox ratio is roughly 8.88. Meaning it takes 8.88 rotations of the motor to route the main shaft one rotation. The wheels are roughly 6 inches in diamter. 
+Therefore 8.88 rotations of the motor will move the robot 18.8 inches. Or one rotation of
+the motor will move the wheel 2.1 inches. Therefore we want to program the encoder class
+with 1/2.1. Now the encoders will tell us exactly how many inches we have moved.
