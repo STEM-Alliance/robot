@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import java.util.Date;
-
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -14,10 +11,6 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-
-import javax.lang.model.util.ElementScanner6;
 
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -32,11 +25,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
  * the code necessary to operate a robot with tank drive.
  */
-public class Robot extends TimedRobot {
+public class Robot4360 extends TimedRobot {
   private DifferentialDrive m_myRobot;
   private XboxController m_xbox;
 
-  private final CANSparkMax m_leftMotor1 = new CANSparkMax(5, MotorType.kBrushless);
+  private final CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax m_leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);
   private final MotorControllerGroup m_left = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
 
@@ -44,16 +37,14 @@ public class Robot extends TimedRobot {
   private final CANSparkMax m_rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
   private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
 
-  private final MotorController m_launcher = new CANSparkMax(1, MotorType.kBrushless);
-
   private final TalonSRX m_harvester = new TalonSRX(10);
   private final TalonSRX m_climber = new TalonSRX(11);
   private final TalonSRX m_indexer = new TalonSRX(12);
   private final TalonSRX m_arm = new TalonSRX(13);
 
-  // private final TalonSRX m_m1 = new TalonSRX(14);
-  // private final TalonSRX m_m2 = new TalonSRX(15);
-  // private final TalonSRX m_m3 = new TalonSRX(16);
+  private final TalonSRX m_m1 = new TalonSRX(14);
+  private final TalonSRX m_m2 = new TalonSRX(15);
+  private final TalonSRX m_m3 = new TalonSRX(16);
 
   NetworkTableEntry m_leftEncoder;
   NetworkTableEntry m_rightEncoder;
@@ -104,26 +95,6 @@ public class Robot extends TimedRobot {
     m_leftEncoder.setNumber(m_lenc.getPosition());
     m_rightEncoder.setNumber(m_renc.getPosition());
  
-    if (m_xbox.getYButton())
-    {
-      m_launcher.set(0.8);
-      System.out.println("Launcher to 80%");
-    }
-    else if (m_xbox.getBButton())
-    {
-      m_launcher.set(0.6);
-      System.out.println("Launcher to 60%");
-    }
-    else if (m_xbox.getAButton())
-    {
-      m_launcher.set(0.4);
-      System.out.println("Launcher to 40%");
-    }
-    else
-    {
-      m_launcher.set(0);
-    }
-
     if (m_xbox.getRightY() > 0.2)
     {
       m_harvester.set(TalonSRXControlMode.PercentOutput, m_xbox.getRightY() * 0.7);
@@ -150,32 +121,30 @@ public class Robot extends TimedRobot {
       m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
     }
 
-    // if (m_xbox.getPOV() == 90)
-    // {
-    //   m_m1.set(TalonSRXControlMode.PercentOutput, 1.0);
-    // }
-    // else
-    // {
-    //   m_m1.set(TalonSRXControlMode.PercentOutput, 0);
-    // }
-    // if (m_xbox.getPOV() == 180)
-    // {
-    //   m_m2.set(TalonSRXControlMode.PercentOutput, 1.0);
-    // }
-    // else
-    // {
-    //   m_m2.set(TalonSRXControlMode.PercentOutput, 0);
-    // }
-    // if (m_xbox.getPOV() == 270)
-    // {
-    //   m_m3.set(TalonSRXControlMode.PercentOutput, 1.0);
-    // }
-    // else
-    // {
-    //   m_m3.set(TalonSRXControlMode.PercentOutput, 0);
-    // }
-
-
+    if (m_xbox.getPOV() == 90)
+    {
+      m_m1.set(TalonSRXControlMode.PercentOutput, 1.0);
+    }
+    else
+    {
+      m_m1.set(TalonSRXControlMode.PercentOutput, 0);
+    }
+    if (m_xbox.getPOV() == 180)
+    {
+      m_m2.set(TalonSRXControlMode.PercentOutput, 1.0);
+    }
+    else
+    {
+      m_m2.set(TalonSRXControlMode.PercentOutput, 0);
+    }
+    if (m_xbox.getPOV() == 270)
+    {
+      m_m3.set(TalonSRXControlMode.PercentOutput, 1.0);
+    }
+    else
+    {
+      m_m3.set(TalonSRXControlMode.PercentOutput, 0);
+    }
   }
 
 
@@ -212,14 +181,12 @@ public class Robot extends TimedRobot {
 
     if ((stop - m_start) > 10)
     {
-      m_launcher.set(0);
       m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
     }
     else if ((stop - m_start) > 5)
     {
       m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
       m_indexer.set(TalonSRXControlMode.PercentOutput, -0.2);
-      m_launcher.set(0.8);
     }
 
     m_leftEncoder.setNumber(m_lenc.getPosition());
