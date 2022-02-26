@@ -20,6 +20,8 @@ public final class Main {
    * <p>If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
-    RobotBase.startRobot(Robot::new);
+    // NOTE: This allows us to switch between the Fargo and Moorhead robot
+    //RobotBase.startRobot(Robot7048::new);
+    RobotBase.startRobot(Robot4360::new);
   }
 }

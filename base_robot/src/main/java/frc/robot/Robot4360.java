@@ -4,13 +4,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -21,6 +21,9 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+import java.lang.Math;
+import java.util.Map;
+
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
  * the code necessary to operate a robot with tank drive.
@@ -28,6 +31,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class Robot4360 extends TimedRobot {
   private DifferentialDrive m_myRobot;
   private XboxController m_xbox;
+  private XboxController m_xbox1;
 
   private final CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax m_leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);
@@ -38,21 +42,21 @@ public class Robot4360 extends TimedRobot {
   private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
 
   private final TalonSRX m_harvester = new TalonSRX(10);
-  private final TalonSRX m_climber = new TalonSRX(11);
-  private final TalonSRX m_indexer = new TalonSRX(12);
-  private final TalonSRX m_arm = new TalonSRX(13);
+  private final TalonSRX m_mainClimber1 = new TalonSRX(11);
+  private final TalonSRX m_mainClimber2 = new TalonSRX(12);
+  private final TalonSRX m_auxClimber = new TalonSRX(13);
 
   private final TalonSRX m_m1 = new TalonSRX(14);
   private final TalonSRX m_m2 = new TalonSRX(15);
   private final TalonSRX m_m3 = new TalonSRX(16);
 
-  NetworkTableEntry m_leftEncoder;
-  NetworkTableEntry m_rightEncoder;
-  NetworkTableEntry m_timeInfo;
-
   RelativeEncoder m_lenc = m_leftMotor1.getEncoder();
   RelativeEncoder m_renc = m_rightMotor1.getEncoder();
-
+  
+  NetworkTableEntry m_autoTime;
+  NetworkTableEntry m_lencTable;
+  NetworkTableEntry m_rencTable;
+  NetworkTableEntry m_position;
 
   @Override
   public void robotInit() {
@@ -64,61 +68,78 @@ public class Robot4360 extends TimedRobot {
     m_myRobot = new DifferentialDrive(m_left, m_right);
     m_myRobot.setDeadband(0.1);
     m_xbox = new XboxController(0);
+    m_xbox1 = new XboxController(1);
 
     m_lenc.setPositionConversionFactor(1/2.1);
     m_renc.setPositionConversionFactor(1/2.1);
     m_lenc.setPosition(0);
     m_renc.setPosition(0);
 
+    TalonSRXConfiguration config = new TalonSRXConfiguration();
+    config.peakCurrentLimit = 40; // the peak current, in amps
+    config.peakCurrentDuration = 1500; // the time at the peak current before the limit triggers, in ms
+    config.continuousCurrentLimit = 30; // the current to maintain if the peak limit is triggered
+    m_mainClimber1.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
+    m_mainClimber2.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
+    m_auxClimber.configAllSettings(config);
+
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-    //Get the table within that instance that contains the data. There can
-    //be as many tables as you like and exist to make it easier to organize
-    //your data. In this case, it's a table called datatable.
-    NetworkTable table = inst.getTable("RoboInfo");
+    // Attempting to get the driver station position
+    NetworkTable fmsInfo = inst.getTable("FMSInfo");
+    NetworkTableEntry m_driverStationPos = fmsInfo.getEntry("StationNumber");
+    Number pos = m_driverStationPos.getNumber(0);
 
-    //Get the entries within that table that correspond to the X and Y values
-    //for some operation in your program.
-    m_leftEncoder = table.getEntry("left");
-    m_rightEncoder = table.getEntry("right");
-
-    m_timeInfo = table.getEntry("timeInfo");
-
+    System.out.println("Driver Station number: " + pos.toString());
     System.out.println("Robot starting");
+
+    m_position = Shuffleboard.getTab("RoboInfo")
+    .add("RobotPosition", 3)
+    .withWidget(BuiltInWidgets.kNumberSlider)
+    .withProperties(Map.of("min", 0, "max", 3)) // specify widget properties here
+    .getEntry();
+
+    System.out.println("Robot position: " + m_position.getNumber(-1).toString());
+
+    m_rencTable = Shuffleboard.getTab("RoboInfo").add("Right Encoder", 0).getEntry();
+    m_lencTable = Shuffleboard.getTab("RoboInfo").add("Left Encoder", 0).getEntry();
+    m_autoTime = Shuffleboard.getTab("RoboInfo").add("Time", 0).getEntry();
   }
 
   @Override
   public void teleopPeriodic() {
     m_myRobot.arcadeDrive(m_xbox.getLeftY(), m_xbox.getLeftX());
-    m_leftEncoder.setNumber(m_lenc.getPosition());
-    m_rightEncoder.setNumber(m_renc.getPosition());
+    m_lencTable.setNumber(m_lenc.getPosition());
+    m_rencTable.setNumber(m_lenc.getPosition());
  
-    if (m_xbox.getRightY() > 0.2)
+    double harvester_speed = m_xbox.getRightX();
+    if (Math.abs(harvester_speed) > 0.2)
     {
-      m_harvester.set(TalonSRXControlMode.PercentOutput, m_xbox.getRightY() * 0.7);
+      m_harvester.set(TalonSRXControlMode.PercentOutput, harvester_speed);
     }
     else
     {
       m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
     }
-    if (m_xbox.getRightBumper())
+    double rightTrigger = m_xbox.getRightTriggerAxis();
+    double leftTrigger = m_xbox.getLeftTriggerAxis();
+
+    if (rightTrigger > 0.2)
     {
-      m_climber.set(TalonSRXControlMode.PercentOutput, 1.0);
+      m_mainClimber1.set(TalonSRXControlMode.PercentOutput, rightTrigger);
+      m_mainClimber2.set(TalonSRXControlMode.PercentOutput, rightTrigger);
+    }
+    else if (leftTrigger > 0.2)
+    {
+      m_mainClimber1.set(TalonSRXControlMode.PercentOutput, -leftTrigger);
+      m_mainClimber2.set(TalonSRXControlMode.PercentOutput, -leftTrigger);
     }
     else
     {
-      m_climber.set(TalonSRXControlMode.PercentOutput, 0);
-    }
-
-    if (m_xbox.getRightBumper())
-    {
-      m_indexer.set(TalonSRXControlMode.PercentOutput, -0.2);
-    }
-    else 
-    {
-      m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
+      m_mainClimber1.set(TalonSRXControlMode.PercentOutput, 0);
+      m_mainClimber2.set(TalonSRXControlMode.PercentOutput, 0);
     }
 
     if (m_xbox.getPOV() == 90)
@@ -145,6 +166,8 @@ public class Robot4360 extends TimedRobot {
     {
       m_m3.set(TalonSRXControlMode.PercentOutput, 0);
     }
+  
+    SmartDashboard.putNumber("Climber Current", m_mainClimber1.getStatorCurrent());
   }
 
 
@@ -162,35 +185,29 @@ public class Robot4360 extends TimedRobot {
   double m_start = 0;
   @Override
   public void autonomousInit() {
-    // m_autoSelected = m_chooser.getSelected();
-    // // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    // System.out.println("Auto selected: " + m_autoSelected);
     m_lenc.setPosition(0);
     m_renc.setPosition(0);
 
+    m_left.set(0);
     m_right.set(0);
     m_start = System.nanoTime() / 1E9;
-    m_harvester.set(TalonSRXControlMode.PercentOutput, 0.5);
+
+    m_mainClimber2.set(TalonSRXControlMode.PercentOutput, 0.5);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
     double stop = System.nanoTime() / 1E9;
-    m_timeInfo.setNumber(stop);
 
-    if ((stop - m_start) > 10)
+    if ((stop - m_start) > 5)
     {
-      m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
-    }
-    else if ((stop - m_start) > 5)
-    {
-      m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
-      m_indexer.set(TalonSRXControlMode.PercentOutput, -0.2);
+      m_mainClimber2.set(TalonSRXControlMode.PercentOutput, 0);
     }
 
-    m_leftEncoder.setNumber(m_lenc.getPosition());
-    m_rightEncoder.setNumber(m_renc.getPosition());
+    //Shuffleboard.getTab("RoboInfo").add("Left Encoder", m_lenc.getPosition());
+    //Shuffleboard.getTab("RoboInfo").add("Right Encoder", m_renc.getPosition());
+    m_autoTime.setNumber(stop);
   }
 
 }
