@@ -72,7 +72,14 @@ The idea is we break common code pieces into their own classes, but have two dif
 
 This code currently implements a two motor differential drive chassis using Spark MAX motor controllers. It uses an XBox and an arcade drive.
 
-The left joystick drives the robot forward/back and left/right. Although I may have things backwards, we will need to test that. 
+### Controller 1
+The left joystick drives the robot forward/back and left/right.
+
+The harvester is controlled by the right joystick. Up is harvest, down is to push the ball out
+
+The A and B buttons control the arms. Although the direction is still unknown
+
+### Controller 2
 
 The launcher is also configured to use the buttons:
 |Button|Description|
@@ -81,9 +88,9 @@ The launcher is also configured to use the buttons:
 |B | 60% |
 |A | 40% |
 
-The Right Y axis (down) controls the speed of the harvester rollers. 
+The Right Y axis controls the indexer
 
-The right bumper (RB) controls the indexer. This runs at a slow fixed speed. 
+This controller will also control the arms
 
 ## Moorhead Robot Control
 

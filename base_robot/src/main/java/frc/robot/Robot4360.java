@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -56,7 +57,7 @@ public class Robot4360 extends TimedRobot {
   NetworkTableEntry m_autoTime;
   NetworkTableEntry m_lencTable;
   NetworkTableEntry m_rencTable;
-  NetworkTableEntry m_position;
+  NetworkTableEntry m_moveDistance;
 
   @Override
   public void robotInit() {
@@ -66,7 +67,7 @@ public class Robot4360 extends TimedRobot {
     m_right.setInverted(true);
 
     m_myRobot = new DifferentialDrive(m_left, m_right);
-    m_myRobot.setDeadband(0.1);
+    m_myRobot.setDeadband(0.15);
     m_xbox = new XboxController(0);
     m_xbox1 = new XboxController(1);
 
@@ -95,13 +96,11 @@ public class Robot4360 extends TimedRobot {
     System.out.println("Driver Station number: " + pos.toString());
     System.out.println("Robot starting");
 
-    m_position = Shuffleboard.getTab("RoboInfo")
-    .add("RobotPosition", 3)
-    .withWidget(BuiltInWidgets.kNumberSlider)
-    .withProperties(Map.of("min", 0, "max", 3)) // specify widget properties here
+    m_moveDistance = Shuffleboard.getTab("RoboInfo")
+    .add("MoveDistance", 20)
     .getEntry();
 
-    System.out.println("Robot position: " + m_position.getNumber(-1).toString());
+    // System.out.println("Robot position: " + m_position.getNumber(-1).toString());
 
     m_rencTable = Shuffleboard.getTab("RoboInfo").add("Right Encoder", 0).getEntry();
     m_lencTable = Shuffleboard.getTab("RoboInfo").add("Left Encoder", 0).getEntry();
@@ -166,8 +165,6 @@ public class Robot4360 extends TimedRobot {
     {
       m_m3.set(TalonSRXControlMode.PercentOutput, 0);
     }
-  
-    SmartDashboard.putNumber("Climber Current", m_mainClimber1.getStatorCurrent());
   }
 
 
@@ -191,8 +188,6 @@ public class Robot4360 extends TimedRobot {
     m_left.set(0);
     m_right.set(0);
     m_start = System.nanoTime() / 1E9;
-
-    m_mainClimber2.set(TalonSRXControlMode.PercentOutput, 0.5);
   }
 
   /** This function is called periodically during autonomous. */
@@ -200,13 +195,17 @@ public class Robot4360 extends TimedRobot {
   public void autonomousPeriodic() {
     double stop = System.nanoTime() / 1E9;
 
-    if ((stop - m_start) > 5)
+    if (m_lenc.getPosition() > m_moveDistance.getNumber(0).doubleValue())
     {
-      m_mainClimber2.set(TalonSRXControlMode.PercentOutput, 0);
+      m_myRobot.stopMotor();
+    }
+    else
+    {
+      m_myRobot.arcadeDrive(0.5, 0);
     }
 
-    //Shuffleboard.getTab("RoboInfo").add("Left Encoder", m_lenc.getPosition());
-    //Shuffleboard.getTab("RoboInfo").add("Right Encoder", m_renc.getPosition());
+    m_lencTable.setNumber(m_lenc.getPosition());
+    m_rencTable.setNumber(m_lenc.getPosition());
     m_autoTime.setNumber(stop);
   }
 
