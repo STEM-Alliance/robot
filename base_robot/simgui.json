@@ -25,6 +25,11 @@
       "window": {
         "visible": true
       }
+    },
+    "Solenoids": {
+      "window": {
+        "visible": true
+      }
     }
   },
   "NTProvider": {
@@ -54,6 +59,12 @@
       "open": true
     },
     "RoboInfo": {
+      "open": true
+    },
+    "Shuffleboard": {
+      "RoboCfg": {
+        "open": true
+      },
       "open": true
     }
   },

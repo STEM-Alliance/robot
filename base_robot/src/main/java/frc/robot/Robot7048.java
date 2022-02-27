@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.*;
 
 import com.revrobotics.*;
@@ -18,6 +20,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -35,11 +38,13 @@ public class Robot7048 extends TimedRobot {
 
   private final CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax m_leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);
-  private final MotorControllerGroup m_left = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
+  //private final MotorControllerGroup m_left = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
+  private final PWMSparkMax m_left = new PWMSparkMax(1);
 
   private final CANSparkMax m_rightMotor1 = new CANSparkMax(3, MotorType.kBrushless);
   private final CANSparkMax m_rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
-  private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
+  //private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
+  private final PWMSparkMax m_right = new PWMSparkMax(3);
 
   private final MotorController m_launcher = new CANSparkMax(5, MotorType.kBrushless);
 
@@ -56,9 +61,13 @@ public class Robot7048 extends TimedRobot {
   NetworkTableEntry m_rencTable;
   NetworkTableEntry m_moveDistance;
   NetworkTableEntry m_launcherSpeed;
+  NetworkTableEntry m_slewRateLimit;
 
   DoubleSolenoid m_harvesterArms = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
   DoubleSolenoid m_climbingArms  = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+
+  SlewRateLimiter m_forwardFilter = new SlewRateLimiter(2);
+  SlewRateLimiter m_rotationFilter = new SlewRateLimiter(2);
 
   @Override
   public void robotInit() {
@@ -89,28 +98,26 @@ public class Robot7048 extends TimedRobot {
     m_indexer.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
     m_climber.configAllSettings(config);
 
-    //Get the default instance of NetworkTables that was created automatically
-    //when your program starts
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
-    //Get the table within that instance that contains the data. There can
-    //be as many tables as you like and exist to make it easier to organize
-    //your data. In this case, it's a table called datatable.
-    NetworkTable table = inst.getTable("RoboInfo");
-
     System.out.println("Robot starting");
 
-    m_moveDistance = Shuffleboard.getTab("RoboInfo")
-    .add("MoveDistance", 20)
+    m_moveDistance = Shuffleboard.getTab("RoboCfg")
+    .addPersistent("MoveDistance", 20)
     .getEntry();
 
-    m_launcherSpeed = Shuffleboard.getTab("RoboInfo")
-    .add("LauncherSpeed", 0.75)
+    m_launcherSpeed = Shuffleboard.getTab("RoboCfg")
+    .addPersistent("LauncherSpeed", 0.75)
+    .getEntry();
+
+    m_slewRateLimit = Shuffleboard.getTab("RoboCfg")
+    .addPersistent("SlewRateLimit", 3)
     .getEntry();
 
     m_rencTable = Shuffleboard.getTab("RoboInfo").add("Right Encoder", 0).getEntry();
     m_lencTable = Shuffleboard.getTab("RoboInfo").add("Left Encoder", 0).getEntry();
     m_autoTime = Shuffleboard.getTab("RoboInfo").add("Time", 0).getEntry();
+
+    m_forwardFilter = new SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
+    m_rotationFilter = new SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
   }
 
   @Override
@@ -119,7 +126,8 @@ public class Robot7048 extends TimedRobot {
     m_lencTable.setNumber(m_lenc.getPosition());
     m_rencTable.setNumber(m_renc.getPosition());
     // The rotation needs to be inverted. Otherwise the robot will turn in the wrong direction
-    m_myRobot.arcadeDrive(m_controller1.getLeftY(), -m_controller1.getLeftX());
+    m_myRobot.arcadeDrive(m_forwardFilter.calculate(m_controller1.getLeftY()), 
+                          m_rotationFilter.calculate(-m_controller1.getLeftX()));
  
     double harvest_value = m_controller1.getRightY();
     if (Math.abs(harvest_value) > 0.2)
