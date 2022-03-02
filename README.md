@@ -88,9 +88,9 @@ The launcher is also configured to use the buttons:
 |B | 60% |
 |A | 40% |
 
-The Right Y axis controls the indexer
+The Left Y axis controls the indexer
 
-This controller will also control the arms
+The Left and Right bumpers (buttons above the triggers) control the climbing arms.
 
 ## Moorhead Robot Control
 

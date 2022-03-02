@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -27,6 +28,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.lang.Math;
 
+import javax.lang.model.util.ElementScanner6;
+
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
  * the code necessary to operate a robot with tank drive.
@@ -38,13 +41,13 @@ public class Robot7048 extends TimedRobot {
 
   private final CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax m_leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);
-  //private final MotorControllerGroup m_left = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
-  private final PWMSparkMax m_left = new PWMSparkMax(1);
+  private final MotorControllerGroup m_left = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
+  //private final PWMSparkMax m_left = new PWMSparkMax(1);
 
   private final CANSparkMax m_rightMotor1 = new CANSparkMax(3, MotorType.kBrushless);
   private final CANSparkMax m_rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
-  //private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
-  private final PWMSparkMax m_right = new PWMSparkMax(3);
+  private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
+  //private final PWMSparkMax m_right = new PWMSparkMax(3);
 
   private final MotorController m_launcher = new CANSparkMax(5, MotorType.kBrushless);
 
@@ -56,12 +59,14 @@ public class Robot7048 extends TimedRobot {
   RelativeEncoder m_lenc = m_leftMotor1.getEncoder();
   RelativeEncoder m_renc = m_rightMotor1.getEncoder();
 
-  NetworkTableEntry m_autoTime;
   NetworkTableEntry m_lencTable;
   NetworkTableEntry m_rencTable;
   NetworkTableEntry m_moveDistance;
   NetworkTableEntry m_launcherSpeed;
   NetworkTableEntry m_slewRateLimit;
+  NetworkTableEntry m_distanceToBall;
+  NetworkTableEntry m_distanceToBasket;
+  NetworkTableEntry m_autoLaunchDelay;
 
   DoubleSolenoid m_harvesterArms = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
   DoubleSolenoid m_climbingArms  = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
@@ -69,11 +74,23 @@ public class Robot7048 extends TimedRobot {
   SlewRateLimiter m_forwardFilter = new SlewRateLimiter(2);
   SlewRateLimiter m_rotationFilter = new SlewRateLimiter(2);
 
+  enum AutoStates {
+    IDLE,
+    PICKUP_BALL,
+    DRIVE_TO_BASKET,
+    SHOOT_BALLS,
+    DRIVE_OUT_AREA
+  }
+
+  private AutoStates m_autoStates = AutoStates.IDLE;
+  private double m_currentEncPos;
+
   @Override
   public void robotInit() {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
+    CameraServer.startAutomaticCapture();
     m_right.setInverted(true);
     m_leftMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
     m_leftMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
@@ -112,10 +129,22 @@ public class Robot7048 extends TimedRobot {
     .addPersistent("SlewRateLimit", 3)
     .getEntry();
 
+    m_distanceToBall = Shuffleboard.getTab("RoboCfg")
+    .addPersistent("DistanceToBall", 42.7)
+    .getEntry();
+
+    m_distanceToBasket = Shuffleboard.getTab("RoboCfg")
+    .addPersistent("DistanceToBasket", 118.1)
+    .getEntry();
+
+    m_autoLaunchDelay = Shuffleboard.getTab("RoboCfg")
+    .addPersistent("AutoLaunchDelay", 7)
+    .getEntry();
+
+
     m_rencTable = Shuffleboard.getTab("RoboInfo").add("Right Encoder", 0).getEntry();
     m_lencTable = Shuffleboard.getTab("RoboInfo").add("Left Encoder", 0).getEntry();
-    m_autoTime = Shuffleboard.getTab("RoboInfo").add("Time", 0).getEntry();
-
+  
     m_forwardFilter = new SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
     m_rotationFilter = new SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
   }
@@ -228,20 +257,68 @@ public class Robot7048 extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     double stop = System.nanoTime() / 1E9;
-    
-    if (m_lenc.getPosition() > m_moveDistance.getNumber(0).doubleValue())
+
+    switch (m_autoStates)
     {
-      m_myRobot.stopMotor();
-      m_launcher.set(m_launcherSpeed.getNumber(0.75).doubleValue());
-    }
-    else
-    {
-      m_myRobot.arcadeDrive(0.5, 0);
+      case IDLE:
+        // This is the start of auto mode, turn on harvester, drop arms
+        m_harvester.set(TalonSRXControlMode.PercentOutput, 0.75);
+        m_harvesterArms.set(Value.kForward);
+        m_lenc.setPosition(0);
+        m_renc.setPosition(0);
+        m_autoStates = AutoStates.PICKUP_BALL;
+        break;
+      case PICKUP_BALL:
+        // Drive forward 42.7 inches, zero encoders before next state
+        m_myRobot.arcadeDrive(0.75, 0);
+        if (m_lenc.getPosition() > m_distanceToBall.getNumber(42.7).doubleValue())
+        {
+          m_myRobot.arcadeDrive(0, 0);
+          m_currentEncPos = m_lenc.getPosition();
+          m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
+          m_autoStates = AutoStates.DRIVE_TO_BASKET;
+          }
+        break;
+      case DRIVE_TO_BASKET:
+        // Drive forward move distance
+        m_myRobot.arcadeDrive(-0.75, 0);
+        if (Math.abs(m_currentEncPos - m_lenc.getPosition()) > m_distanceToBasket.getNumber(118.1).doubleValue())
+        {
+          m_myRobot.arcadeDrive(0, 0);
+          m_currentEncPos = m_lenc.getPosition();
+          m_indexer.set(TalonSRXControlMode.PercentOutput, 0.75);
+          m_launcher.set(m_launcherSpeed.getNumber(0.75).doubleValue());
+          m_autoStates = AutoStates.SHOOT_BALLS;
+          m_start = System.nanoTime() / 1E9;
+        }
+        break;
+      case SHOOT_BALLS:
+        // Start launcher, and start indexer for shoot_basket time variable
+        stop = System.nanoTime() / 1E9;
+        if ((stop - m_start) > m_autoLaunchDelay.getNumber(7).doubleValue())
+        {
+          m_autoStates = AutoStates.DRIVE_OUT_AREA;
+        }
+        break;
+      case DRIVE_OUT_AREA:
+        // Drive back out move distance + additional distance
+        if (Math.abs(m_lenc.getPosition() - m_currentEncPos) > m_moveDistance.getNumber(118.1).doubleValue())
+        {
+          m_myRobot.arcadeDrive(0, 0);
+        }
+        else
+        {
+          m_myRobot.arcadeDrive(0.75, 0);
+        }
+        break;
+      default:
+        // Do nothing, wait until auto period is done
+        break;
+
     }
 
     m_lencTable.setNumber(m_lenc.getPosition());
     m_rencTable.setNumber(m_lenc.getPosition());
-    m_autoTime.setNumber(stop);
   }
 
 }
