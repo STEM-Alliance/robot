@@ -71,8 +71,8 @@ public class Robot7048 extends TimedRobot {
   DoubleSolenoid m_harvesterArms = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
   DoubleSolenoid m_climbingArms  = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
-  SlewRateLimiter m_forwardFilter = new SlewRateLimiter(2);
-  SlewRateLimiter m_rotationFilter = new SlewRateLimiter(2);
+  SlewRateLimiter m_forwardFilter = new SlewRateLimiter(3);
+  SlewRateLimiter m_rotationFilter = new SlewRateLimiter(3);
 
   enum AutoStates {
     IDLE,
@@ -145,8 +145,8 @@ public class Robot7048 extends TimedRobot {
     m_rencTable = Shuffleboard.getTab("RoboInfo").add("Right Encoder", 0).getEntry();
     m_lencTable = Shuffleboard.getTab("RoboInfo").add("Left Encoder", 0).getEntry();
   
-    m_forwardFilter = new SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
-    m_rotationFilter = new SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
+    // m_forwardFilter = new SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
+    // m_rotationFilter = new SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
   }
 
   @Override
@@ -155,13 +155,18 @@ public class Robot7048 extends TimedRobot {
     m_lencTable.setNumber(m_lenc.getPosition());
     m_rencTable.setNumber(m_renc.getPosition());
     // The rotation needs to be inverted. Otherwise the robot will turn in the wrong direction
-    m_myRobot.arcadeDrive(m_forwardFilter.calculate(m_controller1.getLeftY()), 
-                          m_rotationFilter.calculate(-m_controller1.getLeftX()));
+    double multiFactor = 0.6;
+    if (m_controller1.getYButton())
+    {
+      multiFactor = 1;
+    }
+    m_myRobot.arcadeDrive(m_forwardFilter.calculate(m_controller1.getLeftY() * multiFactor), 
+                          m_rotationFilter.calculate(-m_controller1.getLeftX()) * multiFactor);
  
     double harvest_value = m_controller1.getRightY();
     if (Math.abs(harvest_value) > 0.2)
     {
-      m_harvester.set(TalonSRXControlMode.PercentOutput, harvest_value * 0.7);
+      m_harvester.set(TalonSRXControlMode.PercentOutput, harvest_value * 0.45);
     }
     else
     {
@@ -213,7 +218,7 @@ public class Robot7048 extends TimedRobot {
     double climber_value = m_controller2.getRightY();
     if (Math.abs(climber_value) > 0.25)
     {
-      m_climber.set(TalonSRXControlMode.PercentOutput, climber_value);
+      m_climber.set(TalonSRXControlMode.PercentOutput, climber_value * 0.6);
     }
     else
     {
