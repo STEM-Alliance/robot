@@ -7,53 +7,57 @@ package frc.robot;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 import com.revrobotics.*;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.lang.Math;
-import java.util.Map;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
  * the code necessary to operate a robot with tank drive.
  */
 public class Robot4360 extends TimedRobot {
-  private DifferentialDrive m_myRobot;
-  private XboxController m_xbox;
-  private XboxController m_xbox1;
+  //private DifferentialDrive m_myRobot;
+  private XboxController m_controller1;
+  private XboxController m_controller2;
 
   private final CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax m_leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);
+  // Comment this line out for and uncomment the following line for simulation
   private final MotorControllerGroup m_left = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
+  //private final PWMSparkMax m_left = new PWMSparkMax(0);
 
   private final CANSparkMax m_rightMotor1 = new CANSparkMax(3, MotorType.kBrushless);
   private final CANSparkMax m_rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
   private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
+  //private final PWMSparkMax m_right = new PWMSparkMax(1);
 
-  private final TalonSRX m_harvester = new TalonSRX(10);
-  private final TalonSRX m_mainClimber1 = new TalonSRX(11);
-  private final TalonSRX m_mainClimber2 = new TalonSRX(12);
-  private final TalonSRX m_auxClimber = new TalonSRX(13);
+  private DifferentialDrive m_myRobot = new DifferentialDrive(m_left, m_right);
 
-  private final TalonSRX m_m1 = new TalonSRX(14);
-  private final TalonSRX m_m2 = new TalonSRX(15);
-  private final TalonSRX m_m3 = new TalonSRX(16);
+  private final CANSparkMax m_mainClimber1 = new CANSparkMax(6, MotorType.kBrushless);
+  private final CANSparkMax m_mainClimber2 = new CANSparkMax(7, MotorType.kBrushless);
+  private final CANSparkMax m_auxClimber = new CANSparkMax(8, MotorType.kBrushless);
 
   RelativeEncoder m_lenc = m_leftMotor1.getEncoder();
   RelativeEncoder m_renc = m_rightMotor1.getEncoder();
-  
+
+  SlewRateLimiter m_forwardFilter = new SlewRateLimiter(Configuration.forward_back_slew_rate);
+  SlewRateLimiter m_rotationFilter = new SlewRateLimiter(Configuration.right_left_slew_rate);
+
   NetworkTableEntry m_autoTime;
   NetworkTableEntry m_lencTable;
   NetworkTableEntry m_rencTable;
@@ -66,23 +70,22 @@ public class Robot4360 extends TimedRobot {
     // gearbox is constructed, you might have to invert the left side instead.
     m_right.setInverted(true);
 
-    m_myRobot = new DifferentialDrive(m_left, m_right);
-    m_myRobot.setDeadband(0.15);
-    m_xbox = new XboxController(0);
-    m_xbox1 = new XboxController(1);
+    m_controller1 = new XboxController(0);
+    m_controller2 = new XboxController(1);
 
-    m_lenc.setPositionConversionFactor(1/2.1);
-    m_renc.setPositionConversionFactor(1/2.1);
+    m_lenc.setPositionConversionFactor(Configuration.encoder_counts_to_inches);
+    m_renc.setPositionConversionFactor(Configuration.encoder_counts_to_inches);
     m_lenc.setPosition(0);
     m_renc.setPosition(0);
 
-    TalonSRXConfiguration config = new TalonSRXConfiguration();
-    config.peakCurrentLimit = 40; // the peak current, in amps
-    config.peakCurrentDuration = 1500; // the time at the peak current before the limit triggers, in ms
-    config.continuousCurrentLimit = 30; // the current to maintain if the peak limit is triggered
-    m_mainClimber1.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
-    m_mainClimber2.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
-    m_auxClimber.configAllSettings(config);
+    // Uncomment this if you are using Talon controllers
+    // TalonSRXConfiguration config = new TalonSRXConfiguration();
+    // config.peakCurrentLimit = 40; // the peak current, in amps
+    // config.peakCurrentDuration = 1500; // the time at the peak current before the limit triggers, in ms
+    // config.continuousCurrentLimit = 30; // the current to maintain if the peak limit is triggered
+    // m_mainClimber1.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
+    // m_mainClimber2.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
+    // m_auxClimber.configAllSettings(config);
 
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts
@@ -100,70 +103,58 @@ public class Robot4360 extends TimedRobot {
     .add("MoveDistance", 20)
     .getEntry();
 
-    // System.out.println("Robot position: " + m_position.getNumber(-1).toString());
-
     m_rencTable = Shuffleboard.getTab("RoboInfo").add("Right Encoder", 0).getEntry();
     m_lencTable = Shuffleboard.getTab("RoboInfo").add("Left Encoder", 0).getEntry();
     m_autoTime = Shuffleboard.getTab("RoboInfo").add("Time", 0).getEntry();
+
+    m_mainClimber1.setIdleMode(IdleMode.kBrake);
+    m_mainClimber2.setIdleMode(IdleMode.kBrake);
+    m_auxClimber.setIdleMode(IdleMode.kBrake);
+
+    m_myRobot.setDeadband(0.15);
   }
 
   @Override
   public void teleopPeriodic() {
-    m_myRobot.arcadeDrive(m_xbox.getLeftY(), m_xbox.getLeftX());
+
+    // The rotation needs to be inverted. Otherwise the robot will turn in the wrong direction
+    double multiFactor = Configuration.fine_controller_derate;
+    if (m_controller1.getYButton())
+    {
+      multiFactor = 1;
+    }
+    m_myRobot.arcadeDrive(m_forwardFilter.calculate(m_controller1.getLeftY() * multiFactor), 
+                          m_rotationFilter.calculate(-m_controller1.getLeftX()) * multiFactor);
     m_lencTable.setNumber(m_lenc.getPosition());
     m_rencTable.setNumber(m_lenc.getPosition());
  
-    double harvester_speed = m_xbox.getRightX();
-    if (Math.abs(harvester_speed) > 0.2)
-    {
-      m_harvester.set(TalonSRXControlMode.PercentOutput, harvester_speed);
-    }
-    else
-    {
-      m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
-    }
-    double rightTrigger = m_xbox.getRightTriggerAxis();
-    double leftTrigger = m_xbox.getLeftTriggerAxis();
+    double rightTrigger = m_controller1.getRightTriggerAxis();
+    double leftTrigger = m_controller1.getLeftTriggerAxis();
 
-    if (rightTrigger > 0.2)
+    if (rightTrigger > Configuration.controller_dead_zone)
     {
-      m_mainClimber1.set(TalonSRXControlMode.PercentOutput, rightTrigger);
-      m_mainClimber2.set(TalonSRXControlMode.PercentOutput, rightTrigger);
+      m_mainClimber1.set(rightTrigger);
+      m_mainClimber2.set(rightTrigger);
     }
-    else if (leftTrigger > 0.2)
+    else if (leftTrigger > Configuration.controller_dead_zone)
     {
-      m_mainClimber1.set(TalonSRXControlMode.PercentOutput, -leftTrigger);
-      m_mainClimber2.set(TalonSRXControlMode.PercentOutput, -leftTrigger);
+      m_mainClimber1.set(-leftTrigger);
+      m_mainClimber2.set(-leftTrigger);
     }
     else
     {
-      m_mainClimber1.set(TalonSRXControlMode.PercentOutput, 0);
-      m_mainClimber2.set(TalonSRXControlMode.PercentOutput, 0);
+      m_mainClimber1.set(0);
+      m_mainClimber2.set(0);
     }
 
-    if (m_xbox.getPOV() == 90)
+    double aux_arm_speed = m_controller1.getRightY();
+    if (Math.abs(aux_arm_speed) > Configuration.controller_dead_zone)
     {
-      m_m1.set(TalonSRXControlMode.PercentOutput, 1.0);
+      m_auxClimber.set(aux_arm_speed);
     }
     else
     {
-      m_m1.set(TalonSRXControlMode.PercentOutput, 0);
-    }
-    if (m_xbox.getPOV() == 180)
-    {
-      m_m2.set(TalonSRXControlMode.PercentOutput, 1.0);
-    }
-    else
-    {
-      m_m2.set(TalonSRXControlMode.PercentOutput, 0);
-    }
-    if (m_xbox.getPOV() == 270)
-    {
-      m_m3.set(TalonSRXControlMode.PercentOutput, 1.0);
-    }
-    else
-    {
-      m_m3.set(TalonSRXControlMode.PercentOutput, 0);
+      m_auxClimber.set(0);
     }
   }
 
