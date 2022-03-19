@@ -9,30 +9,18 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.*;
-
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
 import java.lang.Math;
-
-import javax.lang.model.util.ElementScanner6;
-import javax.swing.RowFilter.ComparisonType;
-
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -48,19 +36,16 @@ public class Robot7048 extends TimedRobot {
   private final CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
   private final CANSparkMax m_leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);
   private final MotorControllerGroup m_left = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
-  // private final PWMSparkMax m_left = new PWMSparkMax(1);
 
   private final CANSparkMax m_rightMotor1 = new CANSparkMax(3, MotorType.kBrushless);
   private final CANSparkMax m_rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
   private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
-  // private final PWMSparkMax m_right = new PWMSparkMax(3);
 
   private final MotorController m_launcher = new CANSparkMax(5, MotorType.kBrushless);
 
   private final TalonSRX m_harvester = new TalonSRX(10);
   private final TalonSRX m_climber = new TalonSRX(11);
   private final TalonSRX m_indexer = new TalonSRX(12);
-  // private final TalonSRX m_arm = new TalonSRX(13);
 
   RelativeEncoder m_lenc = m_leftMotor1.getEncoder();
   RelativeEncoder m_renc = m_rightMotor1.getEncoder();
@@ -83,8 +68,9 @@ public class Robot7048 extends TimedRobot {
 
   private AutoStates m_autoStates = AutoStates.IDLE;
   private double m_currentEncPos;
-
   private double m_initialTime;
+
+  private SparkMaxPIDController m_pidController[];
 
   public void setMotorsToBrake(IdleMode mode)
   {
@@ -102,10 +88,6 @@ public class Robot7048 extends TimedRobot {
     CameraServer.startAutomaticCapture();
     m_right.setInverted(true);
     setMotorsToBrake(CANSparkMax.IdleMode.kCoast);
-    // m_leftMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    // m_leftMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    // m_rightMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    // m_rightMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
     //m_climber.setNeutralMode(NeutralMode.Brake);
 
     m_myRobot = new DifferentialDrive(m_left, m_right);
@@ -126,39 +108,13 @@ public class Robot7048 extends TimedRobot {
     m_indexer.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
     m_climber.configAllSettings(config);
 
+    m_pidController[0] = m_leftMotor1.getPIDController();
+    m_pidController[1] = m_leftMotor2.getPIDController();
+    m_pidController[2] = m_rightMotor1.getPIDController();
+    m_pidController[3] = m_rightMotor2.getPIDController();
+
     System.out.println("Robot starting");
 
-    m_moveDistance = Shuffleboard.getTab("RoboCfg")
-        .addPersistent("MoveDistance", 20)
-        .getEntry();
-
-    m_launcherSpeed = Shuffleboard.getTab("RoboCfg")
-        .addPersistent("LauncherSpeed", 0.75)
-        .getEntry();
-
-    m_slewRateLimit = Shuffleboard.getTab("RoboCfg")
-        .addPersistent("SlewRateLimit", 1.5)
-        .getEntry();
-
-    m_distanceToBall = Shuffleboard.getTab("RoboCfg")
-        .addPersistent("DistanceToBall", 42.7)
-        .getEntry();
-
-    m_distanceToBasket = Shuffleboard.getTab("RoboCfg")
-        .addPersistent("DistanceToBasket", 118.1)
-        .getEntry();
-
-    m_autoLaunchDelay = Shuffleboard.getTab("RoboCfg")
-        .addPersistent("AutoLaunchDelay", 7)
-        .getEntry();
-
-    m_rencTable = Shuffleboard.getTab("RoboInfo").add("Right Encoder", 0).getEntry();
-    m_lencTable = Shuffleboard.getTab("RoboInfo").add("Left Encoder", 0).getEntry();
-
-    // m_forwardFilter = new
-    // SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
-    // m_rotationFilter = new
-    // SlewRateLimiter(m_slewRateLimit.getNumber(2).doubleValue());
   }
 
   @Override
@@ -169,7 +125,7 @@ public class Robot7048 extends TimedRobot {
     setMotorsToBrake(CANSparkMax.IdleMode.kCoast);
     // The rotation needs to be inverted. Otherwise the robot will turn in the wrong
     // direction
-    double multiFactor = 0.6;
+    double multiFactor = Configuration.fine_controller_derate;
     if (m_controller1.getYButton()) {
       multiFactor = 1;
     }
@@ -177,11 +133,11 @@ public class Robot7048 extends TimedRobot {
     // multiFactor),
     // m_rotationFilter.calculate(-m_controller1.getLeftX()) * multiFactor);
 
-    m_myRobot.arcadeDrive(m_controller1.getLeftY(), (-m_controller1.getLeftX() * .75));
+    m_myRobot.arcadeDrive(m_controller1.getLeftY(), (-m_controller1.getLeftX() * Configuration.right_left_derate_percentage));
 
     double harvest_value = m_controller1.getRightY();
-    if (Math.abs(harvest_value) > 0.2) {
-      m_harvester.set(TalonSRXControlMode.PercentOutput, harvest_value * 0.45);
+    if (Math.abs(harvest_value) > Configuration.controller_dead_zone) {
+      m_harvester.set(TalonSRXControlMode.PercentOutput, harvest_value * Configuration.harvester_max_speed);
       m_harvesterArms.set(Value.kReverse);
     } else {
       m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
@@ -199,29 +155,29 @@ public class Robot7048 extends TimedRobot {
 
     // Controller 2 will control the indexer, launcher, and climbers
     if (m_controller2.getYButton()) {
-      m_launcher.set(0.8);
+      m_launcher.set(Configuration.launcher_high_speed_percentage);
       System.out.println("Launcher to 80%");
     } else if (m_controller2.getBButton()) {
-      m_launcher.set(0.6);
+      m_launcher.set(Configuration.launcher_medium_speed_percentage);
       System.out.println("Launcher to 60%");
     } else if (m_controller2.getAButton()) {
-      m_launcher.set(0.4);
+      m_launcher.set(Configuration.launcher_low_speed_percentage);
       System.out.println("Launcher to 40%");
     } else {
       m_launcher.set(0);
     }
 
     double indexer_value = m_controller2.getLeftY();
-    if (Math.abs(indexer_value) > 0.25) {
-      indexer_value *= 0.50;
+    if (Math.abs(indexer_value) > Configuration.controller_dead_zone) {
+      indexer_value *= Configuration.indexer_max_speed;
       m_indexer.set(TalonSRXControlMode.PercentOutput, indexer_value);
     } else {
       m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
     }
 
     double climber_value = m_controller2.getRightY();
-    if (Math.abs(climber_value) > 0.25) {
-      m_climber.set(TalonSRXControlMode.PercentOutput, climber_value * 1);
+    if (Math.abs(climber_value) > Configuration.controller_dead_zone) {
+      m_climber.set(TalonSRXControlMode.PercentOutput, climber_value * Configuration.climber_max_speed);
     } else {
       m_climber.set(TalonSRXControlMode.PercentOutput, 0);
     }
@@ -285,22 +241,22 @@ public class Robot7048 extends TimedRobot {
       case IDLE:
         // This is the start of auto mode, shoot ball
         m_launcher.set(m_launcherSpeed.getNumber(0.75).doubleValue());
-        if (timer.get() > 1) {
-          m_indexer.set(TalonSRXControlMode.PercentOutput, -0.75);
+        if (timer.get() > Configuration.launcher_spin_up_delay) {
+          m_indexer.set(TalonSRXControlMode.PercentOutput, -Configuration.indexer_max_speed);
         }
         m_lenc.setPosition(0);
         m_renc.setPosition(0);
-        if (timer.get() > 3) {
+        if (timer.get() > Configuration.indexer_launch_delay) {
           m_autoStates = AutoStates.PICKUP_BALL;
           m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
         }
         break;
       case PICKUP_BALL:
         // Drive forward 42.7 inches, zero encoders before next state
-        m_harvester.set(TalonSRXControlMode.PercentOutput, -0.60);
+        m_harvester.set(TalonSRXControlMode.PercentOutput, -Configuration.harvester_max_speed);
         m_harvesterArms.set(Value.kReverse);
-        m_myRobot.arcadeDrive(-0.4, 0);
-        if (Math.abs(m_lenc.getPosition()) >= 48) {
+        m_myRobot.arcadeDrive(-Configuration.auto_mode_drive_speed, 0);
+        if (Math.abs(m_lenc.getPosition()) >= Configuration.auto_move_distance) {
           m_myRobot.arcadeDrive(0, 0);
           // m_currentEncPos = m_lenc.getPosition();
           m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
@@ -312,22 +268,19 @@ public class Robot7048 extends TimedRobot {
         break;
       case DRIVE_TO_BASKET:
         // Drive forward move distance
-        m_myRobot.arcadeDrive(0.4, 0);
-        if (Math.abs(m_lenc.getPosition()) > 48) {
+        m_myRobot.arcadeDrive(Configuration.auto_mode_drive_speed, 0);
+        m_launcher.set(m_launcherSpeed.getNumber(Configuration.launcher_high_speed_percentage).doubleValue());
+        if (Math.abs(m_lenc.getPosition()) > Configuration.auto_move_distance) {
           m_myRobot.arcadeDrive(0, 0);
           m_currentEncPos = m_lenc.getPosition();
-          m_indexer.set(TalonSRXControlMode.PercentOutput, -0.75);
-          m_launcher.set(m_launcherSpeed.getNumber(0.75).doubleValue());
+          m_indexer.set(TalonSRXControlMode.PercentOutput, -Configuration.indexer_max_speed);
           m_autoStates = AutoStates.SHOOT_BALLS;
           m_initialTime = timer.get();
-          
-          // m_start = System.nanoTime() / 1E9;
         }
         break;
       case SHOOT_BALLS:
         // Start launcher, and start indexer for shoot_basket time variable
-        m_launcher.set(m_launcherSpeed.getNumber(0.75).doubleValue());
-        if (timer.get() >= (m_initialTime + 3)) {
+        if (timer.get() >= (m_initialTime + Configuration.indexer_launch_delay)) {
           m_autoStates = AutoStates.DRIVE_OUT_AREA;
           m_lenc.setPosition(0);
           m_renc.setPosition(0);
@@ -336,9 +289,8 @@ public class Robot7048 extends TimedRobot {
         
       case DRIVE_OUT_AREA:
         // Drive back out move distance + additional distance
-        
-        m_myRobot.arcadeDrive(-0.75, 0);
-        if (Math.abs(m_lenc.getPosition()) >= 55) {
+        m_myRobot.arcadeDrive(-Configuration.auto_exit_tarmac_speed, 0);
+        if (Math.abs(m_lenc.getPosition()) >= Configuration.auto_move_out_of_tarmac) {
           m_myRobot.arcadeDrive(0, 0);
         } 
         break;

@@ -24,8 +24,30 @@ public class Configuration {
     // This is the maximum speed, in percent, of the harvester motor
     static double harvester_max_speed = 0.45;
     // This is the maximum speed, in percent, of the indexer
-    static double indexer_max_speed = 0.25;
+    static double indexer_max_speed = 0.75;
     // This is the maximum speed, in percent, of the climbing arms
-    static double climber_max_speed = 0.75;
+    static double climber_max_speed = 1.0;
+    // This slows down the left/right robot movement
+    static double right_left_derate_percentage = 0.75;
+    // Launcher high speed
+    static double launcher_high_speed_percentage = 0.8;
+    // Launcher medium speed
+    static double launcher_medium_speed_percentage = 0.6;
+    // Launcher low speed
+    static double launcher_low_speed_percentage = 0.4;
+    
+    // AUTONOMOUS MODE VARIABLES
+    // Delay to allow the launcher to spin up
+    static double launcher_spin_up_delay = 1;
+    // Delay to drive the indexer to shoot
+    static double indexer_launch_delay = 3;
+    // Auto mode drive speed
+    static double auto_mode_drive_speed = 0.4;
+    // Auto mode exist tarmac speec
+    static double auto_exit_tarmac_speed = 0.75;
+    // How far to move the robot
+    static double auto_move_distance = 48;
+    // How far to move the robot out of the tarmac
+    static double auto_move_out_of_tarmac = 55;
 }
 
