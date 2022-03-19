@@ -95,8 +95,8 @@ public class Robot7048 extends TimedRobot {
     m_controller1 = new XboxController(0);
     m_controller2 = new XboxController(1);
 
-    m_lenc.setPositionConversionFactor(2);
-    m_renc.setPositionConversionFactor(2);
+    m_lenc.setPositionConversionFactor(Configuration.encoder_counts_to_inches);
+    m_renc.setPositionConversionFactor(Configuration.encoder_counts_to_inches);
     m_lenc.setPosition(0);
     m_renc.setPosition(0);
 
