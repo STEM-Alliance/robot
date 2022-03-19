@@ -21,7 +21,9 @@ public final class Main {
    */
   public static void main(String... args) {
     // NOTE: This allows us to switch between the Fargo and Moorhead robot
-    //RobotBase.startRobot(Robot7048::new);
-    RobotBase.startRobot(Robot4360::new);
+    if (Configuration.robot == Configuration.Team.FARGO)
+      RobotBase.startRobot(Robot7048::new);
+    else
+      RobotBase.startRobot(Robot4360::new);
   }
 }
