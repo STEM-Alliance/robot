@@ -50,15 +50,6 @@ public class Robot7048 extends TimedRobot {
   RelativeEncoder m_lenc = m_leftMotor1.getEncoder();
   RelativeEncoder m_renc = m_rightMotor1.getEncoder();
 
-  NetworkTableEntry m_lencTable;
-  NetworkTableEntry m_rencTable;
-  NetworkTableEntry m_moveDistance;
-  NetworkTableEntry m_launcherSpeed;
-  NetworkTableEntry m_slewRateLimit;
-  NetworkTableEntry m_distanceToBall;
-  NetworkTableEntry m_distanceToBasket;
-  NetworkTableEntry m_autoLaunchDelay;
-
   DoubleSolenoid m_harvesterArms = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
   DoubleSolenoid m_climbingArms = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
@@ -108,10 +99,10 @@ public class Robot7048 extends TimedRobot {
     m_indexer.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
     m_climber.configAllSettings(config);
 
-    m_pidController[0] = m_leftMotor1.getPIDController();
-    m_pidController[1] = m_leftMotor2.getPIDController();
-    m_pidController[2] = m_rightMotor1.getPIDController();
-    m_pidController[3] = m_rightMotor2.getPIDController();
+    // m_pidController[0] = m_leftMotor1.getPIDController();
+    // m_pidController[1] = m_leftMotor2.getPIDController();
+    // m_pidController[2] = m_rightMotor1.getPIDController();
+    // m_pidController[3] = m_rightMotor2.getPIDController();
 
     System.out.println("Robot starting");
 
@@ -120,8 +111,6 @@ public class Robot7048 extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Controller 1 will control the robot movement, the arms, and the harvester
-    m_lencTable.setNumber(m_lenc.getPosition());
-    m_rencTable.setNumber(m_renc.getPosition());
     setMotorsToBrake(CANSparkMax.IdleMode.kCoast);
     // The rotation needs to be inverted. Otherwise the robot will turn in the wrong
     // direction
@@ -208,8 +197,7 @@ public class Robot7048 extends TimedRobot {
    * chooser code above as well.
    */
 
-  double m_start = 0;
-
+  
   enum AutoStates {
     IDLE,
     SPIN_UP_DELAY,
@@ -220,16 +208,49 @@ public class Robot7048 extends TimedRobot {
     STOP
   }
 
+  public void setSparkMaxPIDModes() {
+    // PID coefficients
+    double kP = 0.1; 
+    double kI = 1e-4;
+    double kD = 1; 
+    double kIz = 0; 
+    double kFF = 0; 
+    double kMaxOutput = 1; 
+    double kMinOutput = -1;
+
+    for (int i = 0; i < 4; i++)
+    {
+      setSparkMaxMotorPIDValues(i, kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput);
+    }
+  }
+
+  public void setSparkMaxMotorPIDValues(int index, double kP, double kI, double kD, double kIz, double kFF, double kMax, double kMin) {
+    m_pidController[index].setP(kP);
+    m_pidController[index].setI(kI);
+    m_pidController[index].setD(kD);
+    m_pidController[index].setIZone(kIz);
+    m_pidController[index].setFF(kFF);
+    m_pidController[index].setOutputRange(kMin, kMax);
+  }
+
   @Override
   public void autonomousInit() {
     m_lenc.setPosition(0);
     m_renc.setPosition(0);
     timer.reset();
     timer.start();
-    m_right.set(0);
-    m_start = System.nanoTime() / 1E9;
+    //m_right.set(0);
     setMotorsToBrake(CANSparkMax.IdleMode.kBrake);
+    //setSparkMaxPIDModes();
   }
+
+  public void setPositionRef(double posRef) {
+    for (int i = 0; i < 4; i++)
+    {
+      m_pidController[i].setReference(posRef, CANSparkMax.ControlType.kPosition);
+    }
+  }
+
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -237,10 +258,11 @@ public class Robot7048 extends TimedRobot {
   public void autonomousPeriodic() {
     System.out.println(m_lenc.getPosition());
     m_harvesterArms.set(Value.kReverse);
+
     switch (m_autoStates) {
       case IDLE:
         // This is the start of auto mode, shoot ball
-        m_launcher.set(m_launcherSpeed.getNumber(0.75).doubleValue());
+        m_launcher.set(Configuration.launcher_high_speed_percentage);
         if (timer.get() > Configuration.launcher_spin_up_delay) {
           m_indexer.set(TalonSRXControlMode.PercentOutput, -Configuration.indexer_max_speed);
         }
@@ -255,10 +277,10 @@ public class Robot7048 extends TimedRobot {
         // Drive forward 42.7 inches, zero encoders before next state
         m_harvester.set(TalonSRXControlMode.PercentOutput, -Configuration.harvester_max_speed);
         m_harvesterArms.set(Value.kReverse);
+        //setPositionRef(-Configuration.auto_move_distance);
         m_myRobot.arcadeDrive(-Configuration.auto_mode_drive_speed, 0);
         if (Math.abs(m_lenc.getPosition()) >= Configuration.auto_move_distance) {
           m_myRobot.arcadeDrive(0, 0);
-          // m_currentEncPos = m_lenc.getPosition();
           m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
           m_harvesterArms.set(Value.kForward);
           m_autoStates = AutoStates.DRIVE_TO_BASKET;
@@ -269,7 +291,7 @@ public class Robot7048 extends TimedRobot {
       case DRIVE_TO_BASKET:
         // Drive forward move distance
         m_myRobot.arcadeDrive(Configuration.auto_mode_drive_speed, 0);
-        m_launcher.set(m_launcherSpeed.getNumber(Configuration.launcher_high_speed_percentage).doubleValue());
+        m_launcher.set(Configuration.launcher_high_speed_percentage);
         if (Math.abs(m_lenc.getPosition()) > Configuration.auto_move_distance) {
           m_myRobot.arcadeDrive(0, 0);
           m_currentEncPos = m_lenc.getPosition();
@@ -299,10 +321,6 @@ public class Robot7048 extends TimedRobot {
         break;
 
     }
-
-    m_lencTable.setNumber(m_lenc.getPosition());
-    m_rencTable.setNumber(m_lenc.getPosition());
-
   }
 
   public void oldAutonmousPeriodic() {

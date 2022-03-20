@@ -26,6 +26,17 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.lang.Math;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.TimedRobot;
+
+/**
+ * Uses the CameraServer class to automatically capture video from a USB webcam and send it to the
+ * FRC dashboard without doing any vision processing. This is the easiest way to get camera images
+ * to the dashboard. Just add this to the robotInit() method in your program.
+ */
+
+ 
+
 /**
  * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
  * the code necessary to operate a robot with tank drive.
@@ -48,9 +59,9 @@ public class Robot4360 extends TimedRobot {
 
   private DifferentialDrive m_myRobot = new DifferentialDrive(m_left, m_right);
 
-  private final CANSparkMax m_mainClimber1 = new CANSparkMax(6, MotorType.kBrushless);
-  private final CANSparkMax m_mainClimber2 = new CANSparkMax(7, MotorType.kBrushless);
-  private final CANSparkMax m_auxClimber = new CANSparkMax(8, MotorType.kBrushless);
+  private final CANSparkMax m_mainClimber1 = new CANSparkMax(5, MotorType.kBrushless);
+  private final CANSparkMax m_mainClimber2 = new CANSparkMax(6, MotorType.kBrushless);
+  private final CANSparkMax m_auxClimber = new CANSparkMax(7, MotorType.kBrushless);
 
   RelativeEncoder m_lenc = m_leftMotor1.getEncoder();
   RelativeEncoder m_renc = m_rightMotor1.getEncoder();
@@ -110,6 +121,10 @@ public class Robot4360 extends TimedRobot {
     m_mainClimber1.setIdleMode(IdleMode.kBrake);
     m_mainClimber2.setIdleMode(IdleMode.kBrake);
     m_auxClimber.setIdleMode(IdleMode.kBrake);
+    m_leftMotor1.setIdleMode(IdleMode.kCoast);
+    m_leftMotor2.setIdleMode(IdleMode.kCoast);
+    m_rightMotor1.setIdleMode(IdleMode.kCoast);
+    m_rightMotor2.setIdleMode(IdleMode.kCoast);
 
     m_myRobot.setDeadband(0.15);
   }
