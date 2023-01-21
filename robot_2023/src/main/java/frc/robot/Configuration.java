@@ -49,5 +49,12 @@ public class Configuration {
     static double auto_move_distance = 48;
     // How far to move the robot out of the tarmac
     static double auto_move_out_of_tarmac = 55;
+
+    // RAMSETE controoller
+    static double kRamseteB = 2;
+    static double kRamsetsZeta = 0.5;
+    static double kMaxSpeedMetersPerSecond = 4;
+    static double kMaxAccelerationMetersPerSecondSquared = 2;
+    static double TrackWidth = 46.5;
 }
 

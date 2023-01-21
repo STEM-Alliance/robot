@@ -22,6 +22,12 @@ Repeat steps 1 through 3 then paste:
 
 `https://software-metadata.revrobotics.com/REVLib.json`
 
+## Install the New Command System
+1. In VSCode: `CTRL+SHIFT+P` 
+2. then type `WPILib: Manage`
+3. then go down to `Install New librariers (offline)`
+4. Select `new Command`
+
 ## Configure Spark Max Controllers
 
 The SPARK MAX Controllers have a really nice config app and documentation. The documentation can be found here: https://docs.revrobotics.com/sparkmax/gs-sm
