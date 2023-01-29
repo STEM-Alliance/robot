@@ -294,7 +294,7 @@ public class Robot4360 extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    m_odometry.update(new Rotation2d(m_ahrs.getFusedHeading()), m_pulses_to_meters, kDefaultPeriod)
+    m_odometry.update(new Rotation2d(m_ahrs.getFusedHeading()), m_pulses_to_meters, kDefaultPeriod);
   }
 
 }
