@@ -23,7 +23,9 @@ public final class Main {
     // NOTE: This allows us to switch between the Fargo and Moorhead robot
     if (Configuration.robot == Configuration.Team.FARGO)
       RobotBase.startRobot(Robot7048::new);
-    else
+    else if (Configuration.robot == Configuration.Team.MOORHEAD)
       RobotBase.startRobot(Robot4360::new);
+    else
+      RobotBase.startRobot(Testboard::new);
   }
 }

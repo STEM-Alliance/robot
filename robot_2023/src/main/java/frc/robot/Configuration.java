@@ -7,6 +7,7 @@ public class Configuration {
     static enum Team {
         FARGO,
         MOORHEAD,
+        TESTBOARD,
     };
 
     // This variable defines the team
