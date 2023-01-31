@@ -6,9 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -17,22 +14,16 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-import java.lang.Math;
-
 import edu.wpi.first.cameraserver.CameraServer;
-import java.nio.file.Path;
-import java.util.function.BiConsumer;
 
 import edu.wpi.first.math.trajectory.*;
-import edu.wpi.first.math.util.Units;
-
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.*;
-import edu.wpi.first.math.controller.*;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
-import java.util.function.*;
 import java.util.*;
 
 /**
@@ -41,12 +32,6 @@ import java.util.*;
  * to the dashboard. Just add this to the robotInit() method in your program.
  */
 
- 
-
-/**
- * This is a demo program showing the use of the DifferentialDrive class, specifically it contains
- * the code necessary to operate a robot with tank drive.
- */
 public class Robot4360 extends TimedRobot {
   //private DifferentialDrive m_myRobot;
     private XboxController m_controller1;
@@ -96,7 +81,7 @@ public class Robot4360 extends TimedRobot {
         double multiFactor = Configuration.fine_controller_derate;
         if (m_controller1.getYButton())
         {
-        multiFactor = 1;
+            multiFactor = 1;
         }
 
         double joy1[] = new double[4];
@@ -105,12 +90,14 @@ public class Robot4360 extends TimedRobot {
         joy1[2] = m_forwardFilter.calculate(m_controller1.getLeftY() * multiFactor);
         joy1[3] = m_rotationFilter.calculate(m_controller1.getLeftX() * multiFactor);
 
+        if (m_controller1.getAButton())
+        {
+            m_robotDrive.zeroHeading();
+            m_robotDrive.resetOdometry(new Pose2d());
+        }
+
         SmartDashboard.putNumberArray("Joy1", joy1);
         m_robotDrive.arcadeDrive(joy1[2], joy1[3]);
-        // m_myRobot.arcadeDrive(m_forwardFilter.calculate(m_controller1.getLeftY() * multiFactor), 
-        //                       m_rotationFilter.calculate(m_controller1.getLeftX()) * multiFactor);
-        // SmartDashboard.putNumber("left_enc", m_lenc.getPosition());
-        // SmartDashboard.putNumber("right_enc", m_renc.getPosition());
     }
 
 
@@ -126,16 +113,26 @@ public class Robot4360 extends TimedRobot {
    */
 
   /*
-  18 pulses per rotation
-  each wheel rotation is about 16 inches
-  Therefore we have 16/18 = 0.88888 inches per pulse
-  2.25 e-2 meters/pulse
+    Per the spec the Neo motors have 42 pulses/rotation
+    The Neo encoder reports in rotations
+    The neo rotates ~8.5 times per one wheel rotation
+    The wheels are 6 inches
+
+    The velocity is reported in RPMs, it appears the max is around 5800 RPM or so.
+
+    circumference = 2 * pi * r
+
+    1 rotation of the main drive wheel is 2 * pi * 3 inches = 18.85 inches or 0.479 meters
+    Or 1 motor rotation is 0.479 meters/9 = 0.053 meters
+    At max speed the robot can go 0.053 meters * 5800 RPM / 60 = 5.12 meters/sec
+
+    So if we are given meters/second for the wheels, we need to convert that into 
    */ 
     double m_start = 0;
-    double m_pulses_to_meters = 0.02257777777777777777777777777778;
     @Override
     public void autonomousInit() {
         m_start = System.nanoTime() / 1E9;
+        m_robotDrive.zeroHeading();
         m_autoCommand = getAutonomousCommand();
          // schedule the autonomous command (example)
         if (m_autoCommand != null) {
@@ -171,25 +168,76 @@ public class Robot4360 extends TimedRobot {
                 // Start at the origin facing the +X direction
                 new Pose2d(0, 0, new Rotation2d(0)),
                 // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+                List.of(new Translation2d(10, 1), new Translation2d(20, -1)),
                 // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(3, 0, new Rotation2d(0)),
+                new Pose2d(30, 0, new Rotation2d(90)),
                 // Pass config
                 config);
 
-        RamseteCommand ramseteCommand =
-            new RamseteCommand(
-                exampleTrajectory,
-                m_robotDrive::getPose,
-                new RamseteController(2, 0.5),
-                kDriveKinematics,
-                m_robotDrive::move,
-                m_robotDrive);
+        // Super Simple
+        Trajectory moveStraight =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            List.of(new Translation2d(5, 0)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(10, 0, new Rotation2d(0)),
+            // Pass config
+            config);
 
+        // Box turn
+        Trajectory boxturn =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            List.of(new Translation2d(10, 0), 
+                    new Translation2d(10, 10), 
+                    new Translation2d(0, 10), 
+                    new Translation2d(0, 0)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(20, 0, new Rotation2d(0)),
+            // Pass config
+            config);
+
+        // RamseteCommand ramseteCommand =
+        //     new RamseteCommand(
+        //         moveStraight,
+        //         m_robotDrive::getPose,
+        //         new RamseteController(2, 0.7),
+        //         kDriveKinematics,
+        //         m_robotDrive::move,
+        //         m_robotDrive);
+
+        double kp = 0.5;
+        double ki = 0;
+
+        RamseteCommand ramseteCommand =
+        new RamseteCommand(
+            moveStraight,
+            m_robotDrive::getPose,
+            new RamseteController(2, 0.7),
+            new SimpleMotorFeedforward(0.1, 0.1),
+            kDriveKinematics,
+            m_robotDrive::getWheelSpeeds,
+            new PIDController(kp, ki, 0),
+            new PIDController(kp, ki, 0),
+            m_robotDrive::move,
+            m_robotDrive);
+    
         // Reset odometry to the starting pose of the trajectory.
-        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        m_robotDrive.resetOdometry(moveStraight.getInitialPose());
 
         // Run path following command, then stop at the end.
         return ramseteCommand.andThen(() -> m_robotDrive.stop());
     }
+
+    // /**
+    //  * Use this to pass the autonomous command to the main {@link Robot} class.
+    //  *
+    //  * @return the command to run in autonomous
+    //  */
+    // public Command getTurnCommand() {
+    //     // Run path following command, then stop at the end.
+    //     return ramseteCommand.andThen(() -> m_robotDrive.stop());
+    // }
 }

@@ -20,7 +20,7 @@ public class Configuration {
     // This controls the XBox joystick dead zones. Any value less than this value will have 0 effect
     static double controller_dead_zone = 0.2;
     // This is the slow mode. It rerates the max speed of the forward/back and left/right to 0.6
-    static double fine_controller_derate = 0.6;
+    static double fine_controller_derate = 0.5;
     // This is the maximum speed, in percent, of the harvester motor
     static double harvester_max_speed = 0.45;
     // This is the maximum speed, in percent, of the indexer
@@ -54,7 +54,8 @@ public class Configuration {
     static double kRamseteB = 2;
     static double kRamsetsZeta = 0.5;
     static double kMaxSpeedMetersPerSecond = 4;
-    static double kMaxAccelerationMetersPerSecondSquared = 2;
-    static double TrackWidth = 46.5;
+    static double kMaxAccelerationMetersPerSecondSquared = 0.5;
+    static double TrackWidth = 26.5;
+    static double PulsesToMeters = 0.053;
 }
 
