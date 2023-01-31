@@ -11,7 +11,7 @@ public class Configuration {
     };
 
     // This variable defines the team
-    static Team robot = Team.MOORHEAD;
+    static Team robot = Team.TESTBOARD;
     // This controls the speed of the forward/back control. Larger numbers mean faster response
     static double forward_back_slew_rate = 3;
     // This controls the speed of the right to left slew rate. Large numbers mean faster response

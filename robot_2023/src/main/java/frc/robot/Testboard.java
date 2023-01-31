@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -47,7 +48,6 @@ public class Testboard extends TimedRobot {
     private final TalonSRX Talon2 = new TalonSRX(13);
     DoubleSolenoid  Solenoid1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
     DoubleSolenoid  Solenoid2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
-   
 // robot init is the robot starting up
 // the controllers are assigned here 
     @Override
