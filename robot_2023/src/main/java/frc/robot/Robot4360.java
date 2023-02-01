@@ -126,8 +126,8 @@ public class Robot4360 extends TimedRobot {
     Or 1 motor rotation is 0.479 meters/9 = 0.053 meters
     At max speed the robot can go 0.053 meters * 5800 RPM / 60 = 5.12 meters/sec
 
-    So if we are given meters/second for the wheels, we need to convert that into 
-   */ 
+    So if we are given meters/second for the wheels, we need to convert that into
+   */
     double m_start = 0;
     @Override
     public void autonomousInit() {
@@ -178,10 +178,10 @@ public class Robot4360 extends TimedRobot {
         Trajectory moveStraight =
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
+            new Pose2d(0, 0, m_robotDrive.getHeading()),
             List.of(new Translation2d(5, 0)),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(10, 0, new Rotation2d(0)),
+            new Pose2d(10, 0, m_robotDrive.getHeading()),
             // Pass config
             config);
 
@@ -190,9 +190,9 @@ public class Robot4360 extends TimedRobot {
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, new Rotation2d(0)),
-            List.of(new Translation2d(10, 0), 
-                    new Translation2d(10, 10), 
-                    new Translation2d(0, 10), 
+            List.of(new Translation2d(10, 0),
+                    new Translation2d(10, 10),
+                    new Translation2d(0, 10),
                     new Translation2d(0, 0)),
             // End 3 meters straight ahead of where we started, facing forward
             new Pose2d(20, 0, new Rotation2d(0)),
@@ -203,12 +203,12 @@ public class Robot4360 extends TimedRobot {
         //     new RamseteCommand(
         //         moveStraight,
         //         m_robotDrive::getPose,
-        //         new RamseteController(2, 0.7),
+        //         new RamseteController(0.5, 0.2),
         //         kDriveKinematics,
         //         m_robotDrive::move,
         //         m_robotDrive);
 
-        double kp = 0.5;
+        double kp = 0.2;
         double ki = 0;
 
         RamseteCommand ramseteCommand =
@@ -223,7 +223,7 @@ public class Robot4360 extends TimedRobot {
             new PIDController(kp, ki, 0),
             m_robotDrive::move,
             m_robotDrive);
-    
+
         // Reset odometry to the starting pose of the trajectory.
         m_robotDrive.resetOdometry(moveStraight.getInitialPose());
 

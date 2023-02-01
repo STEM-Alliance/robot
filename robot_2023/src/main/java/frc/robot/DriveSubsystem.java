@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.*;
+import edu.wpi.first.wpilibj.DataLogManager;
 
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,7 +26,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final CANSparkMax m_rightMotor1 = new CANSparkMax(3, MotorType.kBrushless);
     private final CANSparkMax m_rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
     private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
-  
+
     // The robot's drive
     private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
@@ -34,7 +35,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     RelativeEncoder m_leftEncoder = m_leftMotor1.getEncoder();
     RelativeEncoder m_rightEncoder = m_rightMotor1.getEncoder();
-  
+
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
 
@@ -60,11 +61,11 @@ public class DriveSubsystem extends SubsystemBase {
           /* Communicate w/navX-MXP via the MXP SPI Bus.                                     */
           /* Alternatively:  I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB     */
           /* See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for details. */
-          m_ahrs = new AHRS(SPI.Port.kMXP); 
+          m_ahrs = new AHRS(SPI.Port.kMXP);
       } catch (RuntimeException ex ) {
           DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
       }
-      
+
       m_ahrs.enableLogging(true);
       m_ahrs.reset();
       m_ahrs.calibrate();
@@ -76,17 +77,22 @@ public class DriveSubsystem extends SubsystemBase {
               new Rotation2d(m_ahrs.getFusedHeading()), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
 
       SmartDashboard.putData("Field", m_field);
+      DataLogManager.start();
   }
 
   @Override
 
   public void periodic() {
-    var lDistance = -m_leftEncoder.getPosition() * Configuration.PulsesToMeters;
-    var rDistance = m_rightEncoder.getPosition() * Configuration.PulsesToMeters;
+    var lDistance = -m_leftEncoder.getPosition() * Configuration.MetersPerRotation;
+    var rDistance = m_rightEncoder.getPosition() * Configuration.MetersPerRotation;
 
-    m_odometry.update(
-        Rotation2d.fromDegrees(-m_ahrs.getYaw()), lDistance, rDistance);
-    m_field.setRobotPose(m_odometry.getPoseMeters());
+    SmartDashboard.putNumber("lDistance", lDistance);
+    SmartDashboard.putNumber("rDistance", rDistance);
+
+    // m_odometry.update(
+    //     Rotation2d.fromDegrees(-m_ahrs.getYaw()), lDistance, rDistance);
+    m_odometry.update(getHeading(), lDistance, rDistance);
+      m_field.setRobotPose(m_odometry.getPoseMeters());
     sendStats();
   }
 
@@ -105,12 +111,14 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    // This function is being called periodically
+    //System.out.println("getWheelSpeeds");
     var lRPM = -m_leftEncoder.getVelocity();
     var rRPM = m_rightEncoder.getVelocity();
 
     // The velocity is in revs/minute, multiply by 60 to get revs/second, then we know 1 rev = 0.053 meters (see Robot code)
-    var leftMetersPerSecond = (lRPM / 60) * Configuration.PulsesToMeters;
-    var rightMetersPerSecond = (rRPM / 60) * Configuration.PulsesToMeters;
+    var leftMetersPerSecond = (lRPM / 60) * Configuration.MetersPerRotation;
+    var rightMetersPerSecond = (rRPM / 60) * Configuration.MetersPerRotation;
     var speed = new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
     return speed;
   }
@@ -133,6 +141,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
+    System.out.println("arcadeDrive");
     periodic();
     sendStats();
   }
@@ -205,9 +214,9 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @return the robot's heading in degrees, from -180 to 180
    */
-  public double getHeading() {
+  public Rotation2d getHeading() {
     System.out.println("getHeading");
-    return -m_ahrs.getYaw();
+    return Rotation2d.fromDegrees(-m_ahrs.getFusedHeading());
   }
 
   /**
@@ -216,6 +225,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
+    System.out.println("getTurnRate");
     SmartDashboard.putNumber("TurnRate", m_ahrs.getRate());
     return -m_ahrs.getRate();
   }
@@ -262,18 +272,42 @@ public class DriveSubsystem extends SubsystemBase {
   public void sendStats()
   {
     SmartDashboard.putNumber("Heading", m_ahrs.getFusedHeading());
-    SmartDashboard.putNumber("Yaw", -m_ahrs.getYaw());
+    SmartDashboard.putNumber("Yaw", Rotation2d.fromDegrees(-m_ahrs.getYaw()).getRadians());
     SmartDashboard.putNumber("pitch", m_ahrs.getPitch());
     SmartDashboard.putNumber("roll", m_ahrs.getRoll());
     SmartDashboard.putNumber("lEnc", -m_leftEncoder.getPosition()); // These are in rotations
     SmartDashboard.putNumber("rEnc", m_rightEncoder.getPosition());
     SmartDashboard.putNumber("lRPM", -m_leftEncoder.getVelocity()); // These are in RPM
     SmartDashboard.putNumber("rRPM", m_rightEncoder.getVelocity());
-    SmartDashboard.putNumber("lVel", -m_leftEncoder.getVelocity() / 60 * Configuration.PulsesToMeters); // These are in RPM
-    SmartDashboard.putNumber("rVel", m_rightEncoder.getVelocity() / 60 * Configuration.PulsesToMeters);
+    SmartDashboard.putNumber("lVel", -m_leftEncoder.getVelocity() / 60 * Configuration.MetersPerRotation); // These are in RPM
+    SmartDashboard.putNumber("rVel", m_rightEncoder.getVelocity() / 60 * Configuration.MetersPerRotation);
 
     var pose = getPose();
     SmartDashboard.putNumber("PoseX", pose.getX());
-    SmartDashboard.putNumber("Posey", pose.getY());
+    SmartDashboard.putNumber("PoseY", pose.getY());
+
+    // Motor stats
+    SmartDashboard.putNumber("lMotor1Output", m_leftMotor1.getAppliedOutput());
+    SmartDashboard.putNumber("lMotor1Voltage", m_leftMotor1.getBusVoltage());
+    SmartDashboard.putNumber("lMotor1Faults", (double)m_leftMotor1.getFaults());
+    SmartDashboard.putNumber("lMotor1Temp", m_leftMotor1.getMotorTemperature());
+    SmartDashboard.putNumber("lMotor1Current", m_leftMotor1.getOutputCurrent());
+    SmartDashboard.putNumber("lMotor2Output", m_leftMotor2.getAppliedOutput());
+    SmartDashboard.putNumber("lMotor2Voltage", m_leftMotor2.getBusVoltage());
+    SmartDashboard.putNumber("lMotor2Faults", (double)m_leftMotor2.getFaults());
+    SmartDashboard.putNumber("lMotor2Temp", m_leftMotor2.getMotorTemperature());
+    SmartDashboard.putNumber("lMotor2Current", m_leftMotor2.getOutputCurrent());
+
+    SmartDashboard.putNumber("rMotor1Output", m_rightMotor1.getAppliedOutput());
+    SmartDashboard.putNumber("rMotor1Voltage", m_rightMotor1.getBusVoltage());
+    SmartDashboard.putNumber("rMotor1Faults", (double)m_rightMotor1.getFaults());
+    SmartDashboard.putNumber("rMotor1Temp", m_rightMotor1.getMotorTemperature());
+    SmartDashboard.putNumber("rMotor1Current", m_rightMotor1.getOutputCurrent());
+    SmartDashboard.putNumber("rMotor2Output", m_rightMotor2.getAppliedOutput());
+    SmartDashboard.putNumber("rMotor2Voltage", m_rightMotor2.getBusVoltage());
+    SmartDashboard.putNumber("rMotor2Faults", (double)m_rightMotor2.getFaults());
+    SmartDashboard.putNumber("rMotor2Temp", m_rightMotor2.getMotorTemperature());
+    SmartDashboard.putNumber("rMotor2Current", m_rightMotor2.getOutputCurrent());
+
   }
 }

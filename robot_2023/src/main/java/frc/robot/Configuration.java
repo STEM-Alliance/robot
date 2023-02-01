@@ -35,7 +35,7 @@ public class Configuration {
     static double launcher_medium_speed_percentage = 0.6;
     // Launcher low speed
     static double launcher_low_speed_percentage = 0.4;
-    
+
     // AUTONOMOUS MODE VARIABLES
     // Delay to allow the launcher to spin up
     static double launcher_spin_up_delay = 1;
@@ -56,6 +56,6 @@ public class Configuration {
     static double kMaxSpeedMetersPerSecond = 4;
     static double kMaxAccelerationMetersPerSecondSquared = 0.5;
     static double TrackWidth = 26.5;
-    static double PulsesToMeters = 0.053;
+    static double MetersPerRotation = 0.053;
 }
 
