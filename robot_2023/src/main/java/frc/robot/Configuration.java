@@ -57,5 +57,7 @@ public class Configuration {
     static double kMaxAccelerationMetersPerSecondSquared = 0.5;
     static double TrackWidth = 26.5;
     static double MetersPerRotation = 0.053;
+    static boolean Simulate = true;
+    static double MaxRobotSpeedMPS = 5800 / 60 * MetersPerRotation;
 }
 
