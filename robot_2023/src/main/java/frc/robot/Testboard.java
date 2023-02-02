@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 import java.lang.Math;
 
@@ -44,9 +46,8 @@ public class Testboard extends TimedRobot {
     private final CANSparkMax Spark2 = new CANSparkMax(2, MotorType.kBrushless);
     private final TalonSRX Talon1 = new TalonSRX(12);
     private final TalonSRX Talon2 = new TalonSRX(13);
-    
-
-   
+    DoubleSolenoid  Solenoid1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+    DoubleSolenoid  Solenoid2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
 // robot init is the robot starting up
 // the controllers are assigned here 
     @Override
@@ -54,7 +55,7 @@ public class Testboard extends TimedRobot {
     m_controller1 = new XboxController(0);
     m_controller2 = new XboxController(1);
   
-  
+    //The sparks are set to coast.
     //Comment to set the sparks to brake also uncomment lines 56,57
     Spark1.setIdleMode(IdleMode.kCoast);
     Spark2.setIdleMode(IdleMode.kCoast);
@@ -113,5 +114,22 @@ public class Testboard extends TimedRobot {
     else {
         Talon2.set(TalonSRXControlMode.PercentOutput, 0);
     }
+
+
+//Solenoid controls
+    if (m_controller1.getAButton()) {
+ Solenoid1.set(kForward);
+}
+else if (m_controller1.getBButton()){
+    Solenoid1.set(kReverse);
+}
+if (m_controller1.getRightBumper()) {
+ Solenoid2.set(kForward);
+}
+else if (m_controller1.getLeftBumper()){
+    Solenoid2.set(kReverse);
+}
+
+
   }
 }
