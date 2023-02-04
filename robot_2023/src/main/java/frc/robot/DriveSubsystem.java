@@ -19,22 +19,20 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSubsystem extends SubsystemBase {
-    private final CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
-    private final CANSparkMax m_leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);
-    private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
+    private final CANSparkMax m_leftMotor = new CANSparkMax(1, MotorType.kBrushless);
+    private final CANSparkMax m_leftMotorFollower = new CANSparkMax(2, MotorType.kBrushless);
 
-    private final CANSparkMax m_rightMotor1 = new CANSparkMax(3, MotorType.kBrushless);
-    private final CANSparkMax m_rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
-    private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
+    private final CANSparkMax m_rightMotor = new CANSparkMax(3, MotorType.kBrushless);
+    private final CANSparkMax m_rightMotorFollower = new CANSparkMax(4, MotorType.kBrushless);
 
     // The robot's drive
-    private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+    private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotor, m_rightMotor);
 
     // The gyro sensor
     private AHRS m_ahrs;
 
-    RelativeEncoder m_leftEncoder = m_leftMotor1.getEncoder();
-    RelativeEncoder m_rightEncoder = m_rightMotor1.getEncoder();
+    RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
+    RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
 
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
@@ -52,11 +50,19 @@ public class DriveSubsystem extends SubsystemBase {
 
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
+        m_leftMotor.restoreFactoryDefaults();
+        m_leftMotorFollower.restoreFactoryDefaults();
+        m_rightMotor.restoreFactoryDefaults();
+        m_rightMotorFollower.restoreFactoryDefaults();
+
+        m_leftMotorFollower.follow(m_leftMotor);
+        m_rightMotorFollower.follow(m_rightMotor);
+
 
         // We need to invert one side of the drivetrain so that positive voltages
         // result in both sides moving forward. Depending on how your robot's
         // gearbox is constructed, you might have to invert the left side instead.
-        m_rightMotors.setInverted(true);
+        m_leftMotor.setInverted(true);
 
         // The left side encoders are negative
 
@@ -77,6 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_ahrs.calibrate();
 
         resetEncoders();
+
         m_odometry = new DifferentialDriveOdometry(
                 new Rotation2d(m_ahrs.getFusedHeading()), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
 
@@ -87,7 +94,7 @@ public class DriveSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-        var lDistance = -m_leftEncoder.getPosition() * Configuration.MetersPerRotation;
+        var lDistance = m_leftEncoder.getPosition() * Configuration.MetersPerRotation;
         var rDistance = m_rightEncoder.getPosition() * Configuration.MetersPerRotation;
 
         SmartDashboard.putNumber("lDistance", lDistance);
@@ -125,7 +132,7 @@ public class DriveSubsystem extends SubsystemBase {
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         // This function is being called periodically
         // System.out.println("getWheelSpeeds");
-        var lRPM = -m_leftEncoder.getVelocity();
+        var lRPM = m_leftEncoder.getVelocity();
         var rRPM = m_rightEncoder.getVelocity();
 
         // The velocity is in revs/minute, multiply by 60 to get revs/second, then we
@@ -238,7 +245,7 @@ public class DriveSubsystem extends SubsystemBase {
         //System.out.println("getHeading");
         if (Configuration.Simulate)
             return new Rotation2d(m_simAngle);
-        return Rotation2d.fromDegrees(-m_ahrs.getFusedHeading());
+        return Rotation2d.fromDegrees(m_ahrs.getYaw());
     }
 
     /**
@@ -253,8 +260,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void move(double leftSpeed, double rightSpeed) {
-        leftSpeed = -leftSpeed;
-        rightSpeed = -rightSpeed;
         SmartDashboard.putNumber("CmdSpdLMPS", leftSpeed);
         SmartDashboard.putNumber("CmdSpdRMPS", rightSpeed);
 
@@ -271,12 +276,12 @@ public class DriveSubsystem extends SubsystemBase {
         } else if (rightSpeed < -1) {
             rightSpeed = -1;
         }
-        SmartDashboard.putNumber("LeftMotorCmd", leftSpeed);
-        SmartDashboard.putNumber("RightMotorCmd", rightSpeed);
+        // SmartDashboard.putNumber("LeftMotorCmd", leftSpeed);
+        // SmartDashboard.putNumber("RightMotorCmd", rightSpeed);
         m_drive.tankDrive(leftSpeed, rightSpeed);
 
-        m_lSimCmd = -leftSpeed;
-        m_rSimCmd = -rightSpeed;
+        m_lSimCmd = leftSpeed;
+        m_rSimCmd = rightSpeed;
 
         sendStats();
     }
@@ -288,24 +293,25 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void sendStats() {
         SmartDashboard.putNumber("Heading", getHeading().getRadians());
-        SmartDashboard.putNumber("Yaw", Rotation2d.fromDegrees(-m_ahrs.getYaw()).getRadians());
-        SmartDashboard.putNumber("pitch", m_ahrs.getPitch());
-        SmartDashboard.putNumber("roll", m_ahrs.getRoll());
-        SmartDashboard.putNumber("lEnc", -m_leftEncoder.getPosition()); // These are in rotations
-        SmartDashboard.putNumber("rEnc", m_rightEncoder.getPosition());
-        SmartDashboard.putNumber("lRPM", -m_leftEncoder.getVelocity()); // These are in RPM
-        SmartDashboard.putNumber("rRPM", m_rightEncoder.getVelocity());
-        SmartDashboard.putNumber("lVel", -m_leftEncoder.getVelocity() / 60 * Configuration.MetersPerRotation); // These
-                                                                                                               // are
-                                                                                                               // in RPM
-        SmartDashboard.putNumber("rVel", m_rightEncoder.getVelocity() / 60 * Configuration.MetersPerRotation);
+        SmartDashboard.putNumber("Yaw", m_ahrs.getYaw());
+        SmartDashboard.putNumber("FusedHeading", m_ahrs.getFusedHeading());
+
+        SmartDashboard.putNumber("CmdL", m_leftMotor.get());
+        SmartDashboard.putNumber("CmdR", m_rightMotor.get());
+        SmartDashboard.putNumber("EncL", m_leftEncoder.getPosition()); // These are in rotations
+        SmartDashboard.putNumber("EncR", m_rightEncoder.getPosition());
+        SmartDashboard.putNumber("RPML", m_leftEncoder.getVelocity()); // These are in RPM
+        SmartDashboard.putNumber("RPMR", m_rightEncoder.getVelocity());
+        // These are in RPMs
+        SmartDashboard.putNumber("VelL", m_leftEncoder.getVelocity() / 60 * Configuration.MetersPerRotation);
+        SmartDashboard.putNumber("VelR", m_rightEncoder.getVelocity() / 60 * Configuration.MetersPerRotation);
         if (Configuration.Simulate) {
-            SmartDashboard.putNumber("lSimCmd", m_lSimCmd);
-            SmartDashboard.putNumber("lSimVel", m_lSimVel);
-            SmartDashboard.putNumber("lSimDistance", m_lSimDistance);
-            SmartDashboard.putNumber("rSimCmd", m_rSimCmd);
-            SmartDashboard.putNumber("rSimVel", m_rSimVel);
-            SmartDashboard.putNumber("rSimDistance", m_rSimDistance);
+            SmartDashboard.putNumber("SimCmdL", m_lSimCmd);
+            SmartDashboard.putNumber("SimVelL", m_lSimVel);
+            SmartDashboard.putNumber("SimDistanceL", m_lSimDistance);
+            SmartDashboard.putNumber("SimCmdR", m_rSimCmd);
+            SmartDashboard.putNumber("SimVelR", m_rSimVel);
+            SmartDashboard.putNumber("SimDistanceR", m_rSimDistance);
         }
 
         var pose = getPose();
@@ -313,27 +319,56 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("PoseY", pose.getY());
 
         // Motor stats
-        SmartDashboard.putNumber("lMotor1Output", m_leftMotor1.getAppliedOutput());
-        SmartDashboard.putNumber("lMotor1Voltage", m_leftMotor1.getBusVoltage());
-        SmartDashboard.putNumber("lMotor1Faults", (double) m_leftMotor1.getFaults());
-        SmartDashboard.putNumber("lMotor1Temp", m_leftMotor1.getMotorTemperature());
-        SmartDashboard.putNumber("lMotor1Current", m_leftMotor1.getOutputCurrent());
-        SmartDashboard.putNumber("lMotor2Output", m_leftMotor2.getAppliedOutput());
-        SmartDashboard.putNumber("lMotor2Voltage", m_leftMotor2.getBusVoltage());
-        SmartDashboard.putNumber("lMotor2Faults", (double) m_leftMotor2.getFaults());
-        SmartDashboard.putNumber("lMotor2Temp", m_leftMotor2.getMotorTemperature());
-        SmartDashboard.putNumber("lMotor2Current", m_leftMotor2.getOutputCurrent());
+        SmartDashboard.putNumber("Motor1OutputL", m_leftMotor.getAppliedOutput());
+        SmartDashboard.putNumber("Motor1VoltageL", m_leftMotor.getBusVoltage());
+        SmartDashboard.putNumber("Motor1FaultsL", (double) m_leftMotor.getFaults());
+        SmartDashboard.putNumber("Motor1TempL", m_leftMotor.getMotorTemperature());
+        SmartDashboard.putNumber("Motor1CurrentL", m_leftMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Motor2OutputL", m_leftMotorFollower.getAppliedOutput());
+        SmartDashboard.putNumber("Motor2VoltageL", m_leftMotorFollower.getBusVoltage());
+        SmartDashboard.putNumber("Motor2FaultsL", (double) m_leftMotorFollower.getFaults());
+        SmartDashboard.putNumber("Motor2TempL", m_leftMotorFollower.getMotorTemperature());
+        SmartDashboard.putNumber("Motor2CurrentL", m_leftMotorFollower.getOutputCurrent());
 
-        SmartDashboard.putNumber("rMotor1Output", m_rightMotor1.getAppliedOutput());
-        SmartDashboard.putNumber("rMotor1Voltage", m_rightMotor1.getBusVoltage());
-        SmartDashboard.putNumber("rMotor1Faults", (double) m_rightMotor1.getFaults());
-        SmartDashboard.putNumber("rMotor1Temp", m_rightMotor1.getMotorTemperature());
-        SmartDashboard.putNumber("rMotor1Current", m_rightMotor1.getOutputCurrent());
-        SmartDashboard.putNumber("rMotor2Output", m_rightMotor2.getAppliedOutput());
-        SmartDashboard.putNumber("rMotor2Voltage", m_rightMotor2.getBusVoltage());
-        SmartDashboard.putNumber("rMotor2Faults", (double) m_rightMotor2.getFaults());
-        SmartDashboard.putNumber("rMotor2Temp", m_rightMotor2.getMotorTemperature());
-        SmartDashboard.putNumber("rMotor2Current", m_rightMotor2.getOutputCurrent());
+        SmartDashboard.putNumber("Motor1OutputR", m_rightMotor.getAppliedOutput());
+        SmartDashboard.putNumber("Motor1VoltageR", m_rightMotor.getBusVoltage());
+        SmartDashboard.putNumber("Motor1FaultsR", (double) m_rightMotor.getFaults());
+        SmartDashboard.putNumber("Motor1TempR", m_rightMotor.getMotorTemperature());
+        SmartDashboard.putNumber("Motor1CurrentR", m_rightMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Motor2OutputR", m_rightMotorFollower.getAppliedOutput());
+        SmartDashboard.putNumber("Motor2VoltageR", m_rightMotorFollower.getBusVoltage());
+        SmartDashboard.putNumber("Motor2FaultsR", (double) m_rightMotorFollower.getFaults());
+        SmartDashboard.putNumber("Motor2TempR", m_rightMotorFollower.getMotorTemperature());
+        SmartDashboard.putNumber("Motor2CurrentR", m_rightMotorFollower.getOutputCurrent());
 
+        // In order to simulate things, it is much easier if all of the data we need is on a single line. So this is duplication, but makes life easier
+        double fullCapture[] = new double[30];
+        fullCapture[0]  = m_leftEncoder.getPosition();
+        fullCapture[1]  = m_rightEncoder.getPosition();
+        fullCapture[2]  = m_leftEncoder.getVelocity();
+        fullCapture[3]  = m_rightEncoder.getVelocity();
+        fullCapture[4]  = m_ahrs.getFusedHeading();
+        fullCapture[5]  = m_ahrs.getYaw();
+        fullCapture[6]  = m_ahrs.getYaw();
+        fullCapture[7]  = m_ahrs.getPitch();
+        fullCapture[8]  = m_ahrs.getRoll();
+        fullCapture[9]  = m_ahrs.getAngle();
+        fullCapture[10] = m_ahrs.getCompassHeading();
+        fullCapture[11] = m_ahrs.getRawAccelX();
+        fullCapture[12] = m_ahrs.getRawAccelY();
+        fullCapture[13] = m_ahrs.getRawAccelZ();
+        fullCapture[14] = m_ahrs.getRawGyroX();
+        fullCapture[15] = m_ahrs.getRawGyroY();
+        fullCapture[16] = m_ahrs.getRawGyroZ();
+        fullCapture[17] = m_ahrs.getRawMagX();
+        fullCapture[18] = m_ahrs.getRawMagY();
+        fullCapture[19] = m_ahrs.getRawMagZ();
+        fullCapture[20] = m_ahrs.getRotation2d().getDegrees();
+        fullCapture[21] = m_odometry.getPoseMeters().getX();
+        fullCapture[22] = m_odometry.getPoseMeters().getY();
+        fullCapture[23] = m_odometry.getPoseMeters().getRotation().getDegrees();
+        fullCapture[24] = m_leftMotor.get();
+        fullCapture[25] = m_rightMotor.get();
+        SmartDashboard.putNumberArray("FullData", fullCapture);
     }
 }

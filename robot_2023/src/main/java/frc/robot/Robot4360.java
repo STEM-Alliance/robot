@@ -97,7 +97,13 @@ public class Robot4360 extends TimedRobot {
         }
 
         SmartDashboard.putNumberArray("Joy1", joy1);
-        m_robotDrive.arcadeDrive(joy1[2], joy1[3]);
+        /*
+         * When we push the joystick forward, it gives a negative number.
+         * But when we drive the motors we want the positive motor commands to drive forward.
+         * Therefore we need to invert the joystick, so up is +1 and down is -1
+         */
+        // We want the motor wheels to be commanded forward with positive offsets.
+        m_robotDrive.arcadeDrive(-joy1[2], -joy1[3]);
     }
 
 
@@ -210,13 +216,15 @@ public class Robot4360 extends TimedRobot {
 
         double kp = 0.2;
         double ki = 0;
+        double ks = 0.001;
+        double kv = 0.001;
 
         RamseteCommand ramseteCommand =
         new RamseteCommand(
             moveStraight,
             m_robotDrive::getPose,
             new RamseteController(2, 0.7),
-            new SimpleMotorFeedforward(0.1, 0.1),
+            new SimpleMotorFeedforward(ks, kv),
             kDriveKinematics,
             m_robotDrive::getWheelSpeeds,
             new PIDController(kp, ki, 0),
