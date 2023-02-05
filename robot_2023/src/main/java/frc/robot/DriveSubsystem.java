@@ -63,8 +63,7 @@ public class DriveSubsystem extends SubsystemBase {
         // result in both sides moving forward. Depending on how your robot's
         // gearbox is constructed, you might have to invert the left side instead.
         m_leftMotor.setInverted(true);
-
-        // The left side encoders are negative
+        m_rightMotor.setInverted(false);
 
         try {
             /* Communicate w/navX-MXP via the MXP SPI Bus. */
@@ -78,14 +77,11 @@ public class DriveSubsystem extends SubsystemBase {
             DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
         }
 
-        m_ahrs.enableLogging(true);
         m_ahrs.reset();
         m_ahrs.calibrate();
-
         resetEncoders();
 
-        m_odometry = new DifferentialDriveOdometry(
-                new Rotation2d(m_ahrs.getFusedHeading()), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+        m_odometry = new DifferentialDriveOdometry(m_ahrs.getRotation2d(), 0, 0);
 
         SmartDashboard.putData("Field", m_field);
         DataLogManager.start();
@@ -109,7 +105,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_rSimDistance += rCmdSpeed * 0.02;
             m_odometry.update(getHeading(), m_lSimDistance, m_rSimDistance);
         } else {
-            m_odometry.update(getHeading(), lDistance, rDistance);
+            m_odometry.update(m_ahrs.getRotation2d(), lDistance, rDistance);
         }
         m_field.setRobotPose(m_odometry.getPoseMeters());
         sendStats();
@@ -207,7 +203,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @return the left drive encoder
      */
     // public Encoder getLeftEncoder() {
-    // //return m_leftEncoder;
+    //     return m_leftEncoder.getPosition();
     // }
 
     /**
@@ -245,7 +241,7 @@ public class DriveSubsystem extends SubsystemBase {
         //System.out.println("getHeading");
         if (Configuration.Simulate)
             return new Rotation2d(m_simAngle);
-        return Rotation2d.fromDegrees(m_ahrs.getYaw());
+        return m_ahrs.getRotation2d();
     }
 
     /**
@@ -292,7 +288,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void sendStats() {
-        SmartDashboard.putNumber("Heading", getHeading().getRadians());
+        SmartDashboard.putNumber("Heading", getHeading().getDegrees());
         SmartDashboard.putNumber("Yaw", m_ahrs.getYaw());
         SmartDashboard.putNumber("FusedHeading", m_ahrs.getFusedHeading());
 

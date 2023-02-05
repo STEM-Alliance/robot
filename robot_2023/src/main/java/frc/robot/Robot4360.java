@@ -158,7 +158,10 @@ public class Robot4360 extends TimedRobot {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        var kDriveKinematics = new DifferentialDriveKinematics(Configuration.TrackWidth);
+        var kDriveKinematics = new DifferentialDriveKinematics(Configuration.TrackWidthInMeters);
+
+        // Reset odometry to the starting pose of the trajectory.
+        m_robotDrive.resetOdometry(new Pose2d(0, 0, m_robotDrive.getHeading()));
 
         // Create config for trajectory
         TrajectoryConfig config =
@@ -169,14 +172,14 @@ public class Robot4360 extends TimedRobot {
                 .setKinematics(kDriveKinematics);
 
         // An example trajectory to follow.  All units in meters.
-        Trajectory exampleTrajectory =
+        Trajectory curve =
             TrajectoryGenerator.generateTrajectory(
                 // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
+                new Pose2d(0, 0, m_robotDrive.getHeading()),
                 // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(10, 1), new Translation2d(20, -1)),
+                List.of(new Translation2d(10, 3), new Translation2d(20, -3)),
                 // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(30, 0, new Rotation2d(90)),
+                new Pose2d(30, 3, Rotation2d.fromDegrees(160)),
                 // Pass config
                 config);
 
@@ -185,9 +188,9 @@ public class Robot4360 extends TimedRobot {
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, m_robotDrive.getHeading()),
-            List.of(new Translation2d(5, 0)),
+            List.of(new Translation2d(25, 0)),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(10, 0, m_robotDrive.getHeading()),
+            new Pose2d(30, 2, Rotation2d.fromDegrees(90)),
             // Pass config
             config);
 
@@ -214,14 +217,14 @@ public class Robot4360 extends TimedRobot {
         //         m_robotDrive::move,
         //         m_robotDrive);
 
-        double kp = 0.2;
+        double kp = 0.05;
         double ki = 0;
-        double ks = 0.001;
+        double ks = 0.05;
         double kv = 0.001;
 
         RamseteCommand ramseteCommand =
         new RamseteCommand(
-            moveStraight,
+            curve,
             m_robotDrive::getPose,
             new RamseteController(2, 0.7),
             new SimpleMotorFeedforward(ks, kv),
@@ -231,9 +234,6 @@ public class Robot4360 extends TimedRobot {
             new PIDController(kp, ki, 0),
             m_robotDrive::move,
             m_robotDrive);
-
-        // Reset odometry to the starting pose of the trajectory.
-        m_robotDrive.resetOdometry(moveStraight.getInitialPose());
 
         // Run path following command, then stop at the end.
         return ramseteCommand.andThen(() -> m_robotDrive.stop());

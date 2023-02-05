@@ -3,6 +3,8 @@
  */
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 public class Configuration {
     static enum Team {
         FARGO,
@@ -52,10 +54,10 @@ public class Configuration {
 
     // RAMSETE controoller
     static double kRamseteB = 2;
-    static double kRamsetsZeta = 0.5;
-    static double kMaxSpeedMetersPerSecond = 4;
+    static double kRamsetsZeta = 0.7;
+    static double kMaxSpeedMetersPerSecond = 2;
     static double kMaxAccelerationMetersPerSecondSquared = 0.5;
-    static double TrackWidth = 26.5;
+    static double TrackWidthInMeters = Units.inchesToMeters(26.5);
     static double MetersPerRotation = 0.053;
     static boolean Simulate = false;
     static double MaxRobotSpeedMPS = 5800 / 60 * MetersPerRotation;
