@@ -11,6 +11,9 @@ public class Configuration {
         MOORHEAD,
     };
 
+    /********************************************
+     * General
+     *******************************************/
     // This variable defines the team
     static Team robot = Team.MOORHEAD;
     // This controls the speed of the forward/back control. Larger numbers mean faster response
@@ -38,7 +41,9 @@ public class Configuration {
     // Launcher low speed
     static double launcher_low_speed_percentage = 0.4;
 
-    // AUTONOMOUS MODE VARIABLES
+    /********************************************
+     * Autonomous controls
+     *******************************************/
     // Delay to allow the launcher to spin up
     static double launcher_spin_up_delay = 1;
     // Delay to drive the indexer to shoot
@@ -51,6 +56,11 @@ public class Configuration {
     static double auto_move_distance = 48;
     // How far to move the robot out of the tarmac
     static double auto_move_out_of_tarmac = 55;
+
+    /********************************************
+     * Gripper Controlers
+     *******************************************/
+    static double GripperCloseSetPoint = 0.5;
 
     // RAMSETE controoller
     static double kRamseteB = 2;

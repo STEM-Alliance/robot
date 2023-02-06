@@ -15,14 +15,18 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import edu.wpi.first.cameraserver.CameraServer;
-
+import edu.wpi.first.hal.CANAPIJNI;
 import edu.wpi.first.math.trajectory.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj2.command.*;
 
 import java.util.*;
 
@@ -45,8 +49,13 @@ public class Robot4360 extends TimedRobot {
     NetworkTableEntry m_moveDistance;
 
     DriveSubsystem m_robotDrive = new DriveSubsystem();
+    GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
 
     Command m_autoCommand;
+
+    CommandXboxController m_commandController;
+    Trigger m_gripOpen;
+    Trigger m_gripClose;
 
     @Override
     public void robotInit() {
@@ -56,6 +65,10 @@ public class Robot4360 extends TimedRobot {
         // m_right.setInverted(true);
 
         m_controller1 = new XboxController(0);
+        final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
+        final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
+        buttonA.onTrue(m_gripper.open());
+        buttonB.onTrue(m_gripper.close());
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
@@ -104,6 +117,22 @@ public class Robot4360 extends TimedRobot {
          */
         // We want the motor wheels to be commanded forward with positive offsets.
         m_robotDrive.arcadeDrive(-joy1[2], -joy1[3]);
+    }
+
+    /**
+     * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+     * that you want ran during disabled, autonomous, teleoperated and test.
+     *
+     * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+     * SmartDashboard integrated updating.
+     */
+    @Override
+    public void robotPeriodic() {
+        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        // commands, running already-scheduled commands, removing finished or interrupted commands,
+        // and running subsystem periodic() methods.  This must be called from the robot's periodic
+        // block in order for anything in the Command-based framework to work.
+        CommandScheduler.getInstance().run();
     }
 
 
