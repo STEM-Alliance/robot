@@ -40,6 +40,7 @@ public class Robot7048 extends TimedRobot {
 
     DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
     GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
+    ElevatorSubsystem m_elevatorArm = new ElevatorSubsystem(20, 21);
 
     Command m_autoCommand;
 
@@ -57,6 +58,7 @@ public class Robot7048 extends TimedRobot {
         buttonB.onTrue(m_gripper.close());
 
         new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
+        new RunCommand(() -> m_elevatorArm.control(m_controller1.getRightY(), m_controller1.getRightX()), m_elevatorArm);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
