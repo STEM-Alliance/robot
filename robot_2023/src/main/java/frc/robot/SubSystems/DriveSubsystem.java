@@ -1,7 +1,8 @@
 //package edu.wpi.first.wpilibj.examples.ramsetecommand.subsystems;
 
-package frc.robot;
+package frc.robot.SubSystems;
 
+import frc.robot.Configuration;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,20 +20,20 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSubsystem extends SubsystemBase {
-    private final CANSparkMax m_leftMotor = new CANSparkMax(1, MotorType.kBrushless);
-    private final CANSparkMax m_leftMotorFollower = new CANSparkMax(2, MotorType.kBrushless);
+    private CANSparkMax m_leftMotor;
+    private CANSparkMax m_leftMotorFollower;
 
-    private final CANSparkMax m_rightMotor = new CANSparkMax(3, MotorType.kBrushless);
-    private final CANSparkMax m_rightMotorFollower = new CANSparkMax(4, MotorType.kBrushless);
+    private CANSparkMax m_rightMotor;
+    private CANSparkMax m_rightMotorFollower;
 
     // The robot's drive
-    private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotor, m_rightMotor);
+    private DifferentialDrive m_drive;
 
     // The gyro sensor
     private AHRS m_ahrs;
 
-    RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
-    RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
+    RelativeEncoder m_leftEncoder;
+    RelativeEncoder m_rightEncoder;
 
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
@@ -49,7 +50,19 @@ public class DriveSubsystem extends SubsystemBase {
     int m_simIndex = 0;
 
     /** Creates a new DriveSubsystem. */
-    public DriveSubsystem() {
+    public DriveSubsystem(int leftMotor1, int leftMotor2, int rightMotor1, int rightMotor2) {
+        m_leftMotor = new CANSparkMax(leftMotor1, MotorType.kBrushless);
+        m_leftMotorFollower = new CANSparkMax(leftMotor2, MotorType.kBrushless);
+
+        m_rightMotor = new CANSparkMax(rightMotor1, MotorType.kBrushless);
+        m_rightMotorFollower = new CANSparkMax(rightMotor2, MotorType.kBrushless);
+
+        // The robot's drive
+        m_drive = new DifferentialDrive(m_leftMotor, m_rightMotor);
+
+        m_leftEncoder = m_leftMotor.getEncoder();
+        m_rightEncoder = m_rightMotor.getEncoder();
+
         m_leftMotor.restoreFactoryDefaults();
         m_leftMotorFollower.restoreFactoryDefaults();
         m_rightMotor.restoreFactoryDefaults();
@@ -64,6 +77,19 @@ public class DriveSubsystem extends SubsystemBase {
         // gearbox is constructed, you might have to invert the left side instead.
         m_leftMotor.setInverted(true);
         m_rightMotor.setInverted(false);
+
+        /*
+         * 120 rotations to go 20 feet on the left
+         * 120 rotations to go 20 feet on the right
+         * This doesn't make any sesne. So lets say it is 127 rotations to go 20 feet
+         * 20 feet is 6.096 meters
+         * 6.096 meters / 120 rotations = 0.0508 meters per rotation
+         * Rotations/minute * 0.0508 meters / rotation * 1 minute / 60 seconds =
+         */
+        m_leftEncoder.setPositionConversionFactor(Configuration.MetersPerRotation);
+        m_rightEncoder.setPositionConversionFactor(Configuration.MetersPerRotation);
+        m_leftEncoder.setVelocityConversionFactor(Configuration.MetersPerRotation / 60);
+        m_rightEncoder.setVelocityConversionFactor(Configuration.MetersPerRotation / 60);
 
         try {
             /* Communicate w/navX-MXP via the MXP SPI Bus. */
@@ -90,19 +116,12 @@ public class DriveSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-        var lDistance = m_leftEncoder.getPosition() * Configuration.MetersPerRotation;
-        var rDistance = m_rightEncoder.getPosition() * Configuration.MetersPerRotation;
-
-        SmartDashboard.putNumber("lDistance", lDistance);
-        SmartDashboard.putNumber("rDistance", rDistance);
+        var lDistance = m_leftEncoder.getPosition();
+        var rDistance = m_rightEncoder.getPosition();
 
         // m_odometry.update(
         // Rotation2d.fromDegrees(-m_ahrs.getYaw()), lDistance, rDistance);
         if (Configuration.Simulate) {
-            var lCmdSpeed = m_lSimCmd * Configuration.MaxRobotSpeedMPS;
-            var rCmdSpeed = m_rSimCmd * Configuration.MaxRobotSpeedMPS;
-            m_lSimDistance += lCmdSpeed * 0.02;
-            m_rSimDistance += rCmdSpeed * 0.02;
             m_odometry.update(getHeading(), m_lSimDistance, m_rSimDistance);
         } else {
             m_odometry.update(m_ahrs.getRotation2d(), lDistance, rDistance);
@@ -128,16 +147,10 @@ public class DriveSubsystem extends SubsystemBase {
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         // This function is being called periodically
         // System.out.println("getWheelSpeeds");
-        var lRPM = m_leftEncoder.getVelocity();
-        var rRPM = m_rightEncoder.getVelocity();
+        var leftMetersPerSecond = m_leftEncoder.getVelocity();
+        var rightMetersPerSecond = m_rightEncoder.getVelocity();
 
-        // The velocity is in revs/minute, multiply by 60 to get revs/second, then we
-        // know 1 rev = 0.053 meters (see Robot code)
-        var leftMetersPerSecond = (lRPM / 60) * Configuration.MetersPerRotation;
-        var rightMetersPerSecond = (rRPM / 60) * Configuration.MetersPerRotation;
         if (Configuration.Simulate) {
-            m_lSimVel = m_lSimCmd * Configuration.MaxRobotSpeedMPS;
-            m_rSimVel = m_rSimCmd * Configuration.MaxRobotSpeedMPS;
             var speed = new DifferentialDriveWheelSpeeds(m_lSimVel, m_rSimVel);
             return speed;
         }
@@ -168,18 +181,6 @@ public class DriveSubsystem extends SubsystemBase {
         sendStats();
     }
 
-    /**
-     * Controls the left and right sides of the drive directly with voltages.
-     *
-     * @param leftVolts  the commanded left output
-     * @param rightVolts the commanded right output
-     */
-    // public void tankDriveVolts(double leftVolts, double rightVolts) {
-    // m_leftMotors.setVoltage(leftVolts);
-    // m_rightMotors.setVoltage(rightVolts);
-    // m_drive.feed();
-    // }
-
     /** Resets the drive encoders to currently read a position of 0. */
     public void resetEncoders() {
         System.out.println("resetEncoders");
@@ -196,24 +197,6 @@ public class DriveSubsystem extends SubsystemBase {
         System.out.println("getAverageEncoderDistance");
         return (m_leftEncoder.getPosition() + m_rightEncoder.getPosition()) / 2.0;
     }
-
-    /**
-     * Gets the left drive encoder.;
-     *
-     * @return the left drive encoder
-     */
-    // public Encoder getLeftEncoder() {
-    //     return m_leftEncoder.getPosition();
-    // }
-
-    /**
-     * Gets the right drive encoder.
-     *
-     * @return the right drive encoder
-     */
-    // public Encoder getRightEncoder() {
-    // //return m_rightEncoder;
-    // }
 
     /**
      * Sets the max output of the drive. Useful for scaling the drive to drive more
@@ -260,6 +243,7 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("CmdSpdRMPS", rightSpeed);
 
         // The speed values are in meters per second. Convert to -1 to +1
+        // TODO: Need to figure this out
         leftSpeed *= 0.19;
         rightSpeed *= 0.19;
         if (leftSpeed > 1) {
@@ -296,11 +280,8 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("CmdR", m_rightMotor.get());
         SmartDashboard.putNumber("EncL", m_leftEncoder.getPosition()); // These are in rotations
         SmartDashboard.putNumber("EncR", m_rightEncoder.getPosition());
-        SmartDashboard.putNumber("RPML", m_leftEncoder.getVelocity()); // These are in RPM
-        SmartDashboard.putNumber("RPMR", m_rightEncoder.getVelocity());
-        // These are in RPMs
-        SmartDashboard.putNumber("VelL", m_leftEncoder.getVelocity() / 60 * Configuration.MetersPerRotation);
-        SmartDashboard.putNumber("VelR", m_rightEncoder.getVelocity() / 60 * Configuration.MetersPerRotation);
+        SmartDashboard.putNumber("VelL", m_leftEncoder.getVelocity());
+        SmartDashboard.putNumber("VelR", m_rightEncoder.getVelocity());
         if (Configuration.Simulate) {
             SmartDashboard.putNumber("SimCmdL", m_lSimCmd);
             SmartDashboard.putNumber("SimVelL", m_lSimVel);

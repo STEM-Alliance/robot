@@ -4,389 +4,220 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import frc.robot.SubSystems.*;
 import edu.wpi.first.wpilibj.*;
-import com.revrobotics.*;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.*;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import java.lang.Math;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+import edu.wpi.first.math.trajectory.*;
+import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+
+import java.util.*;
+import java.io.File;
 
 /**
- * This is a demo program showing the use of the DifferentialDrive class,
- * specifically it contains
- * the code necessary to operate a robot with tank drive.
+ * Uses the CameraServer class to automatically capture video from a USB webcam and send it to the
+ * FRC dashboard without doing any vision processing. This is the easiest way to get camera images
+ * to the dashboard. Just add this to the robotInit() method in your program.
  */
+
 public class Robot7048 extends TimedRobot {
-  private DifferentialDrive m_myRobot;
-  private XboxController m_controller1;
-  private XboxController m_controller2;
+    private XboxController m_controller1;
 
-  private final CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);
-  private final CANSparkMax m_leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);
-  private final MotorControllerGroup m_left = new MotorControllerGroup(m_leftMotor1, m_leftMotor2);
+    DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
+    GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
 
-  private final CANSparkMax m_rightMotor1 = new CANSparkMax(3, MotorType.kBrushless);
-  private final CANSparkMax m_rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);
-  private final MotorControllerGroup m_right = new MotorControllerGroup(m_rightMotor1, m_rightMotor2);
+    Command m_autoCommand;
 
-  private final MotorController m_launcher = new CANSparkMax(5, MotorType.kBrushless);
+    @Override
+    public void robotInit() {
+        // We need to invert one side of the drivetrain so that positive voltages
+        // result in both sides moving forward. Depending on how your robot's
+        // gearbox is constructed, you might have to invert the left side instead.
+        // m_right.setInverted(true);
 
-  private final TalonSRX m_harvester = new TalonSRX(10);
-  private final TalonSRX m_climber = new TalonSRX(11);
-  private final TalonSRX m_indexer = new TalonSRX(12);
+        m_controller1 = new XboxController(0);
+        final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
+        final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
+        buttonA.onTrue(m_gripper.open());
+        buttonB.onTrue(m_gripper.close());
 
-  RelativeEncoder m_lenc = m_leftMotor1.getEncoder();
-  RelativeEncoder m_renc = m_rightMotor1.getEncoder();
+        new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
 
-  DoubleSolenoid m_harvesterArms = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
-  DoubleSolenoid m_climbingArms = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+        //Get the default instance of NetworkTables that was created automatically
+        //when your program starts
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-  SlewRateLimiter m_forwardFilter = new SlewRateLimiter(1.5);
-  SlewRateLimiter m_rotationFilter = new SlewRateLimiter(1.5);
-  Timer timer = new Timer();
+        // Attempting to get the driver station position
+        NetworkTable fmsInfo = inst.getTable("FMSInfo");
+        NetworkTableEntry m_driverStationPos = fmsInfo.getEntry("StationNumber");
+        Number pos = m_driverStationPos.getNumber(0);
 
-  private AutoStates m_autoStates = AutoStates.IDLE;
-  private double m_currentEncPos;
-  private double m_initialTime;
-
-  private SparkMaxPIDController m_pidController[];
-
-  public void setMotorsToBrake(IdleMode mode)
-  {
-    m_leftMotor1.setIdleMode(mode);
-    m_leftMotor2.setIdleMode(mode);
-    m_rightMotor1.setIdleMode(mode);
-    m_rightMotor2.setIdleMode(mode);
+        System.out.println("Driver Station number: " + pos.toString());
+        System.out.println("Robot starting");
   }
 
-  @Override
-  public void robotInit() {
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
-    CameraServer.startAutomaticCapture();
-    m_right.setInverted(true);
-    setMotorsToBrake(CANSparkMax.IdleMode.kCoast);
-    //m_climber.setNeutralMode(NeutralMode.Brake);
+    @Override
+    public void teleopPeriodic() {
 
-    m_myRobot = new DifferentialDrive(m_left, m_right);
-    m_myRobot.setDeadband(0.15);
-    m_controller1 = new XboxController(0);
-    m_controller2 = new XboxController(1);
-
-    m_lenc.setPositionConversionFactor(Configuration.encoder_counts_to_inches);
-    m_renc.setPositionConversionFactor(Configuration.encoder_counts_to_inches);
-    m_lenc.setPosition(0);
-    m_renc.setPosition(0);
-
-    TalonSRXConfiguration config = new TalonSRXConfiguration();
-    config.peakCurrentLimit = 40; // the peak current, in amps
-    config.peakCurrentDuration = 1500; // the time at the peak current before the limit triggers, in ms
-    config.continuousCurrentLimit = 30; // the current to maintain if the peak limit is triggered
-    m_harvester.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
-    m_indexer.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
-    m_climber.configAllSettings(config);
-
-    // m_pidController[0] = m_leftMotor1.getPIDController();
-    // m_pidController[1] = m_leftMotor2.getPIDController();
-    // m_pidController[2] = m_rightMotor1.getPIDController();
-    // m_pidController[3] = m_rightMotor2.getPIDController();
-
-    System.out.println("Robot starting");
-
-  }
-
-  @Override
-  public void teleopPeriodic() {
-    // Controller 1 will control the robot movement, the arms, and the harvester
-    setMotorsToBrake(CANSparkMax.IdleMode.kCoast);
-    // The rotation needs to be inverted. Otherwise the robot will turn in the wrong
-    // direction
-    double multiFactor = Configuration.fine_controller_derate;
-    if (m_controller1.getYButton()) {
-      multiFactor = 1;
-    }
-    // m_myRobot.arcadeDrive(m_forwardFilter.calculate(m_controller1.getLeftY() *
-    // multiFactor),
-    // m_rotationFilter.calculate(-m_controller1.getLeftX()) * multiFactor);
-
-    m_myRobot.arcadeDrive(m_controller1.getLeftY(), (-m_controller1.getLeftX() * Configuration.right_left_derate_percentage));
-
-    double harvest_value = m_controller1.getRightY();
-    if (Math.abs(harvest_value) > Configuration.controller_dead_zone) {
-      m_harvester.set(TalonSRXControlMode.PercentOutput, harvest_value * Configuration.harvester_max_speed);
-      m_harvesterArms.set(Value.kReverse);
-    } else {
-      m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
-      m_harvesterArms.set(Value.kForward);
+        if (m_autoCommand != null) {
+            m_autoCommand.cancel();
+        }
     }
 
-    if (m_controller1.getAButton()) {
-      // up
-      m_harvesterArms.set(Value.kForward);
-    }
-    if (m_controller1.getBButton()) {
-      // down
-      m_harvesterArms.set(Value.kReverse);
-    }
-
-    // Controller 2 will control the indexer, launcher, and climbers
-    if (m_controller2.getYButton()) {
-      m_launcher.set(Configuration.launcher_high_speed_percentage);
-      System.out.println("Launcher to 80%");
-    } else if (m_controller2.getBButton()) {
-      m_launcher.set(Configuration.launcher_medium_speed_percentage);
-      System.out.println("Launcher to 60%");
-    } else if (m_controller2.getAButton()) {
-      m_launcher.set(Configuration.launcher_low_speed_percentage);
-      System.out.println("Launcher to 40%");
-    } else {
-      m_launcher.set(0);
+    /**
+     * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+     * that you want ran during disabled, autonomous, teleoperated and test.
+     *
+     * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+     * SmartDashboard integrated updating.
+     */
+    @Override
+    public void robotPeriodic() {
+        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        // commands, running already-scheduled commands, removing finished or interrupted commands,
+        // and running subsystem periodic() methods.  This must be called from the robot's periodic
+        // block in order for anything in the Command-based framework to work.
+        CommandScheduler.getInstance().run();
     }
 
-    double indexer_value = m_controller2.getLeftY();
-    if (Math.abs(indexer_value) > Configuration.controller_dead_zone) {
-      indexer_value *= Configuration.indexer_max_speed;
-      m_indexer.set(TalonSRXControlMode.PercentOutput, indexer_value);
-    } else {
-      m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
-    }
 
-    double climber_value = m_controller2.getRightY();
-    if (Math.abs(climber_value) > Configuration.controller_dead_zone) {
-      m_climber.set(TalonSRXControlMode.PercentOutput, climber_value * Configuration.climber_max_speed);
-    } else {
-      m_climber.set(TalonSRXControlMode.PercentOutput, 0);
-    }
-
-    if (m_controller2.getRightBumper()) {
-      m_climbingArms.set(Value.kForward);
-    }
-    if (m_controller2.getLeftBumper()) {
-      m_climbingArms.set(Value.kReverse);
-    }
-  }
-
-  /**
-   * This autonomous (along with the chooser code above) shows how to select
-   * between different
-   * autonomous modes using the dashboard. The sendable chooser code works with
-   * the Java
-   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the
-   * chooser code and
-   * uncomment the getString line to get the auto name from the text box below the
-   * Gyro
+    /**
+   * This autonomous (along with the chooser code above) shows how to select between different
+   * autonomous modes using the dashboard. The sendable chooser code works with the Java
+   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the chooser code and
+   * uncomment the getString line to get the auto name from the text box below the Gyro
    *
-   * <p>
-   * You can add additional auto modes by adding additional comparisons to the
-   * switch structure
-   * below with additional strings. If using the SendableChooser make sure to add
-   * them to the
+   * <p>You can add additional auto modes by adding additional comparisons to the switch structure
+   * below with additional strings. If using the SendableChooser make sure to add them to the
    * chooser code above as well.
    */
 
-  
-  enum AutoStates {
-    IDLE,
-    SPIN_UP_DELAY,
-    PICKUP_BALL,
-    DRIVE_TO_BASKET,
-    SHOOT_BALLS,
-    DRIVE_OUT_AREA,
-    STOP
-  }
-
-  public void setSparkMaxPIDModes() {
-    // PID coefficients
-    double kP = 0.1; 
-    double kI = 1e-4;
-    double kD = 1; 
-    double kIz = 0; 
-    double kFF = 0; 
-    double kMaxOutput = 1; 
-    double kMinOutput = -1;
-
-    for (int i = 0; i < 4; i++)
-    {
-      setSparkMaxMotorPIDValues(i, kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput);
-    }
-  }
-
-  public void setSparkMaxMotorPIDValues(int index, double kP, double kI, double kD, double kIz, double kFF, double kMax, double kMin) {
-    m_pidController[index].setP(kP);
-    m_pidController[index].setI(kI);
-    m_pidController[index].setD(kD);
-    m_pidController[index].setIZone(kIz);
-    m_pidController[index].setFF(kFF);
-    m_pidController[index].setOutputRange(kMin, kMax);
-  }
-
-  @Override
-  public void autonomousInit() {
-    m_lenc.setPosition(0);
-    m_renc.setPosition(0);
-    timer.reset();
-    timer.start();
-    //m_right.set(0);
-    setMotorsToBrake(CANSparkMax.IdleMode.kBrake);
-    //setSparkMaxPIDModes();
-  }
-
-  public void setPositionRef(double posRef) {
-    for (int i = 0; i < 4; i++)
-    {
-      m_pidController[i].setReference(posRef, CANSparkMax.ControlType.kPosition);
-    }
-  }
-
-
-  /** This function is called periodically during autonomous. */
-  @Override
-
-  public void autonomousPeriodic() {
-    System.out.println(m_lenc.getPosition());
-    m_harvesterArms.set(Value.kReverse);
-
-    switch (m_autoStates) {
-      case IDLE:
-        // This is the start of auto mode, shoot ball
-        m_launcher.set(Configuration.launcher_high_speed_percentage);
-        if (timer.get() > Configuration.launcher_spin_up_delay) {
-          m_indexer.set(TalonSRXControlMode.PercentOutput, -Configuration.indexer_max_speed);
-        }
-        m_lenc.setPosition(0);
-        m_renc.setPosition(0);
-        if (timer.get() > Configuration.indexer_launch_delay) {
-          m_autoStates = AutoStates.PICKUP_BALL;
-          m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
-        }
-        break;
-      case PICKUP_BALL:
-        // Drive forward 42.7 inches, zero encoders before next state
-        m_harvester.set(TalonSRXControlMode.PercentOutput, -Configuration.harvester_max_speed);
-        m_harvesterArms.set(Value.kReverse);
-        //setPositionRef(-Configuration.auto_move_distance);
-        m_myRobot.arcadeDrive(-Configuration.auto_mode_drive_speed, 0);
-        if (Math.abs(m_lenc.getPosition()) >= Configuration.auto_move_distance) {
-          m_myRobot.arcadeDrive(0, 0);
-          m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
-          m_harvesterArms.set(Value.kForward);
-          m_autoStates = AutoStates.DRIVE_TO_BASKET;
-          m_lenc.setPosition(0);
-          m_renc.setPosition(0);
-        }
-        break;
-      case DRIVE_TO_BASKET:
-        // Drive forward move distance
-        m_myRobot.arcadeDrive(Configuration.auto_mode_drive_speed, 0);
-        m_launcher.set(Configuration.launcher_high_speed_percentage);
-        if (Math.abs(m_lenc.getPosition()) > Configuration.auto_move_distance) {
-          m_myRobot.arcadeDrive(0, 0);
-          m_currentEncPos = m_lenc.getPosition();
-          m_indexer.set(TalonSRXControlMode.PercentOutput, -Configuration.indexer_max_speed);
-          m_autoStates = AutoStates.SHOOT_BALLS;
-          m_initialTime = timer.get();
-        }
-        break;
-      case SHOOT_BALLS:
-        // Start launcher, and start indexer for shoot_basket time variable
-        if (timer.get() >= (m_initialTime + Configuration.indexer_launch_delay)) {
-          m_autoStates = AutoStates.DRIVE_OUT_AREA;
-          m_lenc.setPosition(0);
-          m_renc.setPosition(0);
-        }
-        break;
-        
-      case DRIVE_OUT_AREA:
-        // Drive back out move distance + additional distance
-        m_myRobot.arcadeDrive(-Configuration.auto_exit_tarmac_speed, 0);
-        if (Math.abs(m_lenc.getPosition()) >= Configuration.auto_move_out_of_tarmac) {
-          m_myRobot.arcadeDrive(0, 0);
-        } 
-        break;
-      default:
-        // Do nothing, wait until auto period is done
-        break;
-
-    }
-  }
-
-  public void oldAutonmousPeriodic() {
-    // double time = System.nanoTime() / 1E9;
-    m_harvester.set(TalonSRXControlMode.PercentOutput, -0.3);
-    m_harvesterArms.set(Value.kReverse);
-    // Drive to ball .45sec at .5 speed = 3.3ft
-
-    if (timer.get() < 0.45) {
-      m_myRobot.arcadeDrive(-0.7, 0);
-    }
-    // Drive to hanger 0.98sec at .5speed = 7.3ft
-    else if (0.45 <= timer.get() && timer.get() < 1.43) {
-      m_myRobot.arcadeDrive(0.5, 0);
-      m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
-
-    } else if (1.43 <= timer.get() && timer.get() < 5.5) {
-      m_launcher.set(0.75);
-      m_indexer.set(TalonSRXControlMode.PercentOutput, -0.75);
-    } else if (5.5 <= timer.get() && timer.get() < 6.48) {
-      m_myRobot.arcadeDrive(-.5, 0);
-    } else if (6.48 <= timer.get()) {
-      m_myRobot.arcadeDrive(0, 0);
-      m_launcher.set(0);
-      m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
+    double m_start = 0;
+    @Override
+    public void autonomousInit() {
+        m_start = System.nanoTime() / 1E9;
+        m_robotDrive.zeroHeading();
+        m_autoCommand = getAutonomousCommand();
+         // schedule the autonomous command (example)
+        if (m_autoCommand != null) {
+            m_autoCommand.schedule();
+      }
     }
 
-    /* --- JEREMY START --- */
-    // Fire
-    if (timer.get() < 2.0) {
-      m_launcher.set(0.75);
-
+    /** This function is called periodically during autonomous. */
+    @Override
+    public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
     }
 
-    else if (timer.get() < 4.0) {
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        var kDriveKinematics = new DifferentialDriveKinematics(Configuration.TrackWidthInMeters);
 
-      m_indexer.set(TalonSRXControlMode.PercentOutput, -0.75);
-    } else if (timer.get() < 4.75) {
-      // Drive backwards, turn off shooter
-      m_myRobot.arcadeDrive(-1, 0);
-      m_launcher.set(0);
-      m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
-      m_harvester.set(TalonSRXControlMode.PercentOutput, -0.3);
-    } else if (timer.get() < 6.25 /* /)/* && m_lenc.xxx < xxx */) {
-      // Chill
-      m_myRobot.arcadeDrive(0, 0);
-    } else if (timer.get() < 7.65) {
-      // Go formard
-      m_myRobot.arcadeDrive(.5, 0);
+        // Reset odometry to the starting pose of the trajectory.
+        m_robotDrive.resetOdometry(new Pose2d(0, 0, m_robotDrive.getHeading()));
 
-    } else if (timer.get() < 7.85 /* && m_lenc.xxx > xxx */) {
-      // Stop and shoot
-      m_myRobot.arcadeDrive(0, 0);
-      m_launcher.set(0.75);
-    } else if (timer.get() < 10.75) {
-      m_indexer.set(TalonSRXControlMode.PercentOutput, -0.75);
-      m_harvester.set(TalonSRXControlMode.PercentOutput, 0);
+        // Create config for trajectory
+        TrajectoryConfig config =
+            new TrajectoryConfig(
+                    Configuration.kMaxSpeedMetersPerSecond,
+                    Configuration.kMaxAccelerationMetersPerSecondSquared)
+                // Add kinematics to ensure max speed is actually obeyed
+                .setKinematics(kDriveKinematics);
 
-    } else if (timer.get() < 12.75) {
-      // Turn off the shooter
-      m_launcher.set(0);
-      m_indexer.set(TalonSRXControlMode.PercentOutput, 0);
+        // An example trajectory to follow.  All units in meters.
+        Trajectory curve =
+            TrajectoryGenerator.generateTrajectory(
+                // Start at the origin facing the +X direction
+                new Pose2d(0, 0, m_robotDrive.getHeading()),
+                // Pass through these two interior waypoints, making an 's' curve path
+                List.of(new Translation2d(10, 3), new Translation2d(20, -3)),
+                // End 3 meters straight ahead of where we started, facing forward
+                new Pose2d(30, 3, Rotation2d.fromDegrees(160)),
+                // Pass config
+                config);
+
+        // Super Simple
+        Trajectory moveStraight =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, m_robotDrive.getHeading()),
+            List.of(new Translation2d(3, 0)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(6, 0, Rotation2d.fromDegrees(0)),
+            // Pass config
+            config);
+
+        // Box turn
+        Trajectory complex =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            List.of(new Translation2d(4, 0),
+                    new Translation2d(4, 4)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(5, 5, new Rotation2d(-90)),
+            // Pass config
+            config);
+
+        // RamseteCommand ramseteCommand =
+        //     new RamseteCommand(
+        //         moveStraight,
+        //         m_robotDrive::getPose,
+        //         new RamseteController(0.5, 0.2),
+        //         kDriveKinematics,
+        //         m_robotDrive::move,
+        //         m_robotDrive);
+
+        double kp = 4.7401E-06;
+        double ki = 0;
+        double ks = 0.09827;
+        //double kv = 2.5687;
+        double kv = 1.5687;
+
+        RamseteCommand ramseteCommand =
+        new RamseteCommand(
+            complex,
+            m_robotDrive::getPose,
+            new RamseteController(2, 0.7),
+            new SimpleMotorFeedforward(ks, kv),
+            kDriveKinematics,
+            m_robotDrive::getWheelSpeeds,
+            new PIDController(kp, ki, 0),
+            new PIDController(kp, ki, 0),
+            m_robotDrive::move,
+            m_robotDrive);
+
+        // Run path following command, then stop at the end.
+        return ramseteCommand.andThen(() -> m_robotDrive.stop());
     }
 
-    /* --- JEREMY ABOVE THIS --- */
-
-  }
-
+    // /**
+    //  * Use this to pass the autonomous command to the main {@link Robot} class.
+    //  *
+    //  * @return the command to run in autonomous
+    //  */
+    // public Command getTurnCommand() {
+    //     // Run path following command, then stop at the end.
+    //     return ramseteCommand.andThen(() -> m_robotDrive.stop());
+    // }
 }

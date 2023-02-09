@@ -11,7 +11,7 @@
 
 ## Install Third Party Librariers
 
-1. In VSCode: `CTRL+SHIFT+P` 
+1. In VSCode: `CTRL+SHIFT+P`
 2. then type `WPILib: Manage`
 3. then go down to `Install New librariers (online)`
 4. Paste the following into the dialog box:
@@ -23,7 +23,7 @@ Repeat steps 1 through 3 then paste:
 `https://software-metadata.revrobotics.com/REVLib.json`
 
 ## Install the New Command System
-1. In VSCode: `CTRL+SHIFT+P` 
+1. In VSCode: `CTRL+SHIFT+P`
 2. then type `WPILib: Manage`
 3. then go down to `Install New librariers (offline)`
 4. Select `new Command`
@@ -41,7 +41,7 @@ Connect a USB cable from your PC to the SPARK Max controller. The app will detec
 These controllers are a little more difficult. Start at this page:
 https://store.ctr-electronics.com/talon-srx/
 
-Download the Phoenix Framework installer and the CTRE Device Firmware. 
+Download the Phoenix Framework installer and the CTRE Device Firmware.
 
 ![Phoenix Tuner](assets/phoenix_tuner_1.jpg)
 
@@ -66,17 +66,50 @@ After installing the framework you will start the `Phoenix Tuner` application.
   - `CTRL+SHIFT+P`
   - Type: `WPILib: Simulate Robot Code`
 
+# Robot Configuration
+Someone on the Chief Delphi forums said we should put a configuration file on
+the RoboRIO and use that to choose what robot to run. Therefore this is how
+I want to make it work.
+
+Download (WinSCP)[https://winscp.net/eng/index.php]. Create a text file
+on the PC that is EXACTLY this:
+4360.txt
+or
+7048.txt
+
+This will determine what robot to run on startup. Now start WinSCP and
+configure the login like the image below:
+![Win SCP Login](assets/winscp_login.png)
+
+The host name is **ROBORIO-7048-FRC** for the Fargo robot and
+**ROBORIO-4360-FRC** for the Moorhead robot. If you have configured a RoboRIO
+differently, then the name may change. The login is **lvuser** with no password
+You can read more about (FTPing files)[file:///C:/Users/Public/wpilib/2023/documentation/rtd/frc-docs-latest/docs/software/roborio-info/roborio-ftp.html]
+
+Next you drag and drop the file into the **/home/lvuser** directory as shown
+in the image below:
+![Win SCP Transfer](assets/win_scp_transfer.png)
+
+Now when the program starts it will pick up this file and choose the correct
+robot.
+
+BIG WARNING: DO NOT PUT BOTH 4360.txt and 7048.txt ON THE SAME ROBOT.
+
 # Simulator
 
-I'm still trying to figure out the simulator, but you can test out your control scheme and see how PWM motors respond. The SPARK Max motors don't show up.
+I'm still trying to figure out the simulator, but you can test out your control
+scheme and see how PWM motors respond. The SPARK Max motors don't show up.
 
 # Robots
 
-The idea is we break common code pieces into their own classes, but have two different RobotXXXX classes. Then in Main.java, you can uncomment the robot you want to run.
+The idea is we break common code pieces into their own classes, but have two
+different RobotXXXX classes. Then in Main.java, you can uncomment the robot you
+want to run.
 
 ## Fargo Robot Control
 
-This code currently implements a two motor differential drive chassis using Spark MAX motor controllers. It uses an XBox and an arcade drive.
+This code currently implements a two motor differential drive chassis using
+Spark MAX motor controllers. It uses an XBox and an arcade drive.
 
 ### Controller 1
 The left joystick drives the robot forward/back and left/right.
@@ -102,18 +135,18 @@ The Left and Right bumpers (buttons above the triggers) control the climbing arm
 
 This code currently implements a two motor differential drive chassis using Spark MAX motor controllers. It uses an XBox and an arcade drive.
 
-The left joystick drives the robot forward/back and left/right. Although I may have things backwards, we will need to test that. 
+The left joystick drives the robot forward/back and left/right. Although I may have things backwards, we will need to test that.
 
 The other motors are mapped to the D-PAD, Rigth stick, triggers, and bumpers. I don't know
-what the motors do, so they are not labeled intelligently. 
+what the motors do, so they are not labeled intelligently.
 
 ## Robot positioning
 
-The motor to gearbox ratio is roughly 8.88. Meaning it takes 8.88 rotations of the motor to route the main shaft one rotation. The wheels are roughly 6 inches in diamter. 
+The motor to gearbox ratio is roughly 8.88. Meaning it takes 8.88 rotations of the motor to route the main shaft one rotation. The wheels are roughly 6 inches in diamter.
 Therefore 8.88 rotations of the motor will move the robot 18.8 inches. Or one rotation of
 the motor will move the wheel 2.1 inches. Therefore we want to program the encoder class
 with 1/2.1. Now the encoders will tell us exactly how many inches we have moved.
 
 ## Autonomous Mode
 
-The Fargo robot has a simple autonomous mode that currently runs the harvester for 5 seconds, then runs the indexer and launcher for 5 seconds. 
+The Fargo robot has a simple autonomous mode that currently runs the harvester for 5 seconds, then runs the indexer and launcher for 5 seconds.

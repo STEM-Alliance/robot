@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.SubSystems.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,8 +15,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.hal.CANAPIJNI;
 import edu.wpi.first.math.trajectory.*;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.geometry.*;
@@ -26,9 +25,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj2.command.*;
 
 import java.util.*;
+import java.io.File;
 
 /**
  * Uses the CameraServer class to automatically capture video from a USB webcam and send it to the
@@ -37,25 +36,12 @@ import java.util.*;
  */
 
 public class Robot4360 extends TimedRobot {
-  //private DifferentialDrive m_myRobot;
     private XboxController m_controller1;
 
-    SlewRateLimiter m_forwardFilter = new SlewRateLimiter(Configuration.forward_back_slew_rate);
-    SlewRateLimiter m_rotationFilter = new SlewRateLimiter(Configuration.right_left_slew_rate);
-
-    NetworkTableEntry m_autoTime;
-    NetworkTableEntry m_lencTable;
-    NetworkTableEntry m_rencTable;
-    NetworkTableEntry m_moveDistance;
-
-    DriveSubsystem m_robotDrive = new DriveSubsystem();
+    DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
     GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
 
     Command m_autoCommand;
-
-    CommandXboxController m_commandController;
-    Trigger m_gripOpen;
-    Trigger m_gripClose;
 
     @Override
     public void robotInit() {
@@ -69,6 +55,8 @@ public class Robot4360 extends TimedRobot {
         final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
         buttonA.onTrue(m_gripper.open());
         buttonB.onTrue(m_gripper.close());
+
+        new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
@@ -89,34 +77,6 @@ public class Robot4360 extends TimedRobot {
         if (m_autoCommand != null) {
             m_autoCommand.cancel();
         }
-
-        // The rotation needs to be inverted. Otherwise the robot will turn in the wrong direction
-        double multiFactor = Configuration.fine_controller_derate;
-        if (m_controller1.getYButton())
-        {
-            multiFactor = 1;
-        }
-
-        double joy1[] = new double[4];
-        joy1[0] = m_controller1.getLeftY();
-        joy1[1] = m_controller1.getLeftX();
-        joy1[2] = m_forwardFilter.calculate(m_controller1.getLeftY() * multiFactor);
-        joy1[3] = m_rotationFilter.calculate(m_controller1.getLeftX() * multiFactor);
-
-        if (m_controller1.getAButton())
-        {
-            m_robotDrive.zeroHeading();
-            m_robotDrive.resetOdometry(new Pose2d());
-        }
-
-        SmartDashboard.putNumberArray("Joy1", joy1);
-        /*
-         * When we push the joystick forward, it gives a negative number.
-         * But when we drive the motors we want the positive motor commands to drive forward.
-         * Therefore we need to invert the joystick, so up is +1 and down is -1
-         */
-        // We want the motor wheels to be commanded forward with positive offsets.
-        m_robotDrive.arcadeDrive(-joy1[2], -joy1[3]);
     }
 
     /**
@@ -147,22 +107,6 @@ public class Robot4360 extends TimedRobot {
    * chooser code above as well.
    */
 
-  /*
-    Per the spec the Neo motors have 42 pulses/rotation
-    The Neo encoder reports in rotations
-    The neo rotates ~8.5 times per one wheel rotation
-    The wheels are 6 inches
-
-    The velocity is reported in RPMs, it appears the max is around 5800 RPM or so.
-
-    circumference = 2 * pi * r
-
-    1 rotation of the main drive wheel is 2 * pi * 3 inches = 18.85 inches or 0.479 meters
-    Or 1 motor rotation is 0.479 meters/9 = 0.053 meters
-    At max speed the robot can go 0.053 meters * 5800 RPM / 60 = 5.12 meters/sec
-
-    So if we are given meters/second for the wheels, we need to convert that into
-   */
     double m_start = 0;
     @Override
     public void autonomousInit() {
@@ -217,23 +161,21 @@ public class Robot4360 extends TimedRobot {
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, m_robotDrive.getHeading()),
-            List.of(new Translation2d(25, 0)),
+            List.of(new Translation2d(3, 0)),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(30, 2, Rotation2d.fromDegrees(90)),
+            new Pose2d(6, 0, Rotation2d.fromDegrees(0)),
             // Pass config
             config);
 
         // Box turn
-        Trajectory boxturn =
+        Trajectory complex =
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, new Rotation2d(0)),
-            List.of(new Translation2d(10, 0),
-                    new Translation2d(10, 10),
-                    new Translation2d(0, 10),
-                    new Translation2d(0, 0)),
+            List.of(new Translation2d(4, 0),
+                    new Translation2d(4, 4)),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(20, 0, new Rotation2d(0)),
+            new Pose2d(5, 5, new Rotation2d(-90)),
             // Pass config
             config);
 
@@ -246,14 +188,15 @@ public class Robot4360 extends TimedRobot {
         //         m_robotDrive::move,
         //         m_robotDrive);
 
-        double kp = 0.05;
+        double kp = 4.7401E-06;
         double ki = 0;
-        double ks = 0.05;
-        double kv = 0.001;
+        double ks = 0.09827;
+        //double kv = 2.5687;
+        double kv = 1.5687;
 
         RamseteCommand ramseteCommand =
         new RamseteCommand(
-            curve,
+            complex,
             m_robotDrive::getPose,
             new RamseteController(2, 0.7),
             new SimpleMotorFeedforward(ks, kv),

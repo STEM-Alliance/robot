@@ -1,6 +1,5 @@
-package frc.robot;
+package frc.robot.SubSystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -8,7 +7,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class GripperSubsystem extends SubsystemBase {
     private final CANSparkMax m_lMotor;
     private final CANSparkMax m_rMotor;
-    private int count = 0;
 
     /** Creates a new DriveSubsystem. */
     public GripperSubsystem(int leftMotorCanID, int rightMotorCanID) {
