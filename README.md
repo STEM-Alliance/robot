@@ -71,7 +71,7 @@ Someone on the Chief Delphi forums said we should put a configuration file on
 the RoboRIO and use that to choose what robot to run. Therefore this is how
 I want to make it work.
 
-Download (WinSCP)[https://winscp.net/eng/index.php]. Create a text file
+Download [WinSCP](https://winscp.net/eng/index.php). Create a text file
 on the PC that is EXACTLY this:
 4360.txt
 or
