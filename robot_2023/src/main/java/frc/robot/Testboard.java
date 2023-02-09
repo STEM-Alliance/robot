@@ -53,17 +53,25 @@ public class Testboard extends TimedRobot {
     private final CANSparkMax Spark2 = new CANSparkMax(2, MotorType.kBrushless);
     private final TalonSRX Talon1 = new TalonSRX(12);
     private final TalonSRX Talon2 = new TalonSRX(13);
+
     DoubleSolenoid  Solenoid1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
     DoubleSolenoid  Solenoid2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 3);
     PIDController Pid = new PIDController(KP, KI, KD);
    RelativeEncoder spark2Encoder = Spark2.getEncoder();
+    DoubleSolenoid  Solenoid1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+    DoubleSolenoid  Solenoid2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+
 // robot init is the robot starting up
 // the controllers are assigned here 
     @Override
   public void robotInit() {
     m_controller1 = new XboxController(0);
     m_controller2 = new XboxController(1);
+
   Spark1.setSmartCurrentLimit(100);
+
+  
+
     //The sparks are set to coast.
     //Comment to set the sparks to brake also uncomment lines 56,57
     Spark1.setIdleMode(IdleMode.kCoast);
@@ -83,71 +91,68 @@ public class Testboard extends TimedRobot {
 //begining of teleop code
   @Override
   public void teleopPeriodic() {
-        double Spark1Speed = m_controller1.getLeftY();
-        double Spark2Speed = m_controller1.getRightY();
-        double Talon1Speed = m_controller2.getLeftY();
-        Double Talon2Speed = m_controller2.getRightY();
-        SmartDashboard.putNumber("Spark2Enc", spark2Encoder.getPosition());
-        SmartDashboard.putData(Pid);
-        SmartDashboard.putNumber("PidVal", Pid.calculate(spark2Encoder.getPosition(), Pid.getSetpoint()));
-       //Spark2.set(Pid.calculate(spark2Encoder.getPosition(), Pid.getSetpoint()));
-        if (Spark1Speed > 0.1) {
-                Spark1.set(Spark1Speed * .2);
-            }
-            else if (Spark1Speed < -0.1) {
-                Spark1.set(Spark1Speed * .2);
-            }
-            else {
-                Spark1.set(0);
-            }
-        if (Spark2Speed > 0.1) {
-                Spark2.set(Spark2Speed);
-            }
-            else if (Spark2Speed < -0.1) {
-                Spark2.set(Spark2Speed);
-            }
-            else {
-                Spark2.set(0);
-        }   
-        
-        
 
-        // these if statements are for the TalonSRX controllers
-        if (Talon1Speed > 0.1){
-                Talon1.set(TalonSRXControlMode.PercentOutput, Talon1Speed);
-            }
-            else if (Talon1Speed < -0.1){
-                Talon1.set(TalonSRXControlMode.PercentOutput, Talon1Speed);
-            }
-            else {
-                Talon1.set(TalonSRXControlMode.PercentOutput, 0);
-        }
+  double Spark1Speed = m_controller1.getLeftY();
+  double Spark2Speed = m_controller1.getRightY();
+  double Talon1Speed = m_controller2.getLeftY();
+  Double Talon2Speed = m_controller2.getRightY();
+  // Using if statements to set motor speed
+  // These if statements are for the Spark controllers 
+  if (Spark1Speed > 0.1) {
+        Spark1.set(Spark1Speed);
+    }
+    else if (Spark1Speed < -0.1) {
+        Spark1.set(Spark1Speed);
+    }
+    else {
+        Spark1.set(0);
+    }
+   if (Spark2Speed > 0.1) {
+        Spark2.set(Spark2Speed);
+    }
+    else if (Spark2Speed < -0.1) {
+        Spark2.set(Spark2Speed);
+    }
+    else {
+        Spark2.set(0);
+    }
+   
+   // these if statements are for the TalonSRX controllers
+    if (Talon1Speed > 0.1){
+        Talon1.set(TalonSRXControlMode.PercentOutput, Talon1Speed);
+    }
+    else if (Talon1Speed < -0.1){
+        Talon1.set(TalonSRXControlMode.PercentOutput, Talon1Speed);
+    }
+    else {
+        Talon1.set(TalonSRXControlMode.PercentOutput, 0);
+    }
 
-        if (Talon2Speed > 0.1){
-                Talon2.set(TalonSRXControlMode.PercentOutput, Talon2Speed);
-            }
-            else if (Talon2Speed < -0.1){
-                Talon2.set(TalonSRXControlMode.PercentOutput, Talon2Speed);
-            }
-            else {
-                Talon2.set(TalonSRXControlMode.PercentOutput, 0);
-        }
+    if (Talon2Speed > 0.1){
+        Talon2.set(TalonSRXControlMode.PercentOutput, Talon2Speed);
+    }
+    else if (Talon2Speed < -0.1){
+        Talon2.set(TalonSRXControlMode.PercentOutput, Talon2Speed);
+    }
+    else {
+        Talon2.set(TalonSRXControlMode.PercentOutput, 0);
+    }
 
 
-        //Solenoid controls
-         if (m_controller1.getAButton()) {
-        Solenoid1.set(kForward);
-        }
-         else if (m_controller1.getBButton()){
-                Solenoid1.set(kReverse);
-            }
-        if (m_controller1.getRightBumper()) {
-            Solenoid2.set(kForward);
-            }
-         else if (m_controller1.getLeftBumper()){
-            Solenoid2.set(kReverse);
-        }
+//Solenoid controls
+    if (m_controller1.getAButton()) {
+ Solenoid1.set(kForward);
+}
+else if (m_controller1.getBButton()){
+    Solenoid1.set(kReverse);
+}
+if (m_controller1.getRightBumper()) {
+ Solenoid2.set(kForward);
+}
+else if (m_controller1.getLeftBumper()){
+    Solenoid2.set(kReverse);
+}
 
 
-        }
+  }
 }
