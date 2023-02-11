@@ -42,6 +42,7 @@ public class Robot4360 extends TimedRobot {
     GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
 
     Command m_autoCommand;
+    Command m_driveCommand;
 
     @Override
     public void robotInit() {
@@ -56,7 +57,7 @@ public class Robot4360 extends TimedRobot {
         buttonA.onTrue(m_gripper.open());
         buttonB.onTrue(m_gripper.close());
 
-        new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
+        m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
@@ -93,6 +94,7 @@ public class Robot4360 extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
+        m_driveCommand.schedule();
     }
 
 
@@ -188,15 +190,15 @@ public class Robot4360 extends TimedRobot {
         //         m_robotDrive::move,
         //         m_robotDrive);
 
-        double kp = 4.7401E-06;
+        //double kp = 2.2193E-07;
+        double kp = 2.2193E-03;
         double ki = 0;
-        double ks = 0.09827;
-        //double kv = 2.5687;
-        double kv = 1.5687;
+        double ks = 0.068221;
+        double kv = 2.3938;
 
         RamseteCommand ramseteCommand =
         new RamseteCommand(
-            complex,
+            curve,
             m_robotDrive::getPose,
             new RamseteController(2, 0.7),
             new SimpleMotorFeedforward(ks, kv),
