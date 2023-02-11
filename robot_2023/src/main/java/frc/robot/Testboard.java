@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -17,6 +18,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
@@ -37,24 +40,38 @@ import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.geometry.*;
 
 public class Testboard extends TimedRobot {
+    private double KP;
+    private double KI;
+    private double KD;
+    private double SP;
     //private DifferentialDrive m_myRobot;
     private XboxController m_controller1;
     private XboxController m_controller2;
-  
+   
     //Sets the motor ids and names
     private final CANSparkMax Spark1 = new CANSparkMax(1, MotorType.kBrushless);
     private final CANSparkMax Spark2 = new CANSparkMax(2, MotorType.kBrushless);
     private final TalonSRX Talon1 = new TalonSRX(12);
     private final TalonSRX Talon2 = new TalonSRX(13);
+
+    DoubleSolenoid  Solenoid1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
+    DoubleSolenoid  Solenoid2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 3);
+    PIDController Pid = new PIDController(KP, KI, KD);
+   RelativeEncoder spark2Encoder = Spark2.getEncoder();
     DoubleSolenoid  Solenoid1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
     DoubleSolenoid  Solenoid2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+
 // robot init is the robot starting up
 // the controllers are assigned here 
     @Override
   public void robotInit() {
     m_controller1 = new XboxController(0);
     m_controller2 = new XboxController(1);
+
+  Spark1.setSmartCurrentLimit(100);
+
   
+
     //The sparks are set to coast.
     //Comment to set the sparks to brake also uncomment lines 56,57
     Spark1.setIdleMode(IdleMode.kCoast);
@@ -63,12 +80,18 @@ public class Testboard extends TimedRobot {
     //Uncomment to set the sparks to brake
     //Spark1.setIdleMode(IdleMode.Brake);
     //Spark2.setIdleMode(IdleMode.Brake);
+    NetworkTable  Pidtable;
+ 
+    CameraServer.startAutomaticCapture(0);
  }
 
 
- //begining of teleop code
+
+
+//begining of teleop code
   @Override
   public void teleopPeriodic() {
+
   double Spark1Speed = m_controller1.getLeftY();
   double Spark2Speed = m_controller1.getRightY();
   double Talon1Speed = m_controller2.getLeftY();
