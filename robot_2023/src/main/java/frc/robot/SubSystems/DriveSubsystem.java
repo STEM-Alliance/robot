@@ -4,13 +4,13 @@ package frc.robot.SubSystems;
 
 import frc.robot.Configuration;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.*;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.*;
@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.DataLogManager;
 
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import frc.robot.*;
 
 public class DriveSubsystem extends SubsystemBase {
     private CANSparkMax m_leftMotor;
@@ -29,25 +31,27 @@ public class DriveSubsystem extends SubsystemBase {
     // The robot's drive
     private DifferentialDrive m_drive;
 
+    // Slew rate controllers to prevent the robot from going from 0 to infinity and vice versa
+    private SlewRateLimiter m_forwardLimiter;
+    private SlewRateLimiter m_turnLimiter;
+
     // The gyro sensor
     private AHRS m_ahrs;
 
     RelativeEncoder m_leftEncoder;
     RelativeEncoder m_rightEncoder;
 
+    double m_fwd;
+    double m_rot;
+    double m_fwdFiltered;
+    double m_rotFiltered;
+
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
 
     private final Field2d m_field = new Field2d();
 
-    double m_simAngle = 0;
-    double m_rSimDistance = 0;
-    double m_lSimDistance = 0;
-    double m_lSimCmd = 0;
-    double m_rSimCmd = 0;
-    double m_lSimVel = 0;
-    double m_rSimVel = 0;
-    int m_simIndex = 0;
+    LogPlayback m_playback = new LogPlayback("logs/FRC_20230208_015431.csv");
 
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem(int leftMotor1, int leftMotor2, int rightMotor1, int rightMotor2) {
@@ -91,6 +95,9 @@ public class DriveSubsystem extends SubsystemBase {
         m_leftEncoder.setVelocityConversionFactor(Configuration.MetersPerRotation / 60);
         m_rightEncoder.setVelocityConversionFactor(Configuration.MetersPerRotation / 60);
 
+        m_forwardLimiter = new SlewRateLimiter(Configuration.forward_back_slew_rate);
+        m_turnLimiter = new SlewRateLimiter(Configuration.right_left_slew_rate);
+
         try {
             /* Communicate w/navX-MXP via the MXP SPI Bus. */
             /* Alternatively: I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB */
@@ -110,7 +117,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_odometry = new DifferentialDriveOdometry(m_ahrs.getRotation2d(), 0, 0);
 
         SmartDashboard.putData("Field", m_field);
-        DataLogManager.start();
+        //DataLogManager.start();
     }
 
     @Override
@@ -122,7 +129,8 @@ public class DriveSubsystem extends SubsystemBase {
         // m_odometry.update(
         // Rotation2d.fromDegrees(-m_ahrs.getYaw()), lDistance, rDistance);
         if (Configuration.Simulate) {
-            m_odometry.update(getHeading(), m_lSimDistance, m_rSimDistance);
+            m_odometry.update(Rotation2d.fromDegrees(m_playback.getHeading()), m_playback.getLPos(), m_playback.getRPos());
+            m_playback.stepSim();
         } else {
             m_odometry.update(m_ahrs.getRotation2d(), lDistance, rDistance);
         }
@@ -150,11 +158,10 @@ public class DriveSubsystem extends SubsystemBase {
         var leftMetersPerSecond = m_leftEncoder.getVelocity();
         var rightMetersPerSecond = m_rightEncoder.getVelocity();
 
-        if (Configuration.Simulate) {
-            var speed = new DifferentialDriveWheelSpeeds(m_lSimVel, m_rSimVel);
-            return speed;
-        }
+
         var speed = new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
+        if (Configuration.Simulate)
+            speed = new DifferentialDriveWheelSpeeds(m_playback.getLVel(), m_playback.getRVel());
         return speed;
     }
 
@@ -175,7 +182,11 @@ public class DriveSubsystem extends SubsystemBase {
      * @param rot the commanded rotation
      */
     public void arcadeDrive(double fwd, double rot) {
-        m_drive.arcadeDrive(fwd, rot);
+        m_fwd = fwd;
+        m_rot = rot;
+        m_fwdFiltered = m_forwardLimiter.calculate(fwd);
+        m_rotFiltered = m_turnLimiter.calculate(rot);
+        m_drive.arcadeDrive(m_fwdFiltered, m_rotFiltered);
         System.out.println("arcadeDrive");
         periodic();
         sendStats();
@@ -223,7 +234,7 @@ public class DriveSubsystem extends SubsystemBase {
     public Rotation2d getHeading() {
         //System.out.println("getHeading");
         if (Configuration.Simulate)
-            return new Rotation2d(m_simAngle);
+            return Rotation2d.fromRadians(m_playback.getHeading());
         return m_ahrs.getRotation2d();
     }
 
@@ -260,9 +271,6 @@ public class DriveSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("RightMotorCmd", rightSpeed);
         m_drive.tankDrive(leftSpeed, rightSpeed);
 
-        m_lSimCmd = leftSpeed;
-        m_rSimCmd = rightSpeed;
-
         sendStats();
     }
 
@@ -272,6 +280,11 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void sendStats() {
+        /*
+         * This is all for telemetry and data logging.
+         * If you want to put a value on the dashboard, put it here.
+         * This data will also be logged to a log file
+         */
         SmartDashboard.putNumber("Heading", getHeading().getDegrees());
         SmartDashboard.putNumber("Yaw", m_ahrs.getYaw());
         SmartDashboard.putNumber("FusedHeading", m_ahrs.getFusedHeading());
@@ -282,14 +295,6 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("EncR", m_rightEncoder.getPosition());
         SmartDashboard.putNumber("VelL", m_leftEncoder.getVelocity());
         SmartDashboard.putNumber("VelR", m_rightEncoder.getVelocity());
-        if (Configuration.Simulate) {
-            SmartDashboard.putNumber("SimCmdL", m_lSimCmd);
-            SmartDashboard.putNumber("SimVelL", m_lSimVel);
-            SmartDashboard.putNumber("SimDistanceL", m_lSimDistance);
-            SmartDashboard.putNumber("SimCmdR", m_rSimCmd);
-            SmartDashboard.putNumber("SimVelR", m_rSimVel);
-            SmartDashboard.putNumber("SimDistanceR", m_rSimDistance);
-        }
 
         var pose = getPose();
         SmartDashboard.putNumber("PoseX", pose.getX());
@@ -317,6 +322,11 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Motor2FaultsR", (double) m_rightMotorFollower.getFaults());
         SmartDashboard.putNumber("Motor2TempR", m_rightMotorFollower.getMotorTemperature());
         SmartDashboard.putNumber("Motor2CurrentR", m_rightMotorFollower.getOutputCurrent());
+
+        SmartDashboard.putNumber("JoyFwd", m_fwd);
+        SmartDashboard.putNumber("JoyRot", m_rot);
+        SmartDashboard.putNumber("JoyFwdFiltered", m_fwdFiltered);
+        SmartDashboard.putNumber("JoyRotFiltered", m_rotFiltered);
 
         // In order to simulate things, it is much easier if all of the data we need is on a single line. So this is duplication, but makes life easier
         double fullCapture[] = new double[30];

@@ -29,6 +29,8 @@ public class Configuration {
      * Gripper Controlers
      *******************************************/
     static public double GripperCloseSetPoint = 0.5;
+    // Any value between -0.2 and 0.2 will NOT move the gripper
+    static public double GripperDeadband = 0.2;
 
     /*
      * Per the spec the Neo motors have 42 pulses/rotation
@@ -54,5 +56,5 @@ public class Configuration {
     static public double kMaxAccelerationMetersPerSecondSquared = 0.3;
     static public double TrackWidthInMeters = Units.inchesToMeters(26.5);
     static public double MetersPerRotation = 0.0508;
-    static public boolean Simulate = false;
+    static public boolean Simulate = true;
 }

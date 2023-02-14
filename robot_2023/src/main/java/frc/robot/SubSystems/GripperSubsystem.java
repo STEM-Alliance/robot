@@ -1,5 +1,6 @@
 package frc.robot.SubSystems;
 
+import frc.robot.Configuration;
 import edu.wpi.first.wpilibj2.command.*;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -28,12 +29,25 @@ public class GripperSubsystem extends SubsystemBase {
 
     }
 
-    public CommandBase close() {
+    public Command close() {
+        // Close the grabber until we hit the limit switch
         return this.runOnce(() -> System.out.println("Close Grabber"));
     }
 
-    public CommandBase open() {
+    public Command open() {
+        // Open the grabber until we hit the limit switch
         return this.runOnce(() -> System.out.println("Open Grabber"));
     }
 
+    public void slideGripper(double commandValue) {
+        if (Math.abs(commandValue) > Configuration.GripperDeadband)
+        {
+            /*
+             * Drive the motor directly.
+             * TODO: Make sure these directions are correct
+             */
+            m_lMotor.set(commandValue);
+            m_rMotor.set(commandValue);
+        }
+    }
 }
