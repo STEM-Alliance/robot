@@ -117,7 +117,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_odometry = new DifferentialDriveOdometry(m_ahrs.getRotation2d(), 0, 0);
 
         SmartDashboard.putData("Field", m_field);
-        //DataLogManager.start();
+        DataLogManager.start();
     }
 
     @Override
@@ -187,7 +187,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_fwdFiltered = m_forwardLimiter.calculate(fwd);
         m_rotFiltered = m_turnLimiter.calculate(rot);
         m_drive.arcadeDrive(m_fwdFiltered, m_rotFiltered);
-        System.out.println("arcadeDrive");
+        //System.out.println("arcadeDrive");
         periodic();
         sendStats();
     }

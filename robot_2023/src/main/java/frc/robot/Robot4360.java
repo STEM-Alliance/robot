@@ -41,7 +41,7 @@ public class Robot4360 extends TimedRobot {
 
     DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
     GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
-    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(20, 21);
+    //ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(20, 21);
     LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
 
     Command m_autoCommand;

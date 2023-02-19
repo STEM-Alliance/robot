@@ -4,17 +4,19 @@ import frc.robot.Configuration;
 import edu.wpi.first.wpilibj2.command.*;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.*;
 
 public class GripperSubsystem extends SubsystemBase {
-    private final CANSparkMax m_lMotor;
-    private final CANSparkMax m_rMotor;
+    private final TalonSRX m_lMotor;
+    private final TalonSRX m_rMotor;
 
     /** Creates a new DriveSubsystem. */
     public GripperSubsystem(int leftMotorCanID, int rightMotorCanID) {
-        m_lMotor = new CANSparkMax(leftMotorCanID, MotorType.kBrushless);
-        m_rMotor = new CANSparkMax(rightMotorCanID, MotorType.kBrushless);
-        m_lMotor.restoreFactoryDefaults();
-        m_rMotor.restoreFactoryDefaults();
+        m_lMotor = new TalonSRX(leftMotorCanID);
+        m_rMotor = new TalonSRX(rightMotorCanID);
+        m_lMotor.configFactoryDefault();
+        m_rMotor.configFactoryDefault();
 
         /*
          * TODO: Need to set the motor direction and speed.
@@ -31,12 +33,12 @@ public class GripperSubsystem extends SubsystemBase {
 
     public Command close() {
         // Close the grabber until we hit the limit switch
-        return this.runOnce(() -> System.out.println("Close Grabber"));
+        return this.runOnce(() -> m_lMotor.set(TalonSRXControlMode.PercentOutput, 0.5));
     }
 
     public Command open() {
         // Open the grabber until we hit the limit switch
-        return this.runOnce(() -> System.out.println("Open Grabber"));
+        return this.runOnce(() -> m_rMotor.set(TalonSRXControlMode.PercentOutput, 0.5));
     }
 
     public void slideGripper(double commandValue) {
@@ -46,8 +48,8 @@ public class GripperSubsystem extends SubsystemBase {
              * Drive the motor directly.
              * TODO: Make sure these directions are correct
              */
-            m_lMotor.set(commandValue);
-            m_rMotor.set(commandValue);
+            //m_lMotor.set(commandValue);
+            //m_rMotor.set(commandValue);
         }
     }
 }

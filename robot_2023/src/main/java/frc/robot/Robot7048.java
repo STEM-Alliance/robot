@@ -40,13 +40,14 @@ public class Robot7048 extends TimedRobot {
     private XboxController m_controller1;
 
     DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
-    GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
-    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(20, 21);
+    GripperSubsystem m_gripper = new GripperSubsystem(20, 21);
+    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(5, 15);
     LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
 
     Command m_autoCommand;
     Command m_driveCommand;
     Command m_gripperDrive;
+    Command m_elevatorCommand;
 
     @Override
     public void robotInit() {
@@ -61,11 +62,15 @@ public class Robot7048 extends TimedRobot {
         final JoystickButton buttonX = new JoystickButton(m_controller1, XboxController.Button.kX.value);
         buttonA.onTrue(m_gripper.open());
         buttonB.onTrue(m_gripper.close());
-        buttonX.onTrue(m_leds.controlRed(true));
-        buttonX.onFalse(m_leds.controlRed(false));
+        //buttonX.onTrue(m_leds.controlRed(true));
+        //buttonX.onFalse(m_leds.controlRed(false));
+        //buttonA.onTrue(m_elevatorCommand.mid());
+        //buttonB.onTrue(m_elevatorCommand.high());
+        //buttonX.onTrue(m_elevatorCommand.up());
 
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
         m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller1.getLeftTriggerAxis()), m_gripper);
+        m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller1.getRightY(), m_controller1.getRightX()), m_ElevatorSubsystem);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
@@ -87,6 +92,7 @@ public class Robot7048 extends TimedRobot {
             m_autoCommand.cancel();
         }
         m_driveCommand.schedule();
+        m_elevatorCommand.schedule();
     }
 
     /**
