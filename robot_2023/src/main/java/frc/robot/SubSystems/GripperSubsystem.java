@@ -18,6 +18,9 @@ public class GripperSubsystem extends SubsystemBase {
         m_lMotor.configFactoryDefault();
         m_rMotor.configFactoryDefault();
 
+        m_lMotor.configPeakCurrentLimit(Configuration.M775ProLimit);
+        m_rMotor.configPeakCurrentLimit(Configuration.M775ProLimit);
+
         /*
          * TODO: Need to set the motor direction and speed.
          * Do we need to setup the limit switches?
@@ -31,25 +34,22 @@ public class GripperSubsystem extends SubsystemBase {
 
     }
 
-    public Command close() {
-        // Close the grabber until we hit the limit switch
-        return this.runOnce(() -> m_lMotor.set(TalonSRXControlMode.PercentOutput, 0.5));
-    }
-
-    public Command open() {
-        // Open the grabber until we hit the limit switch
-        return this.runOnce(() -> m_rMotor.set(TalonSRXControlMode.PercentOutput, 0.5));
-    }
-
-    public void slideGripper(double commandValue) {
+    private void controlMotor(TalonSRX motor, double commandValue)
+    {
         if (Math.abs(commandValue) > Configuration.GripperDeadband)
         {
             /*
-             * Drive the motor directly.
-             * TODO: Make sure these directions are correct
+             * Not sure if this control scheme is going to work well.
+             * But the idea is you could use the two joysticks to move the
+             * grippers independently of each other
              */
-            //m_lMotor.set(commandValue);
-            //m_rMotor.set(commandValue);
+            motor.set(TalonSRXControlMode.PercentOutput, commandValue);
         }
+    }
+
+    public void slideGripper(double leftCommand, double rightCommand)
+    {
+        controlMotor(m_lMotor, leftCommand);
+        controlMotor(m_rMotor, rightCommand);
     }
 }

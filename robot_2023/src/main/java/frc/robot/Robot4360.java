@@ -38,6 +38,7 @@ import java.io.File;
 
 public class Robot4360 extends TimedRobot {
     private XboxController m_controller1;
+    private XboxController m_controller2;
 
     DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
     GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
@@ -56,16 +57,15 @@ public class Robot4360 extends TimedRobot {
         // m_right.setInverted(true);
 
         m_controller1 = new XboxController(0);
+        m_controller1 = new XboxController(1);
         final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
         final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
         final JoystickButton buttonX = new JoystickButton(m_controller1, XboxController.Button.kX.value);
-        buttonA.onTrue(m_gripper.open());
-        buttonB.onTrue(m_gripper.close());
         buttonX.onTrue(m_leds.controlRed(true));
         buttonX.onFalse(m_leds.controlRed(false));
 
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-        m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller1.getLeftTriggerAxis()), m_gripper);
+        m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller2.getLeftX(), m_controller2.getRightX()), m_gripper);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts

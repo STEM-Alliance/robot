@@ -15,23 +15,34 @@ public class Configuration {
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
     static public double right_left_slew_rate = 2;
-    // TODO: This controls the encoder counts to inches. This is really a guess and
-    // needs to be fixed
-    static public double encoder_counts_to_inches = 2.04;
-    // This controls the XBox joystick dead zones. Any value less than this value
-    // will have 0 effect
-    static public double controller_dead_zone = 0.2;
-    // This is the slow mode. It rerates the max speed of the forward/back and
-    // left/right to 0.6
-    static public double fine_controller_derate = 0.5;
+
+    /********************************************
+     * Motor Current Limits
+     * P = VI
+     * I = P / V
+     *******************************************/
+    static public int NeoLimit = 80;
+    static public int Neo550Limit = 20;
+    static public int BagMotorLimit = 20; // Max power is 149 W, 12.4 A
+    static public int M775ProLimit = 28; // Max power 347 W, 28.9 A
+    static public int CIMSLimit = 28; // Max power 337 W, 28.0 A
+
+    /********************************************
+     * Fargo Elevator
+     *******************************************/
+    static public double RotationDeadband = 0.2;
+    static public double RotationScale = 0.1;
+    static public double ExtendDeadband = 0.2;
 
     /********************************************
      * Gripper Controlers
      *******************************************/
-    static public double GripperCloseSetPoint = 0.5;
     // Any value between -0.2 and 0.2 will NOT move the gripper
     static public double GripperDeadband = 0.2;
 
+    /********************************************
+     * Autonomous Control
+     *******************************************/
     /*
      * Per the spec the Neo motors have 42 pulses/rotation
      * The Neo encoder reports in rotations
@@ -56,5 +67,5 @@ public class Configuration {
     static public double kMaxAccelerationMetersPerSecondSquared = 0.3;
     static public double TrackWidthInMeters = Units.inchesToMeters(26.5);
     static public double MetersPerRotation = 0.0508;
-    static public boolean Simulate = true;
+    static public boolean Simulate = false;
 }

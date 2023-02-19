@@ -28,7 +28,6 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
 import java.util.*;
-import java.io.File;
 
 /**
  * Uses the CameraServer class to automatically capture video from a USB webcam and send it to the
@@ -38,6 +37,7 @@ import java.io.File;
 
 public class Robot7048 extends TimedRobot {
     private XboxController m_controller1;
+    private XboxController m_controller2;
 
     DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
     GripperSubsystem m_gripper = new GripperSubsystem(20, 21);
@@ -57,20 +57,17 @@ public class Robot7048 extends TimedRobot {
         // m_right.setInverted(true);
 
         m_controller1 = new XboxController(0);
-        final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
-        final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
-        final JoystickButton buttonX = new JoystickButton(m_controller1, XboxController.Button.kX.value);
-        buttonA.onTrue(m_gripper.open());
-        buttonB.onTrue(m_gripper.close());
-        //buttonX.onTrue(m_leds.controlRed(true));
-        //buttonX.onFalse(m_leds.controlRed(false));
-        //buttonA.onTrue(m_elevatorCommand.mid());
-        //buttonB.onTrue(m_elevatorCommand.high());
-        //buttonX.onTrue(m_elevatorCommand.up());
+        m_controller2 = new XboxController(1);
+        final JoystickButton buttonA = new JoystickButton(m_controller2, XboxController.Button.kA.value);
+        final JoystickButton buttonB = new JoystickButton(m_controller2, XboxController.Button.kB.value);
+        final JoystickButton buttonY = new JoystickButton(m_controller2, XboxController.Button.kY.value);
+        buttonA.onTrue(m_ElevatorSubsystem.MoveArmToLow());
+        buttonB.onTrue(m_ElevatorSubsystem.MoveArmToMid());
+        buttonY.onTrue(m_ElevatorSubsystem.MoveArmToHigh());
 
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-        m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller1.getLeftTriggerAxis()), m_gripper);
         m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller1.getRightY(), m_controller1.getRightX()), m_ElevatorSubsystem);
+        m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller2.getLeftX(), m_controller2.getRightX()), m_gripper);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
