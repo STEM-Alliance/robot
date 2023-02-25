@@ -1,0 +1,16 @@
+digraph G {
+	fontname="Helvetica,Arial,sans-serif"
+	node [fontname="Helvetica,Arial,sans-serif"]
+	edge [fontname="Helvetica,Arial,sans-serif"]
+
+	Main -> Robot4360;
+	Main -> Robot7048;
+	Robot4360 -> DriveSubsystem;
+	Robot4360 -> ElevatorSubsystem;
+	Robot4360 -> GripperSubsystem;
+	Robot4360 -> LEDSubsystem;
+	Robot7048 -> DriveSubsystem;
+	Robot7048 -> ElevatorSubsystem;
+	Robot7048 -> GripperSubsystem;
+	Robot7048 -> LEDSubsystem;
+}

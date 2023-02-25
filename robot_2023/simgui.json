@@ -1,0 +1,16 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PIDController[1]": "PIDController"
+    },
+    "windows": {
+      "/SmartDashboard/PIDController[1]": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  }
+}
