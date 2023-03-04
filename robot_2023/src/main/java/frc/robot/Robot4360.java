@@ -40,10 +40,10 @@ public class Robot4360 extends TimedRobot {
     private XboxController m_controller1;
     private XboxController m_controller2;
 
-    DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
-    GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
+    DriveSubsystem m_robotDrive = new DriveSubsystem(1, 4, 2, 3);
+    //GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
     //ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(20, 21);
-    LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
+    //LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
 
     Command m_autoCommand;
     Command m_driveCommand;
@@ -57,15 +57,15 @@ public class Robot4360 extends TimedRobot {
         // m_right.setInverted(true);
 
         m_controller1 = new XboxController(0);
-        m_controller1 = new XboxController(1);
+        //m_controller1 = new XboxController(1);
         final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
         final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
         final JoystickButton buttonX = new JoystickButton(m_controller1, XboxController.Button.kX.value);
-        buttonX.onTrue(m_leds.controlRed(true));
-        buttonX.onFalse(m_leds.controlRed(false));
+        //buttonX.onTrue(m_leds.controlRed(true));
+        //buttonX.onFalse(m_leds.controlRed(false));
 
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-        m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller2.getLeftX(), m_controller2.getRightX()), m_gripper);
+        //m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller2.getLeftX(), m_controller2.getRightX()), m_gripper);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
@@ -87,7 +87,6 @@ public class Robot4360 extends TimedRobot {
             m_autoCommand.cancel();
         }
         m_driveCommand.schedule();
-        m_gripperDrive.schedule();
     }
 
     /**

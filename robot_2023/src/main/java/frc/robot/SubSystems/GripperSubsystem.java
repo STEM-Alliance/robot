@@ -31,7 +31,7 @@ public class GripperSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-
+        //System.out.println("Gripper period");
     }
 
     private void controlMotor(TalonSRX motor, double commandValue)
@@ -43,13 +43,38 @@ public class GripperSubsystem extends SubsystemBase {
              * But the idea is you could use the two joysticks to move the
              * grippers independently of each other
              */
-            motor.set(TalonSRXControlMode.PercentOutput, commandValue);
+            motor.set(TalonSRXControlMode.PercentOutput, commandValue * 0.35);
+        }
+        else
+        {
+            motor.set(TalonSRXControlMode.PercentOutput, 0);
         }
     }
 
     public void slideGripper(double leftCommand, double rightCommand)
     {
-        controlMotor(m_lMotor, leftCommand);
-        controlMotor(m_rMotor, rightCommand);
+        System.out.println("slide gripper: " + leftCommand + " : " + rightCommand);
+        controlMotor(m_lMotor, -rightCommand);
+        controlMotor(m_rMotor, leftCommand);
+    }
+
+    public Command slideLeft()
+    {
+        return this.run(() -> slideGripper(Configuration.GripperSlideFast, Configuration.GripperSlideSlow));
+    }
+
+    public Command slideRight()
+    {
+        return this.run(() -> slideGripper(-Configuration.GripperSlideSlow, -Configuration.GripperSlideFast));
+    }
+
+    public Command openGripper()
+    {
+        return this.run(() -> slideGripper(-Configuration.GripperOpenCloseSpeed, Configuration.GripperOpenCloseSpeed));
+    }
+
+    public Command closeGripper()
+    {
+        return this.run(() -> slideGripper(Configuration.GripperOpenCloseSpeed, -Configuration.GripperOpenCloseSpeed));
     }
 }

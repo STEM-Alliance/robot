@@ -39,6 +39,9 @@ public class Configuration {
      *******************************************/
     // Any value between -0.2 and 0.2 will NOT move the gripper
     static public double GripperDeadband = 0.2;
+    static public double GripperOpenCloseSpeed = 0.3;
+    static public double GripperSlideFast = 0.3;
+    static public double GripperSlideSlow = 0.2;
 
     /********************************************
      * Autonomous Control

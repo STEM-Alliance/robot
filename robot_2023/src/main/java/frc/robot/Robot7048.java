@@ -36,8 +36,8 @@ import java.util.*;
  */
 
 public class Robot7048 extends TimedRobot {
-    private XboxController m_controller1;
-    private XboxController m_controller2;
+    //private CommandXboxController m_controller1 = new CommandXboxController(0);
+    private CommandXboxController m_controller2 = new CommandXboxController(1);
 
     DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
     GripperSubsystem m_gripper = new GripperSubsystem(20, 21);
@@ -46,7 +46,6 @@ public class Robot7048 extends TimedRobot {
 
     Command m_autoCommand;
     Command m_driveCommand;
-    Command m_gripperDrive;
     Command m_elevatorCommand;
 
     @Override
@@ -56,18 +55,24 @@ public class Robot7048 extends TimedRobot {
         // gearbox is constructed, you might have to invert the left side instead.
         // m_right.setInverted(true);
 
-        m_controller1 = new XboxController(0);
-        m_controller2 = new XboxController(1);
-        final JoystickButton buttonA = new JoystickButton(m_controller2, XboxController.Button.kA.value);
-        final JoystickButton buttonB = new JoystickButton(m_controller2, XboxController.Button.kB.value);
-        final JoystickButton buttonY = new JoystickButton(m_controller2, XboxController.Button.kY.value);
+        final Trigger buttonA = m_controller2.a();
+        final Trigger buttonB = m_controller2.b();
+        final Trigger buttonY = m_controller2.y();
+        final Trigger leftBumper = m_controller2.leftBumper();
+        final Trigger rightBumper = m_controller2.rightBumper();
+        final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
+        final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
+
         buttonA.onTrue(m_ElevatorSubsystem.MoveArmToLow());
         buttonB.onTrue(m_ElevatorSubsystem.MoveArmToMid());
         buttonY.onTrue(m_ElevatorSubsystem.MoveArmToHigh());
+        leftBumper.whileTrue(m_gripper.slideLeft());
+        rightBumper.whileTrue(m_gripper.slideRight());
+        leftTrigger.whileTrue(m_gripper.openGripper());
+        rightTrigger.whileTrue(m_gripper.closeGripper());
 
-        m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-        m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller1.getRightY(), m_controller1.getRightX()), m_ElevatorSubsystem);
-        m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller2.getLeftX(), m_controller2.getRightX()), m_gripper);
+        //m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
+        m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getRightX()), m_ElevatorSubsystem);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
@@ -88,7 +93,7 @@ public class Robot7048 extends TimedRobot {
         if (m_autoCommand != null) {
             m_autoCommand.cancel();
         }
-        m_driveCommand.schedule();
+        //m_driveCommand.schedule();
         m_elevatorCommand.schedule();
     }
 
