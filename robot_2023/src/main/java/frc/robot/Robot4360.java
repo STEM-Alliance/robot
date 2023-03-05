@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.SubSystems.*;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -56,16 +55,19 @@ public class Robot4360 extends TimedRobot {
         // m_right.setInverted(true);
 
         m_controller1 = new XboxController(0);
+        XboxController m_controller2 = new XboxController(1);
         final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
         final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
         final JoystickButton buttonX = new JoystickButton(m_controller1, XboxController.Button.kX.value);
+        
         buttonA.onTrue(m_gripper.open());
         buttonB.onTrue(m_gripper.close());
         buttonX.onTrue(m_gripper.Stop());
         buttonX.onFalse(m_gripper.Go());
-
+        m_ElevatorSubsystem.control( m_controller2.getLeftY(), m_controller2.getRightY());
+        
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-
+        
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
