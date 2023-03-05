@@ -111,9 +111,7 @@
               "Y-axis/Automatic bounds": true,
               "Y-axis/Upper bound": 10.0,
               "Y-axis/Lower bound": -10.0,
-              "Y-axis/Unit": "ul",
-              "Visible data/SmartDashboard/CmdSpeedMeterPerSecond[0]": true,
-              "Visible data/SmartDashboard/CmdSpeedMeterPerSecond[1]": true
+              "Y-axis/Unit": "ul"
             }
           },
           "5,0": {
@@ -132,9 +130,7 @@
               "Y-axis/Automatic bounds": true,
               "Y-axis/Upper bound": 1.0,
               "Y-axis/Lower bound": -1.0,
-              "Y-axis/Unit": "ul",
-              "Visible data/SmartDashboard/CmdMotorSpeed[0]": true,
-              "Visible data/SmartDashboard/CmdMotorSpeed[1]": true
+              "Y-axis/Unit": "ul"
             }
           },
           "0,0": {
@@ -221,9 +217,7 @@
               "Y-axis/Automatic bounds": true,
               "Y-axis/Upper bound": 1.0,
               "Y-axis/Lower bound": -1.0,
-              "Y-axis/Unit": "ul",
-              "Visible data/SmartDashboard/WheelSpeeds[0]": true,
-              "Visible data/SmartDashboard/WheelSpeeds[1]": true
+              "Y-axis/Unit": "ul"
             }
           },
           "9,2": {
@@ -261,6 +255,188 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/CmdSpdRMPS",
               "_title": "CmdSpdRMPS",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/FusedHeading",
+              "_title": "FusedHeading",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/CmdL",
+              "_title": "CmdL",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/CmdR",
+              "_title": "CmdR",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/EncL",
+              "_title": "EncL",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/EncR",
+              "_title": "EncR",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/VelL",
+              "_title": "VelL",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/VelR",
+              "_title": "VelR",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/PoseX",
+              "_title": "PoseX",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/PoseY",
+              "_title": "PoseY",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Motor1OutputL",
+              "_title": "Motor1OutputL",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Motor1VoltageL",
+              "_title": "Motor1VoltageL",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Motor1FaultsL",
+              "_title": "Motor1FaultsL",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Motor1TempL",
+              "_title": "Motor1TempL",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "12,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Motor1CurrentL",
+              "_title": "Motor1CurrentL",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -347,9 +523,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1056.0
+    "x": -7.0,
+    "y": 0.0,
+    "width": 1934.0,
+    "height": 1047.0
   }
 }

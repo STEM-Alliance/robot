@@ -36,17 +36,17 @@ import java.util.*;
  */
 
 public class Robot7048 extends TimedRobot {
-    //private CommandXboxController m_controller1 = new CommandXboxController(0);
+    private CommandXboxController m_controller1 = new CommandXboxController(0);
     private CommandXboxController m_controller2 = new CommandXboxController(1);
 
     DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
-    GripperSubsystem m_gripper = new GripperSubsystem(20, 21);
+    GripperSubsystem m_gripper = new GripperSubsystem(20, 21, 7);
     ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(5, 15);
     LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
 
     Command m_autoCommand;
-    Command m_driveCommand;
-    Command m_elevatorCommand;
+    Command m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
+    Command m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getRightX()), m_ElevatorSubsystem);
 
     @Override
     public void robotInit() {
@@ -70,9 +70,6 @@ public class Robot7048 extends TimedRobot {
         rightBumper.whileTrue(m_gripper.slideRight());
         leftTrigger.whileTrue(m_gripper.openGripper());
         rightTrigger.whileTrue(m_gripper.closeGripper());
-
-        //m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-        m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getRightX()), m_ElevatorSubsystem);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts

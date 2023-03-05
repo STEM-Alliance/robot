@@ -26,6 +26,8 @@ public class Configuration {
     static public int BagMotorLimit = 20; // Max power is 149 W, 12.4 A
     static public int M775ProLimit = 28; // Max power 347 W, 28.9 A
     static public int CIMSLimit = 28; // Max power 337 W, 28.0 A
+    // https://firstwiki.github.io/wiki/denso-window-motor
+    static public int WindowLimit = 15; // This seems safe
 
     /********************************************
      * Fargo Elevator
@@ -33,6 +35,14 @@ public class Configuration {
     static public double RotationDeadband = 0.2;
     static public double RotationScale = 0.1;
     static public double ExtendDeadband = 0.2;
+    static public double ElevatorKp = 0.05;
+    static public double ElevatorKi = 0.0001;
+    static public double ElevatorKd = 0;
+
+    static public double ElevatorScale = 0.1;
+    static public double ExtenderKp = 0.05;
+    static public double ExtenderKi = 0.0001;
+    static public double ExtenderKd = 0;
 
     /********************************************
      * Gripper Controlers
@@ -42,6 +52,7 @@ public class Configuration {
     static public double GripperOpenCloseSpeed = 0.3;
     static public double GripperSlideFast = 0.3;
     static public double GripperSlideSlow = 0.2;
+    static public double RotateMotorMaxSpeed = 1;
 
     /********************************************
      * Autonomous Control

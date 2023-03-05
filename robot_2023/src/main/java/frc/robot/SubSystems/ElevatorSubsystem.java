@@ -3,7 +3,6 @@ package frc.robot.SubSystems;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Configuration;
 
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
@@ -14,9 +13,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class ElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax m_rotateMotor;
     private final TalonSRX m_extendMotor;
-    private final PIDController m_pid = new PIDController(0.05, 0.0001, 0);
+    private final PIDController m_elevatorPID = new PIDController(Configuration.ElevatorKp, Configuration.ElevatorKi, Configuration.ElevatorKd);
+    private final PIDController m_extenderPID = new PIDController(Configuration.ExtenderKp, Configuration.ExtenderKi, Configuration.ExtenderKd);
     private final RelativeEncoder m_rotateEnc;
     private double m_desiredArmPosition = 0;
+    private double m_desiredElevatorPosition = 0;
 
     /** Creates a new DriveSubsystem. */
     public ElevatorSubsystem(int rotateMotorID, int extendMotorID) {
@@ -51,46 +52,63 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-        var output = m_pid.calculate(m_rotateEnc.getPosition());
-        m_rotateMotor.set(output);
+        var elevatorOutput = m_elevatorPID.calculate(m_rotateEnc.getPosition());
+        m_rotateMotor.set(elevatorOutput);
         SmartDashboard.putNumber("ArmEnc", m_rotateEnc.getPosition());
-        SmartDashboard.putNumber("ArmMotorDrive", output);
+        SmartDashboard.putNumber("ArmMotorDrive", elevatorOutput);
+        SmartDashboard.putNumber("ArmSetPoint", m_desiredArmPosition);
+
+        // var extenderOutput = m_extenderPID.calculate(m_extenderEnc.getPosition());
+        // m_extendMotor.set(extenderOutput);
+        // SmartDashboard.putNumber("ExtEnc", m_extenderEnc.getPosition());
+        // SmartDashboard.putNumber("ExtMotorDrive", extenderOutput);
+        // SmartDashboard.putNumber("ExtSetPoint", m_desiredArmPosition);
+
+        SmartDashboard.putNumber("TalonSRXEnc", m_extendMotor.getSelectedSensorPosition());
     }
 
     public void control(double rotation, double extend)
     {
-        //m_rotateMotor.set(rotation * 0.25);
         if (Math.abs(rotation) > Configuration.RotationDeadband)
         {
             /*
-             * Now we are going to use the rotation to set the desired encoder
-             * set point.
+             * This sets the elevator desired set point. The PID controller
+             * will then close the loop and move the elevator to the correct
+             * position
              */
             m_desiredArmPosition += (rotation * Configuration.RotationScale);
-            m_pid.setSetpoint(m_desiredArmPosition);
+            m_elevatorPID.setSetpoint(m_desiredArmPosition);
         }
         if (Math.abs(extend) > Configuration.ExtendDeadband)
         {
-            // Just run the motor, we might need a PID to control this as well
-            m_extendMotor.set(TalonSRXControlMode.PercentOutput, extend * 0.10);
+            /*
+             * This sets the extend desired set point. The PID controller
+             * will then close the loop and move the elevator to the correct
+             * position
+             */
+            m_desiredArmPosition += (extend * Configuration.ElevatorScale);
+            m_extenderPID.setSetpoint(m_desiredArmPosition);
         }
     }
 
     public Command MoveArmToLow()
     {
-        m_desiredArmPosition = -4;
-        return new PrintCommand("Low");
+        // m_desiredArmPosition = -4;
+        // return new PrintCommand("Low");
+        return new InstantCommand(() -> m_desiredArmPosition = -4);
     }
 
     public Command MoveArmToMid()
     {
-        m_desiredArmPosition = -8;
-        return new PrintCommand("Mid");
+        // m_desiredArmPosition = -8;
+        // return new PrintCommand("Mid");
+        return new InstantCommand(() -> m_desiredArmPosition = -8);
     }
 
     public Command MoveArmToHigh()
     {
-        m_desiredArmPosition = -12;
-        return new PrintCommand("High");
+        // m_desiredArmPosition = -12;
+        // return new PrintCommand("High");
+        return new InstantCommand(() -> m_desiredArmPosition = -12);
     }
 }

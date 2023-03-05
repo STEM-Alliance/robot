@@ -10,16 +10,20 @@ import com.ctre.phoenix.motorcontrol.can.*;
 public class GripperSubsystem extends SubsystemBase {
     private final TalonSRX m_lMotor;
     private final TalonSRX m_rMotor;
+    private final TalonSRX m_rotateMotor;
 
     /** Creates a new DriveSubsystem. */
-    public GripperSubsystem(int leftMotorCanID, int rightMotorCanID) {
+    public GripperSubsystem(int leftMotorCanID, int rightMotorCanID, int rotateCanID) {
         m_lMotor = new TalonSRX(leftMotorCanID);
         m_rMotor = new TalonSRX(rightMotorCanID);
+        m_rotateMotor = new TalonSRX(rotateCanID);
         m_lMotor.configFactoryDefault();
         m_rMotor.configFactoryDefault();
+        m_rotateMotor.configFactoryDefault();
 
         m_lMotor.configPeakCurrentLimit(Configuration.M775ProLimit);
         m_rMotor.configPeakCurrentLimit(Configuration.M775ProLimit);
+        m_rotateMotor.configPeakCurrentLimit(Configuration.WindowLimit);
 
         /*
          * TODO: Need to set the motor direction and speed.
@@ -76,5 +80,20 @@ public class GripperSubsystem extends SubsystemBase {
     public Command closeGripper()
     {
         return this.run(() -> slideGripper(Configuration.GripperOpenCloseSpeed, -Configuration.GripperOpenCloseSpeed));
+    }
+
+    public Command rotateHome()
+    {
+        return this.run(() -> rotateControl(Configuration.RotateMotorMaxSpeed));
+    }
+
+    public Command rotatePerpendicular()
+    {
+        return this.run(() -> rotateControl(-Configuration.RotateMotorMaxSpeed));
+    }
+
+    public void rotateControl(double speed)
+    {
+        m_rotateMotor.set(TalonSRXControlMode.PercentOutput, speed);
     }
 }
