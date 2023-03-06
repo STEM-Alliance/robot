@@ -2,8 +2,6 @@ package frc.robot.SubSystems;
 
 import frc.robot.Configuration;
 import edu.wpi.first.wpilibj2.command.*;
-import com.revrobotics.*;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
 
@@ -11,6 +9,7 @@ public class GripperSubsystem extends SubsystemBase {
     private final TalonSRX m_lMotor;
     private final TalonSRX m_rMotor;
     private final TalonSRX m_rotateMotor;
+    int m_state = 0;
 
     /** Creates a new DriveSubsystem. */
     public GripperSubsystem(int leftMotorCanID, int rightMotorCanID, int rotateCanID) {
@@ -35,65 +34,77 @@ public class GripperSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-        //System.out.println("Gripper period");
-    }
-
-    private void controlMotor(TalonSRX motor, double commandValue)
-    {
-        if (Math.abs(commandValue) > Configuration.GripperDeadband)
+        //System.out.println("Gripper period")
+        switch (m_state)
         {
-            /*
-             * Not sure if this control scheme is going to work well.
-             * But the idea is you could use the two joysticks to move the
-             * grippers independently of each other
-             */
-            motor.set(TalonSRXControlMode.PercentOutput, commandValue * 0.35);
+            case 0:
+                slideGripper(0, 0);
+                break;
+            // Open
+            case 1:
+                slideGripper(-Configuration.GripperSlideFast, Configuration.GripperSlideFast);
+                break;
+            // close
+            case 2:
+                slideGripper(Configuration.GripperSlideFast, -Configuration.GripperSlideFast);
+                break;
+            // left
+            case 3:
+                slideGripper(Configuration.GripperSlideFast, Configuration.GripperSlideSlow);
+                break;
+            // right
+            case 4:
+                slideGripper(-Configuration.GripperSlideFast, -Configuration.GripperSlideFast);
+                break;
         }
-        else
-        {
-            motor.set(TalonSRXControlMode.PercentOutput, 0);
-        }
+        //return this.startEnd(() -> slideGripper(Configuration.GripperSlideFast, Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
+        ;
     }
 
     public void slideGripper(double leftCommand, double rightCommand)
     {
-        System.out.println("slide gripper: " + leftCommand + " : " + rightCommand);
-        controlMotor(m_lMotor, -rightCommand);
-        controlMotor(m_rMotor, leftCommand);
+        //System.out.println("slide gripper: " + leftCommand + " : " + rightCommand);
+        m_lMotor.set(TalonSRXControlMode.PercentOutput, -rightCommand);
+        m_rMotor.set(TalonSRXControlMode.PercentOutput, leftCommand);
     }
 
     public Command slideLeft()
     {
-        return this.run(() -> slideGripper(Configuration.GripperSlideFast, Configuration.GripperSlideSlow));
+        //return this.startEnd(() -> slideGripper(Configuration.GripperSlideFast, Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
+        return this.startEnd(() -> m_state = 3, () -> m_state = 0);
     }
 
     public Command slideRight()
     {
-        return this.run(() -> slideGripper(-Configuration.GripperSlideSlow, -Configuration.GripperSlideFast));
+        //return this.startEnd(() -> slideGripper(-Configuration.GripperSlideFast, -Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
+        return this.startEnd(() -> m_state = 4, () -> m_state = 0);
     }
 
     public Command openGripper()
     {
-        return this.run(() -> slideGripper(-Configuration.GripperOpenCloseSpeed, Configuration.GripperOpenCloseSpeed));
+        //return this.startEnd(() -> slideGripper(-Configuration.GripperSlideFast, Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
+        return this.startEnd(() -> m_state = 1, () -> m_state = 0);
     }
 
     public Command closeGripper()
     {
-        return this.run(() -> slideGripper(Configuration.GripperOpenCloseSpeed, -Configuration.GripperOpenCloseSpeed));
+        //return this.startEnd(() -> slideGripper(Configuration.GripperSlideFast, -Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
+        return this.startEnd(() -> m_state = 2, () -> m_state = 0);
     }
 
-    public Command rotateHome()
+    public Command rotateLeft()
     {
-        return this.run(() -> rotateControl(Configuration.RotateMotorMaxSpeed));
+        return new InstantCommand(() -> rotateControl(Configuration.GripperSlideFast));
     }
 
-    public Command rotatePerpendicular()
+    public Command rotateRight()
     {
-        return this.run(() -> rotateControl(-Configuration.RotateMotorMaxSpeed));
+        return new InstantCommand(() -> rotateControl(-Configuration.GripperSlideFast));
     }
 
     public void rotateControl(double speed)
     {
+        System.out.println("rotate motor " + speed);
         m_rotateMotor.set(TalonSRXControlMode.PercentOutput, speed);
     }
 }

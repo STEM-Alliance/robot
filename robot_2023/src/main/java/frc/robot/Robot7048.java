@@ -46,15 +46,10 @@ public class Robot7048 extends TimedRobot {
 
     Command m_autoCommand;
     Command m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-    Command m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getRightX()), m_ElevatorSubsystem);
+    Command m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getLeftY()), m_ElevatorSubsystem);
 
     @Override
     public void robotInit() {
-        // We need to invert one side of the drivetrain so that positive voltages
-        // result in both sides moving forward. Depending on how your robot's
-        // gearbox is constructed, you might have to invert the left side instead.
-        // m_right.setInverted(true);
-
         final Trigger buttonA = m_controller2.a();
         final Trigger buttonB = m_controller2.b();
         final Trigger buttonY = m_controller2.y();
@@ -62,14 +57,22 @@ public class Robot7048 extends TimedRobot {
         final Trigger rightBumper = m_controller2.rightBumper();
         final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
         final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
+        final Trigger up = m_controller2.pov(0);
+        final Trigger down = m_controller2.pov(180);
+        final Trigger left = m_controller2.pov(270);
+        final Trigger right = m_controller2.pov(90);
 
-        buttonA.onTrue(m_ElevatorSubsystem.MoveArmToLow());
-        buttonB.onTrue(m_ElevatorSubsystem.MoveArmToMid());
-        buttonY.onTrue(m_ElevatorSubsystem.MoveArmToHigh());
-        leftBumper.whileTrue(m_gripper.slideLeft());
-        rightBumper.whileTrue(m_gripper.slideRight());
-        leftTrigger.whileTrue(m_gripper.openGripper());
-        rightTrigger.whileTrue(m_gripper.closeGripper());
+        // TODO: These don't work right now.
+        // buttonA.onTrue(m_ElevatorSubsystem.MoveArmToLow());
+        // buttonB.onTrue(m_ElevatorSubsystem.MoveArmToMid());
+        // buttonY.onTrue(m_ElevatorSubsystem.MoveArmToHigh());
+        left.whileTrue(m_gripper.slideLeft());
+        right.whileTrue(m_gripper.slideRight());
+        up.whileTrue(m_gripper.openGripper());
+        down.whileTrue(m_gripper.closeGripper());
+
+        leftBumper.whileTrue(m_gripper.rotateLeft());
+        rightBumper.whileTrue(m_gripper.rotateRight());
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
