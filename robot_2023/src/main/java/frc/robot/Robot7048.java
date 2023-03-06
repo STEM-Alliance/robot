@@ -93,7 +93,7 @@ public class Robot7048 extends TimedRobot {
         if (m_autoCommand != null) {
             m_autoCommand.cancel();
         }
-        //m_driveCommand.schedule();
+        m_driveCommand.schedule();
         m_elevatorCommand.schedule();
     }
 

@@ -9,7 +9,17 @@ public class GripperSubsystem extends SubsystemBase {
     private final TalonSRX m_lMotor;
     private final TalonSRX m_rMotor;
     private final TalonSRX m_rotateMotor;
-    int m_state = 0;
+
+    enum GripperState {
+        IDLE,
+        OPEN,
+        CLOSE,
+        SLIDE_LEFT,
+        SLIDE_RIGHT
+    }
+
+    GripperState m_gripperState = GripperState.IDLE;
+    private double m_rotateSpeed = 0;
 
     /** Creates a new DriveSubsystem. */
     public GripperSubsystem(int leftMotorCanID, int rightMotorCanID, int rotateCanID) {
@@ -35,71 +45,64 @@ public class GripperSubsystem extends SubsystemBase {
 
     public void periodic() {
         //System.out.println("Gripper period")
-        switch (m_state)
+        switch (m_gripperState)
         {
-            case 0:
+            case IDLE:
                 slideGripper(0, 0);
                 break;
-            // Open
-            case 1:
+            case OPEN:
                 slideGripper(-Configuration.GripperSlideFast, Configuration.GripperSlideFast);
                 break;
-            // close
-            case 2:
+            case CLOSE:
                 slideGripper(Configuration.GripperSlideFast, -Configuration.GripperSlideFast);
                 break;
-            // left
-            case 3:
+            case SLIDE_LEFT:
                 slideGripper(Configuration.GripperSlideFast, Configuration.GripperSlideSlow);
                 break;
-            // right
-            case 4:
+            case SLIDE_RIGHT:
                 slideGripper(-Configuration.GripperSlideFast, -Configuration.GripperSlideFast);
                 break;
         }
-        //return this.startEnd(() -> slideGripper(Configuration.GripperSlideFast, Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
-        ;
+
+        // Control the rotate motor
+        m_rotateMotor.set(TalonSRXControlMode.PercentOutput, m_rotateSpeed);
     }
 
     public void slideGripper(double leftCommand, double rightCommand)
     {
-        //System.out.println("slide gripper: " + leftCommand + " : " + rightCommand);
+        System.out.println("slide gripper: " + leftCommand + " : " + rightCommand);
         m_lMotor.set(TalonSRXControlMode.PercentOutput, -rightCommand);
         m_rMotor.set(TalonSRXControlMode.PercentOutput, leftCommand);
     }
 
     public Command slideLeft()
     {
-        //return this.startEnd(() -> slideGripper(Configuration.GripperSlideFast, Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
-        return this.startEnd(() -> m_state = 3, () -> m_state = 0);
+        return this.startEnd(() -> m_gripperState = GripperState.SLIDE_LEFT, () -> m_gripperState = GripperState.IDLE);
     }
 
     public Command slideRight()
     {
-        //return this.startEnd(() -> slideGripper(-Configuration.GripperSlideFast, -Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
-        return this.startEnd(() -> m_state = 4, () -> m_state = 0);
+        return this.startEnd(() -> m_gripperState = GripperState.SLIDE_RIGHT, () -> m_gripperState = GripperState.IDLE);
     }
 
     public Command openGripper()
     {
-        //return this.startEnd(() -> slideGripper(-Configuration.GripperSlideFast, Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
-        return this.startEnd(() -> m_state = 1, () -> m_state = 0);
+        return this.startEnd(() -> m_gripperState = GripperState.OPEN, () -> m_gripperState = GripperState.IDLE);
     }
 
     public Command closeGripper()
     {
-        //return this.startEnd(() -> slideGripper(Configuration.GripperSlideFast, -Configuration.GripperSlideSlow), () -> slideGripper(0, 0));
-        return this.startEnd(() -> m_state = 2, () -> m_state = 0);
+        return this.startEnd(() -> m_gripperState = GripperState.CLOSE, () -> m_gripperState = GripperState.IDLE);
     }
 
     public Command rotateLeft()
     {
-        return new InstantCommand(() -> rotateControl(Configuration.GripperSlideFast));
+        return this.startEnd(() -> m_rotateSpeed = Configuration.RotateMotorMaxSpeed, () -> m_rotateSpeed = 0);
     }
 
     public Command rotateRight()
     {
-        return new InstantCommand(() -> rotateControl(-Configuration.GripperSlideFast));
+        return this.startEnd(() -> m_rotateSpeed = -Configuration.RotateMotorMaxSpeed, () -> m_rotateSpeed = 0);
     }
 
     public void rotateControl(double speed)
