@@ -7,8 +7,11 @@ import edu.wpi.first.wpilibj2.command.*;
 
 import java.util.function.BooleanSupplier;
 
+import javax.lang.model.util.ElementScanner14;
+
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+// import com.revrobotics.CANSparkMaxLowLevel.FollowConfig.Config;
 
 public class OneMotorGripper extends SubsystemBase {
     private final CANSparkMax m_Motor;
@@ -20,7 +23,10 @@ public class OneMotorGripper extends SubsystemBase {
     /** Creates a new DriveSubsystem. */
     public OneMotorGripper(int leftMotorCanID) {
         m_Motor = new CANSparkMax(leftMotorCanID, MotorType.kBrushless);
+
+      
         m_Motor.restoreFactoryDefaults();
+
         m_Motor.setSmartCurrentLimit(20);
         m_Enc = m_Motor.getEncoder();
         m_Enc.setPosition(0);
@@ -33,7 +39,6 @@ public class OneMotorGripper extends SubsystemBase {
     }
 
     @Override
-
     public void periodic() {
         
         SmartDashboard.putNumber("encoder", m_Enc.getPosition());
@@ -41,7 +46,7 @@ public class OneMotorGripper extends SubsystemBase {
 
     void driveMotorToCloseLoop()
     {
-        m_Motor.set(m_PID.calculate(m_Enc.getPosition()));
+        m_Motor.set(m_PID.calculate(m_Enc.getPosition() * 0.2));
     }
 
 
@@ -54,7 +59,7 @@ public class OneMotorGripper extends SubsystemBase {
  
         // Close the grabber until we hit the limit switch
         // return this.runOnce(() -> System.out.println("Close Grabber"));
-        return new FunctionalCommand(() -> m_PID.setSetpoint(-6), () -> driveMotorToCloseLoop(), interrupted -> done(), () -> Stop == true);
+        return new FunctionalCommand(() -> m_PID.setSetpoint(-0000000002), () -> driveMotorToCloseLoop(), interrupted -> done(), () -> Stop == true);
     }
 
     public Command open() {
@@ -67,5 +72,26 @@ public class OneMotorGripper extends SubsystemBase {
     }
     public Command Go() {
         return this.runOnce(() -> Stop = false);
+    }
+    
+    
+    public void MotorDrive(double In, Double Out){
+        if (Configuration.RotateGripper == true);
+        {
+            if (In > Configuration.controller_dead_zone)
+            {
+                m_Motor.set(In * Configuration.GripperMaxSpeed);
+            }
+            else if (Out < -Configuration.controller_dead_zone);
+            {
+                m_Motor.set(Out * Configuration.GripperMaxSpeed);
+            }
+            {
+                m_Motor.set(0);
+            }
+            
+            
+        }
+
     }
 }

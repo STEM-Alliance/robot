@@ -6,6 +6,7 @@ package frc.robot;
 import edu.wpi.first.math.util.Units;
 
 public class Configuration {
+    
     /********************************************
      * General
      *******************************************/
@@ -26,13 +27,17 @@ public class Configuration {
     /********************************************
      * Gripper Controlers
      *******************************************/
-    static public double GripperCloseSetPoint = 0.5;
+    static public boolean RotateGripper = true;
+    // make SURE to set the gripper motor type to brushed
+     static public double GripperCloseSetPoint = 0.5;
     // Any value between -0.2 and 0.2 will NOT move the gripper
     static public double GripperDeadband = 0.2;
+    static public double GripperMaxSpeed = 0.4;
     /********************************************
      * Elevator Controlers
      *******************************************/
     static public double ExtendMaxSpeed = 0.2;
+
 
 
 

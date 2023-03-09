@@ -39,14 +39,14 @@ public class Robot4360 extends TimedRobot {
     private XboxController m_controller1;
 
     DriveSubsystem m_robotDrive = new DriveSubsystem(2  , 3, 1, 4);
-    OneMotorGripper m_gripper = new OneMotorGripper(10);
+    OneMotorGripper m_gripper = new OneMotorGripper(11);
     ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(7,6);
     LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
 
     Command m_autoCommand;
     Command m_driveCommand;
     Command m_ElveatorCommand;
-    
+    Command m_GripperCommand;
 
     
     @Override
@@ -69,6 +69,7 @@ public class Robot4360 extends TimedRobot {
                
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
         m_ElveatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control( m_controller2.getLeftY(), m_controller2.getRightY()) , m_ElevatorSubsystem);
+        m_GripperCommand = new RunCommand(() ->m_gripper.MotorDrive(m_controller2.getLeftTriggerAxis(), -m_controller2.getRightTriggerAxis()), m_gripper);
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -211,7 +212,7 @@ public class Robot4360 extends TimedRobot {
 
         RamseteCommand ramseteCommand =
         new RamseteCommand(
-            curve,
+            moveStraight,
             m_robotDrive::getPose,
             new RamseteController(2, 0.7),
             new SimpleMotorFeedforward(ks, kv),

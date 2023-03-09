@@ -34,32 +34,7 @@ public class GripperSubsystem extends SubsystemBase {
     @Override
 
     public void periodic() {
-        SmartDashboard.putData(m_PID);
-    }
-
-    public Command close() {
- 
-        // Close the grabber until we hit the limit switch
-        return this.runOnce(() -> System.out.println("Close Grabber"));
-        //return new FunctionalCommand(() -> m_PID.setSetpoint(100), () -> m_lMotor.set(m_PID.calculate(m_lEnc.getPosition())), null, () -> m_PID.atSetpoint());
+        
     }
     
-    
-
-    public Command open() {
-        // Open the grabber until we hit the limit switch
-        return this.runOnce(() -> System.out.println("Open Grabber"));
-    }
-
-    public void slideGripper(double commandValue) {
-        if (Math.abs(commandValue) > Configuration.GripperDeadband)
-        {
-            /*
-             * Drive the motor directly.
-             * TODO: Make sure these directions are correct
-             */
-            m_lMotor.set(commandValue);
-            m_rMotor.set(commandValue);
-        }
-    }
 }
