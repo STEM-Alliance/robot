@@ -58,9 +58,9 @@ public class Robot4360 extends TimedRobot {
 
         m_controller1 = new XboxController(0);
         XboxController m_controller2 = new XboxController(1);
-        final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
-        final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
-        final JoystickButton buttonX = new JoystickButton(m_controller1, XboxController.Button.kX.value);
+        final JoystickButton buttonA = new JoystickButton(m_controller2, XboxController.Button.kA.value);
+        final JoystickButton buttonB = new JoystickButton(m_controller2, XboxController.Button.kB.value);
+        final JoystickButton buttonX = new JoystickButton(m_controller2, XboxController.Button.kX.value);
         
         buttonA.onTrue(m_gripper.open());
         buttonB.onTrue(m_gripper.close());
