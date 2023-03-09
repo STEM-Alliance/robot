@@ -38,14 +38,16 @@ import java.io.File;
 public class Robot4360 extends TimedRobot {
     private XboxController m_controller1;
 
-    DriveSubsystem m_robotDrive = new DriveSubsystem(1  , 2, 3, 4);
+    DriveSubsystem m_robotDrive = new DriveSubsystem(2  , 3, 1, 4);
     OneMotorGripper m_gripper = new OneMotorGripper(10);
-    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(20, 21);
+    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(7,6);
     LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
 
     Command m_autoCommand;
     Command m_driveCommand;
+    Command m_ElveatorCommand;
     
+
     
     @Override
     public void robotInit() {
@@ -64,10 +66,9 @@ public class Robot4360 extends TimedRobot {
         buttonB.onTrue(m_gripper.close());
         buttonX.onTrue(m_gripper.Stop());
         buttonX.onFalse(m_gripper.Go());
-        m_ElevatorSubsystem.control( m_controller2.getLeftY(), m_controller2.getRightY());
-        
+               
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-        
+        m_ElveatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control( m_controller2.getLeftY(), m_controller2.getRightY()) , m_ElevatorSubsystem);
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -89,6 +90,8 @@ public class Robot4360 extends TimedRobot {
             m_autoCommand.cancel();
         }
         m_driveCommand.schedule();
+        m_ElveatorCommand.schedule();
+
     }
 
     /**

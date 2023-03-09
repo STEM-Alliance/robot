@@ -11,12 +11,10 @@ public class Configuration {
      *******************************************/
     // This controls the speed of the forward/back control. Larger numbers mean
     // faster response
-    static public double forward_back_slew_rate = 3;
+    static public double forward_back_slew_rate = 2;
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
-    static public double right_left_slew_rate = 2;
-    // TODO: This controls the encoder counts to inches. This is really a guess and
-    // needs to be fixed
+    static public double right_left_slew_rate = 1.5;
     static public double encoder_counts_to_inches = 2.04;
     // This controls the XBox joystick dead zones. Any value less than this value
     // will have 0 effect
@@ -31,6 +29,12 @@ public class Configuration {
     static public double GripperCloseSetPoint = 0.5;
     // Any value between -0.2 and 0.2 will NOT move the gripper
     static public double GripperDeadband = 0.2;
+    /********************************************
+     * Elevator Controlers
+     *******************************************/
+    static public double ExtendMaxSpeed = 0.2;
+
+
 
     /*
      * Per the spec the Neo motors have 42 pulses/rotation
