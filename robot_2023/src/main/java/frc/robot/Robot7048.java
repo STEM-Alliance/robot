@@ -7,10 +7,7 @@ package frc.robot;
 import frc.robot.SubSystems.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -21,8 +18,8 @@ import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -39,17 +36,25 @@ public class Robot7048 extends TimedRobot {
     private CommandXboxController m_controller1 = new CommandXboxController(0);
     private CommandXboxController m_controller2 = new CommandXboxController(1);
 
-    DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
-    GripperSubsystem m_gripper = new GripperSubsystem(20, 21, 7);
-    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(5, 15);
-    LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
+    DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4, 5);
+    //GripperSubsystem m_gripper = new GripperSubsystem(20, 21, 16);
+    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(6);
+    PneumaticSubsystem m_pneumatics = new PneumaticSubsystem(0);
 
     Command m_autoCommand;
-    Command m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
+    Command m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX(), m_controller1.getRightX()), m_robotDrive);
     Command m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getLeftY()), m_ElevatorSubsystem);
+    RamseteCommand m_ramseteCommand;
 
     @Override
     public void robotInit() {
+        final Trigger brake = m_controller1.b();
+        final Trigger coast = m_controller1.a();
+        final Trigger enTurbo = m_controller1.y();
+        final Trigger disTurbo = m_controller1.x();
+        final Trigger toggleHDrive = m_controller1.rightBumper();
+        toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
+
         final Trigger buttonA = m_controller2.a();
         final Trigger buttonB = m_controller2.b();
         final Trigger buttonY = m_controller2.y();
@@ -61,18 +66,30 @@ public class Robot7048 extends TimedRobot {
         final Trigger down = m_controller2.pov(180);
         final Trigger left = m_controller2.pov(270);
         final Trigger right = m_controller2.pov(90);
+        final Trigger retractHome = m_controller2.x();
+
+        brake.onTrue(m_robotDrive.setBrakeModeCmd());
+        coast.onTrue(m_robotDrive.setCoastModeCmd());
+        enTurbo.onTrue(m_robotDrive.enableTurbo());
+        disTurbo.onTrue(m_robotDrive.disableTurbo());
+
+        buttonA.onTrue(m_pneumatics.toggleGripper());
+        buttonY.onTrue(m_pneumatics.toggleExtend());
 
         // TODO: These don't work right now.
-        // buttonA.onTrue(m_ElevatorSubsystem.MoveArmToLow());
+        //buttonA.onTrue(m_ElevatorSubsystem.MoveArmToLow());
         // buttonB.onTrue(m_ElevatorSubsystem.MoveArmToMid());
         // buttonY.onTrue(m_ElevatorSubsystem.MoveArmToHigh());
-        left.whileTrue(m_gripper.slideLeft());
-        right.whileTrue(m_gripper.slideRight());
-        up.whileTrue(m_gripper.openGripper());
-        down.whileTrue(m_gripper.closeGripper());
+        //left.whileTrue(m_gripper.slideLeft());
+        //right.whileTrue(m_gripper.slideRight());
+        //up.whileTrue(m_gripper.openGripper());
+        //down.whileTrue(m_gripper.closeGripper());
+        //retractHome.onTrue(m_ElevatorSubsystem.RetractHome());
 
-        leftBumper.whileTrue(m_gripper.rotateLeft());
-        rightBumper.whileTrue(m_gripper.rotateRight());
+        //leftBumper.whileTrue(m_gripper.rotateLeft());
+        //rightBumper.whileTrue(m_gripper.rotateRight());
+
+        CameraServer.startAutomaticCapture();
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
@@ -130,7 +147,8 @@ public class Robot7048 extends TimedRobot {
     public void autonomousInit() {
         m_start = System.nanoTime() / 1E9;
         m_robotDrive.zeroHeading();
-        m_autoCommand = getAutonomousCommand();
+        //m_autoCommand = getAutonomousCommand();
+        m_autoCommand = m_robotDrive.autoLevel();
          // schedule the autonomous command (example)
         if (m_autoCommand != null) {
             m_autoCommand.schedule();
@@ -162,59 +180,26 @@ public class Robot7048 extends TimedRobot {
                 // Add kinematics to ensure max speed is actually obeyed
                 .setKinematics(kDriveKinematics);
 
-        // An example trajectory to follow.  All units in meters.
-        Trajectory curve =
-            TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, m_robotDrive.getHeading()),
-                // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(10, 3), new Translation2d(20, -3)),
-                // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(30, 3, Rotation2d.fromDegrees(160)),
-                // Pass config
-                config);
-
         // Super Simple
         Trajectory moveStraight =
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, m_robotDrive.getHeading()),
-            List.of(new Translation2d(3, 0)),
+            List.of(new Translation2d(1.5, 0)),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(6, 0, Rotation2d.fromDegrees(0)),
+            new Pose2d(3.3, 0, Rotation2d.fromDegrees(0)),
             // Pass config
             config);
-
-        // Box turn
-        Trajectory complex =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            List.of(new Translation2d(4, 0),
-                    new Translation2d(4, 4)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(5, 5, new Rotation2d(-90)),
-            // Pass config
-            config);
-
-        // RamseteCommand ramseteCommand =
-        //     new RamseteCommand(
-        //         moveStraight,
-        //         m_robotDrive::getPose,
-        //         new RamseteController(0.5, 0.2),
-        //         kDriveKinematics,
-        //         m_robotDrive::move,
-        //         m_robotDrive);
 
         //double kp = 2.2193E-07;
-        double kp = 2.2193E-03;
+        double kp = 4.2193E-03;
         double ki = 0;
         double ks = 0.068221;
         double kv = 2.3938;
 
-        RamseteCommand ramseteCommand =
+        m_ramseteCommand =
         new RamseteCommand(
-            curve,
+            moveStraight,
             m_robotDrive::getPose,
             new RamseteController(2, 0.7),
             new SimpleMotorFeedforward(ks, kv),
@@ -226,7 +211,9 @@ public class Robot7048 extends TimedRobot {
             m_robotDrive);
 
         // Run path following command, then stop at the end.
-        return ramseteCommand.andThen(() -> m_robotDrive.stop());
+        //return ramseteCommand.andThen(() -> m_robotDrive.stop());
+        //return m_ramseteCommand.andThen(() -> m_robotDrive.autoLevel().andThen(() -> m_robotDrive.stop()));
+        return m_robotDrive.autoLevel().andThen(() -> m_robotDrive.stop());
     }
 
     // /**

@@ -11,10 +11,12 @@ public class Configuration {
      *******************************************/
     // This controls the speed of the forward/back control. Larger numbers mean
     // faster response
-    static public double forward_back_slew_rate = 3;
+    static public double forward_back_slew_rate = 0.5;
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
-    static public double right_left_slew_rate = 2;
+    static public double right_left_slew_rate = 0.8;
+    static public double FwdRevMaxLimit = 0.7;
+    static public double TurnMaxLimit = 0.4;
 
     /********************************************
      * Motor Current Limits
@@ -23,26 +25,30 @@ public class Configuration {
      *******************************************/
     static public int NeoLimit = 80;
     static public int Neo550Limit = 20;
-    static public int BagMotorLimit = 20; // Max power is 149 W, 12.4 A
-    static public int M775ProLimit = 28; // Max power 347 W, 28.9 A
+    static public int BagMotorLimit = 30; // Max power is 149 W, 12.4 A
+    static public int M775ProLimit = 15; // Max power 347 W, 28.9 A
     static public int CIMSLimit = 28; // Max power 337 W, 28.0 A
     // https://firstwiki.github.io/wiki/denso-window-motor
     static public int WindowLimit = 15; // This seems safe
+
+    static public double ExpControl = 2.3;
 
     /********************************************
      * Fargo Elevator
      *******************************************/
     static public double RotationDeadband = 0.2;
-    static public double RotationScale = 0.1;
+    static public double RotationScale = 0.2;
     static public double ExtendDeadband = 0.2;
     static public double ElevatorKp = 0.05;
     static public double ElevatorKi = 0.0001;
     static public double ElevatorKd = 0;
-
     static public double ElevatorScale = 0.1;
-    static public double ExtenderKp = 0.05;
-    static public double ExtenderKi = 0.0001;
+
+    static public double ExtendScale = 0.05;
+    static public double ExtenderKp = 0.5;
+    static public double ExtenderKi = 0;
     static public double ExtenderKd = 0;
+    static public boolean usePIDForExtend = true;
 
     /********************************************
      * Gripper Controlers
@@ -52,7 +58,8 @@ public class Configuration {
     static public double GripperOpenCloseSpeed = 0.3;
     static public double GripperSlideFast = 0.3;
     static public double GripperSlideSlow = 0.2;
-    static public double RotateMotorMaxSpeed = 1;
+    static public double RotateMotorMaxSpeed = 0.4;
+
 
     /********************************************
      * Autonomous Control
@@ -82,4 +89,7 @@ public class Configuration {
     static public double TrackWidthInMeters = Units.inchesToMeters(26.5);
     static public double MetersPerRotation = 0.0508;
     static public boolean Simulate = false;
+    static public double AutoArmPosition = 80;
+    static public double ExtendArmPosition = 1;
+    static public double DriveForwardTime = 5;
 }

@@ -70,7 +70,7 @@ public class GripperSubsystem extends SubsystemBase {
 
     public void slideGripper(double leftCommand, double rightCommand)
     {
-        System.out.println("slide gripper: " + leftCommand + " : " + rightCommand);
+        //System.out.println("slide gripper: " + leftCommand + " : " + rightCommand);
         m_lMotor.set(TalonSRXControlMode.PercentOutput, -rightCommand);
         m_rMotor.set(TalonSRXControlMode.PercentOutput, leftCommand);
     }

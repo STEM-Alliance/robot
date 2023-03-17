@@ -12,23 +12,17 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class ElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax m_rotateMotor;
-    private final TalonSRX m_extendMotor;
     private final PIDController m_elevatorPID = new PIDController(Configuration.ElevatorKp, Configuration.ElevatorKi, Configuration.ElevatorKd);
-    private final PIDController m_extenderPID = new PIDController(Configuration.ExtenderKp, Configuration.ExtenderKi, Configuration.ExtenderKd);
     private final RelativeEncoder m_rotateEnc;
     private double m_desiredArmPosition = 0;
-    private double m_desiredElevatorPosition = 0;
 
     /** Creates a new DriveSubsystem. */
-    public ElevatorSubsystem(int rotateMotorID, int extendMotorID) {
+    public ElevatorSubsystem(int rotateMotorID) {
         // The SparkMax controls a Neo motor
         m_rotateMotor = new CANSparkMax(rotateMotorID, MotorType.kBrushless);
         // The Talon Controls a BAG motor
-        m_extendMotor = new TalonSRX(extendMotorID);
         m_rotateMotor.restoreFactoryDefaults();
         m_rotateMotor.setSmartCurrentLimit(Configuration.NeoLimit);
-        m_extendMotor.configFactoryDefault();
-        m_extendMotor.configPeakCurrentLimit(Configuration.BagMotorLimit);
 
         /*
          * When the arm is in the "front" of the robot, negative motor
@@ -47,6 +41,7 @@ public class ElevatorSubsystem extends SubsystemBase {
          * the desired position to "park" the arm. Then the PID controller
          * closes the loop and tries to move the arm to that location.
          */
+
     }
 
     @Override
@@ -54,18 +49,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
         var elevatorOutput = m_elevatorPID.calculate(m_rotateEnc.getPosition());
         m_rotateMotor.set(elevatorOutput);
-        SmartDashboard.putNumber("ArmEnc", m_rotateEnc.getPosition());
-        SmartDashboard.putNumber("ArmMotorDrive", elevatorOutput);
-        SmartDashboard.putNumber("ArmSetPoint", m_desiredArmPosition);
+        // SmartDashboard.putNumber("ArmEnc", m_rotateEnc.getPosition());
+        // SmartDashboard.putNumber("ArmMotorDrive", elevatorOutput);
+        // SmartDashboard.putNumber("ArmSetPoint", m_desiredArmPosition);
         SmartDashboard.putNumber("ArmCurrent", m_rotateMotor.getOutputCurrent());
-
-        // var extenderOutput = m_extenderPID.calculate(m_extenderEnc.getPosition());
-        // m_extendMotor.set(extenderOutput);
-        // SmartDashboard.putNumber("ExtEnc", m_extenderEnc.getPosition());
-        // SmartDashboard.putNumber("ExtMotorDrive", extenderOutput);
-        // SmartDashboard.putNumber("ExtSetPoint", m_desiredArmPosition);
-
-        SmartDashboard.putNumber("TalonSRXEnc", m_extendMotor.getSelectedSensorPosition());
     }
 
     public void control(double rotation, double extend)
@@ -77,8 +64,8 @@ public class ElevatorSubsystem extends SubsystemBase {
              * will then close the loop and move the elevator to the correct
              * position
              */
-            m_desiredArmPosition += (rotation * Configuration.RotationScale);
-            if (m_desiredArmPosition > 40)
+            m_desiredArmPosition += (-rotation * Configuration.RotationScale);
+            if (m_desiredArmPosition > 150)
             {
                 m_desiredArmPosition = 40;
             }
@@ -87,38 +74,60 @@ public class ElevatorSubsystem extends SubsystemBase {
                 m_desiredArmPosition = 0;
             }
 
-            m_elevatorPID.setSetpoint(m_desiredArmPosition);
         }
-        if (Math.abs(extend) > Configuration.ExtendDeadband)
-        {
-            /*
-             * This sets the extend desired set point. The PID controller
-             * will then close the loop and move the elevator to the correct
-             * position
-             */
-            m_desiredArmPosition += (extend * Configuration.ElevatorScale);
-            m_extenderPID.setSetpoint(m_desiredArmPosition);
-        }
+        m_elevatorPID.setSetpoint(m_desiredArmPosition);
     }
 
-    public Command MoveArmToLow()
-    {
-        // m_desiredArmPosition = -4;
-        // return new PrintCommand("Low");
-        return new InstantCommand(() -> m_desiredArmPosition = 0);
-    }
+    // public Command MoveArmToLow()
+    // {
+    //     return new InstantCommand(() -> m_desiredArmPosition = 18.6).andThen(new InstantCommand(() -> m_desiredExtPos = -0.45));
+    // }
 
-    public Command MoveArmToMid()
-    {
-        // m_desiredArmPosition = -8;
-        // return new PrintCommand("Mid");
-        return new InstantCommand(() -> m_desiredArmPosition = 20);
-    }
+    // public Command MoveArmToMid()
+    // {
+    //     return new InstantCommand(() -> m_desiredArmPosition = 20);
+    // }
 
-    public Command MoveArmToHigh()
-    {
-        // m_desiredArmPosition = -12;
-        // return new PrintCommand("High");
-        return new InstantCommand(() -> m_desiredArmPosition = 35);
-    }
+    // public Command MoveArmToHigh()
+    // {
+    //     return new InstantCommand(() -> m_desiredArmPosition = 35);
+    // }
+
+    // public void UnlockExtend()
+    // {
+    //     m_desiredExtPos = 1;
+    // }
+
+    // public Command RetractHome()
+    // {
+    //     return new InstantCommand(() -> m_desiredExtPos = 0);
+    // }
+
+    // public boolean IsArmInPosition()
+    // {
+    //     if (m_rotateEnc.getPosition() >= m_desiredArmPosition)
+    //     {
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    // public boolean IsArmExtendedInPosition()
+    // {
+    //     if (m_extendMotor.getSelectedSensorPosition() >= m_desiredExtPos)
+    //     {
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    // public Command MoveArmToPosition()
+    // {
+    //     return new FunctionalCommand(() -> m_desiredArmPosition = Configuration.AutoArmPosition, () -> {}, interrupted -> {}, () -> IsArmInPosition());
+    // }
+
+    // public Command PlaceCone()
+    // {
+    //     return MoveArmToPosition();
+    // }
 }
