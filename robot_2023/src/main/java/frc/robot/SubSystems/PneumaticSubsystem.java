@@ -33,14 +33,6 @@ public class PneumaticSubsystem extends SubsystemBase {
 
     public void periodic()
     {
-        if (m_toggle)
-        {
-            m_toggle = false;
-            m_extend.toggle();
-            m_gripper.toggle();
-            m_deployHDrive.toggle();
-            System.out.println("toggle");
-        }
     }
 
     public Command toggleExtend()
@@ -55,6 +47,17 @@ public class PneumaticSubsystem extends SubsystemBase {
 
     public Command toggleHDrive()
     {
-       return new InstantCommand(() -> m_toggle = true);
+       return new InstantCommand(() -> m_deployHDrive.toggle());
     }
+
+    public void deployHDrive()
+    {
+        m_deployHDrive.set(Value.kForward);
+    }
+
+    public void retractHDrive()
+    {
+        m_deployHDrive.set(Value.kReverse);
+    }
+
 }

@@ -121,10 +121,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     //     return false;
     // }
 
-    // public Command MoveArmToPosition()
-    // {
-    //     return new FunctionalCommand(() -> m_desiredArmPosition = Configuration.AutoArmPosition, () -> {}, interrupted -> {}, () -> IsArmInPosition());
-    // }
+    private boolean IsArmInPosition()
+    {
+        return true;
+    }
+
+    public Command MoveArmToPosition()
+    {
+        return new FunctionalCommand(() -> m_desiredArmPosition = Configuration.AutoArmPosition, () -> {}, interrupted -> {}, () -> IsArmInPosition());
+    }
 
     // public Command PlaceCone()
     // {

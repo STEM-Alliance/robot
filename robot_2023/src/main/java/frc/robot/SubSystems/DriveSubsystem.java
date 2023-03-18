@@ -2,6 +2,7 @@
 
 package frc.robot.SubSystems;
 
+import frc.robot.SubSystems.*;;
 import frc.robot.Configuration;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.math.controller.PIDController;
@@ -192,7 +193,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @param fwd the commanded forward movement
      * @param rot the commanded rotation
      */
-    public void arcadeDrive(double fwd, double rot, double hDriveCmd) {
+    public void arcadeDrive(double fwd, double rot, double hDriveCmd, PneumaticSubsystem psi) {
         if (m_enableTurbo)
         {
             m_fwd = fwd;
@@ -220,6 +221,11 @@ public class DriveSubsystem extends SubsystemBase {
         {
             m_hDriveFiltered = exponential_scaling(hDriveCmd, Configuration.ExpControl);
             m_hdrive.set(m_hDriveFiltered);
+            psi.deployHDrive();
+        }
+        else
+        {
+            psi.retractHDrive();
         }
 
         periodic();
@@ -346,10 +352,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     public boolean checkLevel()
     {
-        // if (Math.abs(m_ahrs.getRawAccelY()) < 0.01)
-        // {
-        //     return true;
-        // }
         return false;
     }
 
@@ -378,6 +380,43 @@ public class DriveSubsystem extends SubsystemBase {
     {
         return new FunctionalCommand(() -> enableLevel(), () -> runAutoLevel(), interrupted -> {}, () -> checkLevel());
     }
+
+    public void autoInitDrive(double distance)
+    {
+        m_leftEncoder.setPosition(-distance);
+        m_rightEncoder.setPosition(-distance);
+        m_leftMotor.set(0.3);
+        m_rightMotor.set(0.3);
+    }
+
+    public void runAutoDrive()
+    {
+
+    }
+
+    public boolean autoDriveDone()
+    {
+        boolean done = false;
+        double doneTolerance = 0.1;
+        if ((Math.abs(m_leftEncoder.getPosition()) < doneTolerance) &&
+            (Math.abs(m_rightEncoder.getPosition()) < doneTolerance))
+        {
+            stop();
+            done = true;
+        }
+        return done;
+    }
+
+    public Command driveForward()
+    {
+        return new FunctionalCommand(() -> autoInitDrive(5), () -> runAutoDrive(), interrupted -> {}, () -> autoDriveDone());
+    }
+
+    public Command driveBackward()
+    {
+        return new FunctionalCommand(() -> autoInitDrive(-10), () -> runAutoDrive(), interrupted -> {}, () -> autoDriveDone());
+    }
+
 
     public void sendStats() {
         /*

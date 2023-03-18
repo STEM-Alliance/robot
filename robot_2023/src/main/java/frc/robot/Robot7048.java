@@ -42,8 +42,8 @@ public class Robot7048 extends TimedRobot {
     PneumaticSubsystem m_pneumatics = new PneumaticSubsystem(0);
 
     Command m_autoCommand;
-    Command m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX(), m_controller1.getRightX()), m_robotDrive);
-    Command m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getLeftY()), m_ElevatorSubsystem);
+    Command m_driveCommand;
+    Command m_elevatorCommand;
     RamseteCommand m_ramseteCommand;
 
     @Override
@@ -75,6 +75,10 @@ public class Robot7048 extends TimedRobot {
 
         buttonA.onTrue(m_pneumatics.toggleGripper());
         buttonY.onTrue(m_pneumatics.toggleExtend());
+
+        m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX(), m_controller1.getRightX(), m_pneumatics), m_robotDrive);
+        m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getLeftY()), m_ElevatorSubsystem);
+
 
         // TODO: These don't work right now.
         //buttonA.onTrue(m_ElevatorSubsystem.MoveArmToLow());
@@ -166,63 +170,13 @@ public class Robot7048 extends TimedRobot {
      *
      * @return the command to run in autonomous
      */
-    public Command getAutonomousCommand() {
-        var kDriveKinematics = new DifferentialDriveKinematics(Configuration.TrackWidthInMeters);
-
-        // Reset odometry to the starting pose of the trajectory.
-        m_robotDrive.resetOdometry(new Pose2d(0, 0, m_robotDrive.getHeading()));
-
-        // Create config for trajectory
-        TrajectoryConfig config =
-            new TrajectoryConfig(
-                    Configuration.kMaxSpeedMetersPerSecond,
-                    Configuration.kMaxAccelerationMetersPerSecondSquared)
-                // Add kinematics to ensure max speed is actually obeyed
-                .setKinematics(kDriveKinematics);
-
-        // Super Simple
-        Trajectory moveStraight =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, m_robotDrive.getHeading()),
-            List.of(new Translation2d(1.5, 0)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3.3, 0, Rotation2d.fromDegrees(0)),
-            // Pass config
-            config);
-
-        //double kp = 2.2193E-07;
-        double kp = 4.2193E-03;
-        double ki = 0;
-        double ks = 0.068221;
-        double kv = 2.3938;
-
-        m_ramseteCommand =
-        new RamseteCommand(
-            moveStraight,
-            m_robotDrive::getPose,
-            new RamseteController(2, 0.7),
-            new SimpleMotorFeedforward(ks, kv),
-            kDriveKinematics,
-            m_robotDrive::getWheelSpeeds,
-            new PIDController(kp, ki, 0),
-            new PIDController(kp, ki, 0),
-            m_robotDrive::move,
-            m_robotDrive);
-
-        // Run path following command, then stop at the end.
-        //return ramseteCommand.andThen(() -> m_robotDrive.stop());
-        //return m_ramseteCommand.andThen(() -> m_robotDrive.autoLevel().andThen(() -> m_robotDrive.stop()));
-        return m_robotDrive.autoLevel().andThen(() -> m_robotDrive.stop());
+    public Command getAutonomousCommand()
+    {
+        // Lift arm, drive forward, extend arm, open gripper, retract arm, drive back
+        return m_ElevatorSubsystem.MoveArmToPosition().andThen(
+                m_pneumatics.toggleExtend().andThen(
+                m_robotDrive.driveForward().andThen(
+                m_pneumatics.toggleGripper().andThen(
+                m_robotDrive.driveBackward()))));
     }
-
-    // /**
-    //  * Use this to pass the autonomous command to the main {@link Robot} class.
-    //  *
-    //  * @return the command to run in autonomous
-    //  */
-    // public Command getTurnCommand() {
-    //     // Run path following command, then stop at the end.
-    //     return ramseteCommand.andThen(() -> m_robotDrive.stop());
-    // }
 }
