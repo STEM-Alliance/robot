@@ -49,9 +49,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
         var elevatorOutput = m_elevatorPID.calculate(m_rotateEnc.getPosition());
         m_rotateMotor.set(elevatorOutput);
-        // SmartDashboard.putNumber("ArmEnc", m_rotateEnc.getPosition());
-        // SmartDashboard.putNumber("ArmMotorDrive", elevatorOutput);
-        // SmartDashboard.putNumber("ArmSetPoint", m_desiredArmPosition);
+        SmartDashboard.putNumber("ArmEnc", m_rotateEnc.getPosition());
+        SmartDashboard.putNumber("ArmMotorDrive", elevatorOutput);
+        SmartDashboard.putNumber("ArmSetPoint", m_desiredArmPosition);
         SmartDashboard.putNumber("ArmCurrent", m_rotateMotor.getOutputCurrent());
     }
 
@@ -78,20 +78,20 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_elevatorPID.setSetpoint(m_desiredArmPosition);
     }
 
-    // public Command MoveArmToLow()
-    // {
-    //     return new InstantCommand(() -> m_desiredArmPosition = 18.6).andThen(new InstantCommand(() -> m_desiredExtPos = -0.45));
-    // }
+    public Command MoveArmToLow()
+    {
+        return new InstantCommand(() -> m_desiredArmPosition = 7);
+    }
 
-    // public Command MoveArmToMid()
-    // {
-    //     return new InstantCommand(() -> m_desiredArmPosition = 20);
-    // }
+    public Command MoveArmToMid()
+    {
+        return new InstantCommand(() -> m_desiredArmPosition = 29);
+    }
 
-    // public Command MoveArmToHigh()
-    // {
-    //     return new InstantCommand(() -> m_desiredArmPosition = 35);
-    // }
+    public Command MoveArmToHigh()
+    {
+        return new InstantCommand(() -> m_desiredArmPosition = 38);
+    }
 
     // public void UnlockExtend()
     // {
@@ -123,12 +123,30 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private boolean IsArmInPosition()
     {
-        return true;
+        var diff = Math.abs(m_rotateEnc.getPosition() - m_desiredArmPosition);
+        //System.out.println("Desired: " + m_desiredArmPosition + " error " + diff);
+        if (Math.abs(m_rotateEnc.getPosition() - m_desiredArmPosition) < 1)
+        {
+            System.out.println("Arm at desired position");
+            return true;
+        }
+        return false;
     }
 
-    public Command MoveArmToPosition()
+    public void InitMoveArmPos(double desiredPosition)
     {
-        return new FunctionalCommand(() -> m_desiredArmPosition = Configuration.AutoArmPosition, () -> {}, interrupted -> {}, () -> IsArmInPosition());
+        m_desiredArmPosition = desiredPosition;
+        m_elevatorPID.setSetpoint(m_desiredArmPosition);
+    }
+
+    public Command MoveArmToPosition(double desiredPosition)
+    {
+        return new FunctionalCommand(() -> InitMoveArmPos(desiredPosition), () -> {}, interrupted -> {}, () -> IsArmInPosition());
+    }
+
+    public double getArmPos()
+    {
+        return m_rotateEnc.getPosition();
     }
 
     // public Command PlaceCone()

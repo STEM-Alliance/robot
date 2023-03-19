@@ -2,7 +2,7 @@
 
 package frc.robot.SubSystems;
 
-import frc.robot.SubSystems.*;;
+import frc.robot.SubSystems.*;
 import frc.robot.Configuration;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.math.controller.PIDController;
@@ -52,6 +52,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     PIDController m_levelPID = new PIDController(0.03, 0, 0);
     Timer m_driveForwardTimer = new Timer();
+
+    double m_desiredDistance;
+    double m_currentEnc;
 
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
@@ -194,30 +197,36 @@ public class DriveSubsystem extends SubsystemBase {
      * @param rot the commanded rotation
      */
     public void arcadeDrive(double fwd, double rot, double hDriveCmd, PneumaticSubsystem psi) {
-        if (m_enableTurbo)
+        m_fwd = fwd;
+        m_rot = rot;
+        if (Configuration.EnableExpoControl)
         {
-            m_fwd = fwd;
-            m_rot = rot;
+            m_fwdFiltered = exponential_scaling(m_fwd , Configuration.ExpControl);
+            m_rotFiltered = exponential_scaling(m_rot, Configuration.ExpControl);
         }
         else
         {
-            m_fwd = fwd * Configuration.FwdRevMaxLimit;
-            m_rot = rot * Configuration.TurnMaxLimit;
+            m_fwdFiltered = m_fwd;
+            m_rotFiltered = m_rot;
         }
 
+        if (!m_enableTurbo)
+        {
+            m_fwdFiltered = m_fwdFiltered * Configuration.FwdRevMaxLimit;
+        }
+        m_rotFiltered = m_rotFiltered * Configuration.TurnMaxLimit;
 
-        m_fwdFiltered = exponential_scaling(m_fwd, Configuration.ExpControl);
-        m_rotFiltered = exponential_scaling(m_rot, Configuration.ExpControl);
-        if ((Math.abs(m_fwdFiltered) < 0.1) && (Math.abs(m_rotFiltered) < 0.1))
+        if ((Math.abs(m_fwdFiltered) < 0.2) && (Math.abs(m_rotFiltered) < 0.2))
         {
             m_drive.arcadeDrive(0, 0);
         }
         else
         {
             m_drive.arcadeDrive(m_fwdFiltered, m_rotFiltered);
+            //m_drive.arcadeDrive(m_fwd, m_rot);
         }
 
-        if (Math.abs(hDriveCmd) > 0.1)
+        if (Math.abs(hDriveCmd) > 0.2)
         {
             m_hDriveFiltered = exponential_scaling(hDriveCmd, Configuration.ExpControl);
             m_hdrive.set(m_hDriveFiltered);
@@ -226,6 +235,7 @@ public class DriveSubsystem extends SubsystemBase {
         else
         {
             psi.retractHDrive();
+            m_hdrive.set(0);
         }
 
         periodic();
@@ -357,23 +367,15 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void enableLevel()
     {
-        m_driveForwardTimer.restart();
         m_levelPID.setSetpoint(m_ahrs.getPitch());
     }
 
     public void runAutoLevel()
     {
-        if (m_driveForwardTimer.hasElapsed(Configuration.DriveForwardTime))
-        {
-            var output = m_levelPID.calculate(m_ahrs.getPitch());
-            m_drive.arcadeDrive(output, 0);
-            SmartDashboard.putNumber("LevelPID", output);
-            System.out.println("Attempting to level");
-        }
-        else
-        {
-            m_drive.arcadeDrive(0.3, 0);
-        }
+        var output = m_levelPID.calculate(m_ahrs.getPitch());
+        m_drive.arcadeDrive(output, 0);
+        SmartDashboard.putNumber("LevelPID", output);
+        System.out.println("Attempting to level");
     }
 
     public Command autoLevel()
@@ -383,38 +385,53 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void autoInitDrive(double distance)
     {
+        m_desiredDistance = distance;
         m_leftEncoder.setPosition(-distance);
         m_rightEncoder.setPosition(-distance);
-        m_leftMotor.set(0.3);
-        m_rightMotor.set(0.3);
-    }
-
-    public void runAutoDrive()
-    {
-
+        if (m_desiredDistance > 0)
+        {
+            m_leftMotor.set(0.4);
+            m_rightMotor.set(0.4);
+        }
+        else
+        {
+            m_leftMotor.set(-0.4);
+            m_rightMotor.set(-0.4);
+        }
+        //Thread.sleep(100, 0);
     }
 
     public boolean autoDriveDone()
     {
         boolean done = false;
         double doneTolerance = 0.1;
+        System.out.println("L/R enc: " + m_leftEncoder.getPosition() + " " + m_rightEncoder.getPosition());
         if ((Math.abs(m_leftEncoder.getPosition()) < doneTolerance) &&
             (Math.abs(m_rightEncoder.getPosition()) < doneTolerance))
         {
+            System.out.println("At the correct position, stopping");
             stop();
             done = true;
+        }
+        else
+        {
+            if (m_desiredDistance > 0)
+            {
+                m_leftMotor.set(0.4);
+                m_rightMotor.set(0.4);
+            }
+            else
+            {
+                m_leftMotor.set(-0.4);
+                m_rightMotor.set(-0.4);
+            }
         }
         return done;
     }
 
-    public Command driveForward()
+    public Command driveDistance(double distance)
     {
-        return new FunctionalCommand(() -> autoInitDrive(5), () -> runAutoDrive(), interrupted -> {}, () -> autoDriveDone());
-    }
-
-    public Command driveBackward()
-    {
-        return new FunctionalCommand(() -> autoInitDrive(-10), () -> runAutoDrive(), interrupted -> {}, () -> autoDriveDone());
+        return new FunctionalCommand(() -> autoInitDrive(distance), () -> {}, interrupted -> {}, () -> autoDriveDone());
     }
 
 
