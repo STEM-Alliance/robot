@@ -149,6 +149,15 @@ public class ElevatorSubsystem extends SubsystemBase {
         return m_rotateEnc.getPosition();
     }
 
+    public boolean isArmOkForExtend()
+    {
+        if (m_rotateEnc.getPosition() > 5)
+        {
+            return true;
+        }
+        return false;
+    }
+
     // public Command PlaceCone()
     // {
     //     return MoveArmToPosition();

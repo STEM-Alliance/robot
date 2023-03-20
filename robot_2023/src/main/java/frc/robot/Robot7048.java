@@ -82,7 +82,7 @@ public class Robot7048 extends TimedRobot {
         //gripper_control.onTrue(m_pneumatics.openClaw());
         //gripper_control.onFalse(m_pneumatics.closeClaw());
         gripper_control.toggleOnTrue(m_pneumatics.toggleGripper());
-        extend_control.onTrue(m_pneumatics.extendArm());
+        extend_control.onTrue(m_pneumatics.extendArm(() -> m_ElevatorSubsystem.isArmOkForExtend()));
         extend_control.onFalse(m_pneumatics.retractArm());
 
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX(), m_controller1.getRightX(), m_pneumatics), m_robotDrive);
@@ -212,7 +212,7 @@ public class Robot7048 extends TimedRobot {
     {
         // Lift arm, drive forward, extend arm, open gripper, retract arm, drive back
         return m_ElevatorSubsystem.MoveArmToPosition(38).andThen(
-                m_pneumatics.extendArm().andThen(
+                m_pneumatics.extendArm(() -> true).andThen(
                 new WaitCommand(2 ).andThen(
                 m_pneumatics.openClaw().andThen(
                 new WaitCommand(2).andThen(

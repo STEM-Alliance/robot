@@ -5,8 +5,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.BooleanSupplier;
 
 public class PneumaticSubsystem extends SubsystemBase {
 
@@ -60,9 +62,10 @@ public class PneumaticSubsystem extends SubsystemBase {
         return new InstantCommand(() -> m_gripper.set(Value.kForward));
     }
 
-    public Command extendArm()
+    public Command extendArm(BooleanSupplier armPos)
     {
-        return new InstantCommand(() -> m_extend.set(Value.kForward));
+        return new ConditionalCommand(new InstantCommand(() -> m_extend.set(Value.kForward)), new InstantCommand(), armPos);
+        //return new InstantCommand(() -> m_extend.set(Value.kForward));
     }
 
     public Command retractArm()
