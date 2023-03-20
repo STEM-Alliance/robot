@@ -1,12 +1,11 @@
 package frc.robot.SubSystems;
 
+import frc.robot.LoggedNumber;
+
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Configuration;
 
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -49,10 +48,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
         var elevatorOutput = m_elevatorPID.calculate(m_rotateEnc.getPosition());
         m_rotateMotor.set(elevatorOutput);
-        SmartDashboard.putNumber("ArmEnc", m_rotateEnc.getPosition());
-        SmartDashboard.putNumber("ArmMotorDrive", elevatorOutput);
-        SmartDashboard.putNumber("ArmSetPoint", m_desiredArmPosition);
-        SmartDashboard.putNumber("ArmCurrent", m_rotateMotor.getOutputCurrent());
+        LoggedNumber.getInstance().logNumber("ArmEnc", m_rotateEnc.getPosition());
+        LoggedNumber.getInstance().logNumber("ArmMotorDrive", elevatorOutput);
+        LoggedNumber.getInstance().logNumber("ArmSetPoint", m_desiredArmPosition);
+        LoggedNumber.getInstance().logNumber("ArmCurrent", m_rotateMotor.getOutputCurrent());
     }
 
     public void control(double rotation, double extend)
@@ -125,6 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     {
         var diff = Math.abs(m_rotateEnc.getPosition() - m_desiredArmPosition);
         //System.out.println("Desired: " + m_desiredArmPosition + " error " + diff);
+        LoggedNumber.getInstance().logNumber("IsArmInPosition", diff);
         if (Math.abs(m_rotateEnc.getPosition() - m_desiredArmPosition) < 1)
         {
             System.out.println("Arm at desired position");

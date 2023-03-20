@@ -86,5 +86,5 @@ public class Configuration {
     static public boolean Simulate = false;
     static public double AutoArmPosition = 38;
     static public double ExtendArmPosition = 1;
-    static public double DriveForwardTime = 5;
+    static public double MaxAutoSpeed = 0.6;
 }

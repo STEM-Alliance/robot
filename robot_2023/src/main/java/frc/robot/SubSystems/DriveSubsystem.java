@@ -2,27 +2,28 @@
 
 package frc.robot.SubSystems;
 
-import frc.robot.SubSystems.*;
-import frc.robot.Configuration;
-import edu.wpi.first.wpilibj.*;
+import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj2.command.*;
-import com.revrobotics.*;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import com.kauailabs.navx.frc.*;
-import edu.wpi.first.wpilibj.DataLogManager;
-
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import frc.robot.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Configuration;
+import frc.robot.LoggedNumber;
 
 public class DriveSubsystem extends SubsystemBase {
     private CANSparkMax m_leftMotor;
@@ -50,8 +51,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     boolean m_enableTurbo = false;
 
+    PIDController m_lPID = new PIDController(2, 0, 0);
+    PIDController m_rPID = new PIDController(2, 0, 0);
     PIDController m_levelPID = new PIDController(0.03, 0, 0);
-    Timer m_driveForwardTimer = new Timer();
 
     double m_desiredDistance;
     double m_currentEnc;
@@ -132,7 +134,6 @@ public class DriveSubsystem extends SubsystemBase {
         m_odometry = new DifferentialDriveOdometry(m_ahrs.getRotation2d(), 0, 0);
 
         SmartDashboard.putData("Field", m_field);
-        DataLogManager.start();
     }
 
     @Override
@@ -141,9 +142,12 @@ public class DriveSubsystem extends SubsystemBase {
         var lDistance = m_leftEncoder.getPosition();
         var rDistance = m_rightEncoder.getPosition();
 
+        LoggedNumber.getInstance().logNumber(lDistance, "lDistance");
+        LoggedNumber.getInstance().logNumber(rDistance, "rDistance");
+
         m_odometry.update(m_ahrs.getRotation2d(), lDistance, rDistance);
         m_field.setRobotPose(m_odometry.getPoseMeters());
-        sendStats();
+        saveStats();
     }
 
     /**
@@ -165,7 +169,8 @@ public class DriveSubsystem extends SubsystemBase {
         // System.out.println("getWheelSpeeds");
         var leftMetersPerSecond = m_leftEncoder.getVelocity();
         var rightMetersPerSecond = m_rightEncoder.getVelocity();
-
+        LoggedNumber.getInstance().logNumber(leftMetersPerSecond, "leftMetersPerSecond");
+        LoggedNumber.getInstance().logNumber(rightMetersPerSecond, "rightMetersPerSecond");
 
         var speed = new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
         return speed;
@@ -210,6 +215,9 @@ public class DriveSubsystem extends SubsystemBase {
             m_rotFiltered = m_rot;
         }
 
+        LoggedNumber.getInstance().logNumber(m_fwdFiltered, "m_fwdFiltered");
+        LoggedNumber.getInstance().logNumber(m_rotFiltered, "m_rotFiltered");
+
         if (!m_enableTurbo)
         {
             m_fwdFiltered = m_fwdFiltered * Configuration.FwdRevMaxLimit;
@@ -223,7 +231,6 @@ public class DriveSubsystem extends SubsystemBase {
         else
         {
             m_drive.arcadeDrive(m_fwdFiltered, m_rotFiltered);
-            //m_drive.arcadeDrive(m_fwd, m_rot);
         }
 
         if (Math.abs(hDriveCmd) > 0.2)
@@ -329,7 +336,8 @@ public class DriveSubsystem extends SubsystemBase {
         m_leftMotorFollower.setIdleMode(IdleMode.kBrake);
         m_rightMotorFollower.setIdleMode(IdleMode.kBrake);
         System.out.println("Enabling Brake mode");
-    }
+        LoggedNumber.getInstance().logNumber(1.0, "BrakeEnabled");
+}
 
     public void setCoastMode()
     {
@@ -338,6 +346,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_leftMotorFollower.setIdleMode(IdleMode.kCoast);
         m_rightMotorFollower.setIdleMode(IdleMode.kCoast);
         System.out.println("Enabling coast mode");
+        LoggedNumber.getInstance().logNumber(0.0, "BrakeEnabled");
     }
 
     public Command setBrakeModeCmd()
@@ -376,6 +385,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_drive.arcadeDrive(output, 0);
         SmartDashboard.putNumber("LevelPID", output);
         System.out.println("Attempting to level");
+        LoggedNumber.getInstance().logNumber(1.0, "runAutoLevel");
     }
 
     public Command autoLevel()
@@ -386,45 +396,39 @@ public class DriveSubsystem extends SubsystemBase {
     public void autoInitDrive(double distance)
     {
         m_desiredDistance = distance;
-        m_leftEncoder.setPosition(-distance);
-        m_rightEncoder.setPosition(-distance);
-        if (m_desiredDistance > 0)
-        {
-            m_leftMotor.set(0.4);
-            m_rightMotor.set(0.4);
-        }
-        else
-        {
-            m_leftMotor.set(-0.4);
-            m_rightMotor.set(-0.4);
-        }
-        //Thread.sleep(100, 0);
+        var lPIDSetPoint = distance + m_leftEncoder.getPosition();
+        var rPIDSetPoint = distance + m_rightEncoder.getPosition();
+        m_lPID.setSetpoint(lPIDSetPoint);
+        m_rPID.setSetpoint(rPIDSetPoint);
+        LoggedNumber.getInstance().logNumber(lPIDSetPoint, "lPIDSetPoint");
+        LoggedNumber.getInstance().logNumber(rPIDSetPoint, "rPIDSetPoint");
     }
 
     public boolean autoDriveDone()
     {
         boolean done = false;
         double doneTolerance = 0.1;
-        System.out.println("L/R enc: " + m_leftEncoder.getPosition() + " " + m_rightEncoder.getPosition());
-        if ((Math.abs(m_leftEncoder.getPosition()) < doneTolerance) &&
-            (Math.abs(m_rightEncoder.getPosition()) < doneTolerance))
+        var lDrive = m_lPID.calculate(m_leftEncoder.getPosition());
+        var rDrive = m_rPID.calculate(m_rightEncoder.getPosition());
+        System.out.println("L/R drive: " + lDrive + "/" + rDrive + " enc: " + m_leftEncoder.getPosition() + "/" + m_rightEncoder.getPosition());
+        LoggedNumber.getInstance().logNumber(lDrive, "lPIDError");
+        LoggedNumber.getInstance().logNumber(rDrive, "rPIDError");
+
+        if ((Math.abs(lDrive) < doneTolerance) &&
+            (Math.abs(rDrive) < doneTolerance))
         {
+            LoggedNumber.getInstance().logNumber(1.0, "AtDriveGoal");
             System.out.println("At the correct position, stopping");
             stop();
             done = true;
         }
         else
         {
-            if (m_desiredDistance > 0)
-            {
-                m_leftMotor.set(0.4);
-                m_rightMotor.set(0.4);
-            }
-            else
-            {
-                m_leftMotor.set(-0.4);
-                m_rightMotor.set(-0.4);
-            }
+            LoggedNumber.getInstance().logNumber(0.0, "AtDriveGoal");
+            lDrive = Math.max(lDrive, Configuration.MaxAutoSpeed);
+            rDrive = Math.max(rDrive, Configuration.MaxAutoSpeed);
+            m_leftMotor.set(lDrive);
+            m_rightMotor.set(rDrive);
         }
         return done;
     }
@@ -434,86 +438,38 @@ public class DriveSubsystem extends SubsystemBase {
         return new FunctionalCommand(() -> autoInitDrive(distance), () -> {}, interrupted -> {}, () -> autoDriveDone());
     }
 
-
-    public void sendStats() {
+    public void saveStats() {
         /*
          * This is all for telemetry and data logging.
          * If you want to put a value on the dashboard, put it here.
          * This data will also be logged to a log file
          */
-        SmartDashboard.putNumber("Heading", getHeading().getDegrees());
-        SmartDashboard.putNumber("Yaw", m_ahrs.getYaw());
-        SmartDashboard.putNumber("FusedHeading", m_ahrs.getFusedHeading());
-        SmartDashboard.putNumber("pitch", m_ahrs.getPitch());
-
-        SmartDashboard.putNumber("CmdL", m_leftMotor.get());
-        SmartDashboard.putNumber("CmdR", m_rightMotor.get());
-        SmartDashboard.putNumber("EncL", m_leftEncoder.getPosition()); // These are in rotations
-        SmartDashboard.putNumber("EncR", m_rightEncoder.getPosition());
-        SmartDashboard.putNumber("VelL", m_leftEncoder.getVelocity());
-        SmartDashboard.putNumber("VelR", m_rightEncoder.getVelocity());
-
-        var pose = getPose();
-        SmartDashboard.putNumber("PoseX", pose.getX());
-        SmartDashboard.putNumber("PoseY", pose.getY());
+        LoggedNumber.getInstance().logNumber(getHeading().getDegrees(), "Heading");
+        LoggedNumber.getInstance().logNumber(m_ahrs.getYaw(), "Yaw");
+        LoggedNumber.getInstance().logNumber(m_ahrs.getFusedHeading(), "FusedHeading");
+        LoggedNumber.getInstance().logNumber(m_ahrs.getPitch(), "Pitch");
 
         // Motor stats
-        SmartDashboard.putNumber("Motor1OutputL", m_leftMotor.getAppliedOutput());
-        SmartDashboard.putNumber("Motor1TempL", m_leftMotor.getMotorTemperature());
-        SmartDashboard.putNumber("Motor1CurrentL", m_leftMotor.getOutputCurrent());
-        //SmartDashboard.putNumber("Motor1VoltageL", m_leftMotor.getBusVoltage());
-        //SmartDashboard.putNumber("Motor1FaultsL", (double) m_leftMotor.getFaults());
-        SmartDashboard.putNumber("Motor2OutputL", m_leftMotorFollower.getAppliedOutput());
-        SmartDashboard.putNumber("Motor2TempL", m_leftMotorFollower.getMotorTemperature());
-        SmartDashboard.putNumber("Motor2CurrentL", m_leftMotorFollower.getOutputCurrent());
-        //SmartDashboard.putNumber("Motor2VoltageL", m_leftMotorFollower.getBusVoltage());
-        //SmartDashboard.putNumber("Motor2FaultsL", (double) m_leftMotorFollower.getFaults());
+        LoggedNumber.getInstance().logNumber("Motor1OutputL", m_leftMotor.getAppliedOutput());
+        LoggedNumber.getInstance().logNumber("Motor1TempL", m_leftMotor.getMotorTemperature());
+        LoggedNumber.getInstance().logNumber("Motor1CurrentL", m_leftMotor.getOutputCurrent());
+        LoggedNumber.getInstance().logNumber("Motor1VoltageL", m_leftMotor.getBusVoltage());
+        LoggedNumber.getInstance().logNumber("Motor1FaultsL", (double) m_leftMotor.getFaults());
+        LoggedNumber.getInstance().logNumber("Motor2OutputL", m_leftMotorFollower.getAppliedOutput());
+        LoggedNumber.getInstance().logNumber("Motor2TempL", m_leftMotorFollower.getMotorTemperature());
+        LoggedNumber.getInstance().logNumber("Motor2CurrentL", m_leftMotorFollower.getOutputCurrent());
+        LoggedNumber.getInstance().logNumber("Motor2VoltageL", m_leftMotorFollower.getBusVoltage());
+        LoggedNumber.getInstance().logNumber("Motor2FaultsL", (double) m_leftMotorFollower.getFaults());
 
-        SmartDashboard.putNumber("Motor1OutputR", m_rightMotor.getAppliedOutput());
-        SmartDashboard.putNumber("Motor1TempR", m_rightMotor.getMotorTemperature());
-        SmartDashboard.putNumber("Motor1CurrentR", m_rightMotor.getOutputCurrent());
-        //SmartDashboard.putNumber("Motor1VoltageR", m_rightMotor.getBusVoltage());
-        //SmartDashboard.putNumber("Motor1FaultsR", (double) m_rightMotor.getFaults());
-        SmartDashboard.putNumber("Motor2OutputR", m_rightMotorFollower.getAppliedOutput());
-        SmartDashboard.putNumber("Motor2TempR", m_rightMotorFollower.getMotorTemperature());
-        SmartDashboard.putNumber("Motor2CurrentR", m_rightMotorFollower.getOutputCurrent());
-        //SmartDashboard.putNumber("Motor2VoltageR", m_rightMotorFollower.getBusVoltage());
-        //SmartDashboard.putNumber("Motor2FaultsR", (double) m_rightMotorFollower.getFaults());
-
-        // SmartDashboard.putNumber("JoyFwd", m_fwd);
-        // SmartDashboard.putNumber("JoyRot", m_rot);
-        SmartDashboard.putNumber("JoyFwdFiltered", m_fwdFiltered);
-        SmartDashboard.putNumber("JoyRotFiltered", m_rotFiltered);
-        SmartDashboard.putNumber("HDriveFiltered", m_hDriveFiltered);
-
-        // // In order to simulate things, it is much easier if all of the data we need is on a single line. So this is duplication, but makes life easier
-        // double fullCapture[] = new double[30];
-        // fullCapture[0]  = m_leftEncoder.getPosition();
-        // fullCapture[1]  = m_rightEncoder.getPosition();
-        // fullCapture[2]  = m_leftEncoder.getVelocity();
-        // fullCapture[3]  = m_rightEncoder.getVelocity();
-        // fullCapture[4]  = m_ahrs.getFusedHeading();
-        // fullCapture[5]  = m_ahrs.getYaw();
-        // fullCapture[6]  = m_ahrs.getYaw();
-        // fullCapture[7]  = m_ahrs.getPitch();
-        // fullCapture[8]  = m_ahrs.getRoll();
-        // fullCapture[9]  = m_ahrs.getAngle();
-        // fullCapture[10] = m_ahrs.getCompassHeading();
-        // fullCapture[11] = m_ahrs.getRawAccelX();
-        // fullCapture[12] = m_ahrs.getRawAccelY();
-        // fullCapture[13] = m_ahrs.getRawAccelZ();
-        // fullCapture[14] = m_ahrs.getRawGyroX();
-        // fullCapture[15] = m_ahrs.getRawGyroY();
-        // fullCapture[16] = m_ahrs.getRawGyroZ();
-        // fullCapture[17] = m_ahrs.getRawMagX();
-        // fullCapture[18] = m_ahrs.getRawMagY();
-        // fullCapture[19] = m_ahrs.getRawMagZ();
-        // fullCapture[20] = m_ahrs.getRotation2d().getDegrees();
-        // fullCapture[21] = m_odometry.getPoseMeters().getX();
-        // fullCapture[22] = m_odometry.getPoseMeters().getY();
-        // fullCapture[23] = m_odometry.getPoseMeters().getRotation().getDegrees();
-        // fullCapture[24] = m_leftMotor.get();
-        // fullCapture[25] = m_rightMotor.get();
-        // SmartDashboard.putNumberArray("FullData", fullCapture);
+        LoggedNumber.getInstance().logNumber("Motor1OutputR", m_rightMotor.getAppliedOutput());
+        LoggedNumber.getInstance().logNumber("Motor1TempR", m_rightMotor.getMotorTemperature());
+        LoggedNumber.getInstance().logNumber("Motor1CurrentR", m_rightMotor.getOutputCurrent());
+        LoggedNumber.getInstance().logNumber("Motor1VoltageR", m_rightMotor.getBusVoltage());
+        LoggedNumber.getInstance().logNumber("Motor1FaultsR", (double) m_rightMotor.getFaults());
+        LoggedNumber.getInstance().logNumber("Motor2OutputR", m_rightMotorFollower.getAppliedOutput());
+        LoggedNumber.getInstance().logNumber("Motor2TempR", m_rightMotorFollower.getMotorTemperature());
+        LoggedNumber.getInstance().logNumber("Motor2CurrentR", m_rightMotorFollower.getOutputCurrent());
+        LoggedNumber.getInstance().logNumber("Motor2VoltageR", m_rightMotorFollower.getBusVoltage());
+        LoggedNumber.getInstance().logNumber("Motor2FaultsR", (double) m_rightMotorFollower.getFaults());
     }
 }

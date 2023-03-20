@@ -49,6 +49,9 @@ public class Robot7048 extends TimedRobot {
 
     @Override
     public void robotInit() {
+        DataLogManager.start();
+        DriverStation.startDataLog(DataLogManager.getLog());
+
         final Trigger brake = m_controller1.b();
         final Trigger coast = m_controller1.a();
         final Trigger enTurbo = m_controller1.rightTrigger();
