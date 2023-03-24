@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.*;
-import edu.wpi.first.wpilibj.PWM;
 
 /**
  * Uses the CameraServer class to automatically capture video from a USB webcam and send it to the
@@ -30,12 +29,10 @@ public class Robot7048 extends TimedRobot {
     private CommandXboxController m_controller1 = new CommandXboxController(0);
     private CommandXboxController m_controller2 = new CommandXboxController(1);
 
-    private PWM m_leds = new PWM(0);
-
     DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4, 5);
-    //GripperSubsystem m_gripper = new GripperSubsystem(20, 21, 16);
     ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(6);
     PneumaticSubsystem m_pneumatics = new PneumaticSubsystem(0);
+    LEDSubsystem m_leds = new LEDSubsystem();
 
     Command m_autoCommand;
     Command m_driveCommand;
@@ -43,6 +40,7 @@ public class Robot7048 extends TimedRobot {
 
     // Auto select
     final String kLevel = "AutoLevel";
+    final String kPlaceAndLevel = "ConeAndLevel";
     final String kPlaceCone = "PlaceCone";
     String m_autoSelected;
     final SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -52,6 +50,7 @@ public class Robot7048 extends TimedRobot {
         DataLogManager.start();
         DriverStation.startDataLog(DataLogManager.getLog());
 
+        // Controller 1
         final Trigger brake = m_controller1.b();
         final Trigger coast = m_controller1.a();
         final Trigger enTurbo = m_controller1.rightTrigger();
@@ -59,6 +58,7 @@ public class Robot7048 extends TimedRobot {
         final Trigger toggleHDrive = m_controller1.rightBumper();
         toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
 
+        // Controller 2
         final Trigger gripper_control = m_controller2.leftTrigger();
         final Trigger extend_control = m_controller2.rightTrigger();
         final Trigger high = m_controller2.y();
@@ -68,19 +68,22 @@ public class Robot7048 extends TimedRobot {
         final Trigger rightBumper = m_controller2.rightBumper();
         final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
         final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
+        final Trigger retractHome = m_controller2.x();
         final Trigger up = m_controller2.pov(0);
         final Trigger down = m_controller2.pov(180);
         final Trigger left = m_controller2.pov(270);
         final Trigger right = m_controller2.pov(90);
-        final Trigger retractHome = m_controller2.x();
+
+        up.onTrue(m_leds.red());
+        left.onTrue(m_leds.yellow());
+        right.onTrue(m_leds.blue());
+        down.onTrue(m_leds.crazy());
 
         brake.onTrue(m_robotDrive.setBrakeModeCmd());
         coast.onTrue(m_robotDrive.setCoastModeCmd());
         enTurbo.onTrue(m_robotDrive.enableTurbo());
         enTurbo.onFalse(m_robotDrive.disableTurbo());
 
-        //gripper_control.onTrue(m_pneumatics.openClaw());
-        //gripper_control.onFalse(m_pneumatics.closeClaw());
         gripper_control.toggleOnTrue(m_pneumatics.toggleGripper());
         extend_control.onTrue(m_pneumatics.extendArm(() -> m_ElevatorSubsystem.isArmOkForExtend()));
         extend_control.onFalse(m_pneumatics.retractArm());
@@ -91,19 +94,6 @@ public class Robot7048 extends TimedRobot {
         high.onTrue(m_ElevatorSubsystem.MoveArmToHigh());
         medium.onTrue(m_ElevatorSubsystem.MoveArmToMid());
         low.onTrue(m_ElevatorSubsystem.MoveArmToLow());
-
-        // TODO: These don't work right now.
-        //buttonA.onTrue(m_ElevatorSubsystem.MoveArmToLow());
-        // buttonB.onTrue(m_ElevatorSubsystem.MoveArmToMid());
-        // buttonY.onTrue(m_ElevatorSubsystem.MoveArmToHigh());
-        //left.whileTrue(m_gripper.slideLeft());
-        //right.whileTrue(m_gripper.slideRight());
-        //up.whileTrue(m_gripper.openGripper());
-        //down.whileTrue(m_gripper.closeGripper());
-        //retractHome.onTrue(m_ElevatorSubsystem.RetractHome());
-
-        //leftBumper.whileTrue(m_gripper.rotateLeft());
-        //rightBumper.whileTrue(m_gripper.rotateRight());
 
         CameraServer.startAutomaticCapture();
 
@@ -121,6 +111,7 @@ public class Robot7048 extends TimedRobot {
 
         m_chooser.setDefaultOption(kLevel, kLevel);
         m_chooser.addOption(kPlaceCone, kPlaceCone);
+        m_chooser.addOption(kPlaceAndLevel, kPlaceAndLevel);
         SmartDashboard.putData("Auto choices", m_chooser);
     }
 
@@ -148,10 +139,6 @@ public class Robot7048 extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
-
-        var time = System.currentTimeMillis();
-        var led_sp = ((time % 60) / 30) - 1;
-        m_leds.setSpeed(led_sp);
     }
 
 
@@ -180,7 +167,11 @@ public class Robot7048 extends TimedRobot {
                 // Put custom auto code here
                 m_autoCommand = getAutoLevel();
                 System.out.println("Auto level mode");
-            break;
+                break;
+            case kPlaceAndLevel:
+                m_autoCommand = getPlaceConeAutoAndLevel();
+                System.out.println("Place cone and auto level");
+                break;
             case kPlaceCone:
             default:
                 // Put default auto code here
@@ -211,7 +202,7 @@ public class Robot7048 extends TimedRobot {
     public Command getPlaceConeAuto()
     {
         // Lift arm, drive forward, extend arm, open gripper, retract arm, drive back
-        return m_ElevatorSubsystem.MoveArmToPosition(38).andThen(
+        return m_ElevatorSubsystem.MoveArmToPosition(29).andThen(
                 m_pneumatics.extendArm(() -> true).andThen(
                 new WaitCommand(2 ).andThen(
                 m_pneumatics.openClaw().andThen(
@@ -219,8 +210,26 @@ public class Robot7048 extends TimedRobot {
                 m_pneumatics.retractArm().andThen(
                 m_pneumatics.closeClaw().andThen(
                 new WaitCommand(2).andThen(
-                m_robotDrive.driveDistance(-5).andThen(
-                m_ElevatorSubsystem.MoveArmToPosition(5))))))))));
+                m_ElevatorSubsystem.MoveArmToPosition(20).andThen(
+                m_ElevatorSubsystem.MoveArmToPosition(10).andThen(
+                m_ElevatorSubsystem.MoveArmToPosition(5).andThen(
+                m_robotDrive.driveDistance(-5))))))))))));
+    }
+
+    public Command getPlaceConeAutoAndLevel()
+    {
+        // Lift arm, drive forward, extend arm, open gripper, retract arm, drive back
+        return m_ElevatorSubsystem.MoveArmToPosition(29).andThen(
+                m_pneumatics.extendArm(() -> true).andThen(
+                new WaitCommand(1).andThen(
+                m_pneumatics.openClaw().andThen(
+                new WaitCommand(1).andThen(
+                m_pneumatics.retractArm().andThen(
+                m_pneumatics.closeClaw().andThen(
+                new WaitCommand(1).andThen(
+                m_ElevatorSubsystem.MoveArmToPosition(5).andThen(
+                m_robotDrive.driveDistance(-2.5).andThen(
+                m_robotDrive.autoLevel()))))))))));
     }
 
     /**
@@ -231,7 +240,8 @@ public class Robot7048 extends TimedRobot {
     public Command getAutoLevel()
     {
         // Lift arm, drive forward, extend arm, open gripper, retract arm, drive back
-        return m_robotDrive.driveDistance(3.1).andThen(
-                m_robotDrive.autoLevel());
+        return m_robotDrive.captureLevel().andThen(
+               m_robotDrive.driveDistance(-2.5).andThen(
+               m_robotDrive.autoLevel()));
     }
 }

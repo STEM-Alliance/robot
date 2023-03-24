@@ -2,20 +2,16 @@ package frc.robot.SubSystems;
 
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.hal.*;
+import edu.wpi.first.wpilibj.PWM;
 
 public class LEDSubsystem extends SubsystemBase {
 
-    int m_red;
-    int m_green;
-    int m_blue;
+    private PWM m_leds = new PWM(0);
 
     /** Creates a new DriveSubsystem. */
-    public LEDSubsystem(int redChannel, int greenChannel, int blueChannel) {
-
-        /*
-         * TODO: Need to set the motor direction and speed.
-         * Do we need to setup the limit switches?
-         */
+    public LEDSubsystem() 
+    {
+        m_leds.setSpeed(0.61);
     }
 
     @Override
@@ -24,8 +20,23 @@ public class LEDSubsystem extends SubsystemBase {
 
     }
 
-    public Command controlRed(boolean enable)
+    public Command red()
     {
-        return this.runOnce(() -> System.out.println("Turning Red LED " + enable));
+        return new InstantCommand(() -> m_leds.setSpeed(0.61));
+    }
+
+    public Command yellow()
+    {
+        return new InstantCommand(() -> m_leds.setSpeed(0.69));
+    }
+
+    public Command blue()
+    {
+        return new InstantCommand(() -> m_leds.setSpeed(0.91));
+    }
+
+    public Command crazy()
+    {
+        return new InstantCommand(() -> m_leds.setSpeed(-0.59));
     }
 }

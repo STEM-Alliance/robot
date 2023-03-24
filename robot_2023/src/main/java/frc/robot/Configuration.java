@@ -41,8 +41,8 @@ public class Configuration {
     static public double RotationDeadband = 0.2;
     static public double RotationScale = 0.3;
     static public double ExtendDeadband = 0.2;
-    static public double ElevatorKp = 0.05;
-    static public double ElevatorKi = 0.0001;
+    static public double ElevatorKp = 0.04;
+    static public double ElevatorKi = 0.0005;
     static public double ElevatorKd = 0;
     static public double ElevatorScale = 0.1;
 
@@ -87,4 +87,5 @@ public class Configuration {
     static public double AutoArmPosition = 38;
     static public double ExtendArmPosition = 1;
     static public double MaxAutoSpeed = 0.6;
+    static public double MaxLevelSpeed = 0.4;
 }

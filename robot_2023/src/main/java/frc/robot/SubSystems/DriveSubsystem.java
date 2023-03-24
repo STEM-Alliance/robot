@@ -2,6 +2,8 @@
 
 package frc.robot.SubSystems;
 
+import javax.naming.ldap.LdapContext;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -49,11 +51,17 @@ public class DriveSubsystem extends SubsystemBase {
     double m_rotFiltered;
     double m_hDriveFiltered;
 
-    boolean m_enableTurbo = false;
+    double m_lMotorSP = 0;
+    double m_rMotorSP = 0;
 
-    PIDController m_lPID = new PIDController(2, 0, 0);
-    PIDController m_rPID = new PIDController(2, 0, 0);
-    PIDController m_levelPID = new PIDController(0.03, 0, 0);
+    boolean m_enableTurbo = false;
+    boolean m_autoDriveDone = false;
+
+    PIDController m_lPID = new PIDController(2.2, 0, 0);
+    PIDController m_rPID = new PIDController(2.2, 0, 0);
+    // This works ok, but it is a little slow
+    //PIDController m_levelPID = new PIDController(0.02, 0.001, 0);
+    PIDController m_levelPID = new PIDController(0.02, 0.002, 0);
 
     double m_desiredDistance;
     double m_currentEnc;
@@ -204,6 +212,9 @@ public class DriveSubsystem extends SubsystemBase {
     public void arcadeDrive(double fwd, double rot, double hDriveCmd, PneumaticSubsystem psi) {
         m_fwd = fwd;
         m_rot = rot;
+
+        //System.out.println("arcade drive being called");
+
         if (Configuration.EnableExpoControl)
         {
             m_fwdFiltered = exponential_scaling(m_fwd , Configuration.ExpControl);
@@ -245,7 +256,7 @@ public class DriveSubsystem extends SubsystemBase {
             m_hdrive.set(0);
         }
 
-        periodic();
+        //periodic();
     }
 
     /** Resets the drive encoders to currently read a position of 0. */
@@ -374,18 +385,26 @@ public class DriveSubsystem extends SubsystemBase {
         return false;
     }
 
+    public Command captureLevel()
+    {
+        return new InstantCommand(() -> m_levelPID.setSetpoint(m_ahrs.getPitch()));
+    }
+    
     public void enableLevel()
     {
-        m_levelPID.setSetpoint(m_ahrs.getPitch());
+        System.out.println("Enable level with pitch: " + m_ahrs.getPitch());
+        LoggedNumber.getInstance().logNumber("PitchInitial", m_levelPID.getSetpoint());
     }
 
     public void runAutoLevel()
     {
-        var output = m_levelPID.calculate(m_ahrs.getPitch());
+        var pidOut = m_levelPID.calculate(m_ahrs.getPitch());
+        var output = Math.min(pidOut, Configuration.MaxLevelSpeed);
+        output = Math.max(output, -Configuration.MaxLevelSpeed);
         m_drive.arcadeDrive(output, 0);
-        SmartDashboard.putNumber("LevelPID", output);
-        System.out.println("Attempting to level");
-        LoggedNumber.getInstance().logNumber(1.0, "runAutoLevel");
+        System.out.println("Init: " + m_levelPID.getSetpoint() + " Leveling " + m_ahrs.getPitch() + " PID out: " + output);
+        LoggedNumber.getInstance().logNumber("LevelPID", pidOut);
+        LoggedNumber.getInstance().logNumber("LevelPID2", output);
     }
 
     public Command autoLevel()
@@ -395,22 +414,22 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void autoInitDrive(double distance)
     {
+        m_autoDriveDone = false;
         m_desiredDistance = distance;
-        var lPIDSetPoint = distance + m_leftEncoder.getPosition();
-        var rPIDSetPoint = distance + m_rightEncoder.getPosition();
-        m_lPID.setSetpoint(lPIDSetPoint);
-        m_rPID.setSetpoint(rPIDSetPoint);
-        LoggedNumber.getInstance().logNumber(lPIDSetPoint, "lPIDSetPoint");
-        LoggedNumber.getInstance().logNumber(rPIDSetPoint, "rPIDSetPoint");
+        m_lMotorSP = distance + m_leftEncoder.getPosition();
+        m_rMotorSP = distance + m_rightEncoder.getPosition();
+        m_lPID.setSetpoint(m_lMotorSP);
+        m_rPID.setSetpoint(m_rMotorSP);
+        LoggedNumber.getInstance().logNumber(m_lMotorSP, "lPIDSetPoint");
+        LoggedNumber.getInstance().logNumber(m_rMotorSP, "rPIDSetPoint");
+        System.out.println("autoInitDrive " + distance);
     }
 
-    public boolean autoDriveDone()
+    public void autoDriveExecute()
     {
-        boolean done = false;
         double doneTolerance = 0.1;
         var lDrive = m_lPID.calculate(m_leftEncoder.getPosition());
         var rDrive = m_rPID.calculate(m_rightEncoder.getPosition());
-        System.out.println("L/R drive: " + lDrive + "/" + rDrive + " enc: " + m_leftEncoder.getPosition() + "/" + m_rightEncoder.getPosition());
         LoggedNumber.getInstance().logNumber(lDrive, "lPIDError");
         LoggedNumber.getInstance().logNumber(rDrive, "rPIDError");
 
@@ -420,22 +439,31 @@ public class DriveSubsystem extends SubsystemBase {
             LoggedNumber.getInstance().logNumber(1.0, "AtDriveGoal");
             System.out.println("At the correct position, stopping");
             stop();
-            done = true;
+            m_autoDriveDone = true;
         }
         else
         {
             LoggedNumber.getInstance().logNumber(0.0, "AtDriveGoal");
             lDrive = Math.max(lDrive, Configuration.MaxAutoSpeed);
             rDrive = Math.max(rDrive, Configuration.MaxAutoSpeed);
-            m_leftMotor.set(lDrive);
-            m_rightMotor.set(rDrive);
+            lDrive = Math.min(lDrive, -Configuration.MaxAutoSpeed);
+            rDrive = Math.min(rDrive, -Configuration.MaxAutoSpeed);
+            double fwd = (lDrive + rDrive) / 2;
+            System.out.println("L/R drive: " + lDrive + "/" + rDrive + " enc: " + m_leftEncoder.getPosition() + "/" + m_rightEncoder.getPosition());
+            //m_leftMotor.set(lDrive);
+            //m_rightMotor.set(rDrive);
+            m_drive.arcadeDrive(fwd, 0);
         }
-        return done;
+    }
+
+    public boolean autoDriveDone()
+    {
+        return m_autoDriveDone;
     }
 
     public Command driveDistance(double distance)
     {
-        return new FunctionalCommand(() -> autoInitDrive(distance), () -> {}, interrupted -> {}, () -> autoDriveDone());
+        return new FunctionalCommand(() -> autoInitDrive(distance), () -> autoDriveExecute(), interrupted -> {}, () -> autoDriveDone(), this);
     }
 
     public void saveStats() {
