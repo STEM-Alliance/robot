@@ -59,13 +59,13 @@ public class Robot7048 extends TimedRobot {
         final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
         final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
         final JoystickButton buttonX = new JoystickButton(m_controller1, XboxController.Button.kX.value);
-        // buttonA.onTrue(m_gripper.open());
-        // buttonB.onTrue(m_gripper.close());
-        // buttonX.onTrue(m_leds.controlRed(true));
-        // buttonX.onFalse(m_leds.controlRed(false));
+        buttonA.onTrue(m_gripper.open());
+        buttonB.onTrue(m_gripper.close());
+        buttonX.onTrue(m_leds.controlRed(true));
+        buttonX.onFalse(m_leds.controlRed(false));
 
         m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-        // m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller1.getLeftTriggerAxis()), m_gripper);
+        m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller1.getLeftTriggerAxis()), m_gripper);
 
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
