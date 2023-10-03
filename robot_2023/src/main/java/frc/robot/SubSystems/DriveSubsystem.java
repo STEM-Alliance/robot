@@ -186,7 +186,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_rot = rot;
         m_fwdFiltered = m_forwardLimiter.calculate(fwd);
         m_rotFiltered = m_turnLimiter.calculate(rot);
-        m_drive.arcadeDrive(m_fwdFiltered, m_rotFiltered);
+        m_drive.arcadeDrive(m_fwdFiltered, m_rotFiltered * 0.75);
         System.out.println("arcadeDrive");
         periodic();
         sendStats();
@@ -285,48 +285,48 @@ public class DriveSubsystem extends SubsystemBase {
          * If you want to put a value on the dashboard, put it here.
          * This data will also be logged to a log file
          */
-        SmartDashboard.putNumber("Heading", getHeading().getDegrees());
-        SmartDashboard.putNumber("Yaw", m_ahrs.getYaw());
-        SmartDashboard.putNumber("FusedHeading", m_ahrs.getFusedHeading());
+        // SmartDashboard.putNumber("Heading", getHeading().getDegrees());
+        // SmartDashboard.putNumber("Yaw", m_ahrs.getYaw());
+        // SmartDashboard.putNumber("FusedHeading", m_ahrs.getFusedHeading());
 
-        SmartDashboard.putNumber("CmdL", m_leftMotor.get());
-        SmartDashboard.putNumber("CmdR", m_rightMotor.get());
-        SmartDashboard.putNumber("EncL", m_leftEncoder.getPosition()); // These are in rotations
-        SmartDashboard.putNumber("EncR", m_rightEncoder.getPosition());
-        SmartDashboard.putNumber("VelL", m_leftEncoder.getVelocity());
-        SmartDashboard.putNumber("VelR", m_rightEncoder.getVelocity());
+        // SmartDashboard.putNumber("CmdL", m_leftMotor.get());
+        // SmartDashboard.putNumber("CmdR", m_rightMotor.get());
+        // SmartDashboard.putNumber("EncL", m_leftEncoder.getPosition()); // These are in rotations
+        // SmartDashboard.putNumber("EncR", m_rightEncoder.getPosition());
+        // SmartDashboard.putNumber("VelL", m_leftEncoder.getVelocity());
+        // SmartDashboard.putNumber("VelR", m_rightEncoder.getVelocity());
 
-        var pose = getPose();
-        SmartDashboard.putNumber("PoseX", pose.getX());
-        SmartDashboard.putNumber("PoseY", pose.getY());
+        // var pose = getPose();
+        // SmartDashboard.putNumber("PoseX", pose.getX());
+        // SmartDashboard.putNumber("PoseY", pose.getY());
 
-        // Motor stats
-        SmartDashboard.putNumber("Motor1OutputL", m_leftMotor.getAppliedOutput());
-        SmartDashboard.putNumber("Motor1VoltageL", m_leftMotor.getBusVoltage());
-        SmartDashboard.putNumber("Motor1FaultsL", (double) m_leftMotor.getFaults());
-        SmartDashboard.putNumber("Motor1TempL", m_leftMotor.getMotorTemperature());
-        SmartDashboard.putNumber("Motor1CurrentL", m_leftMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Motor2OutputL", m_leftMotorFollower.getAppliedOutput());
-        SmartDashboard.putNumber("Motor2VoltageL", m_leftMotorFollower.getBusVoltage());
-        SmartDashboard.putNumber("Motor2FaultsL", (double) m_leftMotorFollower.getFaults());
-        SmartDashboard.putNumber("Motor2TempL", m_leftMotorFollower.getMotorTemperature());
-        SmartDashboard.putNumber("Motor2CurrentL", m_leftMotorFollower.getOutputCurrent());
+        // // Motor stats
+        // SmartDashboard.putNumber("Motor1OutputL", m_leftMotor.getAppliedOutput());
+        // SmartDashboard.putNumber("Motor1VoltageL", m_leftMotor.getBusVoltage());
+        // SmartDashboard.putNumber("Motor1FaultsL", (double) m_leftMotor.getFaults());
+        // SmartDashboard.putNumber("Motor1TempL", m_leftMotor.getMotorTemperature());
+        // SmartDashboard.putNumber("Motor1CurrentL", m_leftMotor.getOutputCurrent());
+        // SmartDashboard.putNumber("Motor2OutputL", m_leftMotorFollower.getAppliedOutput());
+        // SmartDashboard.putNumber("Motor2VoltageL", m_leftMotorFollower.getBusVoltage());
+        // SmartDashboard.putNumber("Motor2FaultsL", (double) m_leftMotorFollower.getFaults());
+        // SmartDashboard.putNumber("Motor2TempL", m_leftMotorFollower.getMotorTemperature());
+        // SmartDashboard.putNumber("Motor2CurrentL", m_leftMotorFollower.getOutputCurrent());
 
-        SmartDashboard.putNumber("Motor1OutputR", m_rightMotor.getAppliedOutput());
-        SmartDashboard.putNumber("Motor1VoltageR", m_rightMotor.getBusVoltage());
-        SmartDashboard.putNumber("Motor1FaultsR", (double) m_rightMotor.getFaults());
-        SmartDashboard.putNumber("Motor1TempR", m_rightMotor.getMotorTemperature());
-        SmartDashboard.putNumber("Motor1CurrentR", m_rightMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Motor2OutputR", m_rightMotorFollower.getAppliedOutput());
-        SmartDashboard.putNumber("Motor2VoltageR", m_rightMotorFollower.getBusVoltage());
-        SmartDashboard.putNumber("Motor2FaultsR", (double) m_rightMotorFollower.getFaults());
-        SmartDashboard.putNumber("Motor2TempR", m_rightMotorFollower.getMotorTemperature());
-        SmartDashboard.putNumber("Motor2CurrentR", m_rightMotorFollower.getOutputCurrent());
+        // SmartDashboard.putNumber("Motor1OutputR", m_rightMotor.getAppliedOutput());
+        // SmartDashboard.putNumber("Motor1VoltageR", m_rightMotor.getBusVoltage());
+        // SmartDashboard.putNumber("Motor1FaultsR", (double) m_rightMotor.getFaults());
+        // SmartDashboard.putNumber("Motor1TempR", m_rightMotor.getMotorTemperature());
+        // SmartDashboard.putNumber("Motor1CurrentR", m_rightMotor.getOutputCurrent());
+        // SmartDashboard.putNumber("Motor2OutputR", m_rightMotorFollower.getAppliedOutput());
+        // SmartDashboard.putNumber("Motor2VoltageR", m_rightMotorFollower.getBusVoltage());
+        // SmartDashboard.putNumber("Motor2FaultsR", (double) m_rightMotorFollower.getFaults());
+        // SmartDashboard.putNumber("Motor2TempR", m_rightMotorFollower.getMotorTemperature());
+        // SmartDashboard.putNumber("Motor2CurrentR", m_rightMotorFollower.getOutputCurrent());
 
-        SmartDashboard.putNumber("JoyFwd", m_fwd);
-        SmartDashboard.putNumber("JoyRot", m_rot);
-        SmartDashboard.putNumber("JoyFwdFiltered", m_fwdFiltered);
-        SmartDashboard.putNumber("JoyRotFiltered", m_rotFiltered);
+        // SmartDashboard.putNumber("JoyFwd", m_fwd);
+        // SmartDashboard.putNumber("JoyRot", m_rot);
+        // SmartDashboard.putNumber("JoyFwdFiltered", m_fwdFiltered);
+        // SmartDashboard.putNumber("JoyRotFiltered", m_rotFiltered);
 
         // In order to simulate things, it is much easier if all of the data we need is on a single line. So this is duplication, but makes life easier
         double fullCapture[] = new double[30];

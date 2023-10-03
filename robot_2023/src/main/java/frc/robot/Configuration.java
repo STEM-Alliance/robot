@@ -23,11 +23,12 @@ public class Configuration {
     // This is the slow mode. It rerates the max speed of the forward/back and
     // left/right to 0.6
     static public double fine_controller_derate = 0.5;
-
+    static public double DriveMaxFwdSpeed = .5;
+    static public double DriveMaxROTSpeed = .6;
     /********************************************
      * Gripper Controlers
      *******************************************/
-    static public boolean RotateGripper = true;
+    static public boolean RotateGripper = false;
     // make SURE to set the gripper motor type to brushed
      static public double GripperCloseSetPoint = 0.5;
     // Any value between -0.2 and 0.2 will NOT move the gripper
