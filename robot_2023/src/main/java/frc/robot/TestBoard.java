@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.SubSystems.*;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -23,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -36,37 +36,41 @@ import java.io.File;
  * to the dashboard. Just add this to the robotInit() method in your program.
  */
 
-public class Robot7048 extends TimedRobot {
+public class Robot4360 extends TimedRobot {
     private XboxController m_controller1;
 
-    DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4);
-    GripperSubsystem m_gripper = new GripperSubsystem(10, 11);
-    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(20, 21);
+    DriveSubsystem m_robotDrive = new DriveSubsystem(2  , 3, 1, 4);
+    OneMotorGripper m_gripper = new OneMotorGripper(11);
+    ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem(7,6);
     LEDSubsystem m_leds = new LEDSubsystem(0, 1, 2);
 
     Command m_autoCommand;
     Command m_driveCommand;
-    Command m_gripperDrive;
+    Command m_ElveatorCommand;
+    Command m_GripperCommand;
 
+    
     @Override
     public void robotInit() {
         // We need to invert one side of the drivetrain so that positive voltages
         // result in both sides moving forward. Depending on how your robot's
         // gearbox is constructed, you might have to invert the left side instead.
         // m_right.setInverted(true);
-
+        CameraServer.startAutomaticCapture();
         m_controller1 = new XboxController(0);
-        final JoystickButton buttonA = new JoystickButton(m_controller1, XboxController.Button.kA.value);
-        final JoystickButton buttonB = new JoystickButton(m_controller1, XboxController.Button.kB.value);
-        final JoystickButton buttonX = new JoystickButton(m_controller1, XboxController.Button.kX.value);
+        XboxController m_controller2 = new XboxController(1);
+        final JoystickButton buttonA = new JoystickButton(m_controller2, XboxController.Button.kA.value);
+        final JoystickButton buttonB = new JoystickButton(m_controller2, XboxController.Button.kB.value);
+        final JoystickButton buttonX = new JoystickButton(m_controller2, XboxController.Button.kX.value);
+        
         // buttonA.onTrue(m_gripper.open());
         // buttonB.onTrue(m_gripper.close());
-        // buttonX.onTrue(m_leds.controlRed(true));
-        // buttonX.onFalse(m_leds.controlRed(false));
-
-        m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX()), m_robotDrive);
-        // m_gripperDrive = new RunCommand(() -> m_gripper.slideGripper(m_controller1.getLeftTriggerAxis()), m_gripper);
-
+        // buttonX.onTrue(m_gripper.Stop());
+        // buttonX.onFalse(m_gripper.Go());
+               
+        m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY() * Configuration.DriveMaxFwdSpeed, -m_controller1.getLeftX() * Configuration.DriveMaxROTSpeed), m_robotDrive);
+        m_ElveatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control( m_controller2.getLeftY(), m_controller2.getRightY()) , m_ElevatorSubsystem);
+        m_GripperCommand = new RunCommand(() ->m_gripper.MotorDrive(m_controller2.getLeftTriggerAxis(), m_controller2.getRightTriggerAxis()), m_gripper);
         //Get the default instance of NetworkTables that was created automatically
         //when your program starts
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -78,6 +82,7 @@ public class Robot7048 extends TimedRobot {
 
         System.out.println("Driver Station number: " + pos.toString());
         System.out.println("Robot starting");
+        
   }
 
     @Override
@@ -87,6 +92,10 @@ public class Robot7048 extends TimedRobot {
             m_autoCommand.cancel();
         }
         m_driveCommand.schedule();
+        m_ElveatorCommand.schedule();
+        m_GripperCommand.schedule();
+
+
     }
 
     /**
@@ -171,9 +180,9 @@ public class Robot7048 extends TimedRobot {
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, m_robotDrive.getHeading()),
-            List.of(new Translation2d(3, 0)),
+            List.of(new Translation2d(1, 0)),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(6, 0, Rotation2d.fromDegrees(0)),
+            new Pose2d(1.25, 0, Rotation2d.fromDegrees(0)),
             // Pass config
             config);
 
@@ -199,14 +208,14 @@ public class Robot7048 extends TimedRobot {
         //         m_robotDrive);
 
         //double kp = 2.2193E-07;
-        double kp = 2.2193E-03;
+        double kp = 0.2193E-03;
         double ki = 0;
         double ks = 0.068221;
         double kv = 2.3938;
 
         RamseteCommand ramseteCommand =
         new RamseteCommand(
-            curve,
+            moveStraight,
             m_robotDrive::getPose,
             new RamseteController(2, 0.7),
             new SimpleMotorFeedforward(ks, kv),
@@ -219,6 +228,7 @@ public class Robot7048 extends TimedRobot {
 
         // Run path following command, then stop at the end.
         return ramseteCommand.andThen(() -> m_robotDrive.stop());
+        // return null;
     }
 
     // /**
@@ -229,5 +239,6 @@ public class Robot7048 extends TimedRobot {
     // public Command getTurnCommand() {
     //     // Run path following command, then stop at the end.
     //     return ramseteCommand.andThen(() -> m_robotDrive.stop());
+    
     // }
 }

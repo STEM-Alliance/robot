@@ -38,11 +38,12 @@ public final class Main {
                 System.out.println("***Configured as Moorhead team 4360 robot");
                 RobotBase.startRobot(Robot4360::new);
             }
-            else if (file.getName().contains("7048.txt"))
+            else if(file.getName().contains("testboard.txt")) 
             {
-                System.out.println("***Configured as Fargo team 7048 robot");
-                RobotBase.startRobot(Robot7048::new);
+                System.out.println("***Configured as Testboard robot");
+                RobotBase.startRobot(TestBoard::new);  
             }
+            
         }
         System.out.println("***ERROR, please copy a text file for the correct team onto the unit");
     }
