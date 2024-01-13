@@ -1,4 +1,0 @@
-[NetworkTables Storage 3.0]
-double "/Shuffleboard/RoboCfg/LauncherSpeed"=0.75
-double "/Shuffleboard/RoboCfg/MoveDistance"=20
-double "/Shuffleboard/RoboCfg/SlewRateLimit"=5
