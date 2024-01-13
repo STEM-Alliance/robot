@@ -1,4 +1,4 @@
-# SAFM 2022 Code
+# SAFM 2024 Code
 
 
 ## Setup
@@ -15,12 +15,13 @@
 2. then type `WPILib: Manage`
 3. then go down to `Install New librariers (online)`
 4. Paste the following into the dialog box:
-`https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix-frc2022-latest.json`
+This link may not work.
+`https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix-frc2024-latest.json`
 
 Repeat steps 1 through 3 then paste:
-`https://www.kauailabs.com/dist/frc/2022/navx_frc.json`
+`https://www.kauailabs.com/dist/frc/2024/navx_frc.json`
 
-`https://software-metadata.revrobotics.com/REVLib.json`
+`https://software-metadata.revrobotics.com/REVLib-2024.json`
 
 ## Configure Spark Max Controllers
 
@@ -68,46 +69,16 @@ I'm still trying to figure out the simulator, but you can test out your control 
 
 The idea is we break common code pieces into their own classes, but have two different RobotXXXX classes. Then in Main.java, you can uncomment the robot you want to run.
 
-## Fargo Robot Control
 
-This code currently implements a two motor differential drive chassis using Spark MAX motor controllers. It uses an XBox and an arcade drive.
+# Motor Current Limits
+ALL motor will have current limits setup. Below is a table of the current limits that are deemed good:
 
-### Controller 1
-The left joystick drives the robot forward/back and left/right.
-
-The harvester is controlled by the right joystick. Up is harvest, down is to push the ball out
-
-The A and B buttons control the arms. Although the direction is still unknown
-
-### Controller 2
-
-The launcher is also configured to use the buttons:
-|Button|Description|
-|---|---|
-|Y | 80% |
-|B | 60% |
-|A | 40% |
-
-The Left Y axis controls the indexer
-
-The Left and Right bumpers (buttons above the triggers) control the climbing arms.
-
-## Moorhead Robot Control
-
-This code currently implements a two motor differential drive chassis using Spark MAX motor controllers. It uses an XBox and an arcade drive.
-
-The left joystick drives the robot forward/back and left/right. Although I may have things backwards, we will need to test that. 
-
-The other motors are mapped to the D-PAD, Rigth stick, triggers, and bumpers. I don't know
-what the motors do, so they are not labeled intelligently. 
-
-## Robot positioning
-
-The motor to gearbox ratio is roughly 8.88. Meaning it takes 8.88 rotations of the motor to route the main shaft one rotation. The wheels are roughly 6 inches in diamter. 
-Therefore 8.88 rotations of the motor will move the robot 18.8 inches. Or one rotation of
-the motor will move the wheel 2.1 inches. Therefore we want to program the encoder class
-with 1/2.1. Now the encoders will tell us exactly how many inches we have moved.
-
-## Autonomous Mode
-
-The Fargo robot has a simple autonomous mode that currently runs the harvester for 5 seconds, then runs the indexer and launcher for 5 seconds. 
+```
+  static public int NeoLimit = 80;
+  static public int Neo550Limit = 20;
+  static public int BagMotorLimit = 30; // Max power is 149 W, 12.4 A
+  static public int M775ProLimit = 15; // Max power 347 W, 28.9 A
+  static public int CIMSLimit = 28; // Max power 337 W, 28.0 A
+  // https://firstwiki.github.io/wiki/denso-window-motor
+  static public int WindowLimit = 15; // This seems safe
+```
