@@ -6,28 +6,41 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Configuration;
+import java.math.*;
+import frc.robot.LoggedNumber;
 
 public class DriveSubSystem extends SubsystemBase {
+    private double m_vx = 0.0;
+    private double m_vy = 0.0;
+    private double m_omega = 0.0;
+
     private AnalogInput m_swervePos1 = new AnalogInput(0);
     private AnalogInput m_swervePos2 = new AnalogInput(1);
     private AnalogInput m_swervePos3 = new AnalogInput(2);
     private AnalogInput m_swervePos4 = new AnalogInput(3);
-    //private CANSparkMax m_drive1 = new CANSparkMax(0, MotorType.kBrushless);
-    //private CANSparkMax m_swerve1 = new CANSparkMax(1, MotorType.kBrushless);
+    private double m_prevServerPos1 = 0;
+    private CANSparkMax m_drive1 = new CANSparkMax(1, MotorType.kBrushless);
+    private CANSparkMax m_swerve1 = new CANSparkMax(2, MotorType.kBrushless);
     // private CANSparkMax m_drive2 = new CANSparkMax(2, MotorType.kBrushless);
     // private CANSparkMax m_swerve2 = new CANSparkMax(3, MotorType.kBrushless);
     // private CANSparkMax m_drive3 = new CANSparkMax(4, MotorType.kBrushless);
     // private CANSparkMax m_swerve3 = new CANSparkMax(5, MotorType.kBrushless);
     // private CANSparkMax m_drive4 = new CANSparkMax(6, MotorType.kBrushless);
     // private CANSparkMax m_swerve4 = new CANSparkMax(7, MotorType.kBrushless);
+
+    private PIDController m_pid1 = new PIDController(0.005, 0, 0);
 
     // Locations for the swerve drive modules relative to the robot center.
     Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
@@ -43,8 +56,8 @@ public class DriveSubSystem extends SubsystemBase {
   /** Creates a new DriveSubSystem. */
   public DriveSubSystem() {
         // Setup current limits
-    //m_drive1.setSmartCurrentLimit(Configuration.NeoLimit);
-    //m_swerve1.setSmartCurrentLimit(Configuration.NeoLimit);
+    m_drive1.setSmartCurrentLimit(Configuration.NeoLimit);
+    m_swerve1.setSmartCurrentLimit(Configuration.NeoLimit);
     // m_drive2.setSmartCurrentLimit(Configuration.NeoLimit);
     // m_swerve2.setSmartCurrentLimit(Configuration.NeoLimit);
     // m_drive3.setSmartCurrentLimit(Configuration.NeoLimit);
@@ -59,29 +72,9 @@ public class DriveSubSystem extends SubsystemBase {
    * @return a command
    */
   public void swerveControl(double vx, double vy, double omega) {
-    // Example chassis speeds: 1 meter per second forward, 3 meters
-    // per second to the left, and rotation at 1.5 radians per second
-    // counterclockwise.
-    ChassisSpeeds speeds = new ChassisSpeeds(vx, vy, omega);
-
-    // Convert to module states
-    SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
-
-    // Front left module state
-    SwerveModuleState frontLeft = moduleStates[0];
-    // Front right module state
-    SwerveModuleState frontRight = moduleStates[1];
-    // Back left module state
-    SwerveModuleState backLeft = moduleStates[2];
-    // Back right module state
-    SwerveModuleState backRight = moduleStates[3];  
-
-    var str = "Speed: " + frontLeft.speedMetersPerSecond + " angles: ";
-    for (int i = 0; i < 4; i++)
-    {
-        str += moduleStates[i].angle.getDegrees() + "/";
-    }
-    System.out.println(str);
+    m_vx = vx;
+    m_vy = vy;
+    m_omega = omega;
 }
 
   /**
@@ -97,6 +90,43 @@ public class DriveSubSystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    ChassisSpeeds speeds = new ChassisSpeeds(m_vx, m_vy, m_omega);
+
+    // Convert to module states
+    SwerveModuleState[] moduleStates = m_kinematics.toSwerveModuleStates(speeds);
+
+    // Front left module state
+    SwerveModuleState frontLeft = moduleStates[0];
+    // Front right module state
+    SwerveModuleState frontRight = moduleStates[1];
+    // Back left module state
+    SwerveModuleState backLeft = moduleStates[2];
+    // Back right module state
+    SwerveModuleState backRight = moduleStates[3];  
+
+    double desiredpos1 = moduleStates[0].angle.getDegrees();
+    double swervePos1 = m_swervePos1.getAverageValue();
+    // Convert analog voltage to degrees.
+    var currentPosDegrees = (swervePos1 / 4092) * 360;
+    var robotPosDegrees = currentPosDegrees - 180;
+    SwerveModuleState frontLeftOpt = SwerveModuleState.optimize(moduleStates[0], Rotation2d.fromDegrees(robotPosDegrees));
+    
+    // Feed error term to PID controller
+    var output1 = m_pid1.calculate(robotPosDegrees, frontLeftOpt.angle.getDegrees()); 
+
+    // Feed output of PID to motor
+    m_swerve1.set(output1);
+    m_drive1.set(frontLeftOpt.speedMetersPerSecond / 10);
+
+    SmartDashboard.putNumber("Analog", swervePos1);
+    SmartDashboard.putNumber("Desired", desiredpos1);
+    SmartDashboard.putNumber("RobotPosDegrees", robotPosDegrees);
+    SmartDashboard.putNumber("pidOut", output1);
+
+    LoggedNumber.getInstance().logNumber("Analog", swervePos1);
+    LoggedNumber.getInstance().logNumber("Desired", desiredpos1);
+    LoggedNumber.getInstance().logNumber("RobotPosDegrees", robotPosDegrees);
+    LoggedNumber.getInstance().logNumber("pidOut", output1);
   }
 
   @Override

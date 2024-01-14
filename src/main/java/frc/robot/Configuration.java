@@ -18,6 +18,7 @@ public class Configuration {
     static public double TurboFwdRevMaxLimit = 0.8;
     static public double FwdRevMaxLimit = 0.6;
     static public double TurnMaxLimit = 0.6;
+    static public double GeneralDeadband = 0.2;
 
     /********************************************
      * Motor Current Limits

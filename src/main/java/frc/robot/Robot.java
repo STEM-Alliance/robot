@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.math.*;
 import frc.robot.subsystems.DriveSubSystem;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Configuration;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -54,7 +56,10 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
   
-    m_drivesub.swerveControl(-m_controller.getLeftY(), -m_controller.getLeftX(), -m_controller.getRightX());
+    var vx = MathUtil.applyDeadband(m_controller.getLeftY(), Configuration.GeneralDeadband);
+    var vy = MathUtil.applyDeadband(m_controller.getLeftX(), Configuration.GeneralDeadband);
+    var omega = MathUtil.applyDeadband(m_controller.getRightX(), Configuration.GeneralDeadband);
+    m_drivesub.swerveControl(-vx, -vy, -omega);
 }
 
   /** This function is called once each time the robot enters Disabled mode. */
