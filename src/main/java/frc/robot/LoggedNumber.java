@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 
@@ -29,6 +30,16 @@ public class LoggedNumber {
     {
         // Compatible with the SmartDashboard method
         logNumber(value, name);
+    }
+
+    public void logNumber(String name, double value, boolean sendToTelemetry)
+    {
+        // Compatible with the SmartDashboard method
+        logNumber(value, name);
+        if (sendToTelemetry)
+        {
+            SmartDashboard.putNumber(name, value);
+        }
     }
 
     public void logNumber(double value, String name)

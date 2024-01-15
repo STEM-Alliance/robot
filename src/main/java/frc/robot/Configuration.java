@@ -7,18 +7,28 @@ import edu.wpi.first.math.util.Units;
 
 public class Configuration {
     /********************************************
-     * General
+     * Swerve and Controls
      *******************************************/
-    // This controls the speed of the forward/back control. Larger numbers mean
-    // faster response
-    static public double forward_back_slew_rate = 0.5;
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
-    static public double right_left_slew_rate = 0.8;
-    static public double TurboFwdRevMaxLimit = 0.8;
-    static public double FwdRevMaxLimit = 0.6;
-    static public double TurnMaxLimit = 0.6;
+    static public double kVxSlewRateLimit = 3;
+    static public double kVySlewRateLimit = 3;
+    static public double kOmegaSlewRateLimit = 3;
+    // Max speeds
+    static public double kMaxSpeed = 3.0; // 3 meters per second
+    static public double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second 
     static public double GeneralDeadband = 0.2;
+
+    static public double kWheelRadius = 0.0508;
+    static public int kEncoderResolution = 4096;
+  
+    // PID Values
+    static public double kDriveKp = 1;
+    static public double kDriveKi = 0;
+    static public double kDriveKd = 0;
+    static public double kSwerveKp = 0.003;
+    static public double kSwerveKi = 0;
+    static public double kSwerveKd = 0;
 
     /********************************************
      * Motor Current Limits
