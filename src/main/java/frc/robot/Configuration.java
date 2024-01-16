@@ -11,9 +11,9 @@ public class Configuration {
      *******************************************/
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
-    static public double kVxSlewRateLimit = 3;
-    static public double kVySlewRateLimit = 3;
-    static public double kOmegaSlewRateLimit = 3;
+    static public double kVxSlewRateLimit = 4;
+    static public double kVySlewRateLimit = 4;
+    static public double kOmegaSlewRateLimit = 4;
     // Max speeds
     static public double kMaxSpeed = 3.0; // 3 meters per second
     static public double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second 

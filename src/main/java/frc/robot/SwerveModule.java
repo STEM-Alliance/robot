@@ -138,6 +138,8 @@ public class SwerveModule {
 
     LoggedNumber.getInstance().logNumber("drivePID", driveOutput, true);
     LoggedNumber.getInstance().logNumber("driveout", driveOutput + driveFeedforward, true);
+    LoggedNumber.getInstance().logNumber("turnEnc", m_turningEncoder.getPosition(), true);
+    LoggedNumber.getInstance().logNumber("desiredAng", state.angle.getRadians(), true);
     LoggedNumber.getInstance().logNumber("turnPID", turnOutput, true);
     LoggedNumber.getInstance().logNumber("turnout", turnOutput + turnFeedforward, true);
 

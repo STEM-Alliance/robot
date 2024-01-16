@@ -80,8 +80,8 @@ public class Drivetrain {
     LoggedNumber.getInstance().logNumber("vx", xSpeed, true);
     LoggedNumber.getInstance().logNumber("vy", ySpeed, true);
     LoggedNumber.getInstance().logNumber("omega", rot, true);
-    LoggedNumber.getInstance().logNumber("drive", swerveModuleStates[0].speedMetersPerSecond, true);
-    LoggedNumber.getInstance().logNumber("rot", swerveModuleStates[0].angle.getDegrees(), true);
+    //LoggedNumber.getInstance().logNumber("drive", swerveModuleStates[0].speedMetersPerSecond, true);
+    //LoggedNumber.getInstance().logNumber("rot", swerveModuleStates[0].angle.getRadians(), true);
   }
 
   /** Updates the field relative position of the robot. */
