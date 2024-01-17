@@ -4,14 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.math.*;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import frc.robot.Drivetrain;
-import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Configuration;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -60,6 +58,9 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    driveWithJoystick(true);
+
 }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -98,7 +99,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    driveWithJoystick(true);
+    //driveWithJoystick(true);
   }
 
   @Override
@@ -123,14 +124,14 @@ public class Robot extends TimedRobot {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     final var xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(m_controller.getLeftY(), 0.02))
+        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(m_controller.getLeftY(), Configuration.GeneralDeadband))
             * Configuration.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     final var ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(m_controller.getLeftX(), 0.02))
+        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(m_controller.getLeftX(), Configuration.GeneralDeadband))
             * Configuration.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
@@ -138,7 +139,7 @@ public class Robot extends TimedRobot {
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
     final var rot =
-        -m_rotLimiter.calculate(MathUtil.applyDeadband(m_controller.getRightX(), 0.02))
+        -m_rotLimiter.calculate(MathUtil.applyDeadband(m_controller.getRightX(), Configuration.GeneralDeadband))
             * Configuration.kMaxAngularSpeed;
 
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());

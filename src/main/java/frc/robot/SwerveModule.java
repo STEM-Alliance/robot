@@ -44,8 +44,8 @@ public class SwerveModule {
               kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration));
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(1, 3);
-  private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(1, 0.5);
+  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(Configuration.kDriveKs, Configuration.kDriveKv);
+  private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(Configuration.kSwerveKs, Configuration.kSwerveKv);
 
   /**
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
@@ -72,12 +72,15 @@ public class SwerveModule {
     // Set the distance per pulse for the drive encoder. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
     // resolution.
-    m_driveEncoder.setPositionConversionFactor(2 * Math.PI * Configuration.kWheelRadius / Configuration.kEncoderResolution);
+    m_driveEncoder.setPositionConversionFactor(2 * Math.PI * Configuration.kWheelRadius / Configuration.kDriveGearReduction);
+    m_driveEncoder.setVelocityConversionFactor(2 * Math.PI * Configuration.kWheelRadius / Configuration.kDriveGearReduction / 60);
+    m_driveEncoder.setPosition(0);
 
     // Set the distance (in this case, angle) in radians per pulse for the turning encoder.
     // This is the the angle through an entire rotation (2 * pi) divided by the
     // encoder resolution.
-    m_turningEncoder.setPositionConversionFactor(2 * Math.PI / Configuration.kEncoderResolution);
+    m_turningEncoder.setPositionConversionFactor(2 * Math.PI / Configuration.kTurningGearReduction);    
+    m_turningEncoder.setPosition(0);
 
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous.
@@ -133,11 +136,14 @@ public class SwerveModule {
     final double turnFeedforward =
         m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
 
-    m_driveMotor.set(driveOutput + driveFeedforward);
-    m_turningMotor.set(turnOutput + turnFeedforward);
+    //m_driveMotor.set(driveOutput + driveFeedforward);
+    m_driveMotor.set(driveFeedforward / 4);
+    //m_turningMotor.set(turnOutput + turnFeedforward);
+    m_turningMotor.set(turnOutput);
 
+    LoggedNumber.getInstance().logNumber("mps", m_driveEncoder.getVelocity(), true);
     LoggedNumber.getInstance().logNumber("drivePID", driveOutput, true);
-    LoggedNumber.getInstance().logNumber("driveout", driveOutput + driveFeedforward, true);
+    LoggedNumber.getInstance().logNumber("driveout", driveFeedforward, true);
     LoggedNumber.getInstance().logNumber("turnEnc", m_turningEncoder.getPosition(), true);
     LoggedNumber.getInstance().logNumber("desiredAng", state.angle.getRadians(), true);
     LoggedNumber.getInstance().logNumber("turnPID", turnOutput, true);

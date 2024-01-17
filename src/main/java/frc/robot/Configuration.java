@@ -20,15 +20,21 @@ public class Configuration {
     static public double GeneralDeadband = 0.2;
 
     static public double kWheelRadius = 0.0508;
-    static public int kEncoderResolution = 4096;
-  
+    static public double kDriveGearReduction = 6.12;
+    static public double kTurningGearReduction = 12.8;
+
     // PID Values
-    static public double kDriveKp = 1;
+    static public double kDriveKp = 0.3;
     static public double kDriveKi = 0;
     static public double kDriveKd = 0;
-    static public double kSwerveKp = 0.003;
+    static public double kDriveKs = 2.35;
+    static public double kDriveKv = 0.53;
+
+    static public double kSwerveKp = 0.7;
     static public double kSwerveKi = 0;
     static public double kSwerveKd = 0;
+    static public double kSwerveKs = 4.91;
+    static public double kSwerveKv = 0.25;
 
     /********************************************
      * Motor Current Limits
