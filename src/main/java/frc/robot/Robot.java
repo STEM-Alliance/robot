@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
 
   Command m_driveCommand;
   Drivetrain m_swerve = new Drivetrain();
+  IntakeSubSystem m_intake = new IntakeSubSystem(10, 11);
   CommandXboxController m_controller1 = new CommandXboxController(0);
   CommandXboxController m_controller2 = new CommandXboxController(1);
 
@@ -92,6 +93,9 @@ public class Robot extends TimedRobot {
     coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
+
+    leftTrigger.onTrue(m_intake.grabNote());
+    rightTrigger.onTrue(m_intake.shootNote());
 
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts

@@ -39,7 +39,11 @@ public class IntakeSubSystem extends SubsystemBase {
 
     public Command grabNote()
     {
-        //return this.startEnd(() -> {}, () -> m_gripperState = GripperState.IDLE);
-        return Commands.run(() -> doStuff());
+        return new InstantCommand();
+    }
+
+    public Command shootNote()
+    {
+        return new InstantCommand();
     }
 }
