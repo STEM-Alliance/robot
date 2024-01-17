@@ -6,10 +6,18 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,13 +32,19 @@ public class Robot extends TimedRobot {
 
   Command m_driveCommand;
   Drivetrain m_swerve = new Drivetrain();
-  XboxController m_controller = new XboxController(0);
+  CommandXboxController m_controller1 = new CommandXboxController(0);
+  CommandXboxController m_controller2 = new CommandXboxController(1);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Configuration.kVxSlewRateLimit);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(Configuration.kVySlewRateLimit);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(Configuration.kOmegaSlewRateLimit);
 
+  LEDSubsystem m_leds = new LEDSubsystem();
+
+  final SendableChooser<String> m_kp = new SendableChooser<>();
+  final SendableChooser<String> m_ki = new SendableChooser<>();
+  final SendableChooser<String> m_kd = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -42,6 +56,54 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
   
+    // Controller 1
+    final Trigger brake = m_controller1.b();
+    final Trigger coast = m_controller1.a();
+    final Trigger enTurbo = m_controller1.rightTrigger();
+    final Trigger disTurbo = m_controller1.x();
+    final Trigger homeSwerve = m_controller1.y();
+    // final Trigger toggleHDrive = m_controller1.rightBumper();
+    // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
+
+    // Controller 2
+    final Trigger gripper_control = m_controller2.leftTrigger();
+    final Trigger extend_control = m_controller2.rightTrigger();
+    final Trigger high = m_controller2.y();
+    final Trigger medium = m_controller2.b();
+    final Trigger low = m_controller2.a();
+    final Trigger leftBumper = m_controller2.leftBumper();
+    final Trigger rightBumper = m_controller2.rightBumper();
+    final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
+    final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
+    final Trigger retractHome = m_controller2.x();
+    final Trigger up = m_controller2.pov(0);
+    final Trigger down = m_controller2.pov(180);
+    final Trigger left = m_controller2.pov(270);
+    final Trigger right = m_controller2.pov(90);
+
+    homeSwerve.onTrue(m_swerve.homeSwerve());
+
+    up.onTrue(m_leds.red());
+    left.onTrue(m_leds.yellow());
+    right.onTrue(m_leds.blue());
+    down.onTrue(m_leds.crazy());
+   
+    brake.onTrue(m_swerve.setBrakeModeCmd());
+    coast.onTrue(m_swerve.setCoastModeCmd());
+    enTurbo.onTrue(m_swerve.enableTurbo());
+    enTurbo.onFalse(m_swerve.disableTurbo());
+
+    //Get the default instance of NetworkTables that was created automatically
+    //when your program starts
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+
+    // Attempting to get the driver station position
+    NetworkTable fmsInfo = inst.getTable("FMSInfo");
+    NetworkTableEntry m_driverStationPos = fmsInfo.getEntry("StationNumber");
+    Number pos = m_driverStationPos.getNumber(0);
+
+    System.out.println("Driver Station number: " + pos.toString());
+    System.out.println("Robot starting");
   }
 
   /**
@@ -60,7 +122,10 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     driveWithJoystick(true);
-
+    double kp = SmartDashboard.getNumber("kp", Configuration.kDriveKp);
+    double ki = SmartDashboard.getNumber("ki", Configuration.kDriveKi);
+    double kd = SmartDashboard.getNumber("kd", Configuration.kDriveKd);
+    m_swerve.setGains(kp, ki, kd);
 }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -124,14 +189,14 @@ public class Robot extends TimedRobot {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     final var xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(m_controller.getLeftY(), Configuration.GeneralDeadband))
+        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(m_controller1.getLeftY(), Configuration.GeneralDeadband))
             * Configuration.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     final var ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(m_controller.getLeftX(), Configuration.GeneralDeadband))
+        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(m_controller1.getLeftX(), Configuration.GeneralDeadband))
             * Configuration.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
@@ -139,7 +204,7 @@ public class Robot extends TimedRobot {
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
     final var rot =
-        -m_rotLimiter.calculate(MathUtil.applyDeadband(m_controller.getRightX(), Configuration.GeneralDeadband))
+        -m_rotLimiter.calculate(MathUtil.applyDeadband(m_controller1.getRightX(), Configuration.GeneralDeadband))
             * Configuration.kMaxAngularSpeed;
 
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());

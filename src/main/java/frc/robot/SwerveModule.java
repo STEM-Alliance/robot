@@ -150,4 +150,10 @@ public class SwerveModule {
     LoggedNumber.getInstance().logNumber("turnout", turnOutput + turnFeedforward, true);
 
   }
+
+  void setGains(double kp, double ki, double kd) {
+    m_turningPIDController.setP(kp);
+    m_turningPIDController.setI(ki);
+    m_turningPIDController.setD(kd);
+  }
 }

@@ -11,6 +11,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj2.command.*;
+
 import com.kauailabs.navx.frc.AHRS;
 import java.math.*;
 
@@ -95,5 +97,35 @@ public class Drivetrain {
     //       m_backLeft.getPosition(),
     //       m_backRight.getPosition()
     //     });
+  }
+
+  Command setBrakeModeCmd() {
+    // TODO: Set the motors to brake mode
+    //    //return new InstantCommand(() -> m_leds.setSpeed(0.61));
+    return new InstantCommand();
+  }
+
+  Command setCoastModeCmd() {
+    // TODO: Set the motors to coast mode
+      return new InstantCommand();
+  }
+
+  Command enableTurbo() {
+    // TODO: Enable turbo mode
+      return new InstantCommand();
+  }
+
+  Command disableTurbo() {
+    // TODO: Disable turbo mode
+      return new InstantCommand();
+  }
+
+  Command homeSwerve() {
+    // TODO: Home the swerve motors
+      return new InstantCommand();
+  }
+
+  void setGains(double kp, double ki, double kd) {
+    m_frontLeft.setGains(kp, ki, kd);
   }
 }
