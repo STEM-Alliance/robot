@@ -6,25 +6,25 @@ package frc.robot.commands;
 
 import frc.robot.Configuration;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
 
 /** An example command that uses an example subsystem. */
 public class HomeSwerve extends Command {
+    private final DrivetrainSubsystem m_driveTrain;
+
     final PIDController m_frontLeftPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
     //final PIDController m_frontRightPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
     //final PIDController m_backLeftPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
     //final PIDController m_backRightPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
 
-    DrivetrainSubsystem m_driveTrain;
     /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    * @return 
    */
-  public void HomeSwerve(DrivetrainSubsystem Drivetrain) {
+  public HomeSwerve(DrivetrainSubsystem Drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Drivetrain);
     m_driveTrain = Drivetrain;
