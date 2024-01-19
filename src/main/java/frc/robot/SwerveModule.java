@@ -47,6 +47,9 @@ public class SwerveModule {
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(Configuration.kDriveKs, Configuration.kDriveKv);
   private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(Configuration.kSwerveKs, Configuration.kSwerveKv);
 
+  private boolean m_homing;
+  private long m_startHomeTime;
+
   /**
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
    *
@@ -148,12 +151,21 @@ public class SwerveModule {
     LoggedNumber.getInstance().logNumber("desiredAng", state.angle.getRadians(), true);
     LoggedNumber.getInstance().logNumber("turnPID", turnOutput, true);
     LoggedNumber.getInstance().logNumber("turnout", turnOutput + turnFeedforward, true);
+    LoggedNumber.getInstance().logNumber("abspos", m_absolutePos.getValue(), true);
 
   }
 
-  void setGains(double kp, double ki, double kd) {
+  public void setGains(double kp, double ki, double kd) {
     m_turningPIDController.setP(kp);
     m_turningPIDController.setI(ki);
     m_turningPIDController.setD(kd);
+  }
+
+  public void homeSwerve(double driveTo) {
+    m_turningMotor.set(driveTo);
+  }
+
+  public double getAbsPos() {
+    return m_absolutePos.getValue();
   }
 }

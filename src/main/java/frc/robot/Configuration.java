@@ -36,6 +36,14 @@ public class Configuration {
     static public double kSwerveKs = 4.91;
     static public double kSwerveKv = 0.25;
 
+    static public double kSwerveZeroTolerancekP = 0.025;
+    static public double kSwerveZeroTolerancekD = 0.1;
+
+    static public double kFrontLeftZero = 1851;
+    static public double kFrontRightZero = 1851;
+    static public double kBackLeftZero = 1851;
+    static public double kBackRightZero = 1851;
+
     /********************************************
      * Motor Current Limits
      * P = VI

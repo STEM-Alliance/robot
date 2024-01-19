@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,11 +12,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.Configuration;
+import frc.robot.LoggedNumber;
+import frc.robot.SwerveModule;
 
 import com.kauailabs.navx.frc.AHRS;
 import java.math.*;
 
-public class Drivetrain {
+public class DrivetrainSubsystem extends SubsystemBase {
     private double m_vx = 0.0;
     private double m_vy = 0.0;
     private double m_omega = 0.0;
@@ -28,6 +31,10 @@ public class Drivetrain {
     Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
     private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
+    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
+    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
+    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
+    private final SwerveModule m_modules[] = {m_frontLeft};
 
     private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
 
@@ -49,8 +56,12 @@ public class Drivetrain {
   //         });
 
   /** Creates a new DriveSubSystem. */
-  public Drivetrain() {
+  public DrivetrainSubsystem() {
     m_ahrs.reset();
+  }
+
+  public SwerveModule getModule(int offset) {
+    return m_modules[offset];
   }
 
 /**
@@ -99,33 +110,28 @@ public class Drivetrain {
     //     });
   }
 
-  Command setBrakeModeCmd() {
+  public Command setBrakeModeCmd() {
     // TODO: Set the motors to brake mode
     //    //return new InstantCommand(() -> m_leds.setSpeed(0.61));
     return new InstantCommand();
   }
 
-  Command setCoastModeCmd() {
+  public Command setCoastModeCmd() {
     // TODO: Set the motors to coast mode
       return new InstantCommand();
   }
 
-  Command enableTurbo() {
+  public Command enableTurbo() {
     // TODO: Enable turbo mode
       return new InstantCommand();
   }
 
-  Command disableTurbo() {
+  public Command disableTurbo() {
     // TODO: Disable turbo mode
       return new InstantCommand();
   }
 
-  Command homeSwerve() {
-    // TODO: Home the swerve motors
-      return new InstantCommand();
-  }
-
-  void setGains(double kp, double ki, double kd) {
+  public void setGains(double kp, double ki, double kd) {
     m_frontLeft.setGains(kp, ki, kd);
   }
 }

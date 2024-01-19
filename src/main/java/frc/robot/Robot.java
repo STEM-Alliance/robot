@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.HomeSwerve;
 import frc.robot.subsystems.*;
 
 /**
@@ -31,10 +32,10 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   Command m_driveCommand;
-  Drivetrain m_swerve = new Drivetrain();
-  IntakeSubSystem m_intake = new IntakeSubSystem(10, 11);
+  DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
+  //IntakeSubSystem m_intake = new IntakeSubSystem(10, 11);
   CommandXboxController m_controller1 = new CommandXboxController(0);
-  CommandXboxController m_controller2 = new CommandXboxController(1);
+  //CommandXboxController m_controller2 = new CommandXboxController(1);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Configuration.kVxSlewRateLimit);
@@ -65,37 +66,37 @@ public class Robot extends TimedRobot {
     final Trigger homeSwerve = m_controller1.y();
     // final Trigger toggleHDrive = m_controller1.rightBumper();
     // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
-
+  
     // Controller 2
-    final Trigger gripper_control = m_controller2.leftTrigger();
-    final Trigger extend_control = m_controller2.rightTrigger();
-    final Trigger high = m_controller2.y();
-    final Trigger medium = m_controller2.b();
-    final Trigger low = m_controller2.a();
-    final Trigger leftBumper = m_controller2.leftBumper();
-    final Trigger rightBumper = m_controller2.rightBumper();
-    final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
-    final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
-    final Trigger retractHome = m_controller2.x();
-    final Trigger up = m_controller2.pov(0);
-    final Trigger down = m_controller2.pov(180);
-    final Trigger left = m_controller2.pov(270);
-    final Trigger right = m_controller2.pov(90);
+    // final Trigger gripper_control = m_controller2.leftTrigger();
+    // final Trigger extend_control = m_controller2.rightTrigger();
+    // final Trigger high = m_controller2.y();
+    // final Trigger medium = m_controller2.b();
+    // final Trigger low = m_controller2.a();
+    // final Trigger leftBumper = m_controller2.leftBumper();
+    // final Trigger rightBumper = m_controller2.rightBumper();
+    // final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
+    // final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
+    // final Trigger retractHome = m_controller2.x();
+    // final Trigger up = m_controller2.pov(0);
+    // final Trigger down = m_controller2.pov(180);
+    // final Trigger left = m_controller2.pov(270);
+    // final Trigger right = m_controller2.pov(90);
 
-    homeSwerve.onTrue(m_swerve.homeSwerve());
+    homeSwerve.whileTrue(new HomeSwerve(m_swerve));
 
-    up.onTrue(m_leds.red());
-    left.onTrue(m_leds.yellow());
-    right.onTrue(m_leds.blue());
-    down.onTrue(m_leds.crazy());
+    // up.onTrue(m_leds.red());
+    // left.onTrue(m_leds.yellow());
+    // right.onTrue(m_leds.blue());
+    // down.onTrue(m_leds.crazy());
    
     brake.onTrue(m_swerve.setBrakeModeCmd());
     coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
 
-    leftTrigger.onTrue(m_intake.grabNote());
-    rightTrigger.onTrue(m_intake.shootNote());
+    //leftTrigger.onTrue(m_intake.grabNote());
+    //rightTrigger.onTrue(m_intake.shootNote());
 
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts
