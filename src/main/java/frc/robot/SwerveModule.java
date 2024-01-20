@@ -115,8 +115,8 @@ public class SwerveModule {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    if (!m_homingMotors)
-    {
+    // if (!m_homingMotors)
+    // {
       var encoderRotation = new Rotation2d(m_turningEncoder.getPosition());
 
       // Optimize the reference state to avoid spinning further than 90 degrees
@@ -153,7 +153,7 @@ public class SwerveModule {
       LoggedNumber.getInstance().logNumber("turnPID", turnOutput, true);
       LoggedNumber.getInstance().logNumber("turnout", turnOutput + turnFeedforward, true);
       LoggedNumber.getInstance().logNumber("abspos", m_absolutePos.getValue(), true);
-    }
+    // }
   }
 
   public void setGains(double kp, double ki, double kd) {

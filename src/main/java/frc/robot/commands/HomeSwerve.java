@@ -78,7 +78,8 @@ public class HomeSwerve extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    boolean ret = m_frontLeftPID.atSetpoint();
+    boolean ret = m_frontLeftPID.atSetpoint() && m_frontRightPID.atSetpoint()
+&& m_backLeftPID.atSetpoint() && m_backRightPID.atSetpoint();
     if (ret)
     {
       var frontLeftModule = m_driveTrain.getModule(0);

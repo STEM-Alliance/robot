@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Configuration;
 import frc.robot.LoggedNumber;
@@ -25,16 +26,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double m_omega = 0.0;
 
     // Locations for the swerve drive modules relative to the robot center.
-    Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-    Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-    Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-    Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+    Translation2d m_frontLeftLocation = new Translation2d(-0.2921, 0.3048);
+    Translation2d m_frontRightLocation = new Translation2d(0.2921, 0.381);
+    Translation2d m_backLeftLocation = new Translation2d(-0.29321, -0.3048);
+    Translation2d m_backRightLocation = new Translation2d(0.2921, -0.3048);
 
-    private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    private final SwerveModule m_frontRight = new SwerveModule(3, 4, 1);
-    private final SwerveModule m_backLeft = new SwerveModule(5, 6, 2);
-    private final SwerveModule m_backRight = new SwerveModule(7, 8, 3);
-    private final SwerveModule m_modules[] = {m_frontLeft};
+    private final SwerveModule m_frontLeft = new SwerveModule(4, 3, 0);
+    private final SwerveModule m_frontRight = new SwerveModule(1, 2, 1);
+    private final SwerveModule m_backLeft = new SwerveModule(8, 7, 2);
+    private final SwerveModule m_backRight = new SwerveModule(5, 6, 3);
+    private final SwerveModule m_modules[] = {m_frontLeft, m_frontRight, m_backLeft, m_backRight};
 
     private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
 
@@ -88,7 +89,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
-
+    
+   
+    SmartDashboard.putNumber("FL Pos", m_frontLeft.getAbsPos());
+    SmartDashboard.putNumber("FR Pos", m_frontRight.getAbsPos());
+    SmartDashboard.putNumber("BL Pos", m_backLeft.getAbsPos());
+    SmartDashboard.putNumber("BR Pos", m_backRight.getAbsPos());
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
     LoggedNumber.getInstance().logNumber("vx", xSpeed, true);
     LoggedNumber.getInstance().logNumber("vy", ySpeed, true);
