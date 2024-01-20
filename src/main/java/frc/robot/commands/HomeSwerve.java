@@ -7,9 +7,7 @@ package frc.robot.commands;
 import frc.robot.Configuration;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.proto.System;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** An example command that uses an example subsystem. */
@@ -17,13 +15,17 @@ public class HomeSwerve extends Command {
     private final DrivetrainSubsystem m_driveTrain;
     int m_counter = 0;
     
-    public boolean m_homing;
-    
     final PIDController m_frontLeftPID = new PIDController(
       Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
-    final PIDController m_frontRightPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
-    final PIDController m_backLeftPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
-    final PIDController m_backRightPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
+
+    final PIDController m_frontRightPID = new PIDController(
+      Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
+
+    final PIDController m_backLeftPID = new PIDController(
+      Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
+
+    final PIDController m_backRightPID = new PIDController(
+      Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
 
     /**
    * Creates a new ExampleCommand.
@@ -49,7 +51,6 @@ public class HomeSwerve extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_homing = true;
     var frontLeftModule = m_driveTrain.getModule(0);
     var frontRightModule = m_driveTrain.getModule(1);
     var backLeftModule = m_driveTrain.getModule(2);

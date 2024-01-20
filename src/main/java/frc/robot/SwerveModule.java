@@ -18,7 +18,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 // Logging stuff
 import frc.robot.LoggedNumber;
-import frc.robot.commands.HomeSwerve;
 
 public class SwerveModule {
   private static final double kModuleMaxAngularVelocity = Configuration.kMaxAngularSpeed;
@@ -144,8 +143,7 @@ public class SwerveModule {
       //m_driveMotor.set(driveOutput + driveFeedforward);
       m_driveMotor.set(driveFeedforward / 4);
       //m_turningMotor.set(turnOutput + turnFeedforward);
-          m_turningMotor.set(turnOutput);
-      
+      m_turningMotor.set(turnOutput);
 
       LoggedNumber.getInstance().logNumber("mps", m_driveEncoder.getVelocity(), true);
       LoggedNumber.getInstance().logNumber("drivePID", driveOutput, true);
@@ -170,11 +168,9 @@ public class SwerveModule {
   }
 
   public void doneHoming() {
-    m_homingMotors = false;
     m_turningEncoder.setPosition(0);
+    m_homingMotors = false;
   }
-
-
 
   public double getAbsPos() {
     return m_absolutePos.getValue();
