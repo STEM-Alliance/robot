@@ -31,9 +31,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
     private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
+    private final SwerveModule m_frontRight = new SwerveModule(3, 4, 1);
+    private final SwerveModule m_backLeft = new SwerveModule(5, 6, 2);
+    private final SwerveModule m_backRight = new SwerveModule(7, 8, 3);
     private final SwerveModule m_modules[] = {m_frontLeft};
 
     private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
@@ -44,16 +44,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     );    
 
   // TODO: Uncomment when we have all 4 motors.
-  // private final SwerveDriveOdometry m_odometry =
-  //     new SwerveDriveOdometry(
-  //         m_kinematics,
-  //         m_ahrs.getRotation2d(),
-  //         new SwerveModulePosition[] {
-  //           m_frontLeft.getPosition(),
-  //           m_frontRight.getPosition(),
-  //           m_backLeft.getPosition(),
-  //           m_backRight.getPosition()
-  //         });
+  private final SwerveDriveOdometry m_odometry =
+      new SwerveDriveOdometry(
+          m_kinematics,
+          m_ahrs.getRotation2d(),
+          new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+          });
 
   /** Creates a new DriveSubSystem. */
   public DrivetrainSubsystem() {
@@ -85,9 +85,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
     // TODO: Only drive one swerve at the moment. Uncomment when we have all 4 motors.
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    // m_frontRight.setDesiredState(swerveModuleStates[1]);
-    // m_backLeft.setDesiredState(swerveModuleStates[2]);
-    // m_backRight.setDesiredState(swerveModuleStates[3]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_backLeft.setDesiredState(swerveModuleStates[2]);
+    m_backRight.setDesiredState(swerveModuleStates[3]);
 
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
     LoggedNumber.getInstance().logNumber("vx", xSpeed, true);

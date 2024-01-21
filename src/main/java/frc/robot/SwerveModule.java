@@ -47,8 +47,7 @@ public class SwerveModule {
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(Configuration.kDriveKs, Configuration.kDriveKv);
   private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(Configuration.kSwerveKs, Configuration.kSwerveKv);
 
-  private boolean m_homing;
-  private long m_startHomeTime;
+  private boolean m_homingMotors = true;
 
   /**
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
@@ -116,43 +115,45 @@ public class SwerveModule {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    var encoderRotation = new Rotation2d(m_turningEncoder.getPosition());
+    if (!m_homingMotors)
+    {
+      var encoderRotation = new Rotation2d(m_turningEncoder.getPosition());
 
-    // Optimize the reference state to avoid spinning further than 90 degrees
-    SwerveModuleState state = SwerveModuleState.optimize(desiredState, encoderRotation);
+      // Optimize the reference state to avoid spinning further than 90 degrees
+      SwerveModuleState state = SwerveModuleState.optimize(desiredState, encoderRotation);
 
-    // Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
-    // direction of travel that can occur when modules change directions. This results in smoother
-    // driving.
-    state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos();
+      // Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
+      // direction of travel that can occur when modules change directions. This results in smoother
+      // driving.
+      state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos();
 
-    // Calculate the drive output from the drive PID controller.
-    final double driveOutput =
-        m_drivePIDController.calculate(m_driveEncoder.getVelocity(), state.speedMetersPerSecond);
+      // Calculate the drive output from the drive PID controller.
+      final double driveOutput =
+          m_drivePIDController.calculate(m_driveEncoder.getVelocity(), state.speedMetersPerSecond);
 
-    final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
+      final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
-    // Calculate the turning motor output from the turning PID controller.
-    final double turnOutput =
-        m_turningPIDController.calculate(m_turningEncoder.getPosition(), state.angle.getRadians());
+      // Calculate the turning motor output from the turning PID controller.
+      final double turnOutput =
+          m_turningPIDController.calculate(m_turningEncoder.getPosition(), state.angle.getRadians());
 
-    final double turnFeedforward =
-        m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
+      final double turnFeedforward =
+          m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
 
-    //m_driveMotor.set(driveOutput + driveFeedforward);
-    m_driveMotor.set(driveFeedforward / 4);
-    //m_turningMotor.set(turnOutput + turnFeedforward);
-    m_turningMotor.set(turnOutput);
+      //m_driveMotor.set(driveOutput + driveFeedforward);
+      m_driveMotor.set(driveFeedforward / 4);
+      //m_turningMotor.set(turnOutput + turnFeedforward);
+      m_turningMotor.set(turnOutput);
 
-    LoggedNumber.getInstance().logNumber("mps", m_driveEncoder.getVelocity(), true);
-    LoggedNumber.getInstance().logNumber("drivePID", driveOutput, true);
-    LoggedNumber.getInstance().logNumber("driveout", driveFeedforward, true);
-    LoggedNumber.getInstance().logNumber("turnEnc", m_turningEncoder.getPosition(), true);
-    LoggedNumber.getInstance().logNumber("desiredAng", state.angle.getRadians(), true);
-    LoggedNumber.getInstance().logNumber("turnPID", turnOutput, true);
-    LoggedNumber.getInstance().logNumber("turnout", turnOutput + turnFeedforward, true);
-    LoggedNumber.getInstance().logNumber("abspos", m_absolutePos.getValue(), true);
-
+      LoggedNumber.getInstance().logNumber("mps", m_driveEncoder.getVelocity(), true);
+      LoggedNumber.getInstance().logNumber("drivePID", driveOutput, true);
+      LoggedNumber.getInstance().logNumber("driveout", driveFeedforward, true);
+      LoggedNumber.getInstance().logNumber("turnEnc", m_turningEncoder.getPosition(), true);
+      LoggedNumber.getInstance().logNumber("desiredAng", state.angle.getRadians(), true);
+      LoggedNumber.getInstance().logNumber("turnPID", turnOutput, true);
+      LoggedNumber.getInstance().logNumber("turnout", turnOutput + turnFeedforward, true);
+      LoggedNumber.getInstance().logNumber("abspos", m_absolutePos.getValue(), true);
+    }
   }
 
   public void setGains(double kp, double ki, double kd) {
@@ -162,7 +163,13 @@ public class SwerveModule {
   }
 
   public void homeSwerve(double driveTo) {
+    m_homingMotors = true;
     m_turningMotor.set(driveTo);
+  }
+
+  public void doneHoming() {
+    m_turningEncoder.setPosition(0);
+    m_homingMotors = false;
   }
 
   public double getAbsPos() {
