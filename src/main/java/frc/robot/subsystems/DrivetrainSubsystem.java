@@ -27,8 +27,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Locations for the swerve drive modules relative to the robot center.
     Translation2d m_frontLeftLocation = new Translation2d(-0.2921, 0.3048);
-    Translation2d m_frontRightLocation = new Translation2d(0.2921, 0.381);
-    Translation2d m_backLeftLocation = new Translation2d(-0.29321, -0.3048);
+    Translation2d m_frontRightLocation = new Translation2d(0.2921, 0.3048);
+    Translation2d m_backLeftLocation = new Translation2d(-0.2921, -0.3048);
     Translation2d m_backRightLocation = new Translation2d(0.2921, -0.3048);
 
     private final SwerveModule m_frontLeft = new SwerveModule(4, 3, 0);
@@ -95,6 +95,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("FR Pos", m_frontRight.getAbsPos());
     SmartDashboard.putNumber("BL Pos", m_backLeft.getAbsPos());
     SmartDashboard.putNumber("BR Pos", m_backRight.getAbsPos());
+   
+    
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
     LoggedNumber.getInstance().logNumber("vx", xSpeed, true);
     LoggedNumber.getInstance().logNumber("vy", ySpeed, true);

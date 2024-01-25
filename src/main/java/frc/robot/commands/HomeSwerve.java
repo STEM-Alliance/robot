@@ -7,10 +7,20 @@ package frc.robot.commands;
 import frc.robot.Configuration;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+
+import java.util.Timer;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
+
+// import com.revrobotics.CANSparkLowLevel.FollowConfig.Config;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** An example command that uses an example subsystem. */
+
 public class HomeSwerve extends Command {
     private final DrivetrainSubsystem m_driveTrain;
     int m_counter = 0;
@@ -26,7 +36,15 @@ public class HomeSwerve extends Command {
 
     final PIDController m_backRightPID = new PIDController(
       Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
+    
+    private boolean frontLeftReady;
+    private boolean frontRightReady;
+    private boolean backLeftReady;
+    private boolean backRightReady;
+    
+    
 
+  
     /**
    * Creates a new ExampleCommand.
    *
@@ -60,7 +78,8 @@ public class HomeSwerve extends Command {
     var frontRightOutput = m_frontLeftPID.calculate(frontRightModule.getAbsPos(), Configuration.kFrontRightZero);
     var backLeftOutput = m_frontLeftPID.calculate(backLeftModule.getAbsPos(), Configuration.kBackLeftZero);
     var backRightOutput = m_frontLeftPID.calculate(backRightModule.getAbsPos(), Configuration.kBackLeftZero);
-
+   
+   
     frontLeftModule.homeSwerve(frontLeftOutput);
     frontRightModule.homeSwerve(frontRightOutput);
     backLeftModule.homeSwerve(backLeftOutput);
@@ -69,6 +88,19 @@ public class HomeSwerve extends Command {
     SmartDashboard.putNumber("ZeroPos", frontLeftModule.getAbsPos());
     SmartDashboard.putNumber("ZeroPID", frontLeftOutput);
     SmartDashboard.putNumber("ZeroCounter", m_counter++);
+
+     if (frontLeftModule.getAbsPos() >= (Configuration.kFrontLeftZero - 5) &  frontLeftModule.getAbsPos() <= (Configuration.kFrontLeftZero + 5)){
+        frontLeftReady = true;
+    }
+     if (frontRightModule.getAbsPos() >= (Configuration.kFrontRightZero - 5) &  frontRightModule.getAbsPos() <= (Configuration.kFrontRightZero + 5)){
+        frontRightReady = true;
+    }
+     if (backLeftModule.getAbsPos() >= (Configuration.kBackLeftZero - 5) &  backLeftModule.getAbsPos() <= (Configuration.kBackLeftZero + 5)){
+        backLeftReady = true;
+    }
+     if (backRightModule.getAbsPos() >= (Configuration.kBackRightZero - 5) &  backRightModule.getAbsPos() <= (Configuration.kBackRightZero + 5)){
+        backRightReady = true;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -78,12 +110,19 @@ public class HomeSwerve extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    boolean ret = m_frontLeftPID.atSetpoint() && m_frontRightPID.atSetpoint()
-&& m_backLeftPID.atSetpoint() && m_backRightPID.atSetpoint();
-    if (ret)
-    {
+    
       var frontLeftModule = m_driveTrain.getModule(0);
-      frontLeftModule.doneHoming();
+    var frontRightModule = m_driveTrain.getModule(1);
+    var backLeftModule = m_driveTrain.getModule(2);
+    var backRightModule = m_driveTrain.getModule(3);
+
+    boolean ret = frontLeftReady == true && frontRightReady == true && backLeftReady == true && backRightReady == true;
+    if (ret)
+    { 
+       frontLeftModule.doneHoming();
+      frontRightModule.doneHoming();
+      backLeftModule.doneHoming();
+      backRightModule.doneHoming();
     }
     return ret;
   }

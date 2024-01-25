@@ -15,13 +15,15 @@ public class Configuration {
     static public double kVySlewRateLimit = 4;
     static public double kOmegaSlewRateLimit = 4;
     // Max speeds
-    static public double kMaxSpeed = 3.0; // 3 meters per second
+    static public double kMaxSpeed = .1; // 3 meters per second
     static public double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second 
     static public double GeneralDeadband = 0.2;
 
     static public double kWheelRadius = 0.0508;
     static public double kDriveGearReduction = 6.12;
     static public double kTurningGearReduction = 12.8;
+    // Angle tolerence 
+    static public double SwerveangleTolerance = 3;
 
     // PID Values
     static public double kDriveKp = 0.3;
@@ -43,10 +45,10 @@ public class Configuration {
     static public double kSwerveZeroToleranceKp = 0.025;
     static public double kSwerveZeroToleranceKd = 0.5;
 
-    static public double kFrontLeftZero = 1851;
-    static public double kFrontRightZero = 1851;
-    static public double kBackLeftZero = 1851;
-    static public double kBackRightZero = 1851;
+    static public double kFrontLeftZero = 1735;
+    static public double kFrontRightZero = 1240;
+    static public double kBackLeftZero = 3445;
+    static public double kBackRightZero = 1300;
 
     /********************************************
      * Motor Current Limits
