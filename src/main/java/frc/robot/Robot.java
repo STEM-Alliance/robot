@@ -10,7 +10,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -57,7 +56,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-  
+    
     // Controller 1
     final Trigger brake = m_controller1.b();
     final Trigger coast = m_controller1.a();
@@ -83,18 +82,18 @@ public class Robot extends TimedRobot {
     // final Trigger left = m_controller2.pov(270);
     // final Trigger right = m_controller2.pov(90);
 
-    homeSwerve.whileTrue(new HomeSwerve(m_swerve));
-
+    
+    
     // up.onTrue(m_leds.red());
     // left.onTrue(m_leds.yellow());
     // right.onTrue(m_leds.blue());
     // down.onTrue(m_leds.crazy());
-   
+    homeSwerve.onTrue(new HomeSwerve(m_swerve));
     brake.onTrue(m_swerve.setBrakeModeCmd());
     coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
-
+    
     //leftTrigger.onTrue(m_intake.grabNote());
     //rightTrigger.onTrue(m_intake.shootNote());
 

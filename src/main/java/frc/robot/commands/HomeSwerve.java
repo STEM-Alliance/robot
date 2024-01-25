@@ -8,15 +8,26 @@ import frc.robot.Configuration;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** An example command that uses an example subsystem. */
 public class HomeSwerve extends Command {
     private final DrivetrainSubsystem m_driveTrain;
+    int m_counter = 0;
 
-    final PIDController m_frontLeftPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
-    //final PIDController m_frontRightPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
-    //final PIDController m_backLeftPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
-    //final PIDController m_backRightPID = new PIDController(Configuration.kSwerveKp, Configuration.kSwerveKi, Configuration.kSwerveKd);
+    private boolean isHomed = false;
+
+    // final PIDController m_frontLeftPID = new PIDController(
+    //   Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
+
+    // final PIDController m_frontRightPID = new PIDController(
+    //   Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
+
+    // final PIDController m_backLeftPID = new PIDController(
+    //   Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
+
+    // final PIDController m_backRightPID = new PIDController(
+    //   Configuration.kSwerveZeroPIDKp, Configuration.kSwerveZeroPIDKi, Configuration.kSwerveZeroPIDKd);
 
     /**
    * Creates a new ExampleCommand.
@@ -28,31 +39,68 @@ public class HomeSwerve extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Drivetrain);
     m_driveTrain = Drivetrain;
-    m_frontLeftPID.setTolerance(Configuration.kSwerveZeroTolerancekP, Configuration.kSwerveZeroTolerancekD);
+
+    // m_frontLeftPID.enableContinuousInput(0, 4092);
+    // m_frontLeftPID.setTolerance(
+    //   Configuration.kSwerveZeroToleranceKp, Configuration.kSwerveZeroToleranceKd);
+
+    // m_frontRightPID.enableContinuousInput(0, 4092);
+    // m_frontRightPID.setTolerance(
+    //   Configuration.kSwerveZeroToleranceKp, Configuration.kSwerveZeroToleranceKd);
+
+    // m_backLeftPID.enableContinuousInput(0, 4092);
+    // m_frontLeftPID.setTolerance(
+    //   Configuration.kSwerveZeroToleranceKp, Configuration.kSwerveZeroToleranceKd);
+
+    // m_backRightPID.enableContinuousInput(0, 4092);
+    // m_backRightPID.setTolerance(
+    //   Configuration.kSwerveZeroToleranceKp, Configuration.kSwerveZeroToleranceKd);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-  }
+    var frontLeftModule = m_driveTrain.getModule(0);
+    // var frontRightModule = m_driveTrain.getModule(1);
+    // var backLeftModule = m_driveTrain.getModule(2);
+    // var backRightModule = m_driveTrain.getModule(3);
+
+    frontLeftModule.syncSwerveEncoder(Configuration.kFrontLeftZero);
+    // frontRightModule.syncSwerveEncoder(Configuration.kFrontRightZero);
+    // backLeftModule.syncSwerveEncoder(Configuration.kBackLeftZero);
+    // backRightModule.syncSwerveEncoder(Configuration.kBackRightZero);
+
+    isHomed = true;
+    }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    var frontLeftModule = m_driveTrain.getModule(0);
-    // var frontRightModule = DrivetrainSubsystem.getModule(1);
-    //var backLeftModule = DrivetrainSubsystem.getModule(2);
-    // var backRightModule = DrivetrainSubsystem.getModule(3);
+    // var frontLeftModule = m_driveTrain.getModule(0);
+    // var frontRightModule = m_driveTrain.getModule(1);
+    // var backLeftModule = m_driveTrain.getModule(2);
+    // var backRightModule = m_driveTrain.getModule(3);
 
-    var frontLeftOutput = m_frontLeftPID.calculate(frontLeftModule.getAbsPos(), Configuration.kFrontLeftZero);
-    // var frontRightOutput = m_frontLeftPID.calculate(frontRightModule.getAbsPos(), Configuration.kFrontRightZero);
-    // var backLeftOutput = m_frontLeftPID.calculate(backLeftModule.getAbsPos(), Configuration.kBackLeftZero);
-    // var backRightOutput = m_frontLeftPID.calculate(backRightModule.getAbsPos(), Configuration.kBackLeftZero);
+    // var frontLeftOutput = m_frontLeftPID.calculate(
+    //   frontLeftModule.getAbsPos(), Configuration.kFrontLeftZero);
 
-    frontLeftModule.homeSwerve(frontLeftOutput);
-    // frontRightModule.m_turningMotor.set(frontRightOutput);
-    // backLeftModule.m_turningMotor.set(backLeftOutput);
-    // backRightModule.m_turningMotor.set(backRightOutput);
+    // var frontRightOutput = m_frontLeftPID.calculate(
+    //   frontRightModule.getAbsPos(), Configuration.kFrontRightZero);
+
+    // var backLeftOutput = m_frontLeftPID.calculate(
+    //   backLeftModule.getAbsPos(), Configuration.kBackLeftZero);
+      
+    // var backRightOutput = m_frontLeftPID.calculate(
+    //   backRightModule.getAbsPos(), Configuration.kBackLeftZero);
+
+    // frontLeftModule.homeSwerve(frontLeftOutput);
+    // frontRightModule.homeSwerve(frontRightOutput);
+    // backLeftModule.homeSwerve(backLeftOutput);
+    // backRightModule.homeSwerve(backRightOutput);
+    
+    // SmartDashboard.putNumber("ZeroPos", frontLeftModule.getAbsPos());
+    // SmartDashboard.putNumber("ZeroPID", frontLeftOutput);
+    // SmartDashboard.putNumber("ZeroCounter", m_counter++);
   }
 
   // Called once the command ends or is interrupted.
@@ -62,6 +110,28 @@ public class HomeSwerve extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_frontLeftPID.atSetpoint();
+    // boolean modulesAtSetpoint = (m_frontLeftPID.atSetpoint() && m_frontRightPID.atSetpoint()
+    //   && m_backLeftPID.atSetpoint() && m_backRightPID.atSetpoint());
+    
+    // if (modulesAtSetpoint)
+    // {
+    //   var frontLeftModule = m_driveTrain.getModule(0);
+    //   var frontRightModule = m_driveTrain.getModule(1);
+    //   var backLeftModule = m_driveTrain.getModule(2);
+    //   var backRightModule = m_driveTrain.getModule(3);
+
+    //   frontLeftModule.doneHoming();
+    //   frontRightModule.doneHoming();
+    //   backLeftModule.doneHoming();
+    //   backRightModule.doneHoming();
+    // }
+
+    // return modulesAtSetpoint;
+    if (isHomed) {
+      isHomed  = false;
+      return true;
+    }
+
+    return false;
   }
 }

@@ -31,19 +31,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
     private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    //private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    private final SwerveModule m_modules[] = {m_frontLeft};
+    // private final SwerveModule m_frontRight = new SwerveModule(3, 4, 1);
+    // private final SwerveModule m_backLeft = new SwerveModule(5, 6, 2);
+    // private final SwerveModule m_backRight = new SwerveModule(7, 8, 3);
+    private final SwerveModule m_modules[] = {m_frontLeft}; //, m_frontRight, m_backLeft, m_backRight};
 
     private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
 
     // Creating my kinematics object using the module locations
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
     m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
-    );    
+    );
 
-  // TODO: Uncomment when we have all 4 motors.
   // private final SwerveDriveOdometry m_odometry =
   //     new SwerveDriveOdometry(
   //         m_kinematics,
@@ -57,10 +56,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubSystem. */
   public DrivetrainSubsystem() {
-    m_ahrs.reset();
+    resetGyro();
   }
 
   public SwerveModule getModule(int offset) {
+    offset %= 4;
+
     return m_modules[offset];
   }
 
@@ -83,7 +84,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                     : new ChassisSpeeds(xSpeed, ySpeed, rot),
                 periodSeconds));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
-    // TODO: Only drive one swerve at the moment. Uncomment when we have all 4 motors.
+
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     // m_frontRight.setDesiredState(swerveModuleStates[1]);
     // m_backLeft.setDesiredState(swerveModuleStates[2]);
@@ -98,16 +99,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   /** Updates the field relative position of the robot. */
-  public void updateOdometry() {
-    // TODO: Uncomment this when we have all 4 motors.
-    // m_odometry.update(
-    //     m_gyro.getRotation2d(),
-    //     new SwerveModulePosition[] {
-    //       m_frontLeft.getPosition(),
-    //       m_frontRight.getPosition(),
-    //       m_backLeft.getPosition(),
-    //       m_backRight.getPosition()
-    //     });
+  // public void updateOdometry() {
+  //   m_odometry.update(
+  //       m_ahrs.getRotation2d(),
+  //       new SwerveModulePosition[] {
+  //         m_frontLeft.getPosition(),
+  //         m_frontRight.getPosition(),
+  //         m_backLeft.getPosition(),
+  //         m_backRight.getPosition()
+  //       });
+  // }
+
+  public void setGyro(double desiredAngle) {
+    var current_angle = m_ahrs.getAngle();
+    var diff_angle = desiredAngle - current_angle;
+
+    m_ahrs.setAngleAdjustment(diff_angle);
+  }
+
+  public void resetGyro() {
+    m_ahrs.reset();
   }
 
   public Command setBrakeModeCmd() {

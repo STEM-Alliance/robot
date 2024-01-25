@@ -17,7 +17,7 @@ public class Configuration {
     // Max speeds
     static public double kMaxSpeed = 3.0; // 3 meters per second
     static public double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second 
-    static public double GeneralDeadband = 0.2;
+    static public double GeneralDeadband = 0.35;
 
     static public double kWheelRadius = 0.0508;
     static public double kDriveGearReduction = 6.12;
@@ -36,8 +36,12 @@ public class Configuration {
     static public double kSwerveKs = 4.91;
     static public double kSwerveKv = 0.25;
 
-    static public double kSwerveZeroTolerancekP = 0.025;
-    static public double kSwerveZeroTolerancekD = 0.1;
+    static public double kSwerveZeroPIDKp = 0.0005;
+    static public double kSwerveZeroPIDKi = 0.001;
+    static public double kSwerveZeroPIDKd = 0;
+
+    static public double kSwerveZeroToleranceKp = 0.025;
+    static public double kSwerveZeroToleranceKd = 0.5;
 
     static public double kFrontLeftZero = 1851;
     static public double kFrontRightZero = 1851;
