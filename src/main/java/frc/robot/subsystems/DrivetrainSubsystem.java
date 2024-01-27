@@ -26,15 +26,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double m_omega = 0.0;
 
     // Locations for the swerve drive modules relative to the robot center.
-    Translation2d m_frontLeftLocation = new Translation2d(-0.2921, 0.3048);
-    Translation2d m_frontRightLocation = new Translation2d(0.2921, 0.3048);
-    Translation2d m_backLeftLocation = new Translation2d(-0.2921, -0.3048);
-    Translation2d m_backRightLocation = new Translation2d(0.2921, -0.3048);
+    Translation2d m_frontLeftLocation = new Translation2d(-0.3302, 0.3334);
+    Translation2d m_frontRightLocation = new Translation2d(0.3302, 0.3334);
+    Translation2d m_backLeftLocation = new Translation2d(-0.3302, -0.3334);
+    Translation2d m_backRightLocation = new Translation2d(0.3302, -0.3334);
 
-    private final SwerveModule m_frontLeft = new SwerveModule(4, 3, 0);
-    private final SwerveModule m_frontRight = new SwerveModule(1, 2, 1);
-    private final SwerveModule m_backLeft = new SwerveModule(8, 7, 2);
-    private final SwerveModule m_backRight = new SwerveModule(5, 6, 3);
+    private final SwerveModule m_frontLeft = new SwerveModule(0, 4, 3, 0);
+    private final SwerveModule m_frontRight = new SwerveModule(1, 1, 2, 1);
+    private final SwerveModule m_backLeft = new SwerveModule(2, 8, 7, 2);
+    private final SwerveModule m_backRight = new SwerveModule(3, 5, 6, 3);
     private final SwerveModule m_modules[] = {m_frontLeft, m_frontRight, m_backLeft, m_backRight};
 
     private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
@@ -95,7 +95,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("FR Pos", m_frontRight.getAbsPos());
     SmartDashboard.putNumber("BL Pos", m_backLeft.getAbsPos());
     SmartDashboard.putNumber("BR Pos", m_backRight.getAbsPos());
-   
+    SmartDashboard.putNumber("FLenc", m_frontLeft.m_turningEncoder.getPosition());
+    SmartDashboard.putNumber("FRenc", m_frontRight.m_turningEncoder.getPosition());
+    SmartDashboard.putNumber("BLenc", m_backLeft.m_turningEncoder.getPosition());
+    SmartDashboard.putNumber("BRenc", m_backRight.m_turningEncoder.getPosition());
     
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
     LoggedNumber.getInstance().logNumber("vx", xSpeed, true);
@@ -141,5 +144,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void setGains(double kp, double ki, double kd) {
     m_frontLeft.setGains(kp, ki, kd);
+  }
+
+  public void homeSwerve() {
+    System.out.println("Setting the zero position for the turning motors");
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].syncSwerveEncoder(Configuration.kZeroPosition[i]);
+    }    
   }
 }

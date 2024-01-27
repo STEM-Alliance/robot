@@ -12,6 +12,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -24,10 +26,12 @@ public class SwerveModule {
   private static final double kModuleMaxAngularAcceleration =
       2 * Math.PI; // radians per second squared
 
+  private int m_swerveIndex = -1;
+
   private final CANSparkMax m_driveMotor;
   private final CANSparkMax m_turningMotor;
   private RelativeEncoder m_driveEncoder;
-  private RelativeEncoder m_turningEncoder;
+  public RelativeEncoder m_turningEncoder;
 
   private final AnalogInput m_absolutePos;
 
@@ -60,9 +64,11 @@ public class SwerveModule {
    * @param turningEncoderChannelB DIO input for the turning encoder channel B
    */
   public SwerveModule(
+      int swerveIndex,
       int driveMotorChannel,
       int turningMotorChannel,
       int analogInputChannel) {
+    m_swerveIndex = swerveIndex;
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
@@ -141,18 +147,12 @@ public class SwerveModule {
           m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
 
       //m_driveMotor.set(driveOutput + driveFeedforward);
-      m_driveMotor.set(driveFeedforward / 4);
+      m_driveMotor.set(driveFeedforward / 8);
       //m_turningMotor.set(turnOutput + turnFeedforward);
       m_turningMotor.set(turnOutput);
 
-      LoggedNumber.getInstance().logNumber("mps", m_driveEncoder.getVelocity(), true);
-      LoggedNumber.getInstance().logNumber("drivePID", driveOutput, true);
-      LoggedNumber.getInstance().logNumber("driveout", driveFeedforward, true);
-      LoggedNumber.getInstance().logNumber("turnEnc", m_turningEncoder.getPosition(), true);
-      LoggedNumber.getInstance().logNumber("desiredAng", state.angle.getRadians(), true);
-      LoggedNumber.getInstance().logNumber("turnPID", turnOutput, true);
-      LoggedNumber.getInstance().logNumber("turnout", turnOutput + turnFeedforward, true);
-      LoggedNumber.getInstance().logNumber("abspos", m_absolutePos.getValue(), true);
+      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_ff", driveFeedforward / 4, true);
+      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_abspos", m_absolutePos.getValue(), true);
     }
   }
 
@@ -162,17 +162,37 @@ public class SwerveModule {
     m_turningPIDController.setD(kd);
   }
 
-  public void homeSwerve(double driveTo) {
-    m_homingMotors = true;
-    m_turningMotor.set(driveTo);
+  // public void homeSwerve(double driveTo) {
+  //   m_homingMotors = true;
+  //   m_turningMotor.set(driveTo);
+  // }
+
+  // public void doneHoming() {
+  //   m_turningEncoder.setPosition(0);
+  //   m_homingMotors = false;
+  // }
+
+ 
+  private double getSwerveEncoderSyncedPos(double zeroedAbsPos) {
+    /* Calculate the error and wrap it around with a modulo
+    If the current rotation was 50, and the target was 4096, this
+    would set the encoders rotation to ~+0.1 rotations instead of ~-12.5 */
+
+    double diffPos = (getAbsPos() - zeroedAbsPos);
+    if (diffPos > 2048)
+    {
+      diffPos -= 4096;
+    }
+    return (diffPos * 2 * Math.PI) / 4096;
   }
 
-  public void doneHoming() {
-    m_turningEncoder.setPosition(0);
-    m_homingMotors = false;
+  public void syncSwerveEncoder(double zeroedAbsPos) {
+    m_turningEncoder.setPosition(getSwerveEncoderSyncedPos(zeroedAbsPos));
+
   }
 
   public double getAbsPos() {
     return m_absolutePos.getValue();
   }
+
 }
