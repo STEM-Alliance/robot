@@ -36,17 +36,9 @@ public class Configuration {
     static public double kSwerveKs = 4.91;
     static public double kSwerveKv = 0.25;
 
-    static public double kSwerveZeroPIDKp = 0.0005;
-    static public double kSwerveZeroPIDKi = .0010;
-    static public double kSwerveZeroPIDKd = 0;
-
-    static public double kSwerveZeroToleranceKp = 0.025;
-    static public double kSwerveZeroToleranceKd = 0.5;
-
     // Zero settings
     // FL, FR, BL, BR
     static public double[] kZeroPosition = new double[]{290, 2800, 2290, 2381};
-    static public double kSwerveZeroTolerance = 10;
     public static double kEncoderRes = 4096;
 
     /********************************************
