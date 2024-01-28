@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Configuration;
 import frc.robot.LoggedNumber;
@@ -25,16 +26,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double m_omega = 0.0;
 
     // Locations for the swerve drive modules relative to the robot center.
-    Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-    Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-    Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-    Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+    Translation2d m_frontLeftLocation = new Translation2d(0.3302, 0.3334);
+    Translation2d m_frontRightLocation = new Translation2d(0.3302, -0.3334);
+    Translation2d m_backLeftLocation = new Translation2d(-0.3302, 0.3334);
+    Translation2d m_backRightLocation = new Translation2d(-0.3302, -0.3334);
 
-    private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    private final SwerveModule m_frontRight = new SwerveModule(3, 4, 1);
-    private final SwerveModule m_backLeft = new SwerveModule(5, 6, 2);
-    private final SwerveModule m_backRight = new SwerveModule(7, 8, 3);
-    private final SwerveModule m_modules[] = {m_frontLeft};
+    private final SwerveModule m_frontLeft = new SwerveModule(0, 4, 3, 0);
+    private final SwerveModule m_frontRight = new SwerveModule(1, 1, 2, 1);
+    private final SwerveModule m_backLeft = new SwerveModule(2, 8, 7, 2);
+    private final SwerveModule m_backRight = new SwerveModule(3, 5, 6, 3);
+    private final SwerveModule m_modules[] = {m_frontLeft, m_frontRight, m_backLeft, m_backRight};
 
     private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
 
@@ -90,11 +91,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_backRight.setDesiredState(swerveModuleStates[3]);
 
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
-    LoggedNumber.getInstance().logNumber("vx", xSpeed, true);
-    LoggedNumber.getInstance().logNumber("vy", ySpeed, true);
-    LoggedNumber.getInstance().logNumber("omega", rot, true);
-    //LoggedNumber.getInstance().logNumber("drive", swerveModuleStates[0].speedMetersPerSecond, true);
-    //LoggedNumber.getInstance().logNumber("rot", swerveModuleStates[0].angle.getRadians(), true);
+    SmartDashboard.putNumber("vx", xSpeed);
+    SmartDashboard.putNumber("vy", ySpeed);
+    SmartDashboard.putNumber("omega", rot);
   }
 
   /** Updates the field relative position of the robot. */
@@ -133,5 +132,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void setGains(double kp, double ki, double kd) {
     m_frontLeft.setGains(kp, ki, kd);
+  }
+
+  public void homeSwerve() {
+    System.out.println("Setting the zero position for the turning motors");
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].syncSwerveEncoder(Configuration.kZeroPosition[i]);
+    }    
   }
 }

@@ -30,8 +30,8 @@ public class Configuration {
     static public double kDriveKs = 2.35;
     static public double kDriveKv = 0.53;
 
-    static public double kSwerveKp = 0.7;
-    static public double kSwerveKi = 0;
+    static public double kSwerveKp = 0.5;
+    static public double kSwerveKi = 0.1;
     static public double kSwerveKd = 0;
     static public double kSwerveKs = 4.91;
     static public double kSwerveKv = 0.25;
@@ -43,10 +43,11 @@ public class Configuration {
     static public double kSwerveZeroToleranceKp = 0.025;
     static public double kSwerveZeroToleranceKd = 0.5;
 
-    static public double kFrontLeftZero = 1851;
-    static public double kFrontRightZero = 1851;
-    static public double kBackLeftZero = 1851;
-    static public double kBackRightZero = 1851;
+    // Zero settings
+    // FL, FR, BL, BR
+    static public double[] kZeroPosition = new double[]{290, 2800, 2290, 2381};
+    static public double kSwerveZeroTolerance = 10;
+    public static double kEncoderRes = 4096;
 
     /********************************************
      * Motor Current Limits
