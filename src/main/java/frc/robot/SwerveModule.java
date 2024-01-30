@@ -12,8 +12,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -31,7 +29,7 @@ public class SwerveModule {
   private final CANSparkMax m_driveMotor;
   private final CANSparkMax m_turningMotor;
   private RelativeEncoder m_driveEncoder;
-  public RelativeEncoder m_turningEncoder;
+  private RelativeEncoder m_turningEncoder;
 
   private final AnalogInput m_absolutePos;
 
@@ -51,7 +49,7 @@ public class SwerveModule {
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(Configuration.kDriveKs, Configuration.kDriveKv);
   private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(Configuration.kSwerveKs, Configuration.kSwerveKv);
 
-  private boolean m_homingMotors = false;
+  private boolean m_homingMotors = true;
 
   /**
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
@@ -162,17 +160,6 @@ public class SwerveModule {
     m_turningPIDController.setD(kd);
   }
 
-  // public void homeSwerve(double driveTo) {
-  //   m_homingMotors = true;
-  //   m_turningMotor.set(driveTo);
-  // }
-
-  // public void doneHoming() {
-  //   m_turningEncoder.setPosition(0);
-  //   m_homingMotors = false;
-  // }
-
- 
   private double getSwerveEncoderSyncedPos(double zeroedAbsPos) {
     /* Calculate the error and wrap it around with a modulo
     If the current rotation was 50, and the target was 4096, this
@@ -194,5 +181,4 @@ public class SwerveModule {
   public double getAbsPos() {
     return m_absolutePos.getValue();
   }
-
 }

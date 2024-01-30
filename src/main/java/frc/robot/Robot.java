@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.*;
 
 /**
@@ -127,11 +127,10 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     driveWithJoystick(true);
-    // double kp = SmartDashboard.getNumber("kp", Configuration.kDriveKp);
-    // double ki = SmartDashboard.getNumber("ki", Configuration.kDriveKi);
-    // double kd = SmartDashboard.getNumber("kd", Configuration.kDriveKd);
-    // m_swerve.setGains(kp, ki, kd);
-
+    double kp = SmartDashboard.getNumber("kp", Configuration.kDriveKp);
+    double ki = SmartDashboard.getNumber("ki", Configuration.kDriveKi);
+    double kd = SmartDashboard.getNumber("kd", Configuration.kDriveKd);
+    m_swerve.setGains(kp, ki, kd);
 }
 
   /** This function is called once each time the robot enters Disabled mode. */

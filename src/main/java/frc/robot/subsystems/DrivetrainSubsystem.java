@@ -26,10 +26,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double m_omega = 0.0;
 
     // Locations for the swerve drive modules relative to the robot center.
-    Translation2d m_frontLeftLocation = new Translation2d(-0.3302, 0.3334);
-    Translation2d m_frontRightLocation = new Translation2d(0.3302, 0.3334);
-    Translation2d m_backLeftLocation = new Translation2d(-0.3302, -0.3334);
-    Translation2d m_backRightLocation = new Translation2d(0.3302, -0.3334);
+    Translation2d m_frontLeftLocation = new Translation2d(0.3302, 0.3334);
+    Translation2d m_frontRightLocation = new Translation2d(0.3302, -0.3334);
+    Translation2d m_backLeftLocation = new Translation2d(-0.3302, 0.3334);
+    Translation2d m_backRightLocation = new Translation2d(-0.3302, -0.3334);
 
     private final SwerveModule m_frontLeft = new SwerveModule(0, 4, 3, 0);
     private final SwerveModule m_frontRight = new SwerveModule(1, 1, 2, 1);
@@ -89,23 +89,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
-    
-   
-    SmartDashboard.putNumber("FL Pos", m_frontLeft.getAbsPos());
-    SmartDashboard.putNumber("FR Pos", m_frontRight.getAbsPos());
-    SmartDashboard.putNumber("BL Pos", m_backLeft.getAbsPos());
-    SmartDashboard.putNumber("BR Pos", m_backRight.getAbsPos());
-    SmartDashboard.putNumber("FLenc", m_frontLeft.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("FRenc", m_frontRight.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("BLenc", m_backLeft.m_turningEncoder.getPosition());
-    SmartDashboard.putNumber("BRenc", m_backRight.m_turningEncoder.getPosition());
-    
+
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
-    LoggedNumber.getInstance().logNumber("vx", xSpeed, true);
-    LoggedNumber.getInstance().logNumber("vy", ySpeed, true);
-    LoggedNumber.getInstance().logNumber("omega", rot, true);
-    //LoggedNumber.getInstance().logNumber("drive", swerveModuleStates[0].speedMetersPerSecond, true);
-    //LoggedNumber.getInstance().logNumber("rot", swerveModuleStates[0].angle.getRadians(), true);
+    SmartDashboard.putNumber("vx", xSpeed);
+    SmartDashboard.putNumber("vy", ySpeed);
+    SmartDashboard.putNumber("omega", rot);
   }
 
   /** Updates the field relative position of the robot. */

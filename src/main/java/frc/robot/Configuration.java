@@ -15,15 +15,13 @@ public class Configuration {
     static public double kVySlewRateLimit = 4;
     static public double kOmegaSlewRateLimit = 4;
     // Max speeds
-    static public double kMaxSpeed = .1; // 3 meters per second
+    static public double kMaxSpeed = 3.0; // 3 meters per second
     static public double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second 
     static public double GeneralDeadband = 0.2;
 
     static public double kWheelRadius = 0.0508;
     static public double kDriveGearReduction = 6.12;
     static public double kTurningGearReduction = 12.8;
-    // Angle tolerence 
-    static public double SwerveangleTolerance = 3;
 
     // PID Values
     static public double kDriveKp = 0.3;
@@ -38,17 +36,9 @@ public class Configuration {
     static public double kSwerveKs = 4.91;
     static public double kSwerveKv = 0.25;
 
-    static public double kSwerveZeroPIDKp = 0.0010;
-    static public double kSwerveZeroPIDKi = .0001;
-    static public double kSwerveZeroPIDKd = 0;
-
-    static public double kSwerveZeroToleranceKp = 0.035;
-    static public double kSwerveZeroToleranceKd = 0.5;
-
     // Zero settings
     // FL, FR, BL, BR
     static public double[] kZeroPosition = new double[]{290, 2800, 2290, 2381};
-    static public double kSwerveZeroTolerance = 10;
     public static double kEncoderRes = 4096;
 
     /********************************************
@@ -120,5 +110,4 @@ public class Configuration {
     static public double ExtendArmPosition = 1;
     static public double MaxAutoSpeed = 0.6;
     static public double MaxLevelSpeed = 0.4;
-    
 }
