@@ -9,11 +9,10 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
@@ -53,36 +52,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
+    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    
+  
     // Controller 1
     final Trigger brake = m_controller1.b();
     final Trigger coast = m_controller1.a();
     final Trigger enTurbo = m_controller1.rightTrigger();
     final Trigger disTurbo = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
-    // final Trigger toggleHDrive = m_controller1.rightBumper();
-    // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
-  
-    // Controller 2
-    // final Trigger gripper_control = m_controller2.leftTrigger();
-    // final Trigger extend_control = m_controller2.rightTrigger();
-    // final Trigger high = m_controller2.y();
-    // final Trigger medium = m_controller2.b();
-    // final Trigger low = m_controller2.a();
-    // final Trigger leftBumper = m_controller2.leftBumper();
-    // final Trigger rightBumper = m_controller2.rightBumper();
-    // final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
-    // final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
-    // final Trigger retractHome = m_controller2.x();
-    // final Trigger up = m_controller2.pov(0);
-    // final Trigger down = m_controller2.pov(180);
-    // final Trigger left = m_controller2.pov(270);
-    // final Trigger right = m_controller2.pov(90);
 
-    
     
     // up.onTrue(m_leds.red());
     // left.onTrue(m_leds.yellow());
@@ -126,7 +108,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    driveWithJoystick(true);
+    // driveWithJoystick(true);
     double kp = SmartDashboard.getNumber("kp", Configuration.kDriveKp);
     double ki = SmartDashboard.getNumber("ki", Configuration.kDriveKi);
     double kd = SmartDashboard.getNumber("kd", Configuration.kDriveKd);
@@ -169,7 +151,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //driveWithJoystick(true);
+    driveWithJoystick(true);
   }
 
   @Override

@@ -15,7 +15,7 @@ public class Configuration {
     static public double kVySlewRateLimit = 4;
     static public double kOmegaSlewRateLimit = 4;
     // Max speeds
-    static public double kMaxSpeed = 3.0; // 3 meters per second
+    static public double kMaxSpeed = 0.50; // 3 meters per second
     static public double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second 
     static public double GeneralDeadband = 0.2;
 
