@@ -13,7 +13,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -23,7 +22,9 @@ import frc.robot.LoggedNumber;
 public class SwerveModule {
   private static final double kModuleMaxAngularVelocity = Configuration.kMaxAngularSpeed;
   private static final double kModuleMaxAngularAcceleration =
-      2 * Math.PI; // radians per second squared
+      Math.pow(4 * Math.PI, 2); // radians per second squared
+
+  private int m_swerveIndex = -1;
 
   private final CANSparkMax m_driveMotor;
   private final CANSparkMax m_turningMotor;
@@ -33,7 +34,8 @@ public class SwerveModule {
   private final AnalogInput m_absolutePos;
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final PIDController m_drivePIDController = new PIDController(Configuration.kDriveKp, Configuration.kDriveKi, Configuration.kDriveKd);
+  private final PIDController m_drivePIDController = new PIDController(
+    Configuration.kDriveKp, Configuration.kDriveKi, Configuration.kDriveKd);
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final ProfiledPIDController m_turningPIDController =
@@ -45,10 +47,11 @@ public class SwerveModule {
               kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration));
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(Configuration.kDriveKs, Configuration.kDriveKv);
-  private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(Configuration.kSwerveKs, Configuration.kSwerveKv);
-
-  private boolean m_homingMotors = true;
+  private SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(
+    Configuration.kDriveKs, Configuration.kDriveKv);
+  
+  private SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(
+    Configuration.kSwerveKs, Configuration.kSwerveKv);
 
   /**
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
@@ -61,9 +64,11 @@ public class SwerveModule {
    * @param turningEncoderChannelB DIO input for the turning encoder channel B
    */
   public SwerveModule(
+      int swerveIndex,
       int driveMotorChannel,
       int turningMotorChannel,
       int analogInputChannel) {
+    m_swerveIndex = swerveIndex;
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
@@ -140,47 +145,39 @@ public class SwerveModule {
           m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
 
       //m_driveMotor.set(driveOutput + driveFeedforward);
-      m_driveMotor.set(driveFeedforward / 4);
+      m_driveMotor.set(driveFeedforward);
       //m_turningMotor.set(turnOutput + turnFeedforward);
-      m_turningMotor.set(turnOutput);
+      m_turningMotor.set(turnOutput + turnFeedforward);
 
-      LoggedNumber.getInstance().logNumber("mps", m_driveEncoder.getVelocity(), true);
-      LoggedNumber.getInstance().logNumber("drivePID", driveOutput, true);
-      LoggedNumber.getInstance().logNumber("driveout", driveFeedforward, true);
-      LoggedNumber.getInstance().logNumber("turnEnc", m_turningEncoder.getPosition(), true);
-      LoggedNumber.getInstance().logNumber("desiredAng", state.angle.getRadians(), true);
-      LoggedNumber.getInstance().logNumber("turnPID", turnOutput, true);
-      LoggedNumber.getInstance().logNumber("turnout", turnOutput + turnFeedforward, true);
-      LoggedNumber.getInstance().logNumber("abspos", m_absolutePos.getValue(), true);
+      // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_ff", driveFeedforward / 8, true);
+      // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_abspos", m_absolutePos.getValue(), true);
+    
   }
 
-  public void setGains(double kp, double ki, double kd) {
+  public void setGains(double kp, double ki, double kd, double ks, double kv) {
     m_turningPIDController.setP(kp);
     m_turningPIDController.setI(ki);
     m_turningPIDController.setD(kd);
+
+    m_turnFeedforward = new SimpleMotorFeedforward(ks, kv);
   }
 
-  // public void homeSwerve(double driveTo) {
-  //   m_homingMotors = true;
-  //   m_turningMotor.set(driveTo);
-  // }
+  private double getSwerveEncoderSyncedPos(double syncedAbsPos) {
+    /* Calculate the error and wrap it around to the nearest half
+    If the current rotation was 50, and the target was 4096, this
+    would set the encoders rotation to ~+0.1 rotations instead of ~-12.5 */
 
-  // public void doneHoming() {
-  //   m_turningEncoder.setPosition(0);
-  //   m_homingMotors = false;
-  // }
+    double diffPos = (getAbsPos() - syncedAbsPos);
+    if (diffPos > Configuration.kEncoderRes / 2)
+    {
+      diffPos -= Configuration.kEncoderRes;
+    }
+    return (diffPos * 2 * Math.PI) / Configuration.kEncoderRes;
+  }
 
-  public REVLibError syncSwerveEncoder(double zeroedAbsRotation) {
-    /* Calculate the error and convert it into rotations of the motor.
-    Wraps around with the modulo so that example absolute rotation of 51
-    and setpoint of 4096 is +.1 rotations instead of -12.5 rotations.
-    Not needed but technically more accurate? It might be needed, test */
+  public void syncSwerveEncoder(double syncedAbsPos) {
+    m_turningEncoder.setPosition(getSwerveEncoderSyncedPos(syncedAbsPos));
 
-    var absRotation = getAbsPos();
-    var syncedPosition = ((absRotation - zeroedAbsRotation + 2048) % 4096 - 2048)
-      / 4096 * Configuration.kTurningGearReduction;
-
-    return m_turningEncoder.setPosition(syncedPosition);
   }
 
   public double getAbsPos() {

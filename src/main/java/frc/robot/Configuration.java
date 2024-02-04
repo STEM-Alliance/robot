@@ -3,6 +3,7 @@
  */
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public class Configuration {
@@ -11,42 +12,48 @@ public class Configuration {
      *******************************************/
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
-    static public double kVxSlewRateLimit = 4;
-    static public double kVySlewRateLimit = 4;
-    static public double kOmegaSlewRateLimit = 4;
+    static public double kVxSlewRateLimit = 10;
+    static public double kVySlewRateLimit = 10;
+    static public double kOmegaSlewRateLimit = 10;
     // Max speeds
-    static public double kMaxSpeed = 3.0; // 3 meters per second
-    static public double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second 
-    static public double GeneralDeadband = 0.35;
+    static public double kMaxSpeed = 0.5; // 3 meters per second
+    static public double kMaxAngularSpeed = 4 * Math.PI; // 1 rotation per second 
+    static public double GeneralDeadband = 0.2;
 
+    // PID Values
+    static public double kDriveKp = 0;
+    static public double kDriveKi = 0;
+    static public double kDriveKd = 0;
+    static public double kDriveKs = 0.1;
+    static public double kDriveKv = 0.25;
+
+    static public double kSwerveKp = 0.65; // 0.65
+    static public double kSwerveKi = 0; // 0.1
+    static public double kSwerveKd = 0; // 0
+    static public double kSwerveKs = 0;
+    static public double kSwerveKv = 0;
+
+    // Swerve Hardware
     static public double kWheelRadius = 0.0508;
     static public double kDriveGearReduction = 6.12;
     static public double kTurningGearReduction = 12.8;
+    
+    // FL, FR, BL, BR
+    static public Translation2d[] kSwerveTranslations = new Translation2d[]{
+        new Translation2d(0.3303, 0.3334),
+        new Translation2d(0.3303, -0.3334),
+        new Translation2d(-0.3303, 0.3334),
+        new Translation2d(-0.3303, -0.3334)
+    };
 
-    // PID Values
-    static public double kDriveKp = 0.3;
-    static public double kDriveKi = 0;
-    static public double kDriveKd = 0;
-    static public double kDriveKs = 2.35;
-    static public double kDriveKv = 0.53;
+    // Module Index, Drive Motor Channel, Swerve Motor Channel, Analog Encoder Channel
+    static public int[] kSwerveFLChannels = new int[]{0, 4, 3, 0};
+    static public int[] kSwerveFRChannels = new int[]{1, 1, 2, 1};
+    static public int[] kSwerveBLChannels = new int[]{2, 8, 7, 2};
+    static public int[] kSwerveBRChannels = new int[]{3, 5, 6, 3};
 
-    static public double kSwerveKp = 0.7;
-    static public double kSwerveKi = 0;
-    static public double kSwerveKd = 0;
-    static public double kSwerveKs = 4.91;
-    static public double kSwerveKv = 0.25;
-
-    static public double kSwerveZeroPIDKp = 0.0005;
-    static public double kSwerveZeroPIDKi = 0.001;
-    static public double kSwerveZeroPIDKd = 0;
-
-    static public double kSwerveZeroToleranceKp = 0.025;
-    static public double kSwerveZeroToleranceKd = 0.5;
-
-    static public double kFrontLeftZero = 1851;
-    static public double kFrontRightZero = 1851;
-    static public double kBackLeftZero = 1851;
-    static public double kBackRightZero = 1851;
+    static public double[] kZeroPosition = new double[]{290, 2800, 2290, 2381};
+    public static double kEncoderRes = 4096;
 
     /********************************************
      * Motor Current Limits
@@ -61,7 +68,7 @@ public class Configuration {
     // https://firstwiki.github.io/wiki/denso-window-motor
     static public int WindowLimit = 15; // This seems safe
 
-    static public double ExpControl = 1.5;
+    static public double kExpControl = 1.5;
     static public boolean EnableExpoControl = false;
 
     /********************************************

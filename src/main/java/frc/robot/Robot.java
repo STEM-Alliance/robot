@@ -9,14 +9,13 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.HomeSwerve;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.*;
 
 /**
@@ -43,52 +42,37 @@ public class Robot extends TimedRobot {
 
   LEDSubsystem m_leds = new LEDSubsystem();
 
-  final SendableChooser<String> m_kp = new SendableChooser<>();
-  final SendableChooser<String> m_ki = new SendableChooser<>();
-  final SendableChooser<String> m_kd = new SendableChooser<>();
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    SmartDashboard.putNumber("kp", Configuration.kSwerveKp);
+    SmartDashboard.putNumber("ki", Configuration.kSwerveKi);
+    SmartDashboard.putNumber("kd", Configuration.kSwerveKd);
+
+    SmartDashboard.putNumber("ks", Configuration.kSwerveKs);
+    SmartDashboard.putNumber("kv", Configuration.kSwerveKv);
+    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    
+  
     // Controller 1
     final Trigger brake = m_controller1.b();
     final Trigger coast = m_controller1.a();
     final Trigger enTurbo = m_controller1.rightTrigger();
     final Trigger disTurbo = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
-    // final Trigger toggleHDrive = m_controller1.rightBumper();
-    // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
-  
-    // Controller 2
-    // final Trigger gripper_control = m_controller2.leftTrigger();
-    // final Trigger extend_control = m_controller2.rightTrigger();
-    // final Trigger high = m_controller2.y();
-    // final Trigger medium = m_controller2.b();
-    // final Trigger low = m_controller2.a();
-    // final Trigger leftBumper = m_controller2.leftBumper();
-    // final Trigger rightBumper = m_controller2.rightBumper();
-    // final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
-    // final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
-    // final Trigger retractHome = m_controller2.x();
-    // final Trigger up = m_controller2.pov(0);
-    // final Trigger down = m_controller2.pov(180);
-    // final Trigger left = m_controller2.pov(270);
-    // final Trigger right = m_controller2.pov(90);
 
-    
     
     // up.onTrue(m_leds.red());
     // left.onTrue(m_leds.yellow());
     // right.onTrue(m_leds.blue());
     // down.onTrue(m_leds.crazy());
-    homeSwerve.onTrue(new HomeSwerve(m_swerve));
+    homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
+   
     brake.onTrue(m_swerve.setBrakeModeCmd());
     coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
@@ -125,11 +109,15 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    driveWithJoystick(true);
-    double kp = SmartDashboard.getNumber("kp", Configuration.kDriveKp);
-    double ki = SmartDashboard.getNumber("ki", Configuration.kDriveKi);
-    double kd = SmartDashboard.getNumber("kd", Configuration.kDriveKd);
-    m_swerve.setGains(kp, ki, kd);
+    // driveWithJoystick(true);
+    double kp = SmartDashboard.getNumber("kp", Configuration.kSwerveKp);
+    double ki = SmartDashboard.getNumber("ki", Configuration.kSwerveKi);
+    double kd = SmartDashboard.getNumber("kd", Configuration.kSwerveKd);
+
+    double ks = SmartDashboard.getNumber("ks", Configuration.kSwerveKs);
+    double kv = SmartDashboard.getNumber("kv", Configuration.kSwerveKv);
+
+    m_swerve.setGains(kp, ki, kd, ks, kv);
 }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -168,7 +156,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //driveWithJoystick(true);
+    driveWithJoystick(true);
   }
 
   @Override
@@ -190,17 +178,21 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void driveWithJoystick(boolean fieldRelative) {
+    var expLeftX = exponentialScaling(m_controller1.getLeftX(), Configuration.kExpControl);
+    var expLeftY = exponentialScaling(m_controller1.getLeftY(), Configuration.kExpControl);
+    var expOmega = exponentialScaling(m_controller1.getRightX(), Configuration.kExpControl);
+
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     final var xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(m_controller1.getLeftY(), Configuration.GeneralDeadband))
+        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(expLeftY, Configuration.GeneralDeadband))
             * Configuration.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     final var ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(m_controller1.getLeftX(), Configuration.GeneralDeadband))
+        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(expLeftX, Configuration.GeneralDeadband))
             * Configuration.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
@@ -208,10 +200,18 @@ public class Robot extends TimedRobot {
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
     final var rot =
-        -m_rotLimiter.calculate(MathUtil.applyDeadband(m_controller1.getRightX(), Configuration.GeneralDeadband))
+        -m_rotLimiter.calculate(MathUtil.applyDeadband(expOmega, Configuration.GeneralDeadband))
             * Configuration.kMaxAngularSpeed;
 
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
+  }
+
+  public double exponentialScaling(double base, double exponent) {
+    if (base > 0) {
+      return Math.pow(Math.abs(base), exponent);
+    }
+
+    return -Math.pow(Math.abs(base), exponent);
   }
 
 }

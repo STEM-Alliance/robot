@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Configuration;
 import frc.robot.LoggedNumber;
@@ -25,43 +26,54 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double m_omega = 0.0;
 
     // Locations for the swerve drive modules relative to the robot center.
-    Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-    Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-    Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-    Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+    Translation2d m_frontLeftLocation = Configuration.kSwerveTranslations[0];
+    Translation2d m_frontRightLocation = Configuration.kSwerveTranslations[1];
+    Translation2d m_backLeftLocation = Configuration.kSwerveTranslations[2];
+    Translation2d m_backRightLocation = Configuration.kSwerveTranslations[3];
 
-    private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0);
-    // private final SwerveModule m_frontRight = new SwerveModule(3, 4, 1);
-    // private final SwerveModule m_backLeft = new SwerveModule(5, 6, 2);
-    // private final SwerveModule m_backRight = new SwerveModule(7, 8, 3);
-    private final SwerveModule m_modules[] = {m_frontLeft}; //, m_frontRight, m_backLeft, m_backRight};
+    private final int[] frontLeftChannels = Configuration.kSwerveFLChannels;
+    private final int[] frontRightChannels = Configuration.kSwerveFRChannels;
+    private final int[] backLeftChannels = Configuration.kSwerveBLChannels;
+    private final int[] backRightChannels = Configuration.kSwerveBRChannels;
 
+    private final SwerveModule m_frontLeft = new SwerveModule(
+      frontLeftChannels[0], frontLeftChannels[1], frontLeftChannels[2], frontLeftChannels[3]);
+
+    private final SwerveModule m_frontRight = new SwerveModule(
+      frontRightChannels[0], frontRightChannels[1], frontRightChannels[2], frontRightChannels[3]);
+
+    private final SwerveModule m_backLeft = new SwerveModule(
+      backLeftChannels[0], backLeftChannels[1], backLeftChannels[2], backLeftChannels[3]);
+
+    private final SwerveModule m_backRight = new SwerveModule(
+      backRightChannels[0], backRightChannels[1], backRightChannels[2], backRightChannels[3]);
+      
+    private final SwerveModule m_modules[] = {m_frontLeft, m_frontRight, m_backLeft, m_backRight};
     private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
 
     // Creating my kinematics object using the module locations
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
     m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
-    );
+    );    
 
-  // private final SwerveDriveOdometry m_odometry =
-  //     new SwerveDriveOdometry(
-  //         m_kinematics,
-  //         m_ahrs.getRotation2d(),
-  //         new SwerveModulePosition[] {
-  //           m_frontLeft.getPosition(),
-  //           m_frontRight.getPosition(),
-  //           m_backLeft.getPosition(),
-  //           m_backRight.getPosition()
-  //         });
+  // TODO: Uncomment when we have all 4 motors.
+  private final SwerveDriveOdometry m_odometry =
+      new SwerveDriveOdometry(
+          m_kinematics,
+          m_ahrs.getRotation2d(),
+          new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_backLeft.getPosition(),
+            m_backRight.getPosition()
+          });
 
   /** Creates a new DriveSubSystem. */
   public DrivetrainSubsystem() {
-    resetGyro();
+    m_ahrs.reset();
   }
 
   public SwerveModule getModule(int offset) {
-    offset %= 4;
-
     return m_modules[offset];
   }
 
@@ -84,41 +96,29 @@ public class DrivetrainSubsystem extends SubsystemBase {
                     : new ChassisSpeeds(xSpeed, ySpeed, rot),
                 periodSeconds));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
-
+    // TODO: Only drive one swerve at the moment. Uncomment when we have all 4 motors.
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    // m_frontRight.setDesiredState(swerveModuleStates[1]);
-    // m_backLeft.setDesiredState(swerveModuleStates[2]);
-    // m_backRight.setDesiredState(swerveModuleStates[3]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_backLeft.setDesiredState(swerveModuleStates[2]);
+    m_backRight.setDesiredState(swerveModuleStates[3]);
 
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
-    LoggedNumber.getInstance().logNumber("vx", xSpeed, true);
-    LoggedNumber.getInstance().logNumber("vy", ySpeed, true);
-    LoggedNumber.getInstance().logNumber("omega", rot, true);
-    //LoggedNumber.getInstance().logNumber("drive", swerveModuleStates[0].speedMetersPerSecond, true);
-    //LoggedNumber.getInstance().logNumber("rot", swerveModuleStates[0].angle.getRadians(), true);
+    // SmartDashboard.putNumber("vx", xSpeed);
+    // SmartDashboard.putNumber("vy", ySpeed);
+    // SmartDashboard.putNumber("omega", rot);
   }
 
   /** Updates the field relative position of the robot. */
-  // public void updateOdometry() {
-  //   m_odometry.update(
-  //       m_ahrs.getRotation2d(),
-  //       new SwerveModulePosition[] {
-  //         m_frontLeft.getPosition(),
-  //         m_frontRight.getPosition(),
-  //         m_backLeft.getPosition(),
-  //         m_backRight.getPosition()
-  //       });
-  // }
-
-  public void setGyro(double desiredAngle) {
-    var current_angle = m_ahrs.getAngle();
-    var diff_angle = desiredAngle - current_angle;
-
-    m_ahrs.setAngleAdjustment(diff_angle);
-  }
-
-  public void resetGyro() {
-    m_ahrs.reset();
+  public void updateOdometry() {
+    // TODO: Uncomment this when we have all 4 motors.
+    // m_odometry.update(
+    //     m_gyro.getRotation2d(),
+    //     new SwerveModulePosition[] {
+    //       m_frontLeft.getPosition(),
+    //       m_frontRight.getPosition(),
+    //       m_backLeft.getPosition(),
+    //       m_backRight.getPosition()
+    //     });
   }
 
   public Command setBrakeModeCmd() {
@@ -134,6 +134,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Command enableTurbo() {
     // TODO: Enable turbo mode
+      
+
       return new InstantCommand();
   }
 
@@ -142,7 +144,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
       return new InstantCommand();
   }
 
-  public void setGains(double kp, double ki, double kd) {
-    m_frontLeft.setGains(kp, ki, kd);
+  public void setGains(double kp, double ki, double kd, double ks, double kv) {
+    m_frontLeft.setGains(kp, ki, kd, ks, kv);
+    m_frontRight.setGains(kp, ki, kd, ks, kv);
+    m_backLeft.setGains(kp, ki, kd, ks, kv);
+    m_backRight.setGains(kp, ki, kd, ks, kv);
+  }
+
+  public void homeSwerve() {
+    System.out.println("Setting the zero position for the turning motors");
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].syncSwerveEncoder(Configuration.kZeroPosition[i]);
+    }    
   }
 }
