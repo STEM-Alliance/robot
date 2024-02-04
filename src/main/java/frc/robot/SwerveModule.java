@@ -22,7 +22,7 @@ import frc.robot.LoggedNumber;
 public class SwerveModule {
   private static final double kModuleMaxAngularVelocity = Configuration.kMaxAngularSpeed;
   private static final double kModuleMaxAngularAcceleration =
-      2 * Math.PI; // radians per second squared
+      Math.pow(4 * Math.PI, 2); // radians per second squared
 
   private int m_swerveIndex = -1;
 
@@ -34,7 +34,8 @@ public class SwerveModule {
   private final AnalogInput m_absolutePos;
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final PIDController m_drivePIDController = new PIDController(Configuration.kDriveKp, Configuration.kDriveKi, Configuration.kDriveKd);
+  private final PIDController m_drivePIDController = new PIDController(
+    Configuration.kDriveKp, Configuration.kDriveKi, Configuration.kDriveKd);
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final ProfiledPIDController m_turningPIDController =
@@ -46,10 +47,11 @@ public class SwerveModule {
               kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration));
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(Configuration.kDriveKs, Configuration.kDriveKv);
-  private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(Configuration.kSwerveKs, Configuration.kSwerveKv);
-
-  private boolean m_homingMotors = true;
+  private SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(
+    Configuration.kDriveKs, Configuration.kDriveKv);
+  
+  private SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(
+    Configuration.kSwerveKs, Configuration.kSwerveKv);
 
   /**
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
@@ -119,66 +121,73 @@ public class SwerveModule {
    * @param desiredState Desired state with speed and angle.
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    if (!m_homingMotors)
-    {
-      var encoderRotation = new Rotation2d(m_turningEncoder.getPosition());
+    var encoderRotation = new Rotation2d(m_turningEncoder.getPosition());
 
-      // Optimize the reference state to avoid spinning further than 90 degrees
-      SwerveModuleState state = SwerveModuleState.optimize(desiredState, encoderRotation);
+    // Optimize the reference state to avoid spinning further than 90 degrees
+    SwerveModuleState state = SwerveModuleState.optimize(desiredState, encoderRotation);
 
-      // Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
-      // direction of travel that can occur when modules change directions. This results in smoother
-      // driving.
-      state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos();
+    // Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
+    // direction of travel that can occur when modules change directions. This results in smoother
+    // driving.
+    state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos();
 
-      // Calculate the drive output from the drive PID controller.
-      final double driveOutput =
-          m_drivePIDController.calculate(m_driveEncoder.getVelocity(), state.speedMetersPerSecond);
+    // Calculate the drive output from the drive PID controller.
+    final double driveOutput =
+        m_drivePIDController.calculate(m_driveEncoder.getVelocity(), state.speedMetersPerSecond);
 
-      final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
+    final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
-      // Calculate the turning motor output from the turning PID controller.
-      final double turnOutput =
-          m_turningPIDController.calculate(m_turningEncoder.getPosition(), state.angle.getRadians());
+    // Calculate the turning motor output from the turning PID controller.
+    final double turnOutput =
+        m_turningPIDController.calculate(m_turningEncoder.getPosition(), state.angle.getRadians());
 
-      final double turnFeedforward =
-          m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
+    final double turnFeedforward =
+        m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
 
-      //m_driveMotor.set(driveOutput + driveFeedforward);
-      m_driveMotor.set(driveFeedforward / 8);
-      //m_turningMotor.set(turnOutput + turnFeedforward);
-      m_turningMotor.set(turnOutput);
+    //m_driveMotor.set(driveOutput + driveFeedforward);
+    m_driveMotor.set(driveFeedforward);
+    m_turningMotor.set(turnOutput + turnFeedforward);
+    //m_turningMotor.set(turnOutput);
 
-      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_ff", driveFeedforward / 4, true);
-      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_abspos", m_absolutePos.getValue(), true);
-    }
+    // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_driveff", driveFeedforward, true);
+    // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_ff", turnFeedforward, true);
+    // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_fb", turnOutput, true);
+    // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_abspos", m_absolutePos.getValue(), true);
+    // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_turnenc", m_turningEncoder.getPosition(), true);
+    // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_desenc", state.angle.getRadians(), true);
   }
 
-  public void setGains(double kp, double ki, double kd) {
+  public void setGains(double kp, double ki, double kd, double ks, double kv) {
     m_turningPIDController.setP(kp);
     m_turningPIDController.setI(ki);
     m_turningPIDController.setD(kd);
+
+    m_turnFeedforward = new SimpleMotorFeedforward(ks, kv);
   }
 
-  private double getSwerveEncoderSyncedPos(double zeroedAbsPos) {
-    /* Calculate the error and wrap it around with a modulo
+  private double getSwerveEncoderSyncedPos(double syncedAbsPos) {
+    /* Calculate the error and wrap it around to the nearest half
     If the current rotation was 50, and the target was 4096, this
     would set the encoders rotation to ~+0.1 rotations instead of ~-12.5 */
 
-    double diffPos = (getAbsPos() - zeroedAbsPos);
-    if (diffPos > 2048)
+    double diffPos = (getAbsPos() - syncedAbsPos);
+    if (diffPos > Configuration.kEncoderRes / 2)
     {
-      diffPos -= 4096;
+      diffPos -= Configuration.kEncoderRes;
     }
-    return (diffPos * 2 * Math.PI) / 4096;
+    return (diffPos * 2 * Math.PI) / Configuration.kEncoderRes;
   }
 
-  public void syncSwerveEncoder(double zeroedAbsPos) {
-    m_turningEncoder.setPosition(getSwerveEncoderSyncedPos(zeroedAbsPos));
+  public void syncSwerveEncoder(double syncedAbsPos) {
+    m_turningEncoder.setPosition(getSwerveEncoderSyncedPos(syncedAbsPos));
 
   }
 
   public double getAbsPos() {
     return m_absolutePos.getValue();
+  }
+
+  public void printPos() {
+    System.out.println(m_swerveIndex + ": " + m_absolutePos.getValue() + ": " + m_turningEncoder.getPosition());
   }
 }

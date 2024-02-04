@@ -11,12 +11,12 @@ public class Configuration {
      *******************************************/
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
-    static public double kVxSlewRateLimit = 4;
-    static public double kVySlewRateLimit = 4;
-    static public double kOmegaSlewRateLimit = 4;
+    static public double kVxSlewRateLimit = 10;
+    static public double kVySlewRateLimit = 10;
+    static public double kOmegaSlewRateLimit = 10;
     // Max speeds
     static public double kMaxSpeed = 3.0; // 3 meters per second
-    static public double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second 
+    static public double kMaxAngularSpeed = 4 * Math.PI; // 1/2 rotation per second 
     static public double GeneralDeadband = 0.2;
 
     static public double kWheelRadius = 0.0508;
@@ -27,18 +27,19 @@ public class Configuration {
     static public double kDriveKp = 0.3;
     static public double kDriveKi = 0;
     static public double kDriveKd = 0;
-    static public double kDriveKs = 2.35;
-    static public double kDriveKv = 0.53;
+    static public double kDriveKs = 0.1;
+    static public double kDriveKv = 0.25;
 
-    static public double kSwerveKp = 0.5;
-    static public double kSwerveKi = 0.1;
+    static public double kSwerveKp = 0.3;
+    static public double kSwerveKi = 0;
     static public double kSwerveKd = 0;
-    static public double kSwerveKs = 4.91;
-    static public double kSwerveKv = 0.25;
+    static public double kSwerveKs = 0;
+    static public double kSwerveKv = 0;
 
     // Zero settings
     // FL, FR, BL, BR
-    static public double[] kZeroPosition = new double[]{290, 2800, 2290, 2381};
+    // The analogs are connected 3, 0, 1, 2
+    static public double[] kZeroPosition = new double[]{1866, 4025, 2113, 2424};
     public static double kEncoderRes = 4096;
 
     /********************************************
@@ -54,7 +55,7 @@ public class Configuration {
     // https://firstwiki.github.io/wiki/denso-window-motor
     static public int WindowLimit = 15; // This seems safe
 
-    static public double ExpControl = 1.5;
+    static public double kExpControl = 1.5;
     static public boolean EnableExpoControl = false;
 
     /********************************************

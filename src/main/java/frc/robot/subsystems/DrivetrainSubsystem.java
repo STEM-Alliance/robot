@@ -26,15 +26,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double m_omega = 0.0;
 
     // Locations for the swerve drive modules relative to the robot center.
-    Translation2d m_frontLeftLocation = new Translation2d(0.3302, 0.3334);
-    Translation2d m_frontRightLocation = new Translation2d(0.3302, -0.3334);
-    Translation2d m_backLeftLocation = new Translation2d(-0.3302, 0.3334);
-    Translation2d m_backRightLocation = new Translation2d(-0.3302, -0.3334);
+    Translation2d m_frontLeftLocation = new Translation2d(0.3048, 0.3048);
+    Translation2d m_frontRightLocation = new Translation2d(0.3048, -0.3048);
+    Translation2d m_backLeftLocation = new Translation2d(-0.3048, 0.3048);
+    Translation2d m_backRightLocation = new Translation2d(-0.3048, -0.3048);
 
-    private final SwerveModule m_frontLeft = new SwerveModule(0, 4, 3, 0);
+    // private final SwerveModule m_frontLeft = new SwerveModule(0, 1, 2, 0);
+    // private final SwerveModule m_frontRight = new SwerveModule(1, 3, 4, 1);
+    // private final SwerveModule m_backLeft = new SwerveModule(2, 5, 6, 2);
+    // private final SwerveModule m_backRight = new SwerveModule(3, 7, 8, 3);
+
+    private final SwerveModule m_frontLeft = new SwerveModule(0, 5, 6, 0);
     private final SwerveModule m_frontRight = new SwerveModule(1, 1, 2, 1);
-    private final SwerveModule m_backLeft = new SwerveModule(2, 8, 7, 2);
-    private final SwerveModule m_backRight = new SwerveModule(3, 5, 6, 3);
+    private final SwerveModule m_backLeft = new SwerveModule(2, 7, 8, 2);
+    private final SwerveModule m_backRight = new SwerveModule(3, 3, 4, 3);
+
     private final SwerveModule m_modules[] = {m_frontLeft, m_frontRight, m_backLeft, m_backRight};
 
     private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
@@ -85,10 +91,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 periodSeconds));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
     // TODO: Only drive one swerve at the moment. Uncomment when we have all 4 motors.
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_backLeft.setDesiredState(swerveModuleStates[2]);
-    m_backRight.setDesiredState(swerveModuleStates[3]);
+    for (int i = 0; i < 4; i++)
+    {
+      m_modules[i].setDesiredState(swerveModuleStates[i]);
+    }
 
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
     SmartDashboard.putNumber("vx", xSpeed);
@@ -130,8 +136,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
       return new InstantCommand();
   }
 
-  public void setGains(double kp, double ki, double kd) {
-    m_frontLeft.setGains(kp, ki, kd);
+  public void setGains(double kp, double ki, double kd, double ks, double kv) {
+    m_frontLeft.setGains(kp, ki, kd, ks, kv);
+    m_frontRight.setGains(kp, ki, kd, ks, kv);
+    m_backLeft.setGains(kp, ki, kd, ks, kv);
+    m_backRight.setGains(kp, ki, kd, ks, kv);
   }
 
   public void homeSwerve() {
@@ -140,4 +149,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
       m_modules[i].syncSwerveEncoder(Configuration.kZeroPosition[i]);
     }    
   }
+
+  public void printPos() {
+    for (int i = 0; i < 4; i++)
+    {
+      m_modules[i].printPos();
+    }
+  } 
 }
