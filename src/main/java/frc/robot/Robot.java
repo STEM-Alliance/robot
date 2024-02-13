@@ -4,239 +4,227 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
+import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.subsystems.*;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.*;
+import frc.robot.commands.*;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
+ * Uses the CameraServer class to automatically capture video from a USB webcam and send it to the
+ * FRC dashboard without doing any vision processing. This is the easiest way to get camera images
+ * to the dashboard. Just add this to the robotInit() method in your program.
  */
+
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+    private CommandXboxController m_controller1 = new CommandXboxController(0);
+    // private CommandXboxController m_controller2 = new CommandXboxController(1);
 
-  private RobotContainer m_robotContainer;
+    DriveSubsystem m_robotDrive = new DriveSubsystem(1, 2, 3, 4, 5);
+    PneumaticSubsystem m_pneumatics = new PneumaticSubsystem(0);
+    LEDSubsystem m_leds = new LEDSubsystem();
 
-  Command m_driveCommand;
-  DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
-  //IntakeSubSystem m_intake = new IntakeSubSystem(10, 11);
-  CommandXboxController m_controller1 = new CommandXboxController(0);
-  //CommandXboxController m_controller2 = new CommandXboxController(1);
+    Command m_autoCommand;
+    Command m_driveCommand;
+    Command m_elevatorCommand;
 
-  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
-  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Configuration.kVxSlewRateLimit);
-  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(Configuration.kVySlewRateLimit);
-  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(Configuration.kOmegaSlewRateLimit);
+     //Command m_aimcommand  = new AimbotCommand(m_robotDrive);
+    Command m_aimcommand  = new RotationAimCommand(m_robotDrive);
+    Command m_strafecommand = new StrafeAimCommand(m_robotDrive);
 
-  LEDSubsystem m_leds = new LEDSubsystem();
+    // Auto select
+    final String kLevel = "AutoLevel";
+    final String kPlaceAndLevel = "ConeAndLevel";
+    final String kPlaceCone = "PlaceCone";
+    String m_autoSelected;
+    final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  // final SendableChooser<String> m_kp = new SendableChooser<>();
-  // final SendableChooser<String> m_ki = new SendableChooser<>();
-  // final SendableChooser<String> m_kd = new SendableChooser<>();
+    @Override
+    public void robotInit() {
+        DataLogManager.start();
+        DriverStation.startDataLog(DataLogManager.getLog());
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  @Override
-  public void robotInit() {
-    SmartDashboard.putNumber("kp", Configuration.kSwerveKp);
-    SmartDashboard.putNumber("ki", Configuration.kSwerveKi);
-    SmartDashboard.putNumber("kd", Configuration.kSwerveKd);
+        SmartDashboard.putNumber("P", Configuration.kAimP);
+        SmartDashboard.putNumber("I", Configuration.kAimI);
+        SmartDashboard.putNumber("D", Configuration.kAimD);
 
-    SmartDashboard.putNumber("ks", Configuration.kSwerveKs);
-    SmartDashboard.putNumber("kv", Configuration.kSwerveKv);
-    
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
-  
-    // Controller 1
-    final Trigger brake = m_controller1.b();
-    final Trigger coast = m_controller1.a();
-    final Trigger enTurbo = m_controller1.rightTrigger();
-    final Trigger disTurbo = m_controller1.x();
-    final Trigger homeSwerve = m_controller1.y();
-    // final Trigger toggleHDrive = m_controller1.rightBumper();
-    // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
-  
-    // Controller 2
-    // final Trigger gripper_control = m_controller2.leftTrigger();
-    // final Trigger extend_control = m_controller2.rightTrigger();
-    // final Trigger high = m_controller2.y();
-    // final Trigger medium = m_controller2.b();
-    // final Trigger low = m_controller2.a();
-    // final Trigger leftBumper = m_controller2.leftBumper();
-    // final Trigger rightBumper = m_controller2.rightBumper();
-    // final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
-    // final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
-    // final Trigger retractHome = m_controller2.x();
-    // final Trigger up = m_controller2.pov(0);
-    // final Trigger down = m_controller2.pov(180);
-    // final Trigger left = m_controller2.pov(270);
-    // final Trigger right = m_controller2.pov(90);
+        // Controller 1
+        final Trigger brake = m_controller1.b();
+        //final Trigger coast = m_controller1.a();
+        final Trigger enTurbo = m_controller1.rightTrigger();
+        final Trigger enableDrive = m_controller1.x();
+        final Trigger toggleHDrive = m_controller1.rightBumper();
+        toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
+        final Trigger aimbot = m_controller1.y();
+        final Trigger strafebot = m_controller1.a();
+        aimbot.onTrue(m_aimcommand);
+        strafebot.onTrue(m_strafecommand);
 
-    
-    
-    // up.onTrue(m_leds.red());
-    // left.onTrue(m_leds.yellow());
-    // right.onTrue(m_leds.blue());
-    // down.onTrue(m_leds.crazy());
-    homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
-   
-    brake.onTrue(m_swerve.setBrakeModeCmd());
-    coast.onTrue(m_swerve.setCoastModeCmd());
-    enTurbo.onTrue(m_swerve.enableTurbo());
-    enTurbo.onFalse(m_swerve.disableTurbo());
-    
-    //leftTrigger.onTrue(m_intake.grabNote());
-    //rightTrigger.onTrue(m_intake.shootNote());
+        // Controller 2
+        // final Trigger gripper_control = m_controller2.leftTrigger();
+        // final Trigger extend_control = m_controller2.rightTrigger();
+        // final Trigger high = m_controller2.y();
+        // final Trigger medium = m_controller2.b();
+        // final Trigger low = m_controller2.a();
+        // final Trigger leftBumper = m_controller2.leftBumper();
+        // final Trigger rightBumper = m_controller2.rightBumper();
+        // final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
+        // final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
+        // final Trigger retractHome = m_controller2.x();
+        // final Trigger up = m_controller2.pov(0);
+        // final Trigger down = m_controller2.pov(180);
+        // final Trigger left = m_controller2.pov(270);
+        // final Trigger right = m_controller2.pov(90);
 
-    //Get the default instance of NetworkTables that was created automatically
-    //when your program starts
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        // up.onTrue(m_leds.red());
+        // left.onTrue(m_leds.yellow());
+        // right.onTrue(m_leds.blue());
 
-    // Attempting to get the driver station position
-    NetworkTable fmsInfo = inst.getTable("FMSInfo");
-    NetworkTableEntry m_driverStationPos = fmsInfo.getEntry("StationNumber");
-    Number pos = m_driverStationPos.getNumber(0);
+        
+        m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX(), m_controller1.getRightX()), m_robotDrive);
+        enableDrive.onTrue(m_driveCommand);
 
-    System.out.println("Driver Station number: " + pos.toString());
-    System.out.println("Robot starting");
-  }
+        // m_driveCommand = new RunCommand(() -> m_robotDrive.arcadeDrive(-m_controller1.getLeftY(), -m_controller1.getLeftX(), m_controller1.getRightX(), m_pneumatics), m_robotDrive);
+        // m_elevatorCommand = new RunCommand(() -> m_ElevatorSubsystem.control(m_controller2.getRightY(), m_controller2.getLeftY()), m_ElevatorSubsystem);
 
-  /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
+        // high.onTrue(m_ElevatorSubsystem.MoveArmToHigh());
+        // // TODO: How can we drive the arm to the mid position
+        // low.onTrue(m_ElevatorSubsystem.MoveArmToLow());
+
+        CameraServer.startAutomaticCapture();
+
+        //Get the default instance of NetworkTables that was created automatically
+        //when your program starts
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+
+        // Attempting to get the driver station position
+        NetworkTable fmsInfo = inst.getTable("FMSInfo");
+        NetworkTableEntry m_driverStationPos = fmsInfo.getEntry("StationNumber");
+        Number pos = m_driverStationPos.getNumber(0);
+
+        System.out.println("Driver Station number: " + pos.toString());
+        System.out.println("Robot starting");
+
+        m_chooser.setDefaultOption(kLevel, kLevel);
+        m_chooser.addOption(kPlaceCone, kPlaceCone);
+        m_chooser.addOption(kPlaceAndLevel, kPlaceAndLevel);
+        SmartDashboard.putData("Auto choices", m_chooser);
+    }
+
+    @Override
+    public void teleopPeriodic() {
+
+        if (m_autoCommand != null) {
+            m_autoCommand.cancel();
+        }
+        //m_driveCommand.schedule();
+        //m_elevatorCommand.schedule();
+        // \m_aimcommand.schedule();
+    }
+
+    /**
+     * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+     * that you want ran during disabled, autonomous, teleoperated and test.
+     *
+     * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+     * SmartDashboard integrated updating.
+     */
+    @Override
+    public void robotPeriodic() {
+        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        // commands, running already-scheduled commands, removing finished or interrupted commands,
+        // and running subsystem periodic() methods.  This must be called from the robot's periodic
+        // block in order for anything in the Command-based framework to work.
+        CommandScheduler.getInstance().run();
+    }
+
+
+    /**
+   * This autonomous (along with the chooser code above) shows how to select between different
+   * autonomous modes using the dashboard. The sendable chooser code works with the Java
+   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the chooser code and
+   * uncomment the getString line to get the auto name from the text box below the Gyro
    *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
+   * <p>You can add additional auto modes by adding additional comparisons to the switch structure
+   * below with additional strings. If using the SendableChooser make sure to add them to the
+   * chooser code above as well.
    */
-  @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
 
-    // driveWithJoystick(true);
-    double kp = SmartDashboard.getNumber("kp", Configuration.kSwerveKp);
-    double ki = SmartDashboard.getNumber("ki", Configuration.kSwerveKi);
-    double kd = SmartDashboard.getNumber("kd", Configuration.kSwerveKd);
+    double m_start = 0;
+    @Override
+    public void autonomousInit() {
+        m_start = System.nanoTime() / 1E9;
+        m_robotDrive.zeroHeading();
+        m_autoSelected = m_chooser.getSelected();
+        //m_autoSelected = kPlaceCone;
+        System.out.println("Auto selected: " + m_autoSelected);
+        switch (m_autoSelected)
+        {
+            case kLevel:
+                // Put custom auto code here
+                m_autoCommand = getAutoLevel();
+                System.out.println("Auto level mode");
+                break;
+            case kPlaceAndLevel:
+                m_autoCommand = getPlaceConeAutoAndLevel();
+                System.out.println("Place cone and auto level");
+                break;
+            case kPlaceCone:
+            default:
+                // Put default auto code here
+                m_autoCommand = getPlaceConeAuto();
+                System.out.println("Place Cone mode");
+                break;
+        }
 
-    double ks = SmartDashboard.getNumber("ks", Configuration.kSwerveKs);
-    double kv = SmartDashboard.getNumber("kv", Configuration.kSwerveKv);
-
-    m_swerve.setGains(kp, ki, kd, ks, kv);
-
-    // Uncomment to print analogs
-    //m_swerve.printPos();
-}
-
-  /** This function is called once each time the robot enters Disabled mode. */
-  @Override
-  public void disabledInit() {}
-
-  @Override
-  public void disabledPeriodic() {}
-
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
-  }
-
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-  }
-
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {
-    driveWithJoystick(false);
-  }
-
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
-
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {}
-
-  /** This function is called once when the robot is first started up. */
-  @Override
-  public void simulationInit() {}
-
-  /** This function is called periodically whilst in simulation. */
-  @Override
-  public void simulationPeriodic() {}
-
-  private void driveWithJoystick(boolean fieldRelative) {
-    var expLeftX = exponentialScaling(m_controller1.getLeftX(), Configuration.kExpControl);
-    var expLeftY = exponentialScaling(m_controller1.getLeftY(), Configuration.kExpControl);
-    var expOmega = exponentialScaling(m_controller1.getRightX(), Configuration.kExpControl);
-
-    // Get the x speed. We are inverting this because Xbox controllers return
-    // negative values when we push forward.
-    final var xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(expLeftY, Configuration.GeneralDeadband))
-            * Configuration.kMaxSpeed;
-
-    // Get the y speed or sideways/strafe speed. We are inverting this because
-    // we want a positive value when we pull to the left. Xbox controllers
-    // return positive values when you pull to the right by default.
-    final var ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(expLeftX, Configuration.GeneralDeadband))
-            * Configuration.kMaxSpeed;
-
-    // Get the rate of angular rotation. We are inverting this because we want a
-    // positive value when we pull to the left (remember, CCW is positive in
-    // mathematics). Xbox controllers return positive values when you pull to
-    // the right by default.
-    final var rot =
-        -m_rotLimiter.calculate(MathUtil.applyDeadband(expOmega, Configuration.GeneralDeadband))
-            * Configuration.kMaxAngularSpeed;
-
-    m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
-  }
-
-  public double exponentialScaling(double base, double exponent) {
-    if (base > 0) {
-      return Math.pow(Math.abs(base), exponent);
+        //m_autoCommand = getAutonomousCommand();
+        //m_autoCommand = m_robotDrive.autoLevel();
+         // schedule the autonomous command (example)
+        if (m_autoCommand != null) {
+            m_autoCommand.schedule();
+      }
     }
 
-    return -Math.pow(Math.abs(base), exponent);
-  }
+    /** This function is called periodically  during autonomous. */
+    @Override
+    public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
+    }
 
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getPlaceConeAuto()
+    {
+        // Lift arm, drive forward, extend arm, open gripper, retract arm, drive back
+        return new InstantCommand();
+    }
+
+    public Command getPlaceConeAutoAndLevel()
+    {
+        // Lift arm, drive forward, extend arm, open gripper, retract arm, drive back
+        return new InstantCommand();
+    }
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutoLevel()
+    {
+        // Lift arm, drive forward, extend arm, open gripper, retract arm, drive back
+        return m_robotDrive.captureLevel().andThen(
+               m_robotDrive.driveDistance(-2.5).andThen(
+               m_robotDrive.autoLevel()));
+    }
 }

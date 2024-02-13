@@ -7,40 +7,17 @@ import edu.wpi.first.math.util.Units;
 
 public class Configuration {
     /********************************************
-     * Swerve and Controls
+     * General
      *******************************************/
+    // This controls the speed of the forward/back control. Larger numbers mean
+    // faster response
+    static public double forward_back_slew_rate = 0.5;
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
-    static public double kVxSlewRateLimit = 10;
-    static public double kVySlewRateLimit = 10;
-    static public double kOmegaSlewRateLimit = 10;
-    // Max speeds
-    static public double kMaxSpeed = 3.0; // 3 meters per second
-    static public double kMaxAngularSpeed = 4 * Math.PI; // 1/2 rotation per second 
-    static public double GeneralDeadband = 0.2;
-
-    static public double kWheelRadius = 0.0508;
-    static public double kDriveGearReduction = 6.12;
-    static public double kTurningGearReduction = 12.8;
-
-    // PID Values
-    static public double kDriveKp = 0.3;
-    static public double kDriveKi = 0;
-    static public double kDriveKd = 0;
-    static public double kDriveKs = 0.1;
-    static public double kDriveKv = 0.25;
-
-    static public double kSwerveKp = 0.3;
-    static public double kSwerveKi = 0;
-    static public double kSwerveKd = 0;
-    static public double kSwerveKs = 0;
-    static public double kSwerveKv = 0;
-
-    // Zero settings
-    // FL, FR, BL, BR
-    // The analogs are connected 3, 0, 1, 2
-    static public double[] kZeroPosition = new double[]{1866, 4025, 2113, 2424};
-    public static double kEncoderRes = 4096;
+    static public double right_left_slew_rate = 0.8;
+    static public double TurboFwdRevMaxLimit = 0.8;
+    static public double FwdRevMaxLimit = 0.6;
+    static public double TurnMaxLimit = 0.6;
 
     /********************************************
      * Motor Current Limits
@@ -55,19 +32,32 @@ public class Configuration {
     // https://firstwiki.github.io/wiki/denso-window-motor
     static public int WindowLimit = 15; // This seems safe
 
-    static public double kExpControl = 1.5;
+    static public double ExpControl = 1.5;
     static public boolean EnableExpoControl = false;
 
     /********************************************
-     * Fargo Elevator
+     * Aimbot
      *******************************************/
-    static public double RotationDeadband = 0.2;
-    static public double RotationScale = 0.3;
-    static public double ExtendDeadband = 0.2;
-    static public double ElevatorKp = 0.04;
-    static public double ElevatorKi = 0.0005;
-    static public double ElevatorKd = 0;
-    static public double ElevatorScale = 0.1;
+    static public double kAimP = 0.04;
+    static public double kAimI = 0.04;
+    static public double kAimD = 0;
+    static public double kAimSpeedLimit = 0.5;
+    static public double kAimbotStop = 1;
+
+    /********************************************
+     * TrapAim
+     *******************************************/
+    static public double kTrapAimPs = 0.04;
+    static public double kTrapAimIs = 0.04;
+    static public double kTrapAimDs = 0;
+
+    static public double kTrapAimPr = 0.04;
+    static public double kTrapAimIr = 0.04;
+    static public double kTrapAimDr = 0;
+
+    static public double kTrapAimSpeedLimit = 0.5;
+    static public double kTrapAimbotStop = 1;
+
 
     /********************************************
      * Gripper Controlers
