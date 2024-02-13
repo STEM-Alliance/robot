@@ -12,6 +12,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -21,8 +23,7 @@ import frc.robot.LoggedNumber;
 
 public class SwerveModule {
   private static final double kModuleMaxAngularVelocity = Configuration.kMaxAngularSpeed;
-  private static final double kModuleMaxAngularAcceleration =
-      Math.pow(4 * Math.PI, 2); // radians per second squared
+  private static final double kModuleMaxAngularAcceleration = Configuration.kMaxAngularAcceleration;
 
   private int m_swerveIndex = -1;
 

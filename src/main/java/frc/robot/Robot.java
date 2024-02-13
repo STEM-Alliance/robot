@@ -9,14 +9,14 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.*;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -25,6 +25,8 @@ import frc.robot.subsystems.*;
  * project.
  */
 public class Robot extends TimedRobot {
+  private DigitalInput m_lightSensor = new DigitalInput(0);
+  
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
@@ -63,7 +65,7 @@ public class Robot extends TimedRobot {
     final Trigger brake = m_controller1.b();
     final Trigger coast = m_controller1.a();
     final Trigger enTurbo = m_controller1.rightTrigger();
-    final Trigger disTurbo = m_controller1.x();
+    final Trigger runPath = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
 
     
@@ -77,6 +79,10 @@ public class Robot extends TimedRobot {
     coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
+
+    runPath.onTrue(m_swerve.runPath());
+    
+    //m_swerve.homeSwerve();
     
     //leftTrigger.onTrue(m_intake.grabNote());
     //rightTrigger.onTrue(m_intake.shootNote());
@@ -103,6 +109,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putBoolean("lightsensor", m_lightSensor.get());
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -185,25 +192,28 @@ public class Robot extends TimedRobot {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     final var xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(expLeftY, Configuration.GeneralDeadband))
-            * Configuration.kMaxSpeed;
+        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(expLeftY, Math.pow(
+          Configuration.GeneralDeadband, Configuration.kExpControl))) * Configuration.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     final var ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(expLeftX, Configuration.GeneralDeadband))
-            * Configuration.kMaxSpeed;
+        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(expLeftX, Math.pow(
+          Configuration.GeneralDeadband, Configuration.kExpControl))) * Configuration.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    final var rot =
-        -m_rotLimiter.calculate(MathUtil.applyDeadband(expOmega, Configuration.GeneralDeadband))
-            * Configuration.kMaxAngularSpeed;
+    var rot = -m_rotLimiter.calculate(MathUtil.applyDeadband(expOmega, Math.pow(
+      Configuration.GeneralDeadband, Configuration.kExpControl))) * Configuration.kMaxAngularSpeed;
 
-    m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
+    // Limit rotation to 1 - the driving omega factor when driving any direction
+    rot = rot * (1 - (Configuration.kDrivingOmegaFactor *
+      (Math.abs(expLeftX) + Math.abs(expLeftY))));
+    
+    m_swerve.controllerDrive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
   }
 
   public double exponentialScaling(double base, double exponent) {

@@ -3,6 +3,10 @@
  */
 package frc.robot;
 
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -15,9 +19,12 @@ public class Configuration {
     static public double kVxSlewRateLimit = 10;
     static public double kVySlewRateLimit = 10;
     static public double kOmegaSlewRateLimit = 10;
+    static public double kDrivingOmegaFactor = 0.8;
+
     // Max speeds
     static public double kMaxSpeed = 0.5; // 3 meters per second
-    static public double kMaxAngularSpeed = 4 * Math.PI; // 1 rotation per second 
+    static public double kMaxAngularSpeed = 4 * Math.PI; // 2 rotations per second 
+    static public double kMaxAngularAcceleration = Math.pow(2 * Math.PI, 2);
     static public double GeneralDeadband = 0.2;
 
     // PID Values
@@ -27,7 +34,7 @@ public class Configuration {
     static public double kDriveKs = 0.1;
     static public double kDriveKv = 0.25;
 
-    static public double kSwerveKp = 0.65; // 0.65
+    static public double kSwerveKp = 0.6; // 0.65
     static public double kSwerveKi = 0; // 0.1
     static public double kSwerveKd = 0; // 0
     static public double kSwerveKs = 0;
@@ -40,20 +47,42 @@ public class Configuration {
     
     // FL, FR, BL, BR
     static public Translation2d[] kSwerveTranslations = new Translation2d[]{
-        new Translation2d(0.3303, 0.3334),
-        new Translation2d(0.3303, -0.3334),
-        new Translation2d(-0.3303, 0.3334),
-        new Translation2d(-0.3303, -0.3334)
+        new Translation2d(0.2286, 0.22225),
+        new Translation2d(0.2286, -0.22225),
+        new Translation2d(-0.2286, 0.22225),
+        new Translation2d(-0.2286, -0.22225)
     };
 
     // Module Index, Drive Motor Channel, Swerve Motor Channel, Analog Encoder Channel
-    static public int[] kSwerveFLChannels = new int[]{0, 4, 3, 0};
-    static public int[] kSwerveFRChannels = new int[]{1, 1, 2, 1};
-    static public int[] kSwerveBLChannels = new int[]{2, 8, 7, 2};
-    static public int[] kSwerveBRChannels = new int[]{3, 5, 6, 3};
+    static public int[] kSwerveFLChannels = new int[]{0, 1, 2, 0};
+    static public int[] kSwerveFRChannels = new int[]{1, 3, 4, 1};
+    static public int[] kSwerveBLChannels = new int[]{2, 5, 6, 2};
+    static public int[] kSwerveBRChannels = new int[]{3, 7, 8, 3};
 
-    static public double[] kZeroPosition = new double[]{290, 2800, 2290, 2381};
-    public static double kEncoderRes = 4096;
+    static public int kPigeon2Channel = 50;
+
+    static public double[] kZeroPosition = new double[]{1885, 4010, 2025, 2415};
+    static public double kEncoderRes = 4096;
+
+    static public HolonomicPathFollowerConfig kPathFollowerConfig =
+        new HolonomicPathFollowerConfig(
+            new PIDConstants(0.65), // Translation
+            new PIDConstants(0.65), // Rotation
+            kMaxSpeed,
+            kSwerveTranslations[0].getNorm(),
+            new ReplanningConfig()
+        );
+    
+    // Shooter Configuration
+    static public int[] kShooterMotorChannels = new int[]{10, 11};
+    static public int kNoteSensorChannel = 1;
+
+    // Intake Configuration
+    static public int kIntakeMotorChannel = 12;
+
+    // Climber Configuration
+    static public double kClimberAligningSpeed = 1;
+    static public int kStageSensorChannel = 2;
 
     /********************************************
      * Motor Current Limits
