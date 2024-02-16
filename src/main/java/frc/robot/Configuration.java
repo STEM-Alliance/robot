@@ -57,6 +57,18 @@ public class Configuration {
     static public double ExpControl = 1.5;
     static public boolean EnableExpoControl = false;
 
+        /********************************************
+     * Aimbot
+     *******************************************/
+    static public double kAimP = 0.04;
+    static public double kAimI = 0.04;
+    static public double kAimD = 0;
+    static public double kAimSpeedLimit = 0.5;
+    static public double kAimbotStop = 1;
+    static public double kAutoDriveP = .04;
+    static public double kAutoDriveI = .04;
+    static public double kAutoDriveD = 0;
+    static public double DriveMaxSpeed = .5;
     /********************************************
      * Fargo Elevator
      *******************************************/

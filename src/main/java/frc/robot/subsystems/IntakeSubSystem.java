@@ -8,21 +8,26 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class IntakeSubSystem extends SubsystemBase {
     private final CANSparkMax m_intake;
     private final CANSparkMax m_shooter;
+    private final CANSparkMax m_midintake;
+
 
     private double m_rotateSpeed = 0;
 
     /** Creates a new DriveSubsystem. */
-    public IntakeSubSystem(int intakeMotorID, int shooterMotorID) {
+    public IntakeSubSystem(int intakeMotorID, int shooterMotorID, int midtakeMotorID) {
         m_intake = new CANSparkMax(intakeMotorID, MotorType.kBrushless);
         m_shooter = new CANSparkMax(shooterMotorID, MotorType.kBrushless);
+        m_midintake = new CANSparkMax(midtakeMotorID, MotorType.kBrushless);
 
         m_intake.setSmartCurrentLimit(Configuration.Neo550Limit);
         m_shooter.setSmartCurrentLimit(Configuration.Neo550Limit);
+        m_midintake.setSmartCurrentLimit(Configuration.Neo550Limit);
 
         /*
          * TODO: Need to set the motor direction and speed.
          * Do we need to setup the limit switches?
          */
+
 
     }
 
@@ -39,6 +44,28 @@ public class IntakeSubSystem extends SubsystemBase {
 
     public Command grabNote()
     {
+        m_intake.set(1);
+        // m_midintake.set(1);
+        return new InstantCommand();
+    }
+
+    public Command runMidintake()
+    {
+        m_midintake.set(1);
+        return new InstantCommand();        
+    }
+
+    public Command midintakeDone()
+    {
+
+        runMidintake().end(true);
+        return new InstantCommand();
+
+    }
+    
+    public Command grabnNoteDone()
+    {
+        grabNote().end(true);
         return new InstantCommand();
     }
 

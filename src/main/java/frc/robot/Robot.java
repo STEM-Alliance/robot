@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -30,9 +31,9 @@ public class Robot extends TimedRobot {
 
   Command m_driveCommand;
   DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
-  //IntakeSubSystem m_intake = new IntakeSubSystem(10, 11);
+  IntakeSubSystem m_intake = new IntakeSubSystem(10, 11, 22);
   CommandXboxController m_controller1 = new CommandXboxController(0);
-  //CommandXboxController m_controller2 = new CommandXboxController(1);
+  CommandXboxController m_controller2 = new CommandXboxController(1);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Configuration.kVxSlewRateLimit);
@@ -70,9 +71,9 @@ public class Robot extends TimedRobot {
     // final Trigger high = m_controller2.y();
     // final Trigger medium = m_controller2.b();
     // final Trigger low = m_controller2.a();
-    // final Trigger leftBumper = m_controller2.leftBumper();
+    final Trigger leftBumper = m_controller2.leftBumper();
     // final Trigger rightBumper = m_controller2.rightBumper();
-    // final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
+    final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
     // final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
     // final Trigger retractHome = m_controller2.x();
     // final Trigger up = m_controller2.pov(0);
@@ -93,7 +94,10 @@ public class Robot extends TimedRobot {
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
     
-    //leftTrigger.onTrue(m_intake.grabNote());
+    leftTrigger.onTrue(m_intake.grabNote());
+    leftTrigger.onFalse(m_intake.grabnNoteDone());
+    leftBumper.onTrue(m_intake.runMidintake());
+    leftBumper.onFalse(m_intake.midintakeDone());
     //rightTrigger.onTrue(m_intake.shootNote());
 
     //Get the default instance of NetworkTables that was created automatically
