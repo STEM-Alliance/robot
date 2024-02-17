@@ -76,7 +76,8 @@ public class AimbotCommand extends Command {
     NetworkTableEntry tid = table.getEntry("tid");
 
     //read values periodically
-    double x = tx.getDouble(0.0);
+    double x
+     = tx.getDouble(0.0);
     double z = tz.getDouble(0.0);
     double area = ta.getDouble(0.0);
     double tidnum = tid.getDouble(0);

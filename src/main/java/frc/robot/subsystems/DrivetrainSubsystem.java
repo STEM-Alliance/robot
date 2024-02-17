@@ -36,7 +36,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule m_backLeft = new SwerveModule(2, 2, 1, 2);
     private final SwerveModule m_backRight = new SwerveModule(3, 8, 7, 3);
     private final SwerveModule m_modules[] = {m_frontLeft, m_frontRight, m_backLeft, m_backRight};
-    private final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
+    public final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
 
     // Creating my kinematics object using the module locations
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -126,10 +126,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return new InstantCommand();
   }
 
-  public Command enableTurbo() {
-    // TODO: Enable turbo mode
-      
-
+  public Command ZeroGyro() {
+    m_ahrs.zeroYaw();
       return new InstantCommand();
   }
 

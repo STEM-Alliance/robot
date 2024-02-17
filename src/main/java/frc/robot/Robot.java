@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -37,7 +39,7 @@ public class Robot extends TimedRobot {
 
   DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
   IntakeSubSystem m_intake = new IntakeSubSystem(10, 11, 22);
-  CommandXboxController m_controller1 = new CommandXboxController(0);
+  public CommandXboxController m_controller1 = new CommandXboxController(0);
   CommandXboxController m_controller2 = new CommandXboxController(1);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -62,7 +64,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    
     // Controller 1
     final Trigger brake = m_controller1.b();
     final Trigger coast = m_controller1.x();
@@ -81,7 +82,7 @@ public class Robot extends TimedRobot {
     // final Trigger low = m_controller2.a();
     final Trigger leftBumper = m_controller2.leftBumper();
     // final Trigger rightBumper = m_controller2.rightBumper();
-    final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
+    final Trigger leftTrigger = m_controller1.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
     // final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
     // final Trigger retractHome = m_controller2.x();
     // final Trigger up = m_controller2.pov(0);
@@ -89,7 +90,6 @@ public class Robot extends TimedRobot {
     // final Trigger left = m_controller2.pov(270);
     // final Trigger right = m_controller2.pov(90);
 
-    CameraServer.startAutomaticCapture();
     
     // up.onTrue(m_leds.red());
     // left.onTrue(m_leds.yellow());
@@ -101,8 +101,8 @@ public class Robot extends TimedRobot {
     coast.onTrue(m_swerve.setCoastModeCmd());
 
     autoAim.whileTrue(AimbotCommand);
-    leftTrigger.whileTrue(m_intake.grabNote());
-    leftTrigger.onFalse(m_intake.doneLoading());
+    leftTrigger.whileTrue( m_intake.grabNote());
+    // leftTrigger.whileFalse(new InstantCommand(() -> m_intake.doneLoading()));
     //rightTrigger.onTrue(m_intake.shootNote());
 
     //Get the default instance of NetworkTables that was created automatically
@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
+    SmartDashboard.putNumber("Yaw", m_swerve.m_ahrs.getYaw());
     double kp = SmartDashboard.getNumber("kp", Configuration.kDriveKp);
     double ki = SmartDashboard.getNumber("ki", Configuration.kDriveKi);
     double kd = SmartDashboard.getNumber("kd", Configuration.kDriveKd);
@@ -151,17 +151,30 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    new InstantCommand(() -> m_swerve.homeSwerve());
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
+       m_swerve.m_ahrs.zeroYaw();
+       new InstantCommand(() -> m_swerve.homeSwerve());
+
+      
     }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() 
+  {
+    boolean HomingComplete;
+    if (HomingComplete = false)
+  {
+    new InstantCommand(() -> m_swerve.homeSwerve());
+    HomingComplete = true;
+  }
+  
+  }
 
+  
   @Override
   public void teleopInit() {
     // This makes sure that the autonomous stops running when
