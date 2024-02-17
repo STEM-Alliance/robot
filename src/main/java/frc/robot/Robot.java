@@ -95,9 +95,7 @@ public class Robot extends TimedRobot {
     enTurbo.onFalse(m_swerve.disableTurbo());
     
     leftTrigger.onTrue(m_intake.grabNote());
-    leftTrigger.onFalse(m_intake.grabnNoteDone());
-    leftBumper.onTrue(m_intake.runMidintake());
-    leftBumper.onFalse(m_intake.midintakeDone());
+    leftTrigger.onFalse(m_intake.doneLoading());
     //rightTrigger.onTrue(m_intake.shootNote());
 
     //Get the default instance of NetworkTables that was created automatically
@@ -210,9 +208,11 @@ public class Robot extends TimedRobot {
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    final var rot =
+    var rot =
         -m_rotLimiter.calculate(MathUtil.applyDeadband(m_controller1.getRightX(), Configuration.GeneralDeadband))
             * Configuration.kMaxAngularSpeed;
+
+    rot = rot * (1 - (0.9 * (Math.abs(xSpeed) + Math.abs(ySpeed))));
 
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
   }

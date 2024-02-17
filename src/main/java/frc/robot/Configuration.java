@@ -70,25 +70,11 @@ public class Configuration {
     static public double kAutoDriveD = 0;
     static public double DriveMaxSpeed = .5;
     /********************************************
-     * Fargo Elevator
+    *Intake and shooter
      *******************************************/
-    static public double RotationDeadband = 0.2;
-    static public double RotationScale = 0.3;
-    static public double ExtendDeadband = 0.2;
-    static public double ElevatorKp = 0.04;
-    static public double ElevatorKi = 0.0005;
-    static public double ElevatorKd = 0;
-    static public double ElevatorScale = 0.1;
+    static public double IntakeSpeed = 1;
+    static public double shooterMaxSpeed = 1;
 
-    /********************************************
-     * Gripper Controlers
-     *******************************************/
-    // Any value between -0.2 and 0.2 will NOT move the gripper
-    static public double GripperDeadband = 0.2;
-    static public double GripperOpenCloseSpeed = 0.3;
-    static public double GripperSlideFast = 0.3;
-    static public double GripperSlideSlow = 0.2;
-    static public double RotateMotorMaxSpeed = 0.4;
 
     /********************************************
      * Autonomous Control

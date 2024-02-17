@@ -98,25 +98,32 @@ public class DrivetrainSubsystem extends SubsystemBase {
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     // TODO: Uncomment this when we have all 4 motors.
-    // m_odometry.update(
-    //     m_gyro.getRotation2d(),
-    //     new SwerveModulePosition[] {
-    //       m_frontLeft.getPosition(),
-    //       m_frontRight.getPosition(),
-    //       m_backLeft.getPosition(),
-    //       m_backRight.getPosition()
-    //     });
+    m_odometry.update(
+        m_ahrs.getRotation2d(),
+        new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_backLeft.getPosition(),
+          m_backRight.getPosition()
+        });
   }
 
-  public Command setBrakeModeCmd() {
-    // TODO: Set the motors to brake mode
-    //    //return new InstantCommand(() -> m_leds.setSpeed(0.61));
+  public InstantCommand setBrakeModeCmd() {
+    m_frontLeft.Braking = true;
+    m_frontRight.Braking = true;
+    m_backLeft.Braking = true;
+    m_backRight.Braking = true;
+    
     return new InstantCommand();
   }
 
-  public Command setCoastModeCmd() {
-    // TODO: Set the motors to coast mode
-      return new InstantCommand();
+  public InstantCommand setCoastModeCmd() {
+     m_frontLeft.Braking = false;
+    m_frontRight.Braking = false;
+    m_backLeft.Braking = false;
+    m_backRight.Braking = false;
+
+    return new InstantCommand();
   }
 
   public Command enableTurbo() {

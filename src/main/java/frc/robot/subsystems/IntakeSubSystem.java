@@ -12,7 +12,6 @@ public class IntakeSubSystem extends SubsystemBase {
 
 
     private double m_rotateSpeed = 0;
-
     /** Creates a new DriveSubsystem. */
     public IntakeSubSystem(int intakeMotorID, int shooterMotorID, int midtakeMotorID) {
         m_intake = new CANSparkMax(intakeMotorID, MotorType.kBrushless);
@@ -42,27 +41,18 @@ public class IntakeSubSystem extends SubsystemBase {
         // Do stuff
     }
 
-    public Command grabNote()
+    public InstantCommand grabNote()
     {
-        m_intake.set(1);
-        // m_midintake.set(1);
+        m_intake.set(Configuration.IntakeSpeed);
         return new InstantCommand();
     }
 
-    public Command runMidintake()
+    public InstantCommand doneLoading()
     {
-        m_midintake.set(1);
+        m_intake.set(0);
         return new InstantCommand();        
     }
 
-    public Command midintakeDone()
-    {
-
-        runMidintake().end(true);
-        return new InstantCommand();
-
-    }
-    
     public Command grabnNoteDone()
     {
         grabNote().end(true);

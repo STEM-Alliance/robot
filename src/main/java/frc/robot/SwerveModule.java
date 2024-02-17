@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 // Logging stuff
@@ -22,15 +23,15 @@ import frc.robot.LoggedNumber;
 public class SwerveModule {
   private static final double kModuleMaxAngularVelocity = Configuration.kMaxAngularSpeed;
   private static final double kModuleMaxAngularAcceleration =
-      2 * Math.PI; // radians per second squared
+      Math.pow(2 * Math.PI, 2); // radians per second squared
 
   private int m_swerveIndex = -1;
-
+  
   private final CANSparkMax m_driveMotor;
   private final CANSparkMax m_turningMotor;
   private RelativeEncoder m_driveEncoder;
   private RelativeEncoder m_turningEncoder;
-
+  
   private final AnalogInput m_absolutePos;
 
   // Gains are for example purposes only - must be determined for your own robot!
@@ -49,7 +50,7 @@ public class SwerveModule {
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(Configuration.kDriveKs, Configuration.kDriveKv);
   private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(Configuration.kSwerveKs, Configuration.kSwerveKv);
 
-  private boolean m_homingMotors = true;
+  public boolean Braking = false;
 
   /**
    * Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
@@ -69,7 +70,7 @@ public class SwerveModule {
     m_swerveIndex = swerveIndex;
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
-
+    
     m_absolutePos = new AnalogInput(analogInputChannel);
 
     m_driveEncoder = m_driveMotor.getEncoder();
@@ -81,7 +82,8 @@ public class SwerveModule {
     m_driveEncoder.setPositionConversionFactor(2 * Math.PI * Configuration.kWheelRadius / Configuration.kDriveGearReduction);
     m_driveEncoder.setVelocityConversionFactor(2 * Math.PI * Configuration.kWheelRadius / Configuration.kDriveGearReduction / 60);
     m_driveEncoder.setPosition(0);
-
+    // m_driveMotor.setSmartCurrentLimit(20);
+    // m_turningMotor.setSmartCurrentLimit(20);
     // Set the distance (in this case, angle) in radians per pulse for the turning encoder.
     // This is the the angle through an entire rotation (2 * pi) divided by the
     // encoder resolution.
@@ -91,6 +93,17 @@ public class SwerveModule {
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous.
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
+
+
+    // Setting braking moded
+    if (Braking = true)
+    {
+      m_driveMotor.setIdleMode(IdleMode.kBrake);
+    }
+    else 
+    { 
+      m_driveMotor.setIdleMode(IdleMode.kCoast);
+    }
   }
 
   /**
