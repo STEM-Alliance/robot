@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
@@ -16,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.commands.AimbotCommand;
+import frc.robot.commands.AimbotCommand;
 import frc.robot.subsystems.*;
 
 /**
@@ -30,6 +33,8 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   Command m_driveCommand;
+ 
+
   DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
   IntakeSubSystem m_intake = new IntakeSubSystem(10, 11, 22);
   CommandXboxController m_controller1 = new CommandXboxController(0);
@@ -46,6 +51,8 @@ public class Robot extends TimedRobot {
   final SendableChooser<String> m_ki = new SendableChooser<>();
   final SendableChooser<String> m_kd = new SendableChooser<>();
 
+
+   Command AimbotCommand = new AimbotCommand(m_swerve);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -60,7 +67,7 @@ public class Robot extends TimedRobot {
     final Trigger brake = m_controller1.b();
     final Trigger coast = m_controller1.a();
     final Trigger enTurbo = m_controller1.rightTrigger();
-    final Trigger disTurbo = m_controller1.x();
+    final Trigger autoAim = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
     // final Trigger toggleHDrive = m_controller1.rightBumper();
     // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
@@ -81,7 +88,7 @@ public class Robot extends TimedRobot {
     // final Trigger left = m_controller2.pov(270);
     // final Trigger right = m_controller2.pov(90);
 
-    
+    CameraServer.startAutomaticCapture();
     
     // up.onTrue(m_leds.red());
     // left.onTrue(m_leds.yellow());
@@ -93,7 +100,8 @@ public class Robot extends TimedRobot {
     coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
-    
+
+    autoAim.onTrue(AimbotCommand);
     leftTrigger.onTrue(m_intake.grabNote());
     leftTrigger.onFalse(m_intake.doneLoading());
     //rightTrigger.onTrue(m_intake.shootNote());
@@ -144,7 +152,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    new InstantCommand(() -> m_swerve.homeSwerve());
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
