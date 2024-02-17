@@ -65,9 +65,10 @@ public class Robot extends TimedRobot {
     
     // Controller 1
     final Trigger brake = m_controller1.b();
-    final Trigger coast = m_controller1.a();
-    final Trigger enTurbo = m_controller1.rightTrigger();
-    final Trigger autoAim = m_controller1.x();
+    final Trigger coast = m_controller1.x();
+    final Trigger turbo = m_controller1.rightTrigger();
+    final Trigger autoAim = m_controller1.a();
+    final Trigger Drive = m_controller1.rightBumper();
     final Trigger homeSwerve = m_controller1.y();
     // final Trigger toggleHDrive = m_controller1.rightBumper();
     // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
@@ -98,11 +99,9 @@ public class Robot extends TimedRobot {
    
     brake.onTrue(m_swerve.setBrakeModeCmd());
     coast.onTrue(m_swerve.setCoastModeCmd());
-    enTurbo.onTrue(m_swerve.enableTurbo());
-    enTurbo.onFalse(m_swerve.disableTurbo());
 
-    autoAim.onTrue(AimbotCommand);
-    leftTrigger.onTrue(m_intake.grabNote());
+    autoAim.whileTrue(AimbotCommand);
+    leftTrigger.whileTrue(m_intake.grabNote());
     leftTrigger.onFalse(m_intake.doneLoading());
     //rightTrigger.onTrue(m_intake.shootNote());
 
