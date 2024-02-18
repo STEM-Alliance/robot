@@ -73,6 +73,9 @@ public class SwerveModule {
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
+    m_driveMotor.setSmartCurrentLimit(Configuration.NeoLimit);
+    m_turningMotor.setSmartCurrentLimit(Configuration.NeoLimit);
+
     m_absolutePos = new AnalogInput(analogInputChannel);
 
     m_driveEncoder = m_driveMotor.getEncoder();
@@ -178,7 +181,6 @@ public class SwerveModule {
 
   public void syncSwerveEncoder(double syncedAbsPos) {
     m_turningEncoder.setPosition(getSwerveEncoderSyncedPos(syncedAbsPos));
-
   }
 
   public double getAbsPos() {

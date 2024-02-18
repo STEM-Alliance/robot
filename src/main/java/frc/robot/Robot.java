@@ -25,17 +25,21 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * project.
  */
 public class Robot extends TimedRobot {
-  private DigitalInput m_lightSensor = new DigitalInput(0);
+  // private DigitalInput m_lightSensor = new DigitalInput(0);
   
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
   Command m_driveCommand;
-  DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
-  //IntakeSubSystem m_intake = new IntakeSubSystem(10, 11);
+
+  public DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
+  //public LimelightSubsystem m_limelight = new LimelightSubsystem(this);
+  public IntakeSubsystem m_intake = new IntakeSubsystem(this);
+  public ShooterSubsystem m_shooter = new ShooterSubsystem();
+
   CommandXboxController m_controller1 = new CommandXboxController(0);
-  //CommandXboxController m_controller2 = new CommandXboxController(1);
+  CommandXboxController m_controller2 = new CommandXboxController(1);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Configuration.kVxSlewRateLimit);
@@ -68,22 +72,38 @@ public class Robot extends TimedRobot {
     final Trigger runPath = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
 
-    
+    final Trigger raiseArm = m_controller1.rightTrigger();
+    final Trigger lowerArm = m_controller1.leftTrigger();
+    final Trigger armPositionUp = m_controller1.povUp();
+    final Trigger armPositionDown = m_controller1.povDown();
+
+    final Trigger fwdIntake = m_controller2.a();
+    final Trigger revIntake = m_controller2.b();
+    final Trigger shoot = m_controller2.y();
+
     // up.onTrue(m_leds.red());
     // left.onTrue(m_leds.yellow());
     // right.onTrue(m_leds.blue());
     // down.onTrue(m_leds.crazy());
-    homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
-   
     brake.onTrue(m_swerve.setBrakeModeCmd());
     coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
 
     runPath.onTrue(m_swerve.runPath());
+    homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
+
+    raiseArm.whileTrue(m_shooter.raiseShooter(m_controller1.getRightTriggerAxis()));
+    lowerArm.whileTrue(m_shooter.lowerShooter(m_controller1.getLeftTriggerAxis()));
+    armPositionUp.onTrue(m_shooter.movePositionUp());
+    armPositionDown.onTrue(m_shooter.movePositionDown());
+
+    m_swerve.homeSwerve();
     
-    //m_swerve.homeSwerve();
-    
+    fwdIntake.onTrue(m_intake.fwdIntake(false));
+    shoot.whileTrue((m_shooter.spinShooter(false).andThen(
+      Commands.parallel(m_shooter.spinShooter(true), m_intake.fwdIntake(true)))));
+
     //leftTrigger.onTrue(m_intake.grabNote());
     //rightTrigger.onTrue(m_intake.shootNote());
 
@@ -109,7 +129,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putBoolean("lightsensor", m_lightSensor.get());
+    //SmartDashboard.putBoolean("lightsensor", m_lightSensor.get());
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -137,17 +157,25 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+      //m_autonomousCommand.schedule();
     }
+    //m_shooter.unhookShooter();
+  }
+
+  public Command getAutonomousCommand() {
+    return m_shooter.unhookShooter();//.andThen(m_shooter.lowerShooter())
+      //.andth
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    // unhookShooter, then lowerShooter, then shoot until 5 seconds passed
+  }
 
   @Override
   public void teleopInit() {
@@ -164,6 +192,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     driveWithJoystick(true);
+    moveArm();
+    cmdIntake();
   }
 
   @Override
@@ -214,6 +244,28 @@ public class Robot extends TimedRobot {
       (Math.abs(expLeftX) + Math.abs(expLeftY))));
     
     m_swerve.controllerDrive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
+  }
+
+  private void moveArm() {
+    var expLeftY = exponentialScaling(m_controller2.getLeftY(), Configuration.kExpControl);
+
+    // Get the y speed or sideways/strafe speed. We are inverting this because
+    // we want a positive value when we pull to the left. Xbox controllers
+    // return positive values when you pull to the right by default.
+    final var ySpeed = MathUtil.applyDeadband(expLeftY, Math.pow(
+          Configuration.GeneralDeadband, Configuration.kExpControl));
+
+    SmartDashboard.putNumber("arm yspeed", ySpeed);
+    m_shooter.setPosition(ySpeed);
+  }
+
+  private void cmdIntake() {
+    var expRightY = exponentialScaling(m_controller2.getRightY(), Configuration.kExpControl);
+
+    final var ySpeed = MathUtil.applyDeadband(expRightY, Math.pow(
+          Configuration.GeneralDeadband, Configuration.kExpControl));
+
+    m_intake.cmdIntake(ySpeed);
   }
 
   public double exponentialScaling(double base, double exponent) {

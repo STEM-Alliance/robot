@@ -22,7 +22,7 @@ public class Configuration {
     static public double kDrivingOmegaFactor = 0.8;
 
     // Max speeds
-    static public double kMaxSpeed = 0.5; // 3 meters per second
+    static public double kMaxSpeed = 3; // 3 meters per second
     static public double kMaxAngularSpeed = 4 * Math.PI; // 2 rotations per second 
     static public double kMaxAngularAcceleration = Math.pow(2 * Math.PI, 2);
     static public double GeneralDeadband = 0.2;
@@ -74,15 +74,29 @@ public class Configuration {
         );
     
     // Shooter Configuration
-    static public int[] kShooterMotorChannels = new int[]{10, 11};
-    static public int kNoteSensorChannel = 1;
+    static public double kShooterArmKp = 0.1;
+    static public double kShooterArmKi = 0;
+    static public double kShooterArmKd = 0;
+
+    static public int[] kShooterMotorChannels = new int[]{11, 12};
+    static public int kShooterArmMotorChannel = 14;
+    static public int kNoteSensorChannel = 0;
+    static public int kArmLimitswitchChannel = 1;
+    static public double kArmBackwardsLimit = 100;
+    static public double kMinFlywheelSpeed = 85;
+
+    /* In rotations, travel position (up) is 0
+    Intake position, Travel position, Amp Position */
+    static public double[] kShooterArmPositions = new double[]{-25, 0, 40};
 
     // Intake Configuration
-    static public int kIntakeMotorChannel = 12;
+    static public int kIntakeMotorChannel = 10;
 
     // Climber Configuration
     static public double kClimberAligningSpeed = 1;
     static public int kStageSensorChannel = 2;
+    static public int kClimberChannel = 13;
+    
 
     /********************************************
      * Motor Current Limits
@@ -90,7 +104,7 @@ public class Configuration {
      * I = P / V
      *******************************************/
     static public int NeoLimit = 80;
-    static public int Neo550Limit = 20;
+    static public int Neo550Limit = 30;
     static public int BagMotorLimit = 30; // Max power is 149 W, 12.4 A
     static public int M775ProLimit = 15; // Max power 347 W, 28.9 A
     static public int CIMSLimit = 28; // Max power 337 W, 28.0 A
@@ -101,25 +115,27 @@ public class Configuration {
     static public boolean EnableExpoControl = false;
 
     /********************************************
-     * Fargo Elevator
+     * Aimbot
      *******************************************/
-    static public double RotationDeadband = 0.2;
-    static public double RotationScale = 0.3;
-    static public double ExtendDeadband = 0.2;
-    static public double ElevatorKp = 0.04;
-    static public double ElevatorKi = 0.0005;
-    static public double ElevatorKd = 0;
-    static public double ElevatorScale = 0.1;
+    static public double kAimP = 0.04;
+    static public double kAimI = 0.04;
+    static public double kAimD = 0;
+    static public double kAimSpeedLimit = 0.5;
+    static public double kAimbotStop = 1;
 
     /********************************************
-     * Gripper Controlers
+     * TrapAim
      *******************************************/
-    // Any value between -0.2 and 0.2 will NOT move the gripper
-    static public double GripperDeadband = 0.2;
-    static public double GripperOpenCloseSpeed = 0.3;
-    static public double GripperSlideFast = 0.3;
-    static public double GripperSlideSlow = 0.2;
-    static public double RotateMotorMaxSpeed = 0.4;
+    static public double kTrapAimPs = 0.04;
+    static public double kTrapAimIs = 0.04;
+    static public double kTrapAimDs = 0;
+
+    static public double kTrapAimPr = 0.04;
+    static public double kTrapAimIr = 0.04;
+    static public double kTrapAimDr = 0;
+
+    static public double kTrapAimSpeedLimit = 0.5;
+    static public double kTrapAimbotStop = 1;
 
     /********************************************
      * Autonomous Control
