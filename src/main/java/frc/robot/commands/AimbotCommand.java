@@ -88,8 +88,9 @@ public class AimbotCommand extends Command {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("x", x); 
    
-    if (tidnum == 4)
+    if (tidnum == 16)
     {
+      
       double RotCaclulated = m_RotPID.calculate(x, 0);
       SmartDashboard.putNumber("xCaculated", RotCaclulated);
       if(RotCaclulated > Configuration.kAimSpeedLimit)
