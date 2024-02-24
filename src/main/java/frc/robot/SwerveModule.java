@@ -38,12 +38,13 @@ public class SwerveModule {
   private final PIDController m_drivePIDController = new PIDController(Configuration.kDriveKp, Configuration.kDriveKi, Configuration.kDriveKd);
 
   // Gains are for example purposes only - must be determined for your own robot!
-  private final PIDController m_turningPIDController =
-      new PIDController(
+  private final ProfiledPIDController m_turningPIDController =
+      new ProfiledPIDController(
           Configuration.kSwerveKp,
           Configuration.kSwerveKi,
-          Configuration.kSwerveKd
-      );
+          Configuration.kSwerveKd,
+          new TrapezoidProfile.Constraints(
+              kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration));
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(Configuration.kDriveKs, Configuration.kDriveKv);
@@ -196,5 +197,14 @@ public class SwerveModule {
 
   public void printAbsPos() {
     System.out.println(m_swerveIndex + " " + m_absolutePos.getValue());
+  }
+
+  public void setBrakingMode(boolean enabled) {
+    if (enabled) {
+      m_driveMotor.setIdleMode(IdleMode.kBrake);
+    }
+    else {
+      m_driveMotor.setIdleMode(IdleMode.kBrake);
+    }
   }
 }

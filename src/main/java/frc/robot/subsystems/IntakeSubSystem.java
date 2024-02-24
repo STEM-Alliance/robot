@@ -63,7 +63,7 @@ public class IntakeSubSystem extends SubsystemBase {
 
     public Command grabnNoteDone()
     {
-        grabNote().end(true);
+        // grabNote().end(true);
         return new InstantCommand();
     }
 

@@ -4,11 +4,7 @@
 
 package frc.robot;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -20,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.AimbotCommand;
-import frc.robot.commands.AimbotCommand;
+import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.*;
 
 /**
@@ -33,19 +29,13 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-
-  Command m_driveCommand;
  
+  boolean m_enableDrive = true;
 
   DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
-  IntakeSubSystem m_intake = new IntakeSubSystem(10, 11, 22);
+  IntakeSubSystem m_intake = new IntakeSubSystem(10, 11, 12);
   public CommandXboxController m_controller1 = new CommandXboxController(0);
-  CommandXboxController m_controller2 = new CommandXboxController(1);
-
-  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
-  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Configuration.kVxSlewRateLimit);
-  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(Configuration.kVySlewRateLimit);
-  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(Configuration.kOmegaSlewRateLimit);
+  //CommandXboxController m_controller2 = new CommandXboxController(1);
 
   LEDSubsystem m_leds = new LEDSubsystem();
 
@@ -54,7 +44,8 @@ public class Robot extends TimedRobot {
   final SendableChooser<String> m_kd = new SendableChooser<>();
 
 
-   Command AimbotCommand = new AimbotCommand(m_swerve);
+  Command m_aimbotCommand = new AimbotCommand(m_swerve);
+  Command m_driveCommand = new DriveCommand(m_swerve, true, m_controller1);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -65,22 +56,23 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     // Controller 1
-    final Trigger brake = m_controller1.b();
+    final Trigger enableDrive = m_controller1.b();
     final Trigger coast = m_controller1.x();
     final Trigger turbo = m_controller1.rightTrigger();
     final Trigger autoAim = m_controller1.a();
-    final Trigger Drive = m_controller1.rightBumper();
+    //final Trigger Drive = m_controller1.rightBumper();
     final Trigger homeSwerve = m_controller1.y();
     // final Trigger toggleHDrive = m_controller1.rightBumper();
     // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
   
+    
     // Controller 2
     // final Trigger gripper_control = m_controller2.leftTrigger();
     // final Trigger extend_control = m_controller2.rightTrigger();
     // final Trigger high = m_controller2.y();
     // final Trigger medium = m_controller2.b();
     // final Trigger low = m_controller2.a();
-    final Trigger leftBumper = m_controller2.leftBumper();
+    //final Trigger leftBumper = m_controller2.leftBumper();
     // final Trigger rightBumper = m_controller2.rightBumper();
     final Trigger leftTrigger = m_controller1.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
     // final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
@@ -97,11 +89,17 @@ public class Robot extends TimedRobot {
     // down.onTrue(m_leds.crazy());
     homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
    
-    brake.onTrue(m_swerve.setBrakeModeCmd());
+    //brake.onTrue(m_swerve.setBrakeModeCmd());
     coast.onTrue(m_swerve.setCoastModeCmd());
 
-    autoAim.whileTrue(AimbotCommand);
+    enableDrive.onTrue(m_driveCommand);
+    autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand));
+    //autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand.andThen(m_driveCommand)));
     leftTrigger.whileTrue( m_intake.grabNote());
+    if (enableDrive.getAsBoolean()) 
+    {
+      m_enableDrive = true;
+    }
     // leftTrigger.whileFalse(new InstantCommand(() -> m_intake.doneLoading()));
     //rightTrigger.onTrue(m_intake.shootNote());
 
@@ -116,6 +114,9 @@ public class Robot extends TimedRobot {
 
     System.out.println("Driver Station number: " + pos.toString());
     System.out.println("Robot starting");
+
+    m_swerve.m_ahrs.zeroYaw();
+    m_swerve.homeSwerve();
   }
 
   /**
@@ -154,25 +155,17 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
-       m_swerve.m_ahrs.zeroYaw();
-       new InstantCommand(() -> m_swerve.homeSwerve());
-
+      m_swerve.m_ahrs.zeroYaw();
+      m_swerve.homeSwerve();
       
+       
     }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() 
-  {
-    boolean HomingComplete;
-    if (HomingComplete = false)
-  {
-    new InstantCommand(() -> m_swerve.homeSwerve());
-    HomingComplete = true;
-  }
-  
-  }
+  {}
 
   
   @Override
@@ -189,7 +182,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    driveWithJoystick(true);
   }
 
   @Override
@@ -209,32 +201,4 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
-
-  private void driveWithJoystick(boolean fieldRelative) {
-    // Get the x speed. We are inverting this because Xbox controllers return
-    // negative values when we push forward.
-    final var xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(m_controller1.getLeftY(), Configuration.GeneralDeadband))
-            * Configuration.kMaxSpeed;
-
-    // Get the y speed or sideways/strafe speed. We are inverting this because
-    // we want a positive value when we pull to the left. Xbox controllers
-    // return positive values when you pull to the right by default.
-    final var ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(m_controller1.getLeftX(), Configuration.GeneralDeadband))
-            * Configuration.kMaxSpeed;
-
-    // Get the rate of angular rotation. We are inverting this because we want a
-    // positive value when we pull to the left (remember, CCW is positive in
-    // mathematics). Xbox controllers return positive values when you pull to
-    // the right by default.
-    var rot =
-        -m_rotLimiter.calculate(MathUtil.applyDeadband(m_controller1.getRightX(), Configuration.GeneralDeadband))
-            * Configuration.kMaxAngularSpeed;
-
-    rot = rot * (1 - (0.9 * (Math.abs(xSpeed) + Math.abs(ySpeed))));
-
-    m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
-  }
-
 }

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Configuration;
 import frc.robot.LoggedNumber;
 import frc.robot.SwerveModule;
+import frc.robot.commands.AimbotCommand;
 
 import com.kauailabs.navx.frc.AHRS;
 import java.math.*;
@@ -37,6 +38,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule m_backRight = new SwerveModule(3, 8, 7, 3);
     private final SwerveModule m_modules[] = {m_frontLeft, m_frontRight, m_backLeft, m_backRight};
     public final AHRS m_ahrs = new AHRS(SPI.Port.kMXP);
+    
 
     // Creating my kinematics object using the module locations
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -74,12 +76,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
    */
   public void drive(
       double xSpeed, double ySpeed, double rot, boolean fieldRelative, double periodSeconds) {
-    var swerveModuleStates =
+        var swerveModuleStates =
         m_kinematics.toSwerveModuleStates(
             ChassisSpeeds.discretize(
                 fieldRelative
                     ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                        -xSpeed, -ySpeed, rot, m_ahrs.getRotation2d())
+  xSpeed, ySpeed, rot, m_ahrs.getRotation2d().unaryMinus())
                     : new ChassisSpeeds(xSpeed, ySpeed, rot),
                 periodSeconds));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
@@ -93,6 +95,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("vx", xSpeed);
     SmartDashboard.putNumber("vy", ySpeed);
     SmartDashboard.putNumber("omega", rot);
+   
   }
 
   /** Updates the field relative position of the robot. */
@@ -109,21 +112,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public InstantCommand setBrakeModeCmd() {
-    m_frontLeft.Braking = true;
-    m_frontRight.Braking = true;
-    m_backLeft.Braking = true;
-    m_backRight.Braking = true;
-    
-    return new InstantCommand();
+    return new InstantCommand(() -> setBrakingMode(true));
   }
 
   public InstantCommand setCoastModeCmd() {
-     m_frontLeft.Braking = false;
-    m_frontRight.Braking = false;
-    m_backLeft.Braking = false;
-    m_backRight.Braking = false;
+    return new InstantCommand(() -> setBrakingMode(false));
+  }
 
-    return new InstantCommand();
+  private void setBrakingMode(boolean enabled) {
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].setBrakingMode(enabled);
+    }
   }
 
   public Command ZeroGyro() {

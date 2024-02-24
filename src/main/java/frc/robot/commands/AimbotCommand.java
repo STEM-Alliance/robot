@@ -12,6 +12,8 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 
 import java.text.DecimalFormat;
+import java.util.Optional;
+
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -20,6 +22,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
 
@@ -27,13 +31,15 @@ import edu.wpi.first.wpilibj.smartdashboard.*;
 /** An example command that uses an example subsystem. */
 public class AimbotCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final DrivetrainSubsystem m_swerve;
+  DrivetrainSubsystem m_swerve;
   int m_counter = 0;
 
-  PIDController m_RotPID = new PIDController(Configuration.kAimP, Configuration.kAimI, Configuration.kAimD);
+  PIDController m_xPID = new PIDController(Configuration.kAimP, Configuration.kAimI, Configuration.kAimD);
   PIDController m_DrivePID = new PIDController(Configuration.kAutoDriveP, Configuration.kAutoDriveI, Configuration.kAutoDriveD);
-  boolean m_doneAiming = true;
+  boolean m_doneAiming = false;
+  double m_tag;
 
+  
   /**
    * Creates a new AimbotCommand.
    *
@@ -49,16 +55,14 @@ public class AimbotCommand extends Command {
   @Override
   public void initialize() 
   {
-  
-    var p = SmartDashboard.getNumber("P", 0);
-    var i = SmartDashboard.getNumber("I", 0);
-    var d = SmartDashboard.getNumber("D", 0);
-    m_RotPID.setP(p);
-    m_RotPID.setI(i);
-    m_RotPID.setD(d);
+    var p = SmartDashboard.getNumber("P", Configuration.kAimP);
+    var i = SmartDashboard.getNumber("I", Configuration.kAimI);
+    var d = SmartDashboard.getNumber("D", Configuration.kAimD);
+    m_xPID.setP(p);
+    m_xPID.setI(i);
+    m_xPID.setD(d);
     System.out.println("starting aimbot");
     m_doneAiming = false;
-    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -88,21 +92,33 @@ public class AimbotCommand extends Command {
     SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("x", x); 
    
-    if (tidnum == 16)
+    Optional<Alliance> ally = DriverStation.getAlliance();
+if (ally.isPresent()) {
+    if (ally.get() == Alliance.Red) {
+        m_tag = 4;
+    }
+    if (ally.get() == Alliance.Blue) {
+        m_tag = 7;
+    }
+  }
+
+  
+
+    if (tidnum == m_tag)
     {
       
-      double RotCaclulated = m_RotPID.calculate(x, 0);
-      SmartDashboard.putNumber("xCaculated", RotCaclulated);
-      if(RotCaclulated > Configuration.kAimSpeedLimit)
+      double xCaclulated = m_xPID.calculate(x, 0);
+      SmartDashboard.putNumber("xCaculated", xCaclulated);
+      if(xCaclulated > Configuration.kAimSpeedLimit)
       {
-        RotCaclulated = Configuration.kAimSpeedLimit;
+        xCaclulated = Configuration.kAimSpeedLimit;
       }
-      else if (RotCaclulated < -Configuration.kAimSpeedLimit)
+      else if (xCaclulated < -Configuration.kAimSpeedLimit)
       {
-        RotCaclulated = -Configuration.kAimSpeedLimit;
+        xCaclulated = -Configuration.kAimSpeedLimit;
       }
-      
-      SmartDashboard.putData("Pid", m_RotPID);
+      SmartDashboard.putBoolean("done Aiming", m_doneAiming);
+      SmartDashboard.putData("Pid", m_xPID);
       
       System.out.println("x: " + Math.abs(x));
 
@@ -110,15 +126,15 @@ public class AimbotCommand extends Command {
       if (Math.abs(x) < Configuration.kAimbotStop)
       {
         m_doneAiming = true;
-        m_swerve.drive(0, 0, 0, false, 0);
+        m_swerve.drive(0, 0, 0, false, 0.02);
       }
       else
       {
-        m_swerve.drive(0, 0, RotCaclulated, false, 0);
+        m_swerve.drive(0, 0, xCaclulated , false, 0.02);
       }
     }
       
- SmartDashboard.putNumber("ZeroCounter", m_counter++);
+    SmartDashboard.putNumber("ZeroCounter", m_counter++);
   }
 
   // Called once the command ends or is interrupted.
