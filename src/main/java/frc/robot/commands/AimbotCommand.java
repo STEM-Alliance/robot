@@ -11,14 +11,11 @@ import frc.robot.Configuration;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 
-import java.text.DecimalFormat;
+
 import java.util.Optional;
 
 import frc.robot.subsystems.DrivetrainSubsystem;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -69,60 +66,64 @@ public class AimbotCommand extends Command {
   @Override
   public void execute() 
   {
+    // LimeLight Values
     LimelightHelpers limelightHelpers = new LimelightHelpers();
-
+    
     double tx1 = LimelightHelpers.getTX(" ");
-
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry tx = table.getEntry("tx");
     NetworkTableEntry tz = table.getEntry("ty");
     NetworkTableEntry ta = table.getEntry("ta");
     NetworkTableEntry tid = table.getEntry("tid");
 
-    //read values periodically
-    double x
-     = tx.getDouble(0.0);
+    double x = tx1;
     double z = tz.getDouble(0.0);
     double area = ta.getDouble(0.0);
     double tidnum = tid.getDouble(0);
 
-    //post to smart dashboard periodically
-    SmartDashboard.putNumber("LimelightX", x);
-    SmartDashboard.putNumber("LimelightZ", z);
-    SmartDashboard.putNumber("LimelightArea", area);
-    SmartDashboard.putNumber("x", x); 
-   
+     
+    
+    
+    // getting alliance and assigning tag
     Optional<Alliance> ally = DriverStation.getAlliance();
-if (ally.isPresent()) {
-    if (ally.get() == Alliance.Red) {
+    if (ally.isPresent()) {
+      if (ally.get() == Alliance.Red) {
         m_tag = 4;
+      }
+      if (ally.get() == Alliance.Blue) {
+          m_tag = 7;
+      }
     }
-    if (ally.get() == Alliance.Blue) {
-        m_tag = 7;
-    }
-  }
-
-  
-
+    // Geting tag and driving to the zero point
     if (tidnum == m_tag)
     {
       
       double xCaclulated = m_xPID.calculate(x, 0);
-      SmartDashboard.putNumber("xCaculated", xCaclulated);
+      
       if(xCaclulated > Configuration.kAimSpeedLimit)
       {
-        xCaclulated = Configuration.kAimSpeedLimit;
+        Math.min(Configuration.kAimSpeedLimit,
+        xCaclulated);
       }
       else if (xCaclulated < -Configuration.kAimSpeedLimit)
       {
-        xCaclulated = -Configuration.kAimSpeedLimit;
+        Math.max(-Configuration.kAimSpeedLimit,
+        xCaclulated);
       }
-      SmartDashboard.putBoolean("done Aiming", m_doneAiming);
-      SmartDashboard.putData("Pid", m_xPID);
+     
+      //post to smart dashboard periodically
+      SmartDashboard.putNumber("LimelightX", x);
+      SmartDashboard.putNumber("LimelightZ", z);
+      SmartDashboard.putNumber("LimelightArea", area);
+      SmartDashboard.putNumber("x", x);
+      SmartDashboard.putNumber("xCaculated", xCaclulated);
       
+      SmartDashboard.putBoolean("done Aiming", m_doneAiming);
+      
+      SmartDashboard.putData("Pid", m_xPID);
       System.out.println("x: " + Math.abs(x));
 
-      // m_aPID.setSetpoint(1);
+      // Stoping command
       if (Math.abs(x) < Configuration.kAimbotStop)
       {
         m_doneAiming = true;

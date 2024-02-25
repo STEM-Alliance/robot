@@ -60,8 +60,8 @@ public class Configuration {
         /********************************************
      * Aimbot
      *******************************************/
-    static public double kAimP = 0.0001;
-    static public double kAimI = 0;
+    static public double kAimP = 0.01;
+    static public double kAimI = 0.01;
     static public double kAimD = 0;
     static public double kAimSpeedLimit = 0.25; // This is in radians per second
     static public double kAimbotStop = 1;
