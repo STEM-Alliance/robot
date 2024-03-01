@@ -4,6 +4,8 @@ import frc.robot.Configuration;
 import frc.robot.Robot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -43,31 +45,23 @@ public class IntakeSubSystem extends SubsystemBase {
         // Do stuff
     }
 
-    public Command grabNote(double intakeSpeed)
+    public Command grabNote(CommandXboxController m_controller1)
     {
         
         return new FunctionalCommand(
             () -> {},
-            () -> m_intake.set(intakeSpeed),
+            () -> m_intake.set(m_controller1.getLeftTriggerAxis()),
             interrupted -> m_intake.set(0),
             () -> false);
     }
 
 
-    public Command doneLoading()
-    {
-        m_intake.set(0);
-        return new InstantCommand();        
-    }
-
-    public Command grabnNoteDone()
-    {
-        // grabNote().end(true);
-        return new InstantCommand();
-    }
-
     public Command shootNote()
     {
-        return new InstantCommand();
+        return new FunctionalCommand(
+            () -> {},
+            () -> m_shooter.set(.5),
+            interrupted -> m_shooter.set(0),
+            () -> false);
     }
 }

@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
     enableDrive.onTrue(m_driveCommand);
     autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand));
     //autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand.andThen(m_driveCommand)));
-    leftTrigger.whileTrue( m_intake.grabNote(m_controller1.getLeftTriggerAxis()));
+    leftTrigger.whileTrue(m_intake.grabNote(m_controller1));
     if (enableDrive.getAsBoolean()) 
     {
       m_enableDrive = true;

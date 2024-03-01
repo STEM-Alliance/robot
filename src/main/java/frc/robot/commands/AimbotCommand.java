@@ -35,6 +35,7 @@ public class AimbotCommand extends Command {
   PIDController m_DrivePID = new PIDController(Configuration.kAutoDriveP, Configuration.kAutoDriveI, Configuration.kAutoDriveD);
   boolean m_doneAiming = false;
   double m_tag;
+  double xSet;
 
   
   /**
@@ -66,6 +67,8 @@ public class AimbotCommand extends Command {
   @Override
   public void execute() 
   {
+
+    
     // LimeLight Values
     LimelightHelpers limelightHelpers = new LimelightHelpers();
     
@@ -100,14 +103,14 @@ public class AimbotCommand extends Command {
       
       double xCaclulated = m_xPID.calculate(x, 0);
       
-      if(xCaclulated > Configuration.kAimSpeedLimit)
+      if(xCaclulated > -Configuration.kAimSpeedLimit)
       {
-        Math.min(Configuration.kAimSpeedLimit,
+        xSet = Math.min(-Configuration.kAimSpeedLimit,
         xCaclulated);
       }
-      else if (xCaclulated < -Configuration.kAimSpeedLimit)
+      else if (xCaclulated < Configuration.kAimSpeedLimit)
       {
-        Math.max(-Configuration.kAimSpeedLimit,
+        xSet = Math.max(Configuration.kAimSpeedLimit,
         xCaclulated);
       }
      
@@ -131,7 +134,7 @@ public class AimbotCommand extends Command {
       }
       else
       {
-        m_swerve.drive(0, 0, xCaclulated , false, 0.02);
+        m_swerve.drive(0, 0, xSet , false, 0.02);
       }
     }
       
