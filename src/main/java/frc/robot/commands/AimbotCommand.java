@@ -35,7 +35,6 @@ public class AimbotCommand extends Command {
   PIDController m_DrivePID = new PIDController(Configuration.kAutoDriveP, Configuration.kAutoDriveI, Configuration.kAutoDriveD);
   boolean m_doneAiming = false;
   double m_tag;
-  double xSet;
 
   
   /**
@@ -67,26 +66,20 @@ public class AimbotCommand extends Command {
   @Override
   public void execute() 
   {
-
-    
     // LimeLight Values
     LimelightHelpers limelightHelpers = new LimelightHelpers();
     
-    double tx1 = LimelightHelpers.getTX(" ");
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry tx = table.getEntry("tx");
     NetworkTableEntry tz = table.getEntry("ty");
     NetworkTableEntry ta = table.getEntry("ta");
     NetworkTableEntry tid = table.getEntry("tid");
 
-    double x = tx1;
+    double x = tx.getDouble(0);
     double z = tz.getDouble(0.0);
     double area = ta.getDouble(0.0);
     double tidnum = tid.getDouble(0);
 
-     
-    
-    
     // getting alliance and assigning tag
     Optional<Alliance> ally = DriverStation.getAlliance();
     if (ally.isPresent()) {
@@ -94,37 +87,33 @@ public class AimbotCommand extends Command {
         m_tag = 4;
       }
       if (ally.get() == Alliance.Blue) {
-          m_tag = 7;
+        m_tag = 7;
       }
     }
+
     // Geting tag and driving to the zero point
     if (tidnum == m_tag)
     {
-      
       double xCaclulated = m_xPID.calculate(x, 0);
       
-      if(xCaclulated > -Configuration.kAimSpeedLimit)
+      if(xCaclulated > Configuration.kAimSpeedLimit)
       {
-        xSet = Math.min(-Configuration.kAimSpeedLimit,
-        xCaclulated);
+        xCaclulated = Configuration.kAimSpeedLimit;
       }
-      else if (xCaclulated < Configuration.kAimSpeedLimit)
+      else if (xCaclulated < -Configuration.kAimSpeedLimit)
       {
-        xSet = Math.max(Configuration.kAimSpeedLimit,
-        xCaclulated);
+        xCaclulated = -Configuration.kAimSpeedLimit;
       }
-     
+      
       //post to smart dashboard periodically
       SmartDashboard.putNumber("LimelightX", x);
       SmartDashboard.putNumber("LimelightZ", z);
       SmartDashboard.putNumber("LimelightArea", area);
-      SmartDashboard.putNumber("x", x);
       SmartDashboard.putNumber("xCaculated", xCaclulated);
       
       SmartDashboard.putBoolean("done Aiming", m_doneAiming);
       
       SmartDashboard.putData("Pid", m_xPID);
-      System.out.println("x: " + Math.abs(x));
 
       // Stoping command
       if (Math.abs(x) < Configuration.kAimbotStop)
@@ -134,8 +123,9 @@ public class AimbotCommand extends Command {
       }
       else
       {
-        m_swerve.drive(0, 0, xSet , false, 0.02);
+        m_swerve.drive(0, 0, xCaclulated , false, 0.02);
       }
+
     }
       
     SmartDashboard.putNumber("ZeroCounter", m_counter++);
@@ -154,3 +144,4 @@ public class AimbotCommand extends Command {
     return m_doneAiming;
   }
 }
+

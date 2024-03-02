@@ -27,7 +27,7 @@ public class Configuration {
     static public double kDriveKp = 0.3;
     static public double kDriveKi = 0;
     static public double kDriveKd = 0;
-    static public double kDriveKs = 2.35;
+    static public double kDriveKs = 0.0;
     static public double kDriveKv = 0.53;
 
     static public double kSwerveKp = 0.5;
@@ -63,7 +63,7 @@ public class Configuration {
     static public double kAimP = 0.01;
     static public double kAimI = 0.01;
     static public double kAimD = 0;
-    static public double kAimSpeedLimit = 0.25; // This is in radians per second
+    static public double kAimSpeedLimit = 0.001; // This is in radians per second
     static public double kAimbotStop = 1;
     static public double kAutoDriveP = .04;
     static public double kAutoDriveI = .04;
