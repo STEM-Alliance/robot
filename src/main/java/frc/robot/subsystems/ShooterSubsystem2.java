@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Configuration;
+import frc.robot.LoggedNumber;
 import frc.robot.Robot;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -26,18 +27,8 @@ public class ShooterSubsystem2 extends SubsystemBase {
     private final PIDController m_shooterPID = new PIDController(Configuration.kShooterArmKp,
     Configuration.kShooterArmKi, Configuration.kShooterArmKd);
 
-    // private final PIDController m_shooterPID = new PIDController(Configuration.kShooterArmKp,
-    //     Configuration.kShooterArmKi, Configuration.kShooterArmKd);
-
-    // private final IntakeSubsystem m_intake;
-    // private final DigitalInput m_noteSensor;
-    // private final LimelightSubsystem m_limelight;
-
-    private int anglePosition = 0;
-    private final double[] anglePositions = Configuration.kShooterArmPositions;
-
-    private final int[] shooterMotorChannels = Configuration.kShooterMotorChannels;
-    private final int shooterArmMotorChannel = Configuration.kShooterArmMotorChannel;
+    private final int[] shooterMotorChannels = Configuration.kShooterMotorCanID;
+    private final int shooterArmMotorChannel = Configuration.kShooterArmMotorCanID;
 
     double m_desiredAngle = 0;
 
@@ -80,11 +71,14 @@ public class ShooterSubsystem2 extends SubsystemBase {
             output = -Configuration.kArmMotorLimit;
         }
 
+        LoggedNumber.getInstance().logNumber("DesiredAngle", m_desiredAngle);
+        LoggedNumber.getInstance().logNumber("CurrentAngle", currentAngle);
+        LoggedNumber.getInstance().logNumber("ArmPIDOut", output);
+        LoggedNumber.getInstance().logNumber("ArmHighLimit", m_upperLimitSwitch.get() ? 1.0 : 0.0);
+        LoggedNumber.getInstance().logNumber("ArmLowLimit", m_lowLimitSwitch.get() ? 1.0 : 0);
+        LoggedNumber.getInstance().logNumber("ArmCurrent", m_armMotor.getOutputCurrent());
         SmartDashboard.putNumber("m_desiredAngle", m_desiredAngle);
         SmartDashboard.putNumber("currentAngle", currentAngle);
-        SmartDashboard.putNumber("armPID", output);
-        SmartDashboard.putBoolean("armLowerLimit", m_lowLimitSwitch.get());
-        SmartDashboard.putBoolean("armUpperLimit", m_upperLimitSwitch.get());
         m_armMotor.set(output);
     }
 
@@ -138,9 +132,9 @@ public class ShooterSubsystem2 extends SubsystemBase {
         }
     }
 
-    // public Command raiseShooter(double rate) {
-    //     return new InstantCommand(() -> m_desiredAngle += rate);
-    // }
+    public Command setShootPosition() {
+        return new InstantCommand(() -> m_desiredAngle = Configuration.kShooterArmPositions[0]);
+    }
 
     // public Command lowerShooter(double rate) {
     //     return new InstantCommand(() -> m_desiredAngle += rate);

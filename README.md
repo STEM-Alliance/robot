@@ -15,8 +15,11 @@
 2. then type `WPILib: Manage`
 3. then go down to `Install New librariers (online)`
 4. Paste the following into the dialog box:
-This link may not work.
-`https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix-frc2024-latest.json`
+This link should be for the Pigeons and CANSparkMax
+`https://maven.ctr-electronics.com/release/com/ctre/phoenix6/latest/Phoenix6-frc2024-latest.json`
+
+PathPlanner lib:
+`https://3015rangerrobotics.github.io/pathplannerlib/PathplannerLib.json`
 
 Repeat steps 1 through 3 then paste:
 `https://www.kauailabs.com/dist/frc/2024/navx_frc.json`

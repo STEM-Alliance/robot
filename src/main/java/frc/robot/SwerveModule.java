@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 // Logging stuff
@@ -72,6 +73,9 @@ public class SwerveModule {
     m_swerveIndex = swerveIndex;
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
+
+    m_turningMotor.setIdleMode(IdleMode.kBrake);
+    m_driveMotor.setIdleMode(IdleMode.kBrake);
 
     m_driveMotor.setSmartCurrentLimit(Configuration.NeoLimit);
     m_turningMotor.setSmartCurrentLimit(Configuration.NeoLimit);
@@ -151,11 +155,12 @@ public class SwerveModule {
       //m_driveMotor.set(driveOutput + driveFeedforward);
       m_driveMotor.set(driveFeedforward);
       //m_turningMotor.set(turnOutput + turnFeedforward);
-      m_turningMotor.set(turnOutput + turnFeedforward);
+      var turningMotorOutput = turnOutput + turnFeedforward;
+      m_turningMotor.set(turningMotorOutput);
 
-      // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_ff", driveFeedforward / 8, true);
-      // LoggedNumber.getInstance().logNumber(m_swerveIndex + "_abspos", m_absolutePos.getValue(), true);
-    
+      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_drive", driveFeedforward);
+      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_swerve", turningMotorOutput);
+      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_abspos", m_absolutePos.getValue());
   }
 
   public void setGains(double kp, double ki, double kd, double ks, double kv) {
@@ -185,5 +190,14 @@ public class SwerveModule {
 
   public double getAbsPos() {
     return m_absolutePos.getValue();
+  }
+
+  public void setBrake(boolean enabled) {
+    if (enabled) {
+      m_driveMotor.setIdleMode(IdleMode.kBrake);
+    }
+    else {
+      m_driveMotor.setIdleMode(IdleMode.kCoast);
+    }
   }
 }

@@ -4,30 +4,25 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Configuration;
-import frc.robot.Constants;
 import frc.robot.LoggedNumber;
 import frc.robot.SwerveModule;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import java.math.*;
@@ -41,10 +36,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   Translation2d m_backLeftLocation = Configuration.kSwerveTranslations[2];
   Translation2d m_backRightLocation = Configuration.kSwerveTranslations[3];
 
-  private final int[] frontLeftChannels = Configuration.kSwerveFLChannels;
-  private final int[] frontRightChannels = Configuration.kSwerveFRChannels;
-  private final int[] backLeftChannels = Configuration.kSwerveBLChannels;
-  private final int[] backRightChannels = Configuration.kSwerveBRChannels;
+  private final int[] frontLeftChannels = Configuration.kSwerveFLCanID;
+  private final int[] frontRightChannels = Configuration.kSwerveFRCanID;
+  private final int[] backLeftChannels = Configuration.kSwerveBLCanID;
+  private final int[] backRightChannels = Configuration.kSwerveBRCanID;
 
   private final SwerveModule m_frontLeft = new SwerveModule(
     frontLeftChannels[0], frontLeftChannels[1], frontLeftChannels[2], frontLeftChannels[3]);
@@ -59,11 +54,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
     backRightChannels[0], backRightChannels[1], backRightChannels[2], backRightChannels[3]);
       
   private final SwerveModule m_modules[] = {m_frontLeft, m_frontRight, m_backLeft, m_backRight};
-  private final Pigeon2 m_pigeon2 = new Pigeon2(Configuration.kPigeon2Channel);
+  private final Pigeon2 m_pigeon2 = new Pigeon2(Configuration.kPigeon2CanID);
 
   // Creating my kinematics object using the module locations
   SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
   m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+
+  boolean m_turbo = false;
+
+  private final SwerveDriveOdometry m_odometry =
+    new SwerveDriveOdometry(
+        m_kinematics,
+        m_pigeon2.getRotation2d(),
+        getModulePositions());
 
   private final SwerveDrivePoseEstimator m_poseEstimator =
     new SwerveDrivePoseEstimator(
@@ -73,12 +76,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
       getPose()
     );
 
-  private final SwerveDriveOdometry m_odometry =
-    new SwerveDriveOdometry(
-        m_kinematics,
-        m_pigeon2.getRotation2d(),
-        getModulePositions());
-
   private Field2d field = new Field2d();
 
   /** Creates a new DriveSubSystem. */
@@ -87,26 +84,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // https://github.com/mjansen4857/pathplanner/tree/main/examples
     // Configure AutoBuilder
-    // AutoBuilder.configureHolonomic(
-    //   this::getPose,
-    //   this::resetPose,
-    //   this::getChassisSpeeds,
-    //   this::pathplannerDrive,
-    //   Configuration.kPathFollowerConfig,
+    AutoBuilder.configureHolonomic(
+      this::getPose,
+      this::resetPose,
+      this::getChassisSpeeds,
+      this::driveRobotSpeeds,
+      Configuration.kPathFollowerConfig,
 
-    //   () -> {
-    //       // Boolean supplier that controls when the path will be mirrored for the red alliance
-    //       // This will flip the path being followed to the red side of the field.
-    //       // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+      () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-    //       var alliance = DriverStation.getAlliance();
-    //       if (alliance.isPresent()) {
-    //           return alliance.get() == DriverStation.Alliance.Red;
-    //       }
-    //       return false;
-    //   },
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+              return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+      },
 
-    //   this);
+      this);
   }
 
   public void periodic() {
@@ -137,15 +134,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 periodSeconds));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
 
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].setDesiredState(swerveModuleStates[i]);
+      LoggedNumber.getInstance().logNumber("Swerve_" + i + "_drive", swerveModuleStates[i].speedMetersPerSecond);
+      LoggedNumber.getInstance().logNumber("Swerve_" + i + "_angle", swerveModuleStates[i].angle.getDegrees());
+    }
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_backLeft.setDesiredState(swerveModuleStates[2]);
-    m_backRight.setDesiredState(swerveModuleStates[3]);
-
-    // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
-    // SmartDashboard.putNumber("vx", xSpeed);
-    // SmartDashboard.putNumber("vy", ySpeed);
-    // SmartDashboard.putNumber("omega", rot);
+    LoggedNumber.getInstance().logNumber("Vx", xSpeed);
+    LoggedNumber.getInstance().logNumber("Vy", ySpeed);
+    LoggedNumber.getInstance().logNumber("Omega", rot);
   }
 
   public void driveFieldSpeeds(ChassisSpeeds fieldSpeeds) {
@@ -161,10 +158,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
 
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_backLeft.setDesiredState(swerveModuleStates[2]);
-    m_backRight.setDesiredState(swerveModuleStates[3]);
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].setDesiredState(swerveModuleStates[i]);
+    }
   }
 
   public SwerveModulePosition[] getModulePositions() {
@@ -196,8 +192,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    //return m_odometry.getPoseMeters();
-    return new Pose2d();
+    // TODO: This is broke
+    return m_odometry.getPoseMeters();
   }
 
   public void resetPose(Pose2d resetPose) {
@@ -210,34 +206,33 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Command runPath() {
     // // Load the path you want to follow using its name in the GUI
-    // PathPlannerPath path = PathPlannerPath.fromPathFile("Test1_Straight");
+    PathPlannerPath path = PathPlannerPath.fromPathFile("Test1_Straight");
 
     // // Create a path following command using AutoBuilder. This will also trigger event markers.
-    // return AutoBuilder.followPath(path);
-    return new InstantCommand();
+    return AutoBuilder.followPath(path);
+    //return new InstantCommand();
+  }
+
+  private void setBrakeMode(boolean enabled) {
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].setBrake(enabled);
+    }
   }
 
   public Command setBrakeModeCmd() {
-    // TODO: Set the motors to brake mode
-    //    //return new InstantCommand(() -> m_leds.setSpeed(0.61));
-    return new InstantCommand();
+    return new InstantCommand(() -> setBrakeMode(true));
   }
 
   public Command setCoastModeCmd() {
-    // TODO: Set the motors to coast mode
-      return new InstantCommand();
+    return new InstantCommand(() -> setBrakeMode(false));
   }
 
   public Command enableTurbo() {
-    // TODO: Enable turbo mode
-      
-
-      return new InstantCommand();
+      return new InstantCommand(() -> m_turbo = true);
   }
 
   public Command disableTurbo() {
-    // TODO: Disable turbo mode
-      return new InstantCommand();
+      return new InstantCommand(() -> m_turbo = false);
   }
 
   public void setGains(double kp, double ki, double kd, double ks, double kv) {
@@ -246,12 +241,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_backLeft.setGains(kp, ki, kd, ks, kv);
     m_backRight.setGains(kp, ki, kd, ks, kv);
 
-    field.setRobotPose(getPose());
-    // SmartDashboard.putData("Field", field);
-    // SmartDashboard.putNumber("pigeon rotation", m_pigeon2.getAngle());
-    // SmartDashboard.putNumber("pose x", getPose().getX());
-    // SmartDashboard.putNumber("pose y", getPose().getY());
-    // SmartDashboard.putNumber("pose rotation", getPose().getRotation().getDegrees());
+    //field.setRobotPose(getPose());
   }
 
   public void homeSwerve() {

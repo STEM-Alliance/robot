@@ -27,13 +27,15 @@ public class Configuration {
     static public double kMaxAngularAcceleration = Math.pow(2 * Math.PI, 2);
     static public double GeneralDeadband = 0.2;
 
-    // PID Values
+    // PID and Feedforward gains for the drive motors
+    // NOTE: We are running the drive motors in open loop mode, using only the feedfoward.
     static public double kDriveKp = 0;
     static public double kDriveKi = 0;
     static public double kDriveKd = 0;
     static public double kDriveKs = 0.1;
     static public double kDriveKv = 0.25;
 
+    // PID and feedforward gains for the swerve motors
     static public double kSwerveKp = 0.55; // 0.65
     static public double kSwerveKi = 0; // 0.1
     static public double kSwerveKd = 0; // 0
@@ -54,13 +56,14 @@ public class Configuration {
     };
 
     // Module Index, Drive Motor Channel, Swerve Motor Channel, Analog Encoder Channel
-    static public int[] kSwerveFLChannels = new int[]{0, 1, 2, 0};
-    static public int[] kSwerveFRChannels = new int[]{1, 3, 4, 1};
-    static public int[] kSwerveBLChannels = new int[]{2, 5, 6, 2};
-    static public int[] kSwerveBRChannels = new int[]{3, 7, 8, 3};
+    static public int[] kSwerveFLCanID = new int[]{0, 1, 2, 0};
+    static public int[] kSwerveFRCanID = new int[]{1, 3, 4, 1};
+    static public int[] kSwerveBLCanID = new int[]{2, 5, 6, 2};
+    static public int[] kSwerveBRCanID = new int[]{3, 7, 8, 3};
 
-    static public int kPigeon2Channel = 50;
+    static public int kPigeon2CanID = 50;
 
+    // NOTE: These seem to drift
     static public double[] kZeroPosition = new double[]{3790, 1926, 2491, 370};
     static public double kEncoderRes = 4096;
 
@@ -73,7 +76,9 @@ public class Configuration {
             new ReplanningConfig()
         );
     
-    // Shooter Configuration
+    /********************************************
+     * Shooter Configuration
+     *******************************************/
     static public double kShooterArmKp = 0.1; // tune?
     static public double kShooterArmKi = 0;
     static public double kShooterArmKd = 0;
@@ -83,8 +88,8 @@ public class Configuration {
     static public double kArmBackwardsLimit = 60; // need to find working value for this
     static public double kMinFlywheelSpeed = 90;
 
-    static public int[] kShooterMotorChannels = new int[]{11, 12};
-    static public int kShooterArmMotorChannel = 14;
+    static public int[] kShooterMotorCanID = new int[]{11, 12};
+    static public int kShooterArmMotorCanID = 14;
     static public int kLowArmLimitswitchChannel = 1;
     static public int kUpperArmLimitswitchChannel = 2;
     static public int kNoteSensorChannel = 0;
@@ -93,23 +98,28 @@ public class Configuration {
     static public double kUnhookPosition = 10;
     static public double kLoweredPosition = -50;
 
-
     /* In rotations, travel position (up) is 0
     Intake position, Travel position, Amp Position */
-    static public double[] kShooterArmPositions = new double[]{-25, 0, 40};
+    static public double[] kShooterArmPositions = new double[]{-50, 0, 40};
 
+    /********************************************
+     * Intake Configuration
+     *******************************************/
     // Intake Configuration
-    static public int kIntakeMotorChannel = 10;
+    static public int kIntakeMotorCanID = 10;
 
-    // Limelight Configuration
+    /********************************************
+     * Limelight
+     *******************************************/
     static public String kLimelightName = "limelight";
 
-    // Climber Configuration
+    /********************************************
+     * Climber Configuration
+     *******************************************/
     static public double kClimberAligningSpeed = 1;
     static public int kStageSensorChannel = 2;
-    static public int kClimbMotor = 13;
+    static public int kClimbMotorCanID = 13;
     
-
     /********************************************
      * Motor Current Limits
      * P = VI

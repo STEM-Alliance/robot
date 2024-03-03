@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import javax.lang.model.util.ElementScanner14;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -17,8 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.subsystems.*;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -50,7 +48,7 @@ public class Robot extends TimedRobot {
 
   LEDSubsystem m_leds = new LEDSubsystem();
 
-  ClimberSubsystem m_climber = new ClimberSubsystem(Configuration.kClimbMotor);
+  ClimberSubsystem m_climber = new ClimberSubsystem(Configuration.kClimbMotorCanID);
   Command m_climbUp;
   Command m_climbDown;
 
@@ -172,22 +170,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    //SmartDashboard.putBoolean("lightsensor", m_lightSensor.get());
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-    // driveWithJoystick(true);
-    double kp = SmartDashboard.getNumber("kp", Configuration.kSwerveKp);
-    double ki = SmartDashboard.getNumber("ki", Configuration.kSwerveKi);
-    double kd = SmartDashboard.getNumber("kd", Configuration.kSwerveKd);
-
-    double ks = SmartDashboard.getNumber("ks", Configuration.kSwerveKs);
-    double kv = SmartDashboard.getNumber("kv", Configuration.kSwerveKv);
-
-    m_swerve.setGains(kp, ki, kd, ks, kv);
 
     if (m_controller2.getRightTriggerAxis() > 0.1)
     {
@@ -217,6 +204,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    //m_autonomousCommand = getUnhookAndShoot();
     m_autonomousCommand = getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -225,11 +213,15 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public Command getAutonomousCommand() {
+  public Command getUnhookAndShoot() {
     return m_shooter.unhookShooter().andThen(
            m_shooter.lowerShooter().andThen(
            m_shooter.spinShooter(false).andThen(
            Commands.parallel(m_shooter.spinShooter(true), m_intake.fwdIntake(true)))));
+  }
+
+  public Command getAutonomousCommand() {
+    return new PathPlannerAuto("Auto1");
   }
 
   /** This function is called periodically during autonomous. */
@@ -279,9 +271,12 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void driveWithJoystick(boolean fieldRelative) {
-    var expLeftX = exponentialScaling(m_controller1.getLeftX(), Configuration.kExpControl); //getHID()
-    var expLeftY = exponentialScaling(m_controller1.getLeftY(), Configuration.kExpControl);
-    var expOmega = exponentialScaling(m_controller1.getRightX(), Configuration.kExpControl);
+    var leftX = m_controller1.getLeftX();
+    var leftY = m_controller1.getLeftY();
+    var rightX = m_controller1.getRightX();
+    var expLeftX = exponentialScaling(leftX, Configuration.kExpControl); //getHID()
+    var expLeftY = exponentialScaling(leftY, Configuration.kExpControl);
+    var expOmega = exponentialScaling(rightX, Configuration.kExpControl);
 
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
@@ -303,11 +298,21 @@ public class Robot extends TimedRobot {
     var rot = -m_rotLimiter.calculate(MathUtil.applyDeadband(expOmega, Math.pow(
       Configuration.GeneralDeadband, Configuration.kExpControl))) * Configuration.kMaxAngularSpeed;
 
+    LoggedNumber.getInstance().logNumber("rot_prelimit", rot);
+
     // Limit rotation to 1 - the driving omega factor when driving any direction
     rot = rot * (1 - (Configuration.kDrivingOmegaFactor *
       (Math.abs(expLeftX) + Math.abs(expLeftY))));
     
     m_swerve.controllerDrive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
+  
+    LoggedNumber.getInstance().logNumber("LeftX", leftX);
+    LoggedNumber.getInstance().logNumber("LeftY", leftY);
+    LoggedNumber.getInstance().logNumber("RightX", rightX);
+    LoggedNumber.getInstance().logNumber("expLeftX", expLeftX);
+    LoggedNumber.getInstance().logNumber("expLeftY", expLeftY);
+    LoggedNumber.getInstance().logNumber("expOmega", expOmega);
+  
   }
 
   private void moveArm() {
@@ -319,7 +324,6 @@ public class Robot extends TimedRobot {
     final var ySpeed = MathUtil.applyDeadband(expLeftY, Math.pow(
           Configuration.GeneralDeadband, Configuration.kExpControl));
 
-    SmartDashboard.putNumber("arm yspeed", ySpeed);
     m_shooter.setPosition(ySpeed);
   }
 
