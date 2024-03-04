@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import javax.lang.model.util.ElementScanner14;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
@@ -25,8 +27,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * project.
  */
 public class Robot extends TimedRobot {
-  // private DigitalInput m_lightSensor = new DigitalInput(0);
-  
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
@@ -34,9 +34,11 @@ public class Robot extends TimedRobot {
   Command m_driveCommand;
 
   public DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
-  //public LimelightSubsystem m_limelight = new LimelightSubsystem(this);
   public IntakeSubsystem m_intake = new IntakeSubsystem(this);
-  public ShooterSubsystem m_shooter = new ShooterSubsystem();
+  public ShooterSubsystem2 m_shooter = new ShooterSubsystem2();
+  
+
+  public LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
 
   CommandXboxController m_controller1 = new CommandXboxController(0);
   CommandXboxController m_controller2 = new CommandXboxController(1);
@@ -47,6 +49,11 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(Configuration.kOmegaSlewRateLimit);
 
   LEDSubsystem m_leds = new LEDSubsystem();
+
+  ClimberSubsystem m_climber = new ClimberSubsystem(Configuration.kClimbMotor);
+  Command m_climbUp;
+  Command m_climbDown;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -64,6 +71,10 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    //m_shooter.register();
+    m_swerve.homeSwerve();
+    // m_swerve.register();
   
     // Controller 1
     final Trigger brake = m_controller1.b();
@@ -80,6 +91,8 @@ public class Robot extends TimedRobot {
     final Trigger fwdIntake = m_controller2.a();
     final Trigger revIntake = m_controller2.b();
     final Trigger shoot = m_controller2.y();
+    final Trigger climbUp = m_controller2.rightTrigger();
+    final Trigger climbDown = m_controller2.leftTrigger();
 
     // up.onTrue(m_leds.red());
     // left.onTrue(m_leds.yellow());
@@ -93,10 +106,10 @@ public class Robot extends TimedRobot {
     runPath.onTrue(m_swerve.runPath());
     homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
 
-    raiseArm.whileTrue(m_shooter.raiseShooter(m_controller1.getRightTriggerAxis()));
-    lowerArm.whileTrue(m_shooter.lowerShooter(m_controller1.getLeftTriggerAxis()));
-    armPositionUp.onTrue(m_shooter.movePositionUp());
-    armPositionDown.onTrue(m_shooter.movePositionDown());
+    //raiseArm.whileTrue(m_shooter.raiseShooter(m_controller1.getRightTriggerAxis()));
+    //lowerArm.whileTrue(m_shooter.lowerShooter(m_controller1.getLeftTriggerAxis()));
+    // armPositionUp.onTrue(m_shooter.movePositionUp());
+    // armPositionDown.onTrue(m_shooter.movePositionDown());
 
     m_swerve.homeSwerve();
     
@@ -104,8 +117,38 @@ public class Robot extends TimedRobot {
     shoot.whileTrue((m_shooter.spinShooter(false).andThen(
       Commands.parallel(m_shooter.spinShooter(true), m_intake.fwdIntake(true)))));
 
-    //leftTrigger.onTrue(m_intake.grabNote());
-    //rightTrigger.onTrue(m_intake.shootNote());
+    // climbUp.whileTrue(m_climber.climbUp());
+    // climbDown.whileTrue(m_climber.climbDown());
+    // Controller 1 (Driver)
+    // final Trigger runPath = m_controller1.x();
+    // final Trigger homeSwerve = m_controller1.y();
+
+    // runPath.onTrue(m_swerve.runPath());
+    // homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
+
+    // final Trigger armPosUp = m_controller1.leftTrigger();
+    // final Trigger armPosDown = m_controller1.leftBumper();
+    // final Trigger noteIntake = m_controller1.rightBumper();
+    // final Trigger noteOuttake = m_controller1.rightTrigger();
+
+    // armPosUp.onTrue(m_shooter.movePositionUp());
+    // armPosDown.onTrue(m_shooter.movePositionDown());
+
+    // noteIntake.whileTrue(m_intake.fwdIntake(false));
+    // noteOuttake.whileTrue(m_intake.revIntake());
+
+    // // Controller 2
+    // final Trigger shootSpeaker = m_controller2.y();
+    // final Trigger shootAmp = m_controller2.b();
+
+    // // Spin the shooter up to speed, and then keep it at speed while driving the intake
+    // shootSpeaker.whileTrue(m_shooter.spinShooter(false).andThen(Commands.parallel
+    //   (m_shooter.spinShooter(true), m_intake.fwdIntake(true))));
+
+    // final Trigger climbSequence = m_controller2.a();
+
+    // leftTrigger.onTrue(m_intake.grabNote());
+    // rightTrigger.onTrue(m_intake.shootNote());
 
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts
@@ -145,7 +188,24 @@ public class Robot extends TimedRobot {
     double kv = SmartDashboard.getNumber("kv", Configuration.kSwerveKv);
 
     m_swerve.setGains(kp, ki, kd, ks, kv);
-}
+
+    if (m_controller2.getRightTriggerAxis() > 0.1)
+    {
+      m_climber.runClimber(m_controller2.getRightTriggerAxis());
+    }
+    else if (m_controller2.getLeftTriggerAxis() > 0.1)
+    {
+      m_climber.runClimber(-m_controller2.getLeftTriggerAxis());
+    }
+    else 
+    {
+      m_climber.runClimber(0);
+    }
+
+    // m_shooter.movementLoop();
+    // Uncomment this line to print the motor positions.
+    m_swerve.printHomePos();
+  }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
@@ -161,14 +221,15 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      //m_autonomousCommand.schedule();
+      m_autonomousCommand.schedule();
     }
-    //m_shooter.unhookShooter();
   }
 
   public Command getAutonomousCommand() {
-    return m_shooter.unhookShooter();//.andThen(m_shooter.lowerShooter())
-      //.andth
+    return m_shooter.unhookShooter().andThen(
+           m_shooter.lowerShooter().andThen(
+           m_shooter.spinShooter(false).andThen(
+           Commands.parallel(m_shooter.spinShooter(true), m_intake.fwdIntake(true)))));
   }
 
   /** This function is called periodically during autonomous. */
@@ -183,6 +244,9 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    // angle arm not called during this period
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -215,7 +279,7 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void driveWithJoystick(boolean fieldRelative) {
-    var expLeftX = exponentialScaling(m_controller1.getLeftX(), Configuration.kExpControl);
+    var expLeftX = exponentialScaling(m_controller1.getLeftX(), Configuration.kExpControl); //getHID()
     var expLeftY = exponentialScaling(m_controller1.getLeftY(), Configuration.kExpControl);
     var expOmega = exponentialScaling(m_controller1.getRightX(), Configuration.kExpControl);
 

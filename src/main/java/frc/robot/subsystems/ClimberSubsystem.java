@@ -1,50 +1,52 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DigitalInput;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configuration;
 
 public class ClimberSubsystem extends SubsystemBase {
-    private final DigitalInput m_stageSensor;
-    private final ShooterSubsystem m_shooter;
-    private final DrivetrainSubsystem m_swerve;
-    private final LimelightSubsystem m_limelight;
+    CANSparkMax m_climbMotor;
 
     /** Creates a new ClimberSubsystem. */
-    public ClimberSubsystem(LimelightSubsystem m_limelightsubsystem,
-        ShooterSubsystem m_shootersubsystem, DrivetrainSubsystem m_swervesubsystem) {
-        
-        m_limelight = m_limelightsubsystem;
-        m_shooter = m_shootersubsystem;
-        m_swerve = m_swervesubsystem;
-
-        m_stageSensor = new DigitalInput(Configuration.kStageSensorChannel);
+    public ClimberSubsystem(int climbMotor) {
+        m_climbMotor = new CANSparkMax(climbMotor, MotorType.kBrushless);
+        m_climbMotor.setSmartCurrentLimit(Configuration.Neo550Limit);
     }
 
-    public void climbChain() {
-        boolean isAligned = m_limelight.alignToStage();
-
-        while (!isAligned) {
-            return;
-        }
-
-        m_shooter.moveToIntakePos();
-
-        /* While facing the stage, drive forward until the stage sensor detects
-        that the robot is in position under the stage */
-        while (!m_stageSensor.get())
-        m_swerve.driveRobotSpeeds(new ChassisSpeeds(
-            Configuration.kClimberAligningSpeed, 0, 0));
-
-        deployClimber();
+    public void runClimber(double setpoint) {
+        m_climbMotor.set(setpoint);
     }
 
-    private void deployClimber() {
-        // Once in position under the stage, back out and deploy the climber
-        // Once fully deployed and on the chain, raise the climber
-        // Score in the trap?
-        return;
-    }
-    
+    // public Command climbUp() {
+    //     return new FunctionalCommand(
+    //         () -> {},
+    //         {},
+    //         interrupted -> {},
+    //         {},
+    //         this);
+    // }
+
+
+    // // public Command climbUp() {
+    // //     return new FunctionalCommand(
+    // //         () -> m_climbMotor.set(0),
+    // //         () -> {},
+    // //         interrupted -> m_climbMotor.set(0),
+    // //         () -> m_climbMotor.set(0.5),
+    // //         this);
+    // // }
+
+    // public Command climbDown() {
+    // return new FunctionalCommand(
+    //     () -> m_climbMotor.set(0),
+    //     () -> {},
+    //     interrupted -> m_climbMotor.set(0),
+    //     () -> m_climbMotor.set(-0.5),
+    //     this);
+    // }
 }

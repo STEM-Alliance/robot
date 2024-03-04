@@ -22,8 +22,8 @@ public class Configuration {
     static public double kDrivingOmegaFactor = 0.8;
 
     // Max speeds
-    static public double kMaxSpeed = 3; // 3 meters per second
-    static public double kMaxAngularSpeed = 4 * Math.PI; // 2 rotations per second 
+    static public double kMaxSpeed = 2.5; // 3 meters per second
+    static public double kMaxAngularSpeed = 2 * Math.PI; // 2 rotations per second 
     static public double kMaxAngularAcceleration = Math.pow(2 * Math.PI, 2);
     static public double GeneralDeadband = 0.2;
 
@@ -34,7 +34,7 @@ public class Configuration {
     static public double kDriveKs = 0.1;
     static public double kDriveKv = 0.25;
 
-    static public double kSwerveKp = 0.6; // 0.65
+    static public double kSwerveKp = 0.55; // 0.65
     static public double kSwerveKi = 0; // 0.1
     static public double kSwerveKd = 0; // 0
     static public double kSwerveKs = 0;
@@ -61,7 +61,7 @@ public class Configuration {
 
     static public int kPigeon2Channel = 50;
 
-    static public double[] kZeroPosition = new double[]{1885, 4010, 2025, 2415};
+    static public double[] kZeroPosition = new double[]{3790, 1926, 2491, 370};
     static public double kEncoderRes = 4096;
 
     static public HolonomicPathFollowerConfig kPathFollowerConfig =
@@ -74,16 +74,25 @@ public class Configuration {
         );
     
     // Shooter Configuration
-    static public double kShooterArmKp = 0.1;
+    static public double kShooterArmKp = 0.1; // tune?
     static public double kShooterArmKi = 0;
     static public double kShooterArmKd = 0;
 
+    static public double kArmAngleFactor = 1;
+    static public double kArmMotorLimit = 0.3;
+    static public double kArmBackwardsLimit = 60; // need to find working value for this
+    static public double kMinFlywheelSpeed = 90;
+
     static public int[] kShooterMotorChannels = new int[]{11, 12};
     static public int kShooterArmMotorChannel = 14;
+    static public int kLowArmLimitswitchChannel = 1;
+    static public int kUpperArmLimitswitchChannel = 2;
     static public int kNoteSensorChannel = 0;
-    static public int kArmLimitswitchChannel = 1;
-    static public double kArmBackwardsLimit = 100;
-    static public double kMinFlywheelSpeed = 85;
+
+    static public double kTargetError = 2;
+    static public double kUnhookPosition = 10;
+    static public double kLoweredPosition = -50;
+
 
     /* In rotations, travel position (up) is 0
     Intake position, Travel position, Amp Position */
@@ -92,10 +101,13 @@ public class Configuration {
     // Intake Configuration
     static public int kIntakeMotorChannel = 10;
 
+    // Limelight Configuration
+    static public String kLimelightName = "limelight";
+
     // Climber Configuration
     static public double kClimberAligningSpeed = 1;
     static public int kStageSensorChannel = 2;
-    static public int kClimberChannel = 13;
+    static public int kClimbMotor = 13;
     
 
     /********************************************

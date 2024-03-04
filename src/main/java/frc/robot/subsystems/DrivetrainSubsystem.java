@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Configuration;
@@ -59,8 +63,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   // Creating my kinematics object using the module locations
   SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-  m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
-  );
+  m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
+
+  private final SwerveDrivePoseEstimator m_poseEstimator =
+    new SwerveDrivePoseEstimator(
+      m_kinematics,
+      m_pigeon2.getRotation2d(),
+      getModulePositions(),
+      getPose()
+    );
 
   private final SwerveDriveOdometry m_odometry =
     new SwerveDriveOdometry(
@@ -98,6 +109,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     //   this);
   }
 
+  public void periodic() {
+    updateOdometry();
+  }
+
   public SwerveModule getModule(int offset) {
     return m_modules[offset];
   }
@@ -127,8 +142,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
 
-    updateOdometry();
-
     // We can log things to the Smartdashboard and to a log file. LoggedNumber is what is called a Singleton
     // SmartDashboard.putNumber("vx", xSpeed);
     // SmartDashboard.putNumber("vy", ySpeed);
@@ -152,8 +165,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
-
-    updateOdometry();
   }
 
   public SwerveModulePosition[] getModulePositions() {
@@ -185,11 +196,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    //return m_odometry.getPoseMeters();
+    return new Pose2d();
   }
 
   public void resetPose(Pose2d resetPose) {
     m_odometry.resetPosition(m_pigeon2.getRotation2d(), getModulePositions(), resetPose);
+  }
+
+  public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp) {
+    m_poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
   }
 
   public Command runPath() {
@@ -243,5 +259,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       m_modules[i].syncSwerveEncoder(Configuration.kZeroPosition[i]);
     }    
+  }
+
+  public void printHomePos() {
+    double abspos[] = new double[4];
+    for (int i = 0; i < 4; i++) {
+      abspos[i] = m_modules[i].getAbsPos();
+    }
+    SmartDashboard.putNumberArray("abspos", abspos);
   }
 }
