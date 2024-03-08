@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -73,10 +74,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
       m_kinematics,
       m_pigeon2.getRotation2d(),
       getModulePositions(),
-      getPose()
+      new Pose2d()
     );
 
-  private Field2d field = new Field2d();
+  private Field2d m_field = new Field2d();
 
   /** Creates a new DriveSubSystem. */
   public DrivetrainSubsystem() {
@@ -104,10 +105,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
       },
 
       this);
+
+      //m_poseEstimator.resetPosition(new Rotation2d(45), getModulePositions(), new Pose2d(7.4, 0.42, new Rotation2d(45)));
   }
 
   public void periodic() {
     updateOdometry();
+    m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());
+
+    LoggedNumber.getInstance().logNumber("pig_yaw", m_pigeon2.getYaw().getValue());
+    LoggedNumber.getInstance().logNumber("pig_angle", m_pigeon2.getAngle());
+    SmartDashboard.putNumber("RobotPoseX", getPose().getX());
+    SmartDashboard.putNumber("RobotPoseY", getPose().getY());
+    SmartDashboard.putNumber("RobotPoseDeg", getPose().getRotation().getDegrees());
+    LoggedNumber.getInstance().logNumber("FieldX", m_field.getRobotPose().getX());
+    LoggedNumber.getInstance().logNumber("FieldY", m_field.getRobotPose().getY());
+    LoggedNumber.getInstance().logNumber("FieldRot", m_field.getRobotPose().getRotation().getDegrees());
   }
 
   public SwerveModule getModule(int offset) {
@@ -120,7 +133,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * @param xSpeed Speed of the robot in the x direction (forward).
    * @param ySpeed Speed of the robot in the y direction (sideways).
    * @param rot Angular rate of the robot.
-   * @param fieldRelative Whether the provided x and y speeds are relative to the field.
+   * @param m_fieldRelative Whether the provided x and y speeds are relative to the m_field.
    */
   public void controllerDrive(
       double xSpeed, double ySpeed, double rot, boolean fieldRelative, double periodSeconds) {
@@ -189,15 +202,25 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_odometry.update(
         m_pigeon2.getRotation2d(),
         getModulePositions());
-  }
+    m_poseEstimator.update(m_pigeon2.getRotation2d(), getModulePositions());
+    }
 
   public Pose2d getPose() {
     // TODO: This is broke
-    return m_odometry.getPoseMeters();
+    //return m_odometry.getPoseMeters();
+    return m_poseEstimator.getEstimatedPosition();
   }
 
   public void resetPose(Pose2d resetPose) {
-    m_odometry.resetPosition(m_pigeon2.getRotation2d(), getModulePositions(), resetPose);
+    m_poseEstimator.resetPosition(m_pigeon2.getRotation2d(), getModulePositions(), resetPose);
+  }
+
+  public void setGyro(double robotHeading) {
+    m_pigeon2.setYaw(robotHeading);
+  }
+
+  public Command resetGyro() {
+    return new InstantCommand(() -> {m_pigeon2.reset();});
   }
 
   public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp) {
@@ -210,7 +233,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // // Create a path following command using AutoBuilder. This will also trigger event markers.
     return AutoBuilder.followPath(path);
-    //return new InstantCommand();
   }
 
   private void setBrakeMode(boolean enabled) {
@@ -240,8 +262,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_frontRight.setGains(kp, ki, kd, ks, kv);
     m_backLeft.setGains(kp, ki, kd, ks, kv);
     m_backRight.setGains(kp, ki, kd, ks, kv);
-
-    //field.setRobotPose(getPose());
   }
 
   public void homeSwerve() {
@@ -258,4 +278,5 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
     SmartDashboard.putNumberArray("abspos", abspos);
   }
+
 }

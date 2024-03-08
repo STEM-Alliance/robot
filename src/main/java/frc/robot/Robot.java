@@ -6,16 +6,22 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.commands.AimbotCommand;
 import frc.robot.subsystems.*;
 
 /**
@@ -34,7 +40,6 @@ public class Robot extends TimedRobot {
   public DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
   public IntakeSubsystem m_intake = new IntakeSubsystem(this);
   public ShooterSubsystem2 m_shooter = new ShooterSubsystem2();
-  
 
   public LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
 
@@ -52,6 +57,10 @@ public class Robot extends TimedRobot {
   Command m_climbUp;
   Command m_climbDown;
 
+  final String kShoot = "Shoot";
+  final String kShootAndScoot = "ShootAndScoot";
+  String m_autoSelected;
+  final SendableChooser<String> m_autoChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -59,6 +68,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    CameraServer.startAutomaticCapture();
+
     SmartDashboard.putNumber("kp", Configuration.kSwerveKp);
     SmartDashboard.putNumber("ki", Configuration.kSwerveKi);
     SmartDashboard.putNumber("kd", Configuration.kSwerveKd);
@@ -74,11 +85,13 @@ public class Robot extends TimedRobot {
     m_swerve.homeSwerve();
     // m_swerve.register();
   
-    // Controller 1
+    /**************************************************************
+     * Controller 1 
+     *************************************************************/
     final Trigger brake = m_controller1.b();
     final Trigger coast = m_controller1.a();
     final Trigger enTurbo = m_controller1.rightTrigger();
-    final Trigger runPath = m_controller1.x();
+    final Trigger resetGyro = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
 
     final Trigger raiseArm = m_controller1.rightTrigger();
@@ -86,67 +99,50 @@ public class Robot extends TimedRobot {
     final Trigger armPositionUp = m_controller1.povUp();
     final Trigger armPositionDown = m_controller1.povDown();
 
+    /**************************************************************
+     * Controller 2
+     *************************************************************/
     final Trigger fwdIntake = m_controller2.a();
-    final Trigger revIntake = m_controller2.b();
+    final Trigger autoAim = m_controller2.b();
     final Trigger shoot = m_controller2.y();
+    final Trigger shootAmp = m_controller2.rightBumper();
+    final Trigger ampPos = m_controller2.leftBumper();
+    final Trigger engageClimbBrake = m_controller2.x();
     final Trigger climbUp = m_controller2.rightTrigger();
     final Trigger climbDown = m_controller2.leftTrigger();
-
-    // up.onTrue(m_leds.red());
-    // left.onTrue(m_leds.yellow());
-    // right.onTrue(m_leds.blue());
-    // down.onTrue(m_leds.crazy());
+    final Trigger up = m_controller2.pov(0);
+    final Trigger down = m_controller2.pov(180);
+    final Trigger left = m_controller2.pov(270);
+    final Trigger right = m_controller2.pov(90);
+    
+    
+    up.onTrue(m_leds.red());
+    left.onTrue(m_leds.yellow());
+    right.onTrue(m_leds.blue());
+    down.onTrue(m_leds.crazy());
     brake.onTrue(m_swerve.setBrakeModeCmd());
     coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
+    engageClimbBrake.onTrue(m_climber.toggleClimbBrakeCmd());
+    autoAim.whileTrue(new AimbotCommand(m_swerve));
+    ampPos.onTrue(m_shooter.ampPosition());
 
-    runPath.onTrue(m_swerve.runPath());
+    //runPath.onTrue(m_swerve.runPath());
+    resetGyro.onTrue(m_swerve.resetGyro());
     homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
-
-    //raiseArm.whileTrue(m_shooter.raiseShooter(m_controller1.getRightTriggerAxis()));
-    //lowerArm.whileTrue(m_shooter.lowerShooter(m_controller1.getLeftTriggerAxis()));
-    // armPositionUp.onTrue(m_shooter.movePositionUp());
-    // armPositionDown.onTrue(m_shooter.movePositionDown());
-
     m_swerve.homeSwerve();
     
     fwdIntake.onTrue(m_intake.fwdIntake(false));
-    shoot.whileTrue((m_shooter.spinShooter(false).andThen(
-      Commands.parallel(m_shooter.spinShooter(true), m_intake.fwdIntake(true)))));
+    shoot.whileTrue((m_shooter.spinShooterToVelocity().andThen(
+      m_intake.fwdIntake(true)
+      )));
 
-    // climbUp.whileTrue(m_climber.climbUp());
-    // climbDown.whileTrue(m_climber.climbDown());
-    // Controller 1 (Driver)
-    // final Trigger runPath = m_controller1.x();
-    // final Trigger homeSwerve = m_controller1.y();
+    shootAmp.whileTrue((m_shooter.spinShooterToVelocity(-0.4).andThen(
+      m_intake.fwdIntake(true))));
 
-    // runPath.onTrue(m_swerve.runPath());
-    // homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
-
-    // final Trigger armPosUp = m_controller1.leftTrigger();
-    // final Trigger armPosDown = m_controller1.leftBumper();
-    // final Trigger noteIntake = m_controller1.rightBumper();
-    // final Trigger noteOuttake = m_controller1.rightTrigger();
-
-    // armPosUp.onTrue(m_shooter.movePositionUp());
-    // armPosDown.onTrue(m_shooter.movePositionDown());
-
-    // noteIntake.whileTrue(m_intake.fwdIntake(false));
-    // noteOuttake.whileTrue(m_intake.revIntake());
-
-    // // Controller 2
-    // final Trigger shootSpeaker = m_controller2.y();
-    // final Trigger shootAmp = m_controller2.b();
-
-    // // Spin the shooter up to speed, and then keep it at speed while driving the intake
-    // shootSpeaker.whileTrue(m_shooter.spinShooter(false).andThen(Commands.parallel
-    //   (m_shooter.spinShooter(true), m_intake.fwdIntake(true))));
-
-    // final Trigger climbSequence = m_controller2.a();
-
-    // leftTrigger.onTrue(m_intake.grabNote());
-    // rightTrigger.onTrue(m_intake.shootNote());
+    shoot.onFalse(m_shooter.stopShooter());
+    shootAmp.onFalse(m_shooter.stopShooter());
 
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts
@@ -159,6 +155,11 @@ public class Robot extends TimedRobot {
 
     System.out.println("Driver Station number: " + pos.toString());
     System.out.println("Robot starting");
+
+    m_autoChooser.setDefaultOption(kShoot, kShoot);
+    m_autoChooser.addOption(kShootAndScoot, kShootAndScoot);
+    SmartDashboard.putData("Auto choices", m_autoChooser);
+
   }
 
   /**
@@ -189,6 +190,13 @@ public class Robot extends TimedRobot {
       m_climber.runClimber(0);
     }
 
+    if (m_intake.m_noteSensor.get()) {
+      m_leds.setBlue();
+    }
+    else {
+      m_leds.setRed();
+    }
+
     // m_shooter.movementLoop();
     // Uncomment this line to print the motor positions.
     m_swerve.printHomePos();
@@ -204,10 +212,33 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    //m_autonomousCommand = getUnhookAndShoot();
-    m_autonomousCommand = getAutonomousCommand();
 
-    // schedule the autonomous command (example)
+    m_autoSelected = m_autoChooser.getSelected();
+    System.out.println("Auto selected: " + m_autoSelected);
+    switch (m_autoSelected)
+    {
+      case kShoot:
+        // Put custom auto code here
+        m_autonomousCommand = getUnhookAndShoot();
+        System.out.println("Shoot");
+        break;
+      case kShootAndScoot:
+        m_autonomousCommand = getUnhookAndShoot().andThen(
+                              new WaitCommand(2).andThen(
+                              new InstantCommand(() -> m_swerve.controllerDrive(1.5, 0, 0, false, 0.2)).andThen(
+                              new WaitCommand(2).andThen(
+                              new InstantCommand(() -> m_swerve.controllerDrive(0, 0, 0, false, 0.2))))));
+        break;
+    }
+
+    // Overwrite the current heading with what the limelight sees
+    m_swerve.setGyro(m_limelight.getHeading());
+
+    // Reset the robot pose to what the limelight sees
+    double[] visionMeasurements = m_limelight.getBotPose();
+    m_swerve.resetPose(new Pose2d(visionMeasurements[0], visionMeasurements[1],
+      m_swerve.getPose().getRotation()));
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -216,8 +247,11 @@ public class Robot extends TimedRobot {
   public Command getUnhookAndShoot() {
     return m_shooter.unhookShooter().andThen(
            m_shooter.lowerShooter().andThen(
-           m_shooter.spinShooter(false).andThen(
-           Commands.parallel(m_shooter.spinShooter(true), m_intake.fwdIntake(true)))));
+           m_shooter.spinShooterToVelocity().andThen(
+           m_intake.fwdIntakeTimed().andThen(
+           new WaitCommand(2).andThen(
+           m_shooter.stopShooter().andThen(
+          m_intake.stopIntake()))))));
   }
 
   public Command getAutonomousCommand() {
@@ -281,21 +315,21 @@ public class Robot extends TimedRobot {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     final var xSpeed =
-        -m_xspeedLimiter.calculate(MathUtil.applyDeadband(expLeftY, Math.pow(
+        m_xspeedLimiter.calculate(MathUtil.applyDeadband(expLeftY, Math.pow(
           Configuration.GeneralDeadband, Configuration.kExpControl))) * Configuration.kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     final var ySpeed =
-        -m_yspeedLimiter.calculate(MathUtil.applyDeadband(expLeftX, Math.pow(
+        m_yspeedLimiter.calculate(MathUtil.applyDeadband(expLeftX, Math.pow(
           Configuration.GeneralDeadband, Configuration.kExpControl))) * Configuration.kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    var rot = -m_rotLimiter.calculate(MathUtil.applyDeadband(expOmega, Math.pow(
+    var rot = m_rotLimiter.calculate(MathUtil.applyDeadband(expOmega, Math.pow(
       Configuration.GeneralDeadband, Configuration.kExpControl))) * Configuration.kMaxAngularSpeed;
 
     LoggedNumber.getInstance().logNumber("rot_prelimit", rot);

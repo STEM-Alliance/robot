@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import java.text.DecimalFormat;
 
+import edu.wpi.first.apriltag.AprilTagDetector.Config;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -52,9 +53,9 @@ public class AimbotCommand extends Command {
     var p = SmartDashboard.getNumber("P", 0);
     var i = SmartDashboard.getNumber("I", 0);
     var d = SmartDashboard.getNumber("D", 0);
-    m_xPID.setP(p);
-    m_xPID.setI(i);
-    m_xPID.setD(d);
+    m_xPID.setP(Configuration.kAimP);
+    m_xPID.setI(Configuration.kAimI);
+    m_xPID.setD(Configuration.kAimD)  ;
     System.out.println("starting aimbot");
     m_doneAiming = false;
     
@@ -84,7 +85,7 @@ public class AimbotCommand extends Command {
    
     if (tidnum == Helpers.getDesiredAprilTag())
     {
-      double xCacluated = m_xPID.calculate(x, 0);
+      double xCacluated = m_xPID.calculate(-x, 0);
       SmartDashboard.putNumber("xCaculated", xCacluated);
       if(xCacluated > Configuration.kAimSpeedLimit)
       {
@@ -95,19 +96,17 @@ public class AimbotCommand extends Command {
         xCacluated = -Configuration.kAimSpeedLimit;
       }
       
-      SmartDashboard.putData("Pid", m_xPID);
+      SmartDashboard.putData("AimPid", m_xPID);
       
       System.out.println("x: " + Math.abs(x));
 
-      // m_aPID.setSetpoint(1);
       if (Math.abs(x) < Configuration.kAimbotStop)
       {
         m_doneAiming = true;
         //TODO: Replace with swerve
         ChassisSpeeds robotSpeed = new ChassisSpeeds(0, 0, 0);
         m_subsystem.driveRobotSpeeds(robotSpeed);
-        //m_subsystem.arcadeDrive(0, 0, 0);
-      }
+    }
       else
       {
         //TODO: Replace with 

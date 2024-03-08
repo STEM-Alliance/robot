@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.Configuration;
 import frc.robot.LoggedNumber;
 import frc.robot.Robot;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -62,14 +63,7 @@ public class ShooterSubsystem2 extends SubsystemBase {
         double output = m_shooterPID.calculate(currentAngle, m_desiredAngle);
 
         // Limit the PID output
-        if (output > Configuration.kArmMotorLimit)
-        {
-            output = Configuration.kArmMotorLimit;
-        }
-        else if (output < -Configuration.kArmMotorLimit)
-        {
-            output = -Configuration.kArmMotorLimit;
-        }
+        MathUtil.clamp(output, -Configuration.kArmMotorLimit, Configuration.kArmMotorLimit);
 
         LoggedNumber.getInstance().logNumber("DesiredAngle", m_desiredAngle);
         LoggedNumber.getInstance().logNumber("CurrentAngle", currentAngle);
@@ -83,20 +77,34 @@ public class ShooterSubsystem2 extends SubsystemBase {
     }
 
     // Spin the shooter motor and return true when the velocity is above the minimum
-    public Command spinShooter(boolean force) {
+    public Command spinShooterToVelocity() {
         return new FunctionalCommand(
             () -> m_shooter.set(-1),
             () -> {},
-            interrupted -> m_shooter.set(0),
-            () -> !force && Math.abs(m_shooterEnc.getVelocity()) >= Configuration.kMinFlywheelSpeed,
+            interrupted -> {},
+            () -> Math.abs(m_shooterEnc.getVelocity()) >= Configuration.kMinFlywheelSpeed,
             this
         );
     }
 
+    public Command spinShooterToVelocity(double velocity) {
+        return new FunctionalCommand(
+            () -> m_shooter.set(velocity),
+            () -> {},
+            interrupted -> {},
+            () -> Math.abs(m_shooterEnc.getVelocity()) >= 15,
+            this
+        );
+    }
+
+    public Command stopShooter() {
+        return new InstantCommand(() -> m_shooter.set(0));
+    }
+
     public Command unhookShooter() {
         return new FunctionalCommand(
-            () -> {m_desiredAngle = Configuration.kUnhookPosition;},
             () -> {},
+            () -> {m_desiredAngle += 0.1;},
             interrupted -> {},
             () -> m_armEnc.getPosition() >=
                 Configuration.kUnhookPosition - Configuration.kTargetError,
@@ -107,11 +115,23 @@ public class ShooterSubsystem2 extends SubsystemBase {
 
     public Command lowerShooter() {
         return new FunctionalCommand(
-            () -> {m_desiredAngle = Configuration.kLoweredPosition;},
             () -> {},
+            () -> {m_desiredAngle -= 0.5;},
             interrupted -> {},
             () -> m_armEnc.getPosition()
                 <= Configuration.kLoweredPosition + Configuration.kTargetError,
+                
+            this
+        );
+    }
+
+    public Command ampPosition() {
+        return new FunctionalCommand(
+            () -> {},
+            () -> {m_desiredAngle += 1;},
+            interrupted -> {},
+            () -> m_armEnc.getPosition()
+                >= Configuration.kAmpPosition + Configuration.kTargetError,
                 
             this
         );
@@ -122,10 +142,9 @@ public class ShooterSubsystem2 extends SubsystemBase {
         {
             if (m_lowLimitSwitch.get()) {
                 m_desiredAngle -= speed / Configuration.kArmAngleFactor;
-            } 
+            }
         }
         else {
-            // If the arm is past the backwards software limit, set it to the software limit
             if (m_upperLimitSwitch.get()) {
                 m_desiredAngle -= speed / Configuration.kArmAngleFactor;
             }

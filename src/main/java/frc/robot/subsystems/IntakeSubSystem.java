@@ -47,6 +47,14 @@ public class IntakeSubsystem extends SubsystemBase {
         );
     }
 
+    public Command fwdIntakeTimed() {
+        return new InstantCommand(() -> m_intake.set(-1));
+    }
+
+    public Command stopIntake() {
+        return new InstantCommand(() -> m_intake.set(0));
+    }
+
     public Command revIntake() {
         return new FunctionalCommand(
             () -> m_intake.set(1),

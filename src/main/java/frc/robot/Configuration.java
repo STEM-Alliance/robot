@@ -36,7 +36,7 @@ public class Configuration {
     static public double kDriveKv = 0.25;
 
     // PID and feedforward gains for the swerve motors
-    static public double kSwerveKp = 0.55; // 0.65
+    static public double kSwerveKp = 0.5; // 0.65
     static public double kSwerveKi = 0; // 0.1
     static public double kSwerveKd = 0; // 0
     static public double kSwerveKs = 0;
@@ -61,10 +61,10 @@ public class Configuration {
     static public int[] kSwerveBLCanID = new int[]{2, 5, 6, 2};
     static public int[] kSwerveBRCanID = new int[]{3, 7, 8, 3};
 
-    static public int kPigeon2CanID = 50;
+    static public int kPigeon2CanID = 40;
 
     // NOTE: These seem to drift
-    static public double[] kZeroPosition = new double[]{3790, 1926, 2491, 370};
+    static public double[] kZeroPosition = new double[]{3783, 1926, 2780, 365};
     static public double kEncoderRes = 4096;
 
     static public HolonomicPathFollowerConfig kPathFollowerConfig =
@@ -96,7 +96,9 @@ public class Configuration {
 
     static public double kTargetError = 2;
     static public double kUnhookPosition = 10;
-    static public double kLoweredPosition = -50;
+    static public double kLoweredPosition = -55;
+
+    static public double kAmpPosition = 30;
 
     /* In rotations, travel position (up) is 0
     Intake position, Travel position, Amp Position */
@@ -119,6 +121,7 @@ public class Configuration {
     static public double kClimberAligningSpeed = 1;
     static public int kStageSensorChannel = 2;
     static public int kClimbMotorCanID = 13;
+    static public int kClimbStopChannel = 0;
     
     /********************************************
      * Motor Current Limits
@@ -139,8 +142,8 @@ public class Configuration {
     /********************************************
      * Aimbot
      *******************************************/
-    static public double kAimP = 0.04;
-    static public double kAimI = 0.04;
+    static public double kAimP = 0.01;
+    static public double kAimI = 0.01;
     static public double kAimD = 0;
     static public double kAimSpeedLimit = 0.5;
     static public double kAimbotStop = 1;

@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -61,9 +62,10 @@ public class LimelightSubsystem extends SubsystemBase {
 
             // botPose X, Y, and adjusted heading
             Pose2d botPose = new Pose2d(new Translation2d(botPoseBlue[0], botPoseBlue[1]),
-                new Rotation2d(botHeading));
+                new Rotation2d(Math.toRadians(botHeading)));
 
             if (addToOdometry) {
+                SmartDashboard.putNumber("botHeading", botHeading);
                 // m_swerve.addVisionMeasurement(botPose,
                 //     Timer.getFPGATimestamp() - botPoseBlue[6] / 1000);
 
@@ -71,5 +73,33 @@ public class LimelightSubsystem extends SubsystemBase {
                 m_swerve.resetPose(botPose);
             }
         }
+    }
+
+    public double getHeading() {
+        double heading = 0.0;
+
+        if (LimelightHelpers.getTV(Configuration.kLimelightName)) {
+            double[] botPose = LimelightHelpers.getBotPose(Configuration.kLimelightName);
+            heading = botPose[5];
+
+        }
+
+        return heading;
+    }
+
+    public double[] getBotPose() {
+        double[] botXY = new double[2];
+
+        if (LimelightHelpers.getTV(Configuration.kLimelightName)) {
+            double[] botPose = LimelightHelpers.getBotPose(Configuration.kLimelightName);
+
+            botXY[0] = botPose[0];
+            botXY[1] = botPose[1];
+
+            SmartDashboard.putNumber("botX", botPose[0]);
+            SmartDashboard.putNumber("botY", botPose[1]);
+        }
+
+        return botXY;
     }
 }

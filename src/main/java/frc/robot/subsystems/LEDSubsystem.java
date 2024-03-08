@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.PWM;
 
 public class LEDSubsystem extends SubsystemBase {
 
-    private PWM m_leds = new PWM(0);
+    private PWM m_leds = new PWM(1);
 
     /** Creates a new DriveSubsystem. */
     public LEDSubsystem() 
@@ -21,21 +21,37 @@ public class LEDSubsystem extends SubsystemBase {
 
     public Command red()
     {
-        return new InstantCommand(() -> m_leds.setSpeed(0.61));
+        return new InstantCommand(() -> setRed());
     }
 
     public Command yellow()
     {
-        return new InstantCommand(() -> m_leds.setSpeed(0.69));
+        return new InstantCommand(() -> setYellow());
     }
 
     public Command blue()
     {
-        return new InstantCommand(() -> m_leds.setSpeed(0.91));
+        return new InstantCommand(() -> setBlue());
     }
 
     public Command crazy()
     {
-        return new InstantCommand(() -> m_leds.setSpeed(-0.59));
+        return new InstantCommand(() -> setCrazy());
+    }
+
+    public void setRed() {
+        m_leds.setSpeed(0.61);
+    }
+
+    public void setYellow() {
+        m_leds.setSpeed(0.69);
+    }
+
+    public void setBlue() {
+        m_leds.setSpeed(0.91);
+    }
+
+    public void setCrazy() {
+        m_leds.setSpeed(-0.59);
     }
 }

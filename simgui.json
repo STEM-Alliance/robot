@@ -10,10 +10,33 @@
   },
   "NTProvider": {
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Auto choices": "String Chooser"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "PathPlanner": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "open": true
+      }
     }
   },
   "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Connections": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
     "visible": true
   }
 }
