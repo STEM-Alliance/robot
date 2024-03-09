@@ -10,20 +10,23 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class IntakeSubSystem extends SubsystemBase {
-    private final CANSparkMax m_intake;
-    private final CANSparkMax m_shooter;
-    private final CANSparkMax m_midintake;
+    public final CANSparkMax m_intake;
+    public final CANSparkMax m_shooter_1;
+    // public final CANSparkMax m_shooter_2;
+    public final CANSparkMax m_midintake;
     private boolean IntakeRunning;
 
     private double m_rotateSpeed = 0;
     /** Creates a new DriveSubsystem. */
-    public IntakeSubSystem(int intakeMotorID, int shooterMotorID, int midtakeMotorID) {
+    public IntakeSubSystem(int intakeMotorID, int shooterMotorID_1, int midtakeMotorID) {
         m_intake = new CANSparkMax(intakeMotorID, MotorType.kBrushless);
-        m_shooter = new CANSparkMax(shooterMotorID, MotorType.kBrushless);
+        m_shooter_1 = new CANSparkMax(shooterMotorID_1, MotorType.kBrushless);
+        // m_shooter_2 = new CANSparkMax(shooterMotorID_2, MotorType.kBrushless);
         m_midintake = new CANSparkMax(midtakeMotorID, MotorType.kBrushless);
 
         m_intake.setSmartCurrentLimit(Configuration.Neo550Limit);
-        m_shooter.setSmartCurrentLimit(Configuration.Neo550Limit);
+        m_shooter_1.setSmartCurrentLimit(30);
+        // m_shooter_2.setSmartCurrentLimit(30);
         m_midintake.setSmartCurrentLimit(Configuration.Neo550Limit);
 
         /*
@@ -45,23 +48,28 @@ public class IntakeSubSystem extends SubsystemBase {
         // Do stuff
     }
 
-    public Command grabNote(CommandXboxController m_controller1)
+    public Command grabNote()
     {
-        
-        return new FunctionalCommand(
-            () -> {},
-            () -> m_intake.set(m_controller1.getLeftTriggerAxis()),
-            interrupted -> m_intake.set(0),
-            () -> false);
+        m_intake.set(1);
+        m_midintake.set(.1);
+        return new InstantCommand();
     }
 
 
+    public Command doneLoading()
+    {
+        m_intake.set(0);
+        return new InstantCommand();        
+    }
+
+    public Command grabnNoteDone()
+    {
+        // grabNote().end(true);
+        return new InstantCommand();
+    }
+
     public Command shootNote()
     {
-        return new FunctionalCommand(
-            () -> {},
-            () -> m_shooter.set(.5),
-            interrupted -> m_shooter.set(0),
-            () -> false);
+        return new InstantCommand();
     }
 }

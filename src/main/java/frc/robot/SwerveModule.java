@@ -82,8 +82,8 @@ public class SwerveModule {
     m_driveEncoder.setPositionConversionFactor(2 * Math.PI * Configuration.kWheelRadius / Configuration.kDriveGearReduction);
     m_driveEncoder.setVelocityConversionFactor(2 * Math.PI * Configuration.kWheelRadius / Configuration.kDriveGearReduction / 60);
     m_driveEncoder.setPosition(0);
-    // m_driveMotor.setSmartCurrentLimit(20);
-    // m_turningMotor.setSmartCurrentLimit(20);
+    m_driveMotor.setSmartCurrentLimit(Configuration.NeoLimit);
+    m_turningMotor.setSmartCurrentLimit(Configuration.NeoLimit);
     // Set the distance (in this case, angle) in radians per pulse for the turning encoder.
     // This is the the angle through an entire rotation (2 * pi) divided by the
     // encoder resolution.

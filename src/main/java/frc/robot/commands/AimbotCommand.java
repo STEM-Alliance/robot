@@ -123,7 +123,7 @@ public class AimbotCommand extends Command {
       }
       else
       {
-        m_swerve.drive(0, 0, xCaclulated , false, 0.02);
+        m_swerve.drive(0, 0, -xCaclulated , false, 0.02);
       }
 
     }
@@ -144,4 +144,3 @@ public class AimbotCommand extends Command {
     return m_doneAiming;
   }
 }
-

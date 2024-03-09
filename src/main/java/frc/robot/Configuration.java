@@ -27,7 +27,7 @@ public class Configuration {
     static public double kDriveKp = 0.3;
     static public double kDriveKi = 0;
     static public double kDriveKd = 0;
-    static public double kDriveKs = 0.0;
+    static public double kDriveKs = 2.35;
     static public double kDriveKv = 0.53;
 
     static public double kSwerveKp = 0.5;
@@ -47,7 +47,7 @@ public class Configuration {
      * I = P / V
      *******************************************/
     static public int NeoLimit = 80;
-    static public int Neo550Limit = 20;
+    static public int Neo550Limit = 22;
     static public int BagMotorLimit = 30; // Max power is 149 W, 12.4 A
     static public int M775ProLimit = 15; // Max power 347 W, 28.9 A
     static public int CIMSLimit = 28; // Max power 337 W, 28.0 A
@@ -63,7 +63,7 @@ public class Configuration {
     static public double kAimP = 0.01;
     static public double kAimI = 0.01;
     static public double kAimD = 0;
-    static public double kAimSpeedLimit = 0.001; // This is in radians per second
+    static public double kAimSpeedLimit = 0.25; // This is in radians per second
     static public double kAimbotStop = 1;
     static public double kAutoDriveP = .04;
     static public double kAutoDriveI = .04;

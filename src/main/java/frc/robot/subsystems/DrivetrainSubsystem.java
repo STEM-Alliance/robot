@@ -4,12 +4,15 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -19,6 +22,12 @@ import frc.robot.SwerveModule;
 import frc.robot.commands.AimbotCommand;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import java.math.*;
 
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -59,13 +68,87 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubSystem. */
   public DrivetrainSubsystem() {
+     ;
+    
     m_ahrs.reset();
+       AutoBuilder.configureHolonomic(
+            this::getPose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::driveRobotSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                    3, // Max module speed, in m/s
+                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new ReplanningConfig() // Default path replanning config. See the API for the options here
+            ),
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
   }
 
   public SwerveModule getModule(int offset) {
     return m_modules[offset];
   }
 
+
+  public Pose2d getPose(){
+    return m_odometry.getPoseMeters();
+  }
+
+  public void resetPose(Pose2d resetPose){
+    m_odometry.resetPosition(m_ahrs.getRotation2d(), getmodModulePositions(), resetPose);
+  }
+  
+  public SwerveModulePosition[] getmodModulePositions(){
+    return new SwerveModulePosition[]{
+      m_frontLeft.getPosition(),
+      m_frontRight.getPosition(),
+      m_backLeft.getPosition(),
+      m_backRight.getPosition()
+    };
+  }
+
+  public SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[m_modules.length];
+    for (int i = 0; i < m_modules.length; i++) {
+      states[i] = m_modules[i].getState();
+    }
+    return states;
+  }
+  public ChassisSpeeds getChassisSpeeds() {
+    return m_kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public void driveFeildSpeeds(ChassisSpeeds feildSpeeds) {
+    var relativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+      feildSpeeds, getPose().getRotation());
+      
+      driveRobotSpeeds(relativeSpeeds);
+  }
+
+  public void driveRobotSpeeds(ChassisSpeeds robotSpeeds){
+    var targetSpeeds = ChassisSpeeds.discretize(robotSpeeds, 0.02);
+    var swerveModuleStates = m_kinematics.toSwerveModuleStates(targetSpeeds);
+    
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
+
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_backLeft.setDesiredState(swerveModuleStates[2]);
+    m_backRight.setDesiredState(swerveModuleStates[3]);
+  }
 /**
    * Method to drive the robot using joystick info.
    *
@@ -97,7 +180,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("omega", rot);
    
   }
-
+  public void periodic(){
+    updateOdometry();
+    for (int i = 0; i < 4; i++) {
+      SmartDashboard.putNumber("AbsPos_" + i, m_modules[i].getAbsPos());
+    }
+  }
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     // TODO: Uncomment this when we have all 4 motors.
@@ -110,6 +198,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
           m_backRight.getPosition()
         });
   }
+  
 
   public InstantCommand setBrakeModeCmd() {
     return new InstantCommand(() -> setBrakingMode(true));
