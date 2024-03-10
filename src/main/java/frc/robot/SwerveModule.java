@@ -158,9 +158,9 @@ public class SwerveModule {
       var turningMotorOutput = turnOutput + turnFeedforward;
       m_turningMotor.set(turningMotorOutput);
 
-      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_drive", driveFeedforward);
-      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_swerve", turningMotorOutput);
-      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_abspos", m_absolutePos.getValue());
+      LoggedNumber.getInstance().logNumber("Swerve_rot_enc_" + m_swerveIndex, m_turningEncoder.getPosition());
+      LoggedNumber.getInstance().logNumber("Swerve_drive_pos_" + m_swerveIndex, m_driveEncoder.getPosition());
+      LoggedNumber.getInstance().logNumber("Swerve_drive_vel_" + m_swerveIndex, m_driveEncoder.getVelocity());
   }
 
   public void setGains(double kp, double ki, double kd, double ks, double kv) {

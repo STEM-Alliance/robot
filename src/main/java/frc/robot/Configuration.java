@@ -98,6 +98,9 @@ public class Configuration {
     static public double kUnhookPosition = 10;
     static public double kLoweredPosition = -55;
 
+    static public double kLoweredLimit = -70;
+    static public double kUpperLimit = 30;
+
     static public double kAmpPosition = 30;
 
     /* In rotations, travel position (up) is 0

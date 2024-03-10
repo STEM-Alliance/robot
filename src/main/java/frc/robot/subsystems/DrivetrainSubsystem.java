@@ -115,9 +115,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     LoggedNumber.getInstance().logNumber("pig_yaw", m_pigeon2.getYaw().getValue());
     LoggedNumber.getInstance().logNumber("pig_angle", m_pigeon2.getAngle());
-    SmartDashboard.putNumber("RobotPoseX", getPose().getX());
-    SmartDashboard.putNumber("RobotPoseY", getPose().getY());
-    SmartDashboard.putNumber("RobotPoseDeg", getPose().getRotation().getDegrees());
+    SmartDashboard.putData("FieldPos", m_field);
+    LoggedNumber.getInstance().logNumber("RobotPoseX", getPose().getX());
+    LoggedNumber.getInstance().logNumber("RobotPoseY", getPose().getY());
+    LoggedNumber.getInstance().logNumber("RobotPoseDeg", getPose().getRotation().getDegrees());
+    LoggedNumber.getInstance().logNumber("RobotPoseX2", m_odometry.getPoseMeters().getX());
+    LoggedNumber.getInstance().logNumber("RobotPoseY2", m_odometry.getPoseMeters().getY());
+    LoggedNumber.getInstance().logNumber("RobotPoseDeg2", m_odometry.getPoseMeters().getRotation().getDegrees());
     LoggedNumber.getInstance().logNumber("FieldX", m_field.getRobotPose().getX());
     LoggedNumber.getInstance().logNumber("FieldY", m_field.getRobotPose().getY());
     LoggedNumber.getInstance().logNumber("FieldRot", m_field.getRobotPose().getRotation().getDegrees());
@@ -152,7 +156,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
       LoggedNumber.getInstance().logNumber("Swerve_" + i + "_drive", swerveModuleStates[i].speedMetersPerSecond);
       LoggedNumber.getInstance().logNumber("Swerve_" + i + "_angle", swerveModuleStates[i].angle.getDegrees());
     }
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
     LoggedNumber.getInstance().logNumber("Vx", xSpeed);
     LoggedNumber.getInstance().logNumber("Vy", ySpeed);
     LoggedNumber.getInstance().logNumber("Omega", rot);
@@ -199,11 +202,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
-    m_odometry.update(
-        m_pigeon2.getRotation2d(),
-        getModulePositions());
+    m_odometry.update(m_pigeon2.getRotation2d(), getModulePositions());
     m_poseEstimator.update(m_pigeon2.getRotation2d(), getModulePositions());
-    }
+  }
 
   public Pose2d getPose() {
     // TODO: This is broke

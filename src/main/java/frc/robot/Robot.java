@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.AimbotCommand;
+import frc.robot.commands.MoveBotCommand;
 import frc.robot.subsystems.*;
 
 /**
@@ -224,10 +225,13 @@ public class Robot extends TimedRobot {
         break;
       case kShootAndScoot:
         m_autonomousCommand = getUnhookAndShoot().andThen(
-                              new WaitCommand(2).andThen(
-                              new InstantCommand(() -> m_swerve.controllerDrive(1.5, 0, 0, false, 0.2)).andThen(
-                              new WaitCommand(2).andThen(
-                              new InstantCommand(() -> m_swerve.controllerDrive(0, 0, 0, false, 0.2))))));
+          Commands.parallel(new MoveBotCommand(m_swerve),
+          m_intake.fwdIntake(false)));
+        // m_autonomousCommand = getUnhookAndShoot().andThen(
+        //                       new WaitCommand(2).andThen(
+        //                       new InstantCommand(() -> m_swerve.controllerDrive(0.5, 0, 0, false, 0.02)).andThen(
+        //                       new WaitCommand(2).andThen(
+        //                       new InstantCommand(() -> m_swerve.controllerDrive(0, 0, 0, false, 0.02))))));
         break;
     }
 
