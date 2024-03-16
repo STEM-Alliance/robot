@@ -3,11 +3,6 @@
  */
 package frc.robot;
 
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
-
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public class Configuration {
@@ -65,7 +60,7 @@ public class Configuration {
 
     // NOTE: These seem to drift
     //static public double[] kZeroPosition = new double[]{0.963, 0.486, 0.070, 0.093};
-    static public double[] kZeroPosition = new double[]{0.811, 0.310, 0.821, 0.927};
+    static public double[] kZeroPosition = new double[]{0.963, 0.486, 0.710, 0.093};
     static public double kEncoderRes = 4096;
 
     static public HolonomicPathFollowerConfig kPathFollowerConfig =

@@ -158,12 +158,9 @@ public class SwerveModule {
       var turningMotorOutput = turnOutput + turnFeedforward;
       m_turningMotor.set(turningMotorOutput);
 
-      LoggedNumber.getInstance().logNumber("Swerve_rot_enc_" + m_swerveIndex, m_turningEncoder.getPosition());
-      LoggedNumber.getInstance().logNumber("Swerve_drive_pos_" + m_swerveIndex, m_driveEncoder.getPosition());
-      LoggedNumber.getInstance().logNumber("Swerve_drive_vel_" + m_swerveIndex, m_driveEncoder.getVelocity());
-      LoggedNumber.getInstance().logNumber("Swerve_rot_cmd_" + m_swerveIndex, state.angle.getRadians());
-      LoggedNumber.getInstance().logNumber("Swerve_rot_pid_" + m_swerveIndex, turnOutput);
-      LoggedNumber.getInstance().logNumber("Swerve_rot_ff_" + m_swerveIndex, turnFeedforward);
+      LoggedNumber.getInstance().logNumber(m_swerveIndex + "_ff", driveFeedforward / 4, true);
+      //LoggedNumber.getInstance().logNumber(m_swerveIndex + "_abspos", m_absolutePos.getValue(), true);
+    
   }
 
   public void setGains(double kp, double ki, double kd) {

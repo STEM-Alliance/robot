@@ -68,6 +68,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubSystem. */
   public DrivetrainSubsystem() {
+     ;
+    
     m_ahrs.reset();
        AutoBuilder.configureHolonomic(
             this::getPose, // Robot pose supplier
@@ -162,7 +164,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             ChassisSpeeds.discretize(
                 fieldRelative
                     ? ChassisSpeeds.fromFieldRelativeSpeeds(
-  -xSpeed, -ySpeed, rot, m_ahrs.getRotation2d())
+  xSpeed, ySpeed, rot, m_ahrs.getRotation2d().unaryMinus())
                     : new ChassisSpeeds(xSpeed, ySpeed, rot),
                 periodSeconds));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
@@ -207,9 +209,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   private void setBrakingMode(boolean enabled) {
-    // for (int i = 0; i < 4; i++) {
-    //   m_modules[i].setBrakingMode(enabled);
-    // }
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].setBrakingMode(enabled);
+    }
   }
 
   public Command ZeroGyro() {
@@ -233,12 +235,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }    
   }
 
-  public void printHomePos() {
-    double abspos[] = new double[4];
-    for (int i = 0; i < 4; i++) { 
-      abspos[i] = m_modules[i].getAbsPos();
-      //System.out.println("abspos_" + i + ": " + abspos[i]);
+  public void printAbsPos() {
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].printAbsPos();
     }
-    SmartDashboard.putNumberArray("abspos", abspos);
   }
 }

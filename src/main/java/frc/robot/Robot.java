@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
 
 
   Command m_aimbotCommand = new AimbotCommand(m_swerve);
-  Command m_driveCommand = new DriveCommand(m_swerve, false, m_controller1);
+  Command m_driveCommand = new DriveCommand(m_swerve, true, m_controller1);
   Command m_IntakeCommand = new IntakeCommand(m_intake, m_reverseMidtake);
   Command m_ShootCommand = new ShootCommand(m_intake);
   // Command m_ClimbingCommand = new ClimbingCommand(m_Climber);
@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
     
     // Climb.whileTrue(m_ClimbingCommand);
     enableDrive.onTrue(m_driveCommand);
-    autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand));
+    autoAim.whileTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand));
     //autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand.andThen(m_driveCommand)));
     leftTrigger.whileTrue(m_IntakeCommand);
     rightTrigger.whileTrue(m_ShootCommand);
@@ -163,8 +163,8 @@ public class Robot extends TimedRobot {
     double kp = SmartDashboard.getNumber("kp", Configuration.kDriveKp);
     double ki = SmartDashboard.getNumber("ki", Configuration.kDriveKi);
     double kd = SmartDashboard.getNumber("kd", Configuration.kDriveKd);
-    m_swerve.setGains(kp, ki, kd);
-    //m_swerve.printAbsPos();
+    //m_swerve.setGains(kp, ki, kd);
+    m_swerve.printHomePos();
 }
 
   /** This function is called once each time the robot enters Disabled mode. */
