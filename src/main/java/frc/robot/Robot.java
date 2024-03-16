@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
   PathPlannerPath Path = PathPlannerPath.fromPathFile("Example Path");
   DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
   IntakeSubSystem m_intake = new IntakeSubSystem(9, 11, 10);
-  ClimbingSystem m_Climber = new ClimbingSystem(13, 14);
+  // ClimbingSystem m_Climber = new ClimbingSystem(13, 14);
   public CommandXboxController m_controller1 = new CommandXboxController(0);
   CommandXboxController m_controller2 = new CommandXboxController(1);
 
@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
   Command m_driveCommand = new DriveCommand(m_swerve, false, m_controller1);
   Command m_IntakeCommand = new IntakeCommand(m_intake, m_reverseMidtake);
   Command m_ShootCommand = new ShootCommand(m_intake);
-  Command m_ClimbingCommand = new ClimbingCommand(m_Climber);
+  // Command m_ClimbingCommand = new ClimbingCommand(m_Climber);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
   
     
     // Controller 2
-    final Trigger reverseMidtake = m_controller1.b();
+    final Trigger reverseMidtake = m_controller2.b();
     // final Trigger gripper_control = m_controller2.leftTrigger();
     // final Trigger extend_control = m_controller2.rightTrigger();
     // final Trigger high = m_controller2.y();
@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
    
     //brake.onTrue(m_swerve.setBrakeModeCmd());
     
-    Climb.whileTrue(m_ClimbingCommand);
+    // Climb.whileTrue(m_ClimbingCommand);
     enableDrive.onTrue(m_driveCommand);
     autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand));
     //autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand.andThen(m_driveCommand)));
@@ -123,14 +123,9 @@ public class Robot extends TimedRobot {
       m_enableDrive = true;
     }
    
-    if (reverseMidtake.getAsBoolean()) 
-    {
-      m_reverseMidtake = true;
-    }
-    else 
-    {
-      m_reverseMidtake = false;
-    }
+
+    reverseMidtake.onTrue(new InstantCommand(() -> m_reverseMidtake = true));
+    reverseMidtake.onFalse(new InstantCommand(() -> m_reverseMidtake = false));
     // leftTrigger.whileFalse(new InstantCommand(() -> m_intake.doneLoading()));
     //rightTrigger.onTrue(m_intake.shootNote());
 

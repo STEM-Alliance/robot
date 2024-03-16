@@ -37,7 +37,8 @@ public class IntakeCommand extends Command {
   {
     
     subSystem.m_intake.set(1);
-    subSystem.m_midintake.set(-1);
+    subSystem.m_midintake.set(1);
+  
     
   }
 
@@ -45,12 +46,12 @@ public class IntakeCommand extends Command {
   @Override
   public void execute() {
   
-    if (reverse){
-      subSystem.m_midintake.set(1);
+      if (reverse = true){
+      subSystem.m_midintake.set(-1);
     }
     else 
     {
-      subSystem.m_midintake.set(-1);
+      subSystem.m_midintake.set(1);
     }
   }
 

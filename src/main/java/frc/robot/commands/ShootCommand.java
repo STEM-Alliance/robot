@@ -8,6 +8,7 @@ import frc.robot.subsystems.IntakeSubSystem;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.networktables.Subscriber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -33,13 +34,16 @@ public class ShootCommand extends Command {
   @Override
   public void initialize()
   {
+    
     subSystem.m_shooter_1.set(-1);
     // subSystem.m_shooter_2.set(1);
     subSystem.m_midintake.set(-.5);
     subSystem.m_shooter_1.setIdleMode(IdleMode.kBrake);
     // subSystem.m_shooter_2.setIdleMode(IdleMode.kBrake);
     subSystem.m_midintake.setIdleMode(IdleMode.kBrake);
+   
   }
+
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
