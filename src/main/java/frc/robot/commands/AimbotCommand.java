@@ -43,6 +43,10 @@ public class AimbotCommand extends Command {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
+
+    // SmartDashboard.getNumber("P", Configuration.kAimP);
+    // SmartDashboard.getNumber("I", Configuration.kAimI);
+    // SmartDashboard.getNumber("D", Configuration.kAimD);
   }
 
   // Called when the command is initially scheduled.
@@ -50,12 +54,15 @@ public class AimbotCommand extends Command {
   public void initialize() 
   {
     //m_subsystem.setBrakeMode();
-    var p = SmartDashboard.getNumber("P", 0);
-    var i = SmartDashboard.getNumber("I", 0);
-    var d = SmartDashboard.getNumber("D", 0);
     m_xPID.setP(Configuration.kAimP);
     m_xPID.setI(Configuration.kAimI);
     m_xPID.setD(Configuration.kAimD)  ;
+    // var p = SmartDashboard.getNumber("P", Configuration.kAimP);
+    // var i = SmartDashboard.getNumber("I", Configuration.kAimI);
+    // var d = SmartDashboard.getNumber("D", Configuration.kAimD);
+    // m_xPID.setP(p);
+    // m_xPID.setI(i);
+    // m_xPID.setD(d)  ;
     System.out.println("starting aimbot");
     m_doneAiming = false;
     
@@ -81,7 +88,6 @@ public class AimbotCommand extends Command {
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
-    SmartDashboard.putNumber("x", x); 
    
     if (tidnum == Helpers.getDesiredAprilTag())
     {

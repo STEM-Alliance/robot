@@ -22,6 +22,7 @@ import frc.robot.SwerveModule;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -106,16 +107,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
       this);
 
+          // Set up custom logging to add the current path to a field 2d widget
+    PathPlannerLogging.setLogActivePathCallback((poses) -> m_field.getObject("path").setPoses(poses));
+
+    SmartDashboard.putData("Field", m_field);
+
       //m_poseEstimator.resetPosition(new Rotation2d(45), getModulePositions(), new Pose2d(7.4, 0.42, new Rotation2d(45)));
   }
 
   public void periodic() {
     updateOdometry();
-    m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());
+    m_field.setRobotPose(getPose());
 
     LoggedNumber.getInstance().logNumber("pig_yaw", m_pigeon2.getYaw().getValue());
     LoggedNumber.getInstance().logNumber("pig_angle", m_pigeon2.getAngle());
-    SmartDashboard.putData("FieldPos", m_field);
+    //SmartDashboard.putData("FieldPos", m_field);
     LoggedNumber.getInstance().logNumber("RobotPoseX", getPose().getX());
     LoggedNumber.getInstance().logNumber("RobotPoseY", getPose().getY());
     LoggedNumber.getInstance().logNumber("RobotPoseDeg", getPose().getRotation().getDegrees());
@@ -169,6 +175,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void driveRobotSpeeds(ChassisSpeeds robotSpeeds) {
+    System.out.println("driveRobotSpeeds vx: " + robotSpeeds.vxMetersPerSecond + " vy: " + robotSpeeds.vyMetersPerSecond + " rot: " + robotSpeeds.omegaRadiansPerSecond);
+    robotSpeeds.omegaRadiansPerSecond = -robotSpeeds.omegaRadiansPerSecond;
     var targetSpeeds = ChassisSpeeds.discretize(robotSpeeds, 0.02);
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(targetSpeeds);
 
@@ -208,11 +216,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Pose2d getPose() {
     // TODO: This is broke
-    //return m_odometry.getPoseMeters();
-    return m_poseEstimator.getEstimatedPosition();
+    return m_odometry.getPoseMeters();
+    //return m_poseEstimator.getEstimatedPosition();
   }
 
   public void resetPose(Pose2d resetPose) {
+    System.out.println("Reset pose to " + resetPose);
+    m_odometry.resetPosition(m_pigeon2.getRotation2d(), getModulePositions(), resetPose);
     m_poseEstimator.resetPosition(m_pigeon2.getRotation2d(), getModulePositions(), resetPose);
   }
 
@@ -274,8 +284,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public void printHomePos() {
     double abspos[] = new double[4];
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) { 
       abspos[i] = m_modules[i].getAbsPos();
+      //System.out.println("abspos_" + i + ": " + abspos[i]);
     }
     SmartDashboard.putNumberArray("abspos", abspos);
   }

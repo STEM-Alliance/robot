@@ -4,12 +4,14 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -34,18 +36,16 @@ import frc.robot.subsystems.*;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private RobotContainer m_robotContainer;
-
   Command m_driveCommand;
 
   public DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
-  public IntakeSubsystem m_intake = new IntakeSubsystem(this);
-  public ShooterSubsystem2 m_shooter = new ShooterSubsystem2();
+  //public IntakeSubsystem m_intake = new IntakeSubsystem(this);
+  //public ShooterSubsystem2 m_shooter = new ShooterSubsystem2();
 
   public LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
 
   CommandXboxController m_controller1 = new CommandXboxController(0);
-  CommandXboxController m_controller2 = new CommandXboxController(1);
+  //CommandXboxController m_controller2 = new CommandXboxController(1);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Configuration.kVxSlewRateLimit);
@@ -58,10 +58,11 @@ public class Robot extends TimedRobot {
   Command m_climbUp;
   Command m_climbDown;
 
-  final String kShoot = "Shoot";
-  final String kShootAndScoot = "ShootAndScoot";
-  String m_autoSelected;
-  final SendableChooser<String> m_autoChooser = new SendableChooser<>();
+  final String kLoop = "Loop";
+  private SendableChooser<Command> m_autoChooser;
+  final AimbotCommand m_AimbotCommand = new AimbotCommand(m_swerve);
+
+  
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -71,26 +72,21 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     CameraServer.startAutomaticCapture();
 
-    SmartDashboard.putNumber("kp", Configuration.kSwerveKp);
-    SmartDashboard.putNumber("ki", Configuration.kSwerveKi);
-    SmartDashboard.putNumber("kd", Configuration.kSwerveKd);
+    // SmartDashboard.putNumber("kp", Configuration.kSwerveKp);
+    // SmartDashboard.putNumber("ki", Configuration.kSwerveKi);
+    // SmartDashboard.putNumber("kd", Configuration.kSwerveKd);
 
-    SmartDashboard.putNumber("ks", Configuration.kSwerveKs);
-    SmartDashboard.putNumber("kv", Configuration.kSwerveKv);
+    // SmartDashboard.putNumber("ks", Configuration.kSwerveKs);
+    // SmartDashboard.putNumber("kv", Configuration.kSwerveKv);
     
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
-
-    //m_shooter.register();
     m_swerve.homeSwerve();
-    // m_swerve.register();
   
     /**************************************************************
      * Controller 1 
      *************************************************************/
-    final Trigger brake = m_controller1.b();
-    final Trigger coast = m_controller1.a();
+    //final Trigger brake = m_controller1.b();
+    // /final Trigger coast = m_controller1.a();
+    final Trigger autoAim = m_controller1.b();
     final Trigger enTurbo = m_controller1.rightTrigger();
     final Trigger resetGyro = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
@@ -103,47 +99,47 @@ public class Robot extends TimedRobot {
     /**************************************************************
      * Controller 2
      *************************************************************/
-    final Trigger fwdIntake = m_controller2.a();
-    final Trigger autoAim = m_controller2.b();
-    final Trigger shoot = m_controller2.y();
-    final Trigger shootAmp = m_controller2.rightBumper();
-    final Trigger ampPos = m_controller2.leftBumper();
-    final Trigger engageClimbBrake = m_controller2.x();
-    final Trigger climbUp = m_controller2.rightTrigger();
-    final Trigger climbDown = m_controller2.leftTrigger();
-    final Trigger up = m_controller2.pov(0);
-    final Trigger down = m_controller2.pov(180);
-    final Trigger left = m_controller2.pov(270);
-    final Trigger right = m_controller2.pov(90);
+    // final Trigger fwdIntake = m_controller2.a();
+    // final Trigger autoAim = m_controller2.b();
+    // final Trigger shoot = m_controller2.y();
+    // final Trigger shootAmp = m_controller2.rightBumper();
+    // final Trigger ampPos = m_controller2.leftBumper();
+    // final Trigger engageClimbBrake = m_controller2.x();
+    // final Trigger climbUp = m_controller2.rightTrigger();
+    // final Trigger climbDown = m_controller2.leftTrigger();
+    // final Trigger up = m_controller2.pov(0);
+    // final Trigger down = m_controller2.pov(180);
+    // final Trigger left = m_controller2.pov(270);
+    // final Trigger right = m_controller2.pov(90);
     
     
-    up.onTrue(m_leds.red());
-    left.onTrue(m_leds.yellow());
-    right.onTrue(m_leds.blue());
-    down.onTrue(m_leds.crazy());
-    brake.onTrue(m_swerve.setBrakeModeCmd());
-    coast.onTrue(m_swerve.setCoastModeCmd());
+    // up.onTrue(m_leds.red());
+    // left.onTrue(m_leds.yellow());
+    // right.onTrue(m_leds.blue());
+    // down.onTrue(m_leds.crazy());
+    //brake.onTrue(m_swerve.setBrakeModeCmd());
+    //coast.onTrue(m_swerve.setCoastModeCmd());
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
-    engageClimbBrake.onTrue(m_climber.toggleClimbBrakeCmd());
-    autoAim.whileTrue(new AimbotCommand(m_swerve));
-    ampPos.onTrue(m_shooter.ampPosition());
+    // engageClimbBrake.onTrue(m_climber.toggleClimbBrakeCmd());
+    autoAim.whileTrue(m_AimbotCommand);
+    // ampPos.onTrue(m_shooter.ampPosition());
 
     //runPath.onTrue(m_swerve.runPath());
     resetGyro.onTrue(m_swerve.resetGyro());
     homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
     m_swerve.homeSwerve();
     
-    fwdIntake.onTrue(m_intake.fwdIntake(false));
-    shoot.whileTrue((m_shooter.spinShooterToVelocity().andThen(
-      m_intake.fwdIntake(true)
-      )));
+    // fwdIntake.onTrue(m_intake.fwdIntake(false));
+    // shoot.whileTrue((m_shooter.spinShooterToVelocity().andThen(
+    //   m_intake.fwdIntake(true)
+    //   )));
 
-    shootAmp.whileTrue((m_shooter.spinShooterToVelocity(-0.4).andThen(
-      m_intake.fwdIntake(true))));
+    // shootAmp.whileTrue((m_shooter.spinShooterToVelocity(-0.4).andThen(
+    //   m_intake.fwdIntake(true))));
 
-    shoot.onFalse(m_shooter.stopShooter());
-    shootAmp.onFalse(m_shooter.stopShooter());
+    // shoot.onFalse(m_shooter.stopShooter());
+    // shootAmp.onFalse(m_shooter.stopShooter());
 
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts
@@ -157,9 +153,14 @@ public class Robot extends TimedRobot {
     System.out.println("Driver Station number: " + pos.toString());
     System.out.println("Robot starting");
 
-    m_autoChooser.setDefaultOption(kShoot, kShoot);
-    m_autoChooser.addOption(kShootAndScoot, kShootAndScoot);
-    SmartDashboard.putData("Auto choices", m_autoChooser);
+    m_autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    SmartDashboard.putData("Auto Mode", m_autoChooser);
+
+    // m_autoChooser.setDefaultOption(kShoot, kShoot);
+    // m_autoChooser.addOption(kShootAndScoot, kShootAndScoot);
+    // m_autoChooser.addOption(kDriveStraight, kDriveStraight);
+    // m_autoChooser.addOption(kLoop, kLoop);
+    // SmartDashboard.putData("Auto choices", m_autoChooser);
 
   }
 
@@ -178,25 +179,25 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    if (m_controller2.getRightTriggerAxis() > 0.1)
-    {
-      m_climber.runClimber(m_controller2.getRightTriggerAxis());
-    }
-    else if (m_controller2.getLeftTriggerAxis() > 0.1)
-    {
-      m_climber.runClimber(-m_controller2.getLeftTriggerAxis());
-    }
-    else 
-    {
-      m_climber.runClimber(0);
-    }
+    // if (m_controller2.getRightTriggerAxis() > 0.1)
+    // {
+    //   m_climber.runClimber(m_controller2.getRightTriggerAxis());
+    // }
+    // else if (m_controller2.getLeftTriggerAxis() > 0.1)
+    // {
+    //   m_climber.runClimber(-m_controller2.getLeftTriggerAxis());
+    // }
+    // else 
+    // {
+    //   m_climber.runClimber(0);
+    // }
 
-    if (m_intake.m_noteSensor.get()) {
-      m_leds.setBlue();
-    }
-    else {
-      m_leds.setRed();
-    }
+    // if (m_intake.m_noteSensor.get()) {
+    //   m_leds.setRed();
+    // }
+    // else {
+    //   m_leds.setFlashingGreen();
+    // }
 
     // m_shooter.movementLoop();
     // Uncomment this line to print the motor positions.
@@ -214,49 +215,57 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    m_autoSelected = m_autoChooser.getSelected();
-    System.out.println("Auto selected: " + m_autoSelected);
-    switch (m_autoSelected)
-    {
-      case kShoot:
-        // Put custom auto code here
-        m_autonomousCommand = getUnhookAndShoot();
-        System.out.println("Shoot");
-        break;
-      case kShootAndScoot:
-        m_autonomousCommand = getUnhookAndShoot().andThen(
-          Commands.parallel(new MoveBotCommand(m_swerve),
-          m_intake.fwdIntake(false)));
-        // m_autonomousCommand = getUnhookAndShoot().andThen(
-        //                       new WaitCommand(2).andThen(
-        //                       new InstantCommand(() -> m_swerve.controllerDrive(0.5, 0, 0, false, 0.02)).andThen(
-        //                       new WaitCommand(2).andThen(
-        //                       new InstantCommand(() -> m_swerve.controllerDrive(0, 0, 0, false, 0.02))))));
-        break;
-    }
+    m_autonomousCommand = m_autoChooser.getSelected();
+
+    // switch (m_autoSelected)
+    // {
+    //   case kShoot:
+    //     // Put custom auto code here
+    //     m_autonomousCommand = getUnhookAndShoot();
+    //     System.out.println("Shoot");
+    //     break;
+    //   case kShootAndScoot:
+    //     m_autonomousCommand = getUnhookAndShoot().andThen(
+    //       Commands.parallel(new MoveBotCommand(m_swerve),
+    //       m_intake.fwdIntake(false)));
+    //     break;
+    //   case kDriveStraight:
+    //     m_autonomousCommand = new PathPlannerAuto("Auto1");
+    //     break;
+    //   case kLoop:
+    //     m_autonomousCommand = new PathPlannerAuto("GoLong");
+    // }
 
     // Overwrite the current heading with what the limelight sees
-    m_swerve.setGyro(m_limelight.getHeading());
+    //m_swerve.setGyro(m_limelight.getHeading());
 
     // Reset the robot pose to what the limelight sees
-    double[] visionMeasurements = m_limelight.getBotPose();
-    m_swerve.resetPose(new Pose2d(visionMeasurements[0], visionMeasurements[1],
-      m_swerve.getPose().getRotation()));
+    //double[] visionMeasurements = m_limelight.getBotPose();
+    //m_swerve.resetPose(new Pose2d(visionMeasurements[0], visionMeasurements[1],
+    //  m_swerve.getPose().getRotation()));
+
+    //m_swerve.resetPose(new Pose2d(14.5, 1.5, new Rotation2d(0)));
+    //m_swerve.setGyro(0);
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
   }
 
-  public Command getUnhookAndShoot() {
-    return m_shooter.unhookShooter().andThen(
-           m_shooter.lowerShooter().andThen(
-           m_shooter.spinShooterToVelocity().andThen(
-           m_intake.fwdIntakeTimed().andThen(
-           new WaitCommand(2).andThen(
-           m_shooter.stopShooter().andThen(
-          m_intake.stopIntake()))))));
+  private Command PathPlannerAuto(String string) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'PathPlannerAuto'");
   }
+
+  // public Command getUnhookAndShoot() {
+  //   return m_shooter.unhookShooter().andThen(
+  //          m_shooter.lowerShooter().andThen(
+  //          m_shooter.spinShooterToVelocity().andThen(
+  //          m_intake.fwdIntakeTimed().andThen(
+  //          new WaitCommand(2).andThen(
+  //          m_shooter.stopShooter().andThen(
+  //         m_intake.stopIntake()))))));
+  // }
 
   public Command getAutonomousCommand() {
     return new PathPlannerAuto("Auto1");
@@ -286,8 +295,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     driveWithJoystick(true);
-    moveArm();
-    cmdIntake();
+    //moveArm();
+    //cmdIntake();
   }
 
   @Override
@@ -353,26 +362,26 @@ public class Robot extends TimedRobot {
   
   }
 
-  private void moveArm() {
-    var expLeftY = exponentialScaling(m_controller2.getLeftY(), Configuration.kExpControl);
+  // private void moveArm() {
+  //   var expLeftY = exponentialScaling(m_controller2.getLeftY(), Configuration.kExpControl);
 
-    // Get the y speed or sideways/strafe speed. We are inverting this because
-    // we want a positive value when we pull to the left. Xbox controllers
-    // return positive values when you pull to the right by default.
-    final var ySpeed = MathUtil.applyDeadband(expLeftY, Math.pow(
-          Configuration.GeneralDeadband, Configuration.kExpControl));
+  //   // Get the y speed or sideways/strafe speed. We are inverting this because
+  //   // we want a positive value when we pull to the left. Xbox controllers
+  //   // return positive values when you pull to the right by default.
+  //   final var ySpeed = MathUtil.applyDeadband(expLeftY, Math.pow(
+  //         Configuration.GeneralDeadband, Configuration.kExpControl));
 
-    m_shooter.setPosition(ySpeed);
-  }
+  //   m_shooter.setPosition(ySpeed);
+  // }
 
-  private void cmdIntake() {
-    var expRightY = exponentialScaling(m_controller2.getRightY(), Configuration.kExpControl);
+  // private void cmdIntake() {
+  //   var expRightY = exponentialScaling(m_controller2.getRightY(), Configuration.kExpControl);
 
-    final var ySpeed = MathUtil.applyDeadband(expRightY, Math.pow(
-          Configuration.GeneralDeadband, Configuration.kExpControl));
+  //   final var ySpeed = MathUtil.applyDeadband(expRightY, Math.pow(
+  //         Configuration.GeneralDeadband, Configuration.kExpControl));
 
-    m_intake.cmdIntake(ySpeed);
-  }
+  //   m_intake.cmdIntake(ySpeed);
+  // }
 
   public double exponentialScaling(double base, double exponent) {
     if (base > 0) {

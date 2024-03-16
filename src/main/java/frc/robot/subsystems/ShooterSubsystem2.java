@@ -59,7 +59,7 @@ public class ShooterSubsystem2 extends SubsystemBase {
 
     private void processControl() {
         // Drive the motors to the shooters angle to whatever the target angle is
-        MathUtil.clamp(m_desiredAngle, Configuration.kLoweredLimit,
+        m_desiredAngle = MathUtil.clamp(m_desiredAngle, Configuration.kLoweredLimit,
             Configuration.kUpperLimit);
 
         double currentAngle = m_armEnc.getPosition();

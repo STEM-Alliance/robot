@@ -11,16 +11,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-// Logging stuff
-import frc.robot.LoggedNumber;
 
 public class SwerveModule {
   private static final double kModuleMaxAngularVelocity = Configuration.kMaxAngularSpeed;
@@ -33,7 +32,8 @@ public class SwerveModule {
   private RelativeEncoder m_driveEncoder;
   private RelativeEncoder m_turningEncoder;
 
-  private final AnalogInput m_absolutePos;
+  //private final AnalogInput m_absolutePos;
+  private final AnalogEncoder m_absolutePos;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_drivePIDController = new PIDController(
@@ -80,7 +80,7 @@ public class SwerveModule {
     m_driveMotor.setSmartCurrentLimit(Configuration.NeoLimit);
     m_turningMotor.setSmartCurrentLimit(Configuration.NeoLimit);
 
-    m_absolutePos = new AnalogInput(analogInputChannel);
+    m_absolutePos = new AnalogEncoder(analogInputChannel);
 
     m_driveEncoder = m_driveMotor.getEncoder();
     m_turningEncoder = m_turningMotor.getEncoder();
@@ -120,7 +120,7 @@ public class SwerveModule {
    */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        m_driveEncoder.getVelocity(), new Rotation2d(m_turningEncoder.getPosition()));
+        m_driveEncoder.getPosition(), new Rotation2d(m_turningEncoder.getPosition()));
   }
 
   /**
@@ -176,12 +176,16 @@ public class SwerveModule {
     If the current rotation was 50, and the target was 4096, this
     would set the encoders rotation to ~+0.1 rotations instead of ~-12.5 */
 
-    double diffPos = (getAbsPos() - syncedAbsPos);
-    if (diffPos > Configuration.kEncoderRes / 2)
+    double diffPos = getAbsPos() - syncedAbsPos;
+    if (diffPos < 0)
     {
-      diffPos -= Configuration.kEncoderRes;
+      diffPos += 1;
     }
-    return (diffPos * 2 * Math.PI) / Configuration.kEncoderRes;
+    // if (diffPos > Configuration.kEncoderRes / 2)
+    // {
+    //   diffPos -= Configuration.kEncoderRes;
+    // }
+    return (diffPos * 2 * Math.PI);// / Configuration.kTurningGearReduction); /// Configuration.kEncoderRes;
   }
 
   public void syncSwerveEncoder(double syncedAbsPos) {
@@ -189,7 +193,7 @@ public class SwerveModule {
   }
 
   public double getAbsPos() {
-    return m_absolutePos.getValue();
+    return m_absolutePos.getAbsolutePosition();
   }
 
   public void setBrake(boolean enabled) {

@@ -2,25 +2,19 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.7,
-      "y": 4.33
+      "x": 2.0,
+      "y": 2.0
     },
-    "rotation": -108.0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "GoLongPath"
+            "pathName": "TestWTurn"
           }
         }
       ]

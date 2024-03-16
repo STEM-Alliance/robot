@@ -16,13 +16,13 @@ public class Configuration {
      *******************************************/
     // This controls the speed of the right to left slew rate. Large numbers mean
     // faster response
-    static public double kVxSlewRateLimit = 10;
-    static public double kVySlewRateLimit = 10;
+    static public double kVxSlewRateLimit = 8;
+    static public double kVySlewRateLimit = 8;
     static public double kOmegaSlewRateLimit = 10;
-    static public double kDrivingOmegaFactor = 0.8;
+    static public double kDrivingOmegaFactor = 0.3;
 
     // Max speeds
-    static public double kMaxSpeed = 2.5; // 3 meters per second
+    static public double kMaxSpeed = 6; // 3 meters per second
     static public double kMaxAngularSpeed = 2 * Math.PI; // 2 rotations per second 
     static public double kMaxAngularAcceleration = Math.pow(2 * Math.PI, 2);
     static public double GeneralDeadband = 0.2;
@@ -64,7 +64,8 @@ public class Configuration {
     static public int kPigeon2CanID = 40;
 
     // NOTE: These seem to drift
-    static public double[] kZeroPosition = new double[]{3783, 1926, 2780, 365};
+    //static public double[] kZeroPosition = new double[]{0.963, 0.486, 0.070, 0.093};
+    static public double[] kZeroPosition = new double[]{0.963, 0.486, 0.710, 0.093};
     static public double kEncoderRes = 4096;
 
     static public HolonomicPathFollowerConfig kPathFollowerConfig =
@@ -99,7 +100,7 @@ public class Configuration {
     static public double kLoweredPosition = -55;
 
     static public double kLoweredLimit = -70;
-    static public double kUpperLimit = 30;
+    static public double kUpperLimit = 40;
 
     static public double kAmpPosition = 30;
 
@@ -145,11 +146,11 @@ public class Configuration {
     /********************************************
      * Aimbot
      *******************************************/
-    static public double kAimP = 0.01;
-    static public double kAimI = 0.01;
+    static public double kAimP = 0.015;
+    static public double kAimI = 0;
     static public double kAimD = 0;
-    static public double kAimSpeedLimit = 0.5;
-    static public double kAimbotStop = 1;
+    static public double kAimSpeedLimit = 0.1;
+    static public double kAimbotStop = 5;
 
     /********************************************
      * TrapAim

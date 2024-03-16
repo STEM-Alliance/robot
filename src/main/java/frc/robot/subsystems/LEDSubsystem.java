@@ -9,11 +9,13 @@ public class LEDSubsystem extends SubsystemBase {
     private double m_flashingColor;
     private boolean m_flashingEnabled;
     private int m_flashingCounter = 0;
+    private Command m_flashGreenCmd;
 
     /** Creates a new DriveSubsystem. */
     public LEDSubsystem() 
     {
         m_leds.setSpeed(0.61);
+        m_flashGreenCmd = flashGreen();
     }
 
     @Override
@@ -27,6 +29,7 @@ public class LEDSubsystem extends SubsystemBase {
             }
             else if (m_flashingCounter >= 50) {
                 m_leds.setSpeed(m_flashingColor);
+                m_flashingCounter = 0;
             }
         }
     }
@@ -35,6 +38,13 @@ public class LEDSubsystem extends SubsystemBase {
         m_flashingColor = 0.99;
         m_flashingCounter = 0;
         m_flashingEnabled = false;
+    }
+
+    public Command flashGreen() {
+        return new InstantCommand(() -> setGreen()).andThen(
+        new WaitCommand(0.1).andThen(
+        new InstantCommand(() -> setBlack()).andThen(
+        new WaitCommand(0.1))));
     }
 
     public Command red()
