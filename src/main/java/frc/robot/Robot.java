@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.AimbotCommand;
+import frc.robot.commands.AimbotCommand2;
 import frc.robot.commands.MoveBotCommand;
 import frc.robot.subsystems.*;
 
@@ -58,11 +59,8 @@ public class Robot extends TimedRobot {
   Command m_climbUp;
   Command m_climbDown;
 
-  final String kLoop = "Loop";
   private SendableChooser<Command> m_autoChooser;
-  final AimbotCommand m_AimbotCommand = new AimbotCommand(m_swerve);
-
-  
+  final AimbotCommand2 m_AimbotCommand = new AimbotCommand2(m_swerve);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -155,13 +153,6 @@ public class Robot extends TimedRobot {
 
     m_autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", m_autoChooser);
-
-    // m_autoChooser.setDefaultOption(kShoot, kShoot);
-    // m_autoChooser.addOption(kShootAndScoot, kShootAndScoot);
-    // m_autoChooser.addOption(kDriveStraight, kDriveStraight);
-    // m_autoChooser.addOption(kLoop, kLoop);
-    // SmartDashboard.putData("Auto choices", m_autoChooser);
-
   }
 
   /**

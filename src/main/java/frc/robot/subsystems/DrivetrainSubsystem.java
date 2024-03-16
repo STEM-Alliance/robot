@@ -230,6 +230,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_pigeon2.setYaw(robotHeading);
   }
 
+  public double getContinuousHeading() {
+    return m_pigeon2.getAngle();
+  }
+
   public Command resetGyro() {
     return new InstantCommand(() -> {m_pigeon2.reset();});
   }

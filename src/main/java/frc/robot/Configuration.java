@@ -146,11 +146,11 @@ public class Configuration {
     /********************************************
      * Aimbot
      *******************************************/
-    static public double kAimP = 0.015;
+    static public double kAimP = 0.005;
     static public double kAimI = 0;
     static public double kAimD = 0;
-    static public double kAimSpeedLimit = 0.1;
-    static public double kAimbotStop = 5;
+    static public double kAimSpeedLimit = 0.15;
+    static public double kAimbotStop = 8;
 
     /********************************************
      * TrapAim
