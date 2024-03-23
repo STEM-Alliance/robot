@@ -2,25 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.7,
-      "y": 4.33
+      "x": 0.9,
+      "y": 2.3
     },
-    "rotation": -108.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Back3"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "GoLongPath"
+            "pathName": "Back3Return"
           }
         }
       ]

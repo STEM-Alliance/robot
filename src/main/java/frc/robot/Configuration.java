@@ -32,8 +32,8 @@ public class Configuration {
     static public double kDriveKp = 0;
     static public double kDriveKi = 0;
     static public double kDriveKd = 0;
-    static public double kDriveKs = 0.1;
-    static public double kDriveKv = 0.25;
+    static public double kDriveKs = 0.05;
+    static public double kDriveKv = 0.125;
 
     // PID and feedforward gains for the swerve motors
     static public double kSwerveKp = 0.5; // 0.65
@@ -70,52 +70,51 @@ public class Configuration {
 
     static public HolonomicPathFollowerConfig kPathFollowerConfig =
         new HolonomicPathFollowerConfig(
-            new PIDConstants(0.65), // Translation
+            new PIDConstants(0.85), // Translation
             new PIDConstants(0.65), // Rotation
             kMaxSpeed,
             kSwerveTranslations[0].getNorm(),
             new ReplanningConfig()
         );
     
+    static public int KRumbleTimer = 100;
+
     /********************************************
      * Shooter Configuration
      *******************************************/
-    static public double kShooterArmKp = 0.1; // tune?
+    static public int kShooterArmMotorCanID = 14;
+    static public int kShooterArmEncoderChannel = 1;
+
+    static public double kShooterArmKp = 0.1;
     static public double kShooterArmKi = 0;
     static public double kShooterArmKd = 0;
+    static public double kShooterArmMaxSpeed = 60; // Degrees/s
+    static public double kShooterArmAcceleration = kShooterArmMaxSpeed / 0.5; // Max in 0.5s
+    static public double kShooterArmRatio = 360/230 * 1.5;
+    static public double kShooterArmChangeRate = 50; // Increase desired angle x degrees per second
+    static public double kShooterArmPIDLimit = 0.3; // Limit the PID output incase of wrong values
 
-    static public double kArmAngleFactor = 1;
-    static public double kArmMotorLimit = 0.3;
-    static public double kArmBackwardsLimit = 60; // need to find working value for this
+    static public double kTargetingError = 1; // +- Error to be at setpoint
+    static public double kShooterArmLowerLimit = 0;
+    static public double kShooterArmUpperLimit = 0;
+
+    // Intake Position, Travel Position, Amp Position
+    static public double kShooterArmUnhookPosition = 5;
+    static public double kShooterArmLoweredPosition = -60;
+    static public double[] kShooterArmSetpoints = new double[]{-50, 0, 40};
+
     static public double kMinFlywheelSpeed = 90;
 
     static public int[] kShooterMotorCanID = new int[]{11, 12};
-    static public int kShooterArmMotorCanID = 14;
-    static public int kLowArmLimitswitchChannel = 1;
-    static public int kUpperArmLimitswitchChannel = 2;
     static public int kNoteSensorChannel = 0;
-
-    static public double kTargetError = 2;
-    static public double kUnhookPosition = 10;
-    static public double kLoweredPosition = -55;
-
-    static public double kLoweredLimit = -70;
-    static public double kUpperLimit = 40;
-
-    static public double kAmpPosition = 30;
-
-    /* In rotations, travel position (up) is 0
-    Intake position, Travel position, Amp Position */
-    static public double[] kShooterArmPositions = new double[]{-50, 0, 40};
 
     /********************************************
      * Intake Configuration
      *******************************************/
-    // Intake Configuration
     static public int kIntakeMotorCanID = 10;
 
     /********************************************
-     * Limelight
+     * Limelight Configuration
      *******************************************/
     static public String kLimelightName = "limelight";
 
@@ -146,11 +145,11 @@ public class Configuration {
     /********************************************
      * Aimbot
      *******************************************/
-    static public double kAimP = 0.005;
+    static public double kAimP = 0.000025; // 0.005
     static public double kAimI = 0;
     static public double kAimD = 0;
     static public double kAimSpeedLimit = 0.15;
-    static public double kAimbotStop = 8;
+    static public double kAimbotStop = 1; // 8
 
     /********************************************
      * TrapAim

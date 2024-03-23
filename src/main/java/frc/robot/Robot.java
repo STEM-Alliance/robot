@@ -16,6 +16,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -39,14 +41,16 @@ public class Robot extends TimedRobot {
 
   Command m_driveCommand;
 
+  DigitalInput m_noteSensor = new DigitalInput(Configuration.kNoteSensorChannel);
+
   public DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
-  //public IntakeSubsystem m_intake = new IntakeSubsystem(this);
-  //public ShooterSubsystem2 m_shooter = new ShooterSubsystem2();
+  public IntakeSubsystem m_intake = new IntakeSubsystem(this, m_noteSensor);
+  public ShooterSubsystem3 m_shooter = new ShooterSubsystem3();
 
   public LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
 
   CommandXboxController m_controller1 = new CommandXboxController(0);
-  //CommandXboxController m_controller2 = new CommandXboxController(1);
+  CommandXboxController m_controller2 = new CommandXboxController(1);
 
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Configuration.kVxSlewRateLimit);
@@ -62,6 +66,8 @@ public class Robot extends TimedRobot {
   private SendableChooser<Command> m_autoChooser;
   final AimbotCommand2 m_AimbotCommand = new AimbotCommand2(m_swerve);
 
+  boolean m_previousNoteSensor = true;
+  int m_rumbleCounter;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -88,15 +94,53 @@ public class Robot extends TimedRobot {
     final Trigger enTurbo = m_controller1.rightTrigger();
     final Trigger resetGyro = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
+    // Do we want the driver to be able to control the setpoints or controller 2 or both
+    final Trigger armSetpointUp = m_controller1.povUp();
+    final Trigger armSetpointDown = m_controller1.povDown();
 
-    final Trigger raiseArm = m_controller1.rightTrigger();
-    final Trigger lowerArm = m_controller1.leftTrigger();
-    final Trigger armPositionUp = m_controller1.povUp();
-    final Trigger armPositionDown = m_controller1.povDown();
+    //brake.onTrue(m_swerve.setBrakeModeCmd());
+    //coast.onTrue(m_swerve.setCoastModeCmd());
+    autoAim.whileTrue(m_AimbotCommand);
+    enTurbo.onTrue(m_swerve.enableTurbo());
+    enTurbo.onFalse(m_swerve.disableTurbo());
+    //runPath.onTrue(m_swerve.runPath());
+    resetGyro.onTrue(m_swerve.resetGyro());
+    homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
+    armSetpointUp.onTrue(new InstantCommand(() -> m_shooter.moveSetpointUp()));
+    armSetpointDown.onTrue(new InstantCommand(() -> m_shooter.moveSetpointDown()));
 
     /**************************************************************
      * Controller 2
      *************************************************************/
+    final Trigger intakeNote = m_controller2.leftTrigger();
+    final Trigger outtakeNote = m_controller2.rightTrigger();
+    final Trigger shootSpeaker = m_controller2.y();
+    final Trigger shootAmp = m_controller2.x();
+
+    // When you are pressing the intake button, the arm will stay at the lowered position and
+    // run the intake until there is a note, the arm will stay down until the button is released
+    intakeNote.whileTrue(m_shooter.setSetpoint(0).andThen(
+      m_intake.fwdIntake(false)));
+    intakeNote.onFalse(m_shooter.setSetpoint(1));
+
+    outtakeNote.whileTrue(m_intake.revIntake());
+    outtakeNote.onFalse(m_intake.stopIntake());
+
+    // When you are pressing the shoot speaker button, the shooter will spin up to velocity and
+    // move the note into the shooter
+    // (Make aimbot for the speaker run automatically? or run manually)
+    shootSpeaker.whileTrue((m_shooter.spinShooterToVelocity().andThen(
+      m_intake.fwdIntake(true))));
+    shootSpeaker.onFalse(m_shooter.stopShooter());
+
+    // When you press the button, the shooter will just move to the setpoint for the amp
+    // When the arm is up, you can line up and then hold the button, which will run the intake
+    // (Make aimbot for amp run automatically? or run manually)
+    shootAmp.whileTrue(m_shooter.setSetpoint(2).andThen(
+      m_shooter.atSetpoint().andThen(
+      m_intake.revIntake())));
+    shootAmp.onFalse(m_intake.stopIntake());
+
     // final Trigger fwdIntake = m_controller2.a();
     // final Trigger autoAim = m_controller2.b();
     // final Trigger shoot = m_controller2.y();
@@ -109,35 +153,8 @@ public class Robot extends TimedRobot {
     // final Trigger down = m_controller2.pov(180);
     // final Trigger left = m_controller2.pov(270);
     // final Trigger right = m_controller2.pov(90);
-    
-    
-    // up.onTrue(m_leds.red());
-    // left.onTrue(m_leds.yellow());
-    // right.onTrue(m_leds.blue());
-    // down.onTrue(m_leds.crazy());
-    //brake.onTrue(m_swerve.setBrakeModeCmd());
-    //coast.onTrue(m_swerve.setCoastModeCmd());
-    enTurbo.onTrue(m_swerve.enableTurbo());
-    enTurbo.onFalse(m_swerve.disableTurbo());
+
     // engageClimbBrake.onTrue(m_climber.toggleClimbBrakeCmd());
-    autoAim.whileTrue(m_AimbotCommand);
-    // ampPos.onTrue(m_shooter.ampPosition());
-
-    //runPath.onTrue(m_swerve.runPath());
-    resetGyro.onTrue(m_swerve.resetGyro());
-    homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
-    m_swerve.homeSwerve();
-    
-    // fwdIntake.onTrue(m_intake.fwdIntake(false));
-    // shoot.whileTrue((m_shooter.spinShooterToVelocity().andThen(
-    //   m_intake.fwdIntake(true)
-    //   )));
-
-    // shootAmp.whileTrue((m_shooter.spinShooterToVelocity(-0.4).andThen(
-    //   m_intake.fwdIntake(true))));
-
-    // shoot.onFalse(m_shooter.stopShooter());
-    // shootAmp.onFalse(m_shooter.stopShooter());
 
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts
@@ -193,6 +210,24 @@ public class Robot extends TimedRobot {
     // m_shooter.movementLoop();
     // Uncomment this line to print the motor positions.
     m_swerve.printHomePos();
+
+    boolean notesensor = m_noteSensor.get();
+    if (notesensor & !m_previousNoteSensor)
+    {
+      m_rumbleCounter = 0;
+    }
+    m_previousNoteSensor = notesensor;
+    if (m_rumbleCounter < Configuration.KRumbleTimer)
+    {
+      m_controller1.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+      m_controller2.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+      m_rumbleCounter++;
+    }
+    else {
+      m_controller1.getHID().setRumble(RumbleType.kBothRumble, 0);
+      m_controller2.getHID().setRumble(RumbleType.kBothRumble, 0);
+    }
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -286,8 +321,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     driveWithJoystick(true);
-    //moveArm();
-    //cmdIntake();
+    moveArm();
+    cmdIntake();
   }
 
   @Override
@@ -312,7 +347,7 @@ public class Robot extends TimedRobot {
     var leftX = m_controller1.getLeftX();
     var leftY = m_controller1.getLeftY();
     var rightX = m_controller1.getRightX();
-    var expLeftX = exponentialScaling(leftX, Configuration.kExpControl); //getHID()
+    var expLeftX = exponentialScaling(leftX, Configuration.kExpControl);
     var expLeftY = exponentialScaling(leftY, Configuration.kExpControl);
     var expOmega = exponentialScaling(rightX, Configuration.kExpControl);
 
@@ -341,7 +376,9 @@ public class Robot extends TimedRobot {
     // Limit rotation to 1 - the driving omega factor when driving any direction
     rot = rot * (1 - (Configuration.kDrivingOmegaFactor *
       (Math.abs(expLeftX) + Math.abs(expLeftY))));
-    
+
+    rot += m_AimbotCommand.getDesiredRotation();
+
     m_swerve.controllerDrive(xSpeed, ySpeed, rot, fieldRelative, getPeriod());
   
     LoggedNumber.getInstance().logNumber("LeftX", leftX);
@@ -353,26 +390,26 @@ public class Robot extends TimedRobot {
   
   }
 
-  // private void moveArm() {
-  //   var expLeftY = exponentialScaling(m_controller2.getLeftY(), Configuration.kExpControl);
+  private void moveArm() {
+    var expLeftY = exponentialScaling(m_controller2.getLeftY(), Configuration.kExpControl);
 
-  //   // Get the y speed or sideways/strafe speed. We are inverting this because
-  //   // we want a positive value when we pull to the left. Xbox controllers
-  //   // return positive values when you pull to the right by default.
-  //   final var ySpeed = MathUtil.applyDeadband(expLeftY, Math.pow(
-  //         Configuration.GeneralDeadband, Configuration.kExpControl));
+    // Get the y speed or sideways/strafe speed. We are inverting this because
+    // we want a positive value when we pull to the left. Xbox controllers
+    // return positive values when you pull to the right by default.
+    final var ySpeed = MathUtil.applyDeadband(-expLeftY, Math.pow(
+          Configuration.GeneralDeadband, Configuration.kExpControl));
 
-  //   m_shooter.setPosition(ySpeed);
-  // }
+    m_shooter.setPosition(ySpeed);
+  }
 
-  // private void cmdIntake() {
-  //   var expRightY = exponentialScaling(m_controller2.getRightY(), Configuration.kExpControl);
+  private void cmdIntake() {
+    var expRightY = exponentialScaling(m_controller2.getRightY(), Configuration.kExpControl);
 
-  //   final var ySpeed = MathUtil.applyDeadband(expRightY, Math.pow(
-  //         Configuration.GeneralDeadband, Configuration.kExpControl));
+    final var ySpeed = MathUtil.applyDeadband(expRightY, Math.pow(
+          Configuration.GeneralDeadband, Configuration.kExpControl));
 
-  //   m_intake.cmdIntake(ySpeed);
-  // }
+    m_intake.cmdIntake(ySpeed);
+  }
 
   public double exponentialScaling(double base, double exponent) {
     if (base > 0) {

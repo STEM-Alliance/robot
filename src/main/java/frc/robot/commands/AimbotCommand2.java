@@ -34,13 +34,23 @@ public class AimbotCommand2 extends Command {
   private final DrivetrainSubsystem m_subsystem;
   int m_counter = 0;
 
+  // Max velocity is 10 degrees/s and it takes 2 second(s) to accelerate to that speed
+  // ProfiledPIDController m_xPID = new ProfiledPIDController(
+  //   0.00001, Configuration.kAimI, Configuration.kAimD,
+  //   new TrapezoidProfile.Constraints(10, 10 / 2));
   PIDController m_xPID = new PIDController(Configuration.kAimP, Configuration.kAimI, Configuration.kAimD);
 
   boolean tagFound = false;
-  boolean m_doneAiming = true;
+  boolean m_doneAiming = false;
+
+  double currentHeadingOffset;
 
   double targetHeading;
   double robotHeading;
+
+  double m_desiredRotation = 0;
+
+  String m_name = Configuration.kLimelightName;
 
   /**
    * Creates a new AimbotCommand.
@@ -50,7 +60,7 @@ public class AimbotCommand2 extends Command {
   public AimbotCommand2(DrivetrainSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
+    //addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -59,30 +69,25 @@ public class AimbotCommand2 extends Command {
   {
     //m_subsystem.setBrakeMode();
     // For some reason command scheduler loop overrun, only when run for the first time?
-    var p = SmartDashboard.getNumber("P", 0);
-    var i = SmartDashboard.getNumber("I", 0);
-    var d = SmartDashboard.getNumber("D", 0);
-    m_xPID.setP(Configuration.kAimP);
-    m_xPID.setI(Configuration.kAimI);
-    m_xPID.setD(Configuration.kAimD);
+    // var p = SmartDashboard.getNumber("P", 0);
+    // var i = SmartDashboard.getNumber("I", 0);
+    // var d = SmartDashboard.getNumber("D", 0);
+    // m_xPID.setP(Configuration.kAimP);
+    // m_xPID.setI(Configuration.kAimI);
+    // m_xPID.setD(Configuration.kAimD);
     System.out.println("starting aimbot");
     m_doneAiming = false;
+    tagFound = false;
 
-    LimelightResults results = LimelightHelpers.getLatestResults(
-      Configuration.kLimelightName);
+    boolean tv = LimelightHelpers.getTV(m_name);
 
-    for (LimelightTarget_Fiducial target: results.targetingResults.targets_Fiducials) {
-      if (target.fiducialID == Helpers.getDesiredAprilTag()) {
-        double tagTX = target.tx;
-        double tagHeadingOffset = tagTX;
-
-        robotHeading = m_subsystem.getContinuousHeading();
-        targetHeading = robotHeading + tagHeadingOffset;
-        tagFound = true;
-        break;
-      }
+    // Make sure that there is a tag currently in the view
+    // I think getLatestResults does not update no empty when there is no tag detected
+    if (tv) {
+      updateDesiredTagHeading(true);
+      // End the aimbot if the desired tag is not found or there is no tag in the image
     }
-    if (!tagFound) {
+    else {
       m_doneAiming = true;
     }
   }
@@ -92,35 +97,40 @@ public class AimbotCommand2 extends Command {
   public void execute() 
   {
     if (!m_doneAiming) {
+      updateDesiredTagHeading(false);
+
       double currentHeading = m_subsystem.getContinuousHeading();
       double rotationCalculated = m_xPID.calculate(currentHeading, targetHeading);
       rotationCalculated = MathUtil.clamp(rotationCalculated,
         -Configuration.kAimSpeedLimit, Configuration.kAimSpeedLimit);
 
-      ChassisSpeeds driveSpeeds = new ChassisSpeeds(
-        0, 0, rotationCalculated);
-
       SmartDashboard.putNumber("target heading", targetHeading);
       SmartDashboard.putNumber("current heading", currentHeading);
       SmartDashboard.putNumber("rotation pid", rotationCalculated);
+      // SmartDashboard.putNumber("pid setpoint", m_xPID.getSetpoint().position);
 
-      /* Find a better way to do this, make it slow down before reaching the target
-      instead of overshooting the target */
-      if (Math.abs(currentHeading - targetHeading) > Configuration.kAimbotStop) {
-        m_subsystem.driveRobotSpeeds(driveSpeeds);
-      }
-      else {
-        m_doneAiming = true;
-      }
+      m_desiredRotation = rotationCalculated;
+
+      // if (Math.abs(currentHeading - targetHeading) > Configuration.kAimbotStop) {
+      //   ChassisSpeeds driveSpeeds = new ChassisSpeeds(
+      //     0, 0, rotationCalculated);
+      //   m_subsystem.driveRobotSpeeds(driveSpeeds);
+      // }
+      // else {
+      //   m_doneAiming = false;
+      //   ChassisSpeeds driveSpeeds = new ChassisSpeeds(
+      //     0, 0, 0);
+      //   m_subsystem.driveRobotSpeeds(driveSpeeds);
+      // }
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.driveRobotSpeeds(new ChassisSpeeds(
-      0, 0, 0));
-
+    // m_subsystem.driveRobotSpeeds(new ChassisSpeeds(
+    //   0, 0, 0));
+    m_desiredRotation = 0;
     System.out.println("aimbot stopped");
   }
 
@@ -129,4 +139,38 @@ public class AimbotCommand2 extends Command {
   public boolean isFinished() {
     return m_doneAiming;
   }
+
+  private void updateDesiredTagHeading(boolean forceUpdate) {
+    LimelightResults results = LimelightHelpers.getLatestResults(m_name);
+
+    for (LimelightTarget_Fiducial target: results.targetingResults.targets_Fiducials) {
+      if (target.fiducialID == Helpers.getDesiredAprilTag()) {
+        double tagTX = target.tx;
+        double tagHeadingOffset = tagTX;
+
+        // If the change in the offset is more than 0.5 degrees, then it is a new frame
+        if (Math.abs(tagHeadingOffset - currentHeadingOffset) > 5 || forceUpdate) {
+          robotHeading = m_subsystem.getContinuousHeading();
+          targetHeading = robotHeading + tagHeadingOffset;
+          currentHeadingOffset = tagHeadingOffset;
+          tagFound = true;
+
+          // if (forceUpdate) {
+          //   m_xPID.setGoal(new TrapezoidProfile.State(targetHeading, 0));
+          // }
+          // else {
+          //   m_xPID.setGoal(targetHeading);
+          // }
+          break;
+        }
+      }
+    }
+    if (!tagFound) {
+      m_doneAiming = true;
+     }
+   }
+
+   public double getDesiredRotation() {
+    return m_desiredRotation;
+   }
 }

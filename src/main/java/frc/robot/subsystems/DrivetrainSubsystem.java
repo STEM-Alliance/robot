@@ -78,7 +78,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
       new Pose2d()
     );
 
-  private Field2d m_field = new Field2d();
+  private final Field2d m_field = new Field2d();
 
   /** Creates a new DriveSubSystem. */
   public DrivetrainSubsystem() {
@@ -175,8 +175,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void driveRobotSpeeds(ChassisSpeeds robotSpeeds) {
-    System.out.println("driveRobotSpeeds vx: " + robotSpeeds.vxMetersPerSecond + " vy: " + robotSpeeds.vyMetersPerSecond + " rot: " + robotSpeeds.omegaRadiansPerSecond);
-    robotSpeeds.omegaRadiansPerSecond = -robotSpeeds.omegaRadiansPerSecond;
     var targetSpeeds = ChassisSpeeds.discretize(robotSpeeds, 0.02);
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(targetSpeeds);
 

@@ -15,11 +15,11 @@ public class IntakeSubsystem extends SubsystemBase {
     public final DigitalInput m_noteSensor;
 
     /** Creates a new IntakeSubsystem. */
-    public IntakeSubsystem(Robot robot) {
-        m_noteSensor = new DigitalInput(Configuration.kNoteSensorChannel);
+    public IntakeSubsystem(Robot robot, DigitalInput noteSensor) {
         m_intake = new CANSparkMax(Configuration.kIntakeMotorCanID, MotorType.kBrushless);
         m_intake.setSmartCurrentLimit(Configuration.Neo550Limit);
         m_intake.setIdleMode(IdleMode.kBrake);
+        m_noteSensor = noteSensor;
     }
 
     public void periodic() {

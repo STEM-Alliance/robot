@@ -1,0 +1,127 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.79,
+      "y": 4.37
+    },
+    "rotation": 119.90529766139834
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Rotate"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Unrotate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "to4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Rotate"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Unrotate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Rotate"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Unrotate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Rotate"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Unrotate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To1"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
