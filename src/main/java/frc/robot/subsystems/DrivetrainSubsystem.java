@@ -79,6 +79,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     );
 
   private final Field2d m_field = new Field2d();
+  double m_desiredAngle = 0;
 
   /** Creates a new DriveSubSystem. */
   public DrivetrainSubsystem() {
@@ -111,8 +112,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     PathPlannerLogging.setLogActivePathCallback((poses) -> m_field.getObject("path").setPoses(poses));
 
     SmartDashboard.putData("Field", m_field);
-
-      //m_poseEstimator.resetPosition(new Rotation2d(45), getModulePositions(), new Pose2d(7.4, 0.42, new Rotation2d(45)));
   }
 
   public void periodic() {
@@ -121,7 +120,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     LoggedNumber.getInstance().logNumber("pig_yaw", m_pigeon2.getYaw().getValue());
     LoggedNumber.getInstance().logNumber("pig_angle", m_pigeon2.getAngle());
-    //SmartDashboard.putData("FieldPos", m_field);
     LoggedNumber.getInstance().logNumber("RobotPoseX", getPose().getX());
     LoggedNumber.getInstance().logNumber("RobotPoseY", getPose().getY());
     LoggedNumber.getInstance().logNumber("RobotPoseDeg", getPose().getRotation().getDegrees());
@@ -293,4 +291,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SmartDashboard.putNumberArray("abspos", abspos);
   }
 
+  public void rotateChassis() {
+    driveRobotSpeeds(new ChassisSpeeds(0, 0, Configuration.kAutoRotationSpeed));
+  }
+
+  public Command rotateChassisCmd(double rotationAngle) {
+    return new FunctionalCommand(
+      () -> {m_desiredAngle = rotationAngle + getPose().getRotation().getDegrees();}, 
+      () -> {rotateChassis();},
+      interrupted -> {}, // This should stop the arm at the current position
+      () -> Math.abs(getPose().getRotation().getDegrees() - m_desiredAngle) < Configuration.kTargetingError
+    );
+  }
 }

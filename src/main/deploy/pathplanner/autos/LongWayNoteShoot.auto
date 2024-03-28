@@ -2,43 +2,49 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.95,
-      "y": 6.74
+      "x": 0.7265787504547981,
+      "y": 4.363499898170968
     },
-    "rotation": 45.0
+    "rotation": -59.93000000000001
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "GrabNote1"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "name": "Shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ShootNote1"
+            "pathName": "Back5"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 1.0
+            "name": "StopIntake"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "GrabNote2"
+            "name": "Rotate90"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RotateNeg30"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

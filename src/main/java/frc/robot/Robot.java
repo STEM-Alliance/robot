@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -63,11 +64,14 @@ public class Robot extends TimedRobot {
   Command m_climbUp;
   Command m_climbDown;
 
+  // Pathplanner auto chooser
   private SendableChooser<Command> m_autoChooser;
   final AimbotCommand2 m_AimbotCommand = new AimbotCommand2(m_swerve);
 
+  // Rumble Variables
   boolean m_previousNoteSensor = true;
   int m_rumbleCounter;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -75,14 +79,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     CameraServer.startAutomaticCapture();
-
-    // SmartDashboard.putNumber("kp", Configuration.kSwerveKp);
-    // SmartDashboard.putNumber("ki", Configuration.kSwerveKi);
-    // SmartDashboard.putNumber("kd", Configuration.kSwerveKd);
-
-    // SmartDashboard.putNumber("ks", Configuration.kSwerveKs);
-    // SmartDashboard.putNumber("kv", Configuration.kSwerveKv);
-    
     m_swerve.homeSwerve();
   
     /**************************************************************
@@ -170,6 +166,13 @@ public class Robot extends TimedRobot {
 
     m_autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", m_autoChooser);
+
+    // Register auto modes: https://pathplanner.dev/pplib-named-commands.html
+    NamedCommands.registerCommand("Inake", m_shooter.setSetpoint(0).andThen(m_intake.fwdIntake(false)));
+    NamedCommands.registerCommand("StopIntake", m_shooter.setSetpoint(1));
+    NamedCommands.registerCommand("Rotate90", m_swerve.rotateChassisCmd(90));
+    NamedCommands.registerCommand("RotateNeg30", m_swerve.rotateChassisCmd(-30));
+    NamedCommands.registerCommand("Shoot", m_shooter.spinShooterToVelocity().andThen(m_intake.fwdIntakeTimed()));
   }
 
   /**

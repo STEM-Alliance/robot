@@ -197,4 +197,5 @@ public class Configuration {
     static public double ExtendArmPosition = 1;
     static public double MaxAutoSpeed = 0.6;
     static public double MaxLevelSpeed = 0.4;
+    static public double kAutoRotationSpeed = Math.PI;
 }
