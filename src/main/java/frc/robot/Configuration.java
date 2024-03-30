@@ -103,7 +103,7 @@ public class Configuration {
     static public double kShooterArmLoweredPosition = -60;
     static public double[] kShooterArmSetpoints = new double[]{-50, 0, 40};
 
-    static public double kMinFlywheelSpeed = 90;
+    static public double kMaxFlywheelSpeed = 90;
 
     static public int[] kShooterMotorCanID = new int[]{11, 12};
     static public int kNoteSensorChannel = 0;

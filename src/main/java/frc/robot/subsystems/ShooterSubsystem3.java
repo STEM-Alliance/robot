@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.Configuration;
 import frc.robot.LoggedNumber;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -21,6 +22,8 @@ public class ShooterSubsystem3 extends SubsystemBase {
   private final RelativeEncoder m_shooterEnc;
   private final DutyCycleEncoder m_absEncoder;
 
+  private final PIDController m_shooterPID = new PIDController(0.1, 0, 0);
+
   private final ProfiledPIDController m_armPID = new ProfiledPIDController(
     Configuration.kShooterArmKp, Configuration.kShooterArmKi, Configuration.kShooterArmKd,
     new TrapezoidProfile.Constraints(
@@ -35,7 +38,7 @@ public class ShooterSubsystem3 extends SubsystemBase {
 
   private static double m_ampPosition = Configuration.kShooterArmSetpoints[2];
 
-  private static int m_setpoints = Configuration.kShooterArmSetpoints.length - 1;
+  private static int m_setpoints = Configuration.kShooterArmSetpoints.length;
 
   private double m_desiredAngle = 0;
   private int m_angleSetpoint = 0;
@@ -64,6 +67,9 @@ public class ShooterSubsystem3 extends SubsystemBase {
     m_absEncoder.setDistancePerRotation(360);
     m_absEncoder.reset();
 
+    // When the shooter is within 2 rotations per second of its setpoint, it is up to velocity
+    m_shooterPID.setTolerance(2);
+
     // Only allow integral for the arm PID when the error is less than +-5 degrees
     m_armPID.setIZone(5);
   }
@@ -71,6 +77,7 @@ public class ShooterSubsystem3 extends SubsystemBase {
   public void periodic() {
       syncArmEncoders();
 
+      shooterControlLoop();
       armControlLoop();
   }
 
@@ -126,31 +133,41 @@ private double getArmPos() {
     }
   }
 
-  // Spin the shooter motor and return true when the velocity is above the minimum
+  private void shooterControlLoop() {
+    if (m_shooterPID.getSetpoint() != 0) {
+      m_shooter.set(MathUtil.clamp(m_shooterPID.calculate(
+        Math.abs(m_shooterEnc.getVelocity())), -1, 1));
+    }
+    else {
+      m_shooter.set(0);
+    }
+  }
+
+  // Spin the shooter motor and return true when the velocity is at the max velocity
   public Command spinShooterToVelocity() {
     return new FunctionalCommand(
-      () -> m_shooter.set(-1),
+      () -> m_shooterPID.setSetpoint(Configuration.kMaxFlywheelSpeed),
       () -> {},
       interrupted -> {},
-      () -> Math.abs(m_shooterEnc.getVelocity()) >= Configuration.kMinFlywheelSpeed,
+      () -> m_shooterPID.atSetpoint(),
       this
     );
   }
 
-  // Spin the shooter motor with a speed and return true when the velocity is above the minimum
-  public Command spinShooterToVelocity(double speed) {
+  // Spin the shooter motor and return true when the velocity is at the given velocity
+  public Command spinShooterToVelocity(double velocity) {
     return new FunctionalCommand(
-      () -> m_shooter.set(speed),
+      () -> m_shooterPID.setSetpoint(velocity),
       () -> {},
       interrupted -> {},
-      () -> Math.abs(m_shooterEnc.getVelocity()) >= 15,
+      () -> m_shooterPID.atSetpoint(),
       this
     );
   }
 
   // Stop the shooter
   public Command stopShooter() {
-    return new InstantCommand(() -> m_shooter.set(0));
+    return new InstantCommand(() -> m_shooterPID.setSetpoint(0));
   }
 
   // Auto command, move the shooter up to release the pin
@@ -203,19 +220,41 @@ private double getArmPos() {
   }
 
   public void moveToSetpoint() {
-    m_angleSetpoint = MathUtil.clamp(m_angleSetpoint, 0, m_setpoints);
+    m_angleSetpoint = MathUtil.clamp(m_angleSetpoint, 0, m_setpoints - 1);
 
     m_desiredAngle = Configuration.kShooterArmSetpoints[m_angleSetpoint];
   }
 
   public void moveSetpointUp() {
-    m_angleSetpoint++;
-    moveToSetpoint();
+    // if there is a setpoint above the current arm position, then move to that setpoint
+    for (int i = m_angleSetpoint; i < m_setpoints; i++) {
+      double setpoint = Configuration.kShooterArmSetpoints[i];
+
+      if (Math.abs(setpoint - getArmPos()) < Configuration.kTargetingError &&
+        setpoint > getArmPos()) {
+          m_angleSetpoint = i;
+          moveToSetpoint();
+          break;
+        }
+    }
+
+    LoggedNumber.getInstance().logNumber("Setpoint", m_angleSetpoint);
   }
 
   public void moveSetpointDown() {
-    m_angleSetpoint--;
-    moveToSetpoint();
+    // if there is a setpoint below the current arm position, then move to that setpoint
+    for (int i = m_angleSetpoint; i > -1; i--) {
+      double setpoint = Configuration.kShooterArmSetpoints[i];
+
+      if (Math.abs(setpoint - getArmPos()) < Configuration.kTargetingError &&
+        setpoint < getArmPos()) {
+          m_angleSetpoint = i;
+          moveToSetpoint();
+          break;
+        }
+    }
+
+    LoggedNumber.getInstance().logNumber("Setpoint", m_angleSetpoint);
   }
 
   public Command setSetpoint(int setpoint) {

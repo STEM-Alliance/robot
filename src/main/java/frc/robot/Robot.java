@@ -90,9 +90,6 @@ public class Robot extends TimedRobot {
     final Trigger enTurbo = m_controller1.rightTrigger();
     final Trigger resetGyro = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
-    // Do we want the driver to be able to control the setpoints or controller 2 or both
-    final Trigger armSetpointUp = m_controller1.povUp();
-    final Trigger armSetpointDown = m_controller1.povDown();
 
     //brake.onTrue(m_swerve.setBrakeModeCmd());
     //coast.onTrue(m_swerve.setCoastModeCmd());
@@ -102,12 +99,27 @@ public class Robot extends TimedRobot {
     //runPath.onTrue(m_swerve.runPath());
     resetGyro.onTrue(m_swerve.resetGyro());
     homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
-    armSetpointUp.onTrue(new InstantCommand(() -> m_shooter.moveSetpointUp()));
-    armSetpointDown.onTrue(new InstantCommand(() -> m_shooter.moveSetpointDown()));
+
+    final Trigger climbLow = m_controller1.leftBumper();
+    final Trigger climbHigh = m_controller2.rightBumper();
+
+    // Positions for low and high hooks
+    climbLow.onTrue(new InstantCommand()); // -> m_climber.setSetpoint(1)));
+    climbHigh.onTrue(new InstantCommand()); // -> m_climber.setSetpoint(2)));
+
+    // Right bumper setpoint
+    // left bumper setpoint
+    // distance calculate
 
     /**************************************************************
      * Controller 2
      *************************************************************/
+    final Trigger armSetpointUp = m_controller2.povUp();
+    final Trigger armSetpointDown = m_controller2.povDown();
+
+    armSetpointUp.onTrue(new InstantCommand(() -> m_shooter.moveSetpointUp()));
+    armSetpointDown.onTrue(new InstantCommand(() -> m_shooter.moveSetpointDown()));
+
     final Trigger intakeNote = m_controller2.leftTrigger();
     final Trigger outtakeNote = m_controller2.rightTrigger();
     final Trigger shootSpeaker = m_controller2.y();
@@ -215,7 +227,7 @@ public class Robot extends TimedRobot {
     m_swerve.printHomePos();
 
     boolean notesensor = m_noteSensor.get();
-    if (notesensor & !m_previousNoteSensor)
+    if (!notesensor & m_previousNoteSensor)
     {
       m_rumbleCounter = 0;
     }

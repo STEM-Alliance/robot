@@ -85,3 +85,36 @@ ALL motor will have current limits setup. Below is a table of the current limits
   // https://firstwiki.github.io/wiki/denso-window-motor
   static public int WindowLimit = 15; // This seems safe
 ```
+
+# 2024 Controls
+## Controller 1
+*A = 
+*B = Auto aim
+*X = Reset Gyro
+*Y = Reset swerve
+*Left bumper = climb low
+*Right bumper = climb high
+*Left trigger = 
+*Right rigger = 
+*Left stick = translate
+*Right stick = rotate
+*POV up = 
+*POV down = 
+*POV left = 
+*POV right = 
+
+## Controller 2
+*A = 
+*B = 
+*X = Shoot amp
+*Y = Shoot speaker
+*Left bumper = climb low
+*Right bumper = climb high
+*Left trigger = intake note
+*Right rigger = eject note
+*Left stick = arm up/down
+*Right stick = intake fwd/rev
+*POV up = arm setpoint up
+*POV down = arm setpoint down
+*POV left = 
+*POV right = 
