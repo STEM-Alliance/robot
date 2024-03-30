@@ -39,11 +39,6 @@ public class ClimberSubsystem extends SubsystemBase {
         else {
             m_climbMotor.set(0);
         }
-        //m_climbMotor.set(setpoint);
-
-
-
-        
         SmartDashboard.putNumber("Climbenc", m_climbEncoder.getPosition());
     }
 
@@ -60,6 +55,14 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public Command toggleClimbBrakeCmd() {
         return new InstantCommand(() -> toggleClimbBrake());
+    }
+
+    public Command climbCmd(double value) {
+        return new FunctionalCommand(null, 
+                                     () -> {m_climbMotor.set(value);}, 
+                                     interrupted -> {m_climbMotor.set(0);}, 
+                                     () -> false, 
+                                     this);
     }
 
     // public Command climbUp() {

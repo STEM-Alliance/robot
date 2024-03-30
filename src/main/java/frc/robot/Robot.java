@@ -11,24 +11,18 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.*;
-import frc.robot.commands.AimbotCommand;
 import frc.robot.commands.AimbotCommand2;
-import frc.robot.commands.MoveBotCommand;
 import frc.robot.subsystems.*;
 
 /**
@@ -104,9 +98,9 @@ public class Robot extends TimedRobot {
     final Trigger climbHigh = m_controller2.rightBumper();
 
     // Positions for low and high hooks
-    climbLow.onTrue(new InstantCommand()); // -> m_climber.setSetpoint(1)));
-    climbHigh.onTrue(new InstantCommand()); // -> m_climber.setSetpoint(2)));
-
+    climbLow.whileTrue(m_climber.climbCmd(0.5));
+    climbHigh.whileTrue(m_climber.climbCmd(0.5));
+    
     // Right bumper setpoint
     // left bumper setpoint
     // distance calculate
@@ -202,25 +196,12 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    // if (m_controller2.getRightTriggerAxis() > 0.1)
-    // {
-    //   m_climber.runClimber(m_controller2.getRightTriggerAxis());
-    // }
-    // else if (m_controller2.getLeftTriggerAxis() > 0.1)
-    // {
-    //   m_climber.runClimber(-m_controller2.getLeftTriggerAxis());
-    // }
-    // else 
-    // {
-    //   m_climber.runClimber(0);
-    // }
-
-    // if (m_intake.m_noteSensor.get()) {
-    //   m_leds.setRed();
-    // }
-    // else {
-    //   m_leds.setFlashingGreen();
-    // }
+    if (m_intake.m_noteSensor.get()) {
+      m_leds.setRed();
+    }
+    else {
+      m_leds.setFlashingGreen();
+    }
 
     // m_shooter.movementLoop();
     // Uncomment this line to print the motor positions.
@@ -298,15 +279,15 @@ public class Robot extends TimedRobot {
     throw new UnsupportedOperationException("Unimplemented method 'PathPlannerAuto'");
   }
 
-  // public Command getUnhookAndShoot() {
-  //   return m_shooter.unhookShooter().andThen(
-  //          m_shooter.lowerShooter().andThen(
-  //          m_shooter.spinShooterToVelocity().andThen(
-  //          m_intake.fwdIntakeTimed().andThen(
-  //          new WaitCommand(2).andThen(
-  //          m_shooter.stopShooter().andThen(
-  //         m_intake.stopIntake()))))));
-  // }
+  public Command getUnhookAndShoot() {
+    return m_shooter.unhookShooter().andThen(
+           m_shooter.lowerShooter().andThen(
+           m_shooter.spinShooterToVelocity().andThen(
+           m_intake.fwdIntakeTimed().andThen(
+           new WaitCommand(2).andThen(
+           m_shooter.stopShooter().andThen(
+          m_intake.stopIntake()))))));
+  }
 
   public Command getAutonomousCommand() {
     return new PathPlannerAuto("Auto1");
