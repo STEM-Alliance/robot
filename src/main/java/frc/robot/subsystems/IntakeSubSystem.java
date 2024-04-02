@@ -7,24 +7,34 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax m_intake;
+    private final CANSparkMax m_wrist;
     public final DigitalInput m_noteSensor;
+    private final RelativeEncoder m_wristEnc;
 
     /** Creates a new IntakeSubsystem. */
     public IntakeSubsystem(Robot robot, DigitalInput noteSensor) {
-        m_intake = new CANSparkMax(Configuration.kIntakeMotorCanID, MotorType.kBrushless);
-        m_intake.setSmartCurrentLimit(Configuration.Neo550Limit);
-        m_intake.setIdleMode(IdleMode.kBrake);
-        m_noteSensor = noteSensor;
+      m_intake = new CANSparkMax(Configuration.kIntakeMotorCanID, MotorType.kBrushless);
+      m_intake.setSmartCurrentLimit(Configuration.Neo550Limit);
+      m_intake.setIdleMode(IdleMode.kBrake);
+      m_wrist = new CANSparkMax(Configuration.kWristMotorCanID, MotorType.kBrushless);
+      m_wrist.setSmartCurrentLimit(Configuration.NeoLimit);
+      m_wrist.setIdleMode(IdleMode.kBrake);
+      m_wristEnc = m_wrist.getEncoder();
+      m_wristEnc.setPosition(0);
+      m_noteSensor = noteSensor;
     }
 
     public void periodic() {
       LoggedNumber.getInstance().logNumber("IntakeSensor", m_noteSensor.get() ? 1.0: 0.0);
       LoggedNumber.getInstance().logNumber("IntakeCurrent", m_intake.getOutputCurrent());
+      LoggedNumber.getInstance().logNumber("WristPosition", m_wristEnc.getPosition());
+      SmartDashboard.putNumber("WristPosition", m_wristEnc.getPosition());
     }
 
     public void cmdIntake(double cmd)
@@ -64,4 +74,15 @@ public class IntakeSubsystem extends SubsystemBase {
             this
         );
     }
+
+    public Command cmdWrist(double speed) {
+        return new FunctionalCommand(
+            () -> m_wrist.set(speed),
+            () -> {},
+            interrupted -> m_wrist.set(0),
+            () -> false,
+            this
+        );
+    }
+
 }

@@ -58,7 +58,7 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public Command climbCmd(double value) {
-        return new FunctionalCommand(null, 
+        return new FunctionalCommand(() -> {}, 
                                      () -> {m_climbMotor.set(value);}, 
                                      interrupted -> {m_climbMotor.set(0);}, 
                                      () -> false, 

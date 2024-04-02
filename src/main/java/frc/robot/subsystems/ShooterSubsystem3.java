@@ -77,8 +77,12 @@ public class ShooterSubsystem3 extends SubsystemBase {
   public void periodic() {
       syncArmEncoders();
 
-      shooterControlLoop();
+      //shooterControlLoop();
       armControlLoop();
+      LoggedNumber.getInstance().logNumber("ShooterVelocity", m_shooterEnc.getVelocity());
+      LoggedNumber.getInstance().logNumber("ShooterCurrent", m_shooter.getOutputCurrent());
+      LoggedNumber.getInstance().logNumber("ArmCurrent", m_arm.getOutputCurrent());
+      SmartDashboard.putNumber("ArmCurrent", m_arm.getOutputCurrent());
   }
 
   private void armControlLoop() {
@@ -143,13 +147,17 @@ private double getArmPos() {
     }
   }
 
+  private void logVelocity() {
+    SmartDashboard.putNumber("ShooterVelocity", m_shooterEnc.getVelocity());
+  }
+
   // Spin the shooter motor and return true when the velocity is at the max velocity
   public Command spinShooterToVelocity() {
     return new FunctionalCommand(
-      () -> m_shooterPID.setSetpoint(Configuration.kMaxFlywheelSpeed),
-      () -> {},
-      interrupted -> {},
-      () -> m_shooterPID.atSetpoint(),
+      () -> m_shooter.set(Configuration.kMaxFlywheelSpeed),
+      () -> {logVelocity();},
+      interrupted -> {m_shooter.set(0);},
+      () -> m_shooterEnc.getVelocity() <= Configuration.kMaxFlywheelSpeed,
       this
     );
   }

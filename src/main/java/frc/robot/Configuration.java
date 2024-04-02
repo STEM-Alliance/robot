@@ -85,25 +85,25 @@ public class Configuration {
     static public int kShooterArmMotorCanID = 14;
     static public int kShooterArmEncoderChannel = 1;
 
-    static public double kShooterArmKp = 0.1;
+    static public double kShooterArmKp = 0.2;
     static public double kShooterArmKi = 0;
     static public double kShooterArmKd = 0;
     static public double kShooterArmMaxSpeed = 60; // Degrees/s
     static public double kShooterArmAcceleration = kShooterArmMaxSpeed / 0.5; // Max in 0.5s
     static public double kShooterArmRatio = 360/230 * 1.5;
-    static public double kShooterArmChangeRate = 50; // Increase desired angle x degrees per second
+    static public double kShooterArmChangeRate = 25; // Increase desired angle x degrees per second
     static public double kShooterArmPIDLimit = 0.3; // Limit the PID output incase of wrong values
 
     static public double kTargetingError = 1; // +- Error to be at setpoint
-    static public double kShooterArmLowerLimit = 0;
-    static public double kShooterArmUpperLimit = 0;
+    static public double kShooterArmLowerLimit = -80;
+    static public double kShooterArmUpperLimit = 10;
 
     // Intake Position, Travel Position, Amp Position
     static public double kShooterArmUnhookPosition = 5;
     static public double kShooterArmLoweredPosition = -60;
     static public double[] kShooterArmSetpoints = new double[]{-50, 0, 40};
 
-    static public double kMaxFlywheelSpeed = 90;
+    static public double kMaxFlywheelSpeed = -4400;
 
     static public int[] kShooterMotorCanID = new int[]{11, 12};
     static public int kNoteSensorChannel = 0;
@@ -112,6 +112,8 @@ public class Configuration {
      * Intake Configuration
      *******************************************/
     static public int kIntakeMotorCanID = 10;
+    static public int kWristMotorCanID = 15;
+    static public double kWristOut = 236.5;
 
     /********************************************
      * Limelight Configuration

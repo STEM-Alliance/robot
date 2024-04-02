@@ -104,8 +104,8 @@ ALL motor will have current limits setup. Below is a table of the current limits
 *POV right = 
 
 ## Controller 2
-*A = 
-*B = 
+*A = Wrist down
+*B = Wrist up
 *X = Shoot amp
 *Y = Shoot speaker
 *Left bumper = climb low

@@ -118,6 +118,12 @@ public class Robot extends TimedRobot {
     final Trigger outtakeNote = m_controller2.rightTrigger();
     final Trigger shootSpeaker = m_controller2.y();
     final Trigger shootAmp = m_controller2.x();
+    final Trigger lowerWrist = m_controller2.b();
+    final Trigger raiseWrist = m_controller2.a();
+
+    // Wrist control
+    lowerWrist.whileTrue(m_intake.cmdWrist(1.0));
+    raiseWrist.whileTrue(m_intake.cmdWrist(-1.0));
 
     // When you are pressing the intake button, the arm will stay at the lowered position and
     // run the intake until there is a note, the arm will stay down until the button is released
