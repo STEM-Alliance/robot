@@ -172,6 +172,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void driveRobotSpeeds(ChassisSpeeds robotSpeeds) {
+    robotSpeeds.omegaRadiansPerSecond = -robotSpeeds.omegaRadiansPerSecond;
     var targetSpeeds = ChassisSpeeds.discretize(robotSpeeds, 0.02);
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(targetSpeeds);
 
