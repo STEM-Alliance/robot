@@ -159,9 +159,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
       LoggedNumber.getInstance().logNumber("Swerve_" + i + "_drive", swerveModuleStates[i].speedMetersPerSecond);
       LoggedNumber.getInstance().logNumber("Swerve_" + i + "_angle", swerveModuleStates[i].angle.getDegrees());
     }
-    LoggedNumber.getInstance().logNumber("Vx", xSpeed);
-    LoggedNumber.getInstance().logNumber("Vy", ySpeed);
-    LoggedNumber.getInstance().logNumber("Omega", rot);
+    // LoggedNumber.getInstance().logNumber("Vx", xSpeed);
+    // LoggedNumber.getInstance().logNumber("Vy", ySpeed);
+    // LoggedNumber.getInstance().logNumber("Omega", rot);
   }
 
   public void driveFieldSpeeds(ChassisSpeeds fieldSpeeds) {
@@ -175,6 +175,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     robotSpeeds.omegaRadiansPerSecond = -robotSpeeds.omegaRadiansPerSecond;
     var targetSpeeds = ChassisSpeeds.discretize(robotSpeeds, 0.02);
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(targetSpeeds);
+
+    LoggedNumber.getInstance().logNumber("Vx", robotSpeeds.vxMetersPerSecond);
+    LoggedNumber.getInstance().logNumber("Vy", robotSpeeds.vyMetersPerSecond);
+    LoggedNumber.getInstance().logNumber("Omega", robotSpeeds.omegaRadiansPerSecond);
 
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Configuration.kMaxSpeed);
 

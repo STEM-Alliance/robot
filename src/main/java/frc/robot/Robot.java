@@ -39,8 +39,8 @@ public class Robot extends TimedRobot {
   DigitalInput m_noteSensor = new DigitalInput(Configuration.kNoteSensorChannel);
 
   public DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
-  public IntakeSubsystem m_intake = new IntakeSubsystem(this, m_noteSensor);
-  public ShooterSubsystem3 m_shooter = new ShooterSubsystem3();
+  public IntakeSubsystem m_intake = new IntakeSubsystem(m_noteSensor);
+  public ShooterSubsystem3 m_shooter = new ShooterSubsystem3(m_intake);
 
   public LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
 
@@ -108,12 +108,6 @@ public class Robot extends TimedRobot {
     /**************************************************************
      * Controller 2
      *************************************************************/
-    final Trigger armSetpointUp = m_controller2.povUp();
-    final Trigger armSetpointDown = m_controller2.povDown();
-
-    armSetpointUp.onTrue(new InstantCommand(() -> m_shooter.moveSetpointUp()));
-    armSetpointDown.onTrue(new InstantCommand(() -> m_shooter.moveSetpointDown()));
-
     final Trigger intakeNote = m_controller2.leftTrigger();
     final Trigger outtakeNote = m_controller2.rightTrigger();
     final Trigger shootSpeaker = m_controller2.y();
@@ -121,15 +115,26 @@ public class Robot extends TimedRobot {
     final Trigger lowerWrist = m_controller2.b();
     final Trigger raiseWrist = m_controller2.a();
 
-    // Wrist control
-    lowerWrist.whileTrue(m_intake.cmdWrist(1.0));
-    raiseWrist.whileTrue(m_intake.cmdWrist(-1.0));
+    final Trigger travelPosition = m_controller2.povDown();
+
+    // lowerWrist.whileTrue(m_intake.cmdWrist(1.0));
+    // raiseWrist.whileTrue(m_intake.cmdWrist(-1.0));
+
+    lowerWrist.whileTrue(new InstantCommand(() -> m_intake.setPosition(-1)));
+    raiseWrist.whileTrue(new InstantCommand(() -> m_intake.setPosition(1)));
+    
+    // Move the arm up to the travel position and fold in the wrist
+    travelPosition.onTrue(m_shooter.setSetpoint(1)); //.andThen(
+      //m_intake.setSetpoint(1)));
 
     // When you are pressing the intake button, the arm will stay at the lowered position and
     // run the intake until there is a note, the arm will stay down until the button is released
     intakeNote.whileTrue(m_shooter.setSetpoint(0).andThen(
-      m_intake.fwdIntake(false)));
-    intakeNote.onFalse(m_shooter.setSetpoint(1));
+      m_intake.wristSetSetpoint(0).andThen(
+      Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
+      m_intake.fwdIntake(true)))));
+    intakeNote.onFalse(m_shooter.setSetpoint(1).andThen(
+      m_intake.wristSetSetpoint(0)));
 
     outtakeNote.whileTrue(m_intake.revIntake());
     outtakeNote.onFalse(m_intake.stopIntake());
@@ -137,16 +142,19 @@ public class Robot extends TimedRobot {
     // When you are pressing the shoot speaker button, the shooter will spin up to velocity and
     // move the note into the shooter
     // (Make aimbot for the speaker run automatically? or run manually)
-    shootSpeaker.whileTrue((m_shooter.spinShooterToVelocity().andThen(
-      m_intake.fwdIntake(true))));
+    shootSpeaker.whileTrue(m_intake.wristSetSetpoint(0).andThen(
+      m_intake.wristAtSetpoint().andThen((
+      m_shooter.spinShooterToVelocity().andThen(
+      m_intake.fwdIntake(true))))));
     shootSpeaker.onFalse(m_shooter.stopShooter());
 
     // When you press the button, the shooter will just move to the setpoint for the amp
     // When the arm is up, you can line up and then hold the button, which will run the intake
     // (Make aimbot for amp run automatically? or run manually)
     shootAmp.whileTrue(m_shooter.setSetpoint(2).andThen(
-      m_shooter.atSetpoint().andThen(
-      m_intake.revIntake())));
+      m_intake.wristSetSetpoint(0).andThen(
+      Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
+      m_intake.revIntake()))));
     shootAmp.onFalse(m_intake.stopIntake());
 
     // final Trigger fwdIntake = m_controller2.a();

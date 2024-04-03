@@ -22,6 +22,8 @@ public class ShooterSubsystem3 extends SubsystemBase {
   private final RelativeEncoder m_shooterEnc;
   private final DutyCycleEncoder m_absEncoder;
 
+  private final IntakeSubsystem m_intake;
+
   private final PIDController m_shooterPID = new PIDController(0.1, 0, 0);
 
   private final ProfiledPIDController m_armPID = new ProfiledPIDController(
@@ -32,18 +34,16 @@ public class ShooterSubsystem3 extends SubsystemBase {
   private static int[] m_shooterMotorChannels = Configuration.kShooterMotorCanID;
   private static int m_shooterArmMotorChannel = Configuration.kShooterArmMotorCanID;
 
-  // Give setpoints their own variable so commands are simpler
+  // Give setpoints their own variable so commands are shorter
   private static double m_unhookPosition = Configuration.kShooterArmUnhookPosition;
   private static double m_autoShootingPosition = Configuration.kShooterArmLoweredPosition;
-
   private static double m_ampPosition = Configuration.kShooterArmSetpoints[2];
-
-  private static int m_setpoints = Configuration.kShooterArmSetpoints.length;
+  private static double m_travelPosition = Configuration.kShooterArmSetpoints[1];
 
   private double m_desiredAngle = 0;
   private int m_angleSetpoint = 0;
 
-  public ShooterSubsystem3() {
+  public ShooterSubsystem3(IntakeSubsystem intake) {
     // Make a CANSparkMax that controls both of the shooter motors
     m_shooter = new CANSparkMax(m_shooterMotorChannels[0], MotorType.kBrushless);
     m_shooter2 = new CANSparkMax(m_shooterMotorChannels[1], MotorType.kBrushless);
@@ -53,6 +53,8 @@ public class ShooterSubsystem3 extends SubsystemBase {
 
     m_shooter2.follow(m_shooter);
     m_shooterEnc = m_shooter.getEncoder();
+
+    m_intake = intake;
 
     // Make a CANSparkMax that controls the arm
     m_arm = new CANSparkMax(m_shooterArmMotorChannel, MotorType.kBrushless);
@@ -83,6 +85,11 @@ public class ShooterSubsystem3 extends SubsystemBase {
       LoggedNumber.getInstance().logNumber("ShooterCurrent", m_shooter.getOutputCurrent());
       LoggedNumber.getInstance().logNumber("ArmCurrent", m_arm.getOutputCurrent());
       SmartDashboard.putNumber("ArmCurrent", m_arm.getOutputCurrent());
+
+      // If the arm is being moved below the travel position, move the wrist out of the way
+      // if (m_desiredAngle - m_travelPosition < -2.5) {
+      //   m_intake.wristSetSetpoint(0);
+      // }
   }
 
   private void armControlLoop() {
@@ -228,42 +235,40 @@ private double getArmPos() {
   }
 
   public void moveToSetpoint() {
-    m_angleSetpoint = MathUtil.clamp(m_angleSetpoint, 0, m_setpoints - 1);
-
     m_desiredAngle = Configuration.kShooterArmSetpoints[m_angleSetpoint];
   }
 
-  public void moveSetpointUp() {
-    // if there is a setpoint above the current arm position, then move to that setpoint
-    for (int i = m_angleSetpoint; i < m_setpoints; i++) {
-      double setpoint = Configuration.kShooterArmSetpoints[i];
+  // public void moveSetpointUp() {
+  //   // if there is a setpoint above the current arm position, then move to that setpoint
+  //   for (int i = m_angleSetpoint; i < m_setpoints; i++) {
+  //     double setpoint = Configuration.kShooterArmSetpoints[i];
 
-      if (Math.abs(setpoint - getArmPos()) < Configuration.kTargetingError &&
-        setpoint > getArmPos()) {
-          m_angleSetpoint = i;
-          moveToSetpoint();
-          break;
-        }
-    }
+  //     if (Math.abs(setpoint - getArmPos()) < Configuration.kTargetingError &&
+  //       setpoint > getArmPos()) {
+  //         m_angleSetpoint = i;
+  //         moveToSetpoint();
+  //         break;
+  //       }
+  //   }
 
-    LoggedNumber.getInstance().logNumber("Setpoint", m_angleSetpoint);
-  }
+  //   LoggedNumber.getInstance().logNumber("Setpoint", m_angleSetpoint);
+  // }
 
-  public void moveSetpointDown() {
-    // if there is a setpoint below the current arm position, then move to that setpoint
-    for (int i = m_angleSetpoint; i > -1; i--) {
-      double setpoint = Configuration.kShooterArmSetpoints[i];
+  // public void moveSetpointDown() {
+  //   // if there is a setpoint below the current arm position, then move to that setpoint
+  //   for (int i = m_angleSetpoint; i > -1; i--) {
+  //     double setpoint = Configuration.kShooterArmSetpoints[i];
 
-      if (Math.abs(setpoint - getArmPos()) < Configuration.kTargetingError &&
-        setpoint < getArmPos()) {
-          m_angleSetpoint = i;
-          moveToSetpoint();
-          break;
-        }
-    }
+  //     if (Math.abs(setpoint - getArmPos()) < Configuration.kTargetingError &&
+  //       setpoint < getArmPos()) {
+  //         m_angleSetpoint = i;
+  //         moveToSetpoint();
+  //         break;
+  //       }
+  //   }
 
-    LoggedNumber.getInstance().logNumber("Setpoint", m_angleSetpoint);
-  }
+  //   LoggedNumber.getInstance().logNumber("Setpoint", m_angleSetpoint);
+  // }
 
   public Command setSetpoint(int setpoint) {
     return new InstantCommand(() -> {m_angleSetpoint = setpoint; moveToSetpoint();});

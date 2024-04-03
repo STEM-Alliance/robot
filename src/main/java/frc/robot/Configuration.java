@@ -89,19 +89,22 @@ public class Configuration {
     static public double kShooterArmKi = 0;
     static public double kShooterArmKd = 0;
     static public double kShooterArmMaxSpeed = 60; // Degrees/s
-    static public double kShooterArmAcceleration = kShooterArmMaxSpeed / 0.5; // Max in 0.5s
+    static public double kShooterArmAcceleration = kShooterArmMaxSpeed / 0.5; // Max in 0.25s
     static public double kShooterArmRatio = 360/230 * 1.5;
-    static public double kShooterArmChangeRate = 25; // Increase desired angle x degrees per second
-    static public double kShooterArmPIDLimit = 0.3; // Limit the PID output incase of wrong values
+    static public double kShooterArmChangeRate = 60; // Increase desired angle x degrees per second
+    static public double kShooterArmPIDLimit = 0.4; // Limit the PID output incase of wrong values
 
-    static public double kTargetingError = 1; // +- Error to be at setpoint
-    static public double kShooterArmLowerLimit = -80;
+    static public double kTargetingError = 2; // +- Error to be at setpoint
+    static public double kShooterArmLowerLimit = -52;
     static public double kShooterArmUpperLimit = 10;
 
     // Intake Position, Travel Position, Amp Position
     static public double kShooterArmUnhookPosition = 5;
     static public double kShooterArmLoweredPosition = -60;
-    static public double[] kShooterArmSetpoints = new double[]{-50, 0, 40};
+    static public double[] kShooterArmSetpoints = new double[]{-50, 0, 10};
+
+    // Out Position, In Position, Amp Position
+    static public double[] kWristSetpoints = new double[]{165, 0, 115};
 
     static public double kMaxFlywheelSpeed = -4400;
 
@@ -133,7 +136,7 @@ public class Configuration {
      * P = VI
      * I = P / V
      *******************************************/
-    static public int NeoLimit = 80;
+    static public int NeoLimit = 50;
     static public int Neo550Limit = 30;
     static public int BagMotorLimit = 30; // Max power is 149 W, 12.4 A
     static public int M775ProLimit = 15; // Max power 347 W, 28.9 A
