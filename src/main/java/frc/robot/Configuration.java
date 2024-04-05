@@ -89,7 +89,7 @@ public class Configuration {
     static public double kShooterArmKi = 0;
     static public double kShooterArmKd = 0;
     static public double kShooterArmMaxSpeed = 60; // Degrees/s
-    static public double kShooterArmAcceleration = kShooterArmMaxSpeed / 0.5; // Max in 0.5s
+    static public double kShooterArmAcceleration = kShooterArmMaxSpeed / 0.5; // Max in 0.25s
     static public double kShooterArmRatio = 360/230 * 1.5;
     static public double kShooterArmChangeRate = 60; // Increase desired angle x degrees per second
     static public double kShooterArmPIDLimit = 0.4; // Limit the PID output incase of wrong values
