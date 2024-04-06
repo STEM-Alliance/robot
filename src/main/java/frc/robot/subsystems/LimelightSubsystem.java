@@ -75,6 +75,17 @@ public class LimelightSubsystem extends SubsystemBase {
         }
     }
 
+    // public double getHeading() {
+    //     double heading = 0.0;
+
+    //     if (LimelightHelpers.getTV(Configuration.kLimelightName)) {
+    //         double[] botPose = LimelightHelpers.getBotPose(Configuration.kLimelightName);
+    //         heading = botPose[5];
+
+    //     }
+
+    //     return heading;
+    // }
     public double getHeading() {
         double heading = 0.0;
 

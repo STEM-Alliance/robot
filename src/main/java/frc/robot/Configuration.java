@@ -95,18 +95,25 @@ public class Configuration {
     static public double kShooterArmPIDLimit = 0.4; // Limit the PID output incase of wrong values
 
     static public double kTargetingError = 2; // +- Error to be at setpoint
-    static public double kShooterArmLowerLimit = -52;
+    static public double kShooterArmLowerLimit = -48;
     static public double kShooterArmUpperLimit = 10;
 
-    // Intake Position, Travel Position, Amp Position, rest position
+    // Intake Position, Travel Position, Amp Position, rest position, unhook position
+    public enum ArmSetpoint {
+        INTAKE,
+        TRAVEL,
+        AMP,
+        REST,
+        UNHOOK
+    }
     static public double kShooterArmUnhookPosition = 5;
-    static public double kShooterArmLoweredPosition = -60;
-    static public double[] kShooterArmSetpoints = new double[]{-50, -30, 10, -35};
+    static public double kShooterArmLoweredPosition = -40;
+    static public double[] kShooterArmSetpoints = new double[]{-45, -30, 10, -31, 5};
 
     // Out Position, In Position, Amp Position
-    static public double[] kWristSetpoints = new double[]{165, 0, 115};
+    static public double[] kWristSetpoints = new double[]{210, 25, 115};
 
-    static public double kMaxFlywheelSpeed = -4400;
+    static public double kMaxFlywheelSpeed = -5000;
 
     static public int[] kShooterMotorCanID = new int[]{11, 12};
     static public int kNoteSensorChannel = 0;

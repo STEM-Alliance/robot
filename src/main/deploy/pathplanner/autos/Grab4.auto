@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 0.8,
-      "y": 4.36
-    },
-    "rotation": 118.30603129437853
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -14,19 +8,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "UnhookAndShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootEnd"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Sto4"
+            "pathName": "MoveTo4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Back4Return"
+            "pathName": "Shoot4"
           }
         },
         {
@@ -36,15 +36,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Sto3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Back3Return"
+            "name": "ShootEnd"
           }
         }
       ]

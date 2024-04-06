@@ -22,6 +22,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final PIDController m_wristPID = new PIDController(0.05, 0, 0);
     private int m_wristSetpoint = 0;
     private double m_desiredWristAngle = 0;
+    private boolean m_homing = false;
 
     /** Creates a new IntakeSubsystem. */
     public IntakeSubsystem(DigitalInput noteSensor) {
@@ -49,6 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void cmdIntake(double cmd)
     {
         SmartDashboard.putBoolean("intake", m_noteSensor.get());
+        //System.out.println("Sensor: " + m_noteSensor.get() + " cmd: " + cmd);
         if (m_noteSensor.get() || cmd > 0) { // If there is not a note or driving outtake
             m_intake.set(cmd);
         } else { // There is a note already in the intake while trying to run intake
@@ -99,12 +101,29 @@ public class IntakeSubsystem extends SubsystemBase {
       }
 
     private void wristControlLoop() {
-        m_desiredWristAngle = MathUtil.clamp(m_desiredWristAngle, 0, 165);
+        if (!m_homing) {
+            m_desiredWristAngle = MathUtil.clamp(m_desiredWristAngle, 0, 210 + 2);
 
-        double clampedOut = MathUtil.clamp(m_wristPID.calculate(m_wristEnc.getPosition(),
-        m_desiredWristAngle), -1, 1);
+            double clampedOut = MathUtil.clamp(m_wristPID.calculate(m_wristEnc.getPosition(),
+            m_desiredWristAngle), -1, 1);
 
-        m_wrist.set(clampedOut);
+            m_wrist.set(clampedOut);
+        }
+
+        else {
+            m_wrist.set(-0.5);
+
+            m_wristEnc.setPosition(0);
+            m_desiredWristAngle = 0;
+        }
+    }
+
+    public Command startHomeWrist() {
+        return new InstantCommand(() -> m_homing = true);
+    }
+
+    public Command endHomeWrist() {
+        return new InstantCommand(() -> m_homing = false);
     }
 
     private void moveToSetpoint() {

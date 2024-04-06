@@ -11,11 +11,13 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,6 +43,7 @@ public class Robot extends TimedRobot {
   public DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
   public IntakeSubsystem m_intake = new IntakeSubsystem(m_noteSensor);
   public ShooterSubsystem3 m_shooter = new ShooterSubsystem3(m_intake);
+  public VisionSubsystem m_vision = new VisionSubsystem();
 
   public LimelightSubsystem m_limelight = new LimelightSubsystem(m_swerve);
 
@@ -74,23 +77,21 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     CameraServer.startAutomaticCapture();
     m_swerve.homeSwerve();
+
+    // final Trigger enabledStatus = new Trigger(() -> DriverStation.isEnabled());
+    // enabledStatus.onTrue(new InstantCommand(() -> m_shooter.resetDesiredAngle()));
   
     /**************************************************************
      * Controller 1 
      *************************************************************/
-    //final Trigger brake = m_controller1.b();
-    // /final Trigger coast = m_controller1.a();
     final Trigger autoAim = m_controller1.b();
     final Trigger enTurbo = m_controller1.rightTrigger();
     final Trigger resetGyro = m_controller1.x();
     final Trigger homeSwerve = m_controller1.y();
 
-    //brake.onTrue(m_swerve.setBrakeModeCmd());
-    //coast.onTrue(m_swerve.setCoastModeCmd());
     autoAim.whileTrue(m_AimbotCommand);
     enTurbo.onTrue(m_swerve.enableTurbo());
     enTurbo.onFalse(m_swerve.disableTurbo());
-    //runPath.onTrue(m_swerve.runPath());
     resetGyro.onTrue(m_swerve.resetGyro());
     homeSwerve.onTrue(new InstantCommand(() -> m_swerve.homeSwerve()));
 
@@ -101,9 +102,7 @@ public class Robot extends TimedRobot {
     climbLow.whileTrue(m_climber.climbCmd(-0.5));
     climbHigh.whileTrue(m_climber.climbCmd(0.5));
     
-    // Right bumper setpoint
-    // left bumper setpoint
-    // distance calculate
+    final Trigger engageClimbBrake = m_controller1.a();
 
     /**************************************************************
      * Controller 2
@@ -116,6 +115,10 @@ public class Robot extends TimedRobot {
     final Trigger raiseWrist = m_controller2.a();
 
     final Trigger travelPosition = m_controller2.povDown();
+    final Trigger homeWrist = m_controller2.leftBumper();
+
+    homeWrist.onTrue(m_intake.startHomeWrist());
+    homeWrist.onFalse(m_intake.endHomeWrist());
 
     // lowerWrist.whileTrue(m_intake.cmdWrist(-0.5));
     // raiseWrist.whileTrue(m_intake.cmdWrist(0.5));
@@ -142,19 +145,8 @@ public class Robot extends TimedRobot {
 
     // When you are pressing the intake button, the arm will stay at the lowered position and
     // run the intake until there is a note, the arm will stay down until the button is released
-    intakeNote.whileTrue(m_shooter.setSetpoint(0).andThen(
-      m_intake.wristSetSetpoint(0).andThen(
-      m_shooter.atSetpoint().andThen(
-      Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
-      m_intake.fwdIntake(false))))));
-    
-    intakeNote.onFalse(m_shooter.setSetpoint(1).andThen(
-      m_intake.stopIntake().andThen(
-      m_shooter.setSetpoint(1).andThen(
-      m_shooter.atSetpoint().andThen(
-      m_intake.wristSetSetpoint(1).andThen(
-      m_intake.wristAtSetpoint().andThen(
-      m_shooter.setSetpoint(3))))))));
+    intakeNote.whileTrue(autoIntakeStart());
+    intakeNote.onFalse(autoIntakeEnd());
 
     outtakeNote.whileTrue(m_intake.revIntake());
     outtakeNote.onFalse(m_intake.stopIntake());
@@ -162,15 +154,8 @@ public class Robot extends TimedRobot {
     // When you are pressing the shoot speaker button, the shooter will spin up to velocity and
     // move the note into the shooter
     // (Make aimbot for the speaker run automatically? or run manually)
-    shootSpeaker.whileTrue(m_intake.wristSetSetpoint(0).andThen(
-      m_intake.wristAtSetpoint().andThen((
-      m_shooter.spinShooterToVelocity().andThen(
-      m_intake.fwdIntake(true))))));
-
-    shootSpeaker.onFalse(m_shooter.stopShooter().andThen(
-                         m_intake.wristSetSetpoint(1).andThen(
-                         m_intake.wristAtSetpoint().andThen(
-                         m_shooter.setSetpoint(3))))); 
+    shootSpeaker.whileTrue(shootSpeakerStart());
+    shootSpeaker.onFalse(shootSpeakerEnd());
 
     // When you press the button, the shooter will just move to the setpoint for the amp
     // When the arm is up, you can line up and then hold the button, which will run the intake
@@ -186,7 +171,6 @@ public class Robot extends TimedRobot {
     // final Trigger shoot = m_controller2.y();
     // final Trigger shootAmp = m_controller2.rightBumper();
     // final Trigger ampPos = m_controller2.leftBumper();
-    // final Trigger engageClimbBrake = m_controller2.x();
     // final Trigger climbUp = m_controller2.rightTrigger();
     // final Trigger climbDown = m_controller2.leftTrigger();
     // final Trigger up = m_controller2.pov(0);
@@ -194,7 +178,7 @@ public class Robot extends TimedRobot {
     // final Trigger left = m_controller2.pov(270);
     // final Trigger right = m_controller2.pov(90);
 
-    // engageClimbBrake.onTrue(m_climber.toggleClimbBrakeCmd());
+    engageClimbBrake.onTrue(m_climber.toggleClimbBrakeCmd());
 
     //Get the default instance of NetworkTables that was created automatically
     //when your program starts
@@ -208,15 +192,17 @@ public class Robot extends TimedRobot {
     System.out.println("Driver Station number: " + pos.toString());
     System.out.println("Robot starting");
 
-    m_autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    SmartDashboard.putData("Auto Mode", m_autoChooser);
-
     // Register auto modes: https://pathplanner.dev/pplib-named-commands.html
-    NamedCommands.registerCommand("Inake", m_shooter.setSetpoint(0).andThen(m_intake.fwdIntake(false)));
-    NamedCommands.registerCommand("StopIntake", m_shooter.setSetpoint(1));
+    NamedCommands.registerCommand("Intake", autoIntakeStart());
+    NamedCommands.registerCommand("StopIntake", autoIntakeEnd());
     NamedCommands.registerCommand("Rotate90", m_swerve.rotateChassisCmd(90));
     NamedCommands.registerCommand("RotateNeg30", m_swerve.rotateChassisCmd(-30));
-    NamedCommands.registerCommand("Shoot", m_shooter.spinShooterToVelocity().andThen(m_intake.fwdIntakeTimed()));
+    NamedCommands.registerCommand("Shoot", shootSpeakerStart());
+    NamedCommands.registerCommand("ShootEnd", shootSpeakerEnd());
+    NamedCommands.registerCommand("UnhookAndShoot", getUnhookAndShoot2());
+
+    m_autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    SmartDashboard.putData("Auto Mode", m_autoChooser);
   }
 
   /**
@@ -258,6 +244,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     m_autonomousCommand = m_autoChooser.getSelected();
+    System.out.println("m_autonomousCommand: " + m_autonomousCommand);
+    //m_autonomousCommand = getUnhookAndShoot2();
 
     // switch (m_autoSelected)
     // {
@@ -289,6 +277,9 @@ public class Robot extends TimedRobot {
     //m_swerve.resetPose(new Pose2d(14.5, 1.5, new Rotation2d(0)));
     //m_swerve.setGyro(0);
 
+    Pose2d visionPose = m_vision.getFieldPosition();
+    m_swerve.resetPose(visionPose);
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -307,6 +298,19 @@ public class Robot extends TimedRobot {
            new WaitCommand(2).andThen(
            m_shooter.stopShooter().andThen(
           m_intake.stopIntake()))))));
+  }
+
+  public Command getUnhookAndShoot2() {
+    return m_shooter.setSetpoint(4).andThen(
+           m_intake.wristSetSetpoint(0).andThen(
+           Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
+           m_shooter.setSetpoint(0).andThen(
+           m_shooter.atSetpoint().andThen(
+           m_shooter.spinShooterToVelocity().andThen(
+           m_intake.fwdIntakeTimed().andThen(
+           new WaitCommand(2).andThen(
+           m_shooter.stopShooter().andThen(
+           m_intake.stopIntake())))))))));
   }
 
   public Command getAutonomousCommand() {
@@ -341,6 +345,8 @@ public class Robot extends TimedRobot {
 
     moveArm();
     cmdIntake();
+
+    DriverStation.isEnabled();
   }
 
   @Override
@@ -457,4 +463,37 @@ public class Robot extends TimedRobot {
     return -Math.pow(Math.abs(base), exponent);
   }
 
+  public Command autoIntakeStart() {
+      return m_intake.wristSetSetpoint(0).andThen(
+             new WaitCommand(1).andThen(
+             m_shooter.setSetpoint(0).andThen(
+             m_shooter.atSetpoint().andThen(
+             Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
+             m_intake.fwdIntake(false))))));
+  }
+
+  public Command autoIntakeEnd() {
+    return m_shooter.setSetpoint(1).andThen(
+           m_intake.stopIntake().andThen(
+           m_shooter.setSetpoint(1).andThen(
+           m_shooter.atSetpoint().andThen(
+           m_intake.wristSetSetpoint(1).andThen(
+           m_intake.wristAtSetpoint().andThen(
+           m_shooter.setSetpoint(3)))))));
+  }
+
+  public Command shootSpeakerStart() {
+    return m_intake.wristSetSetpoint(0).andThen(
+           m_intake.wristAtSetpoint().andThen((
+           m_shooter.spinShooterToVelocity().andThen(
+           m_intake.fwdIntake(true)))));
+  }
+
+  public Command shootSpeakerEnd() {
+    return m_shooter.stopShooter().andThen(
+           m_shooter.setSetpoint(3).andThen(
+           m_shooter.atSetpoint().andThen(
+           m_intake.wristSetSetpoint(1).andThen(
+           m_intake.wristAtSetpoint()))));
+  }
 }

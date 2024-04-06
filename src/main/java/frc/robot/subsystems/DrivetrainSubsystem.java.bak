@@ -109,6 +109,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
           // Set up custom logging to add the current path to a field 2d widget
     PathPlannerLogging.setLogActivePathCallback((poses) -> m_field.getObject("path").setPoses(poses));
+
+    SmartDashboard.putData("Field", m_field);
   }
 
   public void periodic() {
@@ -126,7 +128,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     LoggedNumber.getInstance().logNumber("FieldX", m_field.getRobotPose().getX());
     LoggedNumber.getInstance().logNumber("FieldY", m_field.getRobotPose().getY());
     LoggedNumber.getInstance().logNumber("FieldRot", m_field.getRobotPose().getRotation().getDegrees());
-    SmartDashboard.putData("Field", m_field);
   }
 
   public SwerveModule getModule(int offset) {

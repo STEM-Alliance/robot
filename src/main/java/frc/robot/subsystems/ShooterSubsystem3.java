@@ -158,6 +158,10 @@ private double getArmPos() {
     SmartDashboard.putNumber("ShooterVelocity", m_shooterEnc.getVelocity());
   }
 
+  public void resetDesiredAngle() {
+    m_desiredAngle = getArmPos();
+  }
+
   // Spin the shooter motor and return true when the velocity is at the max velocity
   public Command spinShooterToVelocity() {
     return new FunctionalCommand(
@@ -189,7 +193,7 @@ private double getArmPos() {
   public Command unhookShooter() {
     return new FunctionalCommand(
       () -> {m_desiredAngle = m_unhookPosition;},
-      () -> {},
+      () -> {System.out.println("Running unhook shooter");},
       interrupted -> {},
       () -> Math.abs(getArmPos() - m_unhookPosition) <
       Configuration.kTargetingError,
