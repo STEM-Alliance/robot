@@ -89,7 +89,7 @@ public class Configuration {
     static public double kShooterArmKi = 0;
     static public double kShooterArmKd = 0;
     static public double kShooterArmMaxSpeed = 60; // Degrees/s
-    static public double kShooterArmAcceleration = kShooterArmMaxSpeed / 0.5; // Max in 0.25s
+    static public double kShooterArmAcceleration = kShooterArmMaxSpeed / 0.5; // Max in 0.5s
     static public double kShooterArmRatio = 360/230 * 1.5;
     static public double kShooterArmChangeRate = 60; // Increase desired angle x degrees per second
     static public double kShooterArmPIDLimit = 0.4; // Limit the PID output incase of wrong values
@@ -98,22 +98,43 @@ public class Configuration {
     static public double kShooterArmLowerLimit = -48;
     static public double kShooterArmUpperLimit = 10;
 
-    // Intake Position, Travel Position, Amp Position, rest position, unhook position
-    public enum ArmSetpoint {
-        INTAKE,
-        TRAVEL,
-        AMP,
-        REST,
-        UNHOOK
+    static public enum kShooterSetpoints {
+        INTAKE  (-45),
+        TRAVEL  (-30),
+        REST    (-31),
+        UNHOOK  (5),
+        AMP     (10);
+        private final double armRotationTarget;
+
+        kShooterSetpoints(double armRotationTarget) {
+            this.armRotationTarget = armRotationTarget;
+        }
+
+        public double getArmRotation() {return armRotationTarget;}
     }
+
+    static public enum kWristSetpoints2 {
+        IN      (25),
+        AMP     (115),
+        OUT     (210);
+        private final double wristRotationTarget;
+
+        kWristSetpoints2(double wristRotationTarget) {
+            this.wristRotationTarget = wristRotationTarget;
+        }
+
+        public double getWristRotation() {return wristRotationTarget;}
+    }
+
+    // Intake Position, Travel Position, Amp Position, rest position, unhook position
     static public double kShooterArmUnhookPosition = 5;
-    static public double kShooterArmLoweredPosition = -40;
+    static public double kShooterArmLoweredPosition = -34;
     static public double[] kShooterArmSetpoints = new double[]{-45, -30, 10, -31, 5};
 
     // Out Position, In Position, Amp Position
-    static public double[] kWristSetpoints = new double[]{210, 25, 115};
+    static public double[] kWristSetpoints = new double[]{205, 25, 145};
 
-    static public double kMaxFlywheelSpeed = -5000;
+    static public double kMaxFlywheelSpeed = -4600;
 
     static public int[] kShooterMotorCanID = new int[]{11, 12};
     static public int kNoteSensorChannel = 0;

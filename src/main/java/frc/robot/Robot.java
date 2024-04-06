@@ -116,9 +116,12 @@ public class Robot extends TimedRobot {
 
     final Trigger travelPosition = m_controller2.povDown();
     final Trigger homeWrist = m_controller2.leftBumper();
+    final Trigger wristOut = m_controller2.rightBumper();
 
     homeWrist.onTrue(m_intake.startHomeWrist());
     homeWrist.onFalse(m_intake.endHomeWrist());
+
+    wristOut.onTrue(m_intake.wristSetSetpoint(0));
 
     // lowerWrist.whileTrue(m_intake.cmdWrist(-0.5));
     // raiseWrist.whileTrue(m_intake.cmdWrist(0.5));
@@ -154,8 +157,8 @@ public class Robot extends TimedRobot {
     // When you are pressing the shoot speaker button, the shooter will spin up to velocity and
     // move the note into the shooter
     // (Make aimbot for the speaker run automatically? or run manually)
-    shootSpeaker.whileTrue(shootSpeakerStart());
-    shootSpeaker.onFalse(shootSpeakerEnd());
+    shootSpeaker.whileTrue(humanShootStart());
+    shootSpeaker.onFalse(humanShootEnd());
 
     // When you press the button, the shooter will just move to the setpoint for the amp
     // When the arm is up, you can line up and then hold the button, which will run the intake
@@ -200,6 +203,7 @@ public class Robot extends TimedRobot {
     NamedCommands.registerCommand("Shoot", shootSpeakerStart());
     NamedCommands.registerCommand("ShootEnd", shootSpeakerEnd());
     NamedCommands.registerCommand("UnhookAndShoot", getUnhookAndShoot2());
+    NamedCommands.registerCommand("StopIntake", m_intake.stopIntake());
 
     m_autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", m_autoChooser);
@@ -230,6 +234,10 @@ public class Robot extends TimedRobot {
     // m_shooter.movementLoop();
     // Uncomment this line to print the motor positions.
     m_swerve.printHomePos();
+
+    if (m_vision.hasTargets()) {
+      m_swerve.addVisionMeasurements(m_vision.getFieldPosition(), m_vision.getVisionDataTimestamp());
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -247,38 +255,9 @@ public class Robot extends TimedRobot {
     System.out.println("m_autonomousCommand: " + m_autonomousCommand);
     //m_autonomousCommand = getUnhookAndShoot2();
 
-    // switch (m_autoSelected)
-    // {
-    //   case kShoot:
-    //     // Put custom auto code here
-    //     m_autonomousCommand = getUnhookAndShoot();
-    //     System.out.println("Shoot");
-    //     break;
-    //   case kShootAndScoot:
-    //     m_autonomousCommand = getUnhookAndShoot().andThen(
-    //       Commands.parallel(new MoveBotCommand(m_swerve),
-    //       m_intake.fwdIntake(false)));
-    //     break;
-    //   case kDriveStraight:
-    //     m_autonomousCommand = new PathPlannerAuto("Auto1");
-    //     break;
-    //   case kLoop:
-    //     m_autonomousCommand = new PathPlannerAuto("GoLong");
-    // }
-
-    // Overwrite the current heading with what the limelight sees
-    //m_swerve.setGyro(m_limelight.getHeading());
-
-    // Reset the robot pose to what the limelight sees
-    //double[] visionMeasurements = m_limelight.getBotPose();
-    //m_swerve.resetPose(new Pose2d(visionMeasurements[0], visionMeasurements[1],
-    //  m_swerve.getPose().getRotation()));
-
-    //m_swerve.resetPose(new Pose2d(14.5, 1.5, new Rotation2d(0)));
-    //m_swerve.setGyro(0);
-
-    Pose2d visionPose = m_vision.getFieldPosition();
-    m_swerve.resetPose(visionPose);
+    if (m_vision.hasTargets()) {
+      m_swerve.resetPose(m_vision.getFieldPosition());
+    }
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -288,16 +267,6 @@ public class Robot extends TimedRobot {
   private Command PathPlannerAuto(String string) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'PathPlannerAuto'");
-  }
-
-  public Command getUnhookAndShoot() {
-    return m_shooter.unhookShooter().andThen(
-           m_shooter.lowerShooter().andThen(
-           m_shooter.spinShooterToVelocity().andThen(
-           m_intake.fwdIntakeTimed().andThen(
-           new WaitCommand(2).andThen(
-           m_shooter.stopShooter().andThen(
-          m_intake.stopIntake()))))));
   }
 
   public Command getUnhookAndShoot2() {
@@ -431,7 +400,6 @@ public class Robot extends TimedRobot {
 
     final var ySpeed = MathUtil.applyDeadband(expRightY, Math.pow(
           Configuration.GeneralDeadband, Configuration.kExpControl));
-
     m_intake.cmdIntake(ySpeed);
   }
 
@@ -465,7 +433,7 @@ public class Robot extends TimedRobot {
 
   public Command autoIntakeStart() {
       return m_intake.wristSetSetpoint(0).andThen(
-             new WaitCommand(1).andThen(
+             new WaitCommand(0.75).andThen(
              m_shooter.setSetpoint(0).andThen(
              m_shooter.atSetpoint().andThen(
              Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
@@ -495,5 +463,15 @@ public class Robot extends TimedRobot {
            m_shooter.atSetpoint().andThen(
            m_intake.wristSetSetpoint(1).andThen(
            m_intake.wristAtSetpoint()))));
+  }
+
+  public Command humanShootStart() {
+      return m_shooter.spinShooterToVelocity().andThen(
+             m_intake.fwdIntake(true));
+  }
+
+    public Command humanShootEnd() {
+      return m_shooter.stopShooter().andThen(
+        m_intake.stopIntake());
   }
 }

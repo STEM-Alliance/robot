@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -84,6 +85,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public DrivetrainSubsystem() {
     m_pigeon2.reset();
 
+    // Set deviations for the pose estimator vision measurements, rotation is positive infinity since
+    // the gyro will give us more accurate results than the vision system. We can also scale this by the
+    // distance of the tag detected, longer distances will be less accurate so will ahve less of an effect
+    m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(1.0, 1.0, Double.POSITIVE_INFINITY));
+
     // https://github.com/mjansen4857/pathplanner/tree/main/examples
     // Configure AutoBuilder
     AutoBuilder.configureHolonomic(
@@ -120,9 +126,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     LoggedNumber.getInstance().logNumber("RobotPoseX", getPose().getX());
     LoggedNumber.getInstance().logNumber("RobotPoseY", getPose().getY());
     LoggedNumber.getInstance().logNumber("RobotPoseDeg", getPose().getRotation().getDegrees());
-    LoggedNumber.getInstance().logNumber("RobotPoseX2", m_odometry.getPoseMeters().getX());
-    LoggedNumber.getInstance().logNumber("RobotPoseY2", m_odometry.getPoseMeters().getY());
-    LoggedNumber.getInstance().logNumber("RobotPoseDeg2", m_odometry.getPoseMeters().getRotation().getDegrees());
+    LoggedNumber.getInstance().logNumber("RobotPoseX2", m_poseEstimator.getEstimatedPosition().getX());
+    LoggedNumber.getInstance().logNumber("RobotPoseY2", m_poseEstimator.getEstimatedPosition().getY());
+    LoggedNumber.getInstance().logNumber("RobotPoseDeg2", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees());
     LoggedNumber.getInstance().logNumber("FieldX", m_field.getRobotPose().getX());
     LoggedNumber.getInstance().logNumber("FieldY", m_field.getRobotPose().getY());
     LoggedNumber.getInstance().logNumber("FieldRot", m_field.getRobotPose().getRotation().getDegrees());
@@ -213,10 +219,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_poseEstimator.update(m_pigeon2.getRotation2d(), getModulePositions());
   }
 
+  public void addVisionMeasurements(Pose2d visionMeasurements, double timestamp) {
+    m_poseEstimator.addVisionMeasurement(visionMeasurements, timestamp);
+  }
+
   public Pose2d getPose() {
-    // TODO: This is broke
-    return m_odometry.getPoseMeters();
-    //return m_poseEstimator.getEstimatedPosition();
+    // return m_odometry.getPoseMeters();
+    return m_poseEstimator.getEstimatedPosition();
   }
 
   public void resetPose(Pose2d resetPose) {
@@ -235,10 +244,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   public Command resetGyro() {
     return new InstantCommand(() -> {m_pigeon2.reset();});
-  }
-
-  public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp) {
-    m_poseEstimator.addVisionMeasurement(visionMeasurement, timestamp);
   }
 
   public Command runPath() {

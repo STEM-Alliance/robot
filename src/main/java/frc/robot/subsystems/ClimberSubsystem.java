@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.logging.Logger;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -12,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configuration;
+import frc.robot.LoggedNumber;
 
 public class ClimberSubsystem extends SubsystemBase {
     CANSparkMax m_climbMotor;
@@ -28,10 +32,14 @@ public class ClimberSubsystem extends SubsystemBase {
         m_climbEncoder.setPositionConversionFactor(0.150458);
         m_climbStop = new PWM(Configuration.kClimbStopChannel);
         m_climbEncoder.setPosition(0);
+        m_climbStop.setSpeed(1);
+
     }
 
     public void periodic() {
         SmartDashboard.putBoolean("ClimbBrakeEngaged", m_brakeEngaged);
+        LoggedNumber.getInstance().logNumber("ClimbCurrent", m_climbMotor.getOutputCurrent());
+        LoggedNumber.getInstance().logNumber("ClimbSpeed", m_climbMotor.get());
     }
 
     public void runClimber(double setpoint) {
@@ -50,10 +58,10 @@ public class ClimberSubsystem extends SubsystemBase {
     private void toggleClimbBrake() {
         m_brakeEngaged = !m_brakeEngaged;
         if (m_brakeEngaged) {
-            m_climbStop.setSpeed(1);
+            m_climbStop.setSpeed(-1);
         }
         else {
-            m_climbStop.setSpeed(-1);
+            m_climbStop.setSpeed(1);
         }
     }
 

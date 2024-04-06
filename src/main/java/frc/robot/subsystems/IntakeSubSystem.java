@@ -23,6 +23,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private int m_wristSetpoint = 0;
     private double m_desiredWristAngle = 0;
     private boolean m_homing = false;
+    private boolean m_allowManualIntake = true;
 
     /** Creates a new IntakeSubsystem. */
     public IntakeSubsystem(DigitalInput noteSensor) {
@@ -50,20 +51,27 @@ public class IntakeSubsystem extends SubsystemBase {
     public void cmdIntake(double cmd)
     {
         SmartDashboard.putBoolean("intake", m_noteSensor.get());
-        //System.out.println("Sensor: " + m_noteSensor.get() + " cmd: " + cmd);
-        if (m_noteSensor.get() || cmd > 0) { // If there is not a note or driving outtake
-            m_intake.set(cmd);
-        } else { // There is a note already in the intake while trying to run intake
-            m_intake.set(0);
+        if (m_allowManualIntake) {
+            //System.out.println("Sensor: " + m_noteSensor.get() + " cmd: " + cmd);
+            if (m_noteSensor.get() || cmd > 0) { // If there is not a note or driving outtake
+                m_intake.set(cmd);
+            } else { // There is a note already in the intake while trying to run intake
+                m_intake.set(0);
+            }
         }
+    }
+
+    private void allowManualIntake() {
+        m_intake.set(0);
+        m_allowManualIntake = true;
     }
 
     public Command fwdIntake(boolean forceIntake) {
         return new FunctionalCommand(
-            () -> {System.out.println("fwdIntake");},
+            () -> {System.out.println("fwdIntake"); m_allowManualIntake=false;},
             () -> m_intake.set(-1),
-            interrupted -> m_intake.set(0),
-            () -> !m_noteSensor.get() && !forceIntake,
+            interrupted -> allowManualIntake(),
+            () -> !m_noteSensor.get() || !forceIntake,
             this
         );
     }
@@ -78,9 +86,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public Command revIntake() {
         return new FunctionalCommand(
-            () -> m_intake.set(1),
+            () -> {m_intake.set(1); m_allowManualIntake=false;},
             () -> {},
-            interrupted -> m_intake.set(0),
+            interrupted -> allowManualIntake(),
             () -> false,
             this
         );
