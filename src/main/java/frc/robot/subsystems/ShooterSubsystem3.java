@@ -184,9 +184,13 @@ private double getArmPos() {
     );
   }
 
-  // Stop the shooter
+  // Stop the shooter[]
+  // public Command stopShooter() {
+  //   return new InstantCommand(() -> m_shooterPID.setSetpoint(0));
+  // }
+
   public Command stopShooter() {
-    return new InstantCommand(() -> m_shooterPID.setSetpoint(0));
+    return new InstantCommand(() -> m_shooter.set(0));
   }
 
   // Auto command, move the shooter up to release the pin
