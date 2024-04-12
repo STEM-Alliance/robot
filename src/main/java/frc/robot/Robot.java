@@ -75,8 +75,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
     m_swerve.homeSwerve();
+
+    if (m_vision.hasTargets()) {
+      m_swerve.resetPose(m_vision.getFieldPosition());
+    }
 
     // final Trigger enabledStatus = new Trigger(() -> DriverStation.isEnabled());
     // enabledStatus.onTrue(new InstantCommand(() -> m_shooter.resetDesiredAngle()));
@@ -108,8 +112,8 @@ public class Robot extends TimedRobot {
      * Controller 2
      *************************************************************/
     final Trigger intakeNote = m_controller2.leftTrigger();
-    final Trigger outtakeNote = m_controller2.rightTrigger();
-    final Trigger shootSpeaker = m_controller2.y();
+    final Trigger shootSpeaker = m_controller2.rightTrigger();
+    final Trigger runShooter = m_controller2.y();
     final Trigger shootAmp = m_controller2.x();
     final Trigger lowerWrist = m_controller2.b();
     final Trigger raiseWrist = m_controller2.a();
@@ -118,10 +122,10 @@ public class Robot extends TimedRobot {
     final Trigger homeWrist = m_controller2.leftBumper();
     final Trigger wristOut = m_controller2.rightBumper();
 
-    homeWrist.onTrue(m_intake.startHomeWrist());
-    homeWrist.onFalse(m_intake.endHomeWrist());
+    homeWrist.onTrue(m_intake.wristStartHome());
+    homeWrist.onFalse(m_intake.wristEndHome());
 
-    wristOut.onTrue(m_intake.wristSetSetpoint(0));
+    wristOut.onTrue(m_intake.wristSetSetpoint(Configuration.kWristSetpoints.OUT));
 
     // lowerWrist.whileTrue(m_intake.cmdWrist(-0.5));
     // raiseWrist.whileTrue(m_intake.cmdWrist(0.5));
@@ -143,28 +147,28 @@ public class Robot extends TimedRobot {
       ));
     
     // Move the arm up to the travel position and fold in the wrist
-    travelPosition.onTrue(m_shooter.setSetpoint(1).andThen(
-      m_intake.wristDelayedSetSetpoint(1)));
+    // travelPosition.onTrue(m_shooter.setSetpoint(1).andThen(
+    //   m_intake.wristDelayedSetSetpoint(1)));
 
     // When you are pressing the intake button, the arm will stay at the lowered position and
     // run the intake until there is a note, the arm will stay down until the button is released
     intakeNote.whileTrue(autoIntakeStart());
     intakeNote.onFalse(autoIntakeEnd());
 
-    outtakeNote.whileTrue(m_intake.revIntake());
-    outtakeNote.onFalse(m_intake.stopIntake());
+    shootSpeaker.whileTrue(shootSpeakerStart());
+    shootSpeaker.onFalse(shootSpeakerEnd());
 
     // When you are pressing the shoot speaker button, the shooter will spin up to velocity and
     // move the note into the shooter
     // (Make aimbot for the speaker run automatically? or run manually)
-    shootSpeaker.whileTrue(humanShootStart());
-    shootSpeaker.onFalse(humanShootEnd());
+    runShooter.whileTrue(humanShootStart());
+    runShooter.onFalse(humanShootEnd());
 
     // When you press the button, the shooter will just move to the setpoint for the amp
     // When the arm is up, you can line up and then hold the button, which will run the intake
     // (Make aimbot for amp run automatically? or run manually)
-    shootAmp.whileTrue(m_shooter.setSetpoint(2).andThen(
-      m_intake.wristSetSetpoint(2).andThen(
+    shootAmp.whileTrue(m_shooter.setSetpoint(Configuration.kShooterSetpoints.AMP).andThen(
+      m_intake.wristSetSetpoint(Configuration.kWristSetpoints.AMP).andThen(
       Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
       m_intake.revIntake()))));
     shootAmp.onFalse(m_intake.stopIntake());
@@ -197,7 +201,6 @@ public class Robot extends TimedRobot {
 
     // Register auto modes: https://pathplanner.dev/pplib-named-commands.html
     NamedCommands.registerCommand("Intake", autoIntakeStart());
-    NamedCommands.registerCommand("StopIntake", autoIntakeEnd());
     NamedCommands.registerCommand("Rotate90", m_swerve.rotateChassisCmd(90));
     NamedCommands.registerCommand("RotateNeg30", m_swerve.rotateChassisCmd(-30));
     NamedCommands.registerCommand("Shoot", shootSpeakerStart());
@@ -235,9 +238,9 @@ public class Robot extends TimedRobot {
     // Uncomment this line to print the motor positions.
     m_swerve.printHomePos();
 
-    if (m_vision.hasTargets()) {
-      m_swerve.addVisionMeasurements(m_vision.getFieldPosition(), m_vision.getVisionDataTimestamp());
-    }
+    // if (m_vision.hasTargets()) {
+    //   m_swerve.addVisionMeasurements(m_vision.getFieldPosition(), m_vision.getVisionDataTimestamp());
+    // }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -255,9 +258,9 @@ public class Robot extends TimedRobot {
     System.out.println("m_autonomousCommand: " + m_autonomousCommand);
     //m_autonomousCommand = getUnhookAndShoot2();
 
-    if (m_vision.hasTargets()) {
-      m_swerve.resetPose(m_vision.getFieldPosition());
-    }
+    // if (m_vision.hasTargets()) {
+    //   m_swerve.resetPose(m_vision.getFieldPosition());
+    // }
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -270,10 +273,10 @@ public class Robot extends TimedRobot {
   }
 
   public Command getUnhookAndShoot2() {
-    return m_shooter.setSetpoint(4).andThen(
-           m_intake.wristSetSetpoint(0).andThen(
+    return m_shooter.setSetpoint(Configuration.kShooterSetpoints.UNHOOK).andThen(
+           m_intake.wristSetSetpoint(Configuration.kWristSetpoints.OUT).andThen(
            Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
-           m_shooter.setSetpoint(0).andThen(
+           m_shooter.setSetpoint(Configuration.kShooterSetpoints.AUTOSHOOT).andThen(
            m_shooter.atSetpoint().andThen(
            m_shooter.spinShooterToVelocity().andThen(
            m_intake.fwdIntakeTimed().andThen(
@@ -432,36 +435,39 @@ public class Robot extends TimedRobot {
   }
 
   public Command autoIntakeStart() {
-      return m_intake.wristSetSetpoint(0).andThen(
-             new WaitCommand(0.75).andThen(
-             m_shooter.setSetpoint(0).andThen(
-             m_shooter.atSetpoint().andThen(
+      return m_intake.wristSetSetpoint(Configuration.kWristSetpoints.OUT).andThen(
+             Commands.race(new WaitCommand(1.25), m_intake.wristAtSetpoint()).andThen(
+             m_shooter.setSetpoint(Configuration.kShooterSetpoints.INTAKE).andThen(
              Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint()).andThen(
-             m_intake.fwdIntake(false))))));
+             m_intake.fwdIntake(false)))));
   }
 
   public Command autoIntakeEnd() {
-    return m_shooter.setSetpoint(1).andThen(
+    return m_shooter.setSetpoint(Configuration.kShooterSetpoints.TRAVEL).andThen(
            m_intake.stopIntake().andThen(
-           m_shooter.setSetpoint(1).andThen(
            m_shooter.atSetpoint().andThen(
-           m_intake.wristSetSetpoint(1).andThen(
+           m_intake.wristSetSetpoint(Configuration.kWristSetpoints.IN).andThen(
            m_intake.wristAtSetpoint().andThen(
-           m_shooter.setSetpoint(3)))))));
+           m_shooter.setSetpoint(Configuration.kShooterSetpoints.REST))))));
   }
 
   public Command shootSpeakerStart() {
-    return m_intake.wristSetSetpoint(0).andThen(
-           m_intake.wristAtSetpoint().andThen((
+    return new WaitCommand(1.0).andThen(m_intake.wristSetSetpoint(Configuration.kWristSetpoints.OUT).andThen(
+           m_intake.wristAtSetpoint().andThen(
+           m_shooter.setSetpoint(Configuration.kShooterSetpoints.AUTOSHOOT).andThen(
+           m_shooter.atSetpoint().andThen(
            m_shooter.spinShooterToVelocity().andThen(
-           m_intake.fwdIntake(true)))));
+           m_intake.fwdIntakeTimed().andThen(
+           new WaitCommand(2).andThen(
+           m_shooter.stopShooter().andThen(
+           m_intake.stopIntake())))))))));
   }
 
   public Command shootSpeakerEnd() {
     return m_shooter.stopShooter().andThen(
-           m_shooter.setSetpoint(3).andThen(
+           m_shooter.setSetpoint(Configuration.kShooterSetpoints.REST).andThen(
            m_shooter.atSetpoint().andThen(
-           m_intake.wristSetSetpoint(1).andThen(
+           m_intake.wristSetSetpoint(Configuration.kWristSetpoints.IN).andThen(
            m_intake.wristAtSetpoint()))));
   }
 
@@ -471,7 +477,6 @@ public class Robot extends TimedRobot {
   }
 
     public Command humanShootEnd() {
-      return m_shooter.stopShooter().andThen(
-        m_intake.stopIntake());
+      return m_shooter.stopShooter();
   }
 }

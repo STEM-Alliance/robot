@@ -86,7 +86,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_pigeon2.reset();
 
     // Set deviations for the pose estimator vision measurements, rotation is positive infinity since
-    // the gyro will give us more accurate results than the vision system. We should also scale this by the
+    // the gyro will give us more accurate results than the vision system. We can also scale this by the
     // distance of the tag detected, longer distances will be less accurate so will ahve less of an effect
     m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(1.0, 1.0, Double.POSITIVE_INFINITY));
 

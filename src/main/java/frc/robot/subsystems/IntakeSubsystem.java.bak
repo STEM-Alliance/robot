@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Configuration;
 import frc.robot.LoggedNumber;
+import frc.robot.Robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -19,7 +20,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private final RelativeEncoder m_wristEnc;
 
     private final PIDController m_wristPID = new PIDController(0.05, 0, 0);
-    private double m_wristDesiredAngle = 0;
+    private int m_wristSetpoint = 0;
+    private double m_desiredWristAngle = 0;
     private boolean m_homing = false;
     private boolean m_allowManualIntake = true;
 
@@ -43,7 +45,7 @@ public class IntakeSubsystem extends SubsystemBase {
         LoggedNumber.getInstance().logNumber("WristPosition", m_wristEnc.getPosition());
         SmartDashboard.putNumber("WristPosition", m_wristEnc.getPosition());
 
-        SmartDashboard.putNumber("WristDesiredAngle", m_wristDesiredAngle);
+        SmartDashboard.putNumber("WristDesiredAngle", m_desiredWristAngle);
     }
 
     public void cmdIntake(double cmd)
@@ -64,19 +66,12 @@ public class IntakeSubsystem extends SubsystemBase {
         m_allowManualIntake = true;
     }
 
-
-    // We want to run this if the note sensor is true or force is true
-    // 0 0 1 // 1 1 1
-    // 0 1 0 // 1 0 0
-    // 1 0 0 // 0 1 0
-    // 1 1 0 // 0 0 0
-    // 
     public Command fwdIntake(boolean forceIntake) {
         return new FunctionalCommand(
             () -> {System.out.println("fwdIntake"); m_allowManualIntake=false;},
             () -> m_intake.set(-1),
             interrupted -> allowManualIntake(),
-            () -> !m_noteSensor.get() && !forceIntake,
+            () -> !m_noteSensor.get() || !forceIntake,
             this
         );
     }
@@ -110,15 +105,15 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setPosition(double speed) {
-        m_wristDesiredAngle += speed / 50 * 110;
+        m_desiredWristAngle += speed / 50 * 110;
       }
 
     private void wristControlLoop() {
         if (!m_homing) {
-            m_wristDesiredAngle = MathUtil.clamp(m_wristDesiredAngle, 0, Configuration.kWristLimit + Configuration.kWristLimitError);
+            m_desiredWristAngle = MathUtil.clamp(m_desiredWristAngle, 0, 210 + 2);
 
             double clampedOut = MathUtil.clamp(m_wristPID.calculate(m_wristEnc.getPosition(),
-            m_wristDesiredAngle), -1, 1);
+            m_desiredWristAngle), -1, 1);
 
             m_wrist.set(clampedOut);
         }
@@ -127,20 +122,29 @@ public class IntakeSubsystem extends SubsystemBase {
             m_wrist.set(-0.5);
 
             m_wristEnc.setPosition(0);
-            m_wristDesiredAngle = 0;
+            m_desiredWristAngle = 0;
         }
     }
 
-    public Command wristStartHome() {
+    public Command startHomeWrist() {
         return new InstantCommand(() -> m_homing = true);
     }
 
-    public Command wristEndHome() {
+    public Command endHomeWrist() {
         return new InstantCommand(() -> m_homing = false);
     }
 
-    public Command wristSetSetpoint(Configuration.kWristSetpoints setpoint) {
-        return new InstantCommand(() -> {m_wristDesiredAngle = setpoint.getRotationTarget();});
+    private void moveToSetpoint() {
+        m_desiredWristAngle = Configuration.kWristSetpoints[m_wristSetpoint];
+    }
+
+    public Command wristSetSetpoint(int setpoint) {
+        return new InstantCommand(() -> {m_wristSetpoint = setpoint; moveToSetpoint();});
+    }
+
+    public Command wristDelayedSetSetpoint(int setpoint) {
+        return new WaitCommand(0.5).andThen(new InstantCommand(() ->
+            {m_wristSetpoint = setpoint; moveToSetpoint();}));
     }
 
     public Command wristAtSetpoint() {
@@ -148,7 +152,7 @@ public class IntakeSubsystem extends SubsystemBase {
             () -> {},
             () -> {},
             interrupted -> {},
-            () -> Math.abs(m_wristEnc.getPosition() - m_wristDesiredAngle) <
+            () -> Math.abs(m_wristEnc.getPosition() - m_desiredWristAngle) <
             Configuration.kTargetingError
           );
     }

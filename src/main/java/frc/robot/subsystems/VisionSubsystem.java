@@ -1,30 +1,51 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Helpers;
+
+import java.util.List;
+import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class VisionSubsystem extends SubsystemBase {
     private boolean m_hasTargets = false;
     private double m_fieldHeading = 0.0;
-    private double m_visionDataLatency = 0.0;
+    private double m_visionDataTimestamp = 0.0;
     private Pose2d m_fieldPosition = new Pose2d();
 
-    private Transform3d m_cameraPose = new Transform3d();
+    private PhotonPipelineResult m_cameraResults;
+    private double m_currentTimestamp = 0.0;
+    private double m_previousTimestamp = 0.0;
+
+    // 5 7/8 to the right, 11 to center?
+    private Transform3d m_cameraPose = new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.PI));
     private PhotonCamera m_camera = new PhotonCamera("HQ_Camera");
     private AprilTagFieldLayout m_fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+    private PhotonPoseEstimator m_poseEstimator = new PhotonPoseEstimator(
+        m_fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, m_camera, m_cameraPose);
 
-    public VisionSubsystem() {}
+    public VisionSubsystem() {
+        m_poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
+    }
 
     public void periodic() {
         updateVisionData();
@@ -52,36 +73,89 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return The latency of the vision pipeline in seconds.
+     * @return The timestamp of the current vision data.
     */
-    public double getVisionDataLatency() {
-        return m_visionDataLatency;
+    public double getVisionDataTimestamp() {
+        return m_visionDataTimestamp;
     }
 
     /**
-     * @return The FPGA timestamp minus the vision data latency, the timestamp of the vision data on the FPGA in seconds.
+     * @return The distance to the desired april tag in meters, 0.0 if the tag is not detected.
     */
-    public double getVisionDataTimestamp() {
-        return Timer.getFPGATimestamp() - m_visionDataLatency;
+    public double getTargetDistance(int desiredTargetID) {
+        if (m_hasTargets) {
+            List<PhotonTrackedTarget> targets = m_cameraResults.getTargets();
+
+            for (PhotonTrackedTarget target : targets) {
+                int targetID = target.getFiducialId();
+
+                if (targetID == desiredTargetID) {
+                    double targetNorm = target.getBestCameraToTarget().getTranslation().toTranslation2d().getNorm();
+
+                    return Math.abs(targetNorm);
+                }
+            }
+        }
+
+        return 0.0;
+    }
+
+    /**
+     * @return The angle to the desired april tag in degrees, 0.0 if the tag is not detected.
+    */
+
+    public double getTargetYaw(int desiredTargetID) {
+        if (m_hasTargets) {
+            List<PhotonTrackedTarget> targets = m_cameraResults.getTargets();
+
+            for (PhotonTrackedTarget target : targets) {
+                int targetID = target.getFiducialId();
+
+                if (targetID == desiredTargetID) {
+                    return -target.getYaw();
+                }
+            }
+        }
+
+        return 0.0;
     }
 
     private void updateVisionData() {
-        var cameraResults = m_camera.getLatestResult();
-        m_hasTargets = cameraResults.hasTargets();
+        try {
+            m_cameraResults = m_camera.getLatestResult();
+            m_currentTimestamp = m_cameraResults.getTimestampSeconds();
 
-        if (m_hasTargets) {
-            var bestTarget = cameraResults.getBestTarget();
-            var tagPose = m_fieldLayout.getTagPose(bestTarget.getFiducialId());
-            Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(
-                bestTarget.getBestCameraToTarget(), tagPose.get(), m_cameraPose);
+            if (isNewDetection()) {
+                Optional<EstimatedRobotPose> estimatorResults = m_poseEstimator.update(m_cameraResults);
 
-            m_visionDataLatency = cameraResults.getLatencyMillis() / 1000;
-            // 0 faces red, 180 faces blue, rotation given in radians?, rotation2d takes value of radians
-            m_fieldPosition = new Pose2d(robotPose.getX(), robotPose.getY(), new Rotation2d(-(robotPose.getRotation().getZ() - Math.PI)));
-            
-            SmartDashboard.putNumber("photon x", robotPose.getX());
-            SmartDashboard.putNumber("photon y", robotPose.getY());
-            SmartDashboard.putNumber("pvRotZ", -(robotPose.getRotation().getZ() * 180 / Math.PI));
+                    if (estimatorResults.isPresent()) {
+                        Pose3d estimatedPose = estimatorResults.get().estimatedPose;
+
+                        m_hasTargets = true;
+                        m_fieldPosition = new Pose2d(estimatedPose.getTranslation().toTranslation2d(),
+                            new Rotation2d(-estimatedPose.getRotation().getZ()));
+                            
+                        m_fieldHeading = m_fieldPosition.getRotation().getDegrees();
+                }
+            }
+            else {
+                m_hasTargets = false;
+            }
+        } catch(Exception e) {
+            System.out.println("UpdateVisionData Exception");
+            System.out.println(m_poseEstimator.update(m_cameraResults));
+            return;
         }
+
+        SmartDashboard.putNumber("Photon X", m_fieldPosition.getX());
+        SmartDashboard.putNumber("Photon Y", m_fieldPosition.getY());
+        SmartDashboard.putNumber("Photon Heading", m_fieldHeading);
+
+        SmartDashboard.putNumber("Speaker Distance", getTargetDistance(Helpers.getDesiredAprilTag()));
+        SmartDashboard.putNumber("Speaker Yaw", getTargetYaw(Helpers.getDesiredAprilTag()));
+    }
+
+    private boolean isNewDetection() {
+        return m_cameraResults.hasTargets() && Math.abs(m_currentTimestamp - m_previousTimestamp) > 1e-5;
     }
 }

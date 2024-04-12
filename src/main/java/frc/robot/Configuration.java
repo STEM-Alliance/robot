@@ -99,42 +99,38 @@ public class Configuration {
     static public double kShooterArmUpperLimit = 10;
 
     static public enum kShooterSetpoints {
-        INTAKE  (-45),
-        TRAVEL  (-30),
-        REST    (-31),
-        UNHOOK  (5),
-        AMP     (10);
+        INTAKE      (-45),
+        AUTOSHOOT   (-34),
+        TRAVEL      (-26),
+        REST        (-30),
+        UNHOOK      (5),
+        AMP         (10);
         private final double armRotationTarget;
 
         kShooterSetpoints(double armRotationTarget) {
             this.armRotationTarget = armRotationTarget;
         }
 
-        public double getArmRotation() {return armRotationTarget;}
+        public double getRotationTarget() {return armRotationTarget;}
     }
 
-    static public enum kWristSetpoints2 {
-        IN      (25),
-        AMP     (115),
-        OUT     (210);
+    static public enum kWristSetpoints {
+        IN      (15 / 3),
+        AMP     (87 / 3),
+        OUT     (118 / 3 + 1);
         private final double wristRotationTarget;
 
-        kWristSetpoints2(double wristRotationTarget) {
+        kWristSetpoints(double wristRotationTarget) {
             this.wristRotationTarget = wristRotationTarget;
         }
 
-        public double getWristRotation() {return wristRotationTarget;}
+        public double getRotationTarget() {return wristRotationTarget;}
     }
 
-    // Intake Position, Travel Position, Amp Position, rest position, unhook position
-    static public double kShooterArmUnhookPosition = 5;
-    static public double kShooterArmLoweredPosition = -34;
-    static public double[] kShooterArmSetpoints = new double[]{-45, -30, 10, -31, 5};
+    static public double kWristLimit = 126 / 3 + 1;
+    static public double kWristLimitError = 2 / 3;
 
-    // Out Position, In Position, Amp Position
-    static public double[] kWristSetpoints = new double[]{205, 25, 145};
-
-    static public double kMaxFlywheelSpeed = -4600;
+    static public double kMaxFlywheelSpeed = -4000;
 
     static public int[] kShooterMotorCanID = new int[]{11, 12};
     static public int kNoteSensorChannel = 0;
