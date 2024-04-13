@@ -4,6 +4,7 @@ import frc.robot.Configuration;
 import frc.robot.LoggedNumber;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
@@ -22,6 +23,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private double m_wristDesiredAngle = 0;
     private boolean m_homing = false;
     private boolean m_allowManualIntake = true;
+
+    private Debouncer m_debouncer = new Debouncer(0.25, Debouncer.DebounceType.kBoth);
 
     /** Creates a new IntakeSubsystem. */
     public IntakeSubsystem(DigitalInput noteSensor) {
@@ -78,6 +81,15 @@ public class IntakeSubsystem extends SubsystemBase {
             interrupted -> allowManualIntake(),
             () -> !m_noteSensor.get() && !forceIntake,
             this
+        );
+    }
+
+    public Command noNote() {
+        return new FunctionalCommand(
+            () -> {},
+            () -> {},
+            interrupted -> {},
+            () -> m_debouncer.calculate(m_noteSensor.get())
         );
     }
 

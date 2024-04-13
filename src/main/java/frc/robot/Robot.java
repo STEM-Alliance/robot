@@ -78,10 +78,6 @@ public class Robot extends TimedRobot {
     // CameraServer.startAutomaticCapture();
     m_swerve.homeSwerve();
 
-    if (m_vision.hasTargets()) {
-      m_swerve.resetPose(m_vision.getFieldPosition());
-    }
-
     // final Trigger enabledStatus = new Trigger(() -> DriverStation.isEnabled());
     // enabledStatus.onTrue(new InstantCommand(() -> m_shooter.resetDesiredAngle()));
   
@@ -208,6 +204,30 @@ public class Robot extends TimedRobot {
     NamedCommands.registerCommand("UnhookAndShoot", getUnhookAndShoot2());
     NamedCommands.registerCommand("StopIntake", m_intake.stopIntake());
 
+    NamedCommands.registerCommand("IntakePosition",
+
+    m_intake.wristSetSetpoint(Configuration.kWristSetpoints.OUT).andThen(
+    Commands.race(new WaitCommand(1.25), m_intake.wristAtSetpoint()).andThen(
+    m_shooter.setSetpoint(Configuration.kShooterSetpoints.INTAKE).andThen(
+    Commands.parallel(m_shooter.atSetpoint(), m_intake.wristAtSetpoint())))));
+
+    NamedCommands.registerCommand("StartIntake",
+    
+    m_intake.fwdIntake(false));
+
+    NamedCommands.registerCommand("ShootNote", m_shooter.setSetpoint(Configuration.kShooterSetpoints.AUTOSHOOT).andThen(
+      m_shooter.atSetpoint().andThen(m_shooter.spinShooterToVelocity().andThen(Commands.race(
+        m_intake.fwdIntake(true), new WaitCommand(2), m_intake.noNote())).andThen(m_shooter.stopShooter().andThen(m_intake.stopIntake()))
+      )
+    ));
+    m_shooter.spinShooterToVelocity().andThen(
+             m_intake.fwdIntake(true));
+
+    NamedCommands.registerCommand("LongShotMiddle", m_shooter.setSetpoint(-20).andThen(m_shooter.atSetpoint().andThen(
+      m_shooter.spinShooterToVelocity().andThen(Commands.race(
+        m_intake.fwdIntake(true), new WaitCommand(2))).andThen(m_shooter.stopShooter()).andThen(m_intake.stopIntake())
+      )));
+
     m_autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", m_autoChooser);
   }
@@ -237,10 +257,6 @@ public class Robot extends TimedRobot {
     // m_shooter.movementLoop();
     // Uncomment this line to print the motor positions.
     m_swerve.printHomePos();
-
-    // if (m_vision.hasTargets()) {
-    //   m_swerve.addVisionMeasurements(m_vision.getFieldPosition(), m_vision.getVisionDataTimestamp());
-    // }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -258,9 +274,9 @@ public class Robot extends TimedRobot {
     System.out.println("m_autonomousCommand: " + m_autonomousCommand);
     //m_autonomousCommand = getUnhookAndShoot2();
 
-    // if (m_vision.hasTargets()) {
-    //   m_swerve.resetPose(m_vision.getFieldPosition());
-    // }
+    if (m_vision.hasTargets()) {
+      m_swerve.resetPose(m_vision.getFieldPosition());
+    }
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -280,7 +296,7 @@ public class Robot extends TimedRobot {
            m_shooter.atSetpoint().andThen(
            m_shooter.spinShooterToVelocity().andThen(
            m_intake.fwdIntakeTimed().andThen(
-           new WaitCommand(2).andThen(
+           Commands.race(new WaitCommand(2), m_intake.noNote()).andThen(
            m_shooter.stopShooter().andThen(
            m_intake.stopIntake())))))))));
   }
@@ -293,6 +309,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // unhookShooter, then lowerShooter, then shoot until 5 seconds passed
+    if (m_vision.hasTargets()) {
+      m_swerve.addVisionMeasurements(m_vision.getFieldPosition(), m_vision.getVisionDataTimestamp());
+    }
   }
 
   @Override
@@ -458,7 +477,7 @@ public class Robot extends TimedRobot {
            m_shooter.atSetpoint().andThen(
            m_shooter.spinShooterToVelocity().andThen(
            m_intake.fwdIntakeTimed().andThen(
-           new WaitCommand(2).andThen(
+           Commands.race(new WaitCommand(2), m_intake.noNote()).andThen(
            m_shooter.stopShooter().andThen(
            m_intake.stopIntake())))))))));
   }

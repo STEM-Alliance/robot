@@ -106,7 +106,7 @@ public class SwerveModule {
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(
-        m_driveEncoder.getVelocity(), new Rotation2d(m_turningEncoder.getPosition()));
+        -m_driveEncoder.getVelocity(), new Rotation2d(m_turningEncoder.getPosition()));
   }
 
   /**
@@ -116,7 +116,7 @@ public class SwerveModule {
    */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        m_driveEncoder.getPosition(), new Rotation2d(m_turningEncoder.getPosition()));
+        -m_driveEncoder.getPosition(), new Rotation2d(m_turningEncoder.getPosition()));
   }
 
   /**

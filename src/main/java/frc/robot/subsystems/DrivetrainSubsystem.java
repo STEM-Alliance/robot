@@ -87,8 +87,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Set deviations for the pose estimator vision measurements, rotation is positive infinity since
     // the gyro will give us more accurate results than the vision system. We should also scale this by the
-    // distance of the tag detected, longer distances will be less accurate so will ahve less of an effect
-    m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(1.0, 1.0, Double.POSITIVE_INFINITY));
+    // distance of the tag detected, longer distances will be less accurate so will have less of an effect
+
+    // Actual deviations are 0.5, over time odometry becomes less accurate?
+    // Deviaton for rotation should be Double.POSITIVE_INFINITY
+    m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, Double.POSITIVE_INFINITY));
 
     // https://github.com/mjansen4857/pathplanner/tree/main/examples
     // Configure AutoBuilder

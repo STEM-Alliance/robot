@@ -266,6 +266,10 @@ private double getArmPos() {
     return new InstantCommand(() -> {m_desiredAngle = setpoint.getRotationTarget();});
   }
 
+  public Command setSetpoint(double angle) {
+    return new InstantCommand(() -> {m_desiredAngle = angle;});
+  }
+
   // public Command setSetpoint2(int setpoint) {
   //   return new FunctionalCommand(
   //     () -> {m_angleSetpoint = setpoint; moveToSetpoint();},

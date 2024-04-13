@@ -36,8 +36,10 @@ public class VisionSubsystem extends SubsystemBase {
     private double m_currentTimestamp = 0.0;
     private double m_previousTimestamp = 0.0;
 
-    // 5 7/8 to the right, 11 to center?
-    private Transform3d m_cameraPose = new Transform3d(new Translation3d(), new Rotation3d(0, 0, Math.PI));
+    // I have no idea why this works but it does. We double our forward/backward offset
+    // and multiply our side to side offset by 1.25, and also dont use rotation?
+    // -0.1651 / 2
+    private Transform3d m_cameraPose = new Transform3d(new Translation3d(0.1524 * 2, -0.1651 * 1.25, 0.584), new Rotation3d(0, 0, 0));;
     private PhotonCamera m_camera = new PhotonCamera("HQ_Camera");
     private AprilTagFieldLayout m_fieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     private PhotonPoseEstimator m_poseEstimator = new PhotonPoseEstimator(
@@ -48,7 +50,13 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public void periodic() {
-        updateVisionData();
+        try {
+            updateVisionData();
+        }
+        catch (Exception e) {
+            System.out.println("Exception while updating vision data.");
+            return;
+        }
     }
 
     /**
@@ -121,30 +129,24 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     private void updateVisionData() {
-        try {
-            m_cameraResults = m_camera.getLatestResult();
-            m_currentTimestamp = m_cameraResults.getTimestampSeconds();
+         m_cameraResults = m_camera.getLatestResult();
+        m_currentTimestamp = m_cameraResults.getTimestampSeconds();
 
-            if (isNewDetection()) {
-                Optional<EstimatedRobotPose> estimatorResults = m_poseEstimator.update(m_cameraResults);
+        if (isNewDetection()) {
+            Optional<EstimatedRobotPose> estimatorResults = m_poseEstimator.update(m_cameraResults);
 
-                    if (estimatorResults.isPresent()) {
-                        Pose3d estimatedPose = estimatorResults.get().estimatedPose;
+                if (estimatorResults.isPresent()) {
+                    Pose3d estimatedPose = estimatorResults.get().estimatedPose;
 
-                        m_hasTargets = true;
-                        m_fieldPosition = new Pose2d(estimatedPose.getTranslation().toTranslation2d(),
-                            new Rotation2d(-estimatedPose.getRotation().getZ()));
+                    m_hasTargets = true;
+                    m_fieldPosition = new Pose2d(estimatedPose.getTranslation().toTranslation2d(),
+                        new Rotation2d(estimatedPose.getRotation().getZ()));
                             
-                        m_fieldHeading = m_fieldPosition.getRotation().getDegrees();
-                }
+                    m_fieldHeading = m_fieldPosition.getRotation().getDegrees();
             }
-            else {
-                m_hasTargets = false;
-            }
-        } catch(Exception e) {
-            System.out.println("UpdateVisionData Exception");
-            System.out.println(m_poseEstimator.update(m_cameraResults));
-            return;
+        }
+        else {
+            m_hasTargets = false;
         }
 
         SmartDashboard.putNumber("Photon X", m_fieldPosition.getX());

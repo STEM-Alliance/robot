@@ -33,7 +33,7 @@ public class Configuration {
     static public double kDriveKi = 0;
     static public double kDriveKd = 0;
     static public double kDriveKs = 0; // 0.1, 0.05
-    static public double kDriveKv = 0.25; // 0.25, 0.125
+    static public double kDriveKv = 0.35; // 0.25, 0.125
 
     // PID and feedforward gains for the swerve motors
     static public double kSwerveKp = 0.5; // 0.65
@@ -70,8 +70,8 @@ public class Configuration {
 
     static public HolonomicPathFollowerConfig kPathFollowerConfig =
         new HolonomicPathFollowerConfig(
-            new PIDConstants(0.85), // Translation
-            new PIDConstants(0.65), // Rotation
+            new PIDConstants(1, 0.0, 0.0), // Translation
+            new PIDConstants(1, 0.0, 0.0), // Rotation
             kMaxSpeed,
             kSwerveTranslations[0].getNorm(),
             new ReplanningConfig()
@@ -99,7 +99,7 @@ public class Configuration {
     static public double kShooterArmUpperLimit = 10;
 
     static public enum kShooterSetpoints {
-        INTAKE      (-45),
+        INTAKE      (-42.8),
         AUTOSHOOT   (-34),
         TRAVEL      (-26),
         REST        (-30),
