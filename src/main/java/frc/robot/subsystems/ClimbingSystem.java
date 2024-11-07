@@ -39,7 +39,6 @@ public class ClimbingSystem extends SubsystemBase {
     public void doStuff() {
         // Do stuff
     }
-    public Command Climb(){
-       return null; 
-    }
+ 
+    
 }

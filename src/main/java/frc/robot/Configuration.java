@@ -22,7 +22,7 @@ public class Configuration {
     static public double kDrivingOmegaFactor = 0.8;
 
     // Max speeds
-    static public double kMaxSpeed = 2.5; // 3 meters per second
+    static public double kMaxSpeed = 3; // 3 meters per second
     static public double kMaxAngularSpeed = 2 * Math.PI; // 2 rotations per second 
     static public double kMaxAngularAcceleration = Math.pow(2 * Math.PI, 2);
     static public double GeneralDeadband = 0.2;
@@ -65,7 +65,7 @@ public class Configuration {
 
     // NOTE: These seem to drift
     //static public double[] kZeroPosition = new double[]{0.963, 0.486, 0.070, 0.093};
-    static public double[] kZeroPosition = new double[]{0.811, 0.310, 0.821, 0.927};
+    static public double[] kZeroPosition = new double[]{0.418, 0.310, 0.821, 0.927};
     static public double kEncoderRes = 4096;
 
     static public HolonomicPathFollowerConfig kPathFollowerConfig =
@@ -137,10 +137,13 @@ public class Configuration {
     static public double kAutoDriveD = 0;
     static public double DriveMaxSpeed = .5;
     /********************************************
-    *Intake and shooter
+    *Intake, shooter and CLimber
      *******************************************/
     static public double IntakeSpeed = 1;
     static public double shooterMaxSpeed = 1;
+    static public double climbP = 0.01;
+    static public double climbI = 0.001;
+    static public double climbD = 0;
 
 
     /********************************************

@@ -51,7 +51,7 @@ public class LoggedNumber {
         }
         else
         {
-            m_itemNames.put(name, new DoubleLogEntry(m_log, "7048/" + name));
+            m_itemNames.put(name, new DoubleLogEntry(m_log, "4360/" + name));
         }
     }
 }

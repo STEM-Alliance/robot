@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Configuration;
+import frc.robot.LoggedNumber;
 import frc.robot.Robot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.*;
@@ -42,6 +43,13 @@ public class IntakeSubSystem extends SubsystemBase {
     public void periodic() {
         // Things we need to do on a periodic basis
         //System.out.println("Gripper period")
+        LoggedNumber.getInstance().logNumber(m_midintake.getOutputCurrent(), "midtake Output current");
+        LoggedNumber.getInstance().logNumber(m_intake.getOutputCurrent(), "intake Output current");
+        LoggedNumber.getInstance().logNumber(m_shooter_1.getOutputCurrent(), "shooter Output current");
+         LoggedNumber.getInstance().logNumber(m_midintake.getAppliedOutput(), "Midtake applied output");
+        LoggedNumber.getInstance().logNumber(m_intake.getAppliedOutput(), "intake applied output");
+        LoggedNumber.getInstance().logNumber(m_shooter_1.getAppliedOutput(), "Shooter applied output");
+        
     }
 
     public void doStuff() {

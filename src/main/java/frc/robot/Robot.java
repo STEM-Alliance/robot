@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -15,6 +17,8 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,8 +30,11 @@ import frc.robot.commands.AimbotCommand;
 import frc.robot.commands.ClimbingCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.MoveAndShootCommand;
 import frc.robot.commands.MoveBotCommand;
+import frc.robot.commands.ReverseMidtake;
 import frc.robot.commands.ShootCommand;
+import frc.robot.commands.ReverseMidtake;
 import frc.robot.subsystems.*;
 
 /**
@@ -38,15 +45,20 @@ import frc.robot.subsystems.*;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private Command m_autonomousCommand2;
 
   private RobotContainer m_robotContainer;
- 
+  
+  // booleans
   boolean m_enableDrive = true;
   boolean m_reverseMidtake = false;
+  boolean ShootandMove = false;
+
+
   PathPlannerPath Path = PathPlannerPath.fromPathFile("Example Path");
   DrivetrainSubsystem m_swerve = new DrivetrainSubsystem();
   IntakeSubSystem m_intake = new IntakeSubSystem(9, 11, 10);
-  // ClimbingSystem m_Climber = new ClimbingSystem(13, 14);
+  ClimbingSystem m_Climber = new ClimbingSystem(13, 14);
   public CommandXboxController m_controller1 = new CommandXboxController(0);
   CommandXboxController m_controller2 = new CommandXboxController(1);
 
@@ -58,9 +70,45 @@ public class Robot extends TimedRobot {
 
 
   Command m_aimbotCommand = new AimbotCommand(m_swerve);
-  Command m_driveCommand = new DriveCommand(m_swerve, true, m_controller1);
+  Command m_driveCommand = new DriveCommand(m_swerve,false, m_controller1);
   Command m_IntakeCommand = new IntakeCommand(m_intake, m_reverseMidtake);
   Command m_ShootCommand = new ShootCommand(m_intake);
+  Command m_ReverseMidtake = new ReverseMidtake(m_intake);
+
+  SendableChooser<Command> m_autoChooser;
+
+  Command m_autoShoot = Commands.race(
+    new WaitCommand(1.5),
+    new FunctionalCommand(
+      () -> {},
+      () -> {
+        m_intake.m_shooter_1.set(-1);
+      },
+
+      interrupted -> {
+        m_intake.m_shooter_1.set(0);
+      },
+      () -> false
+    )
+  ).andThen(Commands.race(
+    new WaitCommand(1.5),
+    new FunctionalCommand(
+      () -> {},
+      () -> {
+        m_intake.m_midintake.set(-1);
+        m_intake.m_shooter_1.set(-1);
+      },
+
+      interrupted -> {
+        m_intake.m_midintake.set(0);
+        m_intake.m_shooter_1.set(0);
+      },
+      () -> false
+    )
+  )).andThen(new InstantCommand(() -> {
+     m_intake.m_midintake.set(0);
+     m_intake.m_shooter_1.set(0);
+  }));
   // Command m_ClimbingCommand = new ClimbingCommand(m_Climber);
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -69,19 +117,23 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     NamedCommands.registerCommand("intake", m_IntakeCommand);
-    
+    NamedCommands.registerCommand("Auto Shoot", m_autoShoot);
+    m_autoChooser = AutoBuilder.buildAutoChooser();
+
+    SmartDashboard.putData("Auto Mode", m_autoChooser);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     // Controller 1
     final Trigger enableDrive = m_controller1.b();
-    final Trigger shoot = m_controller1.rightTrigger();
+    final Trigger zeroGyro = m_controller1.x();
     final Trigger autoAim = m_controller1.a();
     //final Trigger Drive = m_controller1.rightBumper();
     final Trigger homeSwerve = m_controller1.y();
     // final Trigger toggleHDrive = m_controller1.rightBumper();
     // toggleHDrive.onTrue(m_pneumatics.toggleHDrive());
-  
+    final Trigger extendarms = m_controller1.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
+    final Trigger retractArms = m_controller1.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
     
     // Controller 2
     final Trigger reverseMidtake = m_controller2.b();
@@ -95,7 +147,7 @@ public class Robot extends TimedRobot {
     final Trigger Climb = m_controller2.x();
     final Trigger leftTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.5);
     final Trigger rightTrigger = m_controller2.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.5);
-    // final Trigger retractHome = m_controller2.x();
+    final Trigger ReverseMidtake = m_controller2.leftBumper();
     // final Trigger up = m_controller2.pov(0);
     // final Trigger down = m_controller2.pov(180);
     // final Trigger left = m_controller2.pov(270);
@@ -116,14 +168,21 @@ public class Robot extends TimedRobot {
     //autoAim.onTrue(m_swerve.setBrakeModeCmd().andThen(m_aimbotCommand.andThen(m_driveCommand)));
     leftTrigger.whileTrue(m_IntakeCommand);
     rightTrigger.whileTrue(m_ShootCommand);
-    reverseMidtake.whileTrue(m_ShootCommand);
-    
+    reverseMidtake.whileTrue(m_ReverseMidtake);
+    zeroGyro.whileTrue(m_swerve.ZeroGyro());
+    extendarms.whileTrue(new InstantCommand(() -> m_Climber.leftCLimber.set(1)));
+    extendarms.whileTrue(new InstantCommand(() -> m_Climber.rightCLimber.set(1)));
+    retractArms.whileTrue(new InstantCommand(() -> m_Climber.leftCLimber.set(-1)));
+    retractArms.whileTrue(new InstantCommand(() -> m_Climber.rightCLimber.set(-1)));
+    extendarms.whileFalse(new InstantCommand(() -> m_Climber.leftCLimber.set(0)));
+    extendarms.whileFalse(new InstantCommand(() -> m_Climber.rightCLimber.set(0)));
     if (enableDrive.getAsBoolean()) 
     {
       m_enableDrive = true;
     }
-   
-
+    
+    
+  
     reverseMidtake.onTrue(new InstantCommand(() -> m_reverseMidtake = true));
     reverseMidtake.onFalse(new InstantCommand(() -> m_reverseMidtake = false));
     // leftTrigger.whileFalse(new InstantCommand(() -> m_intake.doneLoading()));
@@ -143,6 +202,10 @@ public class Robot extends TimedRobot {
 
     m_swerve.m_ahrs.zeroYaw();
     m_swerve.homeSwerve();
+
+    // putting auto varible
+    SmartDashboard.putBoolean("ShootAuto", ShootandMove);
+
   }
 
   /**
@@ -165,6 +228,12 @@ public class Robot extends TimedRobot {
     double kd = SmartDashboard.getNumber("kd", Configuration.kDriveKd);
     //m_swerve.setGains(kp, ki, kd);
     m_swerve.printHomePos();
+
+    // Auto selecting
+    ShootandMove = SmartDashboard.getBoolean("ShootAuto", false);
+    
+    // logged Numbers
+    LoggedNumber.getInstance().logNumber(m_swerve.m_ahrs.getYaw(), "gyro yaw");
 }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -179,18 +248,24 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_swerve.homeSwerve();
     m_swerve.m_ahrs.zeroYaw();
-    m_autonomousCommand = new MoveBotCommand(m_swerve);
+    
+    m_autonomousCommand = new MoveAndShootCommand(m_swerve, m_intake);
+    m_autonomousCommand2 = new MoveBotCommand(m_swerve, m_intake);
+
+    var m_autoCommand = m_autoChooser.getSelected();
+
     // m_autonomousCommand = new InstantCommand(() -> m_swerve.drive(1.5, 0, 0, false, 0.02)).andThen(
     //                       new WaitCommand(2).andThen(
     //                       new InstantCommand(() -> m_swerve.drive(0, 0, 0, false, 0.02))));
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+      if (SmartDashboard.getBoolean("ShootAuto", ShootandMove)){
+          m_autonomousCommand.schedule(); //Shoot and Move Auto
+      } else {
+          m_autonomousCommand2.schedule(); // Move Auto
+      }
+      // m_autoCommand.schedule(); // Replace if statement to use pathplanner auto
     }
-    
-      
-      
-      // AutoBuilder.buildAuto("basic");
   }
 
   /** This function is called periodically during autonomous. */
